@@ -1261,7 +1261,10 @@ AppRegenerateDocInfo[app_String,ops:OptionsPattern[]]:=
 AppGitInit[appName_:Automatic]:=
 	With[{app=AppFromFile[appName]},
 		With[{d=AppDirectory[app]},
-			GitInit[d]
+			GitInit[d];
+			AppRegenerateGitExclude[app];
+			AppRegenerateGitIgnore[app];
+			d
 			]
 		];
 

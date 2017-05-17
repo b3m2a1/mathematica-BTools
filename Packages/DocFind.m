@@ -244,7 +244,7 @@ DocFind[
 	sortBySorting:None|callablePattern:None,
 	ops:OptionsPattern[]
 	]:=
-	Module[{searchName,names},
+	Module[{searchName,names,selectBy},
 		searchName=
 			StringExpression@@{
 				Replace[#context,Except[_String]->""],
@@ -264,8 +264,10 @@ DocFind[
 							Replace[name,{_Verbatim->False,_:>TrueQ[OptionValue@Autocomplete]}]
 						|>;
 		names=Names@searchName;
+		
 		names=
-			Replace[OptionValue[Select],{
+			Replace[
+				OptionValue[Select],{
 				Identity:>
 					names,
 				match:
@@ -276,7 +278,10 @@ DocFind[
 					Verbatim[Alternatives][__?(Not@KeyMemberQ[$SymbolNameTypes,#]&)]|
 					_StringExpression:>
 					Select[names,StringMatchQ[match]],
-				s_StringMatchQ:>
+				
+				s:(_StringMatchQ|_StringContainsQ|_StringStartsQ|_StringEndsQ):>
+					Select[names,s],
+				s:(Not@*(_StringMatchQ|_StringContainsQ|_StringStartsQ|_StringEndsQ)):>
 					Select[names,s],
 				s_:>
 					With[{f=

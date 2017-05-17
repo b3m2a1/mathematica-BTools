@@ -1,0 +1,106 @@
+(*
+	Special Argument Forms
+	----------------------
+	Each function which provides string completions has an entry in the 
+	following list of the form: 
+	
+	"FunctionName"->ArgumentList
+
+	where ArgumentList is a list of argument specifiers:
+	
+	{argSpec1, argSpec2,..., argSpecN}
+	
+	Each argument specifier corresponds to an argument in the function identified by
+	"FunctionName".
+
+	Argument specifiers can take several forms:
+	
+	A Numeric Code
+	A String
+	A List
+	
+	Numeric codes are for certain special types of completions.  Zero means 'don't complete':
+	
+	Normal argument		0
+	Filename			2
+	Color				4
+	PackageName	    	7
+	DirectoryName		8
+	InterpreterType		9
+
+	Strings are either for specifying internal lists inside the Front End or for specifying 
+	the file name of a list of completions compiled into a search trie.  If the string ends with
+	".trie", the FE will look for a compiled search trie file.  An example is "ImportFormats_Names.trie".
+
+	Alternative formats for arguments:
+
+	Specify a reference page target
+	==============================
+	You can annotate the strings in the .trie file with the target URI of a help page for any particular 
+	string:
+	{"ImportFormats_Names.trie", "URI"->"ref/format/"}
+
+	Dependent Argument Completions
+	==============================
+	These types of completions are supported with descriptors of the form:
+
+	{"CompletionsFile", "DependsOnArgument"->argNumber, "OptionalFallbackCompletionsFile"}
+	or 
+	{"CompletionsFile", "DependsOnArgument"->{argNumber, subArgNumber}, "OptionalFallbackCompletionsFile"}
+	
+	In the first form, the completions in CompletionsFile are dependent upon the argument specified by argNumber.
+
+	In the second form the completions in CompletionsFile are dependent upon a 2 element list in the slot specified by argNumber.
+	Here, subArgNumber indicates which element of the list we are dependent upon.  Completions are taken from the OptionalFallbackCompletionsFile if
+	we are in an argument that depends upon itself.  If there is no OptionalFallbackCompletionsFile in this case, no completions are returned.
+
+	Example 1:
+	"EntityValue"->{"EntityTypeNames.trie", {"EntityPropertyNames.trie", "DependsOnArgument"->1}, "EntityValue_Annotation.trie"},
+
+	Here the 2nd argument completions for EntityValue come from the file EntityPropertyNames.trie and are dependent upon the value of the 1st argument.
+
+	Example 2:
+	"ExampleData" -> {{"ExampleData_TypeNames.trie", "DependsOnArgument"->{1,1}, "ExampleData_Names.trie"}, {"ExampleData_Props.trie", "DependsOnArgument"->{1,1}}}
+
+	Here the 1st argument of ExampleData (a list) is dependent upon the first sub-argument:
+	a) If the selection is in the first sub argument, that is a self-reference, so take completions from ExampleData_Names.trie.
+	b) If the selection is in the 2nd sub argument, there is no self-reference, so take completions from ExampleData_TypeNames.trie.
+
+	In each case, the text of the "DependsOnArgument" is prepended to the text that you are typing and the resulting string 
+	is used as the key by the lookup engine.
+
+	Otherwise, the completion engine will look for an internal list.  These are the keywords that specify internal lists:
+
+	"Style"
+	"ScreenStyleEnvironment"
+	"PrintingStyleEnvironment"
+	"MenuListStyles"
+	"MenuListScreenStyleEnvironments"
+	"MenuListPrintingStyleEnvironments"
+	"codingNoteFontCom"
+	"ExternalDataCharacterEncoding"
+	"MenuListPalettesMenu"
+	"MenuListStyleDefinitions"
+	"ConvertersPath"
+	"MenuListDisplayAsFormatTypes"
+	"MenuListConvertFormatTypes"
+	"MenuListCellTags"
+	"MenuListWindows"
+	"MenuListHelpWindows"
+	"MenuListPackageWindows"
+	"MenuListPaletteWindows"
+	"MenuListPlayerWindows"
+	"MenuListStylesheetWindows"
+	"MenuListTextWindows"
+	"MenuListFonts"
+	"MenuListGlobalEvaluators"
+	"MenuListNotebookEvaluators"
+	"MenuListStartEvaluators"
+	"MenuListQuitEvaluators"
+	"MenuListNotebooksMenu"
+
+	The argument specifier can also be a list of strings that will be used exactly like the lists provided
+	above, but without the need for compiling the list into a .trie file.  For example:
+	"MyPlanetInfo"->{{"Mercury", "Venus", "Earth", "Mars", "Jupiter", "Uranus", "Neptune"}}		
+*)
+$AutoCompletionsList
