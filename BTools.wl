@@ -42,7 +42,7 @@ appFEFile[p___,f_]:=
 		},
 		f
 		];
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Loading*)
 
 
@@ -155,7 +155,10 @@ declarePackage[pkgFile_->syms_]:=
 								Set|SetDelayed|
 								RuleCondition|CompoundExpression
 								][s,__]]:=
-							RuleCondition[s;m,True]	
+							RuleCondition[
+								loadPackage[#,c,pkgFile->syms];
+								m,
+								True]	
 						)]]&,
 			syms
 			]
@@ -212,18 +215,22 @@ appLoad~SetAttributes~Listable;
 
 appGet[f_]:=
 	packageExecute[
-		If[FileExistsQ@f,
-			Get@f,
-			Get@appPath[f<>".m"]
+		feHiddenBlock[
+			If[FileExistsQ@f,
+				Get@f,
+				Get@appPath[f<>".m"]
+				]
 			]
 		];
 appGet[c_,f_]:=
 	packageExecute[
 		Begin[c];
 		(End[];#)&@
-			If[FileExistsQ@f,
-				Get@f,
-				Get@appPath[f<>".m"]
+			feHiddenBlock[
+				If[FileExistsQ@f,
+					Get@f,
+					Get@appPath[f<>".m"]
+					]
 				]
 		];
 
@@ -418,12 +425,12 @@ addUsage[pat:Except[_Missing],usage_String]:=
 addUsage[pat:Except[_Missing],usage_]:=
 	addUsage[pat,ToString[usage]];
 addUsage~SetAttributes~HoldFirst;
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*FrontEnd*)
 
 
 (* ::Subsubsection::Closed:: *)
-(* feInstallStylesheets *)
+(*feInstallStylesheets *)
 
 
 feInstallStylesheets[]:=
@@ -466,7 +473,7 @@ feInstallStylesheets[]:=
 
 
 (* ::Subsubsection::Closed:: *)
-(* feInstallPalettes *)
+(*feInstallPalettes *)
 
 
 feInstallPalettes[]:=
@@ -508,6 +515,119 @@ feInstallPalettes[]:=
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*feHiddenBlock*)
+
+
+feHiddenBlock[expr_]:=
+	(
+		Internal`SymbolList[False];
+		(Internal`SymbolList[True];#)&@expr
+		);
+feHiddenBlock~SetAttributes~HoldFirst
+
+
+(* ::Subsubsection::Closed:: *)
+(*feUnhideSymbols*)
+
+
+feUnhideSymbols[syms__Symbol,
+	cpath:{__String}|Automatic:Automatic,
+	mode:"Update"|"Set":"Update"
+	]:=
+	With[{stuff=
+		Map[
+			Function[Null,
+				{Context@#,SymbolName@Unevaluated@#},
+				HoldAllComplete],
+			HoldComplete[syms]
+			]//Apply[List]
+		},
+		KeyValueMap[
+			FrontEndExecute@
+			If[mode==="Update",
+				FrontEnd`UpdateKernelSymbolContexts,
+				FrontEnd`SetKernelSymbolContexts
+				][
+				#,
+				Replace[cpath,Automatic->$ContextPath],
+				{{#,{},{},#2,{}}}
+				]&,
+			GroupBy[stuff,First->Last]
+			];
+		];
+feUnhideSymbols[names_String,mode:"Update"|"Set":"Update"]:=
+	Replace[
+		Thread[ToExpression[Names@names,StandardForm,Hold],Hold],
+		Hold[{s__}]:>feUnhideSymbols[s,mode]
+		];
+feUnhideSymbols~SetAttributes~HoldAllComplete;
+
+
+(* ::Subsubsection::Closed:: *)
+(*feRehideSymbols*)
+
+
+feRehideSymbols[syms__Symbol,
+	cpath:{__String}|Automatic:Automatic,
+	mode:"Update"|"Set":"Update"]:=
+	With[{stuff=
+		Map[
+			Function[Null,
+				{Context@#,SymbolName@Unevaluated@#},
+				HoldAllComplete],
+			HoldComplete[syms]
+			]//Apply[List]
+		},
+		KeyValueMap[
+			FrontEndExecute@
+			If[mode==="Update",
+				FrontEnd`UpdateKernelSymbolContexts,
+				FrontEnd`SetKernelSymbolContexts
+				][
+				#,
+				Replace[cpath,
+					Automatic->$ContextPath
+					],
+				{{#,{},#2,{},{}}}
+				]&,
+			GroupBy[stuff,First->Last]
+			];
+		];
+feRehideSymbols[names_String,mode:"Update"|"Set":"Update"]:=
+	Replace[
+		Thread[ToExpression[Names@names,StandardForm,Hold],Hold],
+		Hold[{s__}]:>feRehideSymbols[s,mode]
+		];
+feRehideSymbols~SetAttributes~HoldAllComplete;
+
+
+(* ::Subsubsection::Closed:: *)
+(*feUnhidePackage*)
+
+
+feUnhidePackage[package_String?FileExistsQ,a___]:=
+	Replace[Thread[Lookup[$DeclaredPackages,package,{}],HoldPattern],
+		Verbatim[HoldPattern][{syms__}]:>
+			feUnhideSymbols[syms,a]
+		];
+feUnhidePackage[spec:_String|_List,a___]:=
+	feUnhidePackage[appPath@Flatten@{"Packages",spec},a];
+
+
+(* ::Subsubsection::Closed:: *)
+(*feRehidePackage*)
+
+
+feRehidePackage[package_String?FileExistsQ,a___]:=
+	Replace[Thread[Lookup[$DeclaredPackages,package,{}],HoldPattern],
+		Verbatim[HoldPattern][{syms__}]:>
+			feRehideSymbols[syms,a]
+		];
+feRehidePackage[spec:_String|_List,a___]:=
+	feRehidePackage[appPath@Flatten@{"Packages",spec},a];
+
+
 (* ::Subsection::Closed:: *)
 (* End[] *)
 
@@ -519,8 +639,50 @@ End[];
 (* Load *)
 
 
+`Private`Package`$loadAbort=False;
 CheckAbort[
-	`Private`Package`appLoad[],
+	`Private`Package`feHiddenBlock[
+		`Private`Package`appLoad[]
+		],
+	`Private`Package`$loadAbort=True;
 	EndPackage[]
 	];
-EndPackage[];
+If[!`Private`Package`$loadAbort,
+	If[$Notebooks,
+		If[FileExistsQ@`Private`Package`appPath["LoadInfo.m"],
+			Replace[Quiet[Import@`Private`Package`appPath["LoadInfo.m"],Import::nffil],
+				specs:{__Rule}|_Association:>
+					With[{
+						preloads=
+							Replace[
+								Lookup[specs,"PreLoad"],
+								Except[{__String}]->{}
+								],
+						hide=
+							Replace[
+								Lookup[specs,"Hidden"],
+								Except[{__String}]->{}
+								]
+						},
+						`Private`Package`appGet/@preloads;
+						If[
+							!MemberQ[hide,
+								Replace[
+									FileNameSplit@
+										FileNameDrop[#,
+											FileNameDepth@
+												`Private`Package`appPath["Packages"]
+											],{
+									{f_}:>{StringTrim[f,".m"|".wl"]}|StringTrim[f,".m"|".wl"],
+									{p__,f_}:>
+										{p,StringTrim[f,".m"|".wl"]}
+									}]
+								],
+							`Private`Package`feUnhidePackage@#
+							]&/@Keys@`Private`Package`$DeclaredPackages
+						]
+				]
+			];
+		];
+	EndPackage[];
+	];

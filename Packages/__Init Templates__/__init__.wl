@@ -30,8 +30,50 @@ End[];
 (* Load *)
 
 
+`Private`Package`$loadAbort=False;
 CheckAbort[
-	`Private`Package`appLoad[],
+	`Private`Package`feHiddenBlock[
+		`Private`Package`appLoad[]
+		],
+	`Private`Package`$loadAbort=True;
 	EndPackage[]
 	];
-EndPackage[];
+If[!`Private`Package`$loadAbort,
+	If[$Notebooks,
+		If[FileExistsQ@`Private`Package`appPath["LoadInfo.m"],
+			Replace[Quiet[Import@`Private`Package`appPath["LoadInfo.m"],Import::nffil],
+				specs:{__Rule}|_Association:>
+					With[{
+						preloads=
+							Replace[
+								Lookup[specs,"PreLoad"],
+								Except[{__String}]->{}
+								],
+						hide=
+							Replace[
+								Lookup[specs,"Hidden"],
+								Except[{__String}]->{}
+								]
+						},
+						`Private`Package`appGet/@preloads;
+						If[
+							!MemberQ[hide,
+								Replace[
+									FileNameSplit@
+										FileNameDrop[#,
+											FileNameDepth@
+												`Private`Package`appPath["Packages"]
+											],{
+									{f_}:>{StringTrim[f,".m"|".wl"]}|StringTrim[f,".m"|".wl"],
+									{p__,f_}:>
+										{p,StringTrim[f,".m"|".wl"]}
+									}]
+								],
+							`Private`Package`feUnhidePackage@#
+							]&/@Keys@`Private`Package`$DeclaredPackages
+						]
+				]
+			];
+		];
+	EndPackage[];
+	];

@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Loading*)
 
 
@@ -113,7 +113,10 @@ declarePackage[pkgFile_->syms_]:=
 								Set|SetDelayed|
 								RuleCondition|CompoundExpression
 								][s,__]]:=
-							RuleCondition[s;m,True]	
+							RuleCondition[
+								loadPackage[#,c,pkgFile->syms];
+								m,
+								True]	
 						)]]&,
 			syms
 			]
@@ -170,18 +173,22 @@ appLoad~SetAttributes~Listable;
 
 appGet[f_]:=
 	packageExecute[
-		If[FileExistsQ@f,
-			Get@f,
-			Get@appPath[f<>".m"]
+		feHiddenBlock[
+			If[FileExistsQ@f,
+				Get@f,
+				Get@appPath[f<>".m"]
+				]
 			]
 		];
 appGet[c_,f_]:=
 	packageExecute[
 		Begin[c];
 		(End[];#)&@
-			If[FileExistsQ@f,
-				Get@f,
-				Get@appPath[f<>".m"]
+			feHiddenBlock[
+				If[FileExistsQ@f,
+					Get@f,
+					Get@appPath[f<>".m"]
+					]
 				]
 		];
 
