@@ -817,6 +817,13 @@ PackageIndexInstall::howdo="Unsure how to pack a paclet from file type ``";
 Options[installPacletGenerate]={
 	"Verbose"->False
 	};
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Directory*)
+
+
+
 installPacletGenerate[dir:(_String|_File)?DirectoryQ,ops:OptionsPattern[]]:=
 	(
 		If[OptionValue@"Verbose",
@@ -838,6 +845,13 @@ installPacletGenerate[dir:(_String|_File)?DirectoryQ,ops:OptionsPattern[]]:=
 			PacletBundle[dir]
 			]
 		);
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*File*)
+
+
+
 installPacletGenerate[file:(_String|_File)?FileExistsQ,ops:OptionsPattern[]]:=
 	Switch[FileExtension[file],
 		"m"|"wl",
@@ -885,21 +899,7 @@ installPacletGenerate[file:(_String|_File)?FileExistsQ,ops:OptionsPattern[]]:=
 							"PacletInfo.m"
 							}	
 						]
-					];(*
-				Quiet@CreateDirectory[
-					FileNameJoin@{
-						dir,
-						"Kernel"
-						}];
-				With[{bn=FileBaseName@file<>"`"<>FileBaseName@file<>"`"},
-					Put[
-						Unevaluated[Get@bn],
-						FileNameJoin@{
-							dir,
-							"Kernel",
-							"init.m"
-							}]
-					];*)
+					];
 				CopyFile[file,
 					FileNameJoin@{
 						dir,

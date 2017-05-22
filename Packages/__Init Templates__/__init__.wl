@@ -42,22 +42,22 @@ If[!`Private`Package`$loadAbort,
 	If[$Notebooks,
 		If[FileExistsQ@`Private`Package`appPath["LoadInfo.m"],
 			Replace[Quiet[Import@`Private`Package`appPath["LoadInfo.m"],Import::nffil],
-				specs:{__Rule}|_Association:>
+				`Private`Package`specs:{__Rule}|_Association:>
 					With[{
-						preloads=
+						`Private`Package`preloads=
 							Replace[
-								Lookup[specs,"PreLoad"],
+								Lookup[`Private`Package`specs,"PreLoad"],
 								Except[{__String}]->{}
 								],
-						hide=
+						`Private`Package`hide=
 							Replace[
-								Lookup[specs,"Hidden"],
+								Lookup[`Private`Package`specs,"Hidden"],
 								Except[{__String}]->{}
 								]
 						},
-						`Private`Package`appGet/@preloads;
+						`Private`Package`appGet/@`Private`Package`preloads;
 						If[
-							!MemberQ[hide,
+							!MemberQ[`Private`Package`hide,
 								Replace[
 									FileNameSplit@
 										FileNameDrop[#,
