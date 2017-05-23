@@ -38,7 +38,7 @@ CheckAbort[
 	`Private`Package`$loadAbort=True;
 	EndPackage[]
 	];
-If[!`Private`Package`$loadAbort,
+If[(Clear@`Private`Package`$loadAbort;!#)&@`Private`Package`$loadAbort,
 	If[$Notebooks,
 		If[FileExistsQ@`Private`Package`appPath["LoadInfo.m"],
 			Replace[Quiet[Import@`Private`Package`appPath["LoadInfo.m"],Import::nffil],
@@ -64,15 +64,20 @@ If[!`Private`Package`$loadAbort,
 											FileNameDepth@
 												`Private`Package`appPath["Packages"]
 											],{
-									{f_}:>{StringTrim[f,".m"|".wl"]}|StringTrim[f,".m"|".wl"],
-									{p__,f_}:>
-										{p,StringTrim[f,".m"|".wl"]}
+									{`Private`Package`f_}:>{
+										StringTrim[`Private`Package`f,".m"|".wl"]}|
+										StringTrim[`Private`Package`f,".m"|".wl"],
+									{`Private`Package`p__,`Private`Package`f_}:>
+										{`Private`Package`p,
+											StringTrim[`Private`Package`f,".m"|".wl"]}
 									}]
 								],
 							`Private`Package`feUnhidePackage@#
 							]&/@Keys@`Private`Package`$DeclaredPackages
 						]
-				]
+				],
+			`Private`Package`feUnhidePackage/@
+				Keys@`Private`Package`$DeclaredPackages
 			];
 		];
 	EndPackage[];

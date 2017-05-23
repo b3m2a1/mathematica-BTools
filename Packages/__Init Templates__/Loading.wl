@@ -1,10 +1,10 @@
 (* ::Package:: *)
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Loading*)
 
 
-If[Not@ListQ@$DeclaredPackages,
+If[Not@AssociationQ@$DeclaredPackages,
 	$DeclaredPackages=
 		<||>
 	];
@@ -103,7 +103,7 @@ declarePackage[pkgFile_->syms_]:=
 		$DeclaredPackages[pkgFile]=syms;
 		Map[
 			If[True(*Not@MatchQ[Apply[OwnValues][#],{_:>_loadPackage}]*),
-				#:=loadPackage[#,c,pkgFile->syms];
+				#:=feHiddenBlock[loadPackage[#,c,pkgFile->syms]];
 				Replace[#,
 					Verbatim[HoldPattern][s_]:>(
 						s/:HoldPattern[
@@ -114,7 +114,7 @@ declarePackage[pkgFile_->syms_]:=
 								RuleCondition|CompoundExpression
 								][s,__]]:=
 							RuleCondition[
-								loadPackage[#,c,pkgFile->syms];
+								feHiddenBlock[loadPackage[#,c,pkgFile->syms]];
 								m,
 								True]	
 						)]]&,
@@ -129,9 +129,11 @@ declarePackage[pkgFile_->syms_]:=
 
 loadDeclare[pkgFile_String]:=
 	If[!MemberQ[$LoadedPackages,pkgFile],
-		If[!KeyMemberQ[$DeclaredPackages,pkgFile],
-			declarePackage@pullDeclarations[pkgFile],
-			ReleaseHold@First@$DeclaredPackages[pkgFile]
+		feHiddenBlock[
+			If[!KeyMemberQ[$DeclaredPackages,pkgFile],
+				declarePackage@pullDeclarations[pkgFile],
+				ReleaseHold@First@$DeclaredPackages[pkgFile]
+				]
 			],
 		appGet[pkgFile]
 		];

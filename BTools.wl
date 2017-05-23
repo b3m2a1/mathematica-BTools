@@ -42,11 +42,11 @@ appFEFile[p___,f_]:=
 		},
 		f
 		];
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Loading*)
 
 
-If[Not@ListQ@$DeclaredPackages,
+If[Not@AssociationQ@$DeclaredPackages,
 	$DeclaredPackages=
 		<||>
 	];
@@ -145,7 +145,7 @@ declarePackage[pkgFile_->syms_]:=
 		$DeclaredPackages[pkgFile]=syms;
 		Map[
 			If[True(*Not@MatchQ[Apply[OwnValues][#],{_:>_loadPackage}]*),
-				#:=loadPackage[#,c,pkgFile->syms];
+				#:=feHiddenBlock[loadPackage[#,c,pkgFile->syms]];
 				Replace[#,
 					Verbatim[HoldPattern][s_]:>(
 						s/:HoldPattern[
@@ -156,7 +156,7 @@ declarePackage[pkgFile_->syms_]:=
 								RuleCondition|CompoundExpression
 								][s,__]]:=
 							RuleCondition[
-								loadPackage[#,c,pkgFile->syms];
+								feHiddenBlock[loadPackage[#,c,pkgFile->syms]];
 								m,
 								True]	
 						)]]&,
@@ -171,9 +171,11 @@ declarePackage[pkgFile_->syms_]:=
 
 loadDeclare[pkgFile_String]:=
 	If[!MemberQ[$LoadedPackages,pkgFile],
-		If[!KeyMemberQ[$DeclaredPackages,pkgFile],
-			declarePackage@pullDeclarations[pkgFile],
-			ReleaseHold@First@$DeclaredPackages[pkgFile]
+		feHiddenBlock[
+			If[!KeyMemberQ[$DeclaredPackages,pkgFile],
+				declarePackage@pullDeclarations[pkgFile],
+				ReleaseHold@First@$DeclaredPackages[pkgFile]
+				]
 			],
 		appGet[pkgFile]
 		];
@@ -704,6 +706,125 @@ feRehidePackage[package_String?FileExistsQ,a___]:=
 		];
 feRehidePackage[spec:_String|_List,a___]:=
 	feRehidePackage[appPath@Flatten@{"Packages",spec},a];
+(* ::Subsection:: *)
+(*Objects*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*$objectBase*)
+
+
+$objectBase=appPath["Objects"];
+
+
+(* ::Subsubsection::Closed:: *)
+(*localObject*)
+
+
+localObject[name_]:=
+	LocalObject[name,$objectBase];
+
+
+(* ::Subsubsection::Closed:: *)
+(*localFile*)
+
+
+localFile[name_,path_]:=
+	FileNameJoin@{
+		$objectBase,
+		name,
+		path
+		};
+
+
+localFile[name_]:=
+	localFile[
+		name,
+		Key["ExternalData"]@
+			Get@localFile["object.wl"]
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*localPut*)
+
+
+localPut[expr__,name_]:=
+	Put[
+		Unevaluated@expr,
+		localObject[name]
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*localExport*)
+
+
+localExport[name_,e__]:=
+	Export[
+		localObject[name],
+		e
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*localEncode*)
+
+
+localEncode[name_]:=
+	(
+		Put[
+			ReplacePart[Get@localFile[name,"object.wl"],
+				"ExternalData"->"encoded.mx"
+				],
+			localFile[name,"object.wl"]
+			];
+		Encode[
+			localFile[name],
+			localFile[name,"encoded.mx"]
+			];
+		localObject[name]
+		);
+
+
+localEncode[name_,key_]:=
+	(
+		Put[
+			ReplacePart[Get@localFile[name,"object.wl"],
+				"ExternalData"->"encoded.mx"
+				],
+			localFile[name,"object.wl"]
+			];
+		Encode[
+			localFile[name],
+			localFile[name,"encoded.mx"],
+			key
+			];
+		localObject[name]
+		);
+
+
+(* ::Subsubsection::Closed:: *)
+(*localGet*)
+
+
+localGet[name_]:=
+	Get@localObject[name];
+
+
+localGet[name_,key_]:=
+	Get[localObject[name],key];
+
+
+(* ::Subsubsection::Closed:: *)
+(*localImport*)
+
+
+localImport[name_,e___]:=
+	Import[
+		localObject[name],
+		e
+		];
 
 
 (* ::Subsection::Closed:: *)
@@ -725,7 +846,7 @@ CheckAbort[
 	`Private`Package`$loadAbort=True;
 	EndPackage[]
 	];
-If[!`Private`Package`$loadAbort,
+If[(Clear@`Private`Package`$loadAbort;!#)&@`Private`Package`$loadAbort,
 	If[$Notebooks,
 		If[FileExistsQ@`Private`Package`appPath["LoadInfo.m"],
 			Replace[Quiet[Import@`Private`Package`appPath["LoadInfo.m"],Import::nffil],
@@ -751,15 +872,20 @@ If[!`Private`Package`$loadAbort,
 											FileNameDepth@
 												`Private`Package`appPath["Packages"]
 											],{
-									{f_}:>{StringTrim[f,".m"|".wl"]}|StringTrim[f,".m"|".wl"],
-									{p__,f_}:>
-										{p,StringTrim[f,".m"|".wl"]}
+									{`Private`Package`f_}:>{
+										StringTrim[`Private`Package`f,".m"|".wl"]}|
+										StringTrim[`Private`Package`f,".m"|".wl"],
+									{`Private`Package`p__,`Private`Package`f_}:>
+										{`Private`Package`p,
+											StringTrim[`Private`Package`f,".m"|".wl"]}
 									}]
 								],
 							`Private`Package`feUnhidePackage@#
 							]&/@Keys@`Private`Package`$DeclaredPackages
 						]
-				]
+				],
+			`Private`Package`feUnhidePackage/@
+				Keys@`Private`Package`$DeclaredPackages
 			];
 		];
 	EndPackage[];
