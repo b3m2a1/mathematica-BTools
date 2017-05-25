@@ -73,7 +73,7 @@ dataPacletIndexFile[
 					Automatic:>
 						$TemporaryDirectory
 					],
-				dataType<>"Data_Index",
+				StringTrim[dataType,"Data"]<>"Data_Index",
 				"Data",
 				"Index.wdx"
 				},
@@ -109,7 +109,7 @@ dataPacletNamesIndexFile[
 					Automatic:>
 						$TemporaryDirectory
 					],
-				dataType<>"Data_Index",
+				StringTrim[dataType,"Data"]<>"Data_Index",
 				"Data",
 				"Names.wdx"
 				},
@@ -129,7 +129,7 @@ dataPacletEntitiesIndexFile[
 				Automatic:>
 					$TemporaryDirectory
 				],
-			dataType<>"Data_Index",
+			StringTrim[dataType,"Data"]<>"Data_Index",
 			"Data",
 			"Entities.wdx"
 			},
@@ -158,7 +158,7 @@ dataPacletPropertiesIndexFile[
 					Automatic:>
 						$TemporaryDirectory
 					],
-				dataType<>"Data_Index",
+				StringTrim[dataType,"Data"]<>"Data_Index",
 				"Data",
 				"Properties.wdx"
 				},
@@ -175,7 +175,7 @@ dataPacletFunctionsIndexFile[
 	With[{
 		functions=
 			With[{computeFunction=
-				Symbol@Evaluate["DataPaclets`"<>dataType<>"DataDump`ComputeFunction"]
+				Symbol@Evaluate["DataPaclets`"<>StringTrim[dataType,"Data"]<>"DataDump`ComputeFunction"]
 				},
 			Normal@
 				ReplacePart[#,
@@ -223,7 +223,7 @@ dataPacletFunctionsIndexFile[
 					Automatic:>
 						$TemporaryDirectory
 					],
-				dataType<>"Data_Index",
+				StringTrim[dataType,"Data"]<>"Data_Index",
 				"Data",
 				"Functions.wdx"
 				},
@@ -251,7 +251,7 @@ dataPacletGroupsIndexFile[
 					Automatic:>
 						$TemporaryDirectory
 					],
-				dataType<>"Data_Index",
+				StringTrim[dataType,"Data"]<>"Data_Index",
 				"Data",
 				"Groups.wdx"
 				},
@@ -271,7 +271,7 @@ dataPacletPrivateGroupsIndexFile[
 				Automatic:>
 					$TemporaryDirectory
 				],
-			dataType<>"Data_Index",
+			StringTrim[dataType,"Data"]<>"Data_Index",
 			"Data",
 			"PrivateGroups.wdx"
 			},
@@ -312,13 +312,24 @@ dataPacletDataFile[
 						}
 				}
 		},
+		Quiet@
+			CreateDirectory@
+				FileNameJoin@{
+					Replace[dir,
+						Automatic:>
+							$TemporaryDirectory
+						],
+					StringTrim[dataType,"Data"]<>"Data_Part"<>	
+						StringPadLeft[ToString@n,2,"0"],
+					"Data"
+					};
 		Export[
 			FileNameJoin@{
 				Replace[dir,
 					Automatic:>
 						$TemporaryDirectory
 					],
-				dataType<>"Data_Part"<>StringPadLeft[ToString@n,2,"0"],
+				StringTrim[dataType,"Data"]<>"Data_Part"<>StringPadLeft[ToString@n,2,"0"],
 				"Data",
 				"Part"<>dataPacletIndexNumber[n]<>".wdx"
 				},
@@ -355,9 +366,11 @@ CuratedDataIndexPaclet[
 							],
 				$dataPacletPartitionNumber
 				},
-				parts=
 				$dataPacletPartitionNumber=
-					Length@IntegerDigits@Length@partitions;
+					Max@{
+						Length@IntegerDigits@Length@partitions,
+						2
+						};
 				(* ------- Prep Directories  ------- *)
 				Quiet@
 					CreateDirectory[
@@ -366,7 +379,7 @@ CuratedDataIndexPaclet[
 								Automatic:>
 									$TemporaryDirectory
 								],
-							dataType<>"Data_Index",
+							StringTrim[dataType,"Data"]<>"Data_Index",
 							"Data"
 							},
 						CreateIntermediateDirectories->True
@@ -393,7 +406,7 @@ CuratedDataIndexPaclet[
 										Automatic:>
 											$TemporaryDirectory
 										],
-									dataType<>
+									StringTrim[dataType,"Data"]<>
 										"Data_Part"<>
 											dataPacletIndexNumber[#2],
 									"Data"
@@ -402,7 +415,7 @@ CuratedDataIndexPaclet[
 								];
 						dataPacletDataFile[First@#2,
 							dir,
-							dataType,
+							StringTrim[dataType,"Data"],
 							#
 							]
 						],
@@ -417,7 +430,7 @@ CuratedDataIndexPaclet[
 									Automatic:>
 										$TemporaryDirectory
 									],
-								dataType<>"Data_Index"
+								StringTrim[dataType,"Data"]<>"Data_Index"
 								},
 							"Version"->$dataPacletVersionNumber
 							];
@@ -429,7 +442,7 @@ CuratedDataIndexPaclet[
 										Automatic:>
 											$TemporaryDirectory
 										],
-									dataType<>"Data_Part"<>
+									StringTrim[dataType,"Data"]<>"Data_Part"<>
 										dataPacletIndexNumber[#]
 									},
 								"Version"->
@@ -444,7 +457,7 @@ CuratedDataIndexPaclet[
 									Automatic:>
 										$TemporaryDirectory
 									],
-								dataType<>"Data_"<>#
+								StringTrim[dataType,"Data"]<>"Data_"<>#
 								}&,
 						Flatten@{
 							"Index",
@@ -460,7 +473,7 @@ CuratedDataIndexPaclet[
 									Automatic:>
 										$TemporaryDirectory
 									],
-								dataType<>"Data_Index"
+								StringTrim[dataType,"Data"]<>"Data_Index"
 								},
 						"Data"->
 							Map[
@@ -469,7 +482,7 @@ CuratedDataIndexPaclet[
 										Automatic:>
 											$TemporaryDirectory
 										],
-									dataType<>"Data_Part"<>dataPacletIndexNumber[#]
+									StringTrim[dataType,"Data"]<>"Data_Part"<>dataPacletIndexNumber[#]
 									}&,
 								Range[Length@partitions]
 								]
@@ -511,7 +524,7 @@ CuratedDataPaclet[
 						Automatic:>
 							$TemporaryDirectory
 						],
-					dataType<>"Data"
+					StringTrim[dataType,"Data"]<>"Data"
 					}
 				},
 				Quiet@
@@ -521,7 +534,7 @@ CuratedDataPaclet[
 						];
 				FileNameJoin@{
 					d,
-					dataType<>"Data.m"
+					StringTrim[dataType,"Data"]<>"Data.m"
 					}
 				]
 		},
@@ -561,7 +574,7 @@ CuratedDataPaclet[
 								InputForm
 								],
 						"$CuratedDataType"->dataType,
-						"$CuratedData"->dataType<>"Data"
+						"$CuratedData"->StringTrim[dataType,"Data"]<>"Data"
 						}
 					]
 				];
@@ -573,7 +586,7 @@ CuratedDataPaclet[
 						Automatic:>
 							$TemporaryDirectory
 						],
-					dataType<>"Data",
+					StringTrim[dataType,"Data"]<>"Data",
 					"AutoCompletionData",
 					"specialArgFunctions.tr"
 					},
@@ -610,7 +623,7 @@ CuratedDataPaclet[
 									],
 								InputForm
 								],
-						"$CuratedData"->dataType<>"Data"
+						"$CuratedData"->StringTrim[dataType,"Data"]<>"Data"
 						}],
 				"Text"
 				];
@@ -624,14 +637,129 @@ CuratedDataPaclet[
 							Automatic:>
 								$TemporaryDirectory
 							],
-						dataType<>"Data"
+						StringTrim[dataType,"Data"]<>"Data"
 						},
 				FileNameJoin@{
 						Replace[dir,
 							Automatic:>
 								$TemporaryDirectory
 							],
-						dataType<>"Data"
+						StringTrim[dataType,"Data"]<>"Data"
+						}
+				]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Wrapper*)
+
+
+
+$CuratedDataWrapperPackageTemplate:=
+	Import[
+		`Package`appPath[
+			"Packages",
+			"__Templates__",
+			"$CuratedDataWrapper.m"],
+		"Text"
+		];
+
+
+CuratedDataWrapperPaclet[
+	dir:_String?DirectoryQ|Automatic:Automatic,
+	dataType_String,
+	dataFunctions_Association,
+	pack:True|False:True,
+	ops:(_String->_String)...
+	]:=
+	With[{
+		file=
+			With[{d=
+				FileNameJoin@{
+					Replace[dir,
+						Automatic:>
+							$TemporaryDirectory
+						],
+					StringTrim[dataType,"Data"]<>"Data"
+					}
+				},
+				Quiet@
+					CreateDirectory[
+						FileNameJoin@{d,"AutoCompletionData"},
+						CreateIntermediateDirectories->True
+						];
+				FileNameJoin@{
+					d,
+					StringTrim[dataType,"Data"]<>"Data.m"
+					}
+				]
+		},
+			(* --------- Package --------- *)
+			With[{fob=OpenWrite@file},
+				(WriteString[fob,#];Close@fob)&@
+					StringReplace[$CuratedDataWrapperPackageTemplate,{
+						ops,
+						"$CuratedDataFunctions"->
+							Block[{$Context="System`",$ContextPath={"System`"}},
+								ToString[
+									dataFunctions,
+									InputForm
+									]
+								],
+						"$CuratedDataType"->dataType,
+						"$CuratedData"->StringTrim[dataType,"Data"]<>"Data"
+						}
+					]
+				];
+				
+			(* --------- Autocompletions --------- *)
+			Export[
+				FileNameJoin@{
+					Replace[dir,
+						Automatic:>
+							$TemporaryDirectory
+						],
+					StringTrim[dataType,"Data"]<>"Data",
+					"AutoCompletionData",
+					"specialArgFunctions.tr"
+					},
+				StringReplace[
+					Import[
+						`Package`appPath[
+							"Packages",
+							"__Templates__",
+							"$CuratedDataCompletions.tr"
+							],
+						"Text"
+						],
+					{
+						"$CuratedDataEntities"->
+							ToString[
+								Keys@dataFunctions,
+								InputForm
+								],
+						"$CuratedData"->StringTrim[dataType,"Data"]<>"Data"
+						}],
+				"Text"
+				];
+			If[pack,
+				(
+					PacletExpressionBundle[#,"Version"->$dataPacletVersionNumber];
+					PacletBundle[#]
+					)&@
+					FileNameJoin@{
+						Replace[dir,
+							Automatic:>
+								$TemporaryDirectory
+							],
+						StringTrim[dataType,"Data"]<>"Data"
+						},
+				FileNameJoin@{
+						Replace[dir,
+							Automatic:>
+								$TemporaryDirectory
+							],
+						StringTrim[dataType,"Data"]<>"Data"
 						}
 				]
 		]
@@ -645,7 +773,9 @@ CuratedDataPaclet[
 CuratedDataExport[
 	dir:_String?DirectoryQ|Automatic:Automatic,
 	dataType_String,
-	entityStore_Association,
+	entityStore:_Association?(
+		Function[a,AllTrue[{"Entities","Properties"},KeyMemberQ[a,#]&]]
+		),
 	pack:True|False:True
 	]:=
 	 Prepend[
@@ -670,15 +800,61 @@ CuratedDataExport[
 		 		];
 CuratedDataExport[
 	dir:_String?DirectoryQ|Automatic:Automatic,
+	name:_String|None:None,
+	datasets_Association?(
+		AllTrue[Values@#,
+			With[{a=#},
+				AllTrue[{"Entities","Properties"},
+					KeyMemberQ[a,#]&
+					]
+				]&
+			]&),
+	pack:True|False:True
+	]:=
+	If[name===None,
+		Identity,
+		Prepend[
+			name->
+				CuratedDataWrapperPaclet[dir,
+					name,
+					AssociationThread[
+						StringTrim[
+							Replace[Keys@datasets,
+								s_Symbol:>SymbolName[s],
+								1
+								],
+							name
+							],
+						Replace[Keys@datasets,
+							s_String:>
+								ToExpression[
+									StringTrim[s,"Data"]<>"Data"<>"`"<>
+										StringTrim[s,"Data"]<>"Data"],
+							1
+							]
+						],
+					pack
+					]
+			]
+		]@
+		Association@
+			KeyValueMap[
+				#->
+					CuratedDataExport[dir,#,#2,pack]&,
+				datasets
+				];
+CuratedDataExport[
+	dir:_String?DirectoryQ|Automatic:Automatic,
+	name:_String|None:None,
 	entityStore_EntityStore,
 	pack:True|False:True
 	]:=
-	Association@
-		KeyValueMap[
-			#->
-				CuratedDataExport[dir,#,#2,pack]&,
-			entityStore[[1,"Types"]]
-			]
+	CuratedDataExport[
+		dir,
+		name,
+		entityStore[[1,"Types"]],
+		pack
+		];
 
 
 End[];

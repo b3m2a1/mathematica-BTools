@@ -1141,7 +1141,16 @@ GAFileIDQ[id_String]:=
 		Repeated[
 			WordCharacter,
 			{20,28}
-			]
+			]|(
+			Repeated[
+				WordCharacter,
+				{5,15}
+				]~~"-"~~
+				Repeated[
+					WordCharacter,
+					{5,15}
+					]
+				)
 		];
 GAFileIDQ[___]:=
 	False;
