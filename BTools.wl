@@ -26,20 +26,22 @@ $PackageName=
 $Contexts={
 	"BTools`"
 	};
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Paths*)
 
 
 appPath[p__]:=
-	FileNameJoin[{
+	FileNameJoin[Flatten@{
 		$PackageDirectory,
 		p
 		}];
 appFEFile[p___,f_]:=
-	FileNameJoin[{
-		$PackageName,
-		p
-		},
+	FrontEnd`FileName[
+		Evaluate@
+		Flatten@{
+			$PackageName,
+			p
+			},
 		f
 		];
 (* ::Subsection::Closed:: *)

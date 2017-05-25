@@ -77,8 +77,8 @@ HTMLNotebook::usage=
 	"converts an XML spec into a notebook";
 
 
-HTMLClearAuthCredentials::usage=
-	"Clears the auth credentials cache";
+HTMLTemplateNotebook::usage=
+	"Generates a template notebook to fill out";
 
 
 Begin["`Private`"];
@@ -295,6 +295,8 @@ cssPropRules=
 		TextAlignment->"text-align",
 		TabSpacings->"tab-size",
 		SourceLink->"src",
+		ButtonFunction->
+			"onclick",
 		Annotation->"alt",
 		Hyperlink->"href",
 		RoundingRadius->"border-radius",
@@ -471,13 +473,17 @@ xmlOptionsConvert[o_]:=
 		1]
 
 
+$xmlObjectRecursiveConversion=
+	xmlObjectConvert;
+
+
 Clear@xmlObjectConvert;
 xmlObjectConvert[x_XMLObject]:=
 	x;
 xmlObjectConvert[XMLElement[a_,m_,e_]]:=
-	XMLElement[a,m,xmlObjectConvert/@e];
+	XMLElement[a,m,$xmlObjectRecursiveConversion/@e];
 xmlObjectConvert[type_->r_]:=
-	XMLElement[type,{},xmlObjectConvert@r];
+	XMLElement[type,{},$xmlObjectRecursiveConversion@r];
 
 
 xmlObjectConvert[Hyperlink[a_,b:Except[_Rule]:None,o___]]:=
@@ -487,12 +493,20 @@ xmlObjectConvert[Hyperlink[a_,b:Except[_Rule]:None,o___]]:=
 			xmlOptionsConvert@{o}
 			],
 		{a}]
-
-
 xmlObjectConvert[Hyperlink[a_,b:Except[_Rule]:None,___]]:=
 	XMLElement["a",
 		{"href"->Replace[b,Except[_String]->a]},
 		{a}];
+
+
+xmlObjectConvert[Button[e_,b:Except[_Rule]:None,o___]]:=
+	XMLElement["button",
+		xmlOptionsConvert@{
+			ButtonFunction->Function[b](*,
+			o*)
+			},
+		{$xmlObjectRecursiveConversion@e}
+		];
 
 
 xmlObjectConvert[
@@ -501,7 +515,7 @@ xmlObjectConvert[
 		o___]]:=
 	XMLElement["div",
 		cssGenerate[{o},Identity],
-		xmlObjectConvert/@Riffle[e,riffle]
+		$xmlObjectRecursiveConversion/@Riffle[e,riffle]
 		];
 
 
@@ -511,7 +525,7 @@ xmlObjectConvert[
 		o___]]:=
 	XMLElement["span",
 		cssGenerate[{o},Identity],
-		xmlObjectConvert/@Riffle[s,riffle]
+		$xmlObjectRecursiveConversion/@Riffle[s,riffle]
 		];
 
 
@@ -549,7 +563,7 @@ xmlObjectConvert[Grid[g_,o___]]:=
 		cssGenerate[{o},Identity],
 		XMLElement["tr",
 			{},
-			xmlObjectConvert@
+			$xmlObjectRecursiveConversion@
 				Thread["td"->#]&/@g
 			]
 		];
@@ -572,7 +586,7 @@ xmlObjectConvert[Panel[e_,o___]]:=
 				Identity
 				]
 			],
-		{xmlObjectConvert@e}
+		{$xmlObjectRecursiveConversion@e}
 		];
 
 
@@ -597,14 +611,14 @@ xmlObjectConvert[Style[e_,s:_String:"span",o___]]:=
 	xmlBuildStyles[
 		XMLElement[s/.cssTypeRules,
 			xmlOptionsConvert@Cases[{o},_Rule],
-			Flatten@{xmlObjectConvert@e}
+			Flatten@{$xmlObjectRecursiveConversion@e}
 			],
 		Cases[{o},Except[_Rule]]
 		];
 
 
 xmlObjectConvert[l_List]:=
-	xmlObjectConvert/@l;
+	$xmlObjectRecursiveConversion/@l;
 xmlObjectConvert[e_]:=
 	ToString[e];
 
@@ -842,7 +856,7 @@ $CSStylesheets=<|
 			"Text"->{
 				Background->None,
 				FontColor->Automatic,
-				FontSize->14,
+				FontSize->12,
 				FrameStyle->False,
 				FrameMargins->{{66,10},{0,7}},
 				Padding->8
@@ -1025,7 +1039,10 @@ htmlStdTags=
 		"font","footer","form",
 		"frame","frameset",
 		"header","hr",
+		"h1","h2","h3",
+		"h4","h5","h6",
 		"i","iframe","img",
+		"inputcell",
 		"input","ins",
 		"kbd","keygen",
 		"label","legend","li",
@@ -1301,27 +1318,26 @@ htmlLowPriorityTags={
 	"i"->6,
 	"s"->6,
 	"area"->2,
+	"br"->2,
 	"inlinetext"->2,
 	"style class"->2
 	};
 
 
 htmlHeaderCell[spec_,type_:None]:=
-	Cell[spec,If[type===None,Sequence@@{},type],
+	Cell[TextData[{spec,Cell[BoxData@ToBoxes@Spacer[10]]}],
+		If[type===None,Sequence@@{},type],
 		Background->None,
 		FontFamily->"Helvetica",
 		FontWeight->Plain,
 		FontSize->12,
-		CellFrame->{{0,1},{0,0}},
+		CellFrame->None,
 		CellFrameColor->None,
 		CellFrameMargins->{{0,10},{0,0}},
 		CellElementSpacings->{
 			"CellMinHeight"->1
 			}
 		];
-
-
-
 
 
 HTMLTemplateStyles=
@@ -1331,7 +1347,8 @@ HTMLTemplateStyles=
 			{"MAIN","Subsection",
 				CellFrameColor->Gray,
 				CellFrame->{{0,0},{1,1}},
-				Background->GrayLevel[.95],
+				Background->
+					GrayLevel[.95],
 				WholeCellGroupOpener->True,
 				CellSize->{Automatic,10},
 				CellElementSpacings->{
@@ -1348,6 +1365,7 @@ HTMLTemplateStyles=
 				CellFrame->{{0,0},{1,0}},
 				CellGroupingRules->{"SectionGrouping",55+2*10},
 				CellMargins->{{100,Inherited},{Inherited,Inherited}},
+				DefaultNewCellStyle->"TAGInterpreter",
 				StyleKeyMapping->{
 					"Backspace"->"TAGInterpreter"
 					}
@@ -1355,14 +1373,20 @@ HTMLTemplateStyles=
 			{"TAGText","TAG",
 				FontColor->Automatic
 				},
+			{"TAGCode","TAG",
+				FontColor->Automatic,
+				FontWeight->"DemiBold",
+				FontFamily->"SourceCodePro",
+				FontSize->13
+				},
 			{"TAGInterpreter","TAG",
 				Evaluatable->True,
 				CellEvaluationFunction->
-					(
+					With[{specs=Join[htmlStdTags,htmlFakeTags]},
 						NotebookWrite[EvaluationCell[],
-							Cell["",First[Nearest[Join[htmlStdTags,htmlFakeTags],#]]<>"_tag"]
+							Cell["",First[Nearest[specs,#]]<>"_tag"]
 							]&
-						),
+						],
 				MenuCommandKey->"6",
 				DefaultNewCellStyle->"PROPInterpreter"
 				},
@@ -1372,6 +1396,7 @@ HTMLTemplateStyles=
 				Background->GrayLevel[.95],
 				CellGroupingRules->{"SectionGrouping",60+2*10},
 				CellMargins->{{150,Inherited},{Inherited,Inherited}},
+				DefaultNewCellStyle->"PROPInterpreter",
 				StyleKeyMapping->{
 					"Backspace"->"PROPInterpreter"
 					},
@@ -1381,12 +1406,12 @@ HTMLTemplateStyles=
 				DefaultFormatType->"Text",
 				Evaluatable->True,
 				CellEvaluationFunction->
-					(
+					With[{specs=Join[htmlStdProps,htmlFakeProps]},
 						NotebookWrite[EvaluationCell[],
 							Cell[BoxData@{},
-								First[Nearest[Join[htmlStdProps,htmlFakeProps],#]]<>"_prop"]
+								First[Nearest[specs,#]]<>"_prop"]
 							]&
-						),
+						],
 				MenuCommandKey->"8"
 				},
 			{"DIV","Subsubsection",
@@ -1455,9 +1480,13 @@ HTMLTemplateStyles=
 			],
 		Table[
 			{t<>"_tag",
-				If[MatchQ[t,"script"|"inlinetext"|"plaintext"],
-					"TAGText",
-					"TAG"
+				Switch[t,
+					"script"|"inlinetext"|"plaintext"|"p",
+						"TAGText",
+					"inputcell"|"code"|"output",
+						"TAGCode",
+					_,
+						"TAG"
 					],
 				CellDingbat->
 					htmlHeaderCell[t],
@@ -1576,12 +1605,13 @@ If[!ValueQ@htmlStyleSetter,
 		];
 
 
+(*htmlTemplater//Clear*)
 If[!ValueQ@htmlTemplater,
 	htmlTemplater:=
 		htmlTemplater=
 		GradientActionMenu["Insert Content",
 			Map[
-				If[MatchQ[#,_Rule],
+				If[MatchQ[#,_Rule|_RuleDelayed],
 					With[{l=First@#,t=Last@#},
 						l:>(
 								SelectionMove[InputNotebook[],After,Cell,5];
@@ -1590,6 +1620,17 @@ If[!ValueQ@htmlTemplater,
 						],
 					#
 					]&,{
+				"Line Break"->
+					Cell["","br_tag"],
+				"Input / Output"->
+					Cell[
+						CellGroupData[{
+							Cell["input","inputcell_tag"],
+							Cell["","br_tag"],
+							Cell["output","output_tag"]
+							}]
+						],
+				Delimiter,
 				"Link"->
 					Cell[CellGroupData[{
 						Cell["link_title","a_tag"],
@@ -1716,13 +1757,23 @@ If[!ValueQ@pageButtonBar,
 			"Test Pages":>
 				Switch[$OperatingSystem,
 					"MacOSX",
-						Check[
-							RunProcess@{"open",#,"-a","Google Chrome"},
-							RunProcess@{"open",#,"-a","Safari"}
+						If[!FileExistsQ@#,
+							Message[Import::nffil, SystemOpen],
+							Quiet[
+								Check[
+									RunProcess[{"open",#,"-a","Google Chrome"}],
+									Check[
+										RunProcess[{"open",#,"-a","Safari"}],
+											SystemOpen@#
+											]
+										],
+								RunProcess::pnfd
+								]
 							]&,
 					_,
 						SystemOpen
 					]/@
+					Flatten@List@
 						With[{s=
 							Map[
 								htmlSpecDeploy[#,
@@ -1833,14 +1884,14 @@ htmlScrapePage[
 			___],
 		___]
 	]:=
-	With[{scrape=htmlScrapeElements[{data}]},
+	With[{scrape=Reap[htmlScrapeElements[{data}]]},
 		Join[{
 			"PageRoot"->
 				pgName,
 			"PageXML"->
 				XMLObject["Document"][
 					{XMLObject["Declaration"]["Version"->"1.0","Standalone"->"yes"]},
-					Replace[Cases[scrape,_XMLElement],{
+					Replace[Cases[scrape[[1]],_XMLElement],{
 						{x:XMLElement["html",_,_]}:>
 							x,
 						e_:>
@@ -1849,7 +1900,20 @@ htmlScrapePage[
 					{}
 					]
 			},
-			Cases[Flatten@scrape,_Rule|_RuleDelayed]
+			Join[
+				Normal[
+					Normal@*Merge[
+						Flatten
+						]/@
+						GroupBy[First->Last]@
+							Cases[Flatten@scrape,
+								r:(_->(_?OptionQ)):>r
+								]
+						],
+				Cases[Flatten@scrape,
+					(Rule|RuleDelayed)[_,Except[_Rule|_RuleDelayed|_?OptionQ]]
+					]
+				]
 			]
 		];
 htmlScrapePage[Cell[CellGroupData[c_,___],___]]:=
@@ -1960,7 +2024,10 @@ htmlScrapeElements[Cell[e_,
 			{htmlContentConvert[e]}
 		];
 htmlScrapeElements[Cell[t_,"plaintext_tag"|"inlinetext_tag",___]]:=
-	t;
+	If[StringQ@t,
+		t,
+		htmlContentConvert[t]
+		];
 htmlScrapeElements[Cell[___]]:=
 	Nothing;
 htmlScrapeElements~SetAttributes~Listable;
@@ -1984,7 +2051,7 @@ htmlScrapeBuild[
 					"DeployTo"|
 					"ResourceFiles"|
 					"ResourcePermissions"
-					]:>ToExpression[t]
+					]:>ToExpression[htmlGetType[b]]
 				]->expr)
 		}];
 htmlScrapeBuild~SetAttributes~Listable;
@@ -2047,9 +2114,12 @@ htmlScrapeProps[l_List]:=
 htmlContentConvert//ClearAll;
 htmlContentConvert[s_String]:=
 	s;
+htmlContentConvert[Cell[e_,___]]:=	
+	htmlContentConvert[e];
 htmlContentConvert[d_BoxData]:=
-	htmlContentConvert@
-		ToExpression[d];
+	htmlContentConvert@ToExpression[d];
+htmlContentConvert[TextData[Cell[b_BoxData,___]]]:=
+	htmlContentConvert[b];
 htmlContentConvert[d_TextData]:=
 	StringRiffle[ToString/@(htmlContentConvert@ToExpression[d])];
 htmlContentConvert[Null]:=
@@ -2074,10 +2144,23 @@ htmlContentConvert[q_Quantity]:=
 		ToString[q],
 		" "->""
 		];
+htmlContentConvert[Inherited]:=
+	"inherit";
 htmlContentConvert[Scaled[i_]]:=
 	ToString@Floor[i*100]<>"%";
 htmlContentConvert[l_List]:=
 	StringRiffle[htmlContentConvert/@Flatten@l];
+htmlContentConvert[i_?ImageQ]:=
+	With[{u=CreateUUID["img-"]<>".gif"},
+		Sow["ResourceFiles"->{"img"->{u->i}}];
+		XMLElement["img",
+			{
+				"src"->"img/"<>u,
+				"alt"->u
+				},{}]
+		];
+htmlContentConvert[g:_Graphics|_Graphics3D]:=
+	htmlContentConvert@Rasterize[g,"Image",ImageResolution->120];
 
 
 htmlContentConvert[URL[u_String]]:=
@@ -2085,10 +2168,12 @@ htmlContentConvert[URL[u_String]]:=
 htmlContentConvert[r:{__Rule}]:=
 	(First@#->htmlContentConvert[Last[#]])&/@r;
 htmlContentConvert[e_]:=
-	ToLowerCase@ToString@
-		ReplaceAll[e,{
-			Rectangle->"rect"
-			}];
+	Block[{$xmlObjectRecursiveConversion=htmlContentConvert},
+		xmlObjectConvert@
+			ReplaceAll[e,{
+				Rectangle->"rect"
+				}]
+		];
 
 
 htmlGetType[t_String]:=
@@ -2290,11 +2375,6 @@ htmlPageSpecs[Optional[Automatic,Automatic]]:=
 	htmlPageSpecs@htmlScrapePage[Automatic];
 
 
-If[!AssociationQ@$htmlAuthCache,
-	$htmlAuthCache=<||>
-	];
-
-
 htmlGetAuthCredentials[creds:{__}]:=
 	With[{
 		credentials=
@@ -2317,63 +2397,21 @@ htmlGetAuthCredentials[creds:{__}]:=
 						1]
 				}]
 		},	
-		If[AnyTrue[credentials,!KeyMemberQ[$htmlAuthCache,#]&],
-			DialogInput[
-				Column@
-				Table[
-					With[{acc=acc},
-						Panel[
-							Column@{
-								"Input password for "<>Riffle[Flatten@{acc}," - "]<>":",
-								Row@{
-									Spacer[10],
-									EventHandler[
-										InputField[
-											Dynamic[
-												Lookup[$htmlAuthCache,Key@acc,""],
-												($htmlAuthCache[acc]=#)&
-												],
-											String,
-											ImageSize->350,
-											FieldMasked->True
-											],{
-											"ReturnKeyDown":>DialogReturn[],
-											{"MenuCommand","Save"}:>DialogReturn[]
-											}]
-									}
-								},
-							ImageSize->{350,Automatic}
-							]
-						],
-					{acc,credentials}
-					],
-				WindowTitle->"Save Credentials",
-				WindowFloating->True
-				];
-			Lookup[$htmlAuthCache,Key/@credentials,""],
-			Lookup[$htmlAuthCache,Key/@credentials,""]
-			]
+		KeyChainGet[credentials,True]
 		];
 htmlGetAuthCredentials[c_String]:=
 	htmlGetAuthCredentials@{c};
 
 
-HTMLClearAuthCredentials[key_:All]:=
-	If[key===All,
-		$htmlAuthCache=<||>;,
-		KeyDropFrom[$htmlAuthCache,key];
-		];
-
-
 htmlCloudBaseConnect[base_]:=
 	Replace[base,{
 			cloud_String?(
-				StringMatchQ[#,(Except["\@"]..)..~~".com"]||
+				FailureQ[Interpreter["EmailAddress"]@#]||
 				AnyTrue[Lookup[URLParse[#],{"Scheme","Domain"}],
 					MatchQ[Except[None]]
 					]&):>
 				With[{
-					l=Lookup[$htmlAuthCache,Key@{$WolframID,cloud},None],
+					l=Replace[KeyChainGet[{cloud,$WolframID},True],_Missing->None],
 					c=
 						With[{p=URLParse[cloud]},
 							URLBuild@
@@ -2395,18 +2433,18 @@ htmlCloudBaseConnect[base_]:=
 						]
 					],
 			uname_String:>
-				With[{l=Lookup[$htmlAuthCache,Key@{uname,$CloudBase},None]},
+				With[{l=Replace[KeyChainGet[{$CloudBase,uname},True],_Missing->None]},
 					If[$WolframID=!=uname,
 						CloudConnect[uname,Replace[l,None:>Sequence@@{}]]
 						]
 					],
 			{uname_String,
 				cloud_String?(
-					StringMatchQ[#,(Except["\@"]..)~~".com"]||
+					FailureQ[Interpreter["EmailAddress"]@#]||
 					AnyTrue[Lookup[URLParse[#],{"Scheme","Domain"}],
 						MatchQ[Except[None]]
 						]&)}:>
-				With[{l=Lookup[$htmlAuthCache,Key@{uname,cloud},None]},
+				With[{l=Replace[KeyChainGet[{cloud,uname}],_Missing->None]},
 					If[$CloudBase=!=cloud||$WolframID=!+uname,
 						CloudConnect[uname,Replace[l,None:>Sequence@@{}],
 							CloudBase->
@@ -2466,7 +2504,8 @@ htmlExportString[x_]:=
 htmlSpecDeploy//ClearAll;
 htmlSpecDeploy[
 	specAssoc_Association,
-	base:Except[(_String|_File)?DirectoryQ]]:=
+	base:Except[(_String|_File)?(DirectoryQ@DirectoryName@#&)]
+	]:=
 	With[{
 		uri=
 			specAssoc["URI"],
@@ -2517,7 +2556,10 @@ htmlSpecDeploy[
 		];
 
 
-htmlSpecDeploy[specAssocs:{__Association},base:(_String|_File)?DirectoryQ]:=
+htmlSpecDeploy[
+	specAssocs:{__Association},
+	base:(_String|_File)?(DirectoryQ@DirectoryName@#&)
+	]:=
 	Map[
 		With[{
 			file=
@@ -2570,7 +2612,7 @@ htmlSpecDeploy[specAssocs:{__Association},base:(_String|_File)?DirectoryQ]:=
 			]&,
 		specAssocs
 		];
-htmlSpecDeploy[specAssoc_,path:(_String|_File)?DirectoryQ]:=
+htmlSpecDeploy[specAssoc_,path:(_String|_File)?(DirectoryQ@DirectoryName@#&)]:=
 	htmlSpecDeploy[{specAssoc},path];
 
 
@@ -2603,7 +2645,7 @@ htmlSpecDeploy[a:{__Association}]:=
 							MatchQ[co,
 								Except[_CloudObject|{_CloudObject}]],
 							AppendTo[$htmlAuthFailures,l];
-							$htmlAuthCache[l]=.
+							$KeyChain[l]=.
 							];
 						co
 						],
@@ -2629,6 +2671,41 @@ HTMLBuildPages[s:Except[{__Association}]:Automatic]:=
 		];
 HTMLBuildPages[s:{__Association}]:=
 	htmlSpecDeploy[s];
+
+
+HTMLTemplateNotebook[
+	name_:"html_page"
+	]:=
+	Replace[{
+		nb_Notebook:>CreateDocument[nb],
+		f_:>CreateDocument@Import@f
+		}]@
+	SelectFirst[
+		FileNames["*.nb",`Package`appPath["Packages","__HTML Templates__"]],
+		FileBaseName[#]===name&,
+		Notebook[{
+			Cell[name,"PAGE"],
+			Cell[CellGroupData[Flatten@{
+				Cell["","build"],
+				Cell[BoxData@{},#<>"_option"]&/@htmlBuildTags
+				}]],
+			Cell[CellGroupData[{
+				Cell["","head"],
+				Cell[CellGroupData[{
+					Cell["","style_tag"],
+					Cell["body","style_class_tag"]
+					}]]
+				}]],
+			Cell["","body"],
+			Cell["","HTMLFooter"]
+			},
+			StyleDefinitions->
+				FrontEnd`FileName[
+					Evaluate@{`Package`$PackageName},
+					"HTMLTemplating.nb"
+					]
+			]
+		]
 
 
 End[];

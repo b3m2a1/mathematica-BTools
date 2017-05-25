@@ -27,6 +27,22 @@ Begin["`Private`"];
 
 
 (* ::Subsubsection::Closed:: *)
+(*Constants*)
+
+
+
+dataPacletIndexNumber[padLength_,num_Integer]:=
+	StringPadLeft[ToString@num,padLength,"0"];
+dataPacletIndexNumber[padLength_,{num_Integer}]:=
+	dataPacletIndexNumber[padLength,num];
+dataPacletIndexNumber[num_]:=
+	dataPacletIndexNumber[$dataPacletPartitionNumber,num];
+
+
+$dataPacletVersionNumber="1.0.0";
+
+
+(* ::Subsubsection::Closed:: *)
 (*IndexPaclet*)
 
 
@@ -34,7 +50,7 @@ Begin["`Private`"];
 dataPacletIndexFile[
 	dir:_String?DirectoryQ|Automatic:Automatic,
 	dataType_String,
-	entityStore_Association
+	entityStore:_Association|{__Association}
 	]:=
 	With[{
 		index=
@@ -42,18 +58,29 @@ dataPacletIndexFile[
 				"Sources"->
 					{
 						"Data"->
-							{
-							"Part01"->
-								Keys@
-									entityStore["Entities"]
-									}
+							If[AssociationQ@entityStore,
+								{
+								"Part01"->
+									Keys@
+										entityStore["Entities"]
+										},
+								MapIndexed[
+									"Part"<>dataPacletIndexNumber[#2]->
+										Keys@#["Entities"]&,
+									entityStore
+									]
+								]
 						},
 				"Properties"->
 					{
 						"Data"->
 							Thread@List@
 								DeleteCases["Label"]@
-									Keys@entityStore["Properties"]
+									Keys@
+										If[AssociationQ@entityStore,
+											entityStore,
+											First@entityStore
+											]["Properties"]
 						}
 				}
 		},
@@ -270,6 +297,7 @@ dataPacletPrivateGroupsIndexFile[
 
 
 dataPacletDataFile[
+	n:_Integer:1,
 	dir_,
 	dataType_String,
 	entityStore_Association
@@ -307,9 +335,9 @@ dataPacletDataFile[
 					Automatic:>
 						$TemporaryDirectory
 					],
-				dataType<>"Data_Part01",
+				dataType<>"Data_Part"<>StringPadLeft[ToString@n,2,"0"],
 				"Data",
-				"Part01.wdx"
+				"Part"<>dataPacletIndexNumber[n]<>".wdx"
 				},
 			ents,
 			"DataTable"
@@ -326,7 +354,27 @@ CuratedDataIndexPaclet[
 	CompoundExpression[
 		Begin["DataPaclets`CuratedDataFormattingDump`"],
 		(End[];#)&@
-			CompoundExpression[
+		CheckAbort[
+			Block[{
+				partitions=
+					Map[
+						ReplacePart[entityStore,
+							"Entities"->
+								Association@#
+							]&
+						]@
+						Partition[
+							Normal@entityStore["Entities"],
+							UpTo[
+									Floor[Length@entityStore["Entities"]/
+									Ceiling[ByteCount[entityStore["Entities"]]/(5*10^6)]]
+									]
+							],
+				$dataPacletPartitionNumber
+				},
+				parts=
+				$dataPacletPartitionNumber=
+					Length@IntegerDigits@Length@partitions;
 				(* ------- Prep Directories  ------- *)
 				Quiet@
 					CreateDirectory[
@@ -340,28 +388,43 @@ CuratedDataIndexPaclet[
 							},
 						CreateIntermediateDirectories->True
 						];
-				Quiet@
-					CreateDirectory[
-						FileNameJoin@{
-							Replace[dir,	
-								Automatic:>
-									$TemporaryDirectory
-								],
-							dataType<>"Data_Part01",
-							"Data"
-							},
-						CreateIntermediateDirectories->True
-						],
 				(* ------- Indices -------*)
-				dataPacletIndexFile[dir,dataType,entityStore];
+				dataPacletIndexFile[
+					dir,
+					dataType,
+					partitions
+					];
 				dataPacletNamesIndexFile[dir,dataType,entityStore];
 				dataPacletEntitiesIndexFile[dir,dataType,entityStore];
 				dataPacletPropertiesIndexFile[dir,dataType,entityStore];
 				dataPacletFunctionsIndexFile[dir,dataType,entityStore];
 				dataPacletGroupsIndexFile[dir,dataType,entityStore];
-				dataPacletPrivateGroupsIndexFile[dir,dataType,entityStore],
+				dataPacletPrivateGroupsIndexFile[dir,dataType,entityStore];
 				(* ------- Data ------- *)
-				dataPacletDataFile[dir,dataType,entityStore],
+				MapIndexed[
+					Function[
+						Quiet@
+							CreateDirectory[
+								FileNameJoin@{
+									Replace[dir,	
+										Automatic:>
+											$TemporaryDirectory
+										],
+									dataType<>
+										"Data_Part"<>
+											dataPacletIndexNumber[#2],
+									"Data"
+									},
+								CreateIntermediateDirectories->True
+								];
+						dataPacletDataFile[First@#2,
+							dir,
+							dataType,
+							#
+							]
+						],
+					partitions
+					];
 				(* ------- Paclets  ------- *)
 				If[pack,
 					Quiet@
@@ -372,18 +435,25 @@ CuratedDataIndexPaclet[
 										$TemporaryDirectory
 									],
 								dataType<>"Data_Index"
-								}
+								},
+							"Version"->$dataPacletVersionNumber
 							];
-					Quiet@
-						PacletExpressionBundle[
-							FileNameJoin@{
-								Replace[dir,
-									Automatic:>
-										$TemporaryDirectory
-									],
-								dataType<>"Data_Part01"
-								}
-							];
+					Map[
+						Quiet@
+							PacletExpressionBundle[
+								FileNameJoin@{
+									Replace[dir,
+										Automatic:>
+											$TemporaryDirectory
+										],
+									dataType<>"Data_Part"<>
+										dataPacletIndexNumber[#]
+									},
+								"Version"->
+									$dataPacletVersionNumber
+								]&,
+						Range[Length@partitions]
+						];
 					AssociationMap[
 						PacletBundle@
 							FileNameJoin@{
@@ -393,9 +463,12 @@ CuratedDataIndexPaclet[
 									],
 								dataType<>"Data_"<>#
 								}&,
-						{
+						Flatten@{
 							"Index",
-							"Part01"
+							Map[
+								"Part"<>dataPacletIndexNumber[#]&,
+								Range[Length@partitions]
+								]
 							}],
 					<|
 						"Index"->
@@ -407,16 +480,21 @@ CuratedDataIndexPaclet[
 								dataType<>"Data_Index"
 								},
 						"Data"->
-							FileNameJoin@{
-								Replace[dir,
-									Automatic:>
-										$TemporaryDirectory
-									],
-								dataType<>"Data_Part01"
-								}
+							Map[
+								FileNameJoin@{
+									Replace[dir,
+										Automatic:>
+											$TemporaryDirectory
+										],
+									dataType<>"Data_Part"<>dataPacletIndexNumber[#]
+									}&,
+								Range[Length@partitions]
+								]
 						|>
 					]
-				]
+				],
+			End[]
+			]
 		];
 
 
@@ -496,9 +574,7 @@ CuratedDataPaclet[
 									entityStore,
 									"DefaultProperty",
 									"Entity"
-									]
-							(*	First@DeleteCases["Label"]@
-									Keys@entityStore["Properties"]*),
+									],
 								InputForm
 								],
 						"$CuratedDataType"->dataType,
@@ -556,7 +632,10 @@ CuratedDataPaclet[
 				"Text"
 				];
 			If[pack,
-				(PacletExpressionBundle[#];PacletBundle[#])&@
+				(
+					PacletExpressionBundle[#,"Version"->$dataPacletVersionNumber];
+					PacletBundle[#]
+					)&@
 					FileNameJoin@{
 						Replace[dir,
 							Automatic:>
@@ -595,8 +674,9 @@ CuratedDataExport[
 	 			"$CuratedDataDefaultProperty"->
 	 				Lookup[entityStore,
 	 					"DefaultProperty",
-	 					First@DeleteCases["Label"]@
-	 						Keys@entityStore["Properties"]
+	 					(*First@DeleteCases["Label"]@
+	 						Keys@entityStore["Properties"]*)
+	 					"Entity"
 	 					]
 	 			]
 	 		]@
