@@ -16,11 +16,12 @@ $DataFunctions=
 	$CuratedDataFunctions;
 
 
-$DataFunctionsLoaded=
-	<||>;
+If[!AssociationQ@$DataFunctionsLoaded,
+	$DataFunctionsLoaded=<||>
+	];
 
 
-$CuratedData["DataTypes"]=
+$CuratedData["DataFunctions"]=
 	$DataFunctions;
 
 
