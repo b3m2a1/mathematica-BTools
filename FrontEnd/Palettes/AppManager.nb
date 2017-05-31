@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    341687,       6593]
-NotebookOptionsPosition[    341251,       6573]
-NotebookOutlinePosition[    341665,       6592]
-CellTagsIndexPosition[    341622,       6589]
+NotebookDataLength[    349881,       6776]
+NotebookOptionsPosition[    349445,       6756]
+NotebookOutlinePosition[    349859,       6775]
+CellTagsIndexPosition[    349816,       6772]
 WindowTitle->App Manager
 WindowFrame->Palette*)
 
@@ -496,7 +496,10 @@ sE9G7JP//mn9Mf+vNt9hRD/zDScVLRQ=
                  Table[
                    
                    With[{AppManagerPalette`Private`n = 
-                    AppManagerPalette`Private`n}, (StringJoin[
+                    AppManagerPalette`Private`n}, 
+                    If[
+                    AppManagerPalette`Private`n === Delimiter, 
+                    AppManagerPalette`Private`n, (StringJoin[
                     Riffle[
                     FileNameSplit[#], 
                     "\[VeryThinSpace]\[RightGuillemet]\[VeryThinSpace]"]]& )[
@@ -507,9 +510,27 @@ sE9G7JP//mn9Mf+vNt9hRD/zDScVLRQ=
                     FileNameDepth[
                     BTools`AppDirectory[
                     AppManagerPalette`Private`currentApp, "Packages"]]]] :> 
-                    SystemOpen[AppManagerPalette`Private`n]], {
+                    SystemOpen[AppManagerPalette`Private`n]]], {
                    AppManagerPalette`Private`n, 
-                    SortBy[FileNameDepth][
+                    (
+                    With[{AppManagerPalette`Private`pat = #, 
+                    AppManagerPalette`Private`path = {
+                    SlotSequence[2]}}, 
+                    Flatten[
+                    Riffle[
+                    (GatherBy[#, FileNameTake[
+                    FileNameDrop[
+                    FileNameDrop[#, 
+                    FileNameDepth[
+                    BTools`AppDirectory[
+                    AppManagerPalette`Private`currentApp, 
+                    Apply[Sequence, AppManagerPalette`Private`path]]]]], 
+                    1]& ]& )[
+                    SortBy[FileNameDepth[#] + 30 Boole[
+                    StringContainsQ[#, 
+                    StringExpression["__", 
+                    Repeated[
+                    Alternatives[WordCharacter, " ", "$"]], "__"]]]& ][
                     Select[Or[
                     StringContainsQ[#, "__Future__"], 
                     Not[
@@ -517,10 +538,11 @@ sE9G7JP//mn9Mf+vNt9hRD/zDScVLRQ=
                     StringExpression["__", 
                     Repeated[
                     Alternatives[WordCharacter, " ", "$"]], "__"]]]]& ][
-                    FileNames["*.nb", 
+                    FileNames[#, 
                     BTools`AppDirectory[
-                    AppManagerPalette`Private`currentApp, "Packages"], 
-                    Infinity]]]}]], 
+                    AppManagerPalette`Private`currentApp, 
+                    SlotSequence[2]], Infinity]]]], Delimiter]]]& )[
+                    "*.nb", "Packages"]}]], 
                 FilterRules[{Enabled -> Length[
                     Join[
                     FileNames[
@@ -607,7 +629,10 @@ sE9G7JP//mn9Mf+vNt9hRD/zDScVLRQ=
                  Table[
                    
                    With[{AppManagerPalette`Private`n = 
-                    AppManagerPalette`Private`n}, (StringJoin[
+                    AppManagerPalette`Private`n}, 
+                    If[
+                    AppManagerPalette`Private`n === Delimiter, 
+                    AppManagerPalette`Private`n, (StringJoin[
                     Riffle[
                     FileNameSplit[#], 
                     "\[VeryThinSpace]\[RightGuillemet]\[VeryThinSpace]"]]& )[
@@ -618,12 +643,39 @@ sE9G7JP//mn9Mf+vNt9hRD/zDScVLRQ=
                     FileNameDepth[
                     BTools`AppDirectory[
                     AppManagerPalette`Private`currentApp, "FrontEnd"]]]] :> 
-                    SystemOpen[AppManagerPalette`Private`n]], {
+                    SystemOpen[AppManagerPalette`Private`n]]], {
                    AppManagerPalette`Private`n, 
-                    FileNames["*.nb", 
+                    (With[{
+                    AppManagerPalette`Private`pat = #, 
+                    AppManagerPalette`Private`path = {
+                    SlotSequence[2]}}, 
+                    Flatten[
+                    Riffle[
+                    (GatherBy[#, FileNameTake[
+                    FileNameDrop[
+                    FileNameDrop[#, 
+                    FileNameDepth[
                     BTools`AppDirectory[
-                    AppManagerPalette`Private`currentApp, "FrontEnd"], 
-                    Infinity]}]], 
+                    AppManagerPalette`Private`currentApp, 
+                    Apply[Sequence, AppManagerPalette`Private`path]]]]], 
+                    1]& ]& )[
+                    SortBy[FileNameDepth[#] + 30 Boole[
+                    StringContainsQ[#, 
+                    StringExpression["__", 
+                    Repeated[
+                    Alternatives[WordCharacter, " ", "$"]], "__"]]]& ][
+                    Select[Or[
+                    StringContainsQ[#, "__Future__"], 
+                    Not[
+                    StringContainsQ[#, 
+                    StringExpression["__", 
+                    Repeated[
+                    Alternatives[WordCharacter, " ", "$"]], "__"]]]]& ][
+                    FileNames[#, 
+                    BTools`AppDirectory[
+                    AppManagerPalette`Private`currentApp, 
+                    SlotSequence[2]], Infinity]]]], Delimiter]]]& )[
+                    "*.nb", "FrontEnd"]}]], 
                 FilterRules[{Enabled -> Length[
                     FileNames["*.nb", 
                     BTools`AppDirectory[
@@ -710,7 +762,10 @@ sE9G7JP//mn9Mf+vNt9hRD/zDScVLRQ=
                    Table[
                     
                     With[{AppManagerPalette`Private`n = 
-                    AppManagerPalette`Private`n}, (StringJoin[
+                    AppManagerPalette`Private`n}, 
+                    If[
+                    AppManagerPalette`Private`n === Delimiter, 
+                    AppManagerPalette`Private`n, (StringJoin[
                     Riffle[
                     FileNameSplit[#], 
                     "\[VeryThinSpace]\[RightGuillemet]\[VeryThinSpace]"]]& )[
@@ -721,13 +776,39 @@ sE9G7JP//mn9Mf+vNt9hRD/zDScVLRQ=
                     FileNameDepth[
                     BTools`AppDirectory[
                     AppManagerPalette`Private`currentApp, "Private"]]]] :> 
-                    SystemOpen[AppManagerPalette`Private`n]], {
+                    SystemOpen[AppManagerPalette`Private`n]]], {
                     AppManagerPalette`Private`n, 
-                    SortBy[FileNameDepth][
-                    FileNames["*.nb", 
+                    (
+                    With[{AppManagerPalette`Private`pat = #, 
+                    AppManagerPalette`Private`path = {
+                    SlotSequence[2]}}, 
+                    Flatten[
+                    Riffle[
+                    (GatherBy[#, FileNameTake[
+                    FileNameDrop[
+                    FileNameDrop[#, 
+                    FileNameDepth[
                     BTools`AppDirectory[
-                    AppManagerPalette`Private`currentApp, "Private"], 
-                    Infinity]]}], {}]], 
+                    AppManagerPalette`Private`currentApp, 
+                    Apply[Sequence, AppManagerPalette`Private`path]]]]], 
+                    1]& ]& )[
+                    SortBy[FileNameDepth[#] + 30 Boole[
+                    StringContainsQ[#, 
+                    StringExpression["__", 
+                    Repeated[
+                    Alternatives[WordCharacter, " ", "$"]], "__"]]]& ][
+                    Select[Or[
+                    StringContainsQ[#, "__Future__"], 
+                    Not[
+                    StringContainsQ[#, 
+                    StringExpression["__", 
+                    Repeated[
+                    Alternatives[WordCharacter, " ", "$"]], "__"]]]]& ][
+                    FileNames[#, 
+                    BTools`AppDirectory[
+                    AppManagerPalette`Private`currentApp, 
+                    SlotSequence[2]], Infinity]]]], Delimiter]]]& )[
+                    "*.nb", "Private"]}], {}]], 
                 FilterRules[{Enabled -> Length[
                     FileNames["*.nb", 
                     BTools`AppDirectory[
@@ -812,12 +893,14 @@ sE9G7JP//mn9Mf+vNt9hRD/zDScVLRQ=
                     Cell[
                     RowBox[{"<|", "\n", "\n", "\t|>"}], "Code"], 
                     StyleDefinitions -> "Package.nb"]}, 
-                    BTools`MakeIndentable[
+                    BTools`FrontEnd`MakeIndentable[
                     AppManagerPalette`Private`doc, "Code"]], "Text" :> 
                   CreateDocument[{}, StyleDefinitions -> "Notepad.nb"], 
                   "Script" :> 
                   CreateDocument[{}, StyleDefinitions -> "Script.nb"], 
-                  "Testing" :> CreateDocument[
+                  "Palette" :> BTools`PaletteTemplateNotebook[], "HTML" :> 
+                  BTools`Web`HTMLTemplateNotebook[], "Testing" :> 
+                  CreateDocument[
                     BTools`AppGenerateTestingNotebook[
                     AppManagerPalette`Private`currentApp]]}, Appearance -> 
                  None, {}]}], 
@@ -884,7 +967,10 @@ sE9G7JP//mn9Mf+vNt9hRD/zDScVLRQ=
                    BTools`AppRegenerateDirectories[
                     AppManagerPalette`Private`currentApp]; SystemOpen[
                     BTools`AppDirectory[
-                    AppManagerPalette`Private`currentApp]])}, Appearance -> 
+                    AppManagerPalette`Private`currentApp]]), "LoadInfo" :> 
+                  SystemOpen[
+                    BTools`AppRegenerateLoadInfo[
+                    AppManagerPalette`Private`currentApp]]}, Appearance -> 
                  None, {}]}], 
               EventHandler[
                Button[
@@ -892,16 +978,17 @@ sE9G7JP//mn9Mf+vNt9hRD/zDScVLRQ=
                  GrayLevel[0.2]], 
                 CheckAbort[
                  AppManagerPalette`Private`paletteButtonRunning[
-                    "bdf3aa00-25cc-4180-8c44-87c3367d9d1f"] = True; CheckAbort[
+                    "d74c539c-8f8a-46e6-8dd7-193e26d46ef7"] = True; 
+                  Needs["BTools`"]; CheckAbort[
                     BTools`AppGitCommit[AppManagerPalette`Private`currentApp],
                      AppManagerPalette`Private`paletteButtonRunning[
-                    "bdf3aa00-25cc-4180-8c44-87c3367d9d1f"] = False]; 
+                    "d74c539c-8f8a-46e6-8dd7-193e26d46ef7"] = False]; 
                   AppManagerPalette`Private`paletteButtonRunning[
-                    "bdf3aa00-25cc-4180-8c44-87c3367d9d1f"] = False, 
+                    "d74c539c-8f8a-46e6-8dd7-193e26d46ef7"] = False, 
                   BTools`Private`UUIDActive[
-                   "Button-c4e07d88-facd-4335-bad5-f35ce9f59630"] = False]; 
+                   "Button-757a9876-1620-4320-8ea9-be937d8b30df"] = False]; 
                 BTools`Private`UUIDActive[
-                  "Button-c4e07d88-facd-4335-bad5-f35ce9f59630"] = False, 
+                  "Button-757a9876-1620-4320-8ea9-be937d8b30df"] = False, 
                 Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -930,7 +1017,7 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-c4e07d88-facd-4335-bad5-f35ce9f59630"]], 
+                    "Button-757a9876-1620-4320-8ea9-be937d8b30df"]], 
                     "Pressed", Automatic]]}, Method -> "Queued", 
                 FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
                 Appearance -> {"Palette", 
@@ -938,11 +1025,11 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-c4e07d88-facd-4335-bad5-f35ce9f59630"]], 
+                    "Button-757a9876-1620-4320-8ea9-be937d8b30df"]], 
                     "Pressed", Automatic]]}], {
                "MouseClicked" :> (
                  BTools`Private`UUIDActive[
-                  "Button-c4e07d88-facd-4335-bad5-f35ce9f59630"] = True), 
+                  "Button-757a9876-1620-4320-8ea9-be937d8b30df"] = True), 
                 PassEventsDown -> True}], 
               Row[{
                 Button[
@@ -1634,18 +1721,19 @@ UVdVBS7LErWUErUQAlwUBWrO+aIZY7MJpRT+Mmdfqc/QmA==
                  GrayLevel[0.2]], 
                 CheckAbort[
                  AppManagerPalette`Private`paletteButtonRunning[
-                    "2413a0bb-b365-4c28-b3bf-2fa854252ec5"] = True; CheckAbort[
+                    "cad176a7-e93a-4e36-8ff5-d3a0a8ed4f80"] = True; 
+                  Needs["BTools`"]; CheckAbort[
                     SystemOpen[
                     BTools`AppRegenerateDocInfo[
                     AppManagerPalette`Private`currentApp]], 
                     AppManagerPalette`Private`paletteButtonRunning[
-                    "2413a0bb-b365-4c28-b3bf-2fa854252ec5"] = False]; 
+                    "cad176a7-e93a-4e36-8ff5-d3a0a8ed4f80"] = False]; 
                   AppManagerPalette`Private`paletteButtonRunning[
-                    "2413a0bb-b365-4c28-b3bf-2fa854252ec5"] = False, 
+                    "cad176a7-e93a-4e36-8ff5-d3a0a8ed4f80"] = False, 
                   BTools`Private`UUIDActive[
-                   "Button-9f853789-fc7d-497f-aa6e-3247b64ad6a1"] = False]; 
+                   "Button-0e0d2d5f-5ea5-4c1e-b8b2-e4dfbd19374f"] = False]; 
                 BTools`Private`UUIDActive[
-                  "Button-9f853789-fc7d-497f-aa6e-3247b64ad6a1"] = False, 
+                  "Button-0e0d2d5f-5ea5-4c1e-b8b2-e4dfbd19374f"] = False, 
                 Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -1674,7 +1762,7 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-9f853789-fc7d-497f-aa6e-3247b64ad6a1"]], 
+                    "Button-0e0d2d5f-5ea5-4c1e-b8b2-e4dfbd19374f"]], 
                     "Pressed", Automatic]]}, Method -> "Queued", 
                 FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
                 Appearance -> {"Palette", 
@@ -1682,11 +1770,11 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-9f853789-fc7d-497f-aa6e-3247b64ad6a1"]], 
+                    "Button-0e0d2d5f-5ea5-4c1e-b8b2-e4dfbd19374f"]], 
                     "Pressed", Automatic]]}], {
                "MouseClicked" :> (
                  BTools`Private`UUIDActive[
-                  "Button-9f853789-fc7d-497f-aa6e-3247b64ad6a1"] = True), 
+                  "Button-0e0d2d5f-5ea5-4c1e-b8b2-e4dfbd19374f"] = True), 
                 PassEventsDown -> True}], 
               EventHandler[
                Button[
@@ -1694,18 +1782,19 @@ mEXTyg==
                  GrayLevel[0.2]], 
                 CheckAbort[
                  AppManagerPalette`Private`paletteButtonRunning[
-                    "2e0317f9-fbaf-4ff7-8aca-17996d6ab22b"] = True; CheckAbort[
+                    "bbf16b96-ef3f-4ba6-b2f3-c8a38410190f"] = True; 
+                  Needs["BTools`"]; CheckAbort[
                     AppManagerPalette`Private`paletteDialog[
                     BTools`AppIndexDocs[AppManagerPalette`Private`currentApp],
                      "Indexing documentation"], 
                     AppManagerPalette`Private`paletteButtonRunning[
-                    "2e0317f9-fbaf-4ff7-8aca-17996d6ab22b"] = False]; 
+                    "bbf16b96-ef3f-4ba6-b2f3-c8a38410190f"] = False]; 
                   AppManagerPalette`Private`paletteButtonRunning[
-                    "2e0317f9-fbaf-4ff7-8aca-17996d6ab22b"] = False, 
+                    "bbf16b96-ef3f-4ba6-b2f3-c8a38410190f"] = False, 
                   BTools`Private`UUIDActive[
-                   "Button-74af4469-d21e-4c51-aa9a-821173cec03c"] = False]; 
+                   "Button-96672ea1-45aa-4abc-8ce1-7d6bf8cf68a7"] = False]; 
                 BTools`Private`UUIDActive[
-                  "Button-74af4469-d21e-4c51-aa9a-821173cec03c"] = False, 
+                  "Button-96672ea1-45aa-4abc-8ce1-7d6bf8cf68a7"] = False, 
                 Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -1734,7 +1823,7 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-74af4469-d21e-4c51-aa9a-821173cec03c"]], 
+                    "Button-96672ea1-45aa-4abc-8ce1-7d6bf8cf68a7"]], 
                     "Pressed", Automatic]]}, Method -> "Queued", 
                 FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
                 Appearance -> {"Palette", 
@@ -1742,11 +1831,11 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-74af4469-d21e-4c51-aa9a-821173cec03c"]], 
+                    "Button-96672ea1-45aa-4abc-8ce1-7d6bf8cf68a7"]], 
                     "Pressed", Automatic]]}], {
                "MouseClicked" :> (
                  BTools`Private`UUIDActive[
-                  "Button-74af4469-d21e-4c51-aa9a-821173cec03c"] = True), 
+                  "Button-96672ea1-45aa-4abc-8ce1-7d6bf8cf68a7"] = True), 
                 PassEventsDown -> True}], 
               Panel[
               "", ImageSize -> {190, 1}, ImageMargins -> 5, Appearance -> 
@@ -2154,6 +2243,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDScVLRQ=
                     Map[Map[AppManagerPalette`Private`addContent["Symbols", #, 
                     AppManagerPalette`Private`currentExtensionPath[
                     "Symbols", #], False]& , 
+                    
                     Block[{BTools`$DocActive = 
                     AppManagerPalette`Private`currentApp}, 
                     BTools`GenerateDocs[
@@ -2815,20 +2905,20 @@ UVdVBS7LErWUErUQAlwUBWrO+aIZY7MJpRT+Mmdfqc/QmA==
                  GrayLevel[0.2]], 
                 CheckAbort[
                  AppManagerPalette`Private`paletteButtonRunning[
-                    "1ab8e186-3685-43ed-ba60-8feffd7d1de9"] = True; 
-                  CheckAbort[Quiet[
+                    "7a8c83f9-b986-45cb-9ba8-00989d0100d7"] = True; 
+                  Needs["BTools`"]; CheckAbort[Quiet[
                     BTools`AppGitHubPush[
                     AppManagerPalette`Private`currentApp]]; SystemOpen[
                     BTools`Private`AppGitHubRepo[
                     AppManagerPalette`Private`currentApp, None]], 
                     AppManagerPalette`Private`paletteButtonRunning[
-                    "1ab8e186-3685-43ed-ba60-8feffd7d1de9"] = False]; 
+                    "7a8c83f9-b986-45cb-9ba8-00989d0100d7"] = False]; 
                   AppManagerPalette`Private`paletteButtonRunning[
-                    "1ab8e186-3685-43ed-ba60-8feffd7d1de9"] = False, 
+                    "7a8c83f9-b986-45cb-9ba8-00989d0100d7"] = False, 
                   BTools`Private`UUIDActive[
-                   "Button-9395652a-99ef-4aec-8e69-c4272db00f36"] = False]; 
+                   "Button-22cf7d55-0d22-4304-b752-fd8ad9ee862e"] = False]; 
                 BTools`Private`UUIDActive[
-                  "Button-9395652a-99ef-4aec-8e69-c4272db00f36"] = False, 
+                  "Button-22cf7d55-0d22-4304-b752-fd8ad9ee862e"] = False, 
                 Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -2857,7 +2947,7 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-9395652a-99ef-4aec-8e69-c4272db00f36"]], 
+                    "Button-22cf7d55-0d22-4304-b752-fd8ad9ee862e"]], 
                     "Pressed", Automatic]]}, Method -> "Queued", 
                 FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
                 Appearance -> {"Palette", 
@@ -2865,11 +2955,11 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-9395652a-99ef-4aec-8e69-c4272db00f36"]], 
+                    "Button-22cf7d55-0d22-4304-b752-fd8ad9ee862e"]], 
                     "Pressed", Automatic]]}], {
                "MouseClicked" :> (
                  BTools`Private`UUIDActive[
-                  "Button-9395652a-99ef-4aec-8e69-c4272db00f36"] = True), 
+                  "Button-22cf7d55-0d22-4304-b752-fd8ad9ee862e"] = True), 
                 PassEventsDown -> True}], 
               EventHandler[
                Button[
@@ -2877,18 +2967,19 @@ mEXTyg==
                  GrayLevel[0.2]], 
                 CheckAbort[
                  AppManagerPalette`Private`paletteButtonRunning[
-                    "3017fb5a-9e99-4806-a649-69e4a74221f4"] = True; CheckAbort[
+                    "af5d8130-78af-431d-aca1-47463d528d9e"] = True; 
+                  Needs["BTools`"]; CheckAbort[
                     Quiet[
                     BTools`AppGitHubConfigure[
                     AppManagerPalette`Private`currentApp]], 
                     AppManagerPalette`Private`paletteButtonRunning[
-                    "3017fb5a-9e99-4806-a649-69e4a74221f4"] = False]; 
+                    "af5d8130-78af-431d-aca1-47463d528d9e"] = False]; 
                   AppManagerPalette`Private`paletteButtonRunning[
-                    "3017fb5a-9e99-4806-a649-69e4a74221f4"] = False, 
+                    "af5d8130-78af-431d-aca1-47463d528d9e"] = False, 
                   BTools`Private`UUIDActive[
-                   "Button-1f0ed948-071c-4462-b73d-5cba89ff471f"] = False]; 
+                   "Button-b8490908-5ae9-4fc2-a756-41aafe7e032a"] = False]; 
                 BTools`Private`UUIDActive[
-                  "Button-1f0ed948-071c-4462-b73d-5cba89ff471f"] = False, 
+                  "Button-b8490908-5ae9-4fc2-a756-41aafe7e032a"] = False, 
                 Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -2917,7 +3008,7 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-1f0ed948-071c-4462-b73d-5cba89ff471f"]], 
+                    "Button-b8490908-5ae9-4fc2-a756-41aafe7e032a"]], 
                     "Pressed", Automatic]]}, Method -> "Queued", 
                 FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
                 Appearance -> {"Palette", 
@@ -2925,11 +3016,11 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-1f0ed948-071c-4462-b73d-5cba89ff471f"]], 
+                    "Button-b8490908-5ae9-4fc2-a756-41aafe7e032a"]], 
                     "Pressed", Automatic]]}], {
                "MouseClicked" :> (
                  BTools`Private`UUIDActive[
-                  "Button-1f0ed948-071c-4462-b73d-5cba89ff471f"] = True), 
+                  "Button-b8490908-5ae9-4fc2-a756-41aafe7e032a"] = True), 
                 PassEventsDown -> True}], 
               EventHandler[
                Button[
@@ -2937,18 +3028,19 @@ mEXTyg==
                  GrayLevel[0.2]], 
                 CheckAbort[
                  AppManagerPalette`Private`paletteButtonRunning[
-                    "85518711-7dd5-4150-b97a-a64c352b9625"] = True; CheckAbort[
+                    "c9317ba0-4436-49f9-8b0c-1a6538c66908"] = True; 
+                  Needs["BTools`"]; CheckAbort[
                     Quiet[
                     BTools`AppGitHubDelete[
                     AppManagerPalette`Private`currentApp]], 
                     AppManagerPalette`Private`paletteButtonRunning[
-                    "85518711-7dd5-4150-b97a-a64c352b9625"] = False]; 
+                    "c9317ba0-4436-49f9-8b0c-1a6538c66908"] = False]; 
                   AppManagerPalette`Private`paletteButtonRunning[
-                    "85518711-7dd5-4150-b97a-a64c352b9625"] = False, 
+                    "c9317ba0-4436-49f9-8b0c-1a6538c66908"] = False, 
                   BTools`Private`UUIDActive[
-                   "Button-67892baa-f0b3-4f34-ae9b-e47515bd57b8"] = False]; 
+                   "Button-d729cdfa-5981-47ca-9029-f1aae032cb24"] = False]; 
                 BTools`Private`UUIDActive[
-                  "Button-67892baa-f0b3-4f34-ae9b-e47515bd57b8"] = False, 
+                  "Button-d729cdfa-5981-47ca-9029-f1aae032cb24"] = False, 
                 Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -2977,7 +3069,7 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-67892baa-f0b3-4f34-ae9b-e47515bd57b8"]], 
+                    "Button-d729cdfa-5981-47ca-9029-f1aae032cb24"]], 
                     "Pressed", Automatic]]}, Method -> "Queued", 
                 FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
                 Appearance -> {"Palette", 
@@ -2985,11 +3077,11 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-67892baa-f0b3-4f34-ae9b-e47515bd57b8"]], 
+                    "Button-d729cdfa-5981-47ca-9029-f1aae032cb24"]], 
                     "Pressed", Automatic]]}], {
                "MouseClicked" :> (
                  BTools`Private`UUIDActive[
-                  "Button-67892baa-f0b3-4f34-ae9b-e47515bd57b8"] = True), 
+                  "Button-d729cdfa-5981-47ca-9029-f1aae032cb24"] = True), 
                 PassEventsDown -> True}], 
               Panel[
               "", ImageSize -> {190, 1}, ImageMargins -> 5, Appearance -> 
@@ -3351,23 +3443,23 @@ mEXTyg==
                  If[
                   TrueQ[
                    BTools`Private`UUIDActive[
-                   "Button-60490a3c-9c78-4f6f-8484-faa16d21d319"]], "Pressed",
+                   "Button-c4d548b5-aa20-431a-ae69-dcc9cb4f2af8"]], "Pressed",
                    Automatic]]},
               
               ButtonFunction:>(
                CheckAbort[
                 AppManagerPalette`Private`paletteButtonRunning[
-                   "bc4e7bd7-18a1-4155-865e-386068f1c032"] = True; 
-                 CheckAbort[
+                   "4be56474-a1c0-4210-9edb-5118e2228a38"] = True; 
+                 Needs["BTools`"]; CheckAbort[
                    AppManagerPalette`Private`newAppDialog[], 
                    AppManagerPalette`Private`paletteButtonRunning[
-                    "bc4e7bd7-18a1-4155-865e-386068f1c032"] = False]; 
+                    "4be56474-a1c0-4210-9edb-5118e2228a38"] = False]; 
                  AppManagerPalette`Private`paletteButtonRunning[
-                   "bc4e7bd7-18a1-4155-865e-386068f1c032"] = False, 
+                   "4be56474-a1c0-4210-9edb-5118e2228a38"] = False, 
                  BTools`Private`UUIDActive[
-                  "Button-60490a3c-9c78-4f6f-8484-faa16d21d319"] = False]; 
+                  "Button-c4d548b5-aa20-431a-ae69-dcc9cb4f2af8"] = False]; 
                BTools`Private`UUIDActive[
-                 "Button-60490a3c-9c78-4f6f-8484-faa16d21d319"] = False),
+                 "Button-c4d548b5-aa20-431a-ae69-dcc9cb4f2af8"] = False),
               Evaluator->Automatic,
               FrameMargins->{{5, 5}, {2, 0}},
               ImageSize->200,
@@ -3376,7 +3468,7 @@ mEXTyg==
              EventHandlerTag[{
               "MouseClicked" :> (
                 BTools`Private`UUIDActive[
-                 "Button-60490a3c-9c78-4f6f-8484-faa16d21d319"] = True), 
+                 "Button-c4d548b5-aa20-431a-ae69-dcc9cb4f2af8"] = True), 
                PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
                True}]]}
           },
@@ -3850,31 +3942,53 @@ sE9G7JP//mn9Mf+vNt9hRD/zDScVLRQ=
              Table[
                
                With[{AppManagerPalette`Private`n = 
-                 AppManagerPalette`Private`n}, (StringJoin[
-                  Riffle[
-                   FileNameSplit[#], 
-                   "\[VeryThinSpace]\[RightGuillemet]\[VeryThinSpace]"]]& )[
-                  FileNameDrop[
-                   FileNameJoin[{
+                 AppManagerPalette`Private`n}, 
+                If[
+                AppManagerPalette`Private`n === Delimiter, 
+                 AppManagerPalette`Private`n, (StringJoin[
+                   Riffle[
+                    FileNameSplit[#], 
+                    "\[VeryThinSpace]\[RightGuillemet]\[VeryThinSpace]"]]& )[
+                   FileNameDrop[
+                    FileNameJoin[{
                     DirectoryName[AppManagerPalette`Private`n], 
                     FileBaseName[AppManagerPalette`Private`n]}], 
-                   FileNameDepth[
+                    FileNameDepth[
                     BTools`AppDirectory[
                     AppManagerPalette`Private`currentApp, "Packages"]]]] :> 
-                SystemOpen[AppManagerPalette`Private`n]], {
+                 SystemOpen[AppManagerPalette`Private`n]]], {
                AppManagerPalette`Private`n, 
-                SortBy[FileNameDepth][
-                 Select[Or[
-                   StringContainsQ[#, "__Future__"], 
-                   Not[
+                (
+                With[{AppManagerPalette`Private`pat = #, 
+                  AppManagerPalette`Private`path = {
+                    SlotSequence[2]}}, 
+                 Flatten[
+                  Riffle[
+                   (GatherBy[#, FileNameTake[
+                    FileNameDrop[
+                    FileNameDrop[#, 
+                    FileNameDepth[
+                    BTools`AppDirectory[
+                    AppManagerPalette`Private`currentApp, 
+                    Apply[Sequence, AppManagerPalette`Private`path]]]]], 
+                    1]& ]& )[
+                    SortBy[FileNameDepth[#] + 30 Boole[
+                    StringContainsQ[#, 
+                    StringExpression["__", 
+                    Repeated[
+                    Alternatives[WordCharacter, " ", "$"]], "__"]]]& ][
+                    Select[Or[
+                    StringContainsQ[#, "__Future__"], 
+                    Not[
                     StringContainsQ[#, 
                     StringExpression["__", 
                     Repeated[
                     Alternatives[WordCharacter, " ", "$"]], "__"]]]]& ][
-                  FileNames["*.nb", 
-                   BTools`AppDirectory[
-                   AppManagerPalette`Private`currentApp, "Packages"], 
-                   Infinity]]]}]], 
+                    FileNames[#, 
+                    BTools`AppDirectory[
+                    AppManagerPalette`Private`currentApp, 
+                    SlotSequence[2]], Infinity]]]], Delimiter]]]& )[
+                "*.nb", "Packages"]}]], 
             FilterRules[{Enabled -> Length[
                  Join[
                   FileNames[
@@ -3959,23 +4073,53 @@ sE9G7JP//mn9Mf+vNt9hRD/zDScVLRQ=
              Table[
                
                With[{AppManagerPalette`Private`n = 
-                 AppManagerPalette`Private`n}, (StringJoin[
-                  Riffle[
-                   FileNameSplit[#], 
-                   "\[VeryThinSpace]\[RightGuillemet]\[VeryThinSpace]"]]& )[
-                  FileNameDrop[
-                   FileNameJoin[{
+                 AppManagerPalette`Private`n}, 
+                If[
+                AppManagerPalette`Private`n === Delimiter, 
+                 AppManagerPalette`Private`n, (StringJoin[
+                   Riffle[
+                    FileNameSplit[#], 
+                    "\[VeryThinSpace]\[RightGuillemet]\[VeryThinSpace]"]]& )[
+                   FileNameDrop[
+                    FileNameJoin[{
                     DirectoryName[AppManagerPalette`Private`n], 
                     FileBaseName[AppManagerPalette`Private`n]}], 
-                   FileNameDepth[
+                    FileNameDepth[
                     BTools`AppDirectory[
                     AppManagerPalette`Private`currentApp, "FrontEnd"]]]] :> 
-                SystemOpen[AppManagerPalette`Private`n]], {
+                 SystemOpen[AppManagerPalette`Private`n]]], {
                AppManagerPalette`Private`n, 
-                FileNames["*.nb", 
-                 BTools`AppDirectory[
-                 AppManagerPalette`Private`currentApp, "FrontEnd"], 
-                 Infinity]}]], 
+                (
+                With[{AppManagerPalette`Private`pat = #, 
+                  AppManagerPalette`Private`path = {
+                    SlotSequence[2]}}, 
+                 Flatten[
+                  Riffle[
+                   (GatherBy[#, FileNameTake[
+                    FileNameDrop[
+                    FileNameDrop[#, 
+                    FileNameDepth[
+                    BTools`AppDirectory[
+                    AppManagerPalette`Private`currentApp, 
+                    Apply[Sequence, AppManagerPalette`Private`path]]]]], 
+                    1]& ]& )[
+                    SortBy[FileNameDepth[#] + 30 Boole[
+                    StringContainsQ[#, 
+                    StringExpression["__", 
+                    Repeated[
+                    Alternatives[WordCharacter, " ", "$"]], "__"]]]& ][
+                    Select[Or[
+                    StringContainsQ[#, "__Future__"], 
+                    Not[
+                    StringContainsQ[#, 
+                    StringExpression["__", 
+                    Repeated[
+                    Alternatives[WordCharacter, " ", "$"]], "__"]]]]& ][
+                    FileNames[#, 
+                    BTools`AppDirectory[
+                    AppManagerPalette`Private`currentApp, 
+                    SlotSequence[2]], Infinity]]]], Delimiter]]]& )[
+                "*.nb", "FrontEnd"]}]], 
             FilterRules[{Enabled -> Length[
                  FileNames["*.nb", 
                   BTools`AppDirectory[
@@ -4061,24 +4205,53 @@ sE9G7JP//mn9Mf+vNt9hRD/zDScVLRQ=
                Table[
                 
                 With[{AppManagerPalette`Private`n = 
-                  AppManagerPalette`Private`n}, (StringJoin[
-                   Riffle[
+                  AppManagerPalette`Private`n}, 
+                 If[
+                 AppManagerPalette`Private`n === Delimiter, 
+                  AppManagerPalette`Private`n, (StringJoin[
+                    Riffle[
                     FileNameSplit[#], 
                     "\[VeryThinSpace]\[RightGuillemet]\[VeryThinSpace]"]]& )[
-                   FileNameDrop[
+                    FileNameDrop[
                     FileNameJoin[{
                     DirectoryName[AppManagerPalette`Private`n], 
                     FileBaseName[AppManagerPalette`Private`n]}], 
                     FileNameDepth[
                     BTools`AppDirectory[
                     AppManagerPalette`Private`currentApp, "Private"]]]] :> 
-                 SystemOpen[AppManagerPalette`Private`n]], {
+                  SystemOpen[AppManagerPalette`Private`n]]], {
                 AppManagerPalette`Private`n, 
-                 SortBy[FileNameDepth][
-                  FileNames["*.nb", 
-                   BTools`AppDirectory[
-                   AppManagerPalette`Private`currentApp, "Private"], 
-                   Infinity]]}], {}]], 
+                 (
+                 With[{AppManagerPalette`Private`pat = #, 
+                   AppManagerPalette`Private`path = {
+                    SlotSequence[2]}}, 
+                  Flatten[
+                   Riffle[
+                    (GatherBy[#, FileNameTake[
+                    FileNameDrop[
+                    FileNameDrop[#, 
+                    FileNameDepth[
+                    BTools`AppDirectory[
+                    AppManagerPalette`Private`currentApp, 
+                    Apply[Sequence, AppManagerPalette`Private`path]]]]], 
+                    1]& ]& )[
+                    SortBy[FileNameDepth[#] + 30 Boole[
+                    StringContainsQ[#, 
+                    StringExpression["__", 
+                    Repeated[
+                    Alternatives[WordCharacter, " ", "$"]], "__"]]]& ][
+                    Select[Or[
+                    StringContainsQ[#, "__Future__"], 
+                    Not[
+                    StringContainsQ[#, 
+                    StringExpression["__", 
+                    Repeated[
+                    Alternatives[WordCharacter, " ", "$"]], "__"]]]]& ][
+                    FileNames[#, 
+                    BTools`AppDirectory[
+                    AppManagerPalette`Private`currentApp, 
+                    SlotSequence[2]], Infinity]]]], Delimiter]]]& )[
+                 "*.nb", "Private"]}], {}]], 
             FilterRules[{Enabled -> Length[
                  FileNames["*.nb", 
                   BTools`AppDirectory[
@@ -4162,11 +4335,12 @@ sE9G7JP//mn9Mf+vNt9hRD/zDScVLRQ=
                    Cell[
                     RowBox[{"<|", "\n", "\n", "\t|>"}], "Code"], 
                    StyleDefinitions -> "Package.nb"]}, 
-                BTools`MakeIndentable[AppManagerPalette`Private`doc, "Code"]],
-               "Text" :> CreateDocument[{}, StyleDefinitions -> "Notepad.nb"],
-               "Script" :> 
-              CreateDocument[{}, StyleDefinitions -> "Script.nb"], "Testing" :> 
-              CreateDocument[
+                BTools`FrontEnd`MakeIndentable[
+                AppManagerPalette`Private`doc, "Code"]], "Text" :> 
+              CreateDocument[{}, StyleDefinitions -> "Notepad.nb"], "Script" :> 
+              CreateDocument[{}, StyleDefinitions -> "Script.nb"], "Palette" :> 
+              BTools`PaletteTemplateNotebook[], "HTML" :> 
+              BTools`Web`HTMLTemplateNotebook[], "Testing" :> CreateDocument[
                 BTools`AppGenerateTestingNotebook[
                 AppManagerPalette`Private`currentApp]]}, Appearance -> 
              None, {}]}], 
@@ -4231,24 +4405,28 @@ sE9G7JP//mn9Mf+vNt9hRD/zDScVLRQ=
               "Directories" :> (
                BTools`AppRegenerateDirectories[
                 AppManagerPalette`Private`currentApp]; SystemOpen[
-                 BTools`AppDirectory[AppManagerPalette`Private`currentApp]])},
-              Appearance -> None, {}]}], 
+                 BTools`AppDirectory[AppManagerPalette`Private`currentApp]]), 
+              "LoadInfo" :> SystemOpen[
+                BTools`AppRegenerateLoadInfo[
+                AppManagerPalette`Private`currentApp]]}, Appearance -> 
+             None, {}]}], 
           EventHandler[
            Button[
             Style["Git Commit", 
              GrayLevel[0.2]], 
             CheckAbort[
              AppManagerPalette`Private`paletteButtonRunning[
-                "bdf3aa00-25cc-4180-8c44-87c3367d9d1f"] = True; CheckAbort[
+                "d74c539c-8f8a-46e6-8dd7-193e26d46ef7"] = True; 
+              Needs["BTools`"]; CheckAbort[
                 BTools`AppGitCommit[AppManagerPalette`Private`currentApp], 
                 AppManagerPalette`Private`paletteButtonRunning[
-                 "bdf3aa00-25cc-4180-8c44-87c3367d9d1f"] = False]; 
+                 "d74c539c-8f8a-46e6-8dd7-193e26d46ef7"] = False]; 
               AppManagerPalette`Private`paletteButtonRunning[
-                "bdf3aa00-25cc-4180-8c44-87c3367d9d1f"] = False, 
+                "d74c539c-8f8a-46e6-8dd7-193e26d46ef7"] = False, 
               BTools`Private`UUIDActive[
-               "Button-c4e07d88-facd-4335-bad5-f35ce9f59630"] = False]; 
+               "Button-757a9876-1620-4320-8ea9-be937d8b30df"] = False]; 
             BTools`Private`UUIDActive[
-              "Button-c4e07d88-facd-4335-bad5-f35ce9f59630"] = False, 
+              "Button-757a9876-1620-4320-8ea9-be937d8b30df"] = False, 
             Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -4277,7 +4455,7 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-c4e07d88-facd-4335-bad5-f35ce9f59630"]], "Pressed", 
+                 "Button-757a9876-1620-4320-8ea9-be937d8b30df"]], "Pressed", 
                 Automatic]]}, Method -> "Queued", 
             FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
             Appearance -> {"Palette", 
@@ -4285,11 +4463,11 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-c4e07d88-facd-4335-bad5-f35ce9f59630"]], "Pressed", 
+                 "Button-757a9876-1620-4320-8ea9-be937d8b30df"]], "Pressed", 
                 Automatic]]}], {
            "MouseClicked" :> (
              BTools`Private`UUIDActive[
-              "Button-c4e07d88-facd-4335-bad5-f35ce9f59630"] = True), 
+              "Button-757a9876-1620-4320-8ea9-be937d8b30df"] = True), 
             PassEventsDown -> True}], 
           Row[{
             Button[
@@ -4962,18 +5140,19 @@ UVdVBS7LErWUErUQAlwUBWrO+aIZY7MJpRT+Mmdfqc/QmA==
              GrayLevel[0.2]], 
             CheckAbort[
              AppManagerPalette`Private`paletteButtonRunning[
-                "2413a0bb-b365-4c28-b3bf-2fa854252ec5"] = True; CheckAbort[
+                "cad176a7-e93a-4e36-8ff5-d3a0a8ed4f80"] = True; 
+              Needs["BTools`"]; CheckAbort[
                 SystemOpen[
                  BTools`AppRegenerateDocInfo[
                  AppManagerPalette`Private`currentApp]], 
                 AppManagerPalette`Private`paletteButtonRunning[
-                 "2413a0bb-b365-4c28-b3bf-2fa854252ec5"] = False]; 
+                 "cad176a7-e93a-4e36-8ff5-d3a0a8ed4f80"] = False]; 
               AppManagerPalette`Private`paletteButtonRunning[
-                "2413a0bb-b365-4c28-b3bf-2fa854252ec5"] = False, 
+                "cad176a7-e93a-4e36-8ff5-d3a0a8ed4f80"] = False, 
               BTools`Private`UUIDActive[
-               "Button-9f853789-fc7d-497f-aa6e-3247b64ad6a1"] = False]; 
+               "Button-0e0d2d5f-5ea5-4c1e-b8b2-e4dfbd19374f"] = False]; 
             BTools`Private`UUIDActive[
-              "Button-9f853789-fc7d-497f-aa6e-3247b64ad6a1"] = False, 
+              "Button-0e0d2d5f-5ea5-4c1e-b8b2-e4dfbd19374f"] = False, 
             Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -5002,7 +5181,7 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-9f853789-fc7d-497f-aa6e-3247b64ad6a1"]], "Pressed", 
+                 "Button-0e0d2d5f-5ea5-4c1e-b8b2-e4dfbd19374f"]], "Pressed", 
                 Automatic]]}, Method -> "Queued", 
             FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
             Appearance -> {"Palette", 
@@ -5010,11 +5189,11 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-9f853789-fc7d-497f-aa6e-3247b64ad6a1"]], "Pressed", 
+                 "Button-0e0d2d5f-5ea5-4c1e-b8b2-e4dfbd19374f"]], "Pressed", 
                 Automatic]]}], {
            "MouseClicked" :> (
              BTools`Private`UUIDActive[
-              "Button-9f853789-fc7d-497f-aa6e-3247b64ad6a1"] = True), 
+              "Button-0e0d2d5f-5ea5-4c1e-b8b2-e4dfbd19374f"] = True), 
             PassEventsDown -> True}], 
           EventHandler[
            Button[
@@ -5022,18 +5201,19 @@ mEXTyg==
              GrayLevel[0.2]], 
             CheckAbort[
              AppManagerPalette`Private`paletteButtonRunning[
-                "2e0317f9-fbaf-4ff7-8aca-17996d6ab22b"] = True; CheckAbort[
+                "bbf16b96-ef3f-4ba6-b2f3-c8a38410190f"] = True; 
+              Needs["BTools`"]; CheckAbort[
                 AppManagerPalette`Private`paletteDialog[
                  BTools`AppIndexDocs[AppManagerPalette`Private`currentApp], 
                  "Indexing documentation"], 
                 AppManagerPalette`Private`paletteButtonRunning[
-                 "2e0317f9-fbaf-4ff7-8aca-17996d6ab22b"] = False]; 
+                 "bbf16b96-ef3f-4ba6-b2f3-c8a38410190f"] = False]; 
               AppManagerPalette`Private`paletteButtonRunning[
-                "2e0317f9-fbaf-4ff7-8aca-17996d6ab22b"] = False, 
+                "bbf16b96-ef3f-4ba6-b2f3-c8a38410190f"] = False, 
               BTools`Private`UUIDActive[
-               "Button-74af4469-d21e-4c51-aa9a-821173cec03c"] = False]; 
+               "Button-96672ea1-45aa-4abc-8ce1-7d6bf8cf68a7"] = False]; 
             BTools`Private`UUIDActive[
-              "Button-74af4469-d21e-4c51-aa9a-821173cec03c"] = False, 
+              "Button-96672ea1-45aa-4abc-8ce1-7d6bf8cf68a7"] = False, 
             Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -5062,7 +5242,7 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-74af4469-d21e-4c51-aa9a-821173cec03c"]], "Pressed", 
+                 "Button-96672ea1-45aa-4abc-8ce1-7d6bf8cf68a7"]], "Pressed", 
                 Automatic]]}, Method -> "Queued", 
             FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
             Appearance -> {"Palette", 
@@ -5070,11 +5250,11 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-74af4469-d21e-4c51-aa9a-821173cec03c"]], "Pressed", 
+                 "Button-96672ea1-45aa-4abc-8ce1-7d6bf8cf68a7"]], "Pressed", 
                 Automatic]]}], {
            "MouseClicked" :> (
              BTools`Private`UUIDActive[
-              "Button-74af4469-d21e-4c51-aa9a-821173cec03c"] = True), 
+              "Button-96672ea1-45aa-4abc-8ce1-7d6bf8cf68a7"] = True), 
             PassEventsDown -> True}], 
           Panel[
           "", ImageSize -> {190, 1}, ImageMargins -> 5, Appearance -> 
@@ -5630,8 +5810,9 @@ sE9G7JP//mn9Mf+vNt9hRD/zDScVLRQ=
                    Map[AppManagerPalette`Private`addContent["Guides", #, 
                     AppManagerPalette`Private`currentExtensionPath[
                     "Guides", #], False]& , 
-                    Block[{
-                    BTools`$DocActive = AppManagerPalette`Private`currentApp}, 
+                    
+                    Block[{BTools`$DocActive = 
+                    AppManagerPalette`Private`currentApp}, 
                     BTools`GenerateGuide[
                     CreateDocument[
                     BTools`AppPackageGuideNotebook[
@@ -6118,20 +6299,20 @@ UVdVBS7LErWUErUQAlwUBWrO+aIZY7MJpRT+Mmdfqc/QmA==
              GrayLevel[0.2]], 
             CheckAbort[
              AppManagerPalette`Private`paletteButtonRunning[
-                "1ab8e186-3685-43ed-ba60-8feffd7d1de9"] = True; 
-              CheckAbort[Quiet[
+                "7a8c83f9-b986-45cb-9ba8-00989d0100d7"] = True; 
+              Needs["BTools`"]; CheckAbort[Quiet[
                   BTools`AppGitHubPush[AppManagerPalette`Private`currentApp]]; 
                 SystemOpen[
                   BTools`Private`AppGitHubRepo[
                   AppManagerPalette`Private`currentApp, None]], 
                 AppManagerPalette`Private`paletteButtonRunning[
-                 "1ab8e186-3685-43ed-ba60-8feffd7d1de9"] = False]; 
+                 "7a8c83f9-b986-45cb-9ba8-00989d0100d7"] = False]; 
               AppManagerPalette`Private`paletteButtonRunning[
-                "1ab8e186-3685-43ed-ba60-8feffd7d1de9"] = False, 
+                "7a8c83f9-b986-45cb-9ba8-00989d0100d7"] = False, 
               BTools`Private`UUIDActive[
-               "Button-9395652a-99ef-4aec-8e69-c4272db00f36"] = False]; 
+               "Button-22cf7d55-0d22-4304-b752-fd8ad9ee862e"] = False]; 
             BTools`Private`UUIDActive[
-              "Button-9395652a-99ef-4aec-8e69-c4272db00f36"] = False, 
+              "Button-22cf7d55-0d22-4304-b752-fd8ad9ee862e"] = False, 
             Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -6160,7 +6341,7 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-9395652a-99ef-4aec-8e69-c4272db00f36"]], "Pressed", 
+                 "Button-22cf7d55-0d22-4304-b752-fd8ad9ee862e"]], "Pressed", 
                 Automatic]]}, Method -> "Queued", 
             FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
             Appearance -> {"Palette", 
@@ -6168,11 +6349,11 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-9395652a-99ef-4aec-8e69-c4272db00f36"]], "Pressed", 
+                 "Button-22cf7d55-0d22-4304-b752-fd8ad9ee862e"]], "Pressed", 
                 Automatic]]}], {
            "MouseClicked" :> (
              BTools`Private`UUIDActive[
-              "Button-9395652a-99ef-4aec-8e69-c4272db00f36"] = True), 
+              "Button-22cf7d55-0d22-4304-b752-fd8ad9ee862e"] = True), 
             PassEventsDown -> True}], 
           EventHandler[
            Button[
@@ -6180,18 +6361,19 @@ mEXTyg==
              GrayLevel[0.2]], 
             CheckAbort[
              AppManagerPalette`Private`paletteButtonRunning[
-                "3017fb5a-9e99-4806-a649-69e4a74221f4"] = True; CheckAbort[
+                "af5d8130-78af-431d-aca1-47463d528d9e"] = True; 
+              Needs["BTools`"]; CheckAbort[
                 Quiet[
                  BTools`AppGitHubConfigure[
                  AppManagerPalette`Private`currentApp]], 
                 AppManagerPalette`Private`paletteButtonRunning[
-                 "3017fb5a-9e99-4806-a649-69e4a74221f4"] = False]; 
+                 "af5d8130-78af-431d-aca1-47463d528d9e"] = False]; 
               AppManagerPalette`Private`paletteButtonRunning[
-                "3017fb5a-9e99-4806-a649-69e4a74221f4"] = False, 
+                "af5d8130-78af-431d-aca1-47463d528d9e"] = False, 
               BTools`Private`UUIDActive[
-               "Button-1f0ed948-071c-4462-b73d-5cba89ff471f"] = False]; 
+               "Button-b8490908-5ae9-4fc2-a756-41aafe7e032a"] = False]; 
             BTools`Private`UUIDActive[
-              "Button-1f0ed948-071c-4462-b73d-5cba89ff471f"] = False, 
+              "Button-b8490908-5ae9-4fc2-a756-41aafe7e032a"] = False, 
             Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -6220,7 +6402,7 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-1f0ed948-071c-4462-b73d-5cba89ff471f"]], "Pressed", 
+                 "Button-b8490908-5ae9-4fc2-a756-41aafe7e032a"]], "Pressed", 
                 Automatic]]}, Method -> "Queued", 
             FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
             Appearance -> {"Palette", 
@@ -6228,11 +6410,11 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-1f0ed948-071c-4462-b73d-5cba89ff471f"]], "Pressed", 
+                 "Button-b8490908-5ae9-4fc2-a756-41aafe7e032a"]], "Pressed", 
                 Automatic]]}], {
            "MouseClicked" :> (
              BTools`Private`UUIDActive[
-              "Button-1f0ed948-071c-4462-b73d-5cba89ff471f"] = True), 
+              "Button-b8490908-5ae9-4fc2-a756-41aafe7e032a"] = True), 
             PassEventsDown -> True}], 
           EventHandler[
            Button[
@@ -6240,18 +6422,19 @@ mEXTyg==
              GrayLevel[0.2]], 
             CheckAbort[
              AppManagerPalette`Private`paletteButtonRunning[
-                "85518711-7dd5-4150-b97a-a64c352b9625"] = True; CheckAbort[
+                "c9317ba0-4436-49f9-8b0c-1a6538c66908"] = True; 
+              Needs["BTools`"]; CheckAbort[
                 Quiet[
                  BTools`AppGitHubDelete[
                  AppManagerPalette`Private`currentApp]], 
                 AppManagerPalette`Private`paletteButtonRunning[
-                 "85518711-7dd5-4150-b97a-a64c352b9625"] = False]; 
+                 "c9317ba0-4436-49f9-8b0c-1a6538c66908"] = False]; 
               AppManagerPalette`Private`paletteButtonRunning[
-                "85518711-7dd5-4150-b97a-a64c352b9625"] = False, 
+                "c9317ba0-4436-49f9-8b0c-1a6538c66908"] = False, 
               BTools`Private`UUIDActive[
-               "Button-67892baa-f0b3-4f34-ae9b-e47515bd57b8"] = False]; 
+               "Button-d729cdfa-5981-47ca-9029-f1aae032cb24"] = False]; 
             BTools`Private`UUIDActive[
-              "Button-67892baa-f0b3-4f34-ae9b-e47515bd57b8"] = False, 
+              "Button-d729cdfa-5981-47ca-9029-f1aae032cb24"] = False, 
             Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -6280,7 +6463,7 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-67892baa-f0b3-4f34-ae9b-e47515bd57b8"]], "Pressed", 
+                 "Button-d729cdfa-5981-47ca-9029-f1aae032cb24"]], "Pressed", 
                 Automatic]]}, Method -> "Queued", 
             FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
             Appearance -> {"Palette", 
@@ -6288,11 +6471,11 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-67892baa-f0b3-4f34-ae9b-e47515bd57b8"]], "Pressed", 
+                 "Button-d729cdfa-5981-47ca-9029-f1aae032cb24"]], "Pressed", 
                 Automatic]]}], {
            "MouseClicked" :> (
              BTools`Private`UUIDActive[
-              "Button-67892baa-f0b3-4f34-ae9b-e47515bd57b8"] = True), 
+              "Button-d729cdfa-5981-47ca-9029-f1aae032cb24"] = True), 
             PassEventsDown -> True}], 
           Panel[
           "", ImageSize -> {190, 1}, ImageMargins -> 5, Appearance -> 
@@ -6569,7 +6752,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDScVLRQ=
  ShowStringCharacters->False,
  FontFamily:>CurrentValue["PanelFontFamily"],
  FontSize:>CurrentValue[
-  "PanelFontSize"],ExpressionUUID->"03822e4d-342e-4500-9fca-825f2d36365f"]
+  "PanelFontSize"],ExpressionUUID->"532c71ff-580b-44f7-9643-48fe758dcd13"]
 },
 WindowSize->{All, 
   Scaled[1]},
@@ -6591,8 +6774,8 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[584, 21, 340663, 6550, 858, InheritFromParent, "ExpressionUUID" -> \
-"03822e4d-342e-4500-9fca-825f2d36365f",
+Cell[584, 21, 348857, 6733, 858, InheritFromParent, "ExpressionUUID" -> \
+"532c71ff-580b-44f7-9643-48fe758dcd13",
  PageBreakAbove->True,
  PageBreakWithin->False]
 }

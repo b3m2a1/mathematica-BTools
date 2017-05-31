@@ -118,7 +118,7 @@ If[$pacletConfigLoaded//TrueQ//Not,
 	$PacletBuildDirectory:=FileNameJoin@{$PacletBuildRoot,$PacletBuildExtension};
 	Replace[
 		SelectFirst[
-			`Package`appPath["Private","PacletConfig."<>#]&/@{"m","wl"},
+			`Package`PackageFilePath["Private","PacletConfig."<>#]&/@{"m","wl"},
 			FileExistsQ
 			],
 			f_String:>Get@f
@@ -391,7 +391,7 @@ PacletExpression[ops:OptionsPattern[]]:=
 			];
 
 
-PacletExpression[dir]~~`Package`addUsage~~
+PacletExpression[dir]~~`Package`PackageAddUsage~~
 	"generates a Paclet expression from dir";
 PacletExpression[
 	dest_String?DirectoryQ,
@@ -464,7 +464,7 @@ PacletExpression[
 
 Options[PacletExpressionBundle]=
 	Options[PacletExpression];
-PacletExpressionBundle[paclet,dest]~~`Package`addUsage~~
+PacletExpressionBundle[paclet,dest]~~`Package`PackageAddUsage~~
 	"bundles paclet into a PacletInfo.m file in dest";
 PacletExpressionBundle[
 	paclet_PacletManager`Paclet,
@@ -711,7 +711,7 @@ pacletSiteMExtract[mzFile_,dirExt_:Automatic]:=
 
 Options[PacletSiteInfo]=
 	Options[PacletSiteFiles];
-(*PacletSiteInfo[specs]~~`Package`addUsage~~
+(*PacletSiteInfo[specs]~~`Package`PackageAddUsage~~
 	"extracts the PacletSite info stored in specs";*)
 PacletSiteInfo[infoFiles_,ops:OptionsPattern[]]:=
 	With[{
@@ -816,9 +816,9 @@ PacletSiteInfo[infoFiles_,ops:OptionsPattern[]]:=
 PacletSiteInfoDataset::usages="";
 
 
-PacletSiteInfoDataset[site]~`Package`addUsage~
+PacletSiteInfoDataset[site]~`Package`PackageAddUsage~
 	"formats a Dataset from the PacletInfo in site";
-PacletSiteInfoDataset[files]~`Package`addUsage~
+PacletSiteInfoDataset[files]~`Package`PackageAddUsage~
 	"formats from the PacletSiteInfo in files";
 
 
@@ -837,7 +837,7 @@ Options[PacletSiteBundle]=
 		},
 		Options@PacletSiteInfo
 		];
-PacletSiteBundle[infoFiles]~~`Package`addUsage~~
+PacletSiteBundle[infoFiles]~~`Package`PackageAddUsage~~
 	"bundles the PacletInfo.m files found in infoFiles into a compressed PacletSite file";
 PacletSiteBundle[
 	infoFiles:pacletFilePatterns|{pacletFilePatterns...},
@@ -876,7 +876,7 @@ PacletSiteBundle[
 		];
 
 
-PacletBundle[dir]~`Package`addUsage~
+PacletBundle[dir]~`Package`PackageAddUsage~
 	"creates a .paclet file from dir and places it in the default build directory";
 Options[PacletBundle]={
 	"RemovePaths"->{},
@@ -1530,7 +1530,7 @@ Options[PacletUpload]=
 				}
 			];
 PacletUpload::nopac="Unable to find paclet files ``";
-PacletUpload[pacletFiles]~~`Package`addUsage~~
+PacletUpload[pacletFiles]~~`Package`PackageAddUsage~~
 	"uploads pacletFiles to the specified server and configures installers";
 PacletUpload[
 	pacletSpecs:pacletPossiblePatterns,

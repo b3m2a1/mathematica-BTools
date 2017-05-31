@@ -229,11 +229,20 @@ Begin["`Private`"];
 
 
 
-$AppDirectoryRoot=
-	Nest[ParentDirectory,`Package`$PackageDirectory,2];
-$AppDirectoryName="Applications";
-$AppDirectory:=
-	FileNameJoin@{$AppDirectoryRoot,$AppDirectoryName};
+If[$appBuilderConfigLoaded//TrueQ//Not,
+	$AppDirectoryRoot=$UserBaseDirectory;
+	$AppDirectoryName="Applications";
+	$AppDirectory:=
+		FileNameJoin@{$AppDirectoryRoot,$AppDirectoryName};
+	Replace[
+		SelectFirst[
+			`Package`PackageFilePath["Private","AppBuilderConfig."<>#]&/@{"m","wl"},
+			FileExistsQ
+			],
+			f_String:>Get@f
+		]
+	];
+$appBuilderConfigLoaded=True
 
 
 (* ::Subsubsection::Closed:: *)
@@ -450,38 +459,39 @@ $appInitStrings:=
 				}]&/@
 				FileNames[
 					"*.wl",
-					`Package`appPath[
+					`Package`PackageFilePath[
 						"Packages",
-						"__Init Templates__"
+						"__Templates__",
+						"Initialization"
 						]
 					]
 			]
 
 
 appInitTemplate[pkg_]:=
-With[{strings=$appInitStrings},
-	TemplateApply[
-		TemplateApply[strings["__init__"],<|
-			"cores"->
-				StringRiffle[StringTrim/@{
-					strings["Constants"],
-					strings["Paths"],
-					strings["Loading"],
-					strings["Autocomplete"],
-					strings["SyntaxInformation"],
-					strings["Usage"],
-					strings["FrontEnd"],
-					strings["Objects"]
-					},
-					"\n"
-					],
-			"tick"->"`tick`",
-			"name"->"`name`"
-			|>],<|
-		"name"->pkg,
-		"tick"->"`"
-		|>]
-	];
+	With[{strings=$appInitStrings},
+		TemplateApply[
+			TemplateApply[strings["__init__"],<|
+				"cores"->
+					StringRiffle[StringTrim/@{
+						strings["Constants"],
+						strings["Paths"],
+						strings["Loading"],
+						strings["Autocomplete"],
+						strings["SyntaxInformation"],
+						strings["Usage"],
+						strings["FrontEnd"],
+						strings["Objects"]
+						},
+						"\n"
+						],
+				"tick"->"`tick`",
+				"name"->"`name`"
+				|>],<|
+			"name"->pkg,
+			"tick"->"`"
+			|>]
+		];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -489,7 +499,7 @@ With[{strings=$appInitStrings},
 
 
 
-AppRegenerateInit[name]~`Package`addUsage~
+AppRegenerateInit[name]~`Package`PackageAddUsage~
 	"regenerates the main package .m file for the application name";
 AppRegenerateInit[name_String]:=
 	With[{
@@ -1065,17 +1075,15 @@ AppRegenerateBundleInfo[app_String,ops:OptionsPattern[]]:=
 Options[AppRegenerateLoadInfo]=
 	{
 		"PreLoad"-> None,
-		"Hidden" -> {}
+		"Hidden" -> {},
+		"HiddenContexts"->None
 		};
 AppRegenerateLoadInfo[app_String,ops:OptionsPattern[]]:=
 	Export[AppPath[app,"LoadInfo.m"],
 		DeleteDuplicatesBy[First]@
 			Flatten@{
 				ops,
-				{
-					"PreLoad"-> None,
-					"Hidden" -> {}
-					}
+				Options@AppRegenerateLoadInfo
 			}
 		];
 
@@ -1824,15 +1832,84 @@ AppGitHubDelete[appName_:Automatic]:=
 
 
 AppGet[appName_,pkgName_String]:=
-	With[{app=AppFromFile[appName]},
-		BeginPackage[app<>"`"];
-		CheckAbort[
-			Get@AppPath[app,"Packages",
-				StringTrim[pkgName,".m"]<>".m"],
-			EndPackage[]
+	With[{
+		app=AppFromFile[appName],
+		cont=$Context
+		},
+		If[DirectoryQ@AppPath[app,"Packages",pkgName],
+			BeginPackage[app<>"`"];
+			Begin["`"<>StringTrim[StringReplace[pkgName,$PathnameSeparator->"`"],"`"]<>"`"];
+			FrontEnd`Private`GetUpdatedSymbolContexts[];
+			EndPackage[],
+			With[{
+				pkg=
+					SelectFirst[
+						SortBy[FileNameDepth]@
+							FileNames[
+								StringTrim[pkgName,".m"]<>".m",
+								AppPath[app,"Packages"],
+								Infinity
+								],
+						FileExistsQ
+						]
+				},
+				If[FileExistsQ@pkg,
+					With[{
+						pkCont=
+							StringReplace[
+								app<>"`"<>
+									StringReplace[
+										FileNameDrop[DirectoryName@pkg,
+											FileNameDepth@AppDirectory[app,"Packages"]],
+										$PathnameSeparator->"`"
+										]<>"`",
+								"``"->"`"
+								]
+						},
+						BeginPackage[pkCont]
+						];
+					$ContextPath=
+						DeleteDuplicates@
+							Join[`Package`$PackageContexts,$ContextPath];
+					CheckAbort[
+						Get@pkg;
+						EndPackage[],
+						EndPackage[];
+						Catch[
+							Catch[
+								Do[
+									If[i<100,
+										If[$Context===cont,Throw[$Context,"success"],End[]],
+										Throw[$Failed,"fail"]
+										],
+									{i,1000}
+									],
+								"fail",
+								Begin[cont]&
+								],
+							"success"
+							];
+						]
+					]
+				]
 			];
-		EndPackage[];
+		Catch[
+			Catch[
+				Do[
+					If[i<100,
+						If[$Context===cont,Throw[$Context,"success"],End[]],
+						Throw[$Failed,"fail"]
+						],
+					{i,1000}
+					],
+				"fail",
+				Begin[cont]&
+				],
+			"success"
+			];
 		];
+AppGet[appName_,pkgName:{__String}]:=
+	AppGet[appName,FileNameJoin@pkgName];
 AppGet[appName_,Optional[Automatic,Automatic]]:=
 	AppGet[appName,FileBaseName@NotebookFileName[]];
 AppGet[Optional[Automatic,Automatic]]:=

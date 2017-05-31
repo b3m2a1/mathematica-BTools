@@ -4,6 +4,8 @@
 	"PreLoad"-> None,
 	"Hidden" -> {
 		"FormattingTools",
-		"FETools"
-		}
+		"FETools",
+		"ChromeTools"
+		},
+	"HiddenContexts"->None
 	}
