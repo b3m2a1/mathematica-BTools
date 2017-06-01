@@ -5,7 +5,8 @@
 	"Hidden" -> {
 		"FormattingTools",
 		"FETools",
-		"ChromeTools"
+		"SearchTools",
+		"GraphTools"
 		},
 	"HiddenContexts"->None
 	}

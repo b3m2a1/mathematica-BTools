@@ -1787,21 +1787,16 @@ AppGitHubConfigure[appName_:Automatic]:=
 
 
 
-With[{sym=
-	Extract[PackagePathSymbol["APIs","Private",$GitHubEncodePassword],
-		1,Unevaluated]
-	},
-	AppGitHubPush[appName_:Automatic]:=
-		With[{app=AppFromFile[appName]},
-			If[GitRepoQ@AppDirectory[app],
-				Block[{sym=True},
-					GitPush[AppDirectory[app],
-						AppGitHubRepo[appName,Automatic]
-						]
+AppGitHubPush[appName_:Automatic]:=
+	With[{app=AppFromFile[appName]},
+		If[GitRepoQ@AppDirectory[app],
+			Block[{$GitHubEncodePassword=True},
+				GitPush[AppDirectory[app],
+					AppGitHubRepo[appName,Automatic]
 					]
 				]
 			]
-	];
+		];
 
 
 (* ::Subsubsection::Closed:: *)

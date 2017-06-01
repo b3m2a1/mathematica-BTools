@@ -31,12 +31,14 @@ CustomServiceConnection::ifkey="Import function `` missing keys ``";
 Options[customServiceConnectionImportFunction]:=
 	{
 		"URL"->None,
-		"Method"->None,
+		"Method"->"GET",
+		"Body"->None,
 		"Headers"->None,
 		"Path"->None,
 		"Parameters"->None,
 		"Required"->None,
-		"Function"->None
+		"Function"->None,
+		"Permissions"
 		};
 customServiceConnectionImportFunction[name_,ops:OptionsPattern[]]:=
 	With[
@@ -49,14 +51,30 @@ customServiceConnectionImportFunction[name_,ops:OptionsPattern[]]:=
 			},
 		With[{
 			function=
-				KeyMap[
-					Replace[{
-						"Method"->"HTTPSMethod",
-						"Path"->"PathParameters",
-						"Required"->"RequiredParameters",
-						"Function"->"ResultsFunction"
-						}],
-					basic
+				Join[
+					DeleteCases[{}]@
+						<|
+							"BodyData"->
+								Cases[Lookup[basic,"Body",{}],_String|_Rule],
+							"MultipartData"->
+								Cases[Lookup[basic,"Body",{}],_List]
+							|>,
+					KeyDrop[
+						KeyMap[
+							Replace[{
+								"Method"->"HTTPSMethod",
+								"Path"->"PathParameters",
+								"Required"->"RequiredParameters",
+								"Function"->"ResultsFunction",
+								"Permissions"->"RequiredPermisssions"
+								}],
+							If[!(KeyMemberQ[basic,"Method"]&&KeyMemberQ[basic,"HTTPSMethod"]),
+								Append["Method"->OptionValue["Method"]],
+								Identity
+								]@basic
+							],
+						"Body"
+						]
 					]
 			},
 			Replace[
@@ -120,7 +138,7 @@ customServiceTemplateExport[
 	params_
 	]:=
 	With[{
-		tf=PackageFileName[
+		tf=PackageFilePath[
 			"Packages",
 			"__Templates__",
 			"$ServiceConnection",
@@ -151,14 +169,25 @@ customServiceTemplateExport[
 								_Function,
 									"("<>ToString[#2,InputForm]<>")",
 								_,
-									If[ListQ@obj&&Length@obj>0,
-										"\n"<>
-											FrontEndExecute[
-												ExportPacket[
-													Cell[BoxData@First@NewlineateCode@obj,"Input"],
-													"InputText"
-													]
-												][[1]],
+									If[(ListQ@obj||AssociationQ@obj)&&Length@obj>0,
+										Replace[
+											NewlineateCodeRecursive[
+												obj,
+												_List|_Association|_Rule
+												],{
+											RawBoxes[r_]:>
+											"\n"<>
+												FrontEndExecute[
+													ExportPacket[
+														Cell[
+															BoxData@r,
+															"Input"
+															],
+														"InputText"
+														]
+													][[1]],
+											e_:>(ToString[obj,InputForm])
+										}],
 										ToString[obj,InputForm]
 										]
 								]
@@ -189,6 +218,8 @@ $customServiceConnectionBaseFetchFunction=
 Options[customServiceConnectionPrep]={
 	"Fetch"->
 		Automatic,
+	"Client"->
+		Automatic,
 	"ClientInfo"->
 		Automatic,
 	"ClientID"->None,
@@ -201,9 +232,9 @@ Options[customServiceConnectionPrep]={
 	"UseOAuth"->
 		Automatic,
 	"AuthorizeEndpoint"->
-		None,
+		Automatic,
 	"AccessEndpoint"->
-		None,
+		Automatic,
 	"TermsOfServiceURL"->
 		None,
 	"Information"->
@@ -233,16 +264,61 @@ customServiceConnectionPrep[
 					OptionValue@"Fetch",
 				"$ServiceConnectionClientInfo"->
 					OptionValue@"ClientInfo",
+				"$ServiceConnectionClientName"->
+					StringReplace[
+						Capitalize@ToLowerCase@
+							StringTrim[
+								Replace[OptionValue@"Client",{
+									Automatic:>
+										If[
+											Replace[OptionValue@"UseOAuth",
+												Except[True|False]:>
+													!MatchQ[OptionValue["AuthorizeEndpoint"],Automatic|None]&&
+														!MatchQ[OptionValue["AccessEndpoint"],Automatic|None]
+												]//TrueQ,
+											"OAuth",
+											"Key"
+											],
+									Except[_String]->"Key"
+									}],
+								"client"
+								]<>"Client",
+						"Oauth"->"OAuth"
+						],
 				"$ServiceConnectionUseOAuth"->
 					Replace[OptionValue@"UseOAuth",
 						Except[True|False]:>
-							OptionValue["AuthorizeEndpoint"]=!=None&&
-								OptionValue["AccessEndpoint"]=!=None
+							StringQ@OptionValue@"Client"&&
+								StringStartsQ[ToLowerCase@OptionValue@"Client","oauth"]||
+							!MatchQ[OptionValue["AuthorizeEndpoint"],Automatic|None]&&
+								!MatchQ[OptionValue["AccessEndpoint"],Automatic|None]
 						],
 				"$ServiceConnectionAuthEndpoint"->
-					OptionValue@"AuthorizeEndpoint",
+					Replace[OptionValue@"AuthorizeEndpoint",
+						Automatic:>
+							If[
+								TrueQ[
+									TrueQ@OptionValue@"UseOAuth"||
+										StringQ@OptionValue@"Client"&&
+											StringStartsQ[ToLowerCase@OptionValue@"Client","oauth"]
+									],
+								"https://localhost:7000/oauth2authorize",
+								None
+								]
+							],
 				"$ServiceConnectionAccessEndpoint"->
-					OptionValue@"AccessEndpoint",
+					Replace[OptionValue@"AccessEndpoint",
+						Automatic:>
+							If[
+								TrueQ[
+									TrueQ@OptionValue@"UseOAuth"||
+										StringQ@OptionValue@"Client"&&
+											StringStartsQ[ToLowerCase@OptionValue@"Client","oauth"]
+									],
+								"https://localhost:7000/oauth2access",
+								None
+								]
+							],
 				"$ServiceConnectionTermsOfServiceURL"->
 					OptionValue@"TermsOfServiceURL",
 				"$ServiceConnectionClientID"->
@@ -250,7 +326,15 @@ customServiceConnectionPrep[
 				"$ServiceConnectionState"->
 					OptionValue@"AuthState",
 				"$ServiceConnectionRedirectURI"->
-					OptionValue@"RedirectURI",
+					Replace[OptionValue@"RedirectURI",
+						Automatic:>
+							If[OptionValue@"UseOAuth"||
+								StringQ@OptionValue@"Client"&&
+									StringStartsQ[ToLowerCase@OptionValue@"Client","oauth"],
+								"https://localhost:7000/oauth2callback",
+								None
+								]
+							],
 				"$ServiceConnectionCalls"->
 					imps,
 				"$ServiceConnectionCookingFunctions"->
@@ -262,7 +346,7 @@ customServiceConnectionPrep[
 									(k_->{
 										___,
 										"HTTPSMethod"->_?(
-											(ToUpperCase@#/.("PATCH"|"DELETE"->"POST"))===b&),
+											(ToUpperCase@#/.("PATCH"|"PUT"|"DELETE"->"POST"))===b&),
 										___
 										}):>k
 									]

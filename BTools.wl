@@ -1035,7 +1035,10 @@ $ContextPath=
 					$ContextPath
 					]
 				]@
-				Delete[BTools`Private`Package`$PackageContexts,{{2},{3}}],
+				Select[
+					BTools`Private`Package`$PackageContexts,
+					Not@*StringContainsQ["Private"]
+					],
 		$ContextPath
 		];
 FrontEnd`Private`GetUpdatedSymbolContexts[];

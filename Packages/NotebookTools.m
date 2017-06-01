@@ -293,8 +293,8 @@ CirclePoints[{1.2,\[Pi]/3+\[Pi]/6},3]
 }~Graphics~(ImageSize\[Rule]{32,32})*)
 
 
-$CompressionIcon=Graphics[{{{{{{{{GrayLevel[0.95], EdgeForm[{GrayLevel[0.7], Thickness[Tiny]}], Rectangle[{-2.5, -2.5}, {2.5, 2.5}], {{{{{{{{Thickness[0.05], Arrowheads[{{0.15, Automatic, GraphicsBox[TagBox[PolygonBox[{{0, 0.5}, {1, 0}, {0, -0.5}}], "Triangle"]]}}], {{{{{{{{GrayLevel[0.8], EdgeForm[GrayLevel[0]], Disk[{0, 0}, 1.5]}}}}}}}}, {{{{{{{{{RGBColor[Rational[2, 3], 0, 0], Arrow[{{1.3777276490407724`*^-16, 2.25}, {7.347880794884119*^-17, 1.2}}]}}}}}}}}, {{{{{{{{RGBColor[0, Rational[2, 3], 0], Arrow[{{-1.9485571585149875`, -1.1249999999999993`}, {-1.0392304845413265`, -0.5999999999999996}}]}}}}}}}}, {{{{{{{{RGBColor[0, 0, Rational[2, 3]], Arrow[{{1.9485571585149863`, -1.1250000000000009`}, {1.039230484541326, -0.6000000000000005}}]}}}}}}}}}}}}}}}}}}}}}}}}}, ImageSize -> {32, 32}];
-Graphics[{{}, {}, Annotation[{{{{{{{{RGBColor[0.368417, 0.506779, 0.709798], Thickness[0.035], Opacity[1.], FaceForm[Opacity[0.3]], Line[CompressedData["
+$CompressionIcon=Graphics[{{{{{{{{{{{GrayLevel[0.95], EdgeForm[{GrayLevel[0.7], Thickness[Tiny]}], Rectangle[{-2.5, -2.5}, {2.5, 2.5}], {{{{{{{{{{{Thickness[0.05], Arrowheads[{{0.15, Automatic, GraphicsBox[TagBox[PolygonBox[{{0, 0.5}, {1, 0}, {0, -0.5}}], "Triangle"]]}}], {{{{{{{{{{{GrayLevel[0.8], EdgeForm[GrayLevel[0]], Disk[{0, 0}, 1.5]}}}}}}}}}}}, {{{{{{{{{{{{RGBColor[Rational[2, 3], 0, 0], Arrow[{{1.3777276490407724`*^-16, 2.25}, {7.347880794884119*^-17, 1.2}}]}}}}}}}}}}}, {{{{{{{{{{{RGBColor[0, Rational[2, 3], 0], Arrow[{{-1.9485571585149875`, -1.1249999999999993`}, {-1.0392304845413265`, -0.5999999999999996}}]}}}}}}}}}}}, {{{{{{{{{{{RGBColor[0, 0, Rational[2, 3]], Arrow[{{1.9485571585149863`, -1.1250000000000009`}, {1.039230484541326, -0.6000000000000005}}]}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}, ImageSize -> {32, 32}];
+Graphics[{{}, {}, Annotation[{{{{{{{{{{{RGBColor[0.368417, 0.506779, 0.709798], Thickness[0.035], Opacity[1.], FaceForm[Opacity[0.3]], Line[CompressedData["
 1:eJw1m3c4Vv//x+/7PlJUIioVKklGw2qJ3ic7FYkko8yyQigzpZIRomRky15l
 ZPM+9sjeW/bK3vv3/ly/6+sfHte5nfs+5/V6PV/P53Wd+5S26X09ColEssRI
 pP9+//8PFf6/v/IDN7y2djD8oMQ2bVCuBfChnhFfRpxy+05kQO57oLW7m3kC
@@ -595,7 +595,7 @@ nVsQQcy6cd+/mikaBk1/ikc5Dv/Us5l/8/4PKF4yLvPfc4g7x/lIKZ/D4Ovm
 7dr/nlO0XfhofPl7IMwbJUTqEEc7s5lSDvnCnfCzX4b++/7a0c6M8s9esPbd
 uTqUu/DW7J6hA4c+QrHhqoVNxG+k5cQYD72C//u+HI1FB/x5oCzv/wBQkTv+
 
-"]]}}}}}}}}, "Charting`Private`Tag$527904#1"], Annotation[{{{{{{{{RGBColor[0.880722, 0.611041, 0.142051], Thickness[0.025], Opacity[1.], FaceForm[Opacity[0.3]], Line[CompressedData["
+"]]}}}}}}}}}}}, "Charting`Private`Tag$527904#1"], Annotation[{{{{{{{{{{{RGBColor[0.880722, 0.611041, 0.142051], Thickness[0.025], Opacity[1.], FaceForm[Opacity[0.3]], Line[CompressedData["
 1:eJw1m3c41f///42KyChKpaKFFBWl3aOiYWRENLyzUpLM0jBTUlFkJyMpW2ZW
 8rB3tuxs2ftwnPX6vT7X9fv6h9v14lzn+Xw+Ho/n/XZdx3ZjqyumHGxsbA85
 2dj+9/3/f535vx+M9+0TZRAEvFxVpeTnawXiX1MtZkh+3nPhgbevC7CD30IX
@@ -894,7 +894,7 @@ kaxRo1Jm1xOFi9Y/JspJHqyIvXAqPhL3DfYIkh4HCQH+lRxj4bjyeNxDTZLl
 /IY/PncJwQpxlsgrko31G3WpwoHoD7W0VJKvHBu6Zhb/AU0V1mxt/t/nFBf1
 Z7+5vEWR8CTnif99DlLWeatd/HO8x51ALpcAYuW32kfxNvh//y/HpS8sLxFd
 mPf/AAa41As=
-"]]}}}}}}}}, "Charting`Private`Tag$527904#2"], Annotation[{{{{{{{{RGBColor[0.560181, 0.691569, 0.194885], Thickness[0.015], Opacity[1.], FaceForm[Opacity[0.3]], Line[CompressedData["
+"]]}}}}}}}}}}}, "Charting`Private`Tag$527904#2"], Annotation[{{{{{{{{{{{RGBColor[0.560181, 0.691569, 0.194885], Thickness[0.015], Opacity[1.], FaceForm[Opacity[0.3]], Line[CompressedData["
 1:eJw123c4Vm/cAHCjIjKK0qaFBhWl3beiYWRENPyyUpLM0rJSUlH2yExkl5kV
 vvbOlr33eJ5jb895z3td7+sfPtfhPOf+rvs+f9ila3JDn4WJiekpKxPT/37/
 v68L//+D7qFD25ZJEt6tKZPxcNcCobAEo3HKbzqvPHFxNwFm8Jhuo+z0y61g
@@ -1193,7 +1193,7 @@ OHrgAvszykoVckUWnR44a/p7rJhyX0nklXPRbnior5N3PUlCjJdnKcvIF1x9
 OuqpMmUJj4Gvb2w/YYkQQ+A9ZV3NWvV5/vfoCZWLCZRvnOq/ZRD9BvWl1u2o
 p6w6qznxw/YVCgT9tBmjfFncZodFtBk+Yo+hlksCufpH5bNoHfz//5dj0+SX
 FA5PyPwfJCqc2w==
-"]]}}}}}}}}, "Charting`Private`Tag$527904#3"], Annotation[{{{{{{{{RGBColor[0.922526, 0.385626, 0.209179], Thickness[0.015], Opacity[1.], FaceForm[Opacity[0.3]], Line[CompressedData["
+"]]}}}}}}}}}}}, "Charting`Private`Tag$527904#3"], Annotation[{{{{{{{{{{{RGBColor[0.922526, 0.385626, 0.209179], Thickness[0.015], Opacity[1.], FaceForm[Opacity[0.3]], Line[CompressedData["
 1:eJw123c8Vn/YB3BSERlFqVS0KEVFaXdVNIyMiIZfVkrIbGc1pKLIzkzKlpkV
 Lntn7+x543Yfe7vPc57X83r8w/t1OK/7fK/PdZ3v9w879M2vGa5gYWF5xMbC
 8r/f/+9rDP7/J/0DB4SWSALeri6T83A3B5EfCaZjlF91Xnro6m4PrOAx1UbZ
@@ -1492,7 +1492,7 @@ CIThiPg5jseUVSoUiqw7Q3HG4je9mHJfScSlM1EheKCvk28dSUC0l2fpiuEg
 XHUy8pEqZSmPga+v7P2wRIQp+I6yvnat5pyAN3pC5UIC5Wsn+m8YRX1BQ5m1
 2+opq89oj/+0/4iCQbF2dMoXJe22WUe9wgcc0cKLlMlVPysfR1ni//+/HLu2
 gLRoWG7m/wAGtp7J
-"]]}}}}}}}}, "Charting`Private`Tag$527904#4"], Annotation[{{{{{{{{RGBColor[0.528488, 0.470624, 0.701351], Thickness[0.015], Opacity[1.], FaceForm[Opacity[0.3]], Line[CompressedData["
+"]]}}}}}}}}}}}, "Charting`Private`Tag$527904#4"], Annotation[{{{{{{{{{{{RGBColor[0.528488, 0.470624, 0.701351], Thickness[0.015], Opacity[1.], FaceForm[Opacity[0.3]], Line[CompressedData["
 1:eJw1m3c41f///42KyChKpaKFFBWl3aOiYWRENLyzUkJmkbJSUih7ZCayZWbz
 sHf23hzjHM45rxSlUL/X5/pdX/8ct+vFuc7r+Xw8Hs/77bpeZ6eh5TVjNhYW
 lkfsLCz/e/3/P9/g/34zPHBAePkfAS/XNCgE+OuBaFym+TeSn49ceujjbwms
@@ -1791,7 +1791,7 @@ MZuRS3LxqyD2DT4f8GOipYbCMgEPebf/FKZFoVxq3EItyefu3nXgyonAgQnJ
 ZJmAqffPXTyxTvSv0CuSDXXbtRcFX2EgNP/JJPnaickbJsnP0Vhu3fbO/z2n
 +FN37pPLUxSKSnOm/+85SGnn7bbJ1viAM0VkieR/qz81P042wP/7vhyHrqCs
 WHxm8f8DJChnmQ==
-"]]}}}}}}}}, "Charting`Private`Tag$527904#5"], Annotation[{{{{{{{{RGBColor[0.772079, 0.431554, 0.102387], Thickness[0.015], Opacity[1.], FaceForm[Opacity[0.3]], Line[CompressedData["
+"]]}}}}}}}}}}}, "Charting`Private`Tag$527904#5"], Annotation[{{{{{{{{{{{RGBColor[0.772079, 0.431554, 0.102387], Thickness[0.015], Opacity[1.], FaceForm[Opacity[0.3]], Line[CompressedData["
 1:eJw1m3k01P/3xy0VkaUolYo2pKgo7d2KkiVLRIuypYSspcgWSUXZl+yyb9n3
 5dr3fQxmzMy7UFEoRSnU7/05v/P1z3icN3Pm/Xrde1/Pxznv2Wpic9GMg42N
 7R4nG9t/r///8w7+95vJnj2ii/8IeLKiTSk4SBPEk/KsvpH8mDh31z/IENgh
@@ -2090,7 +2090,7 @@ WbNDtcmB8MKftkWTzSSPtaSdO5HxGPeMEYKkx0FmaEgrx2c3XH40/Z4WyXLB
 H18/dnfGFvG/Ik9JNjHo05sXdsQQ6PqTR/LFIx8um2fYoZnCqs39/z2n+NNg
 JtndAkVis90m/3sOUtZts0OGMd7hzhRbIPnf8uSu+xna+L/vy3EZCMtLpCRU
 /h8xofka
-"]]}}}}}}}}, "Charting`Private`Tag$527904#6"]}, Axes -> {False, False}, AxesLabel -> {None, None}, AxesOrigin -> {0, 0}, DisplayFunction -> Identity, FrameLabel -> {{None, None}, {None, None}}, FrameTicks -> {{Automatic, Automatic}, {Automatic, Automatic}}, GridLinesStyle -> Directive[GrayLevel[0.5, 0.4]], ImageSize -> {24, 24}, Method -> {"ScalingFunctions" -> None}, PlotRange -> {{-2.499999707837932, 2.5}, {-2.499999648203012, 2.4999996956862214`}}, PlotRangeClipping -> True, PlotRangePadding -> {{Scaled[0.05], Scaled[0.05]}, {Scaled[0.05], Scaled[0.05]}}, Ticks -> {Automatic, Automatic}];
+"]]}}}}}}}}}}}, "Charting`Private`Tag$527904#6"]}, Axes -> {False, False}, AxesLabel -> {None, None}, AxesOrigin -> {0, 0}, DisplayFunction -> Identity, FrameLabel -> {{None, None}, {None, None}}, FrameTicks -> {{Automatic, Automatic}, {Automatic, Automatic}}, GridLinesStyle -> Directive[GrayLevel[0.5, 0.4]], ImageSize -> {24, 24}, Method -> {"ScalingFunctions" -> None}, PlotRange -> {{-2.499999707837932, 2.5}, {-2.499999648203012, 2.4999996956862214`}}, PlotRangeClipping -> True, PlotRangePadding -> {{Scaled[0.05], Scaled[0.05]}, {Scaled[0.05], Scaled[0.05]}}, Ticks -> {Automatic, Automatic}];
 
 
 CompressedSummaryForm[
@@ -2463,41 +2463,67 @@ BoxQ[e_]:=
 $indentingNewLine="\[IndentingNewLine]";
 
 
+Newlineate//Clear;
 Newlineate[l_List,
-	openChar_String,endChar_String,
-	newline_String,every_Integer]:=
+	openChar:_String|{___String},
+	endChar:_String|{___String},
+	newline:_String|{___String},
+	riffle:_String|{___String}:",",
+	every_Integer
+	]:=
 	Block[{newLineateCounter=1},
 		ReplaceAll[
-			ToBoxes@Range[Length@l]/.{
-				"{":>
-					Sequence@@{openChar,newline},
-				",":>
-					If[Mod[newLineateCounter++,every]===0,
-						newLineateCounter=1;
-						Sequence@@{",",newline},
-						","
-						],
-				"}":>
-					Sequence@@{newline,endChar}
-				},
+			RowBox@
+				Flatten[
+					Flatten@
+						ReplaceRepeated[
+							ToBoxes@Range[Length@l],
+							RowBox[r_]:>r
+							]/.{
+					"{":>
+						Sequence@@{openChar,newline},
+					",":>
+						If[Mod[newLineateCounter++,every]===0,
+							newLineateCounter=1;
+							Sequence@@{riffle,newline},
+							riffle
+							],
+					"}":>
+						Sequence@@{newline,endChar}
+					}
+				],
 			MapThread[Rule,{
 				ToString/@Range[Length@l],
-				ToBoxes/@l
+				If[MatchQ[#,RowBox[{___,"&"}]],
+					RowBox[{"(",#,")"}],
+					#
+					]&@ToBoxes@Unevaluated@#&/@l
 				}]
 			]
 		]//RawBoxes;
-Newlineate[l_List,newLine:_?BoxQ:"\n\t",every:_Integer:1]:=
+Newlineate[l_List,newLine:{___String}|_?BoxQ:"\n\t",every:_Integer:1]:=
 	Newlineate[l,"{","}",newLine,every];
-Newlineate[a_Association,newLine:_?BoxQ:"\n\t",every:_Integer:1]:=
-	Newlineate[Normal@a,"<|","|>",newLine,every];
+Newlineate[a_Association,
+	newLine:{___String}|_?BoxQ:"\n\t",
+	every:_Integer:1
+	]:=
+	Newlineate[
+		If[AssociationQ@a,Normal@a,List@@a],
+		"<|","|>",
+		newLine,every];
+Newlineate[r_Rule,newLine:{___String}|_?BoxQ:"\n\t",every:_Integer:1]:=
+	Newlineate[List@@r,"","",
+		"",
+		{"->",If[StringEndsQ[newLine,"\t"],newLine<>"\t",newLine]},
+		every];
 Newlineate[
-	e:Except[_List|_Association|_?(MatchQ[ToBoxes[#],_String]&)],
-	newLine:_?BoxQ:"\n\t",every:_Integer:1]:=
+	e:Except[_List|_Association|_Rule|_?(MatchQ[ToBoxes[#],_String]&)],
+	newLine:{___String}|_?BoxQ:"\n\t",every:_Integer:1]:=
 	With[{list=List@@e,h=ToString@Head@e<>"["},
 		Newlineate[list,h,"]",newLine,every]
 		];
-HoldPattern[Newlineate[newline:_?BoxQ][
-	e:Except[_?AtomQ],
+HoldPattern[Newlineate[newline:{___String}|_?BoxQ][
+	e:Except[_?(Length@#===0&)],
 	every:_Integer:1]
 	]:=
 	Newlineate[e,
@@ -2511,20 +2537,21 @@ HoldPattern[Newlineate[newline:_?BoxQ][
 		every
 		];
 NewlineateInput[
-	e:Except[_?AtomQ],
+	e:Except[_?(Length@#===0&)],
 	every:_Integer:1
 	]:=
 	Newlineate["Input"][e,every];
-NewlineateInput[s_?AtomQ,every:_Integer:1]:=
+NewlineateInput[s_?(Length@#===0&),every:_Integer:1]:=
 	s;
 NewlineateCode[
-	e:Except[_?AtomQ],
+	e:Except[_?(Length@#===0&)],
 	every:_Integer:1
 	]:=
 	Newlineate["Code"][e,every];
 NewlineateCode[
-	s_?AtomQ,
-	every:_Integer:1]:=
+	s_?(Length@#===0&),
+	every:_Integer:1
+	]:=
 	s
 
 
@@ -2533,15 +2560,17 @@ NewlineateRecursive[
 	newline:_String:"\n",
 	indent:_String:"\t",
 	every:_Integer:1,
-	match:_?(Not@*AtomQ):_List]:=
+	match:_?(Length@#>0&):_List,
+	ignore:_Symbol|_?(Length@#>0&):None
+	]:=
 	Block[{
 		$newlineIndentationLevel=
 			If[IntegerQ@$newlineIndentationLevel,
 				$newlineIndentationLevel+1,
 				1]
 		},
-		If[MatchQ[Unevaluated@expr,match],
-			Newlineate[
+		Which[
+			MatchQ[Unevaluated@expr,ignore],
 				Replace[
 					Function[Null,
 						NewlineateRecursive[#,
@@ -2551,23 +2580,55 @@ NewlineateRecursive[
 							match
 							],
 						HoldFirst
-						]/@Replace[Hold[expr],Hold[_[a__]]:>Hold[a]],
+						]/@Replace[Hold[expr],Hold[_[a___]]:>Hold[a]],
 					Hold[a__]:>
-						RuleCondition[
-							With[{h=Head[Unevaluated[expr]]},
-								Unevaluated@h[a]
-								],
-							True
-							]
+							RuleCondition[
+								With[{
+									h=Head[Unevaluated[expr]],
+									p=List[a]
+									},
+									Replace[p,
+										{b__}:>
+											RawBoxes@ToBoxes@h[b]
+										]
+									],
+								True
+								]
 					],
-				newline<>
-					StringRepeat[indent,
-						$newlineIndentationLevel
+			MatchQ[Unevaluated@expr,match],
+				Newlineate[
+					Replace[
+						Function[Null,
+							NewlineateRecursive[#,
+								newline,
+								indent,
+								every,
+								match
+								],
+							HoldFirst
+							]/@Replace[Hold[expr],Hold[_[a___]]:>Hold[a]],
+						Hold[a__]:>
+							RuleCondition[
+								With[{
+									h=Head[Unevaluated[expr]],
+									p=List[a]
+										},
+										Replace[p,
+											{b__}:>Unevaluated@h[b]
+											]
+										],
+									True
+									]
+							],
+						newline<>
+							StringRepeat[indent,
+								$newlineIndentationLevel
+								],
+						every
 						],
-				every
-				],
-			RawBoxes@ToBoxes@Unevaluated[expr]
-			]
+				True,
+					RawBoxes@ToBoxes@Unevaluated[expr]
+				]
 		];
 NewlineateRecursive[a_?(
 	Function[Null,
@@ -2580,7 +2641,9 @@ NewlineateRecursive~SetAttributes~HoldFirst;
 
 NewlineateCodeRecursive[expr_,
 	every:_Integer:1,
-	match:_?(Not@*AtomQ):_List]:=
+	match:_?((Length@#>0)&):_List,
+	ignore:_Symbol|_?(Length@#>0&):None
+	]:=
 	NewlineateRecursive[expr,
 		"\n",
 		"\t",
@@ -2589,7 +2652,9 @@ NewlineateCodeRecursive[expr_,
 		];
 NewlineateInputRecursive[expr_,
 	every:_Integer:1,
-	match:_?(Not@*AtomQ):_List]:=
+	match:_?(Length@#>0&):_List,
+	ignore:_Symbol|_?(Length@#>0&):None
+	]:=
 	NewlineateRecursive[expr,
 		$indentingNewLine,
 		"",

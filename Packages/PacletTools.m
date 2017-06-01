@@ -1388,6 +1388,36 @@ PacletUploadUninstaller[ops:OptionsPattern[]]:=
 		]
 
 
+Options[PacletInstallerLink]=
+	Options@CloudExport;
+PacletInstallerLink[pacletURL:_String,uri_,ops:OptionsPattern[]]:=
+	"wolfram+cloudobject:"<>
+		First@CloudExport[
+			Notebook[{
+				Cell[
+					BoxData@ToBoxes@Unevaluated[PacletInstall@pacletURL],
+					"Input"
+					]
+				}],
+			"NB",
+			ops
+			];
+PacletInstallerLink[pacletURL:{__String},uri_,ops:OptionsPattern[]]:=
+	"wolfram+cloudobject:"<>
+		First@CloudExport[
+			Notebook[{
+				Cell[
+					BoxData@ToBoxes@Unevaluated[PacletInstall/@pacletURL],
+					"Input"
+					]
+				}],
+			"NB",
+			ops
+			];
+PacletInstallerLink[c:{__CloudObject},uri_,ops:OptionsPattern[]]:=
+	PacletInstallerLink[First/@c,uri,ops];
+
+
 (* ::Subsection:: *)
 (*Upload*)
 
@@ -1525,6 +1555,7 @@ Options[PacletUpload]=
 				"OverwriteSiteFile"->False,
 				"UploadSiteFile"->False,
 				"UploadInstaller"->False,
+				"UploadInstallPage"->False,
 				"UploadUninstaller"->False,
 				Permissions->"Public"
 				}
