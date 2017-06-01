@@ -89,6 +89,17 @@ PackageFEFile[p___,f_]:=
 			},
 		f
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*PackagePathSymbol*)
+
+
+PackagePathSymbol[parts___String,sym_String]:=
+	ToExpression[StringRiffle[{$PackageName,parts,sym},"`"],StandardForm,HoldPattern];
+PackagePathSymbol[parts___String,sym_Symbol]:=
+	PackagePathSymbol[parts,Evaluate@SymbolName@Unevaluated[sym]];
+PackagePathSymbol~SetAttributes~HoldRest;
 (* ::Subsection:: *)
 (*Loading*)
 

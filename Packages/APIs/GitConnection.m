@@ -560,7 +560,8 @@ formatGitHubPath[path__String,ops:OptionsPattern[]]:=
 			"https",
 		"Domain"->
 			"github.com",
-		If[$GitHubEncodePassword,
+		If[$GitHubEncodePassword||
+			MatchQ[OptionValue@"Password",_String|Automatic],
 			"Username"->
 				Replace[OptionValue["Username"],{
 					Automatic:>
@@ -571,7 +572,8 @@ formatGitHubPath[path__String,ops:OptionsPattern[]]:=
 					}],
 			Nothing
 			],
-		If[$GitHubEncodePassword,
+		If[$GitHubEncodePassword||
+			MatchQ[OptionValue@"Password",_String|Automatic],
 			"Password"->
 				Replace[
 					Replace[OptionValue["Username"],{
