@@ -75,7 +75,8 @@ htmlFakeTags=
 	{
 		"plaintext",
 		"inlinetext",
-		"style class"
+		"style class",
+		"php"
 		};
 
 
@@ -360,16 +361,16 @@ htmlStdProps=
 
 
 htmlHighPriorityTags={
-	"div"->14,
-	"div 2"->12,
-	"div 3"->10,
-	"div 4"->8,
-	"div 5"->6,
-	"div 6"->4,
-	"div 7"->2,
+	"div"->42,
+	"div 2"->36,
+	"div 3"->30,
+	"div 4"->24,
+	"div 5"->18,
+	"div 6"->12,
+	"div 7"->6,
 	"div 8"->0,
-	"header"->6,
-	"footer"->6,
+	"header"->42,
+	"footer"->42,
 	"form"->6,
 	"ul"->4,
 	"ol"->4,
@@ -385,6 +386,10 @@ htmlLowPriorityTags={
 	"inlinetext"->2,
 	"style class"->2
 	};
+
+
+$htmlTagBaseGrouping=100;
+$htmlPropBaseGrouping=200;
 
 
 htmlHeaderCell//Clear
@@ -445,7 +450,7 @@ HTMLTemplateStyles:=
 				CellFrameColor->Gray,
 				FontWeight->Plain,
 				CellFrame->{{0,0},{1,0}},
-				CellGroupingRules->{"SectionGrouping",55+2*10},
+				CellGroupingRules->{"SectionGrouping",$htmlTagBaseGrouping+2*10},
 				CellMargins->{{100,Inherited},{Inherited,Inherited}},
 				DefaultNewCellStyle->"TAGInterpreter",
 				StyleKeyMapping->{
@@ -476,7 +481,7 @@ HTMLTemplateStyles:=
 				CellFrameColor->Gray,
 				CellFrame->{{1,0},{0,0}},
 				Background->GrayLevel[.95],
-				CellGroupingRules->{"SectionGrouping",100+2*10},
+				CellGroupingRules->{"SectionGrouping",$htmlPropBaseGrouping+2*10},
 				CellMargins->{{150,Inherited},{Inherited,Inherited}},
 				DefaultNewCellStyle->"PROPInterpreter",
 				StyleKeyMapping->{
@@ -500,7 +505,8 @@ HTMLTemplateStyles:=
 				CellFrameColor->Gray,
 				FontWeight->Plain,
 				CellFrame->{{0,0},{1,0}},
-				DefaultNewCellStyle->"TAGInterpreter"
+				DefaultNewCellStyle->"TAGInterpreter",
+				CellBracketOptions->{"Color"->ColorData[97][11]}
 				},
 			{"LI","TAG",
 				CellFrame->{{0,0},{1,0}},
@@ -561,19 +567,33 @@ HTMLTemplateStyles:=
 						"_tag"],
 				CellMargins->
 					{{95-Last@#,Inherited},{Inherited,Inherited}},
-				CellGroupingRules->{"SectionGrouping",55-Last@#+2*10}
+				CellGroupingRules->{"SectionGrouping",$htmlTagBaseGrouping-Last@#+2*10}
 				}&,
 			DeleteCases[htmlHighPriorityTags,_->None]
 			],
 		Table[
 			{t<>"_tag",
 				Switch[t,
-					"script"|"inlinetext"|"plaintext"|"p",
+					"script"|"php"|"inlinetext"|"plaintext"|"p",
 						"TAGText",
 					"inputcell"|"code"|"output",
 						"TAGCode",
 					_,
 						"TAG"
+					],
+				If[MatchQ[t,"script"|"php"],
+					Sequence@@{
+						FontFamily->"Arial",
+						AutoQuoteCharacters->{},
+						TabSpacings->1.5,
+						AutoStyleWords->{
+							"function"->{FontColor->Purple},
+							"var"->{FontColor->Blue},
+							Map[#->{FontColor->Gray}&,{"=","+","."}],
+							Map[#->{FontColor->Darker@Green}&,{"{","}","(",")"}]
+							}
+						},
+					Nothing
 					],
 				CellDingbat->
 					htmlHeaderCell[t,
@@ -615,7 +635,7 @@ HTMLTemplateStyles:=
 				CellDingbat->
 					htmlHeaderCell[First@Last@#,First/@htmlLowPriorityTags,
 						"_tag"],
-				CellGroupingRules->{"SectionGrouping",57+Last@Last@#*10},
+				CellGroupingRules->{"SectionGrouping",$htmlTagBaseGrouping+2+Last@Last@#*10},
 				CellMargins->
 					{{105+Last@Last@#,Inherited},{Inherited,Inherited}}
 				}&,
@@ -1149,6 +1169,16 @@ htmlScrapeElements[Cell[t_,"plaintext_tag"|"inlinetext_tag",___]]:=
 		t,
 		htmlContentConvert[t]
 		];
+htmlScrapeElements[Cell[t_,"php_tag",___]]:=
+	XMLElement["deletemeplease",
+		{},
+		"<?php\n"<>
+			If[StringQ@t,
+				t,
+				htmlContentConvert[t]
+				]
+			<>"\n?>"
+		];
 htmlScrapeElements[Cell[___]]:=
 	Nothing;
 htmlScrapeElements~SetAttributes~Listable;
@@ -1290,10 +1320,14 @@ htmlContentConvert[r:{__Rule}]:=
 	(First@#->htmlContentConvert[Last[#]])&/@r;
 htmlContentConvert[e_]:=
 	Block[{$xmlObjectRecursiveConversion=htmlContentConvert},
-		xmlObjectConvert@
-			ReplaceAll[e,{
-				Rectangle->"rect"
-				}]
+		Replace[
+			xmlObjectConvert@
+				ReplaceAll[e,{
+					Rectangle->"rect"
+					}],
+			xmlObjectConvert[o_]:>
+				ToLowerCase@ToString@o
+			]
 		];
 
 
@@ -1499,10 +1533,16 @@ HTMLNotebook[spec_]:=
 		}]
 
 
+safeParentDirQ=(StringLength@#>0&&DirectoryQ@#&@DirectoryName@#&);
+
+
+safeDirQ=(StringLength@#>0&&DirectoryQ@#&@#&);
+
+
 htmlGetAuthCredentials[creds:{__}]:=
 	With[{
 		credentials=
-			Replace[DeleteCases[creds,(_String|_File)?DirectoryQ],{
+			Replace[DeleteCases[creds,(_String|_File)?safeDirQ],{
 				l:{_String?(StringContainsQ["\@"]),_String}:>
 					{l},
 				e_:>
@@ -1606,21 +1646,31 @@ htmlExportString[x_]:=
 				(
 					k->
 						StringReplace[v,{
-							"\""->"[--doublequoteescape--]",
-							"'"->"[--singlequoteescape--]"
+							"<"->"[--lessthan--]",
+							">"->"[--greaterthan--]",
+							"&"->"[--ampersandescape--]",
+							"\""|"\[OpenCurlyDoubleQuote]"|"\[CloseCurlyDoubleQuote]"->"[--doublequoteescape--]",
+							"'"|"\[OpenCurlyQuote]"|"\[CloseCurlyQuote]"->"[--singlequoteescape--]"
 							}]
 					),
-			style:XMLElement["style",__]:>
+			style:XMLElement["style"|"script",__]:>
 				(style/.s_String:>
 					StringReplace[s,{
-						"\""->"[--doublequoteescape--]",
-						"'"->"[--singlequoteescape--]"
+						"<"->"[--lessthan--]",
+						">"->"[--greaterthan--]",
+						"&"->"[--ampersandescape--]",
+						"\""|"\[OpenCurlyDoubleQuote]"|"\[CloseCurlyDoubleQuote]"->"[--doublequoteescape--]",
+						"'"|"\[OpenCurlyQuote]"|"\[CloseCurlyQuote]"->"[--singlequoteescape--]"
 						}])
 			},
 			"XML"],
 		{
+			"[--lessthan--]"->"<",
+			"[--greaterthan--]"->">",
+			"[--ampersandescape--]"->"&",
 			"[--doublequoteescape--]"->"\"",
-			"[--singlequoteescape--]"->"'"
+			"[--singlequoteescape--]"->"'",
+			"<deletemeplease>"|"</deletemeplease>"->""
 			}
 		];
 
@@ -1628,7 +1678,7 @@ htmlExportString[x_]:=
 htmlSpecDeploy//ClearAll;
 htmlSpecDeploy[
 	specAssoc_Association,
-	base:Except[(_String|_File)?(DirectoryQ@DirectoryName@#&)]
+	base:Except[(_String|_File)?safeParentDirQ]
 	]:=
 	With[{
 		uri=
@@ -1641,49 +1691,61 @@ htmlSpecDeploy[
 		},
 			If[AllTrue[{uri,export},Not@*MissingQ],
 				htmlCloudBaseConnect[base];
-				CloudDeploy[
-					Replace[export,
+					Replace[export,{
+						f_File:>
+							(
+								CopyFile[
+									f,
+									CloudObject[uri]
+									];
+								SetOptions[CloudObject[uri],ops];
+								CloudObject[uri]
+								),
+						e_ExportForm:>
+							CloudDeploy[e,uri,ops],
 						Except[_ExportForm]:>
-							ExportForm[
-								Replace[export,
-									x:XMLObject[___][___]:>
-										If[FileExtension[specAssoc["URI"]]=="css",
-											StringRiffle[
-												Flatten@
-													Cases[x,
-														XMLElement["style",_,s_]:>s,
-														\[Infinity]
-														],
-												"\n"
-												],
-											htmlExportString[x]
-											]
+							CloudDeploy[
+								ExportForm[
+									Replace[export,
+										x:XMLObject[___][___]:>
+											If[FileExtension[specAssoc["URI"]]=="css",
+												StringRiffle[
+													Flatten@
+														Cases[x,
+															XMLElement["style",_,s_]:>s,
+															\[Infinity]
+															],
+													"\n"
+													],
+												htmlExportString[x]
+												]
+										],
+									Replace[export,{
+										(data_->mimeType_):>
+											mimeType,
+										s:_String|
+											XMLObject[___][___]?(
+												FileExtension[specAssoc["URI"]]=="css"&
+												):>
+											{"Text","CSS"},
+										i_?ImageQ:>
+											"PNG",
+										{__?ImageQ}:>
+											"GIF",
+										_:>"HTML"
+										}]
 									],
-								Replace[export,{
-									(data_->mimeType_):>
-										mimeType,
-									s:_String|
-										XMLObject[___][___]?(
-											FileExtension[specAssoc["URI"]]=="css"&
-											):>
-										{"Text","CSS"},
-									i_?ImageQ:>
-										"PNG",
-									{__?ImageQ}:>
-										"GIF",
-									_:>"HTML"
-									}]
+								uri,
+								ops
 								]
-							],
-					uri,
-					ops]
+						}]
 			]
 		];
 
 
 htmlSpecDeploy[
 	specAssocs:{__Association},
-	base:(_String|_File)?(DirectoryQ@DirectoryName@#&)
+	base:(_String|_File)?safeParentDirQ
 	]:=
 	Map[
 		With[{
@@ -1741,7 +1803,7 @@ htmlSpecDeploy[
 			]&,
 		specAssocs
 		];
-htmlSpecDeploy[specAssoc_,path:(_String|_File)?(DirectoryQ@DirectoryName@#&)]:=
+htmlSpecDeploy[specAssoc_,path:(_String|_File)?safeParentDirQ]:=
 	htmlSpecDeploy[{specAssoc},path];
 
 
@@ -1772,7 +1834,7 @@ htmlSpecDeploy[a:{__Association}]:=
 					With[{co=htmlSpecDeploy[#]},
 						If[
 							MatchQ[co,
-								Except[_CloudObject|{_CloudObject}]],
+								Except[_CloudObject|{__CloudObject}]],
 							AppendTo[$htmlAuthFailures,l];
 							$KeyChain[l]=.
 							];
