@@ -238,8 +238,6 @@ If[$appBuilderConfigLoaded//TrueQ//Not,
 	$AppDirectoryName="Applications";
 	$AppDirectory:=
 		FileNameJoin@{$AppDirectoryRoot,$AppDirectoryName};
-	$AppServerBase=CloudObject;
-	$AppServerName="PacletServer";
 	Replace[
 		SelectFirst[
 			`Package`PackageFilePath["Private","AppBuilderConfig."<>#]&/@{"m","wl"},
@@ -2866,17 +2864,7 @@ AppRegenerateUploadInfo[app_String,ops:OptionsPattern[]]:=
 Options[AppPacletSiteURL]=
 	Options[PacletSiteURL];
 AppPacletSiteURL[ops:OptionsPattern[]]:=
-	PacletSiteURL[
-		"ServerName"->
-			Replace[OptionValue["ServerName"],
-				Default->$AppServerName
-				],
-		"ServerBase"->
-			Replace[OptionValue["ServerBase"],
-				Default->$AppServerBase
-				],
-		ops
-		];
+	PacletSiteURL[ops];
 AppPacletSiteURL[app_String,ops:OptionsPattern[]]:=
 	AppPacletSiteURL[ops,"ServerName"->app];
 
@@ -3113,14 +3101,8 @@ AppPacletUpload[apps__String,ops:OptionsPattern[]]:=
 							Flatten@{
 								"ServerName"->
 									Replace[OptionValue["ServerName"],{
-										Automatic:>First@{apps},
-										Default->$AppServerName
+										Automatic:>First@{apps}
 										}],
-								"ServerBase"->
-									Replace[
-										OptionValue["ServerBase"],
-										Default->$AppServerBase
-										],
 								ops,
 								Options[AppPacletUpload],
 								"SiteFile"->site
@@ -3182,17 +3164,7 @@ AppSubpacletUpload[
 Options[AppPacletServerPage]=
 	Options[PacletServerPage];
 AppPacletServerPage[ops:OptionsPattern[]]:=
-	PacletServerPage[
-		"ServerName"->
-			Replace[OptionValue["ServerName"],
-				Default->$AppServerName
-				],
-		"ServerBase"->
-			Replace[OptionValue["ServerBase"],
-				Default->$AppServerBase
-				],
-		ops
-		];
+	PacletServerPage[ops];
 AppPacletServerPage[app:Except[_?OptionQ],ops:OptionsPattern[]]:=
 	AppPacletServerPage[
 		"ServerName"->
