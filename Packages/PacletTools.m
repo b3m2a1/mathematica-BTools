@@ -107,6 +107,18 @@ PacletSiteUninstall::usage=
 	"Downloads pieces of a paclet from a server";*)
 
 
+(* ::Subsubsection::Closed:: *)
+(*Install*)
+
+
+
+PacletInstallPaclet::usage="Installs a paclet from a URL";
+
+
+PacletServerPage::usage=
+	"Generates a page laying out the available paclets on that server";
+
+
 Begin["`Private`"];
 
 
@@ -169,8 +181,13 @@ PacletInfo[infoFile_]:=
 				Nest[DirectoryName,pacletInfo,3],
 				$TemporaryDirectory
 				]&&
-					(
-					DirectoryName@pacletInfo!=DirectoryName@infoFile),
+					(StringTrim[DirectoryName@pacletInfo,$PathnameSeparator~~EndOfString]!=
+						StringTrim[
+							If[DirectoryQ@infoFile,
+								infoFile,
+								DirectoryName@infoFile],
+							$PathnameSeparator~~EndOfString
+							]),
 				DeleteDirectory[Nest[DirectoryName,pacletInfo,2],DeleteContents->True]
 				];#)&@
 		If[FileExistsQ@pacletInfo,
@@ -805,7 +822,9 @@ PacletSiteInfo[infoFiles_,ops:OptionsPattern[]]:=
 								1]&/@Flatten@{imp}
 							]&,
 						pacletInfos
-						]//DeleteDuplicates
+						]//DeleteDuplicatesBy[
+							Lookup[Association@@#,{"Name","Version"}]&
+							]
 			},
 			End[];
 			DeleteCases[pacletsite,Except[_PacletManager`Paclet]]
@@ -1392,28 +1411,34 @@ Options[PacletInstallerLink]=
 	Options@CloudExport;
 PacletInstallerLink[pacletURL:_String,uri_,ops:OptionsPattern[]]:=
 	"wolfram+cloudobject:"<>
-		First@CloudExport[
-			Notebook[{
-				Cell[
-					BoxData@ToBoxes@Unevaluated[PacletInstall@pacletURL],
-					"Input"
-					]
-				}],
-			"NB",
-			ops
-			];
+		First@
+			CloudExport[
+				Notebook[{
+					Cell[
+						BoxData@ToBoxes@Unevaluated[PacletInstall@pacletURL],
+						"Input"
+						]
+					}],
+				"NB",
+				uri,
+				ops
+				];
 PacletInstallerLink[pacletURL:{__String},uri_,ops:OptionsPattern[]]:=
 	"wolfram+cloudobject:"<>
-		First@CloudExport[
-			Notebook[{
-				Cell[
-					BoxData@ToBoxes@Unevaluated[PacletInstall/@pacletURL],
-					"Input"
-					]
-				}],
-			"NB",
-			ops
-			];
+		First@
+			CloudExport[
+				Notebook[{
+					Cell[
+						BoxData@ToBoxes@Unevaluated[PacletInstall/@pacletURL],
+						"Input"
+						]
+					}],
+				"NB",
+				uri,
+				ops
+				];
+PacletInstallerLink[c_CloudObject,uri_,ops:OptionsPattern[]]:=
+	PacletInstallerLink[First@c,uri,ops];
 PacletInstallerLink[c:{__CloudObject},uri_,ops:OptionsPattern[]]:=
 	PacletInstallerLink[First/@c,uri,ops];
 
@@ -1555,7 +1580,7 @@ Options[PacletUpload]=
 				"OverwriteSiteFile"->False,
 				"UploadSiteFile"->False,
 				"UploadInstaller"->False,
-				"UploadInstallPage"->False,
+				"UploadInstallLink"->False,
 				"UploadUninstaller"->False,
 				Permissions->"Public"
 				}
@@ -1636,6 +1661,46 @@ pacletUpload[
 					(* ------------------- Wolfram Cloud Paclets ------------------- *)
 					CloudObject|CloudDirectory|Automatic,
 						With[{url=site},
+							Replace[OptionValue@"UploadInstallLink",{
+								True:>
+									Append[#,
+										"PacletInstallLinks"->
+											PacletInstallerLink[
+												#["PacletFiles"],
+												URLBuild@{site,"InstallerNotebook.nb"},
+												Permissions->OptionValue@Permissions
+												]
+										],
+								s_String:>
+									Append[#,
+										"PacletInstallLinks"->
+											PacletInstallerLink[
+												#["PacletFiles"],
+												URLBuild@{site,s},
+												Permissions->OptionValue@Permissions
+												]
+										],
+								Automatic:>
+									Append[#,
+										"PacletInstallLinks"->
+											Map[
+												Function[
+													PacletInstallerLink[
+														#,
+														URLBuild@{
+															site,
+															StringReplace[
+																URLParse[#,"Path"][[-1]],
+																".paclet"~~EndOfString->".nb"
+																]},
+														Permissions->OptionValue@Permissions
+														]
+													],
+												#["PacletFiles"]
+												]
+										],
+								_:>#
+								}]&@
 							<|
 								"PacletSiteFile"->
 									If[MatchQ[pacletMZ,(_String|_File)?FileExistsQ],
@@ -1705,7 +1770,7 @@ pacletUpload[
 										pacletFiles
 										],
 								"PacletInstaller"->
-									If[OptionValue["UploadInstaller"],
+									If[OptionValue["UploadInstaller"]//TrueQ,
 										PacletUploadInstaller[ops,
 											Permissions->
 												OptionValue@Permissions,
@@ -1715,7 +1780,7 @@ pacletUpload[
 										Nothing
 										],
 								"PacletUninstaller"->
-									If[OptionValue["UploadUninstaller"],
+									If[OptionValue["UploadUninstaller"]//TrueQ,
 										PacletUploadUninstaller[ops,
 											Permissions->
 												OptionValue@Permissions,
@@ -1758,7 +1823,7 @@ pacletUpload[
 										pacletFiles
 										],
 								"PacletInstaller"->
-									If[OptionValue["UploadInstaller"],
+									If[OptionValue["UploadInstaller"]//TrueQ,
 										PacletUploadInstaller@
 											FilterRules[{ops},
 												Options@PacletUploadInstaller
@@ -1766,7 +1831,7 @@ pacletUpload[
 										Nothing
 										],
 								"PacletUninstaller"->
-									If[OptionValue["UploadUninstaller"],
+									If[OptionValue["UploadUninstaller"]//TrueQ,
 										PacletUploadUninstaller@
 											FilterRules[{ops},
 												Options@PacletUploadUninstaller
@@ -1864,8 +1929,242 @@ PacletSiteUninstall[ops:OptionsPattern[]]:=
 
 
 
-(*Options[PacletServerConfigure]:=
-	PacletServerConfigure[]*)
+pacletDownloadLine[
+	pacletDownloadNB_,
+	pacletDownloadURL_
+	]:=
+	XMLElement["div",
+		{
+			"class"->"paclet-download-line"
+			},
+		{
+			XMLElement["a",
+				{
+					"href"->"wolfram+cloudobject:"<>pacletDownloadNB
+					},
+				{
+					"Notebook"
+					}
+				],
+			" | ",
+			XMLElement["a",
+				{
+					"href"->pacletDownloadURL
+					},
+				{
+					"Paclet"	
+					}
+				]
+			}
+		];
+
+
+Options[pacletSectionXML]=
+	Options[PacletExpression];
+pacletSectionXML[site_,ops:OptionsPattern[]]:=
+	XMLElement["div",
+		{
+			"class"->"paclet-section",
+			"id"->OptionValue["Name"]
+			},
+		{
+			XMLElement["h3",
+				{
+					"class"->"paclet-name"
+					},
+				{
+					OptionValue["Name"],
+					XMLElement["span",
+						{
+							"class"->"paclet-version-text"
+							},
+						{
+							" v"<>OptionValue["Version"]
+							}
+						]
+				}],
+			pacletDownloadLine[
+				URLBuild[{
+					site,
+					OptionValue["Name"]<>"-"<>
+						OptionValue["Version"]<>".nb"
+					}],
+				URLBuild[{
+					site,
+					"Paclets",
+					OptionValue["Name"]<>"-"<>
+						OptionValue["Version"]<>".paclet"
+					}]
+				],
+			XMLElement[
+				"p",
+				{
+					"class"->"paclet-download-description"	
+					},
+				{
+					Replace[
+						OptionValue["Description"],
+						Automatic->""
+						]
+					}
+				]
+			}
+		];
+
+
+$pacletServerCSS=
+"
+body { 
+	background: #fafafa ;
+	margin: 0;
+	}
+.paclet-server-title {
+	width: 100%;
+	margin: 0;
+	padding: 10;
+	left: 0;
+	top: 0;
+	border-bottom: 1px solid #b01919 ;
+	background: #8f3939; 
+	color: #fafafa;
+	box-shadow: 0px 2px 2px #901919 ;
+ }
+.paclet-server-description { 
+	color: #505050;
+	margin-left: 20px;
+ }
+.paclet-section { 
+	border: solid 1px gray;
+	border-radius: 5px; 
+	box-shadow: 1px 1px 1px gray ;
+	width:95%;
+	background: #f0f0f0;
+	padding-left: 5;
+	margin-top: 5;
+	margin-left: 20px;
+	min-height: 250;
+ }
+.paclet-name {
+	color: #3f3f3f;
+	width: 95%;
+	border-bottom: solid 1px;
+	}
+.paclet-version-text { 
+	color: gray; 
+	}
+a:link {
+	color: gray;
+	}
+a:hover {
+	color: #cf3939;
+	}
+a:visited {
+	color: #8f3939;
+	}
+";
+
+
+Options[pacletServerXML]={
+	"Title"->"Paclet Server",
+	"Description"->
+		"Lists all the available paclets for download."
+	};
+pacletServerXML[
+	site_,
+	pacletSpecs:_Association|{___Association},
+	ops:OptionsPattern[]
+	]:=
+	XMLElement["html",{},{
+		XMLElement["head",{},
+			{
+				XMLElement["title",{},{OptionValue["Title"]}],
+				XMLElement["style",
+					{},
+					{
+						$pacletServerCSS
+						}
+					]
+		}],
+		XMLElement["body",
+			{},
+			Flatten@{
+				XMLElement["div",
+					{
+						"class"->"paclet-server-title"
+						},
+					{
+						XMLElement["h2",{},{OptionValue["Title"]}]
+						}
+					],
+				XMLElement[
+					"div",
+					{
+						"class"->"paclet-server-description"
+						},
+					{
+						XMLElement["p",{},{OptionValue["Description"]}]
+						}
+					],
+				pacletSectionXML[site,#]&/@Map[Normal,Flatten@{pacletSpecs}]
+				}
+			]
+		}];
+
+
+(* ::Subsubsection::Closed:: *)
+(*PacletServerPage*)
+
+
+
+Options[PacletServerPage]=
+	Join[{
+		Permissions->"Public"
+		},
+		Options[CloudExport],
+		Options[PacletSiteURL],
+		Options[pacletServerXML],{
+		"Extension"->"main.html"
+		}];
+PacletServerPage[
+	ops:OptionsPattern[]
+	]:=
+	Block[{
+		pacletServer=
+			PacletSiteURL[FilterRules[{ops},Options@PacletSiteURL]],
+		pacletServerPageXML:=
+			htmlExportString@
+				pacletServerXML[
+					pacletServer,
+					Normal@PacletSiteInfoDataset[pacletServer],
+					FilterRules[{ops},Options@pacletServerXML]
+					]
+		},
+		If[StringStartsQ[pacletServer,"file:"],
+			Export[
+				FileNameJoin@
+					Append[
+						URLParse[pacletServer,"Path"],
+						OptionValue@"Extension"
+						],
+				pacletServerPageXML,
+				"Text"
+				],
+			CloudExport[
+				HTMLTemplateNotebook;
+				pacletServerPageXML,
+				"HTML",
+				URLBuild@{
+					pacletServer,
+					OptionValue@"Extension"
+					},
+				FilterRules[{
+					ops,
+					Permissions->OptionValue[Permissions]
+					},
+					Options@CloudExport]
+				]
+			]
+	]
 
 
 (* ::Subsection:: *)
@@ -1899,6 +2198,452 @@ Alternatives@@Map["*"<>#&,components]
 ]
 ]
 ]//Uncompress
+
+
+(* ::Subsection:: *)
+(*Install*)
+
+
+
+$PackageDependenciesFile=
+	"DependencyInfo.m";
+
+
+(* ::Subsubsection::Closed:: *)
+(*installPacletGenerate*)
+
+
+
+PacletInstallPaclet::howdo="Unsure how to pack a paclet from file type ``";
+PacletInstallPaclet::laywha="Couldn't detect package layout from directory ``";
+
+
+(* ::Subsubsection::Closed:: *)
+(*installPacletGenerate*)
+
+
+
+Options[installPacletGenerate]={
+	"Verbose"->False
+	};
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Directory*)
+
+
+
+installPacletGenerate[dir:(_String|_File)?DirectoryQ,ops:OptionsPattern[]]:=
+	Block[{bundleDir=dir},
+		If[OptionValue@"Verbose",
+			DisplayTemporary@
+				Internal`LoadingPanel[
+					TemplateApply["Bundling paclet for ``",dir]
+					]
+				];
+		(* ------------ Extract Archive Files --------------- *)
+		If[FileExistsQ@#,Quiet@ExtractArchive[#,dir]]&/@
+			Map[
+				FileNameJoin@{dir,FileBaseName@dir<>#}&,
+				{".zip",".gz"}
+				];
+		(* ------------ Detect Paclet Layout --------------- *)
+		Which[
+			FileExistsQ@FileNameJoin@{dir,"PacletInfo.m"},
+				bundleDir=dir,
+			FileExistsQ@FileNameJoin@{dir,FileBaseName[dir]<>".m"}||
+				FileExistsQ@FileNameJoin@{dir,FileBaseName[dir]<>".wl"}||
+				FileExistsQ@FileNameJoin@{dir,"Kernel","init"<>".m"}||
+				FileExistsQ@FileNameJoin@{dir,"Kernel","init"<>".wl"},
+				bundleDir=dir;
+				PacletExpressionBundle[bundleDir],
+			FileExistsQ@FileNameJoin@{dir,FileBaseName@dir,"PacletInfo.m"},
+				bundleDir=FileNameJoin@{dir,FileBaseName@dir},
+			FileExistsQ@FileNameJoin@{dir,FileBaseName@dir,FileBaseName@dir<>".m"},
+				bundleDir=FileNameJoin@{dir,FileBaseName@dir};
+				PacletExpressionBundle[bundleDir],
+			FileExistsQ@FileNameJoin@{dir,FileBaseName[dir]<>".nb"},
+				Export[
+					FileNameJoin@{dir,FileBaseName[dir]<>".m"};
+					"(*Open package notebook*)
+CreateDocument[
+	Import@
+		StringReplace[$InputFileName,\".m\"->\".nb\"]
+	]",
+					"Text"
+					];
+				bundleDir=dir;
+				PacletExpressionBundle[bundleDir],
+			_,
+				Message[PacletInstallPaclet::laywha];
+				Throw[$Failed]
+			];
+		PacletBundle[bundleDir]
+		];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*File*)
+
+
+
+installPacletGenerate[file:(_String|_File)?FileExistsQ,ops:OptionsPattern[]]:=
+	Switch[FileExtension[file],
+		"m"|"wl",
+			If[OptionValue@"Verbose",
+				DisplayTemporary@
+					Internal`LoadingPanel[
+						TemplateApply["Bundling paclet for ``",file]
+						]
+					];
+			With[{dir=
+				FileNameJoin@{
+					$TemporaryDirectory,
+					FileBaseName@file
+					}
+				},
+				If[!DirectoryQ@dir,
+					CreateDirectory[dir]
+					];
+				If[FileExistsQ@
+					FileNameJoin@{
+						DirectoryName@file,
+						$PackageDependenciesFile
+						},
+					CopyFile[
+						FileNameJoin@{
+							DirectoryName@file,
+							$PackageDependenciesFile
+							},
+						FileNameJoin@{
+							dir,
+							$PackageDependenciesFile
+							}	
+						]
+					];
+				If[FileExistsQ@
+					FileNameJoin@{
+						DirectoryName@file,
+						"PacletInfo.m"
+						},
+					CopyFile[
+						FileNameJoin@{
+							DirectoryName@file,
+							"PacletInfo.m"
+							},
+						FileNameJoin@{
+							dir,
+							"PacletInfo.m"
+							}	
+						]
+					];
+				CopyFile[file,
+					FileNameJoin@{
+						dir,
+						FileNameTake@file
+						},
+					OverwriteTarget->True
+					];
+				PacletExpressionBundle[dir,
+					"Name"->
+						StringReplace[FileBaseName[dir],
+							Except[WordCharacter|"$"]->""]
+							];
+				PacletBundle[dir,
+					"BuildRoot"->$TemporaryDirectory
+					]
+				],
+		"nb",
+			With[{dir=
+				FileNameJoin@{
+					$TemporaryDirectory,
+					StringJoin@RandomSample[Alphabet[],10],
+					FileBaseName@file
+					}
+					},
+				Quiet[
+					DeleteDirectory[dir,DeleteContents->True];
+					CreateDirectory[dir,CreateIntermediateDirectories->True]
+					];
+				CopyFile[file,FileNameJoin@{dir,FileNameTake@file}];
+				installPacletGenerate[dir]
+				],
+		"paclet",
+			file,
+		_,
+			Message[PacletInstallPaclet::howdo,
+				FileExtension@file
+				]
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*gitPacletPull*)
+
+
+
+gitPacletPull//Clear
+
+
+gitPacletPull[loc:(_String|_File|_URL)?GitHubPathQ]:=
+	GitHub["Pull",loc];
+gitPacletPull[loc:(_String|_File|_URL)?(Not@*GitHubPathQ)]:=
+	GitClone[loc];
+
+
+(* ::Subsubsection::Closed:: *)
+(*wolframLibraryPull*)
+
+
+
+wolframLibraryPull[loc:_String|_URL]:=
+	With[{fileURLs=
+		URLBuild@
+			Merge[{
+					URLParse[loc],
+					URLParse[#]
+					},
+				Replace[DeleteCases[#,None],{
+						{s_}:>s,
+						{___,l_}:>l,
+						{}->None
+						}]&
+				]&/@
+			Cases[
+				Import[loc,{"HTML","XMLObject"}],
+				XMLElement["a",
+					{
+						___,
+						"href"->link_,
+						___},
+					{___,
+						XMLElement["img",
+							{___,"src"->"/images/database/download-icon.gif",___},
+							_],
+						___}
+					]:>link,
+				\[Infinity]
+				]
+		},
+		With[{name=
+			FileBaseName@
+				First@
+					SortBy[
+						Switch[FileExtension[#],
+							"paclet",
+								0,
+							"zip"|"gz",
+								1,
+							"wl"|"m",
+								2,
+							_,
+								3
+							]&
+						][URLParse[#,"Path"][[-1]]&/@fileURLs]
+				},
+			Quiet@
+				DeleteDirectory[
+					FileNameJoin@{$TemporaryDirectory,name},
+					DeleteContents->True
+					];
+			CreateDirectory@FileNameJoin@{$TemporaryDirectory,name};
+			MapThread[
+				RenameFile[
+					#,
+					FileNameJoin@{$TemporaryDirectory,name,URLParse[#2,"Path"][[-1]]}
+					]&,{
+				URLDownload[fileURLs,
+					FileNameJoin@{$TemporaryDirectory,name}],
+				fileURLs
+				}];
+			FileNameJoin@{$TemporaryDirectory,name}
+			]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*downloadURLIfExists*)
+
+
+
+downloadURLIfExists[urlBase_,{files__},dir_]:=
+	If[
+		MatchQ[0|200]@
+			URLSave[
+				URLBuild@{urlBase,#},
+				FileNameJoin@{
+					dir,
+					#
+					},
+				"StatusCode"
+				],
+		FileNameJoin@{
+			dir,
+			#
+			},
+		Quiet@
+			DeleteFile@
+				FileNameJoin@{
+					dir,
+					#
+					};
+		Nothing
+		]&/@{files}
+
+
+(* ::Subsubsection::Closed:: *)
+(*PacletInstallPaclet*)
+
+
+
+Options[PacletInstallPaclet]=
+	{
+		"Verbose"->True,
+		"InstallSite"->True,
+		"InstallDependencies"->
+			Automatic,
+		"Log"->True
+		};
+PacletInstallPaclet[
+	loc:(_String|_File)?FileExistsQ,
+	ops:OptionsPattern[]
+	]:=
+	Replace[
+		installPacletGenerate[loc,ops],{
+			File[f_]|(f_String?FileExistsQ):>
+				Replace[PacletManager`PacletInstall@f,
+					p_PacletManager`Paclet:>
+						With[{deps=
+							Replace[OptionValue["InstallDependencies"],{
+								Automatic->{"Standard"},
+								True->All
+								}]
+							},
+						If[MatchQ[deps,_List|All],
+							Flatten@{
+								p,
+								With[{l=PacletLookup[p,"Location"]},
+									If[FileExistsQ@FileNameJoin@{l,$PackageDependenciesFile},
+										Replace[Import[$PackageDependenciesFile],{
+											a_Association:>
+												Switch[deps,
+													All,
+														Flatten@
+															Map[Map[PacletInstallPaclet,#]&,a],
+													_,
+														Flatten@
+															Map[PacletInstallPaclet,
+																Flatten@Lookup[a,deps,{}]
+																]
+													],
+											l_List:>
+												Map[PacletInstallPaclet,l]
+											}],
+										{}
+										]
+									]
+								},
+							p
+							]
+						]
+					]
+			}];
+PacletInstallPaclet[
+	loc:(_String?(URLParse[#,"Scheme"]=!=None&)|_URL),
+	ops:OptionsPattern[]
+	]:=
+	Which[
+		URLParse[loc,"Domain"]==="github.com",
+			With[{dir=
+				If[OptionValue@"Verbose"//TrueQ,
+					Monitor[
+						gitPacletPull[loc],
+						Which[GitHubRepoQ@loc,
+							Internal`LoadingPanel[
+								TemplateApply["Cloning repository at ``",loc]
+								],
+							GitHubReleaseQ@loc,
+								Internal`LoadingPanel[
+									TemplateApply["Pulling release at ``",loc]
+									],
+							True,
+								Internal`LoadingPanel[
+									TemplateApply["Downloading from ``",loc]
+									]
+							]
+						],
+					gitPacletPull[loc]
+					]
+				},
+				PacletInstallPaclet@dir
+				],
+			URLParse[loc,"Domain"]==="library.wolfram.com",
+				With[{dir=
+					If[OptionValue@"Verbose"//TrueQ,
+						Monitor[
+							wolframLibraryPull[loc],
+							Internal`LoadingPanel[
+								TemplateApply["Downloading from library.wolfram.com ``",loc]
+								]
+							],
+						gitPacletPull[loc]
+						]
+					},
+					PacletInstallPaclet@dir
+					],
+			True,
+				If[
+					And[
+						OptionValue["InstallSite"]//TrueQ,
+						MatchQ[
+							Quiet@PacletSiteInfo[loc],
+							PacletManager`PacletSite[__PacletManager`Paclet]
+							]
+						],
+					PacletSiteInstall[loc],
+					Switch[URLParse[loc,"Path"][[-1]],
+						_?(FileExtension[#]=="paclet"&),
+							PacletInstallPaclet@URLDownload[loc],
+						_?(MatchQ[FileExtension[#],"m"|"wl"]&),
+							PacletInstallPaclet@
+								downloadURLIfExists[
+									URLBuild[
+										ReplacePart[#,
+											"Path"->
+												Drop[#Path,-1]
+											]&@URLParse[loc]
+										],{
+									URLParse[loc,"Path"][[-1]],
+									$PackageDependenciesFile,
+									"PacletInfo.m"
+									}],
+						_,
+							Replace[
+								Quiet@Normal@PacletSiteInfoDataset[loc],{
+									Except[{__Association}]:>
+										(
+											Message[PacletInstallPaclet::nopac,loc];
+											$Failed
+											),
+									a:{__Association}:>
+										PacletInstallPaclet[
+											URLBuild@
+												Flatten@{
+													loc,
+													StringJoin@{
+														Lookup[Last@SortBy[a,#Version&],{
+															"Name",
+															"Version"
+															}],
+														".paclet"
+														}
+													},
+											ops
+											]
+								}]
+						]
+					]
+			];
 
 
 End[];

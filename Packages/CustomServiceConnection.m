@@ -38,7 +38,12 @@ Options[customServiceConnectionImportFunction]:=
 		"Parameters"->None,
 		"Required"->None,
 		"Function"->None,
-		"Permissions"
+		"Permissions"->None,
+		"ReturnContentData"->None,
+		"RequiredPermissions"->None,
+		"IncludeAuth"->None,
+		"MultipartData"->None,
+		"BodyData"->None
 		};
 customServiceConnectionImportFunction[name_,ops:OptionsPattern[]]:=
 	With[
@@ -97,8 +102,13 @@ CustomServiceConnection::pfkey="Process function `` missing keys ``";
 
 Options[customServiceConnectionProcessFunction]={
 	"Call"->None,
+	"Method"->None,
+	"Pre"->None,
 	"Import"->None,
-	"Process"->None
+	"Post"->None,
+	"Default"->None,
+	"Parameters"->None,
+	"Required"->None
 	};
 customServiceConnectionProcessFunction[name_,ops:OptionsPattern[]]:=
 	With[
@@ -107,7 +117,7 @@ customServiceConnectionProcessFunction[name_,ops:OptionsPattern[]]:=
 				DeleteCases[None]@
 					Association@{ops},
 			required=
-				{"Import"}
+				{}
 			},
 		Replace[
 			Select[MissingQ]@
@@ -223,8 +233,11 @@ Options[customServiceConnectionPrep]={
 	"ClientInfo"->
 		Automatic,
 	"ClientID"->None,
+	"ClientSecret"->None,
+	"AuthorizationResponseType"->None,
 	"RedirectURI"->None,
-	"AuthState"->None,
+	"AuthorizationState"->None,
+	"AuthorizationScope"->None,
 	"LoginURL"->
 		None,
 	"LogoutURL"->
@@ -235,6 +248,10 @@ Options[customServiceConnectionPrep]={
 		Automatic,
 	"AccessEndpoint"->
 		Automatic,
+	"TokenRequestor"->
+		None,
+	"TokenExtractor"->
+		None,
 	"TermsOfServiceURL"->
 		None,
 	"Information"->
@@ -302,7 +319,7 @@ customServiceConnectionPrep[
 										StringQ@OptionValue@"Client"&&
 											StringStartsQ[ToLowerCase@OptionValue@"Client","oauth"]
 									],
-								"https://localhost:7000/oauth2authorize",
+								"https://localhost:8080/oauth2authorize",
 								None
 								]
 							],
@@ -315,16 +332,26 @@ customServiceConnectionPrep[
 										StringQ@OptionValue@"Client"&&
 											StringStartsQ[ToLowerCase@OptionValue@"Client","oauth"]
 									],
-								"https://localhost:7000/oauth2access",
+								"https://localhost:8080/oauth2access",
 								None
 								]
 							],
+				"$ServiceConnectionAccessTokenRequestor"->
+					OptionValue@"TokenRequestor",
+				"$ServiceConnectionAccessTokenExtractor"->
+					OptionValue@"TokenExtractor",
 				"$ServiceConnectionTermsOfServiceURL"->
 					OptionValue@"TermsOfServiceURL",
 				"$ServiceConnectionClientID"->
 					OptionValue@"ClientID",
+				"$ServiceConnectionClientSecret"->
+					OptionValue@"ClientSecret",
+				"$ServiceConnectionAuthResponseType"->
+					OptionValue@"AuthorizationResponseType",
 				"$ServiceConnectionState"->
-					OptionValue@"AuthState",
+					OptionValue@"AuthorizationState",
+				"$ServiceConnectionAuthScope"->
+					OptionValue@"AuthorizationScope",
 				"$ServiceConnectionRedirectURI"->
 					Replace[OptionValue@"RedirectURI",
 						Automatic:>
@@ -359,11 +386,22 @@ customServiceConnectionPrep[
 									Join[
 										Keys@
 											Select[preps,
-												MemberQ[impSpec,#["Call"]]&
+												If[KeyMemberQ[#,"Method"],
+													ReplaceAll[
+														ToUpperCase@#["Method"],
+														"PATCH"|"PUT"|"DELETE"->"POST"
+														]===ToUpperCase@StringTrim[r,"s"],
+													MemberQ[impSpec,#["Call"]]
+													]&
 												],
 										If[r==="Gets",
 											Keys@
-												Select[preps,MissingQ@#["Call"]&],
+												Select[preps,
+													AllTrue[
+														Lookup[#,{"Call","Method"}],
+														MissingQ
+														]&
+													],
 											{}
 											]
 										]
@@ -388,18 +426,20 @@ customServiceConnectionPrep[
 							"\n\n"
 							],
 				"$ServiceConnectionHelperFunctions"->
-					Verbatim@
-						StringRiffle[
-							Replace[
-								Flatten@DeleteCases[None]@{OptionValue@"Functions"},{
-								(k_->f_):>
-									(ToString[k]<>" = "<>ToString[f,InputForm]),
-								e_:>
-									ToString@FullDefinition@e
-								},
-								1],
-							"\n\n"
-							],
+					Block[{$ContextPath={"System`",$Context}},
+						Verbatim@
+							StringRiffle[
+								Replace[
+									Flatten@DeleteCases[None]@{OptionValue@"Functions"},{
+									(k_->f_):>
+										(ToString[k]<>" = "<>ToString[f,InputForm]),
+									e_:>
+										ToString[Definition@e,InputForm]
+									},
+									1],
+								"\n\n"
+								]
+						],
 				"$ServiceConnection"->
 					Verbatim@name,
 				"$serviceconnection"->

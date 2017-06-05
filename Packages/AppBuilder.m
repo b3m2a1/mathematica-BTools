@@ -221,6 +221,10 @@ AppSubpacletUpload::usage=
 	"Uploads a sub-app";
 
 
+AppPacletServerPage::usage=
+	"Uploads a paclet access page to a server";
+
+
 Begin["`Private`"];
 
 
@@ -234,6 +238,8 @@ If[$appBuilderConfigLoaded//TrueQ//Not,
 	$AppDirectoryName="Applications";
 	$AppDirectory:=
 		FileNameJoin@{$AppDirectoryRoot,$AppDirectoryName};
+	$AppServerBase=CloudObject;
+	$AppServerName="PacletServer";
 	Replace[
 		SelectFirst[
 			`Package`PackageFilePath["Private","AppBuilderConfig."<>#]&/@{"m","wl"},
@@ -582,7 +588,15 @@ AppPaclet[app_String,ops:OptionsPattern[]]:=
 						&/@
 						Select[
 							FileNames["*",AppDirectory[app,"Packages"],\[Infinity]],
-							DirectoryQ@#&&StringMatchQ[FileBaseName@#,(WordCharacter|"$")..]&
+							DirectoryQ@#&&
+								AllTrue[
+									FileNameSplit@
+										FileNameDrop[#,FileNameDepth@AppDirectory[app,"Packages"]],
+									StringMatchQ[
+										#,
+										(WordCharacter|"$")..
+										]
+									]&
 							]
 					]
 			},
@@ -1819,7 +1833,7 @@ AppGitHubDelete[appName_:Automatic]:=
 
 
 (* ::Subsection:: *)
-(*Analyze*)
+(*Loading*)
 
 
 
@@ -2007,7 +2021,8 @@ AppPackageFunctions[app_:Automatic,pkgFile_String?FileExistsQ]:=
 		Block[{pkgFuncCheckedCache=<||>},
 			Cases[
 				Reap[
-					Do[Replace[ReadList[f,Hold[Expression],1],{
+					Do[Replace[
+						ReadList[f,Hold[Expression],1],{
 							{}->Return[EndOfFile],
 							{Hold[_Begin|_BeginPackage|
 								CompoundExpression[_Begin|_BeginPackage,___]]}:>
@@ -2025,7 +2040,10 @@ AppPackageFunctions[app_:Automatic,pkgFile_String?FileExistsQ]:=
 									!StringMatchQ[Quiet[Context[sym]],
 										"System`"|("*`*Private*")|$Context
 										],
-									Quiet[Context[sym]]==cont
+									With[{pcont=Quiet[Context[sym]]},
+										StringMatchQ[pcont,cont<>"*"]&&
+											!StringContainsQ[pcont,"Private`"]	
+										]
 									]
 							},
 							pkgFuncCheckedCache[Hold[sym]]=v
@@ -2102,40 +2120,63 @@ AppFunctionPackage[app_:Automatic,f_Symbol]:=
 
 
 functionCallChain[conts_,function_]:=
-	FixedPoint[
-		Union[#,
-			Cases[_Symbol?(
+	With[{cpats=Alternatives@@Map[#<>"*"&,conts]},
+		Cases[
+			Hold[s_Symbol]?(
 				Function[Null,
-					MemberQ[conts,Context[#]]&&Length@DownValues[#]>0,
+					Quiet[StringMatchQ[Context@@#,cpats],Context::ssle]&&
+						Length[OwnValues@@#]==0,
 					HoldFirst
-					])]@
-			Cases[DownValues/@#,
-				s_Symbol?(
-					Function[Null,
-						MemberQ[conts,Quiet@Context[#]],
-						HoldFirst
-						]
-					):>s,
-				\[Infinity],
-				Heads->True
-				]
-			]&,
-		Flatten@{function}
+					]):>s
+			]@
+		FixedPoint[
+			Union[#,
+				Cases[
+					Flatten@
+						(Through[
+							Map[Apply,{DownValues,UpValues,OwnValues,SubValues}]@#
+							]&/@#),
+					s_Symbol?(
+						Function[Null,
+							Quiet[
+								StringMatchQ[Context[#],cpats]&&
+								Length[
+									Flatten@
+										Through[
+											Map[Apply,
+												{DownValues,UpValues,OwnValues,SubValues}
+												]@Hold[#]
+											]
+									]>0
+								],
+							HoldFirst
+							]
+						):>Hold[s],
+					\[Infinity],
+					Heads->True
+					]
+				]&,
+			Thread[Hold[Evaluate@Flatten@{function}]],
+			25
+			]
 		];
 AppFunctionDependencies[app_:Automatic,function:_Symbol|{__Symbol}]:=
 	With[{conts=
 		{#,#<>"Private`"}&@Quiet@Context@Evaluate@First@Flatten@{function}
 		},
-		GroupBy[First->Last]@
-		KeyValueMap[
-			Thread[#2->#]&
-			]@
+		Replace[
 			AppFunctionPackage[app,
 				Select[functionCallChain[conts,function],
 					With[{c=First@conts},
 						Quiet@Context[#]==c
 						]&]
-				]
+				],{
+			a_Association:>
+				GroupBy[First->Last]@
+					KeyValueMap[Thread[#2->#]&,a],
+			_:>
+				<||>
+			}]
 		];
 
 
@@ -2825,7 +2866,17 @@ AppRegenerateUploadInfo[app_String,ops:OptionsPattern[]]:=
 Options[AppPacletSiteURL]=
 	Options[PacletSiteURL];
 AppPacletSiteURL[ops:OptionsPattern[]]:=
-	PacletSiteURL[ops];
+	PacletSiteURL[
+		"ServerName"->
+			Replace[OptionValue["ServerName"],
+				Default->$AppServerName
+				],
+		"ServerBase"->
+			Replace[OptionValue["ServerBase"],
+				Default->$AppServerBase
+				],
+		ops
+		];
 AppPacletSiteURL[app_String,ops:OptionsPattern[]]:=
 	AppPacletSiteURL[ops,"ServerName"->app];
 
@@ -2979,18 +3030,19 @@ AppPacletUploadUninstaller[app_,ops:OptionsPattern[]]:=
 
 
 
-$AppPacletExtension="paclets";
-
-
 Options[AppPacletUpload]=
 	DeleteDuplicatesBy[First]@
 		Join[
-			Options[PacletUpload],
 			{
 				"PacletFiles"->Automatic,
 				"UploadInfo"->Automatic,
-				"RebundlePaclets"->True
-				}
+				"RebundlePaclets"->True,
+				"UploadSiteFile"->True,
+				"UploadInstaller"->True,
+				"UploadInstallLink"->True,
+				"UploadUninstaller"->True
+				},
+			Options[PacletUpload]
 			];
 AppPacletUpload[apps__String,ops:OptionsPattern[]]:=
 	Replace[OptionValue["UploadInfo"],{
@@ -3057,14 +3109,22 @@ AppPacletUpload[apps__String,ops:OptionsPattern[]]:=
 							]
 					},
 					PacletUpload[Sequence@@pacletFiles,
-						FilterRules[{
-							"ServerName"->
-								First@{apps},
-							"ServerBase"->
-								OptionValue["ServerBase"],
-							ops,
-							"SiteFile"->site
-							},
+						FilterRules[
+							Flatten@{
+								"ServerName"->
+									Replace[OptionValue["ServerName"],{
+										Automatic:>First@{apps},
+										Default->$AppServerName
+										}],
+								"ServerBase"->
+									Replace[
+										OptionValue["ServerBase"],
+										Default->$AppServerBase
+										],
+								ops,
+								Options[AppPacletUpload],
+								"SiteFile"->site
+								},
 							Options@PacletUpload
 							]]
 					]
@@ -3111,6 +3171,37 @@ AppSubpacletUpload[
 				FilterRules[{ops},Options@AppPacletUpload]
 				]
 			]
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppPacletServerPage*)
+
+
+
+Options[AppPacletServerPage]=
+	Options[PacletServerPage];
+AppPacletServerPage[ops:OptionsPattern[]]:=
+	PacletServerPage[
+		"ServerName"->
+			Replace[OptionValue["ServerName"],
+				Default->$AppServerName
+				],
+		"ServerBase"->
+			Replace[OptionValue["ServerBase"],
+				Default->$AppServerBase
+				],
+		ops
+		];
+AppPacletServerPage[app:Except[_?OptionQ],ops:OptionsPattern[]]:=
+	AppPacletServerPage[
+		"ServerName"->
+			Lookup[
+				Association@Flatten@{ops},
+				"ServerName",
+				AppFromFile@app
+				],
+		ops
 		];
 
 

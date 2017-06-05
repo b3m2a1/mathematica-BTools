@@ -1,116 +1,312 @@
 (* ::Package:: *)
 
+(* ::Section:: *)
+(*$ServiceConnection Service Connection*)
+
+
+(* ::Text:: *)
+(**)
+
+
+(*This is a service connection for $ServiceConnection built via template. It is designed to generalize building a service connection paclet, and so there may be odd form
+atting and functionality that is never used.*)
+
+
+(* ::Subsection:: *)
+(*Standard Load*)
+
+
 Get["$ServiceConnectionFunctions`"]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Begin*)
+
 
 Begin["$ServiceConnectionAPI`"]
 
 Begin["`Private`"]
 
-(******************************* $ServiceConnection *************************************)
+
+(* ::Subsubsection:: *)
+(*Template Info*)
 
 
-(* Authentication information *)
-$serviceconnectionclientinfo=$ServiceConnectionClientInfo
-$serviceconnectiondata[] = 
-DeleteDuplicatesBy[First]@Flatten@{
+(* ::Text:: *)
+(*Aliases to improve readability*)
 
-	"ServiceName" -> "$ServiceConnection",
-	"URLFetchFun" :> $ServiceConnectionURLFetch,
-	"ClientInfo" :> 
-		Replace[$serviceconnectionclientinfo,
-			{
-				{}|Except[_List]:>
-					If[$ServiceConnectionUseOAuth//TrueQ,
-						{"Wolfram","Token"},
-						{}
-						],
-				o_?OptionQ:>
-					OAuthDialogDump`Private`MultipleKeyDialog[
-						"$ServiceConnection",
-						Flatten@{o},
-						With[{parms=
-							DeleteCases[Except[_String|_Integer]]@
-								AssociationThread[
-									{
-										"client_id",
-										"redirect_uri",
-										"state"
-										},
-									{
-										$ServiceConnectionClientID,
-										$ServiceConnectionRedirectURI,
-										$ServiceConnectionState
-										}
-									]
-							},
-						If[Length@parms>0,
-							URLBuild[
-								$ServiceConnectionAuthEndpoint,
-								Normal@parms
-								],
-							$ServiceConnectionAuthEndpoint
-							]
-						],
-					$ServiceConnectionTermsOfServiceURL
-					]
-				}],
-	If[$ServiceConnectionUseOAuth//TrueQ,
-		{
-			"OAuthVersion" -> "2.0",
-			"AuthorizeEndpoint" -> $ServiceConnectionAuthEndpoint,
-			"AccessEndpoint" -> $ServiceConnectionAccessEndpoint,
-			"LogoutURL" -> $ServiceConnectionLogoutURL,
-			If[TrueQ[OAuthClient`Private`$UseChannelFramework],
-				{
-					"RedirectURI"       -> "WolframConnectorChannelListen",
-					"Blocking"          -> False,
-					"VerifierLabel"     -> "code",
-					"AuthenticationDialog"	:> "WolframConnectorChannel",
-					"AuthorizationFunction"	-> "$ServiceConnection",
-					"RedirectURLFunction"	->(#1&)
-			   	 	},
-				{
-					"RedirectURI" -> "https://www.wolfram.com/oauthlanding?service=$ServiceConnection",
-					"AuthenticationDialog" :>
-						Replace[$servicesonnectionclientinfo,
-							{
-								{}|Except[_List]:>
-									(OAuthClient`tokenOAuthDialog[#,
-										"$ServiceConnection",
-										Replace[
-											$serviceconnectiondata["bigicon"],
-											_serviceconnectiondata:>
-												Replace[$serviceconnectiondata["icon"],
-													_serviceconnectiondata:>
-														Null
-													]
-											]
-										]&),
-								_->("fake-access-token"&)
-								}]
-				   }
-	    		]
-	   },
-	  {}],
-		{
-			Normal[
-				DeleteCases[Except[{__}]]@
-					<|
-						"Gets" -> 
-							Flatten@{
-								"RequestParameters","RequestData",$ServiceConnectionGets
-								},
-						"Posts" -> $ServiceConnectionPosts,
-						"RawGets" -> $ServiceConnectionRawGets,
-						"RawPosts" -> $ServiceConnectionRawPosts
-						|>
-				],
-			If[$ServiceConnectionInformation=!=None,
-				"Information" -> $ServiceConnectionInformation,
-				Nothing
+
+$serviceconnectionurlfetchfun=
+	$ServiceConnectionURLFetch;
+
+
+$$serviceconnectionusecloud=
+	$ServiceConnectionCloudCredentialsQ;
+
+
+$serviceconnectionclientinfo=
+	$ServiceConnectionClientInfo;
+
+
+$$serviceconnectionclientname=
+	$ServiceConnectionClientName;
+
+
+$$serviceconnectionredirecturi:=
+	$$serviceconnectionredirecturi=
+		Replace[$ServiceConnectionRedirectURI,{
+				Key[x_]:>$serviceconnectionprivateoauthpagelink[x],
+				Delayed[x_]:>$serviceconnectionprivateoauthcloudlink[x]
+				}];
+
+
+$$serviceconnectionrawgetrequests=
+	$ServiceConnectionRawGets;
+
+
+$$serviceconnectionrawpostrequests=
+	$ServiceConnectionRawPosts;
+
+
+$$serviceconnectiongetrequests=
+	$ServiceConnectionGets;
+
+
+$$serviceconnectionpostrequests=
+	$ServiceConnectionPosts;
+
+
+$$serviceconnectioninformation=
+	$ServiceConnectionInformation;
+
+
+$$serviceconnectionuseoauth=
+	$ServiceConnectionUseOAuth//TrueQ;
+
+
+$$serviceconnectionclientid:=
+	Replace[
+		Replace[$ServiceConnectionClientID,f_Function:>f[]],{
+		Except[_String]:>
+			"not_supported"
+		}];
+
+
+$$serviceconnectionclientsecret:=
+	Replace[
+		Replace[$ServiceConnectionClientSecret,f_Function:>f[]],{
+		Except[_String]:>
+			"not_supported"
+		}];
+
+
+$$serviceconnectionauthendpoint:=
+	$ServiceConnectionAuthEndpoint;
+
+
+$$serviceconnectionaccessendpoint:=
+	$ServiceConnectionAccessEndpoint;
+
+
+$$serviceconnectionauthresponsetype:=
+	Replace[$ServiceConnectionAuthResponseType,
+		Except[_String]:>
+			If[StringQ@$$serviceconnectionclientid,
+				"code",
+				None
 				]
+		];
+
+
+$$serviceconnectionauthscope:=
+	$ServiceConnectionAuthScope
+
+
+$$serviceconnectionlogouturl=
+	$ServiceConnectionLogoutURL;
+
+
+$$serviceconnectiontermsofserviceurl=
+	$ServiceConnectionTermsOfServiceURL;
+
+
+$$serviceconnectionstate:=
+	$$serviceconnectionstate=
+		$ServiceConnectionState;
+
+
+$$serviceconnectionauthorizationendpointurl[url_]:=
+	URLBuild@
+	ReplacePart[#,
+		"Query":>
+			DeleteDuplicatesBy[First]@
+				DeleteCases[_->(_Symbol|_String?(StringMatchQ[""|Whitespace]))]@
+				#["Query"]
+		]&@
+		Merge[{
+			"Query"->
+				Normal@
+				DeleteCases[Except[_String|_Integer]]@
+					AssociationThread[
+						{
+							"client_id",
+							"redirect_uri",
+							"response_type",
+							"state",
+							"scope"
+							},
+						{
+							$$serviceconnectionclientid,
+							$$serviceconnectionredirecturi,
+							$$serviceconnectionauthresponsetype,
+							$$erviceconnectionstate,
+							$$serviceconnectionauthscope
+							}
+						],
+				URLParse@url
+				},
+				Replace[{f_}:>f]@*Flatten
+				];
+
+
+(* ::Text:: *)
+(*These are requisitioned in case I need to re-overload them with more complex functionality*)
+
+
+$$serviceconnectionaccesstokenendpoint:=
+	$$serviceconnectionaccessendpoint;
+
+
+$$serviceconnectionauthorizationendpoint:=
+	$$serviceconnectionauthendpoint
+
+
+$$serviceconnectionaccesstokenrequestor:=
+	Replace[$ServiceConnectionAccessTokenRequestor,
+		Except[_Function|_String]->Automatic
+		]
+
+
+$$serviceconnectionaccesstokenextractor:=
+	Replace[$ServiceConnectionAccessTokenExtractor,
+		Except[_Function|_String]->"JSON/2.0"
+		]
+
+
+(* ::Subsubsection:: *)
+(*Auth Info*)
+
+
+(* ::Text:: *)
+(*Primary auth information*)
+
+
+$serviceconnectiondata[] = 
+	DeleteDuplicatesBy[First]@Flatten@{
+		"ServiceName" -> "$ServiceConnection",
+		"URLFetchFun" :> $serviceconnectionurlfetchfun,
+		"ClientInfo" :> 
+			Replace[$serviceconnectionclientinfo,
+				{
+					{}|Except[_List]:>
+						If[$$serviceconnectionuseoauth,
+							{"Wolfram","Token"},
+							{}
+							],
+					o_?OptionQ:>
+						OAuthDialogDump`Private`MultipleKeyDialog[
+							"$ServiceConnection",
+							Flatten@{o},
+							$$serviceconnectionauthorizationendpointurl@
+								$$serviceconnectionauthorizationendpoint,
+							$$serviceconnectiontermsofserviceurl
+							]
+					}],
+		If[$$serviceconnectionuseoauth,
+			{
+				"OAuthVersion" -> "2.0",
+				"AuthorizeEndpoint" :>
+					$$serviceconnectionauthorizationendpoint,
+				"AccessEndpoint" :>
+					$$serviceconnectionaccesstokenendpoint,
+				"LogoutURL" :> $$serviceconnectionlogouturl,
+				If[TrueQ[OAuthClient`Private`$UseChannelFramework],
+					(* ------- FUTURIZED (?) FORM INTEGRATING WITH CHANNELS ------ *)
+					{
+						"RedirectURI"       -> "WolframConnectorChannelListen",
+						"Blocking"          -> False,
+						"VerifierLabel"     -> "code",
+						"AuthenticationDialog"	:> "WolframConnectorChannel",
+						"AuthorizationFunction"	-> "$ServiceConnection",
+						"RedirectURLFunction"	->(#1&)
+				   	},
+					(* ------- STANDARD (?) FORM FOR OAUTH ------ *)
+					{
+						"ConsumerKey":>
+							$$serviceconnectionclientid,
+						"ConsumerSecret":>
+							$$serviceconnectionclientsecret,
+						"AccessTokenRequestor":>
+							$$serviceconnectionaccesstokenrequestor,
+						"AccessTokenExtractor":>
+							$$serviceconnectionaccesstokenextractor,
+						"AutomaticScope":>
+							$$serviceconnectionauthscope,
+						"ScopeParameter":>
+							$$serviceconnectionauthscope,
+						"RedirectURI" :>
+							Replace[$$serviceconnectionredirecturi,{
+								Key[x_]:>$serviceconnectionprivateoauthpagelink[x],
+								Except[_String|_Function]->
+									"https://www.wolfram.com/oauthlanding?service=$ServiceConnection"
+								}],
+						"AuthenticationDialog" :>
+							Replace[$$servicesonnectionclientinfo,
+								{
+									{}|Except[_List]:>
+										(
+										OAuthClient`tokenOAuthDialog[
+												$$serviceconnectionauthorizationendpointurl@#,
+												"$ServiceConnection",
+												Replace[
+													$serviceconnectiondata["bigicon"],
+													_serviceconnectiondata:>
+														Replace[$serviceconnectiondata["icon"],
+															_serviceconnectiondata:>
+																Sequence@@{}
+															]
+													]
+												]&),
+									_->($serviceconnectionprivateoauthtokenfile[]&)
+									}]
+					   }
+		    		]
+		   },
+		  {}],
+			{
+				Normal[
+					DeleteCases[Except[{__}]]@
+						<|
+							"Gets" -> 
+								Flatten@{
+									"RequestParameters","RequestData",
+									$$serviceconnectiongetrequests
+									},
+							"Posts" -> $$serviceconnectionpostrequests,
+							"RawGets" -> $$serviceconnectionrawgetrequests,
+							"RawPosts" -> $$serviceconnectionrawpostrequests
+							|>
+					],
+				If[$$serviceconnectioninformation=!=None,
+					"Information" -> $$serviceconnectioninformation,
+					Nothing
+					]
+				}
 			}
-		}
+
+
+(* ::Subsubsection::Closed:: *)
+(*icons*)
 
 
 $$serviceconnectionicon=$ServiceConnectionIcon;
@@ -151,14 +347,24 @@ Replace[
 	}];
 
 
-(* ::Subsubsection:: *)
-(*Call Data*)
+(* ::Subsubsection::Closed:: *)
+(*Raw Import Functions*)
+
+
+$$serviceconnectioncalls=$ServiceConnectionCalls;
 
 
 KeyValueMap[
 	Function[
 		$serviceconnectiondata[#] := 
-			ReplacePart[Association@#2,
+			ReplacePart[
+				Association@#2
+				(*Join[
+					<|
+						"ResultsFunction"->$serviceconnectionurlfetchfun
+	   	 		|>,
+					Association@#2
+					]*),
 				"BodyData":>
 					Append["ParameterlessBodyData"->"ParameterlessBodyData"]@
 					Replace[Lookup[#2,"BodyData",{}],
@@ -167,12 +373,12 @@ KeyValueMap[
 						]
 				]
 			],
-	$ServiceConnectionCalls
+	$$serviceconnectioncalls
 	]
 
 
-(* ::Subsubsection:: *)
-(*Cooked Data*)
+(* ::Subsubsection::Closed:: *)
+(*Request Data*)
 
 
 $serviceconnectioncookeddata[req_, id_] :=
@@ -218,7 +424,10 @@ $serviceconnectioncookeddata["RequestParameters",id_, query_String]:=
 			<|
 				"Parameters"->
 					DeleteCases[
-						Replace[Flatten@Lookup[a,{"Path","Parameters","BodyData","MultipartData"}],
+						Replace[
+							DeleteMissing@
+								Flatten@
+									Lookup[a,{"Path","Parameters","BodyData","MultipartData"}],
 							r_Rule:>First@r,
 							1
 							],
@@ -247,7 +456,7 @@ $serviceconnectioncookeddata["RequestData",id_, query_String]:=
 								!FreeQ[First@#,query]&
 								],
 							With[{fn=
-								Switch[$ServiceConnectionClientName,
+								Switch[$$serviceconnectionclientname,
 									"OAuthClient"|"oauthclient"|"OauthClient",
 										OAuthClient`rawoauthdata,
 									"KeyClient"|"keyclient",
@@ -283,10 +492,24 @@ $serviceconnectioncookeddata["RequestData",id_, query_String]:=
 		];
 
 
+(* ::Subsubsection:: *)
+(*Cooked Data Functions*)
+
+
+$$serviceconnectioncookingfunctions=$ServiceConnectionCookingFunctions;
 KeyValueMap[
 	With[{
 		callName=#,
 		baseCall=Lookup[#2,"Call"],
+		defaultPars=
+			Association@Flatten@List@Lookup[#2,"Default",{}],
+		reqParams=Lookup[#2,"Required",{}],
+		paramList=Lookup[#2,"Parameters",{}],
+		preFunction=
+			If[AssociationQ@#2,
+				Lookup[#2,"Pre",#3&],
+				#2
+				],
 		processFunction=
 			If[AssociationQ@#2,
 				Lookup[#2,"Import",Identity],
@@ -301,77 +524,117 @@ KeyValueMap[
 		If[!MissingQ@baseCall,
 			$serviceconnectioncookeddata[callName, id_,args_] :=
 				postFunction@
-	   	 	Block[{ params = Association[args] },
-		    		Replace[
-		     	  processFunction[
-		     	  	Switch[$ServiceConnectionClientName,
-						"OAuthClient"|"oauthclient"|"OauthClient",
-							OAuthClient`rawoauthdata,
-						"KeyClient"|"keyclient",
-							With[{
-								bodyData=
-									Replace[
-										Lookup[params,"BodyData",{}],
-										Except[_String|_List]->{}
-										],
-								bodyParams=
-									ServiceConnections`Private`getQueryData[
-										id,
-										baseCall
-										][[5]]
-								},
-								If[Length@bodyParams>0,
-								params=
-									Normal@
-									Merge[{
-										params,
-										"ParameterlessBodyData"->
-											Function[
-												If[StringQ@bodyData,
-													StringJoin@{
-														"[\n",bodyData,",\n",
-														ExportString[Normal@#,"JSON"]/.
-															f_File:>
-																Import[f,"Text"],
-														"\n]"
-														},
-													ExportString[
-														Join[
-															bodyData,
-															Normal@#/.
-																f_File:>
-																	Import[f,"Text"]
-															],
-														"JSON"
-														]
-													]
-												]@
-												DeleteMissing@
-													AssociationThread[
-														Keys@bodyParams,
-														Lookup[params,Values@bodyParams]
-														]
-										},
-										Last
-										]
+	   	 	Block[{ 
+	   	 		params = (*preFunction@*)Join[Association[args],defaultPars],
+	   	 		$$serviceconnectionlastrequest
+	   	 		},
+	   	 		ServiceConnections`Private`urlfetchFun[id]=
+	   	 			$serviceconnectionurlfetchfun;
+	   	 	If[MatchQ[$$serviceconnectionclientname,"KeyClient"|"keyclient"],
+	   	 		params=
+	   	 			$serviceconnectionreformatbodydata[
+									If[MatchQ[baseCall,_Function],baseCall[params],baseCall],
+									id,
+									params
 									]
-								];
-							KeyClient`rawkeydata,
-						"OtherClient"|"otherclient",
-							OtherClient`rawotherdata
-						][id,baseCall,Normal@params]],{
+							];
+		    	Replace[
+		     	  processFunction[
+		     	  	Switch[$$serviceconnectionclientname,
+									"OAuthClient"|"oauthclient"|"OauthClient",
+										OAuthClient`rawoauthdata,
+									"KeyClient"|"keyclient",
+										KeyClient`rawkeydata,
+									"OtherClient"|"otherclient",
+										OtherClient`rawotherdata
+									][id,
+										If[MatchQ[baseCall,_Function],baseCall[params],baseCall],
+										Normal@
+											preFunction[
+												If[MatchQ[baseCall,_Function],
+													baseCall[params],
+													baseCall],
+												id,
+												params
+												]
+										]
+									],{
 			       a:_?AssociationQ|{__?AssociationQ}:>
 			       	Dataset[a]
 			       }]
 			    ],
+			 $serviceconnectioncookeddata[
+	 			"RequestData",
+ 				_, 
+ 				callName]:=
+ 				<|
+ 					"URL"->Missing["NotAvailable"],
+ 					"Method"->Missing["NotAvailable"],
+ 					"Path"->Missing["NotAvailable"],
+ 					"Parameters"->paramList,
+ 					"BodyData"->Missing["NotAvailable"],
+ 					"MultipartData"->Missing["NotAvailable"],
+ 					"Headers"->Missing["NotAvailable"],
+ 					"RequiredParameters"->reqParams,
+ 					"RequiredPermissions"->Missing["NotAvailable"],
+ 					"ReturnContentData"->Missing["NotAvailable"],
+ 					"IncludeAuth"->Missing["NotAvailable"]
+ 					|>;
 			 $serviceconnectioncookeddata[callName, id_,args_] :=
-			 	processFunction[id,args]
+			 	Block[{ 
+			 		params = 
+			 			preFunction[
+				 			callName,
+				 			id,
+				 			Join[Association[args],defaultPars]
+				 			],
+			 		req = reqParams,
+			 		pars = paramList,
+			 		$$serviceconnectionlastrequest
+			 		},
+			 		Catch[
+			 			With[{missing=
+				 			Select[req,!KeyMemberQ[params,#]&]
+				 			},
+				 			If[Length@missing>0,
+				 				Message[
+				 					ServiceExecute::nparam,
+				 					#
+				 					]&/@missing;
+									Throw@$Failed
+				 				]
+				 			];
+				 		With[{extra=
+				 			Select[Keys@params,!MemberQ[pars,#]&]
+				 			},
+				 			If[Length@extra>0,
+				 				Message[
+				 					ServiceExecute::noget,
+				 					#,
+				 					"$ServiceConnection"
+				 					]&/@extra;
+									Throw@$Failed
+				 				]
+				 			];
+							processFunction[id,params]
+			 			]
+			 		]
 			 ]
 		]&,
-	$ServiceConnectionCookingFunctions
+	$$serviceconnectioncookingfunctions
 	];
 
+
+(* ::Subsubsection::Closed:: *)
+(*Send Message*)
+
+
 $serviceconnectionsendmessage[___]:=$Failed
+
+
+(* ::Subsection::Closed:: *)
+(*End*)
+
 
 End[]
 

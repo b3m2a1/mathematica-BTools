@@ -311,6 +311,12 @@ If[!AssociationQ@$EncodedCaches,
 	];
 
 
+EncodedCacheLoaded[spec_?StringQ]:=
+	KeyMemberQ[$EncodedCaches,spec];
+EncodedCacheLoaded[EncodedCache[spec_?StringQ]]:=
+	KeyMemberQ[$EncodedCaches,spec];
+
+
 EncodedCacheFile[spec_?StringQ]:=
 	FileNameJoin@Flatten@
 		Replace[
@@ -353,10 +359,17 @@ EncodedCacheLoad[(spec_?StringQ)?(KeyMemberQ[$EncodedCacheOptions,#]&)]:=
 			If[FileExistsQ@file,
 				If[EncodedCacheOption[spec,"UsePassword"]//TrueQ,
 					Replace[
-						Check[
-							Get[file,EncodedCachePassword[spec]],
-							EncodedCachePassword[spec]=.,
-							Get::enkey
+						Nest[
+							If[!AssociationQ@#,
+								Check[
+									Get[file,EncodedCachePassword[spec]],
+									EncodedCachePassword[spec]=.,
+									Get::enkey
+									],
+								#
+								]&,
+							None,
+							3
 							],
 						$Failed:>
 							<||>
@@ -368,7 +381,7 @@ EncodedCacheLoad[(spec_?StringQ)?(KeyMemberQ[$EncodedCacheOptions,#]&)]:=
 			]
 		},
 		If[AssociationQ@a,
-			If[TrueQ@$EncodedCacheOptions["StoreInMemory"],
+			If[TrueQ@EncodedCacheOption[spec,"StoreInMemory"],
 				$EncodedCaches[spec]=a,
 				a
 				],
@@ -413,19 +426,34 @@ EncodedCacheLoad[d_String?DirectoryQ]:=
 
 EncodedCache[spec_?StringQ][keys__]:=
 	If[TrueQ@EncodedCacheOption[spec,"StoreInMemory"],
+		(
+			If[!EncodedCacheLoaded[spec],
+				EncodedCacheLoad[spec];
+				];
 		Lookup[
 			Lookup[
 				$EncodedCaches,
 				spec,
 				<||>],
 			keys
-			],
+			]
+		),
 		EncodedCacheLoad[spec][keys]
 		];
 EncodedCache[spec_?StringQ,"Options"][op_]:=
-	EncodedCacheOption[spec,op];
+	(	
+		If[!EncodedCacheLoaded[spec],
+			EncodedCacheLoad[spec]
+			];
+		EncodedCacheOption[spec,op]
+		);
 EncodedCache[spec_?StringQ,"Password"]:=
-	EncodedCachePassword[spec];
+	(
+		If[!EncodedCacheLoaded[spec],
+			EncodedCacheLoad[spec]
+			];
+		EncodedCachePassword[spec]
+		);
 
 
 EncodedCache/:
@@ -783,11 +811,11 @@ $KeyChainDirectory/:
 			];
 
 
-KeyChainAdd[site_->{username_,password_}]:=
+KeyChainAdd[site_->{username:Except[None],password_}]:=
 	$KeyChain[{site,username}]=password;
-KeyChainAdd[{site_->{username_,password_}}]:=
-	$KeyChain[{site,username}]=password;
-KeyChainAdd[sites:{(_->{_,_}),(_->{_,_})..}]:=
+KeyChainAdd[{site_->{username:Except[None],password_}}]:=
+	$KeyChain[{site,Except[None]}]=password;
+KeyChainAdd[sites:{(_->{Except[None],_}),(_->{Except[None],_})..}]:=
 	With[{
 		saveOps=$KeyChainSettings["SaveOptionsToDisk"],
 		saveDisk=$KeyChainSettings["SaveToDisk"],
@@ -826,7 +854,24 @@ KeyChainAdd[
 								{{s,Automatic},u},
 							1
 							]
-					]
+					];
+KeyChainAdd[
+	site_->{None,s_String}
+	]:=
+	(Clear@$keyChainAuth;Replace[#,_KeyChainAdd->$Failed])&@
+		KeyChainAdd[
+			site->
+				{
+					s,
+					PasswordDialog[
+						Dynamic@$keyChainAuth,
+						"",
+						s,
+						"PromptString"->
+							"Enter ``:",
+						WindowTitle->s
+						]
+				}];
 
 
 KeyChainGet[site_String,lookup:True|False:False]:=
@@ -846,6 +891,16 @@ KeyChainGet[
 			],
 		FirstCase[#,_String?(StringLength@#>0&)]
 		]&@$KeyChain[{Key@{site,username}}];
+KeyChainGet[
+	site_->{None,key_},
+	lookup:True|False:False
+	]:=
+	Replace[
+		KeyChainGet[{site,key}],
+		Except[_String?(StringLength@#>0&)]:>
+			KeyChainAdd[site->{None,key}]
+		]
+	
 
 
 End[];

@@ -190,7 +190,8 @@ GAURLAssoc[s:_String|{__String},o___?OptionQ]:=
 GoogleAPIClearAuth[
 	user:(_String|Automatic):Automatic,
 	clientID:_String|Automatic:Automatic,
-	scope:_String?GAOAuthScopeQ:"drive"]:=
+	scope:_String?GAOAuthScopeQ:"drive"
+	]:=
 	With[{
 		u=
 			StringTrim[
@@ -1955,7 +1956,6 @@ GoogleDrive[
 	call_String?GoogleDriveCallQ,
 	args___
 	]:=
-	(Print[2];
 	Block[{
 		$GAOAuthToken=
 			Replace[$GAOAuthToken,Except[_String]->""],
@@ -1964,7 +1964,7 @@ GoogleDrive[
 		Block[{$GAApplyRequests=applyCall},
 			$GoogleDriveCalls[ToLowerCase@call][args]
 			]
-		]);
+		];
 
 
 End[];
