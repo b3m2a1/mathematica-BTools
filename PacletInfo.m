@@ -5,5 +5,4 @@ development including distribution, documentation generation, formatting, \
 front-end manipulation, application editing, etc.", 
  Extensions -> {{"Documentation", "Language" -> "English", 
     "MainPage" -> "Guides/BTools"}, {"Kernel", Root -> ".", 
-    Context -> {"BTools`"}}, {"FrontEnd", Prepend -> True}, 
-   {"AutoCompletionData", "Root" -> "AutoCompletionData"}}]
+    Context -> {"BTools`"}}, {"FrontEnd", Prepend -> True}}]

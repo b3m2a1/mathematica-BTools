@@ -469,7 +469,8 @@ Options[CustomServiceConnection]=
 			"ProcessFunctions"->{},
 			"Icon"->None
 			},
-		Options@customServiceConnectionPrep
+		Options@customServiceConnectionPrep,
+		Options@PacletExpressionBundle
 		];
 
 
@@ -577,7 +578,8 @@ CustomServiceConnection[
 					];
 				If[pack,
 					PacletExpressionBundle[
-						FileNameJoin@{dir,"ServiceConnection_"<>name}
+						FileNameJoin@{dir,"ServiceConnection_"<>name},
+						FilterRules[{ops},Options@PacletExpressionBundle]
 						];
 					PacletBundle@FileNameJoin@{dir,"ServiceConnection_"<>name},
 					FileNameJoin@{dir,"ServiceConnection_"<>name}

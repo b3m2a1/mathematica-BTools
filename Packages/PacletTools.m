@@ -144,6 +144,11 @@ $pacletConfigLoaded=True
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*PacletInfo*)
+
+
+
 PacletInfoAssociation[PacletManager`Paclet[k__]]:=
 	With[{o=Options[PacletExpression]},
 		KeySortBy[First@FirstPosition[o,#]&]
@@ -205,6 +210,11 @@ PacletInfo[infoFile_]:=
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*PacletDocsInfo*)
+
+
+
 Options[PacletDocsInfo]={
 	"Language"->"English",
 	"Root"->None,
@@ -248,6 +258,11 @@ PacletDocsInfo[dest_String?DirectoryQ,ops:OptionsPattern[]]:=
 				]
 			]
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*PacletExtensionData*)
+
 
 
 Options[PacletExtensionData]={
@@ -367,7 +382,7 @@ PacletExtensionData[pacletInfo_Association,dest_,ops:OptionsPattern[]]:=
 			Replace[OptionValue["AutoCompletionData"],{
 				Automatic:>
 					If[Length@
-							FileNames["*.tr"|"documentedContexts.m",
+							FileNames["*.tr",
 									FileNameJoin@{dest,"AutoCompletionData"},
 									\[Infinity]]>0,
 						"AutoCompletionData"->
@@ -382,6 +397,11 @@ PacletExtensionData[pacletInfo_Association,dest_,ops:OptionsPattern[]]:=
 				}]
 			}
 		};
+
+
+(* ::Subsubsection::Closed:: *)
+(*PacletExpression*)
+
 
 
 Options[PacletExpression]=
@@ -479,6 +499,11 @@ PacletExpression[
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*PacletExpressionBundle*)
+
+
+
 Options[PacletExpressionBundle]=
 	Options[PacletExpression];
 PacletExpressionBundle[paclet,dest]~~`Package`PackageAddUsage~~
@@ -509,12 +534,22 @@ PacletExpressionBundle[
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*PacletLookup*)
+
+
+
 PacletLookup[p:{__PacletManager`Paclet},props_]:=
 	Lookup[PacletManager`PacletInformation/@p,props];
 PacletLookup[p_PacletManager`Paclet,props_]:=
 	Lookup[PacletManager`PacletInformation@p,props];
 PacletLookup[p:_String|{_String,_String},props_]:=
 	PacletLookup[PacletManager`PacletFind[p],props];
+
+
+(* ::Subsubsection::Closed:: *)
+(*PacletOpen*)
+
 
 
 PacletOpen[p_,which:_:First]:=
@@ -1983,28 +2018,35 @@ pacletSectionXML[site_,ops:OptionsPattern[]]:=
 							}
 						]
 				}],
-			pacletDownloadLine[
-				URLBuild[{
-					site,
-					OptionValue["Name"]<>"-"<>
-						OptionValue["Version"]<>".nb"
-					}],
-				URLBuild[{
-					site,
-					"Paclets",
-					OptionValue["Name"]<>"-"<>
-						OptionValue["Version"]<>".paclet"
-					}]
-				],
-			XMLElement[
-				"p",
+			XMLElement["div",
 				{
-					"class"->"paclet-download-description"	
+					"class"->"paclet-section-box"
 					},
 				{
-					Replace[
-						OptionValue["Description"],
-						Automatic->""
+					pacletDownloadLine[
+						URLBuild[{
+							site,
+							OptionValue["Name"]<>"-"<>
+								OptionValue["Version"]<>".nb"
+							}],
+						URLBuild[{
+							site,
+							"Paclets",
+							OptionValue["Name"]<>"-"<>
+								OptionValue["Version"]<>".paclet"
+							}]
+						],
+					XMLElement[
+						"p",
+						{
+							"class"->"paclet-download-description"	
+							},
+						{
+							Replace[
+								OptionValue["Description"],
+								Automatic->""
+								]
+							}
 						]
 					}
 				]
@@ -2033,22 +2075,37 @@ body {
 	color: #505050;
 	margin-left: 20px;
  }
-.paclet-section { 
-	border: solid 1px gray;
-	border-radius: 5px; 
-	box-shadow: 1px 1px 1px gray ;
-	width:95%;
-	background: #f0f0f0;
-	padding-left: 5;
-	margin-top: 5;
+.paclet-section {
+	margin-top: 25;
 	margin-left: 20px;
-	min-height: 250;
- }
-.paclet-name {
-	color: #3f3f3f;
 	width: 95%;
-	border-bottom: solid 1px;
+	margin-bottom: 15px;
+	box-shadow: 1px 1px 1px gray ;
+	border-radius: 5px;
 	}
+.paclet-name {
+	min-height: 25px;
+	margin: 0;
+	padding: 10;
+	color: #fafafa;
+	background: #3f3f3f;
+	border: solid 1px #3f3f3f;
+	box-shadow: 0px 2px 2px #5f5f5f;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	}
+.paclet-section-box { 
+	border-left: solid 1px gray;
+	border-right: solid 1px gray;
+	border-bottom: solid 1px gray;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px; 
+	background: #f6f6f6;
+	margin: 0;
+	margin-top: 2;
+	padding: 10;
+	min-height: 125px;
+ }
 .paclet-version-text { 
 	color: gray; 
 	}
@@ -2066,8 +2123,7 @@ a:visited {
 
 Options[pacletServerXML]={
 	"Title"->"Paclet Server",
-	"Description"->
-		"Lists all the available paclets for download."
+	"Description"->""
 	};
 pacletServerXML[
 	site_,
@@ -2105,7 +2161,13 @@ pacletServerXML[
 						XMLElement["p",{},{OptionValue["Description"]}]
 						}
 					],
-				pacletSectionXML[site,#]&/@Map[Normal,Flatten@{pacletSpecs}]
+				pacletSectionXML[site,#]&/@
+					Map[Normal,
+						Select[
+							SortBy[{#Name,#Version}&]@Flatten@{pacletSpecs},
+							!StringEndsQ[#Name,("_Part"~~NumberString)|"_Index"]&
+							]
+						]
 				}
 			]
 		}];

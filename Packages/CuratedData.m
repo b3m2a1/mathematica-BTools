@@ -518,7 +518,7 @@ CuratedDataIndexPaclet[
 
 $CuratedDataPackageTemplate:=
 	Import[
-		PackageFileName[
+		PackageFilePath[
 			"Packages",
 			"__Templates__",
 			"CuratedData",
@@ -532,7 +532,8 @@ CuratedDataPaclet[
 	dataType_String,
 	entityStore_Association,
 	pack:True|False:True,
-	ops:(_String->_String)...
+	ops:(_String->_String)...,
+	pacletInfo:_List?OptionQ:{}
 	]:=
 	With[{
 		file=
@@ -610,7 +611,7 @@ CuratedDataPaclet[
 					},
 				StringReplace[
 					Import[
-						PackageFileName[
+						PackageFilePath[
 							"Packages",
 							"__Templates__",
 							"CuratedData",
@@ -648,7 +649,12 @@ CuratedDataPaclet[
 				];
 			If[pack,
 				(
-					PacletExpressionBundle[#,"Version"->$dataPacletVersionNumber];
+					PacletExpressionBundle[#,
+						Flatten@{
+							pacletInfo,
+							"Version"->$dataPacletVersionNumber
+							}
+						];
 					PacletBundle[#]
 					)&@
 					FileNameJoin@{
@@ -676,7 +682,7 @@ CuratedDataPaclet[
 
 $CuratedDataWrapperPackageTemplate:=
 	Import[
-		PackageFileName[
+		PackageFilePath[
 			"Packages",
 			"__Templates__",
 			"CuratedData",
@@ -690,7 +696,8 @@ CuratedDataWrapperPaclet[
 	dataType_String,
 	dataFunctions_Association,
 	pack:True|False:True,
-	ops:(_String->_String)...
+	ops:(_String->_String)...,
+	pacletInfo:_List?OptionQ:{}
 	]:=
 	With[{
 		file=
@@ -745,7 +752,7 @@ CuratedDataWrapperPaclet[
 					},
 				StringReplace[
 					Import[
-						PackageFileName[
+						PackageFilePath[
 							"Packages",
 							"__Templates__",
 							"CuratedData",
@@ -765,7 +772,11 @@ CuratedDataWrapperPaclet[
 				];
 			If[pack,
 				(
-					PacletExpressionBundle[#,"Version"->$dataPacletVersionNumber];
+					PacletExpressionBundle[#,
+						Flatten@{
+							pacletInfo,
+							"Version"->$dataPacletVersionNumber
+							}];
 					PacletBundle[#]
 					)&@
 					FileNameJoin@{
@@ -791,14 +802,21 @@ CuratedDataWrapperPaclet[
 
 
 
+Options[CuratedDataExport]=
+	Options@PacletExpressionBundle;
 CuratedDataExport[
 	dir:_String?DirectoryQ|Automatic:Automatic,
 	dataType_String,
 	entityStore:_Association?(
 		Function[a,AllTrue[{"Entities","Properties"},KeyMemberQ[a,#]&]]
 		),
-	pack:True|False:True
+	pack:True|False:True,
+	ops:OptionsPattern[]
 	]:=
+	Block[{
+		$dataPacletVersionNumber=
+			Replace[OptionValue["Version"],Except[_String]->$dataPacletVersionNumber]
+			},
 	 Prepend[
 	 	"Package"->
 	 		CuratedDataPaclet[dir,
@@ -811,14 +829,16 @@ CuratedDataExport[
 	 					(*First@DeleteCases["Label"]@
 	 						Keys@entityStore["Properties"]*)
 	 					"Entity"
-	 					]
+	 					],
+	 			{ops}
 	 			]
 	 		]@
 		 	CuratedDataIndexPaclet[dir,
 		 		dataType,
 		 		entityStore,
 		 		pack
-		 		];
+		 		]
+		];
 CuratedDataExport[
 	dir:_String?DirectoryQ|Automatic:Automatic,
 	name:_String|None:None,
@@ -830,51 +850,60 @@ CuratedDataExport[
 					]
 				]&
 			]&),
-	pack:True|False:True
+	pack:True|False:True,
+	ops:OptionsPattern[]
 	]:=
-	If[name===None,
-		Identity,
-		Prepend[
-			name->
-				CuratedDataWrapperPaclet[dir,
-					name,
-					AssociationThread[
-						StringTrim[
-							Replace[Keys@datasets,
-								s_Symbol:>SymbolName[s],
-								1
+	Block[{
+		$dataPacletVersionNumber=
+			Replace[OptionValue["Version"],Except[_String]->$dataPacletVersionNumber]
+			},
+		If[name===None,
+			Identity,
+			Prepend[
+				name->
+					CuratedDataWrapperPaclet[dir,
+						name,
+						AssociationThread[
+							StringTrim[
+								Replace[Keys@datasets,
+									s_Symbol:>SymbolName[s],
+									1
+									],
+								name
 								],
-							name
+							Replace[Keys@datasets,
+								s_String:>
+									ToExpression[
+										StringTrim[s,"Data"]<>"Data"<>"`"<>
+											StringTrim[s,"Data"]<>"Data"],
+								1
+								]
 							],
-						Replace[Keys@datasets,
-							s_String:>
-								ToExpression[
-									StringTrim[s,"Data"]<>"Data"<>"`"<>
-										StringTrim[s,"Data"]<>"Data"],
-							1
-							]
-						],
-					pack
+						pack,
+						{ops}
+						]
+				]
+			]@
+			Association@
+				KeyValueMap[
+					#->
+						CuratedDataExport[dir,#,#2,pack]&,
+					datasets
 					]
-			]
-		]@
-		Association@
-			KeyValueMap[
-				#->
-					CuratedDataExport[dir,#,#2,pack]&,
-				datasets
-				];
+		];
 CuratedDataExport[
 	dir:_String?DirectoryQ|Automatic:Automatic,
 	name:_String|None:None,
 	entityStore_EntityStore,
-	pack:True|False:True
+	pack:True|False:True,
+	ops:OptionsPattern[]
 	]:=
 	CuratedDataExport[
 		dir,
 		name,
 		entityStore[[1,"Types"]],
-		pack
+		pack,
+		ops
 		];
 
 
