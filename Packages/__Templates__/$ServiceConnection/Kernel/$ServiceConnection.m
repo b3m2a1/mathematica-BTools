@@ -86,7 +86,13 @@ $$serviceconnectionuseoauth=
 
 $$serviceconnectionclientid:=
 	Replace[
-		Replace[$ServiceConnectionClientID,f_Function:>f[]],{
+		Replace[$ServiceConnectionClientID,{
+			f_Function:>f[],
+			Automatic:>
+				serviceconnectionprivategetcredentials["ClientID"],
+			Key[k_]:>
+				serviceconnectionprivategetcredentials[k]
+			}],{
 		Except[_String]:>
 			"not_supported"
 		}];
@@ -94,7 +100,13 @@ $$serviceconnectionclientid:=
 
 $$serviceconnectionclientsecret:=
 	Replace[
-		Replace[$ServiceConnectionClientSecret,f_Function:>f[]],{
+		Replace[$ServiceConnectionClientSecret,{
+			f_Function:>f[],
+			Automatic:>
+				serviceconnectionprivategetcredentials["ClientSecret"],
+			Key[k_]:>
+				serviceconnectionprivategetcredentials[k]
+			}],{
 		Except[_String]:>
 			"not_supported"
 		}];

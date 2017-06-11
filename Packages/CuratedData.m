@@ -26,7 +26,7 @@ CuratedDataExport::usage=
 Begin["`Private`"];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsection:: *)
 (*Constants*)
 
 
@@ -42,8 +42,13 @@ dataPacletIndexNumber[num_]:=
 $dataPacletVersionNumber="1.0.0";
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsection:: *)
 (*IndexPaclet*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*Primary Index*)
 
 
 
@@ -100,6 +105,11 @@ dataPacletIndexFile[
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Names Index*)
+
+
+
 dataPacletNamesIndexFile[
 	dir_,
 	dataType_String,
@@ -135,6 +145,11 @@ dataPacletNamesIndexFile[
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Entities Index*)
+
+
+
 dataPacletEntitiesIndexFile[
 	dir_,
 	dataType_String,
@@ -156,6 +171,11 @@ dataPacletEntitiesIndexFile[
 				Keys@entityStore["Entities"]
 				]
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Properties Index*)
+
 
 
 dataPacletPropertiesIndexFile[
@@ -182,6 +202,11 @@ dataPacletPropertiesIndexFile[
 			Compress@{"Data"->properties}
 			];
 		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Functions Index*)
+
 
 
 dataPacletFunctionsIndexFile[
@@ -249,6 +274,11 @@ dataPacletFunctionsIndexFile[
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*Groups Index*)
+
+
+
 dataPacletGroupsIndexFile[
 	dir_,
 	dataType_String,
@@ -277,6 +307,11 @@ dataPacletGroupsIndexFile[
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*PrivateGroups Index*)
+
+
+
 dataPacletPrivateGroupsIndexFile[
 	dir_,
 	dataType_String,
@@ -294,6 +329,11 @@ dataPacletPrivateGroupsIndexFile[
 			},
 		Compress@{}
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Data File*)
+
 
 
 dataPacletDataFile[
@@ -314,7 +354,8 @@ dataPacletDataFile[
 				"Data"->
 					Map[
 						Replace[
-							Lookup[#,
+							Lookup[
+								Replace[#,f_File?FileExistsQ:>Import[f]],
 								DeleteCases["Label"]@
 									Keys@entityStore["Properties"]
 								],
@@ -356,6 +397,95 @@ dataPacletDataFile[
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Data Partitioning*)
+
+
+
+dataPartition[data_,max_]:=
+	Block[{
+		d=data
+		},
+		Part[d,#]&/@
+			basicPartition[ByteCount/@data,max]
+		]
+
+
+basicPartition[byteCounts_,max_]:=
+	Block[{
+			(*
+			Basic chunking sysetm that tries to get part sizes as close to max 
+				while maximizing the number of chunks in a given grouping
+			*)
+			counts=byteCounts,total,
+			rightIndex,leftIndex,
+			indexMoverLeft,indexMoverRight,
+			ordering,chunks(*,
+			step=1*)
+			},
+		ordering=Ordering@counts;
+		counts=counts[[ordering]];
+		rightIndex=
+			First@
+				FirstPosition[counts,
+					Integer?(GreaterThan[max]),
+					{Length@counts},
+					{1}];
+		leftIndex=1;
+		If[rightIndex<Length@counts,
+			chunks=Thread[{Take[ordering,{rightIndex+1,-1}]}],
+			chunks={}
+			];
+		While[leftIndex<rightIndex(*&&step<2*Length@counts*),
+			(*step++;*)
+			total=counts[[rightIndex]];
+			indexMoverRight=rightIndex;
+			While[total<=max&&indexMoverRight>=leftIndex,
+				indexMoverRight--;
+				total+=counts[[indexMoverRight]]
+				];
+			indexMoverRight++;
+			total-=counts[[indexMoverRight]];
+			
+			If[leftIndex==indexMoverRight,
+				AppendTo[chunks,{{leftIndex,rightIndex}}];
+				leftIndex=rightIndex,
+				
+				If[total+counts[[leftIndex]]>max,
+					AppendTo[chunks,
+						{
+							{indexMoverRight,rightIndex}
+							}
+						];
+					rightIndex=indexMoverRight-1,
+					
+					indexMoverLeft=leftIndex;
+					While[total<=max&&indexMoverLeft<=indexMoverRight,
+						indexMoverLeft++;
+						total+=counts[[indexMoverLeft]]
+						];
+					indexMoverLeft--;
+					AppendTo[chunks,
+						{
+							{leftIndex,indexMoverLeft},
+							{indexMoverRight,rightIndex}
+							}
+						];
+					rightIndex=indexMoverRight-1;
+					leftIndex=indexMoverLeft+1;
+					];
+				If[rightIndex==leftIndex,AppendTo[chunks,{{leftIndex,leftIndex}}]]
+				]
+			];
+		Apply[Join]@*Map[Take[ordering,#]&]/@chunks
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Main*)
+
+
+
 CuratedDataIndexPaclet[
 	dir:_String?DirectoryQ|Automatic:Automatic,
 	dataType_String,
@@ -374,12 +504,9 @@ CuratedDataIndexPaclet[
 								Association@#
 							]&
 						]@
-						Partition[
+						dataPartition[
 							Normal@entityStore["Entities"],
-							UpTo[
-									Floor[Length@entityStore["Entities"]/
-									Ceiling[ByteCount[entityStore["Entities"]]/(5*10^7)]]
-									]
+							5*10^7
 							],
 				$dataPacletPartitionNumber
 				},
@@ -522,7 +649,8 @@ $CuratedDataPackageTemplate:=
 			"Packages",
 			"__Templates__",
 			"CuratedData",
-			"$CuratedData.m"],
+			"$CuratedData.m"
+			],
 		"Text"
 		];
 

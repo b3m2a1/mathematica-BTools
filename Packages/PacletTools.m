@@ -1503,7 +1503,7 @@ PacletInstallerLink[pacletURL:_String,uri_,ops:OptionsPattern[]]:=
 				"NB",
 				uri,
 				Permissions->
-					pacletStandarServerPermissions@OptionValue[Permissions],
+					pacletStandardServerPermissions@OptionValue[Permissions],
 				ops
 				];
 PacletInstallerLink[pacletURL:{__String},uri_,ops:OptionsPattern[]]:=
@@ -1519,7 +1519,7 @@ PacletInstallerLink[pacletURL:{__String},uri_,ops:OptionsPattern[]]:=
 				"NB",
 				uri,
 				Permissions->
-					pacletStandarServerPermissions@OptionValue[Permissions],
+					pacletStandardServerPermissions@OptionValue[Permissions],
 				ops
 				];
 PacletInstallerLink[c_CloudObject,uri_,ops:OptionsPattern[]]:=
@@ -1613,7 +1613,7 @@ PacletSiteUpload[
 							]
 				],
 			pacletMZ,
-			ops
+			FilterRules[{ops},Options@pacletSiteUpload]
 			]
 		},
 		res/;!MatchQ[res,_pacletSiteUpload]
@@ -1625,7 +1625,10 @@ PacletSiteUpload[
 	With[{
 		site=PacletSiteURL@FilterRules[{ops},Options@PacletSiteURL]
 		},
-		With[{res=pacletSiteUpload[site,pacletMZ,ops]},
+		With[{res=
+			pacletSiteUpload[site,pacletMZ,
+				FilterRules[{ops},Options@pacletSiteUpload]
+				]},
 			res/;!MatchQ[res,_pacletSiteUpload]
 			]
 		];
@@ -1930,7 +1933,9 @@ pacletUpload[
 								"PacletSiteFile"->
 									If[OptionValue["UploadSiteFile"]//TrueQ,
 										Replace[
-											PacletSiteUpload[CloudObject@site,pacletMZ,ops],
+											PacletSiteUpload[CloudObject@site,pacletMZ,
+												FilterRules[{ops},Options@PacletSiteUpload]
+												],
 											_PacletSiteUpload->$Failed
 											],
 										Nothing
@@ -2215,7 +2220,9 @@ PacletRemove[pacSpecs:pacPatterns|{pacPatterns..},ops:OptionsPattern[]]:=
 					pacSpecs
 					],{
 				p_PacletManager`PacletSite?(OptionValue["OverwriteSiteFile"]&):>
-					PacletSiteUpload[site,p,ops]
+					PacletSiteUpload[site,p,
+						FilterRules[{ops},Options@PacletSiteUpload]
+						]
 				}]
 			},
 			res/;!MatchQ[res,_pacletRemove]
@@ -2354,7 +2361,7 @@ body {
 	color: #fafafa;
 	background: #3f3f3f;
 	border: solid 1px #3f3f3f;
-	box-shadow: 0px 2px 2px #5f5f5f;
+	box-shadow: 1px 2px 2px #5f5f5f;
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
 	}
@@ -2397,7 +2404,14 @@ pacletServerXML[
 	XMLElement["html",{},{
 		XMLElement["head",{},
 			{
-				XMLElement["title",{},{OptionValue["Title"]}],
+				XMLElement["title",{},{
+					Replace[
+						Replace[OptionValue["Title"],
+							Automatic|Default->$PacletServerTitle
+							],
+						Except[_String]->""
+						]
+					}],
 				XMLElement["style",
 					{},
 					{

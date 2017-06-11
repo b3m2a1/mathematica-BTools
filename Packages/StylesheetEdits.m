@@ -608,7 +608,26 @@ SSStyles[nb:_Notebook|_NotebookObject|Automatic:Automatic]:=
 
 
 SSApplyEdits[cells:{__CellObject}]:=
-	FrontEndExecute@ExportPacket[Notebook[{Cell[""]}],"BoundingBox"];
+	With[{
+		groups=GroupBy[cells,ParentNotebook],
+		current=EvaluationCell[],
+		inb=InputNotebook[]
+		},
+		KeyValueMap[
+			With[{nb=#},
+				Map[
+					SelectionMove[#,All,Cell];
+					FrontEndTokenExecute[nb,"ToggleShowExpression"]~Do~2;
+					&,
+					#2
+					]
+				]&,
+			groups
+			];
+		If[inb===ParentNotebook@current,
+			SelectionMove[current,All,Cell]
+			];
+		];
 SSApplyEdits[nb:_CellObject|Automatic:Automatic]:=
 	SSApplyEdits[{Replace[nb,Automatic:>EvaluationCell[]]}];
 

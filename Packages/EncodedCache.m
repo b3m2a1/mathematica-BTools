@@ -865,11 +865,12 @@ KeyChainAdd[
 					s,
 					PasswordDialog[
 						Dynamic@$keyChainAuth,
-						"",
+						s,
 						s,
 						"PromptString"->
 							"Enter ``:",
-						WindowTitle->s
+						WindowTitle->s,
+						FieldMasked->False
 						]
 				}];
 
