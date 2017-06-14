@@ -208,7 +208,11 @@ SSEditNotebook[nb:_NotebookObject|Automatic:Automatic]:=
 		Replace[CurrentValue[e,StyleDefinitions],{
 			"PrivateStylesheetFormatting.nb"|
 				Notebook[{___,
-					Cell[StyleData[StyleDefinitions->"PrivateStylesheetFormatting.nb"],
+					Cell[
+						StyleData[
+							StyleDefinitions->
+								("PrivateStylesheetFormatting.nb"|"StylesheetFormatting.nb")
+							],
 					___]},
 					___
 					]->e,
@@ -218,7 +222,7 @@ SSEditNotebook[nb:_NotebookObject|Automatic:Automatic]:=
 						StyleDefinitions->
 							Notebook[{Cell[StyleData[StyleDefinitions->s]]},
 								StyleDefinitions->
-									"PrivateStylesheetFormatting.nb"
+									("PrivateStylesheetFormatting.nb"|"StylesheetFormatting.nb")
 								]
 						];
 					$ssNbObjCache[e]=.;

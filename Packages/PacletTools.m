@@ -96,6 +96,8 @@ PacletAPIUpload::usage=
 
 PacletUpload::usage=
 	"Uploads a paclet to a server";
+PacletServerUpload::usage=
+	"Uploads paclet to default server and reconfigures site and page";
 PacletRemove::usage=
 	"Removes a paclet from a server";
 
@@ -432,6 +434,7 @@ Options[PacletExpression]=
 			"Description"->Automatic,
 			"Root"->Automatic,
 			"WolframVersion"->Automatic,
+			"MathematicaVersion"->Automatic,
 			"Internal"->Automatic,
 			"Loading"->Automatic,
 			"Qualifier"->Automatic,
@@ -1781,8 +1784,9 @@ builtPacletFileFind[{f_String,v_String}]:=
 	builtPacletFileFind[f<>"-"<>v<>".paclet"];
 builtPacletFileFind[Rule[s_,p_]]:=
 	Rule[s,builtPacletFileFind[p]];
+builtPacletFileFind[None]:=None;
 builtPacletFileQ[spec_]:=
-	!MatchQ[builtPacletFileFind[spec],None|Labeled[None,_]];
+	!MatchQ[builtPacletFileFind[spec],None|(_->None)];
 
 
 pacletSpecPattern=
@@ -1824,7 +1828,7 @@ PacletUpload[
 		files=builtPacletFileFind/@Flatten@{pacletSpecs};
 		If[!AllTrue[files,builtPacletFileQ],
 			Message[PacletUpload::nopac,
-				Pick[Flatten@{pacletSpecs},MatchQ[None|Labeled[None,_]]/@files]
+				Pick[Flatten@{pacletSpecs},MatchQ[None|(_->None)]/@files]
 				]
 			];
 		pacletUpload[pacletSpecs,ops]/;
@@ -2151,6 +2155,11 @@ PacletSiteUninstall[ops:OptionsPattern[]]:=
 	PacletSiteUninstall@PacletSiteURL[ops];
 
 
+(* ::Subsection:: *)
+(*Remove*)
+
+
+
 pacletRemove[server_,siteExpr_,{name_,version_}]:=
 	With[{
 		file=
@@ -2285,7 +2294,15 @@ pacletSectionXML[site_,ops:OptionsPattern[]]:=
 							"class"->"paclet-version-text"
 							},
 						{
-							" v"<>OptionValue["Version"]
+							" v"<>OptionValue["Version"],
+							Replace[
+								Replace[OptionValue["WolframVersion"],
+									Except[_String]:>OptionValue["MathematicaVersion"]
+									],{
+								s_String:>
+									" | Mathematica "<>s,
+								_->Nothing
+								}]
 							}
 						]
 				}],
@@ -2519,6 +2536,30 @@ PacletServerPage[
 				]
 			]
 	]
+
+
+(* ::Subsubsection::Closed:: *)
+(*PacletServerUpload*)
+
+
+
+Options[PacletServerUpload]=
+	Options@PacletUpload;
+PacletServerUpload[
+	pacletSpecs:pacletPossiblePatterns,
+	ops:OptionsPattern[]
+	]:=
+	With[{
+		res=
+			PacletUpload[pacletSpecs,
+				ops,
+				"ServerName"->Default,
+				"UploadInstallLink"->Automatic,
+				"UploadSiteFile"->True
+				]
+		},
+		PacletServerPage[FilterRules[{ops},PacletServerPage]]
+		]
 
 
 (* ::Subsection:: *)

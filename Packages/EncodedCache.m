@@ -35,6 +35,9 @@ $EncodedCacheDirectory::usage=
 	"A settable directory to change where the $EncodedCache loads from";
 
 
+KeyChainConnect::usage="Uses the keychain to cloud connect";
+
+
 KeyChainAdd::usage=
 	"Adds auth data to the KeyChain";
 KeyChainGet::usage=
@@ -902,6 +905,17 @@ KeyChainGet[
 			KeyChainAdd[site->{None,key}]
 		]
 	
+
+
+Options[KeyChainConnect]=
+	Options[CloudConnect];
+KeyChainConnect[acct:_String:"DeploymentsAccount",ops:OptionsPattern[]]:=
+	With[{user=KeyChainGet["WolframCloud"->{None,acct},True]},
+		CloudConnect[user,
+			KeyChainGet[{OptionValue[CloudBase],user},True],
+			ops
+			]
+		];
 
 
 End[];

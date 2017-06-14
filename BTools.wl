@@ -235,14 +235,14 @@ PackageLoadDeclare[pkgFile_String]:=
 	If[!MemberQ[$LoadedPackages,pkgFile],
 		PackageFEHiddenBlock[
 			If[!KeyMemberQ[$DeclaredPackages,pkgFile],
-				PackageDeclarePackage@PackagePullDeclarations[pkgFile],
+				PackageDeclarePackage@PackagePullDeclarations[pkgFile](*,
 				Replace[$DeclaredPackages[pkgFile],
 					syms:{__}:>
 						PackageLoadPackage[None,
 							$PackageFileContexts[pkgFile],
 							pkgFile->syms
 							]
-					]
+					]*)
 				]
 			],
 		PackageAppGet[pkgFile]

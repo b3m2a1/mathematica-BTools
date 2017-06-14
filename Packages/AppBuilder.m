@@ -720,74 +720,76 @@ Options[AppConfigureSubapp]=
 				]
 			];
 AppConfigureSubapp[
-	app_:Automatic,
+	appName_:Automatic,
 	path_String?(StringLength@DirectoryName@#>0&&FileExistsQ@DirectoryName@#&),
 	ops:OptionsPattern[]
 	]:=
-	With[{
-		packages=
-			Map[
-				{#,
-					FileNameSplit@
-						FileNameDrop[#,FileNameDepth@AppDirectory[app,"Packages"]]
-					}&
-				]@
-					DeleteCases[Except[_String?(StringLength@#>0&&FileExistsQ@#&)]]@
-					Flatten[
-						{
-							AppPackage[app,StringTrim[#,".nb"|".m"|".wl"]],
-							Replace[
-								AppPackage[app,
-									StringTrim[#,".nb"|".m"]<>".m"
-									],
-								$Failed:>
+	With[{app=AppFromFile[appName]},
+		With[{
+			packages=
+				Map[
+					{#,
+						FileNameSplit@
+							FileNameDrop[#,FileNameDepth@AppDirectory[app,"Packages"]]
+						}&
+					]@
+						DeleteCases[Except[_String?(StringLength@#>0&&FileExistsQ@#&)]]@
+						Flatten[
+							{
+								AppPackage[app,StringTrim[#,".nb"|".m"|".wl"]],
+								Replace[
 									AppPackage[app,
-										StringTrim[#,".nb"|".wl"]<>".wl"
-										]
-								]
-							}&/@
-							Flatten[{OptionValue["Packages"]},1]
-						],
-		palettes=
-			DeleteCases[Except[_String?(StringLength@#>0&&FileExistsQ@#&)]]@
-			AppPath[app,"Palettes",
-				StringTrim[#,".nb"]<>".nb"]&/@
-				Flatten@{OptionValue["Palettes"]},
-		stylesheets=
-			DeleteCases[Except[_String?(StringLength@#>0&&FileExistsQ@#&)]]@
-			AppPath[app,"StyleSheets",
-				StringTrim[#,".nb"]<>".nb"]&/@
-				Flatten@{OptionValue["StyleSheets"]},
-		docs=
-			DeleteCases[Except[_String?(StringLength@#>0&&FileExistsQ@#&)]]@
-			Join[
-				AppPath[app,"Symbols",
+										StringTrim[#,".nb"|".m"]<>".m"
+										],
+									$Failed:>
+										AppPackage[app,
+											StringTrim[#,".nb"|".wl"]<>".wl"
+											]
+									]
+								}&/@
+								Flatten[{OptionValue["Packages"]},1]
+							],
+			palettes=
+				DeleteCases[Except[_String?(StringLength@#>0&&FileExistsQ@#&)]]@
+				AppPath[app,"Palettes",
 					StringTrim[#,".nb"]<>".nb"]&/@
-						Flatten@{OptionValue["Symbols"]},
-				AppPath[app,"Symbols",
+					Flatten@{OptionValue["Palettes"]},
+			stylesheets=
+				DeleteCases[Except[_String?(StringLength@#>0&&FileExistsQ@#&)]]@
+				AppPath[app,"StyleSheets",
 					StringTrim[#,".nb"]<>".nb"]&/@
-						Flatten@{OptionValue["Guides"]},
-				AppPath[app,"Symbols",
-					StringTrim[#,".nb"]<>".nb"]&/@
-						Flatten@{OptionValue["Tutorials"]},
-				AppPath[app,"Documentation","English",
-					If[StringQ@#,StringTrim[#,".nb"]<>".nb",#]
-					]&/@
-						Flatten@{OptionValue["Documentation"]}
-				]
-		},
-		AppConfigure[
-			FileBaseName@path,
-			packages,
-			Evaluate@FilterRules[{
-				ops,
-				"Palettes"->palettes,
-				"StyleSheets"->stylesheets,
-				"Documentation"->docs,
-				Directory->DirectoryName@path,
-				Extension->None
-				},
-				Options@AppConfigure
+					Flatten@{OptionValue["StyleSheets"]},
+			docs=
+				DeleteCases[Except[_String?(StringLength@#>0&&FileExistsQ@#&)]]@
+				Join[
+					AppPath[app,"Symbols",
+						StringTrim[#,".nb"]<>".nb"]&/@
+							Flatten@{OptionValue["Symbols"]},
+					AppPath[app,"Symbols",
+						StringTrim[#,".nb"]<>".nb"]&/@
+							Flatten@{OptionValue["Guides"]},
+					AppPath[app,"Symbols",
+						StringTrim[#,".nb"]<>".nb"]&/@
+							Flatten@{OptionValue["Tutorials"]},
+					AppPath[app,"Documentation","English",
+						If[StringQ@#,StringTrim[#,".nb"]<>".nb",#]
+						]&/@
+							Flatten@{OptionValue["Documentation"]}
+					]
+			},
+			AppConfigure[
+				FileBaseName@path,
+				packages,
+				Evaluate@FilterRules[{
+					ops,
+					"Palettes"->palettes,
+					"StyleSheets"->stylesheets,
+					"Documentation"->docs,
+					Directory->DirectoryName@path,
+					Extension->None
+					},
+					Options@AppConfigure
+					]
 				]
 			]
 		];
@@ -3026,9 +3028,9 @@ Options[AppPacletUpload]=
 				"UploadInfo"->Automatic,
 				"RebundlePaclets"->True,
 				"UploadSiteFile"->True,
-				"UploadInstaller"->True,
-				"UploadInstallLink"->True,
-				"UploadUninstaller"->True
+				"UploadInstaller"->False,
+				"UploadInstallLink"->Automatic,
+				"UploadUninstaller"->False
 				},
 			Options[PacletUpload]
 			];
@@ -3080,7 +3082,9 @@ AppPacletUpload[apps__String,ops:OptionsPattern[]]:=
 											AppPath[$PacletBuildExtension,#<>".paclet"],
 										AppPath[$PacletBuildExtension,#<>".paclet"],
 										AppPacletBundle[#,
-											FilterRules[{ops},Options@AppPacletBundle]]
+											FilterRules[{ops},
+												Options@AppPacletBundle
+												]]
 										]&/@{apps}
 									]
 							],
@@ -3141,7 +3145,17 @@ AppSubpacletUpload[
 	]:=
 	With[{
 		dir=
-			AppConfigureSubapp[app,name,FilterRules[{ops},Options@AppConfigureSubapp]]
+			AppConfigureSubapp[app,name,
+				FilterRules[{
+					ops,
+					"PacletInfo"->{
+						"Description"->
+							TemplateApply["A subpaclet of ``",AppFromFile[app]]
+						}
+					},
+					Options@AppConfigureSubapp
+					]
+				]
 		},
 		Block[{
 			$AppDirectoryRoot=DirectoryName@dir,
@@ -3150,7 +3164,11 @@ AppSubpacletUpload[
 			},
 			AppPacletBundle[appName];
 			AppPacletUpload[appName,
-				FilterRules[{ops},Options@AppPacletUpload]
+				FilterRules[{
+					ops
+					},
+					Options@AppPacletUpload
+					]
 				]
 			]
 		];

@@ -28,7 +28,7 @@ Begin["$ServiceConnectionAPI`"]
 Begin["`Private`"]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Template Info*)
 
 
@@ -205,7 +205,7 @@ $$serviceconnectionaccesstokenextractor:=
 		]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Auth Info*)
 
 
@@ -617,7 +617,11 @@ KeyValueMap[
 				 				]
 				 			];
 				 		With[{extra=
-				 			Select[Keys@params,!MemberQ[pars,#]&]
+				 			Select[Keys@params,
+				 				With[{k=#},
+				 					!AnyTrue[pars,StringMatchQ[k,#]&]
+				 					]&
+				 				]
 				 			},
 				 			If[Length@extra>0,
 				 				Message[
