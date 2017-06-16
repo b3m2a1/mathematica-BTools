@@ -688,7 +688,7 @@ docSymbolNameToString[s_]:=
 docSymbolNameToString~SetAttributes~HoldFirst;
 
 
-docArrow=Graphics[{{{{{{{{{{{{{{{{{{{{{{GrayLevel[0.66667], Thickness[0.13], Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}}}}}}}}}}}}}}}}}}}}}}, AspectRatio -> 1, ImageSize -> 20, PlotRange -> {{-3, 4}, {-1, 1}}];
+docArrow=Graphics[{{{{{{{{{{{{{{{{{{{{{{{GrayLevel[0.66667], Thickness[0.13], Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}}}}}}}}}}}}}}}}}}}}}}}, AspectRatio -> 1, ImageSize -> 20, PlotRange -> {{-3, 4}, {-1, 1}}];
 
 
 iGenerateAnchorBar[sym_,seeAlso_,relatedGuides_]:=

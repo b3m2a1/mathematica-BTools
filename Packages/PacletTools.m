@@ -132,6 +132,9 @@ PacletServerPage::usage=
 Begin["`Private`"];
 
 
+$pacletConfigLoaded//ClearAll
+
+
 If[$pacletConfigLoaded//TrueQ//Not,
 	$PacletBuildRoot=$TemporaryDirectory;
 	$PacletBuildExtension=
@@ -142,6 +145,7 @@ If[$pacletConfigLoaded//TrueQ//Not,
 	$PacletServerName="PacletServer";
 	$PacletServerTitle="Paclet Server";
 	$PacletServerDescription="";
+	$PacletUseKeyChain=False;
 	$PacletServer:=
 		PacletSiteURL[
 			"ServerBase"->Default,
@@ -180,8 +184,8 @@ PacletInfoAssociation[PacletManager`Paclet[k__]]:=
 			ReplacePart[base,
 				"Extensions"->
 					AssociationThread[
-						First/@base["Extensions"],
-						Association@*Rest/@base["Extensions"]
+						First/@Lookup[base,"Extensions",{}],
+						Association@*Rest/@Lookup[base,"Extensions",{}]
 						]
 				]
 			];
@@ -634,7 +638,8 @@ Options[PacletSiteURL]={
 	"ServerName"->Default,
 	"ServerExtension"->Automatic,
 	"Username"->Automatic,
-	CloudConnect->Automatic
+	CloudConnect->Automatic,
+	"UseKeyChain"->Automatic
 	};
 PacletSiteURL::nowid="$WolframID isn't a string. Try cloud connecting";
 PacletSiteURL[ops:OptionsPattern[]]:=
@@ -651,7 +656,14 @@ PacletSiteURL[ops:OptionsPattern[]]:=
 				$CloudBase|CloudObject|CloudDirectory|_CloudObject|_CloudDirectory,
 					Replace[
 						Replace[OptionValue@CloudConnect,
-							Automatic:>$PacletUploadAccount
+							Automatic:>
+								If[
+									Replace[OptionValue["UseKeyChain"],
+										Automatic->$PacletUseKeyChain
+										]//TrueQ,
+									KeyChainConnect[$PacletUploadAccount],
+									$PacletUploadAccount
+									]
 							],{
 						s_String:>
 							If[$WolframID=!=s,

@@ -474,6 +474,8 @@ AuthenticationDialog[
 	ops:OptionsPattern[]
 	]:=
 	If[MatchQ[var,Verbatim[Dynamic][None]],
+		Clear@$AuthenticationCache;
+		(Clear@$AuthenticationCache;#)&@
 		AuthenticationDialog[Dynamic[$AuthenticationCache],
 			banner,
 			header,
@@ -545,6 +547,8 @@ PasswordDialog[
 	ops:OptionsPattern[]
 	]:=
 	If[MatchQ[var,Verbatim[Dynamic][None]],
+		Clear@$PasswordCache;
+		(Clear@$PasswordCache;#)&@
 		PasswordDialog[Dynamic@$PasswordCache,
 			banner,
 			spec,
@@ -584,6 +588,7 @@ OAuthDialog[
 	ops:OptionsPattern[]
 	]:=
 	If[MatchQ[var,Verbatim[Dynamic][None]],
+		Clear@$OAuthCache;
 		(Clear@$OAuthCache;#)&@
 		OAuthDialog[Dynamic@$OAuthCache,
 			banner,

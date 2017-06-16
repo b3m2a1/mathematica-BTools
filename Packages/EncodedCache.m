@@ -40,6 +40,8 @@ KeyChainConnect::usage="Uses the keychain to cloud connect";
 
 KeyChainAdd::usage=
 	"Adds auth data to the KeyChain";
+KeyChainRemove::usage=
+	"Removes auth data from the KeyChain";
 KeyChainGet::usage=
 	"Gets auth data from the KeyChain";
 
@@ -73,6 +75,11 @@ $EncodedCacheDefaultOptions=
 			True,
 		"Persistent"->
 			True,
+		"SyncBase"->
+			FileName[{
+				$UserBaseDirectory,
+				"Dropbox"
+				}],
 		"PersistenceBase"->
 			FileName[{
 				$UserBaseDirectory,
@@ -878,6 +885,10 @@ KeyChainAdd[
 				}];
 
 
+KeyChainRemove[site_->username:Except[None]]:=
+	$KeyChain[{site,username}]=.;
+
+
 KeyChainGet[site_String,lookup:True|False:False]:=
 	If[lookup,
 		FirstCase[#,_String?(StringLength@#>0&),
@@ -909,8 +920,10 @@ KeyChainGet[
 
 Options[KeyChainConnect]=
 	Options[CloudConnect];
-KeyChainConnect[acct:_String:"DeploymentsAccount",ops:OptionsPattern[]]:=
-	With[{user=KeyChainGet["WolframCloud"->{None,acct},True]},
+KeyChainConnect[acct:_String|Key[_String]:Key["DeploymentsAccount"],ops:OptionsPattern[]]:=
+	With[{user=
+		Replace[acct,Key[a_]:>KeyChainGet["WolframCloud"->{None,a},True]]
+		},
 		CloudConnect[user,
 			KeyChainGet[{OptionValue[CloudBase],user},True],
 			ops

@@ -202,7 +202,7 @@ SymbolDetermineType[s_Symbol,$SymbolTypeNames[DownValues]]:=
 		Length@docFindValues[s,DownValues]>0;
 SymbolDetermineType[s_Symbol,$SymbolTypeNames[SubValues]]:=
 	System`Private`HasSubCodeQ@s||
-		Length@docFindValues[s,SubValues]@s>0;
+		Length@docFindValues[s,SubValues]>0;
 SymbolDetermineType[s_Symbol,$SymbolTypeNames[UpValues]]:=
 	System`Private`HasUpCodeQ@s||
 		Length@docFindValues[s,UpValues]>0;
