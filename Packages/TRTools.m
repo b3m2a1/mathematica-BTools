@@ -1007,15 +1007,16 @@ $FETrListing=
 		$FEResourceCompleteListing
 		];
 $FEResourceDirectory=
+	$FETemporaryResources=
+		FrontEnd`FileName@{
+			$TemporaryDirectory,
+			"SystemFiles",
+			"FrontEnd",
+			"TextResources"
+			};
+$FEPersistentResources=
 	FrontEnd`FileName@{
-		$TemporaryDirectory,
-		"SystemFiles",
-		"FrontEnd",
-		"TextResources"
-		};
-$FETemporaryResources=
-	FrontEnd`FileName@{
-		$TemporaryDirectory,
+		$UserBaseDirectory,
 		"SystemFiles",
 		"FrontEnd",
 		"TextResources"
@@ -1201,7 +1202,7 @@ FrontEndResourceString/:
 Protect/@{FrontEndResource,FrontEndResourceString};
 
 
-$FEKeyEventDirectory=
+$FEKeyEventsDirectory=
 	$FETemporaryResources;
 
 
@@ -1209,16 +1210,16 @@ $FEKeyEvents:=
 	Replace[$feKeyEvents,
 		Except[_Association]:>
 			Set[$feKeyEvents,
-				Begin["FrontEnd`"];
+				Begin["System`"];
 				(End[];#)&[
 					Replace[
 						ToExpression[
 							FrontEndResourceString["KeyEventTranslations"],
 							StandardForm,
-							Hold
+							HoldComplete
 							],
 						Item[k_,a_]:>
-							(k:>a),
+							(k:>HoldComplete[a]),
 						3]//ReleaseHold//Apply[Association]
 					]
 				]
@@ -1234,11 +1235,11 @@ $FEKeyEvents/:
 feKeyEventExport[]:=
 	Block[{
 		$FEResourceDirectory=
-			$FETemporaryResources,
+			$FEKeyEventsDirectory,
 		$ContextPath=
 			Prepend[$ContextPath,"FrontEnd`"]
 		},
-		Begin["FrontEnd`"];
+		Begin["System`"];
 		(End[];#)&@
 			FEAddResource[
 				"KeyEventTranslations"->
@@ -1258,15 +1259,16 @@ feKeyEventExport[]:=
 							ReleaseHold@
 								Replace[
 									Hold@Evaluate@
-										Normal@$FEKeyEvents,
-									(Rule|RuleDelayed)[k_,v_]:>
+										Normal@$FEKeyEvents,{
+									(Rule|RuleDelayed)[k_,HoldComplete[v_]|v_]:>
 										RuleCondition[
 											ToString[Unevaluated@Item[k,v],InputForm],
 											True
-											],
+											]
+									},
 									2]
 							],
-						"\n\t"
+						",\n\t"
 						]
 				]
 		]
@@ -1292,7 +1294,7 @@ keyEventListing[k_]:=
 				{key_,(Modifiers->modifiers_)|modifiers_}:>
 					FrontEnd`KeyEvent[key,
 						Modifiers->
-							(Begin["FrontEnd`"];(End[];#)&@
+							(Begin["System`"];(End[];#)&@
 								ToExpression@Flatten@{modifiers})
 						]
 				}]
@@ -1322,7 +1324,7 @@ FEResetKeyEvents[]:=
 		$FEResourceDirectory=
 			$FETemporaryResources
 		},
-		Begin["FrontEnd`"];
+		Begin["System`"];
 		(End[];#)&@
 			FEAddResource[
 				"KeyEventTranslations"->
@@ -1448,7 +1450,7 @@ $FEMenuSetup:=
 	Replace[$feMenuSetup,
 		Except[_Association]:>
 			Set[$feMenuSetup,
-				Begin["FrontEnd`"];
+				Begin["System`"];
 				(End[];#)&[
 					Association@
 						feUnspoolMenuExpr@
@@ -1507,7 +1509,7 @@ feMenuSetupExport[]:=
 		$FEResourceDirectory=
 			$FEMenuSetupDirectory
 		},
-		Begin["FrontEnd`"];
+		Begin["System`"];
 		(End[];#)&@
 			FEAddResource[
 				"MenuSetup"->
@@ -1577,9 +1579,12 @@ feMenuPath[path__]:=
 			"Items"]
 
 
-FEMenuSetupGet[{path__String}]:=
+FEMenuSetupGet[{path___String,key:{_String,___}|_String|_Integer}]:=
 	With[{p=Sequence@@feMenuPath[path]},
-		$FEMenuSetup[p]
+		If[IntegerQ@key,
+			Normal[$FEMenuSetup[p]][[key]],
+			Lookup[$FEMenuSetup[p],Key@key]
+			]
 		];
 FEMenuSetupGet[path_String]:=
 	FEMenuSetupGet@{path};
@@ -1590,14 +1595,22 @@ FEMenuSetupAdd[
 	(Rule|RuleDelayed)[lab_,cmd_],
 	ops___
 	]:=
-	With[{p=Sequence@@feMenuPath[path]},
+	With[{
+		p=
+			Sequence@@feMenuPath[path],
+		lab2=
+			If[MemberQ[{ops},_System`MenuKey],
+				{lab,FirstCase[{ops},_System`MenuKey]},
+				lab
+				]
+		},
 		If[pos===None,
-			$FEMenuSetup[p,lab]=
+			$FEMenuSetup[p,lab2]=
 				feMenuSetupObject[cmd,ops];,
 			$FEMenuSetup[p]=
 				Insert[
 					$FEMenuSetup[p],
-					lab->feMenuSetupObject[cmd,ops],
+					lab2->feMenuSetupObject[cmd,ops],
 					pos
 					];
 			]
@@ -1619,15 +1632,29 @@ FEMenuSetupAdd~SetAttributes~HoldRest;
 
 
 FEMenuSetupDrop[
-	{path__String,pos:_Integer|None:None}
+	{path___String,pos:(_String|{_String,___}|_Integer|None):None}
 	]:=
 	With[{p=Sequence@@Most@feMenuPath[path]},
-		If[pos===None,
-			$FEMenuSetup[p]=.,
-			$FEMenuSetup[p]=
-				Delete[
-					$FEMenuSetup[p],
-					pos
+		Switch[pos,
+			None,
+				$FEMenuSetup[p]=.,
+			_String|_List,
+				$FEMenuSetup[p,pos]=.,
+			_Integer,
+				With[{base=$FEMenuSetup[p]},
+					If[AssociationQ@#,
+						$FEMenuSetup[p]=#,
+						#
+						]&@
+						With[{k=Keys[base["Items"]][[pos]]},
+							If[KeyMemberQ[base["Items"],k],
+								ReplacePart[base,
+									"Items"->
+										KeyDrop[base["Items"],If[ListQ@k,{k},k]]
+									],
+								$Failed
+								]
+							]
 					]
 			]
 		];
@@ -1640,7 +1667,7 @@ FEResetMenuSetup[]:=
 		$FEResourceDirectory=
 			$FETemporaryResources
 		},
-		Begin["FrontEnd`"];
+		Begin["System`"];
 		(End[];#)&@
 			FEAddResource[
 				"MenuSetup"->
