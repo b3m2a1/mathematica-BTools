@@ -824,7 +824,7 @@ $KeyChainDirectory/:
 KeyChainAdd[site_->{username:Except[None],password_}]:=
 	$KeyChain[{site,username}]=password;
 KeyChainAdd[{site_->{username:Except[None],password_}}]:=
-	$KeyChain[{site,Except[None]}]=password;
+	$KeyChain[{site,username}]=password;
 KeyChainAdd[sites:{(_->{Except[None],_}),(_->{Except[None],_})..}]:=
 	With[{
 		saveOps=$KeyChainSettings["SaveOptionsToDisk"],
