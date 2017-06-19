@@ -1640,39 +1640,44 @@ htmlCloudBaseConnect[base_]:=
 
 
 htmlExportString[x_]:=
-	StringReplace[
+	(*StringReplace[*)
 		ExportString[x/.{
 			(k_->v_String):>
 				(
-					k->
+					k->XML`RawXML[v](*
 						StringReplace[v,{
-							"<"->"[--lessthan--]",
-							">"->"[--greaterthan--]",
-							"&"->"[--ampersandescape--]",
-							"\""|"\[OpenCurlyDoubleQuote]"|"\[CloseCurlyDoubleQuote]"->"[--doublequoteescape--]",
-							"'"|"\[OpenCurlyQuote]"|"\[CloseCurlyQuote]"->"[--singlequoteescape--]"
-							}]
+							"<"\[Rule]"[--lessthan--]",
+							">"\[Rule]"[--greaterthan--]",
+							"&"\[Rule]"[--ampersandescape--]",
+							"\""|"\[OpenCurlyDoubleQuote]"|"\[CloseCurlyDoubleQuote]"\[Rule]"[--doublequoteescape--]",
+							"'"|"\[OpenCurlyQuote]"|"\[CloseCurlyQuote]"\[Rule]"[--singlequoteescape--]"
+							}]*)
 					),
-			style:XMLElement["style"|"script",__]:>
-				(style/.s_String:>
-					StringReplace[s,{
-						"<"->"[--lessthan--]",
-						">"->"[--greaterthan--]",
-						"&"->"[--ampersandescape--]",
-						"\""|"\[OpenCurlyDoubleQuote]"|"\[CloseCurlyDoubleQuote]"->"[--doublequoteescape--]",
-						"'"|"\[OpenCurlyQuote]"|"\[CloseCurlyQuote]"->"[--singlequoteescape--]"
-						}])
+			style:XMLElement[tag:"style"|"script",ops_,cont_]:>
+				XMLElement[tag,
+					ops/.s_String:>
+						XML`RawXML[s],
+					cont/.s_String:>
+						XML`RawXML[s]
+					]
+					(*StringReplace[s,{
+						"<"\[Rule]"[--lessthan--]",
+						">"\[Rule]"[--greaterthan--]",
+						"&"\[Rule]"[--ampersandescape--]",
+						"\""|"\[OpenCurlyDoubleQuote]"|"\[CloseCurlyDoubleQuote]"\[Rule]"[--doublequoteescape--]",
+						"'"|"\[OpenCurlyQuote]"|"\[CloseCurlyQuote]"\[Rule]"[--singlequoteescape--]"
+						}])*)
 			},
-			"XML"],
+			"XML"](*,
 		{
-			"[--lessthan--]"->"<",
-			"[--greaterthan--]"->">",
-			"[--ampersandescape--]"->"&",
+			"[--lessthan--]"\[Rule]"<",
+			"[--greaterthan--]"\[Rule]">",
+			"[--ampersandescape--]"\[Rule]"&",
 			"[--doublequoteescape--]"->"\"",
 			"[--singlequoteescape--]"->"'",
-			"<deletemeplease>"|"</deletemeplease>"->""
+			"<deletemeplease>"|"</deletemeplease>"\[Rule]""
 			}
-		];
+		]*);
 
 
 htmlSpecDeploy//ClearAll;

@@ -821,9 +821,12 @@ $KeyChainDirectory/:
 			];
 
 
-KeyChainAdd[site_->{username:Except[None],password_}]:=
+$keyChainFailureForms=""|$Failed|$Canceled|_Missing;
+
+
+KeyChainAdd[site_->{username:Except[None],password:Except[$keyChainFailureForms]}]:=
 	$KeyChain[{site,username}]=password;
-KeyChainAdd[{site_->{username:Except[None],password_}}]:=
+KeyChainAdd[{site_->{username:Except[None],password:Except[$keyChainFailureForms]}}]:=
 	$KeyChain[{site,username}]=password;
 KeyChainAdd[sites:{(_->{Except[None],_}),(_->{Except[None],_})..}]:=
 	With[{
@@ -901,10 +904,10 @@ KeyChainGet[
 	{site_String,username_String},
 	lookup:True|False:False]:=
 	If[lookup,
-		FirstCase[#,_String?(StringLength@#>0&),
+		FirstCase[#,Except[$keyChainFailureForms],
 			KeyChainAdd[site->username]
 			],
-		FirstCase[#,_String?(StringLength@#>0&)]
+		FirstCase[#,Except[$keyChainFailureForms]]
 		]&@$KeyChain[{Key@{site,username}}];
 KeyChainGet[
 	site_->{None,key_},
@@ -912,7 +915,7 @@ KeyChainGet[
 	]:=
 	Replace[
 		KeyChainGet[{site,key}],
-		Except[_String?(StringLength@#>0&)]:>
+		""|$Failed|$Canceled:>
 			KeyChainAdd[site->{None,key}]
 		]
 	
@@ -921,12 +924,16 @@ KeyChainGet[
 Options[KeyChainConnect]=
 	Options[CloudConnect];
 KeyChainConnect[acct:_String|Key[_String]:Key["DeploymentsAccount"],ops:OptionsPattern[]]:=
-	With[{user=
-		Replace[acct,Key[a_]:>KeyChainGet["WolframCloud"->{None,a},True]]
+	With[{
+		user=
+			Replace[acct,Key[a_]:>KeyChainGet["WolframCloud"->{None,a},True]],
+		base=Replace[OptionValue[CloudBase],Automatic:>$CloudBase]
 		},
-		CloudConnect[user,
-			KeyChainGet[{OptionValue[CloudBase],user},True],
-			ops
+		If[$WolframID=!=user||$CloudBase=!=base,
+			CloudConnect[user,
+				KeyChainGet[{base,user},True],
+				ops
+				]
 			]
 		];
 

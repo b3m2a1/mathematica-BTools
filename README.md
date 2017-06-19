@@ -1,6 +1,6 @@
 ## BTools Mathematica Application
 
-The BTools application is a standard Mathematica application.
+The BTools application is a multi-use mathematica application, largely devoted to simplifying the development process.
 
 It has an auto-generated initialization file that loads the subpackages in a programmatic manner
 

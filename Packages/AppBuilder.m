@@ -901,11 +901,11 @@ AppPalettes[
 
 
 (* ::Subsubsection::Closed:: *)
-(*AppRefPages*)
+(*AppSymbolPages*)
 
 
 
-AppRefPages[
+AppSymbolPages[
 	appName:_String?(MemberQ[FileBaseName/@AppNames[],#]&)|Automatic:Automatic
 	]:=
 	With[{app=AppFromFile@appName},
@@ -1601,47 +1601,37 @@ AppRegenerateGitExclude[appName_:Automatic,
 
 
 
-appREADMETemplate=
-"## `app` Mathematica Application
-
-The `app` application is a standard Mathematica application.
-
-It has an auto-generated initialization file that loads the subpackages in a programmatic manner
-
-### Functions
-
-It has `funcs` functions in all, in `pkgs` sub-packages
-
-### Documentation
-
-There are `docs`, `guides`, and `tutorials`
-
-### Front End
-
-The application has `ssheets` and `palette`
-
-### Installation
-
-A paclet installer can be found here: [`app` Installer](`installer`) and the paclet can be auto-installed via CloudGet.
-
-An uninstaller for the paclet is here: [`app` Uninstaller](`uninstaller`) can be auto-uninstalled via CloudGet.";
+appREADMETemplate:=
+	StringReplace[
+		Import[
+			PackageAppPath["Packages","__Templates__","README.md"],
+			"Text"
+			],{
+		"`"->"`tick`",
+		"$"~~l:LetterCharacter..~~"$":>"`"<>l<>"`"
+		}]
 
 
+Options[AppRegenerateReadme]={
+	"Header"->"",
+	"Footer"->""
+	};
 AppRegenerateReadme[appName:_String|Automatic:Automatic]:=
 	With[{app=AppFromFile[appName]},
 		GitHubCreateReadme[AppDirectory[app],
 			TemplateApply[appREADMETemplate,<|
-				"app"->
+				"tick"->"`",
+				"Name"->
 					app,
-				"funcs"->
+				"FunctionCount"->
 					(
 						Needs[app<>"`"];
 						Length@Names[app<>"`*"]
 						),
-				"pkgs"->
+				"PackageCount"->
 					Length@AppPackages[app],
-				"docs"->
-					Replace[Length@AppRefPages[app],{
+				"SymbolPages"->
+					Replace[Length@AppSymbolPages[app],{
 						0->
 							"no ref pages",
 						1->
@@ -1649,7 +1639,7 @@ AppRegenerateReadme[appName:_String|Automatic:Automatic]:=
 						n_:>
 							ToString[n]<>" ref pages"
 						}],
-				"guides"->
+				"GuidePages"->
 					Replace[Length@AppGuides[app],{
 						0->
 							"no guide pages",
@@ -1658,7 +1648,7 @@ AppRegenerateReadme[appName:_String|Automatic:Automatic]:=
 						n_:>
 							ToString[n]<>" guide pages"
 						}],
-				"tutorials"->
+				"TutorialPages"->
 					Replace[Length@AppTutorials[app],{
 						0->
 							"no tutorial pages",
@@ -1667,7 +1657,7 @@ AppRegenerateReadme[appName:_String|Automatic:Automatic]:=
 						n_:>
 							ToString[n]<>" tutorial pages"
 						}],
-				"ssheets"->
+				"Stylesheets"->
 					Replace[Length@AppStyleSheets[app],{
 						0->
 							"no stylesheets",
@@ -1676,7 +1666,7 @@ AppRegenerateReadme[appName:_String|Automatic:Automatic]:=
 						n_:>
 							ToString[n]<>" stylesheet"
 						}],
-				"palette"->
+				"Palettes"->
 					Replace[Length@AppPalettes[app],{
 						0->
 							"no palettes",
@@ -1685,9 +1675,9 @@ AppRegenerateReadme[appName:_String|Automatic:Automatic]:=
 						n_:>
 							ToString[n]<>" palettes"
 						}],
-				"installer"->
+				"Installer":>
 					AppPacletInstallerURL@app,
-				"uninstaller"->
+				"Uninstaller":>
 					AppPacletUninstallerURL@app
 				|>]
 			]

@@ -195,7 +195,7 @@ PacletInfoAssociation[infoFile_]:=
 			PacletInfoAssociation@p,
 		_-><||>
 		}];
-PacletInfo[infoFile_]:=
+PacletInfo[infoFile:(_String|_File)?FileExistsQ]:=
 	With[{pacletInfo=
 		Replace[infoFile,{
 			d:(_String|_File)?DirectoryQ:>
@@ -233,6 +233,13 @@ PacletInfo[infoFile_]:=
 			PacletManager`Paclet[]
 			]
 		];
+PacletInfo[pac_PacletManager`Paclet]:=
+	pac;
+PacletInfo[p_String]:=
+	Replace[PacletManager`PacletFind[p],
+		{pac_}:>
+			pac
+		]
 
 
 (* ::Subsubsection::Closed:: *)

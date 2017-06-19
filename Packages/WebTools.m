@@ -335,6 +335,7 @@ cssTypeRules={
 	"Subsubsection"->"h5",
 	"Subsubsubsection"->"h6",
 	"Hyperlink"->"a",
+	"HyperlinkActive"->"a:hover",
 	"Graphics"->"img",
 	"Text"->"p",
 	s_String:>(ToLowerCase[s])
