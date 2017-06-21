@@ -18,13 +18,13 @@ The StylesheetsEdits packages implements simplified stylesheet editing, includin
 
 The IndentableCells implements batch indenting and dedenting in cells and converting \[IndentingNewLine] blocks to the appropriate tab-spaced blocks and vice-versa. This functionality is built into the CodePackage and CodeNotebook stylesheets.
 
-[!code package](project/img/code-package.png)
+![code package](project/img/code-package.png)
 
 ###Documentation Building:
 
 The DocGen package supports documentation generation, both automatically and via templates. Integration with the Wolfram DocumentationTools is upcoming.
 
-[!sample docs](project/img/sample-doc.png)
+![sample docs](project/img/sample-doc.png)
 
 ###Paclet Deployment:
 
@@ -34,13 +34,13 @@ It also supports gathering paclet information and automatic paclet information g
 
 More paclet server integrations are coming, but there is currently functionality for deploying a paclet server landing page
 
-[!landing page](project/img/paclet-page.png)
+![landing page](project/img/paclet-page.png)
 
 ###Front-End Integrations:
 
 The FormattingTools package provides a collection of formatted front end objects that can be used for interface customization, the FETools package supplies tools for manipulating and inspecting the front end, and the TRTools provides ways to work with the built-in TextResource system, which simplifies menu customizations among many other things
 
-[!landing page](project/img/fe-integrations.png)
+![fe integrations](project/img/fe-integrations.png)
 
 ###Web Integrations:
 
