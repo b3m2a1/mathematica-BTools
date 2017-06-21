@@ -2,22 +2,49 @@
 
 The BTools application is a multi-use mathematica application, largely devoted to simplifying the development process.
 
-It has an auto-generated initialization file that loads the subpackages in a programmatic manner
+It supports a few major pieces of functionality:
 
-### Functions
+###Application Development:
 
-It has 473 functions in all, in 23 sub-packages
+The AppBuilder package supports building Mathematica Applications. It supports formatting applications, adding and finding application content, as well as creating sub-applications from current application content.
 
-### Documentation
+It integrates with the rest of the BTools package to allow paclet deployment, documentation building, publishing to GitHub, etc.
 
-There are no ref pages, no guide pages, and no tutorial pages
+This functionality is then all encapsulated in an easy-to-use palette
 
-### Front End
+###Notebook Aides:
 
-The application has 6 stylesheet and 3 palettes
+The StylesheetsEdits packages implements simplified stylesheet editing, including editing the hidden private stylesheet notebook for a given notebook. This can be useful for editing all styles in a given notebook without ever opening its stylesheet. The package will attempt to detect whether the current edit notebook is a stylesheet notebook or not, and act on the notebook itself or its stylesheet, respectively.
 
-### Installation
+The IndentableCells implements batch indenting and dedenting in cells and converting \[IndentingNewLine] blocks to the appropriate tab-spaced blocks and vice-versa. This functionality is built into the CodePackage and CodeNotebook stylesheets.
 
-A paclet installer can be found here: [BTools Installer](http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-2ba2321519a9/paclets/BTools/Installer.m) and the paclet can be auto-installed via CloudGet.
+[!code package](project/img/code-package.png)
 
-An uninstaller for the paclet is here: [BTools Uninstaller](http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-2ba2321519a9/paclets/BTools/Uninstaller.m) can be auto-uninstalled via CloudGet.
+###Documentation Building:
+
+The DocGen package supports documentation generation, both automatically and via templates. Integration with the Wolfram DocumentationTools is upcoming.
+
+[!sample docs](project/img/sample-doc.png)
+
+###Paclet Deployment:
+
+The PacletTools package supports creating paclets and deploying paclets, both locally and to the Wolfram Cloud.
+
+It also supports gathering paclet information and automatic paclet information generation from a directory.
+
+More paclet server integrations are coming, but there is currently functionality for deploying a paclet server landing page
+
+[!landing page](project/img/paclet-page.png)
+
+###Front-End Integrations:
+
+The FormattingTools package provides a collection of formatted front end objects that can be used for interface customization, the FETools package supplies tools for manipulating and inspecting the front end, and the TRTools provides ways to work with the built-in TextResource system, which simplifies menu customizations among many other things
+
+[!landing page](project/img/fe-integrations.png)
+
+###Web Integrations:
+
+CuratedData, CustomServiceConnection, GitConnection, GoogleDrive, StackExchangeAPI
+
+###Misc Tools:
+
