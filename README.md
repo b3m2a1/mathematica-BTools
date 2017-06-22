@@ -4,7 +4,7 @@ The BTools application is a multi-use mathematica application, largely devoted t
 
 It supports a few major pieces of functionality:
 
-###Application Development:
+### Application Development:
 
 The AppBuilder package supports building Mathematica Applications. It supports formatting applications, adding and finding application content, as well as creating sub-applications from current application content.
 
