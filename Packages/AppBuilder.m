@@ -3022,7 +3022,8 @@ Options[AppPacletUpload]=
 				"UploadInstallLink"->Automatic,
 				"UploadUninstaller"->False
 				},
-			Options[PacletUpload]
+			Options[PacletUpload],
+			Options[AppPacletBundle]
 			];
 AppPacletUpload[apps__String,ops:OptionsPattern[]]:=
 	Replace[OptionValue["UploadInfo"],{

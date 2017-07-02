@@ -45,6 +45,11 @@ IndentationRestore::usage=
 Begin["`Private`"];
 
 
+(* ::Subsection:: *)
+(*Make Indentable*)
+
+
+
 MakeIndentable[
 	nb:_NotebookObject|Automatic:Automatic,
 	cell:_String|All{(_String|All)..}|_CellObject|{__CellObject}:All]:=

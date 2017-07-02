@@ -53,6 +53,10 @@ MarkdownGenerate::usage=
 	"Generates an XMLObject from a markdown string";
 
 
+PySimpleServer::usage=
+	"Starts a new SimpleServer in a specific directory and opens it";
+
+
 Begin["`Private`"];
 
 
@@ -960,6 +964,50 @@ MarkdownGenerate[
 	ops:OptionsPattern[]
 	]:=
 	MarkdownGenerate[Import[f,"Text"],css,ops]
+
+
+PySimpleServer::unsupported=
+	"$OperatingSystem isn't supported by SimpleHTTPServer";
+
+
+Options[PySimpleServer]={
+	"Port"->Automatic
+	};
+PySimpleServer[
+	dir:(_String|_File)?DirectoryQ,
+	path:_String|{___String}|Automatic|None:{},
+	ops:OptionsPattern[]
+	]:=
+	If[$OperatingSystem=!="Windows",
+		If[MatchQ[$pySimpleServer,_ProcessObject?(ProcessStatus[#,"Running"]&)],
+			KillProcess@$pySimpleServer
+			];
+		$pySimpleServer=
+			StartProcess[{"python","-m","SimpleHTTPServer",
+				Replace[OptionValue["Port"],{
+					Automatic->"7001",
+					e_:>ToString[e]
+					}]
+				},
+				ProcessDirectory->dir
+				];
+		If[path=!=None,
+			SystemOpen@
+				URLBuild@<|
+					"Scheme"->"http",
+					"Domain"->"localhost",
+					"Port"->
+						Replace[OptionValue["Port"],{
+							Automatic->"7001",
+							e_:>ToString[e]
+							}],
+					"Path"->Replace[path,Automatic->{}]
+					|>
+			];
+		$pySimpleServer,
+		Message[PySimpleServer::unsupported];
+		$Failed
+		];
 
 
 End[];

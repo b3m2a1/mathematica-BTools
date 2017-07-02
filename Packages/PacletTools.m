@@ -736,14 +736,12 @@ PacletSiteURL[ops:OptionsPattern[]]:=
 										{r_,p_}:>
 											StringJoin@{r,":",
 												URLBuild@{
-													$SyncPathExtension,
 													ext,
 													p}
 												},
 										{r_}:>
 											StringJoin@{r,":",
 												URLBuild@{
-													$SyncPathExtension,
 													ext
 													}
 												}

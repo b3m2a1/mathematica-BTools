@@ -915,15 +915,18 @@ KeyChainGet[
 	]:=
 	Replace[
 		KeyChainGet[{site,key}],
-		""|$Failed|$Canceled:>
-			KeyChainAdd[site->{None,key}]
+		e:$keyChainFailureForms:>
+			If[lookup,KeyChainAdd[site->{None,key}],e]
 		]
 	
 
 
 Options[KeyChainConnect]=
 	Options[CloudConnect];
-KeyChainConnect[acct:_String|Key[_String]:Key["DeploymentsAccount"],ops:OptionsPattern[]]:=
+KeyChainConnect[
+	acct:_String|Key[_String]:Key["DeploymentsAccount"],
+	ops:OptionsPattern[]
+	]:=
 	With[{
 		user=
 			Replace[acct,Key[a_]:>KeyChainGet["WolframCloud"->{None,a},True]],

@@ -150,24 +150,16 @@ GenerateDocumentation::usage=
 	"Generates and documentation and saves it in a basic documentation paclet";
 
 
+GenerateHTMLDocumentation::usage=
+	"Exports doc pages as HTML";
+
+
 `Private`Package`PackageFEHiddenBlock[
 
 DocAddUsage::usage=
 	"Adds a usage to the usages for a symbol";
 	
 ];
-
-
-(* ::Subsubsection::Closed:: *)
-(*DocumentationTools Integration*)
-
-
-
-DocPageExtractInfo::usage=
-	"Extracts requisite info from 11.1 style docs to build new a doc template"
-
-
-(*DocWebExport::usage="Exports a doc page to an HTML file";*)
 
 
 Begin["`Private`"];
@@ -437,6 +429,102 @@ docLinkType[sym_Symbol]:=
 docLinkType~SetAttributes~HoldFirst;
 
 
+docArrow=
+	Cell@
+		BoxData@
+			GraphicsBox[
+				{
+					GrayLevel[0.66667],
+					Thickness[0.13],
+					LineBox[{{-1.8,0.5},{0,0},{1.8,0.5}}]
+					}, 
+				AspectRatio -> 1,
+				ImageSize -> 20, 
+				PlotRange -> {{-3, 4}, {-1, 1}}
+				];
+
+
+anchorBarActionMenu[title_,ops_,style_]:=
+	Cell[
+		BoxData@
+		TagBox[
+			ActionMenuBox[
+				FrameBox[
+					Cell@TextData@{title," ",docArrow},
+					StripOnInput->False
+					],
+				ops,
+				Appearance->None,
+				MenuAppearance->Automatic,
+				BaseStyle->"AnchorBarActionMenu",
+				MenuStyle->style
+				],
+			MouseAppearanceTag["LinkHand"]
+			],
+		LineSpacing->{1.4, 0}
+		]
+
+
+With[{spacerboxes=ToBoxes@Spacer[8]},
+	anchorBarPacletCell[string_,bg_]:=
+		DynamicBox[
+			If[$VersionNumber<11.1,
+				Cell[string,
+					"PacletNameCell",
+					TextAlignment->Center
+					],
+				ItemBox[
+					Cell[
+						BoxData@
+							RowBox@{
+								spacerboxes,
+								Cell[
+									string,
+									"PacletNameCell",
+									TextAlignment->Center
+									],
+								spacerboxes
+								}
+						],
+					Background->bg,
+					ItemSize->Full
+					]
+				],
+			UpdateInterval->Infinity
+			]
+		]
+
+
+anchorBarCell[pacletArgs:{_,_},menus___List]:=
+	Cell[
+		BoxData@
+			GridBox[{{
+				GridBox[{{
+					anchorBarPacletCell@@pacletArgs,
+					""
+					}},
+					GridBoxAlignment->{"Rows" -> {{Center}}},
+					GridBoxItemSize->
+						{
+							"Columns" -> 
+								{Full, Scaled[0.02]},
+							"Rows" -> {{2.5}}
+							}
+					],
+				Cell[
+					TextData@
+						Riffle[
+							anchorBarActionMenu@@@{menus},
+							"\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]"
+							],
+					"AnchorBar"
+					]
+				}}
+			],
+		"AnchorBarGrid"
+		];
+
+
 (* ::Subsection:: *)
 (*SymbolPages*)
 
@@ -533,31 +621,34 @@ parseRefText[t_]:=
 							],
 						FormatType->TraditionalForm],
 				Except[_TextData]:>
-						Cell[Replace[b:Except[_BoxData]:>BoxData[b]]@
-							ReplaceAll[s,{
-								hold:TemplateBox[___,"RefLink",___]:>
-									hold,
-								hold:(StyleBox|FormBox)[f_,e___]:>
-									StyleBox[parseRefText[f],e],
-								ref_String?makeRefTest:>
-									SymbolPageRefLink[ref],
-								r_String?(StringMatchQ["\"*\""]):>
-									Cell[
-										BoxData@
-											StyleBox[r,"InlineFormula","Input"],
-										FormatType->StandardForm
+					Replace[{
+						b_BoxData:>
+							Cell[b,"InlineFormula"],
+						b:Except[_Cell]:>
+							Cell[BoxData[b],"InlineFormula"]
+						}]@
+						ReplaceAll[s,{
+							hold:TemplateBox[___,"RefLink",___]:>
+								hold,
+							hold:(StyleBox|FormBox)[f_,e___]:>
+								StyleBox[parseRefText[f],e],
+							ref_String?makeRefTest:>
+								SymbolPageRefLink[ref],
+							r_String?(StringMatchQ["\"*\""]):>
+								Cell[
+									BoxData@
+										StyleBox[r,"InlineFormula",ShowAutoStyles->True],
+									FormatType->StandardForm
+									],
+							SubscriptBox[a_,b_]:>
+								Cell[
+									BoxData@SubscriptBox[
+										StyleBox[a,"TI"],
+										StyleBox[b,"TI"]
 										],
-								SubscriptBox[a_,b_]:>
-									Cell[
-										BoxData@SubscriptBox[
-											StyleBox[a,"TI"],
-											StyleBox[b,"TI"]
-											],
-										FormatType->TraditionalForm
-										]
-								}],
-							"InlineFormula"
-							]
+									FormatType->TraditionalForm
+									]
+							}]
 				}]
 		];
 
@@ -700,94 +791,30 @@ docSymbolNameToString[s_]:=
 docSymbolNameToString~SetAttributes~HoldFirst;
 
 
-docArrow=Graphics[{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{GrayLevel[0.66667], Thickness[0.13], Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}, AspectRatio -> 1, ImageSize -> 20, PlotRange -> {{-3, 4}, {-1, 1}}];
-
-
 iGenerateAnchorBar[sym_,seeAlso_,relatedGuides_]:=
-	Cell[
-		BoxData@
-			ToBoxes@
-				Grid[{{
-					Grid[{{
-						With[{
-							s=
-								StringTrim[
-									ToUpperCase@docSymType@sym,
-									" SYMBOL"
-									]<>" SYMBOL",
-							bg=docTypeColor[docSymType@sym]
-							},
-							Dynamic[
-								If[$VersionNumber<11.1,
-									RawBoxes@
-										Cell[s,
-											"PacletNameCell",
-											TextAlignment->Center
-											],
-									Item[	
-										Row@{
-											Spacer[8],
-											RawBoxes@
-												Cell[
-													s,
-													"PacletNameCell",
-													TextAlignment->Center
-													],
-											Spacer[8]
-											},
-										Background->bg,
-										ItemSize->Full
-										]
-									],
-								UpdateInterval->Infinity
-								]
-							]
-						}},
-						Alignment->{Automatic,Center},
-						ItemSize->{
-							{Full,Scaled[0.02`]},
-							2.5
-							}],
-					RawBoxes@
-						Cell[
-							TextData@
-								Riffle[{
-									Cell[
-										BoxData@ToBoxes@
-											ActionMenu[Row@{"See Also","\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]",docArrow},
-												generateSymRefs[seeAlso],
-												Appearance->None,MenuAppearance->Automatic,
-												BaseStyle->"AnchorBarActionMenu",
-												MenuStyle->"SeeAlso"
-												]
-										],
-									Cell[
-										BoxData@ToBoxes@
-											ActionMenu[Row@{"Related Guides","\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]",docArrow},
-												generateGuideRefs[relatedGuides],
-												Appearance->None,MenuAppearance->Automatic,
-												BaseStyle->"AnchorBarActionMenu",
-												MenuStyle->"MoreAbout"
-												]
-										],
-									Cell[
-										BoxData@ToBoxes@
-											ActionMenu[Row@{"URL","\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]",docArrow},
-												generateUrlRefs[sym],
-												Appearance->None,MenuAppearance->Automatic,
-												BaseStyle->"AnchorBarActionMenu",
-												MenuStyle->"URLMenu"
-												]
-										]
-									},
-								"\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]"
-								],
-							"AnchorBar"]
-					}},
-				ItemSize->{{Scaled[0.35`],{Scaled[0.65`]}}, Automatic},
-				Alignment->{{Left,Right},Center}
-				],
-		"AnchorBarGrid"
+	anchorBarCell[
+		{
+			StringTrim[
+				ToUpperCase@docSymType@sym,
+				" SYMBOL"
+				]<>" SYMBOL",
+			docTypeColor[docSymType@sym]
+			},
+			{
+				"See Also",
+				generateSymRefs[seeAlso],
+				"SeeAlso"
+				},
+			{
+				"Related Guides",
+				generateGuideRefs[relatedGuides],
+				"MoreAbout"
+				},
+			{
+				"URL",
+				generateUrlRefs[sym],
+				"URLMenu"
+				}
 		];
 iGenerateAnchorBar~SetAttributes~HoldAll
 
@@ -841,7 +868,7 @@ generateUsageCell[symbol_String,pattern_->def_]:=
 					Cell[RawBoxes@s,"","InlineFormula"]
 				}]/.{
 					s_String?(StringMatchQ["\"*\""]):>
-							StyleBox[s,"Input"],
+							StyleBox[s,ShowAutoStyles->True],
 					StyleBox[s_String?italString,o___]:>(
 							StyleBox[s,"TI",o]
 							)
@@ -983,16 +1010,33 @@ detailsOpenerCellImage[cell_]:=
 		Riffle[
 			Prepend[
 				Take[
-					Flatten@ImagePartition[#,{170,UpTo[70]}]&@
+					Flatten@
+						ImagePartition[
+							#,
+							{170,70},
+							Padding->GrayLevel[1,0]
+							]&@
 						ImageResize[
 							ColorReplace[
 								ImageCrop@
 									Rasterize[
-										Notebook[Flatten@{cell},
+										Notebook[
+											Flatten@{cell},
 											StyleDefinitions->
-												FrontEnd`FileName[{"Wolfram"},
-													"Reference.nb",CharacterEncoding->"UTF-8"],
-											Magnification->.5
+												Notebook[{
+													Cell[
+														StyleData[
+															StyleDefinitions->
+																FrontEnd`FileName[{"Wolfram"},
+																	"Reference.nb",CharacterEncoding->"UTF-8"]
+															]
+														],
+													Cell[StyleData[All],
+														FontWeight->Bold,
+														FontSize->44
+														]
+													}],
+											Magnification->.35
 											],
 										"Image"
 										],
@@ -1019,9 +1063,9 @@ detailsOpenerCellImage[cell_]:=
 					AspectRatio->Full
 					],
 				Pane[
-					Grid[List@r,Spacings->{0,0}],
+					Grid[List@r,Spacings->{0,0},Alignment->{Center,Center}],
 					ImageSize->{720,70},
-					Alignment->Left
+					Alignment->{Left,Center}
 					],
 				If[CurrentValue["MouseOver"],Image[CompressedData["
 1:eJzdmc9vE0cUxyNAosfeckGIXnujJy6tVKk9VOLStFVz4AIlRD00VQMSouXQ
@@ -1139,26 +1183,28 @@ generateDetailsSection[sec:Except[_List]]:=
 		"Notes"];
 generateDetailsSection[sec:{__List}]:=
 	Cell[
-		TextData@
-			Cell[
-				BoxData@
-					GridBox@
-						Map[
-							Prepend[
-								Replace[#,{
-									s:_String|_BoxData|_TextData:>
-										Cell[s,"TableText"],
-									c_Cell:>
-										c,
-									e_:>
-										Cell[BoxData@ToBoxes[e],"TableText"]
-									},
-									1],
-								Cell["      ", "TableRowIcon"]
-								]&,
-							sec]
-				],
-		ToString[Length@First@sec]<>"ColumnTableMod"];
+		BoxData@
+			GridBox[
+				Map[
+					Prepend[
+						Replace[#,{
+							s:_String|_BoxData|_TextData:>
+								Cell[s,"TableText"],
+							c_Cell:>
+								c,
+							e_:>
+								Cell[BoxData@ToBoxes[e],"TableText"]
+							},
+							1],
+						Cell["      ", "TableRowIcon"]
+						]&,
+					sec],
+			GridBoxDividers->{
+				"Rows" -> ConstantArray[True,Length@sec]
+				}
+			],
+		ToString[Length@First@sec]<>"ColumnTableMod"
+		];
 generateDetailsSection[{note:Except[_List],grid_List}]:=
 	Cell[CellGroupData[{
 		generateDetailsSection[note],
@@ -1499,18 +1545,21 @@ iGenerateMetadata[sym_,ops___]:=
 			"context"->Replace[DocLinkBase@s,Nothing->"System"]<>"`",
 			"keywords"->
 				ToLowerCase@
-					Join[
+					Flatten@{
 						s,
 						Map[
 							StringJoin,
 							DeleteCases[{Break}]@
-								SplitBy[MatchQ[Break]]@Flatten@
-								StringSplit[s,
-									l_?LowerCaseQ~~b:LetterCharacter?(Not@*LowerCaseQ):>
-									{l,Break,b}
+								SplitBy[
+									Flatten@
+										StringSplit[s,
+											l_?LowerCaseQ~~b:LetterCharacter?(Not@*LowerCaseQ):>
+											{l,Break,b}
+											],
+									MatchQ[Break]
 									]
 							]
-						],
+						},
 			"specialkeywords"->{},
 			"tutorialcollectionlinks"->{},
 			"index"->True,
@@ -1746,7 +1795,7 @@ $filterOutOps=
 		PopupMenu,Column,
 		Row,Grid,CreateDocument,
 		Notebook,Plot,Plot3D,
-		DialogInput
+		DialogInput,BoundaryMeshRegion
 		};
 
 
@@ -1997,7 +2046,11 @@ callPatternReplace[vals_,
 							ToString@Unevaluated[p],
 							True
 							],
-					Verbatim[Pattern][p_,Verbatim[Blank][t:Integer|String|List|Association]]:>
+					Verbatim[Pattern][p_,
+						Verbatim[Blank][
+							t:Integer|String|List|Association|Symbol
+							]
+						]:>
 						RuleCondition[
 							With[{pstring=
 								Replace[Unevaluated[p],{
@@ -2008,6 +2061,17 @@ callPatternReplace[vals_,
 									}]
 								},
 								Replace[Unevaluated@t,{
+									Symbol->
+										Replace[Unevaluated[p],{
+											_Symbol:>
+												Block[{$Context="Global`"},
+													ToExpression@SymbolName[p]
+													],
+											_:>
+												Block[{$Context="Global`"},
+													ToExpression@"sym"
+													]
+											}],
 									Integer->1,
 									String->pstring,
 									List->{pstring},
@@ -2134,15 +2198,15 @@ AutoGenerateExamples[sym_,defer:True|False:False]:=
 									RowBox@{"Defer","[",#,"]"},
 									#
 									]&@RowBox@{"Needs","[","\""<>c<>"\"","]"},
-							"ExamplesInput"],
-						Cell["\t","ExampleDelimiter"]
+							"ExamplesInput"](*,
+						Cell["\t","ExampleDelimiter"]*)
 						},
 					Nothing
 					]
 				],
-			Flatten@Riffle[Partition[#,2],
+			(*Flatten@Riffle[Partition[#,2],
 				Cell["\t","ExampleDelimiter"]
-				]&@
+				]&@*)
 			Riffle[
 				Cell[TextData@{"From ",
 					inlineRefBox@Replace[usagePatternReplace@#,
@@ -2947,12 +3011,15 @@ GenerateSymbolPages[namePattern_String,ops:OptionsPattern[]]:=
 GenerateSymbolPages~SetAttributes~HoldFirst;
 
 
-GenerateSymbolPages[nb_NotebookObject]:=
+GenerateSymbolPages[nb_NotebookObject,
+	ops:OptionsPattern[]
+	]:=
 	ToExpression[Lookup[#,"Symbol"],StandardForm,
 		GeneralUtilities`HoldFunction[sym,
 			Block[{$DocGenLine=0},
 				GenerateSymbolPages[sym,
-					DeleteCases[#,"Symbol"->_]
+					DeleteCases[#,"Symbol"->_],
+					ops
 					]
 				]
 			]
@@ -2960,26 +3027,30 @@ GenerateSymbolPages[nb_NotebookObject]:=
 GenerateSymbolPages[
 	nb:
 		_EvaluationNotebook|_InputNotebook|_CreateDocument:
-		EvaluationNotebook[]]:=
-	GenerateSymbolPages[Evaluate@nb];
+		EvaluationNotebook[],
+	ops:OptionsPattern[]
+	]:=
+	GenerateSymbolPages[Evaluate@nb,ops];
 
 
 Options[SaveSymbolPages]=
 	Options[GenerateSymbolPages];
 SaveSymbolPages[
-	doc:_String|_Symbol|{__String},
+	doc:_String|_Symbol|{__String}|
+		_NotebookObject|{__NotebookObject}|
+		_EvaluationNotebook|_InputNotebook|_ButtonNotebook,
 	dir_String?DirectoryQ,
 	extension:True|False:True,
 	ops:OptionsPattern[]
 	]:=
 	GenerateSymbolPages[doc,
-		Visible->False,
 		FilterRules[{
+			Visible->False,
 			ops,
 			"PostFunction"->
 				(
 					(
-						SaveSymbolPages[#,dir,extension,ops];
+						saveSymbolPages[#,dir,extension,ops];
 						NotebookClose[#]
 						)&
 					)
@@ -2987,8 +3058,9 @@ SaveSymbolPages[
 			Options@GenerateSymbolPages
 			]
 		];
-SaveSymbolPages[
-	nb:_NotebookObject|{__NotebookObject},
+saveSymbolPages[
+	nb:_NotebookObject|{__NotebookObject}|
+		_EvaluationNotebook|_InputNotebook|_ButtonNotebook,
 	dir_String?DirectoryQ,
 	extension:True|False:True,
 	ops:OptionsPattern[]
@@ -3040,7 +3112,7 @@ SaveSymbolPages[
 	extension:True|False:True,
 	ops:OptionsPattern[]
 	]:=
-	SaveSymbolPages[Evaluate@doc,dir,extension,ops]
+	SaveSymbolPages[Evaluate@doc,dir,extension,ops];
 SaveSymbolPages~SetAttributes~HoldFirst
 
 
@@ -3147,58 +3219,41 @@ iGuideMain[title_,abstract_]:=
 iGuideAnchorBar[name_,fs_,relatedGuides_]:=
 	Cell[
 		BoxData@
-			ToBoxes@
-				Grid[{{
-					Grid[{{
-						Item[
-							Row@{
-								Spacer[8],
-								RawBoxes@Cell["GUIDE","PacletNameCell"],
-								Spacer[8]
-								},
-							Background->docTypeColor["GUIDE"],
-							ItemSize->Full]
-							}},
-						Alignment->{Automatic,Center},
-						ItemSize->{{Full,Scaled[0.02`]},2.5}],
-					RawBoxes@
-						Cell[
-							TextData@
-								Riffle[{
-									Cell[
-										BoxData@ToBoxes@
-											ActionMenu[Row@{"Functions","  ",docArrow},
-												generateSymRefs[fs],
-												Appearance->None,MenuAppearance->Automatic,
-												BaseStyle->"AnchorBarActionMenu",
-												MenuStyle->"GuideFunction"
-												]
-										],
-									Cell[
-										BoxData@ToBoxes@
-											ActionMenu[Row@{"Related Guides","  ",docArrow},
-												generateGuideRefs[relatedGuides],
-												Appearance->None,MenuAppearance->Automatic,
-												BaseStyle->"AnchorBarActionMenu",
-												MenuStyle->"MoreAbout"
-												]
-										],
-									Cell[
-										BoxData@ToBoxes@
-											ActionMenu[Row@{"URL","  ",docArrow},
-												generateUrlRefs[name],
-												Appearance->None,MenuAppearance->Automatic,
-												BaseStyle->"AnchorBarActionMenu",
-												MenuStyle->"URLMenu"
-												]
-										]
-									},
-								"\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]"
-								],
-							"AnchorBar"]
+			GridBox[{{
+				GridBox[{{
+					anchorBarPacletCell["GUIDE",docTypeColor["GUIDE"]],
+					""
 					}},
-				ItemSize->{{Scaled[0.35`],{Scaled[0.65`]}}, Automatic},
-				Alignment->{{Left,Right},Center}
+					GridBoxAlignment->{"Rows" -> {{Center}}},
+					GridBoxItemSize->
+						{
+							"Columns" -> 
+								{Full, Scaled[0.02]},
+							"Rows" -> {{2.5}}
+							}
+					],
+					Cell[
+						TextData@
+							Riffle[{
+								anchorBarActionMenu[
+									"Functions",
+									generateSymRefs[fs],
+									"GuideFunction"
+									],
+								anchorBarActionMenu["Related Guides",
+									generateGuideRefs[relatedGuides],
+									"MoreAbout"
+									],
+								anchorBarActionMenu["URL",
+									generateUrlRefs[name],
+									"URLMenu"
+									]
+								},
+							"\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]"
+							],
+						"AnchorBar"
+						]
+				}}
 				],
 		"AnchorBarGrid"
 		];
@@ -3471,7 +3526,8 @@ GenerateGuide[nb_NotebookObject]:=
 Options[SaveGuide]=
 	Options[GenerateGuide];
 SaveGuide[
-	guide:_String|None|{__String}:None,
+	guide:_String|None|{__String}|
+		_NotebookObject|_EvaluationNotebook|_InputNotebook:None,
 	dir_String?DirectoryQ,
 	extension:True|False:True,
 	ops:OptionsPattern[]
@@ -3513,7 +3569,7 @@ SaveGuide[
 				Flatten@{nb}
 			]),
 		_->$Failed
-		}]
+		}];
 
 
 GuideGenButton=
@@ -3973,8 +4029,8 @@ iTutorialAnchorBar[name_,fs_,guides_,tuts_]:=
 							TextData@
 								Riffle[{
 									Cell[
-										BoxData@ToBoxes@
-											ActionMenu[Row@{"Related Tutorials","  ",docArrow},
+										BoxData@
+											ActionMenuBox[Cell@TextData@{"Related Tutorials","  ",docArrow},
 												generateGuideRefs[tuts],
 												Appearance->None,MenuAppearance->Automatic,
 												BaseStyle->"AnchorBarActionMenu",
@@ -3982,8 +4038,8 @@ iTutorialAnchorBar[name_,fs_,guides_,tuts_]:=
 												]
 										],
 									Cell[
-										BoxData@ToBoxes@
-											ActionMenu[Row@{"Related Guides","  ",docArrow},
+										BoxData@
+											ActionMenuBox[Cell@TextData@{"Related Guides","  ",docArrow},
 												generateGuideRefs[guides],
 												Appearance->None,MenuAppearance->Automatic,
 												BaseStyle->"AnchorBarActionMenu",
@@ -3991,8 +4047,8 @@ iTutorialAnchorBar[name_,fs_,guides_,tuts_]:=
 												]
 										],
 									Cell[
-										BoxData@ToBoxes@
-											ActionMenu[Row@{"Functions","  ",docArrow},
+										BoxData@
+											ActionMenuBox[Cell@TextData@{"Functions","  ",docArrow},
 												generateSymRefs[fs],
 												Appearance->None,MenuAppearance->Automatic,
 												BaseStyle->"AnchorBarActionMenu",
@@ -4000,8 +4056,8 @@ iTutorialAnchorBar[name_,fs_,guides_,tuts_]:=
 												]
 										],
 									Cell[
-										BoxData@ToBoxes@
-											ActionMenu[Row@{"URL","  ",docArrow},
+										BoxData@
+											ActionMenuBox[Cell@TextData@{"URL","  ",docArrow},
 												generateUrlRefs[name],
 												Appearance->None,MenuAppearance->Automatic,
 												BaseStyle->"AnchorBarActionMenu",
@@ -4260,6 +4316,55 @@ GenerateTutorial[nb_NotebookObject]:=
 	Block[{$DocGenLine=0},
 		GenerateTutorial@#
 		]&/@scrapeTutorialTemplate@nb
+
+
+Options[SaveTutorial]=
+	Options[GenerateTutorial];
+SaveTutorial[
+	guide:_String|None|{__String}|
+		_NotebookObject|_EvaluationNotebook|_InputNotebook:None,
+	dir_String?DirectoryQ,
+	extension:True|False:True,
+	ops:OptionsPattern[]
+	]:=
+	Replace[
+		If[guide===None,
+			GenerateTutorial[Visible->False,ops],
+			GenerateTutorial[guide,Visible->False,ops]
+			],{
+		nb:_NotebookObject|{__NotebookObject}:>(
+			Quiet@CreateDirectory[
+				FileNameJoin@{
+					dir,
+					If[extension,
+						"Guides",
+						Nothing
+						]
+					},
+				CreateIntermediateDirectories->True
+				];
+			Map[
+				Export[
+					FileNameJoin@{
+						dir,
+						If[extension,
+							"Tutorials",
+							Nothing
+							],
+						URLParse[
+							CurrentValue[
+								#,
+								{TaggingRules,"Metadata","uri"}
+								],
+							"Path"
+							][[-1]]<>".nb"
+						},
+					DeleteCases[NotebookGet@#,Visible->_]
+					]&,
+				Flatten@{nb}
+			]),
+		_->$Failed
+		}];
 
 
 Options[TutorialTemplate]=
@@ -4614,6 +4719,11 @@ scrapeTutorialTemplate[nb_NotebookObject]:=
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*IndexDocumentation*)
+
+
+
 IndexDocumentation[
 	src_String?DirectoryQ,
 	dest:_String?DirectoryQ|Automatic:Automatic
@@ -4639,16 +4749,21 @@ IndexDocumentation[
 		];
 
 
+generateDocumentation
+
+
 Options[generateDocumentation]=
 	Join[
 		Options@GenerateSymbolPages,
 		Options@GenerateGuide,{
 		"Install"->False,
 		"Upload"->False,
-		"Index"->Automatic
+		"Index"->Automatic,
+		"GenerateHTML"->False
 		},
 		Options@PacletUpload,
-		Options@PacletExpressionBundle
+		Options@PacletExpressionBundle,
+		Options@GenerateHTMLDocumentation
 		];
 generateDocumentation[
 	pattern:_String,
@@ -4656,7 +4771,7 @@ generateDocumentation[
 	open:True|False:True,
 	ops:OptionsPattern[]
 	]:=
-	With[{
+	Module[{
 		pacletBase=
 			FileNameJoin@{
 				Replace[base,
@@ -4667,20 +4782,22 @@ generateDocumentation[
 							}
 					],
 				StringReplace[pattern,Except["$"|WordCharacter]->""]
-				}
+				},
+		dir,linkbase,
+		paclet,
+		bundle,
+		html
 		},
-		With[{
 			dir=
 				FileNameJoin@{
 					pacletBase,
 					"Documentation",
 					"English"
-					},
+					};
 			linkbase=
 				StringReplace[pattern,
 					Except[WordCharacter]->""
-					]
-			},
+					];
 			Quiet@DeleteDirectory[dir,DeleteContents->True];
 			CreateDirectory[dir,
 				CreateIntermediateDirectories->True
@@ -4715,6 +4832,21 @@ generateDocumentation[
 						"Generating guide"
 						]
 					]
+				];
+			If[OptionValue["GenerateHTML"],
+				If[!DirectoryQ@FileNameJoin@{dir,"html"},
+					CreateDirectory@FileNameJoin@{dir,"html"}
+					];
+				html=
+					GenerateHTMLDocumentation[
+						FileNameJoin@{dir,"html"},
+						dir,
+						FilterRules[{
+							ops
+							},
+							Options@GenerateHTMLDocumentation
+							]
+						]
 				];
 			If[Replace[OptionValue["Index"],
 					Automatic->
@@ -4760,7 +4892,7 @@ generateDocumentation[
 								}
 						]
 					];
-			With[{bundle=
+			bundle=
 				If[TrueQ@OptionValue["Install"]||
 					TrueQ@OptionValue["Upload"],
 					PacletBundle[pacletBase,
@@ -4773,72 +4905,72 @@ generateDocumentation[
 										}
 								]
 						]
-					]
-				},
-				If[OptionValue["Install"]//TrueQ,
-					PacletManager`PacletInstall[bundle,"IgnoreVersion"->True],
-					If[open,
-						CurrentValue[$FrontEndSession,
-							{"NotebookSecurityOptions", "TrustedPath"}
-							]=
-							Append[
-								CurrentValue[$FrontEndSession,
-									{"NotebookSecurityOptions", "TrustedPath"}
-									],
-								Replace[base,
-									Automatic:>
-										FrontEnd`FileName@{
-											$TemporaryDirectory,
-											"doc_paclets"
-											}
-									]
-								];
-						PacletManager`PacletDirectoryAdd@
+					];
+			If[OptionValue["Install"]//TrueQ,
+				PacletManager`PacletInstall[bundle,"IgnoreVersion"->True],
+				If[open,
+					CurrentValue[$FrontEndSession,
+						{"NotebookSecurityOptions", "TrustedPath"}
+						]=
+						Append[
+							CurrentValue[$FrontEndSession,
+								{"NotebookSecurityOptions", "TrustedPath"}
+								],
 							Replace[base,
 								Automatic:>
-									FileNameJoin@{
+									FrontEnd`FileName@{
 										$TemporaryDirectory,
 										"doc_paclets"
 										}
 								]
-						]
-					];
-				If[open,
-					SystemOpen@
-						URLBuild[<|
-							"Scheme"->"paclet",
-							"Path"->{
-								StringReplace[pattern,Except["$"|WordCharacter]->""],
-								"guide",
-								StringReplace[pattern,Except["$"|WordCharacter]->""]
-								}
-							|>];
-					If[OptionValue["Upload"]//TrueQ,
-						PacletUpload[bundle,FilterRules[{ops},Options@PacletUpload]]
-						],
-					<|
-						"Directory"->pacletBase,
-						If[TrueQ@OptionValue@"Install",
-							"Paclets"->
-								PacletManager`PacletFind[
-									Lookup[
-										PacletInfoAssociation@pacletBase,
-										{"Name","Version"}
-										]
-									],
-							Nothing
-							],
-						If[OptionValue["Upload"]//TrueQ,
-							"Upload"->
-								PacletUpload[bundle,
-									FilterRules[{ops},Options@PacletUpload]],
-							Nothing
+							];
+					PacletManager`PacletDirectoryAdd@
+						Replace[base,
+							Automatic:>
+								FileNameJoin@{
+									$TemporaryDirectory,
+									"doc_paclets"
+									}
 							]
-						|>
 					]
+				];
+			If[open,
+				SystemOpen@
+					URLBuild[<|
+						"Scheme"->"paclet",
+						"Path"->{
+							StringReplace[pattern,Except["$"|WordCharacter]->""],
+							"guide",
+							StringReplace[pattern,Except["$"|WordCharacter]->""]
+							}
+						|>];
+				If[OptionValue["Upload"]//TrueQ,
+					PacletUpload[bundle,FilterRules[{ops},Options@PacletUpload]]
+					],
+				<|
+					"Directory"->pacletBase,
+					If[TrueQ@OptionValue@"Install",
+						"Paclets"->
+							PacletManager`PacletFind[
+								Lookup[
+									PacletInfoAssociation@pacletBase,
+									{"Name","Version"}
+									]
+								],
+						Nothing
+						],
+					If[OptionValue["Upload"]//TrueQ,
+						"Upload"->
+							PacletUpload[bundle,
+								FilterRules[{ops},Options@PacletUpload]],
+						Nothing
+						],
+					If[OptionValue["GenerateHTML"]//TrueQ,	
+						"HTML"->html
+						]
+					|>
 				]
-			]
-		];
+			];
 
 
 Options[GenerateDocumentation]=
@@ -4942,11 +5074,17 @@ DocAddUsage~SetAttributes~HoldFirst;
 
 
 
-refLinkRewind[TemplateBox[{Cell[TextData[title_]],link_},___]]:=
+refLinkRewind[
+	TemplateBox[{Cell[TextData[title_]],link_},
+		RefLinkPlain|RefLink|
+		"RefLinkPlain"|"RefLink",
+	___]]:=
 	ButtonBox[title,
 		BaseStyle->"Link",
 		ButtonData->link
 		];
+refLinkRewind[e_]:=
+	e
 
 
 (* ::Subsection:: *)
@@ -5076,24 +5214,11 @@ SymbolPageExtractInfo[nb_Notebook,Optional[All,All]]:=
 		];
 
 
-(*	KeyMap[
-		Capitalize@*
-		Replace[{
-			"title"->"Title",
-			"titlemodifier"->"TitleModifier",
-			"history"\[Rule]"HistoryData",
-			"type"->"EntityType",
-			"paclet"->"PacletName",
-			"context"->"Context",
-			"uri"->"URI",
-			"keywords"->"Keywords",
-			"tutorialcollectionlinks"->"TutorialCollectionLinks",
-			"summary"->"Summary",
-			"index"->"IndexQ"
-			}],
-		Association@
-			
-		]*)
+webExportApplicationsInstall[
+	dir:(_String|_File)?DirectoryQ|_FileName?(DirectoryQ@*ToFileName):
+		FileName[{$UserBaseDirectory,"Applications"}]
+	]:=
+	$Failed(*Download Workbench plugin and install*);
 
 
 webExportTransformAndLayout[entityType_String]:=
@@ -5200,36 +5325,36 @@ webExportTransformAndLayout[entityType_String]:=
 			];
 
 
+$webExportParameters=
+	{
+		"title"->"Title",
+		"titlemodifier"->"TitleModifier",
+		"history"->"HistoryData",
+		"type"->"EntityType",
+		"paclet"->"PacletName",
+		"context"->"Context",
+		"uri"->"URI",
+		"keywords"->"Keywords",
+		"tutorialcollectionlinks"->"TutorialCollectionLinks",
+		"summary"->"Summary",
+		"index"->"IndexQ"
+		};
+
+
 webExportGatherParameters[nb_,ops___?OptionQ]:=
 	Normal@
-		Function[
-			Join[#,
-				AssociationThread[{"Format","Layout"},
-					webExportTransformAndLayout[#EntityType]
-					]
-				]
-			]@
-			KeyMap[
-				Capitalize@*
-				Replace[{
-					"title"->"Title",
-					"titlemodifier"->"TitleModifier",
-					"history"->"HistoryData",
-					"type"->"EntityType",
-					"paclet"->"PacletName",
-					"context"->"Context",
-					"uri"->"URI",
-					"keywords"->"Keywords",
-					"tutorialcollectionlinks"->"TutorialCollectionLinks",
-					"summary"->"Summary",
-					"index"->"IndexQ"
-					}],
-				Association@
+		KeyMap[
+			Capitalize@*
+				Replace[$webExportParameters],
+			Association@
+				FilterRules[
 					Flatten@{
 						ops,
 						Fold[Lookup,Options[nb,TaggingRules],{TaggingRules,"Metadata"}]
-						}
-				];
+						},
+					Alternatives@@Flatten[Through@{Keys,Values}[$webExportParameters]]
+					]
+			];
 
 
 webExportDefaultParametersFormat[gathered_]:=
@@ -5281,41 +5406,829 @@ webExportDefaultParametersFormat[gathered_]:=
 	]
 
 
+webExportNotebookPrep[nb_]:=
+	DeleteCases[
+		Visible->False
+		]@
+	ReplaceRepeated[
+		nb,{
+		Cell[TextData[{c_,___}],"ObjectNameGrid",___]:>
+			c,
+		Cell[_,"NotesThumbnails"|"ObjectNameTranslation",___]:>
+			Sequence@@{},
+		Cell[TextData[{Cell[BoxData[_DynamicBox],___],e__}],
+			t:"NotesSection"|"PrimaryExamplesSection"|
+			"ExampleSection"|"ExampleSubsection",r___]:>
+			Cell[TextData[e],t,r],
+		DynamicBox[e:If[$VersionNumber<_,__],___]:>
+			e,
+		Cell[TextData[s_String],r___]:>Cell[s,r],
+		t:TemplateBox[{_,_String},___]:>
+			refLinkRewind[t],
+		TagBox[a:ActionMenuBox[_FrameBox,___],MouseAppearanceTag["LinkHand"]]:>
+			a,
+		Cell[
+			TextData[{t_," ",
+				Cell[
+					BoxData[
+						GraphicsBox[{{
+								{
+									_GrayLevel, _Thickness,
+									LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]
+									}
+							}},
+							___
+							]
+						],
+					___
+					]
+				}],
+			___
+			]:>
+			InterpretationBox[
+				Cell[
+					TextData[{
+						t,
+						StyleBox[" \[FilledDownTriangle]", "AnchorBarArrow",
+							StripOnInput->False]
+						}]],
+				TextCell[
+					Row[{"See Also", 
+						Style[" \[FilledDownTriangle]", "AnchorBarArrow"]}]
+					]
+				]
+		}
+	]
+
+
 webExportNotebook[file_,nb_,ops___?OptionQ]:=
-	With[{params=
-		webExportDefaultParametersFormat[webExportGatherParameters[nb,ops]]
-		},
+	With[{params=Flatten@{ops}},
 		Needs["DocumentationBuild`"];
 		Block[{
-			Transmogrify`Private`$BoxTypes=
-				Append[Transmogrify`Private`$BoxTypes,
-					String->{"Children"->{}}
+			DocumentationBuild`Common`PubsEvaluateWithFE=
+				Identity,
+			DocumentationBuild`Common`Private`PubsStartFrontEnd=
+				Identity,
+			Print=
+				Identity,
+			NotebookOpen,
+			NotebookPut,
+			expFile=
+				If[DirectoryQ@file,
+					FileNameJoin@Flatten@{
+						file,
+						URLParse[
+							Lookup[params,"URI",
+								URLBuild@{
+									"",
+									"DocPage-"<>ToString[RandomInteger[10000]]
+									}
+								],
+							"Path"]
+						}<>".html",
+					file
 					]
 			},
-			(*Transmogrify`Transmogrify*)List[
-				file,
-				nb,
-				Lookup[params,"Format"],
-				"DefaultParameters"->Normal@KeyDrop[params,"Format"]
+			NotebookOpen[e___]:=
+				MathLink`CallFrontEnd[
+					FrontEnd`NotebookOpenReturnObject[e,Visible->False]
+					];
+			NotebookPut[e_]:=
+				MathLink`CallFrontEnd[
+					FrontEnd`NotebookPutReturnObject[Append[e,Visible->False]]
+					];
+			Quiet[
+				DocumentationBuild`Export`ExportWebPage[
+					ExpandFileName[expFile],
+					webExportNotebookPrep@nb,
+					Normal@KeyDrop[params,{"Format","Layout"}],
+					Sequence@@
+						FilterRules[
+							Flatten@{
+								ops,
+								"CompleteHTMLQ" -> True
+								},
+							FilterRules[
+								Options[DocumentationBuild`Export`ExportWebPage],
+								Except["HistoryData"|"Language"]
+								]
+							]
+					]
 				]
 			]
 		]
 
 
-DocWebExport[dir_String?DirectoryQ,nb_Notebook,
-	ops___?OptionQ]:=
-	webExportNotebook[dir,nb,ops];
-DocWebExport[dir_String?DirectoryQ,nb_NotebookObject,
-ops___?OptionQ]:=
-	DocWebExport[dir,NotebookGet@nb,ops];
-DocWebExport[dir_String?DirectoryQ,f_String?FileExistsQ,
-	ops___?OptionQ]:=	
-	With[{nb=Import[f]},
-		If[MatchQ[nb,_Notebook],
-			DocWebExport[dir,nb,ops],
-			$Failed
+$webExportAssets:=
+	Map[
+		<|
+			"Drop"->FileNameDepth[#[[1]]]-FileNameDepth@#[[2]],
+			"Files"->FileNames[#[[3]],#[[1]],\[Infinity]],
+			"Insert"->If[Length@#>3,#[[4]],Nothing]
+			|>&,
+		{
+			{
+				FileNameJoin@{
+					DocumentationBuild`Common`$DocumentationBuildDirectory,
+					"Internal","web","html","javascript"
+					},
+				"javascript",
+				{
+					"*.js"
+					}
+				},
+			{
+					FileNameJoin@{
+						DocumentationBuild`Common`$DocumentationBuildDirectory,
+						"Internal","web","html","css"
+						},
+					"css",
+					{
+						"*.css"
+						}
+				},
+			{
+				FileNameJoin@{
+					DocumentationBuild`Common`$DocumentationBuildDirectory,
+					"Internal","web","html","2014","standard"
+					},
+				"",
+				{
+					"*.js","*.json","*.css","*.png","*.gif","*.jpg",
+					"*.svg","*.eot","*.otf","*.ttf","*.woff","*.html"
+					}
+				},
+			{
+				FileNameJoin@{
+					DocumentationBuild`Common`$DocumentationBuildDirectory,
+					"Internal","web","html","2014","standard"
+					},
+				"",
+				{
+					"*.ttf","*.woff"
+					},
+				"fonts"
+				},
+			{
+				FileNameJoin@{
+					DocumentationBuild`Common`$DocumentationBuildDirectory,
+					"Internal","web","html","2014",
+					"minimal",
+					"javascript"
+					},
+				"javascript",
+				"faster-page-load.js"
+				},
+			{
+				FileNameJoin@{
+					DocumentationBuild`Common`$DocumentationBuildDirectory,
+					"Internal","web","html","images",
+					"mathematicaImages"
+					},
+				FileNameJoin@{"images","mathematicaImages"},
+				"bullet.gif"
+				}
+			}
+		];
+
+
+webExportAssetsCopy1[dir:(_String|_File)?DirectoryQ]:=
+	Block[{d,f},
+		Monitor[
+			Table[
+				With[{depth=a["Drop"],insert=a["Insert"]},
+					Table[
+						d=
+							FileNameJoin@
+								Flatten@{dir,
+									DirectoryName@FileNameDrop[f,depth],
+									insert
+									};
+							If[!DirectoryQ@d,
+								CreateDirectory[d,
+									CreateIntermediateDirectories->True
+									]
+								];
+							If[StringMatchQ[FileExtension[#],"css"|"js"|"html"],
+								webExportPostProcess[#],
+								#
+								]&@
+								CopyFile[f,
+									FileNameJoin@
+										Flatten@{
+											d,
+											FileNameTake@f
+											},
+									OverwriteTarget->True
+									],
+						{f,a["Files"]}
+						]
+					],
+				{a,$webExportAssets}
+				],
+		Internal`LoadingPanel[
+			"Copying `` to ``"~TemplateApply~
+				{
+					f,
+					FileNameJoin@
+						Flatten@{
+							d,
+							FileNameTake@f
+							}
+					}
+			]
+		]
+	];
+webExportAssetsCopy2[dir:(_String|_File)?DirectoryQ]:=
+	URLDownload[
+		URLBuild@
+			Flatten@{
+				"http://reference.wolfram.com/2013",
+				#
+				},
+		FileNameJoin@Flatten{dir,#}
+		]&/@
+		Join[
+			Thread[{"javascript",{
+				"sub-pages.js",
+				"image-swap.js",
+				"clipboard.js"
+				}}],
+			Thread[{"images",{"clipboard@2x.png"}}]
+			]
+
+
+webExportAssetsCopy[dir:(_String|_File)?DirectoryQ]:=
+	(
+		webExportAssetsCopy1[dir];
+		(*webExportAssetsCopy2[dir];*)
+		);
+
+
+webExportPostProcessSingleReplacements//Clear;
+webExportPostProcessMultiReplacements//Clear;
+
+
+webExportPostProcessMultiReplacements[strip_,res_,url_]:=
+	With[{
+		trimmedRes=
+			StringTrim[res,"/"~~EndOfString],
+		paddedRes=
+			StringTrim[res,"/"~~EndOfString]<>"/"
+		},
+		Flatten@{(*
+			(* Insert prototype into loaded JS characters *)
+			"<script src='javascript/common.js' type='text/javascript'></script>\n"<>
+			"<script src='javascript/jquery.js' type='text/javascript'></script>\n"->
+				"<script src='javascript/jquery.js' type='text/javascript'></script>\n"<>
+					"<script src='javascript/common.js' type='text/javascript'></script>\n",*)
+			(* Relink loaded JS and CSS *)
+			h:("src"|"href")~~"="~~(q:"'"|"\"")~~t:"javascript"|"css"~~"/":>
+				h<>"="<>q<>URLBuild@{res,t}<>"/",
+			h:("src"|"href")~~"="~~(q:"'"|"\"")~~"/"~~t:"javascript"|"css"~~"/":>
+				h<>"="<>q<>URLBuild@{res,t}<>"/",
+			"/webMathematica/Resources/Documentation/English/"->
+				paddedRes,
+			(* Relink loaded JS and CSS *)
+			l:("<link rel=\"stylesheet\" href=\""~~
+				(paddedRes|"")~~"css/reference.css\" />"):>
+				l<>"\n<link rel=\"stylesheet\" href=\""<>
+					URLBuild@{trimmedRes,"css","clipboard.css"}<>"\" />",
+			l:("<script src=\""~~(paddedRes|"")~~"javascript/reference.js\"></script>"):>
+				"<script src=\""<>
+					URLBuild@{trimmedRes,"javascript",
+						"jquery","core","1.7.2","jquery.min.js"}<>"\" /></script>\n"<>l
+			}
+		];
+
+
+webExportPostProcessSingleReplacements[strip_,res_,url_]:=
+	With[{
+		trimmedRes=
+			StringTrim[res,"/"~~EndOfString],
+		paddedRes=
+			StringTrim[res,"/"~~EndOfString]<>"/"
+		},
+		Flatten@{
+			Replace[strip,Except[_List|_Rule]->{}],
+			(* Protect true links *)
+			"http://reference.wolfram.com/language/"~~
+				t:"ref"|"guide"|"tutorial":>
+				"http://reference.wolfram.com/language/"<>t,
+			paddedRes~~
+				t:"ref"|"guide"|"tutorial":>
+					"http://reference.wolfram.com/language/"<>t,
+			"/language/"~~
+				t:"ref"|"guide"|"tutorial":>
+					URLBuild@{
+						"http://reference.wolfram.com/language",
+						t
+						},
+			(* Patch intra site links *)
+			"/language/"~~param:Except[WhitespaceCharacter]...~~
+				t:"ref"|"guide"|"tutorial"~~
+					doc:Except[WhitespaceCharacter|"\""]...:>
+					URLBuild@
+						DeleteCases[{url,StringTrim[param,"/"],t,StringTrim[doc,"/"]},""],
+			"http://reference.wolfram.com/language"->
+				url,
+			(* Patch resource directory *)
+			"/common/"->
+				paddedRes,
+			(* Patch jquery version *)
+			"jquery/core/1.6.1"->
+				"jquery/core/1.7.2",
+			(* Patch mathematicaImages to work a resource base *)
+			"\"../"~~i:"images/mathematicaImages":>
+				"\""<>URLBuild@{trimmedRes,i},
+			"\""~~i:"images/mathematicaImages":>
+				"\""<>URLBuild@{trimmedRes,i},
+			"\"/mathematicaImages"->
+				"\""<>URLBuild@{trimmedRes,"images","mathematicaImages"},
+			(* Patch includes to work a resource base *)
+			"\"/includes"->
+				"\""<>URLBuild@{trimmedRes,"includes"},
+			(* Downconvert 2013 resources to the standard resoruce base *)
+			"/2013/"->
+				paddedRes,
+			(* Delete duplicates *)
+			(l:"<script src=\""<>
+					URLBuild@{trimmedRes,"javascript","jquery.min.js"}<>"\" /></script>\n")..:>
+				l,
+			(l:"<link rel=\"stylesheet\" href=\""<>
+					URLBuild@{trimmedRes,"css","clipboard.css"}<>"\" />\n")..:>
+				l
+			}
+		];
+
+
+webExportPostProcessSingleReplacements["css",strip_,res_,url_]:=
+	{
+		(* Add clipboard styles into reference.css *)
+		t:"/*##############################\n\tCOLORS":>
+			"/* clipboard styles */\n@import url('clipboard.css');\n"<>t
+		};
+
+
+webExportPostProcessSingleReplacements["js",strip_,res_,url_]:=
+	{
+		(* Clean up dangerous characters while protecting whitespace *)
+		w:WhitespaceCharacter:>w,
+		_?(Not@*PrintableASCIIQ)->""	
+		};
+
+
+webExportPostProcessMultiReplacements[_,_,_,_]:=
+	{
+		};
+webExportPostProcessSingleReplacements[_,_,_,_]:=
+	{
+		};
+
+
+webExportPostProcess//Clear
+
+
+Options[webExportPostProcess]={
+	"ResourceBase"->Automatic,
+	"URLBase"->Automatic,
+	"StripExtensions"->Automatic
+	};
+webExportPostProcess[file_String?FileExistsQ,ops:OptionsPattern[]]:=
+	With[{
+		s=ReadString[file],
+		ext=Replace[OptionValue["StripExtensions"],Automatic->{".en."->"."}],
+		res=
+			Replace[OptionValue["ResourceBase"],
+				Automatic:>
+					URLBuild@
+						ConstantArray["..",
+							With[{split=FileNameSplit@DirectoryName@file},
+								SelectFirst[Range[Length@split],
+									DirectoryQ@FileNameJoin@
+										Append[
+											Drop[split,-#],
+											"javascript"
+											]&,
+									1
+									]
+								]
+							]
+				],
+		url=
+			Replace[OptionValue["URLBase"],
+				Automatic:>
+					URLBuild@
+						ConstantArray["..",
+							With[{split=FileNameSplit@DirectoryName@file},
+								SelectFirst[Range[Length@split],
+									DirectoryQ@FileNameJoin@
+										Append[
+											Drop[split,-#],
+											"javascript"
+											]&,
+									1
+									]
+								]
+							]
+				]
+		},
+		If[StringQ[s],
+			DeleteFile[file];
+			Export[
+				StringReplace[file,
+					Replace[OptionValue["StripExtensions"],Except[_List|_Rule]->{}]
+					],
+				FixedPoint[#,s,6]&@
+					StringReplace@Join[
+						webExportPostProcessMultiReplacements[
+							ext,
+							res,
+							url
+							],
+						webExportPostProcessMultiReplacements[
+							FileExtension[file],
+							ext,
+							res,
+							url
+							]
+						]//
+						StringReplace@Join[
+							webExportPostProcessSingleReplacements[
+								ext,
+								res,
+								url
+								],
+							webExportPostProcessSingleReplacements[
+								FileExtension[file],
+								ext,
+								res,
+								url
+								]
+							]
+					,
+				"Text"
+				],
+			file
 			]
 		];
+webExportPostProcess[___]:=$Failed
+
+
+Options[webExportAssetsDeploy]=
+	DeleteDuplicatesBy[First]@
+		Join[
+			{
+				Permissions->"Public"
+				},
+			Options[CloudObject]
+			];
+webExportAssetsDeploy[
+	dir_String?DirectoryQ,
+	uri_String,
+	ops:OptionsPattern[]
+	]:=
+	With[{
+		files=
+			Select[
+				FileNames[
+					"css"|"fonts"|"images"|"includes"|"javascript"~~
+					$PathnameSeparator<>"*",
+					dir,
+					\[Infinity]],
+				Not@*DirectoryQ
+				]
+		},
+		Block[{f},
+			Monitor[
+				Table[
+					CopyFile[
+						f,
+						CloudObject[
+							URLBuild@Flatten@{uri,FileNameSplit@FileNameDrop[f,FileNameDepth@dir]},
+							Sequence@@FilterRules[Flatten@{
+								ops,
+								Options[webExportAssetsDeploy]
+								},
+								Options[CloudObject]
+								]
+							]
+						],
+				{f,files}
+				],
+				Internal`LoadingPanel[
+					"Copying `` to ``"~TemplateApply~
+						{
+							f,
+							URLBuild@Flatten@{uri,
+								FileNameSplit@FileNameDrop[f,FileNameDepth@dir]}
+							}
+					]
+				]
+			]
+		]
+
+
+Options[webExportCloudDeploy]=
+	DeleteDuplicatesBy[First]@
+		Join[
+			{
+				Permissions->"Public"
+				},
+			Options[CloudObject]
+			];
+webExportCloudDeploy[
+	dir_String?DirectoryQ,
+	pages:{__String?FileExistsQ},
+	uri_String,
+	ops:OptionsPattern[]
+	]:=
+	With[{
+		files=
+			Join[
+				pages,
+				Select[
+					FileNames[
+						"Files"<>$PathnameSeparator~~
+							Alternatives@@Map[FileBaseName,pages]~~
+								$PathnameSeparator<>"*",
+						DirectoryName@First@pages,
+						\[Infinity]],
+					Not@*DirectoryQ
+					]
+				]
+		},
+		Block[{f},
+			Monitor[
+				Table[
+					Take[#,1]&@
+					CopyFile[
+						f,
+						CloudObject[
+							URLBuild@
+							Flatten@{uri,
+								FileNameSplit@FileNameDrop[f,FileNameDepth@dir]},
+							Sequence@@FilterRules[
+								Flatten@{
+									ops,
+									Options[webExportCloudDeploy]
+									},
+								Options[CloudObject]
+								]
+							]
+						],
+						{f,files}
+						],
+				Internal`LoadingPanel[
+					"Copying `` to ``"~TemplateApply~
+						{
+							f,
+							URLBuild@Flatten@{uri,
+								FileNameSplit@FileNameDrop[f,FileNameDepth@dir]}
+							}
+					]
+				]
+			]
+		]
+
+
+Options[GenerateHTMLDocumentation]=
+	Join[
+		Options[GenerateSymbolPages],
+		Options[webExportPostProcess],
+		Options[DocumentationBuild`Export`ExportWebPage],
+		Options[webExportAssetsDeploy],{
+			CloudConnect->Automatic,
+			CloudDeploy->False,
+			"DeployAssets"->False,
+			"CopyAssets"->Automatic
+		}];
+GenerateHTMLDocumentation[dir_String?DirectoryQ,
+	nb:{__Notebook}|None,
+	ops:OptionsPattern[]
+	]:=
+	With[{
+		deploy=OptionValue[CloudDeploy],
+		highlight=
+			CurrentValue[$FrontEndSession,
+				{AutoStyleOptions,"HighlightUndefinedSymbols"}
+				]
+		},
+		If[
+			TrueQ@OptionValue["CopyAssets"]||
+			And[
+				OptionValue["CopyAssets"]===Automatic||TrueQ@OptionValue["DeployAssets"],
+				AnyTrue[{"css","fonts","images","includes","javascript"},
+					Not@DirectoryQ[FileNameJoin@{dir,#}]&
+					]
+				],
+			webExportAssetsCopy[dir]
+			];
+		CheckAbort[
+			Function[
+				CurrentValue[$FrontEndSession,
+					{AutoStyleOptions,"HighlightUndefinedSymbols"}
+					]=
+					highlight;
+				If[deploy,
+					Replace[
+						Replace[OptionValue[CloudConnect],
+							Automatic->Key["PacletsAccount"]
+							],{
+						s_String:>
+							If[$WolframID=!=s,
+								CloudConnect[s]
+								],
+						{s__String}:>
+							CloudConnect[s],
+						k_Key:>
+							KeyChainConnect[k]
+						}]
+					];
+				If[deploy&&OptionValue["DeployAssets"],
+					Replace[
+						Replace[OptionValue["ResourceBase"],{
+							Automatic->"reference",
+							CloudObject[c_,___]:>c
+							}],
+						s_String:>
+							webExportAssetsDeploy[dir,s,
+								FilterRules[
+									{
+										ops
+										},
+									Options@webExportAssetsDeploy
+									]
+								]
+						]
+					];
+				If[deploy,
+					Replace[
+						Replace[OptionValue["URLBase"],{
+							Automatic->"reference",
+							CloudObject[c_,___]:>c
+							}],
+						s_String:>
+							If[#=!=None,
+								webExportCloudDeploy[dir,#,s,
+									FilterRules[
+										{
+											ops
+											},
+										Options@webExportCloudDeploy
+										]
+									]
+								]
+						],
+					#
+					]
+				]@
+			If[nb===None,
+				None,
+					If[Length@nb>1,
+						Monitor[ReleaseHold[#],
+							Internal`LoadingPanel[
+								"Generating HTML page `` of ``"
+									~TemplateApply~
+								{i,Length@nb}
+								]
+							],
+						ReleaseHold@#
+						]&@
+						Hold@
+						Table[
+							With[{
+								params=webExportGatherParameters[nb[[i]],ops]
+								},
+								webExportPostProcess[
+									webExportNotebook[dir,nb[[i]],params],
+									FilterRules[
+										Flatten@{
+											If[deploy,
+												"URLBase"->
+													Replace[OptionValue["URLBase"],{
+														Automatic:>
+															First@CloudObject["reference"],
+														CloudObject[u_,___]:>
+															u,
+														s_String:>
+															First@CloudObject[s]
+														}],
+												Nothing
+												],
+											If[deploy,
+												"ResourceBase"->
+													Replace[OptionValue["ResourceBase"],{
+														Automatic:>
+															First@CloudObject["reference"],
+														CloudObject[u_,___]:>
+															u,
+														s_String:>
+															First@CloudObject[s]
+														}],
+												Nothing
+												],
+											params
+											},
+										Options[webExportPostProcess]
+										]
+									]
+								],
+							{i,Length@nb}
+							]
+						
+				],
+			CurrentValue[$FrontEndSession,
+				{AutoStyleOptions,"HighlightUndefinedSymbols"}
+				]=
+				highlight;
+			$Aborted
+			]
+		];
+
+
+GenerateHTMLDocumentation[
+	dir_String?DirectoryQ,
+	nb:{__NotebookObject},
+	ops___?OptionQ
+	]:=
+	GenerateHTMLDocumentation[dir,NotebookGet/@nb,ops];
+GenerateHTMLDocumentation[
+	dir_String?DirectoryQ,
+	f:{__String?FileExistsQ},
+	ops___?OptionQ
+	]:=	
+	With[{nb=Import[#]},
+		If[MatchQ[nb,_Notebook],
+			GenerateHTMLDocumentation[dir,nb,ops],
+			$Failed
+			]
+		]&/@f;
+GenerateHTMLDocumentation[dir_String?DirectoryQ,
+	nb:_Notebook|_NotebookObject|(_String|_File)?(FileExistsQ@#&&Not@DirectoryQ@#&),
+	ops___?OptionQ
+	]:=
+	First@GenerateHTMLDocumentation[dir,{nb},ops];
+GenerateHTMLDocumentation[
+	dir_String?DirectoryQ,
+	d_String?DirectoryQ,
+	ops___?OptionQ
+	]:=	
+	GenerateHTMLDocumentation[dir,
+		FileNames["*.nb",
+			If[DirectoryQ@FileNameJoin@{d,"Documentation","English"},
+				FileNameJoin@{d,"Documentation","English"},
+				d
+				],
+			\[Infinity]],
+		ops
+		]
+
+
+GenerateHTMLDocumentation[
+	dir:(_String|_File)?DirectoryQ|_FileName?(DirectoryQ@*ToFileName),
+	pattern:_String?(Not@*FileExistsQ)|_Symbol,
+	ops___?OptionQ
+	]:=
+	With[{n=Names[pattern]},
+		If[Length@n>1,
+			$Failed,
+			With[{
+				nb=
+					First[{NotebookGet[#],NotebookClose[#]}]&@
+						First@Flatten@List@
+							GenerateSymbolPages[
+								Evaluate@First@n,
+								Evaluate@FilterRules[{ops},Options@GenerateSymbolPages],
+								Visible->False
+								]
+				},
+					GenerateHTMLDocumentation[
+						Replace[dir,f_FileName:>ToFileName[f]],
+						nb,
+						ops
+						]
+				]
+			]
+		];
+
+
+$webDocsHTMLBuildDirectory=
+	FileNameJoin@{$TemporaryDirectory,"web_docs"};
+GenerateHTMLDocumentation[
+	Optional[Automatic,Automatic],
+	s___
+	]:=
+	With[{dir=
+		Quiet[
+			DeleteDirectory[$webDocsHTMLBuildDirectory,DeleteContents->True];
+			CreateDirectory[$webDocsHTMLBuildDirectory]
+			]},
+		GenerateHTMLDocumentation[
+			dir,
+			s
+			]
+		]
 
 
 End[];
