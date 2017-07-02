@@ -4839,7 +4839,11 @@ generateDocumentation[
 					];
 				html=
 					GenerateHTMLDocumentation[
-						FileNameJoin@{dir,"html"},
+						FileNameJoin@{
+							$TemporaryDirectory,
+							"doc_paclets",
+							"html"
+							},
 						dir,
 						FilterRules[{
 							ops

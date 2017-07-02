@@ -3091,8 +3091,8 @@ AppPacletUpload[apps__String,ops:OptionsPattern[]]:=
 									]
 							]
 					},
-					PacletUpload[Sequence@@pacletFiles,
-						FilterRules[
+					PacletUpload[pacletFiles,
+						Echo@FilterRules[
 							Flatten@{
 								"ServerName"->
 									Replace[OptionValue["ServerName"],{

@@ -350,24 +350,31 @@ SSUpdate[
 
 
 SSTemplate[newNB:_Notebook|_NotebookObject|None:None,
-defaultStyle:_DefaultStyle:DefaultStyle["Default.nb"],
-styles:(_String|_Directive)...,
-ops:_Rule|_RuleDelayed...
-]:=With[{nb=Replace[newNB,{
-_Notebook:>
-CreateDocument["",
-ops,
-WindowTitle->First@newNB,
-StyleDefinitions->"PrivateStylesheetFormatting.nb",
-Saveable->True],
-None:>Automatic
-}]},
-SSNew[nb,defaultStyle,Next];
-Do[
-SSNew[nb,##]&@@If[MatchQ[s,_Directive],s,{s}],
-{s,{styles}}];
-Replace[nb,Automatic:>Null]
-];
+	defaultStyle:_DefaultStyle:DefaultStyle["Default.nb"],
+	styles:(_String|_Directive)...,
+	ops:_Rule|_RuleDelayed...
+	]:=With[{nb=Replace[newNB,{
+			_Notebook:>
+			CreateDocument["",
+				ops,
+				WindowTitle->First@newNB,
+				StyleDefinitions->
+					Notebook[{
+						Cell[StyleData[StyleDefinitions->"StylesheetFormatting.nb"]],
+						Cell[StyleData["Notebook"],
+							Saveable->True,
+							Editable->True
+							]
+						}],
+					Saveable->True],
+				None:>Automatic
+				}]},
+		SSNew[nb,defaultStyle,Next];
+		Do[
+			SSNew[nb,##]&@@If[MatchQ[s,_Directive],s,{s}],
+			{s,{styles}}];
+		Replace[nb,Automatic:>Null]
+		];
 SSTemplate[
 	newNB:_Notebook|_NotebookObject|None:None,
 	defaultStyle:_DefaultStyle:DefaultStyle["Default.nb"],
@@ -725,7 +732,14 @@ SSEdit[
 								SSEdit[Cell[StyleData[#]]&/@Flatten@{types},conf],
 								Cell@StyleData[StyleDefinitions->snb]
 								],
-								StyleDefinitions->"PrivateStylesheetFormatting.nb"
+								StyleDefinitions->
+									Notebook[{
+										Cell[StyleData[StyleDefinitions->"StylesheetFormatting.nb"]],
+										Cell[StyleData["Notebook"],
+											Saveable->True,
+											Editable->True
+											]
+										}]
 								]
 								
 					}]
