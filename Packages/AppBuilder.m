@@ -123,6 +123,10 @@ AppDocumentationTemplate::usage=
 	"Creates a total documentation template for an app";
 
 
+AppGenerateHTMLDocumentation::usage=
+	"Generates HTML documentation for an app"; 
+
+
 (* ::Subsubsection::Closed:: *)
 (*Distribute*)
 
@@ -1102,6 +1106,11 @@ AppRegenerateLoadInfo[app_String,ops:OptionsPattern[]]:=
 		];
 
 
+(* ::Subsection:: *)
+(*Docs*)
+
+
+
 (* ::Subsubsection::Closed:: *)
 (*AppIndexDocs*)
 
@@ -1522,6 +1531,19 @@ AppRegenerateDocInfo[app_String,ops:OptionsPattern[]]:=
 			"GuideOptions"->{},
 			"TutorialOptions"->{}
 			}
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppGenerateHTMLDocumentation*)
+
+
+
+AppGenerateHTMLDocumentation[app_:Automatic,ops:OptionsPattern[]]:=
+	GenerateHTMLDocumentation[
+		Automatic,
+		AppDirectory[app,"Documentation","English"],
+		ops
 		];
 
 
@@ -2936,12 +2958,12 @@ AppPacletBundle[app_String?(FileExistsQ[AppDirectory[#]]&),
 		f:(_String|_File)?FileExistsQ|_URL:>
 			AppPacletBundle[app,
 				"BundleInfo"->None,
+				ops,
 				Replace[Import[f],{
 					o:{__?OptionQ}:>
 						(Sequence@@FilterRules[o,Options@AppPacletBundle]),
 					_:>(Sequence@@{})
-					}],
-				ops
+					}]
 				],
 		_:>
 			PacletBundle[
@@ -3092,7 +3114,7 @@ AppPacletUpload[apps__String,ops:OptionsPattern[]]:=
 							]
 					},
 					PacletUpload[pacletFiles,
-						Echo@FilterRules[
+						FilterRules[
 							Flatten@{
 								"ServerName"->
 									Replace[OptionValue["ServerName"],{

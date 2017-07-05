@@ -256,7 +256,7 @@ DocLinkBase[s_String]:=
 			"`"]/.
 			Append[Replace[$DocLinkBase,Except[_List]:>{}],
 				a_:>
-					With[{app=Replace[a,"Global"|"DocGen":>$DocActive]},
+					With[{app=Replace[a,"Global"|"DocGenPrivate":>$DocActive]},
 						If[FileExistsQ@AppDirectory[app,"PacletInfo.m"],
 							Replace[AppPacletInfo[app]["Documentation","LinkBase"],{
 								Except[_String]->app
@@ -800,21 +800,25 @@ iGenerateAnchorBar[sym_,seeAlso_,relatedGuides_]:=
 				]<>" SYMBOL",
 			docTypeColor[docSymType@sym]
 			},
-			{
-				"See Also",
-				generateSymRefs[seeAlso],
-				"SeeAlso"
-				},
-			{
-				"Related Guides",
-				generateGuideRefs[relatedGuides],
-				"MoreAbout"
-				},
-			{
-				"URL",
-				generateUrlRefs[sym],
-				"URLMenu"
-				}
+			Replace[generateSymRefs[seeAlso],{
+				l:{__}:>
+					{"See Also",l,"SeeAlso"},
+				_:>Sequence@@{}
+				}],
+			Replace[generateGuideRefs[relatedGuides],{
+				l:{__}:>
+					{
+						"Related Guides",
+						l,
+						"MoreAbout"
+						},
+				_:>Sequence@@{}
+				}],
+			Replace[generateUrlRefs[sym],{
+				l:{__}:>
+					{ "URL",l,"URLMenu"},
+				_:>Sequence@@{}
+				}]
 		];
 iGenerateAnchorBar~SetAttributes~HoldAll
 
@@ -1013,7 +1017,7 @@ detailsOpenerCellImage[cell_]:=
 					Flatten@
 						ImagePartition[
 							#,
-							{170,70},
+							{First@ImageDimensions[#],70},
 							Padding->GrayLevel[1,0]
 							]&@
 						ImageResize[
@@ -1036,7 +1040,8 @@ detailsOpenerCellImage[cell_]:=
 														FontSize->44
 														]
 													}],
-											Magnification->.35
+											WindowSize->Automatic,
+											Magnification->.5
 											],
 										"Image"
 										],
@@ -1323,7 +1328,7 @@ generateBasicExample[b_TextData]:=
 		];
 
 
-generateBasicExample[c_Cell]:>
+generateBasicExample[c_Cell]:=
 	c;
 generateBasicExample[s_String]:=
 	Cell[s,"ExampleText"];
@@ -1541,7 +1546,7 @@ iGenerateMetadata[sym_,ops___]:=
 		DeleteDuplicatesBy[First]@{
 			ops,
 			"built"->ToString@First@DateObject[],
-			"history"->{},
+			"history"->{ToString@$VersionNumber,"",""},
 			"context"->Replace[DocLinkBase@s,Nothing->"System"]<>"`",
 			"keywords"->
 				ToLowerCase@
@@ -2796,23 +2801,75 @@ scrapeExamples[examples_]:=
 	Replace[
 		DeleteCases[{"- BreakPoint -"}]@
 		SplitBy[
-			Replace[NotebookTools`FlattenCellGroups@examples,{
-				Cell[n_,"ExampleSection",___]:>
-					Sequence@@{"- BreakPoint -",n->n},
-				Cell[t_,"ExampleText",___]:>
-					parseRefText[t],
-				Cell["Delimiter"|"----"|""|BoxData["Delimiter"],___]|
-					Cell[_,"ExampleDelimiter",___]:>
-					Delimiter,
-				Cell[e_,"ExamplesInput",___]:>
-					e
-				},1],
+			Replace[
+				DeleteCases[{"- ExampleBreak -"}]@
+				SplitBy[
+					Replace[NotebookTools`FlattenCellGroups@examples,{
+						Cell[n_,"ExampleSection",___]:>
+							Sequence@@{"- BreakPoint -",n->n},
+						Cell[t_,"ExampleText",___]:>
+							parseRefText[t],
+						Cell["Delimiter"|"----"|""|BoxData["Delimiter"],___]|
+							Cell[_,"ExampleDelimiter",___]:>
+							Delimiter,
+						c:Cell[_,"ExamplesInput",___]:>
+							Sequence@@{"- ExampleBreak -",c},
+						c:Cell[_,"ExamplesOutput",___]:>
+							Sequence@@{c,"- ExampleBreak -"}
+						},
+						1],
+					MatchQ["- ExampleBreak -"]
+					],
+				{
+					e:Except[
+						{Cell[_,"ExamplesInput",___]}|
+						{Cell[_,"ExamplesOutput",___]}|
+						{Cell[_,"ExamplesInput",___],Cell[_,"ExamplesOutput",___]}
+						]:>
+						Sequence@@Flatten@{e}
+					},
+				1],
 			MatchQ["- BreakPoint -"]
 			],{
 		{n_->_,e__}:>
-			n->{e},
+			n->
+				Replace[{e},
+					{
+						{Cell[ex_,"ExamplesInput",r___]}|
+							Cell[ex_,"ExamplesInput",r___]:>
+							Cell[ex,"Input",r],
+						{Cell[e2_,"ExamplesOutput",r2___]}|
+							Cell[e2_,"ExamplesOutput",r2___]:>
+							Cell[e2,"Output",r2],
+						{Cell[e1_,"ExamplesInput",r1___],Cell[e2_,"ExamplesOutput",r2___]}:>
+							Sequence@@
+								{
+									Cell[e1,"Input",r1],
+									Cell[e2,"Output",r2]
+									}
+						},
+					1],
 		e:{__}:>
-			"Basic Examples"->e
+			"Basic Examples"->
+				Replace[e,
+					{
+						{Cell[ex_,"ExamplesInput",r___]}|
+							Cell[ex_,"ExamplesInput",r___]:>
+							Cell[ex,"Input",r],
+						{Cell[e2_,"ExamplesOutput",r2___]}|
+							Cell[e2_,"ExamplesOutput",r2___]:>
+							Cell[e2,"Output",r2],
+						{
+							Cell[e1_,"ExamplesInput",r1___],
+							Cell[e2_,"ExamplesOutput",r2___]
+							}:>
+							Sequence@@
+								{
+									Cell[e1,"Input",r1],
+									Cell[e2,"Output",r2]
+									}
+						},
+					1]
 		},
 		1]
 
@@ -2828,10 +2885,14 @@ scrapeSymbolPageChunk[c:{__Cell}]:=
 						"DetailsItem"|"DetailsRow"|"DetailsColumn",
 						___]
 					],
-			examples=Cases[c,Cell[__,
-				"ExampleSection"|"ExampleSubsection"|
-				"ExampleText"|"ExamplesInput"|"ExampleDelimiter",
-				___]],
+			examples=
+				Cases[c,
+					Cell[__,
+						"ExampleSection"|"ExampleSubsection"|
+						"ExampleText"|"ExamplesInput"|"ExampleDelimiter"|
+						"ExamplesOutput",
+						___]
+					],
 			guides=
 				Cases[c,Cell[__,"RelatedGuide",___]],
 			tutorials=
@@ -3306,7 +3367,7 @@ iGuideRelatedSection[guides_,tuts_,links_]:=
 iGuideMetadata[guideName_,guideLink_,abstract_]:=
 	{
 		"built"->ToString@First@DateObject[],
-		"history"->{},
+		"history"->{ToString@$VersionNumber,"",""},
 		"context"->"System`",
 		"keywords"->{},
 		"specialkeywords"->{},
@@ -4135,7 +4196,7 @@ iTutorialMetadata[guideName_,guideLink_,abstract_]:=
 		"built"->ToString@First@DateObject[],
 		"history"->{},
 		"context"->"System`",
-		"keywords"->{},
+		"keywords"->{ToString@$VersionNumber,"",""},
 		"specialkeywords"->{},
 		"tutorialcollectionlinks"->{},
 		"index"->True,
@@ -5078,12 +5139,15 @@ DocAddUsage~SetAttributes~HoldFirst;
 
 
 
+refLinkRewind//Clear
+
+
 refLinkRewind[
-	TemplateBox[{Cell[TextData[title_]],link_},
+	TemplateBox[{title_Cell,link_},
 		RefLinkPlain|RefLink|
 		"RefLinkPlain"|"RefLink",
 	___]]:=
-	ButtonBox[title,
+	ButtonBox[FE`makePlainText@title,
 		BaseStyle->"Link",
 		ButtonData->link
 		];
@@ -5410,12 +5474,119 @@ webExportDefaultParametersFormat[gathered_]:=
 	]
 
 
-webExportNotebookPrep[nb_]:=
-	DeleteCases[
-		Visible->False
-		]@
+$webExportGuideReferenceCell=
+	Cell[
+		TextData[{
+			Cell[
+				BoxData[
+					InterpretationBox[
+						StyleBox[
+							GraphicsBox[{},
+								BaselinePosition->Baseline,
+								ImageSize->{6, 0}
+								],
+							CacheGraphics->False
+							],
+						Spacer[6]]
+					]
+				],
+			"Reference"
+			}], 
+		"GuideReferenceSection",
+		System`WholeCellGroupOpener->True
+		];
+
+
+webExportNotebookPrep//Clear
+
+
+webExportNotebookPrep[nb_,"Common"]:=
 	ReplaceRepeated[
 		nb,{
+		TemplateBox[b_,"RefLinkPlain",e___]:>
+			TemplateBox[b,"RefLink",e],
+		(BaseStyle->{s_}):>
+			(BaseStyle->s),
+		Cell[
+			BoxData[
+				InterpretationBox[
+					StyleBox[
+						GraphicsBox[{},
+							BaselinePosition->Baseline,
+							ImageSize->{1, 0}],
+						CacheGraphics->False],
+						Spacer[1],
+					Selectable->False]
+				],
+			___
+			]:>
+			Sequence@@{},
+		DynamicBox[e:If[$VersionNumber<_,__],___]:>
+			e,
+		TagBox[a:ActionMenuBox[_FrameBox,___],MouseAppearanceTag["LinkHand"]]:>
+			a,
+		Cell[
+			TextData[{t_," ",
+				Cell[
+					BoxData[
+						GraphicsBox[
+							_List?(
+								MatchQ[Flatten@#,
+									{
+										_GrayLevel, _Thickness,
+										LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]
+										}
+									]&),
+							___
+							]
+						],
+					___
+					],
+				___
+				}],
+			___
+			]|
+		TemplateBox[{t_,_,
+			GraphicsBox[
+				_List?(
+					MatchQ[Flatten@#,
+						{
+							_GrayLevel, _Thickness,
+							LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]
+							}
+						]&),
+				___
+				]
+			},
+		"RowDefault"
+		]:>
+		RuleCondition[
+			With[{t2=StringTrim[t,"\""]},
+				InterpretationBox[
+					Cell[
+						TextData[{
+							t2,
+							StyleBox[" \[FilledDownTriangle]", "AnchorBarArrow",
+								StripOnInput->False]
+							}]],
+					TextCell[
+						Row[{t2, 
+							Style[" \[FilledDownTriangle]", "AnchorBarArrow"]}]
+						]
+					]
+				],
+			True
+			]
+		}
+	]
+
+
+webExportNotebookPrep[nb_,"Symbol"]:=
+	ReplaceRepeated[nb,{
+		Cell[TextData[s_String],r___]:>
+			Cell[s,r],
+		t:TemplateBox[{_,_String},___]:>
+			refLinkRewind[t],
 		Cell[TextData[{c_,___}],"ObjectNameGrid",___]:>
 			c,
 		Cell[_,"NotesThumbnails"|"ObjectNameTranslation",___]:>
@@ -5423,46 +5594,137 @@ webExportNotebookPrep[nb_]:=
 		Cell[TextData[{Cell[BoxData[_DynamicBox],___],e__}],
 			t:"NotesSection"|"PrimaryExamplesSection"|
 			"ExampleSection"|"ExampleSubsection",r___]:>
-			Cell[TextData[e],t,r],
-		DynamicBox[e:If[$VersionNumber<_,__],___]:>
-			e,
-		Cell[TextData[s_String],r___]:>Cell[s,r],
-		t:TemplateBox[{_,_String},___]:>
-			refLinkRewind[t],
-		TagBox[a:ActionMenuBox[_FrameBox,___],MouseAppearanceTag["LinkHand"]]:>
-			a,
-		Cell[
-			TextData[{t_," ",
-				Cell[
-					BoxData[
-						GraphicsBox[{{
-								{
-									_GrayLevel, _Thickness,
-									LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]
-									}
-							}},
+			Cell[TextData[e],t,r]
+		}]
+
+
+webExportNotebookPrep[nb_,"Guide"]:=
+		Replace[
+			Notebook[{
+				a_Cell,
+				c:Cell[_CellGroupData],
+				content:Shortest[__],
+				e:
+					Cell[
+						CellGroupData[{
+							Cell[_,
+								"GuideMoreAboutSection"|"GuideRelatedLinksSection"|
+									"GuideRelatedTutorialsSection",
+								___],
 							___
-							]
-						],
-					___
+							},
+							___],
+						___],
+				r___
+				},
+				o___
+				]:>
+				Notebook[
+					{
+						a,
+						c,
+						Cell[
+							CellGroupData[{
+								$webExportGuideReferenceCell,
+								Cell["", "SectionHeaderSpacer"],
+								content,
+								Cell["", "SectionFooterSpacer"]
+								},Open
+								]
+							],
+						e,
+						r
+						},
+					o
 					]
-				}],
-			___
-			]:>
-			InterpretationBox[
+			]@
+		ReplaceAll[{
+			Cell[
+				CellGroupData[{
+					c:Cell[_,
+					"GuideMoreAboutSection"|"GuideRelatedLinksSection"|
+						"GuideRelatedTutorialsSection",___],
+					e___
+					},
+					s___
+					],
+				o___
+				]:>
+				Cell[CellGroupData[{c,e,Cell["", "SectionHeaderSpacer"]},s],o]
+			}]@
+		ReplaceRepeated[nb,{
+			Cell[
+				CellGroupData[
+					{e__,Cell[_,"GuideDelimiterSubsection",___]},
+					s___
+					],
+				o___]:>
+				Cell[CellGroupData[{e},s],o],
+			(BaseStyle->"GuideMoreAbout"):>
+				(BaseStyle->"GuideMoreAboutSub"),
+			Cell[b_,"GuideMoreAbout",e___]:>
+				Cell[b,"GuideMoreAboutSub",e],
+			Cell[s_String,
+				t:"GuideMoreAboutSection"|"GuideRelatedLinksSection"|
+					"GuideRelatedTutorialsSection",
+				e___]:>
 				Cell[
 					TextData[{
-						t,
-						StyleBox[" \[FilledDownTriangle]", "AnchorBarArrow",
-							StripOnInput->False]
-						}]],
-				TextCell[
-					Row[{"See Also", 
-						Style[" \[FilledDownTriangle]", "AnchorBarArrow"]}]
+						Cell[BoxData[
+							InterpretationBox[
+								StyleBox[
+									GraphicsBox[{},
+										BaselinePosition->Baseline,
+										ImageSize->{6, 0}],
+									CacheGraphics->False],
+								Spacer[6]]]],
+							s
+						}],
+					t,
+					e
 					]
+			}]
+
+
+webExportNotebookPrep[nb_,_]:=nb
+
+
+webExportNotebookPrep[nb_]:=
+	With[{t=
+		Capitalize@
+			Fold[Lookup,
+				Options[nb,TaggingRules],
+				{TaggingRules,"Metadata","type"}
 				]
-		}
-	]
+		},
+		DeleteCases[
+			Visible->False
+			]@
+			webExportNotebookPrep[
+				webExportNotebookPrep[nb,"Common"],
+				t]
+			(*
+			Block[{
+				nbobj,
+				nbexpr=
+					webExportNotebookPrep[
+						webExportNotebookPrep[nb,"Common"],
+						t]
+				},
+				nbobj=NotebookPut[nbexpr,Visible\[Rule]False];
+				SelectionMove[nbobj,All,Notebook];
+				FrontEndTokenExecute[nbobj,"ToggleShowExpression"]~Do~2;
+				nbexpr=
+					If[#=!=nbexpr,
+						#,
+						Print[$Failed];
+						nbexpr
+						]&@NotebookGet[nbobj];
+				NotebookClose[nbobj];
+				nbexpr
+				]
+			*)
+		]
 
 
 webExportNotebook[file_,nb_,ops___?OptionQ]:=
@@ -5965,7 +6227,10 @@ webExportCloudDeploy[
 		Block[{f},
 			Monitor[
 				Table[
-					Take[#,1]&@
+					Replace[{
+						CloudObject[c_,___]:>
+							CloudObject[c]
+						}]@
 					CopyFile[
 						f,
 						CloudObject[
@@ -6172,7 +6437,9 @@ GenerateHTMLDocumentation[dir_String?DirectoryQ,
 	nb:_Notebook|_NotebookObject|(_String|_File)?(FileExistsQ@#&&Not@DirectoryQ@#&),
 	ops___?OptionQ
 	]:=
-	First@GenerateHTMLDocumentation[dir,{nb},ops];
+	Replace[GenerateHTMLDocumentation[dir,{nb},ops],
+		{l_}:>l
+		];
 GenerateHTMLDocumentation[
 	dir_String?DirectoryQ,
 	d_String?DirectoryQ,
