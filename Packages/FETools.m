@@ -137,6 +137,10 @@ FEUnhideSymbols::usage="";
 FERehideSymbols::usage="";
 
 
+FESelectCells::usage=
+	"Selects cells by criterion";
+
+
 Begin["`Private`"];
 
 
@@ -1392,6 +1396,47 @@ FEAddAutocompletions[l_,v_]:=
 					Map[l->#&,v]
 					]
 			};
+
+
+FESelectCells[
+	nbObj:_NotebookObject|Automatic:Automatic,
+	test_:(True&)
+	]:=
+	Module[{
+		nb=Replace[nbObj,Automatic:>InputNotebook[]],
+		cells
+		},
+		cells=
+			Replace[test,{
+				s:_String|{__String}:>
+					Cells[nb,CellStyle->s],
+				r_Rule:>
+					Cells[nb,r],
+				_:>Select[Cells[nb],test]
+				}];
+		If[Quiet[NotebookFileName[nb]]===$Failed,
+			SetSelectedNotebook[nb]
+			];
+		Function[
+			SelectionMove[#,All,Cell,AutoScroll->False];
+			FrontEndExecute@
+				FrontEnd`SelectionAddCellTags[
+					nb,
+					"---ToCopy---"
+					];
+			]/@cells;
+		If[Quiet[NotebookFileName[nb]]===$Failed,
+			NotebookLocate["---ToCopy---",AutoScroll->False],
+			NotebookLocate[
+				{NotebookFileName[nb],"---ToCopy---"},
+				AutoScroll->False]
+			];
+		FrontEndExecute@
+			FrontEnd`SelectionRemoveCellTags[
+				nb,
+				"---ToCopy---"
+				];
+		]
 
 
 FEHiddenBlock[expr_]:=

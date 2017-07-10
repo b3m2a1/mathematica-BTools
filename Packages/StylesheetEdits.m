@@ -206,14 +206,16 @@ SSNotebookGet[Optional[Automatic,Automatic]]:=
 SSEditNotebook[nb:_NotebookObject|Automatic:Automatic]:=
 	With[{e=Replace[nb,Automatic:>EvaluationNotebook[]]},
 		Replace[CurrentValue[e,StyleDefinitions],{
-			"PrivateStylesheetFormatting.nb"|
+			"StylesheetFormatting.nb"|"PrivateStylesheetFormatting.nb"|
 				Notebook[{___,
 					Cell[
 						StyleData[
 							StyleDefinitions->
 								("PrivateStylesheetFormatting.nb"|"StylesheetFormatting.nb")
 							],
-					___]},
+					___],
+					___
+					},
 					___
 					]->e,
 			s:_String|_FrontEnd`FileName:>
@@ -414,44 +416,62 @@ SSDefaultStyles[
 		];
 
 
-typeMatchQ[type_String,types_]:=Which[
-MatchQ[types,"*"],True,
-MatchQ[types,Except@(
-_List|
-_String|
-_StringExpression|
-_Alternatives)],False,
-MatchQ[types,_List],MemberQ[types,type],
-MatchQ[type,_String|_StringExpression],StringMatchQ[type,types],
-True,False
-];
-typeMatchQ[All,All]:=True;
-typeMatchQ[type_Symbol,"*"]:=True;
-typeMatchQ[type:Except[_String],_]:=False;
-typeMatchQ[types_][type_]:=typeMatchQ[type,types];
+cellTypeMatchQ[type_String,types_]:=
+	Which[
+		MatchQ[types,"*"],True,
+		MatchQ[types,_Verbatim],cellTypeMatchQ[type,List@@types],
+		MatchQ[types,StyleData[_]],cellTypeMatchQ[type,First@types],
+		MatchQ[types,
+			Except[
+				_List|
+				_String|
+				_StringExpression|
+				_Alternatives
+				]
+			],False,
+		MatchQ[types,_List],
+			MemberQ[
+				Replace[types,
+					{s_,"*"..}:>{s},
+					1
+					],
+				type
+				],
+		MatchQ[type,_String|_StringExpression],StringMatchQ[type,types],
+		True,False
+		];
+cellTypeMatchQ[All,All]:=True;
+cellTypeMatchQ[type_Symbol,"*"]:=True;
+cellTypeMatchQ[type:Except[_String],_]:=False;
+cellTypeMatchQ[types_][type_]:=cellTypeMatchQ[type,types];
 
 
-styleNameMatchQ[s_StyleData,types_]:=
+cellStyleNameMatchQ[s_StyleData,types_]:=
 	If[Length@s==1,
-		typeMatchQ[First@s,types],
+		cellTypeMatchQ[First@s,types],
 		Length@s>0&&(
-			typeMatchQ[First@s,Cases[Flatten@{types},_String|_Symbol]]||
+			cellTypeMatchQ[First@s,Cases[Flatten@{types},_String|_Symbol]]||
 				With[{styleDatas=
-					If[Length@#>Length@s,
-						Nothing,
-						Join[
-							List@@#,
-							ConstantArray["*",Max@{Length@s-Length@#,0}]
-							]
-						]&/@
-						Cases[Flatten@{types},_StyleData]},
+					Replace[Cases[Flatten@{types},_StyleData|_Verbatim],{
+						HoldPattern[Verbatim][StyleData[d__]]:>{d},
+						d_StyleData:>
+							If[Length@d>Length@s,
+								Nothing,
+								Join[
+									List@@d,
+									ConstantArray["*",Max@{Length@s-Length@d,0}]
+									]
+								]
+						},
+						1]
+						},
 					AnyTrue[styleDatas,
-						And@@MapThread[typeMatchQ,{List@@s,#}]&]
+						And@@MapThread[cellTypeMatchQ,{List@@s,#}]&]
 					])
 		];
 
 
-styleDataMatchQ[s_StyleData,types_]:=
+cellStyleDataMatchQ[s_StyleData,types_]:=
 	With[{matchData=DeleteCases[s,Except[_String|_Symbol]]},
 		MatchQ[s,
 			Alternatives@@
@@ -465,10 +485,10 @@ styleDataMatchQ[s_StyleData,types_]:=
 					},
 					1]
 				]||
-			styleNameMatchQ[matchData,types]
+			cellStyleNameMatchQ[matchData,types]
 		];
-styleDataMatchQ[types_][s_]:=
-	styleDataMatchQ[s,types];
+cellStyleDataMatchQ[types_][s_]:=
+	cellStyleDataMatchQ[s,types];
 
 
 cellMatchQ[cell_,types_,Optional[StyleData,StyleData]]:=
@@ -482,7 +502,7 @@ Replace[#,_BoxData:>ToExpression[#,StandardForm,Hold]],
 If[types===Default,
 							StyleData[StyleDefinitions->_,___](*|
 							Hold[StyleData[StyleDefinitions\[Rule]_,___]]*),
-_StyleData?(styleDataMatchQ[types])
+_StyleData?(cellStyleDataMatchQ[types])
 ]
 ]&),
 				___]:>True,
@@ -491,7 +511,7 @@ _->False
 ];
 cellMatchQ[cell_,types_,Normal]:=Replace[
 cell,
-{Cell[_,_?(typeMatchQ[types]),___]:>True,
+{Cell[_,_?(cellTypeMatchQ[types]),___]:>True,
 _:>False
 }]
 cellMatchQ[cell_,types_,_]:=False

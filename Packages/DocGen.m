@@ -350,7 +350,10 @@ pacletLinkBuild[s_,context_,type_]/;$pacletBuildLink:=
 			"Path"->
 				Flatten@{
 					Replace[context,"System"->Nothing],
-					type,
+					Replace[ToLowerCase@type,{
+						f:"format"|"message":>{"ref",f},
+						Except["guide"|"tutorial"]->"ref"
+						}],
 					StringSplit[s,"`"]//Last	
 					}
 			|>];
@@ -523,6 +526,156 @@ anchorBarCell[pacletArgs:{_,_},menus___List]:=
 			],
 		"AnchorBarGrid"
 		];
+
+
+Options[docMetadata]=
+	{
+		"Built"->Automatic,
+		"History"->Automatic,
+		"Context"->Automatic,
+		"Keywords"->Automatic,
+		"SpecialKeywords"->Automatic,
+		"TutorialCollectionLinks"->Automatic,
+		"Index"->Automatic,
+		"Label"->Automatic,
+		"Language"->Automatic,
+		"Paclet"->Automatic,
+		"Status"->Automatic,
+		"Summary"->Automatic,
+		"Synonyms"->Automatic,
+		"TableTags"->Automatic,
+		"Title"->Automatic,
+		"TitleModifier"->Automatic,
+		"WindowTitle"->Automatic,
+		"Type"->Automatic,
+		"URI"->Automatic
+		};
+docMetadata[ops:OptionsPattern[]]:=
+	{
+		"built"->
+			Replace[OptionValue["Built"],
+				Automatic->ToString@First@DateObject[]
+				],
+		"history"->
+			Replace[OptionValue["History"],
+				Automatic->{ToString@$VersionNumber,"",""}
+				],
+		"context"->
+			Replace[OptionValue["Context"],
+				Except[_String?(StringEndsQ["`"])]:>
+					StringTrim[Replace[$DocActive,Except[_String]->"System"],"`"]<>"`"
+				],
+		"keywords"->
+			Replace[OptionValue["Keywords"],{
+				strs:_String|{__String}:>
+					Flatten@
+						Map[
+							ToLowerCase@
+								Flatten@{
+									#,
+									Map[
+										StringJoin,
+										DeleteCases[{Break}]@
+											SplitBy[
+												Flatten@
+													StringSplit[#,
+														l_?LowerCaseQ~~b:LetterCharacter?(Not@*LowerCaseQ):>
+														{l,Break,b}
+														],
+												MatchQ[Break]
+												]
+										]
+									}&,
+							Flatten@{strs}
+							]
+				}],
+		"specialkeywords"->
+			Replace[OptionValue["SpecialKeywords"],{
+				strs:_String|{__String}:>
+					Flatten@
+						Map[
+							ToLowerCase@
+								Flatten@{
+									#,
+									Map[
+										StringJoin,
+										DeleteCases[{Break}]@
+											SplitBy[
+												Flatten@
+													StringSplit[#,
+														l_?LowerCaseQ~~b:LetterCharacter?(Not@*LowerCaseQ):>
+														{l,Break,b}
+														],
+												MatchQ[Break]
+												]
+										]
+									}&,
+							Flatten@{strs}
+							]
+				}],
+		"tutorialcollectionlinks"->
+			Replace[OptionValue["TutorialCollectionLinks"],
+				Except[{__String}]:>{}
+				],
+		"index"->
+			Replace[OptionValue["Index"],
+				Except[True|False]->True
+				],
+		"label"->
+			Replace[OptionValue["Label"],
+				Except[_String]->"Symbol"
+				],
+		"language"->
+			Replace[OptionValue["Label"],
+				Except[_String]->"en"
+				],
+		"paclet"->
+			Replace[OptionValue["Paclet"],
+				Except[_String]->"Mathematica"
+				],
+		"status"->
+			Replace[OptionValue["Status"],
+				Except[_String]->"None"],
+		"summary"->
+			First@Flatten@List@
+				Replace[OptionValue["Summary"],
+					Except[_String|{__String}]->{"No summary..."}
+					],
+		"synonyms"->
+			Replace[OptionValue["Synonyms"],
+				Except[{__String}]->{}
+				],
+		"tabletags"->
+			Replace[OptionValue["TableTags"],
+				Except[{__String}]->{}
+				],
+		"title"->
+			Replace[OptionValue["Title"],Except[_String]->"No title..."],
+		"titlemodifier"->
+			Replace[OptionValue["Title"],Except[_String]->""],
+		"windowtitle"->
+			Replace[OptionValue["WindowTitle"],
+				Except[_String]:>
+					Replace[OptionValue["Title"],Except[_String]->"No title..."]
+				],
+		"type"->
+			Replace[OptionValue["Type"],
+				Except[_String]->"Symbol"
+				],
+		"uri"->
+			StringTrim[
+				Replace[OptionValue["URI"],
+					s_String?(Not@StringContainsQ[#,"/"]&):>
+						pacletLinkBuild[s,
+							ToLowerCase@
+								Replace[OptionValue["Type"],
+									Except[_String]->"Symbol"
+									]
+							]
+					],
+				"paclet:"
+				]
+		} 
 
 
 (* ::Subsection:: *)
@@ -764,17 +917,31 @@ generateGuideRefs[guides_]:=
 			1];
 
 
+$DocDefaultURLBase=
+	URLBuild@<|
+		"Scheme"->"https",
+		"Domain"->"www.wolframcloud.com",
+		"Path"->{"objects","user-affd7b1c-ecb6-4ccc-8cc4-4d107e2bf04a","reference"}
+		|>;
+
+
 generateUrlRefs[refString_String]:=
-	{
-		refString:>None,
-		"Copy Documentation Center URI":>CopyToClipboard@refString,
-		Delimiter,
-		"Copy web URL":>
-			CopyToClipboard@
-				Hyperlink[URLBuild[{"http://reference.wolfram.com/language",refString}]],
-		"Go to URL":>
-			SystemOpen@URLBuild[{"http://reference.wolfram.com/language",refString}]
-		};
+	With[{url=
+		If[StringStartsQ[refString,"ref"|"guide"|"tutorial"],
+			URLBuild[{"http://reference.wolfram.com/language",refString}],
+			URLBuild@{$DocDefaultURLBase,refString}
+			]
+		},
+		{
+			refString:>None,
+			"Copy Documentation Center URI":>CopyToClipboard@refString,
+			Delimiter,
+			"Copy web URL":>
+				CopyToClipboard@Hyperlink[url],
+			"Go to URL":>
+				SystemOpen@url
+			}
+		];
 generateUrlRefs[ref_Symbol]:=
 	generateUrlRefs@
 		Evaluate@
@@ -840,8 +1007,7 @@ generateUsageCell[symbol_String,(def:Except[_Rule])|(None->def_)]:=
 				RawBoxes[b_]:>b,
 				Except[_String]:>ToBoxes@def,
 				s_String:>
-					Cell[RawBoxes@s,"","InlineFormula"],
-				e_:>(Print@e;e)
+					Cell[RawBoxes@s,"","InlineFormula"]
 				}]
 			}]
 		];
@@ -1283,9 +1449,7 @@ generateBasicExample[
 
 
 generateBasicExample[b_BoxData]:=
-	Replace[b,{
-		BoxData[RowBox@{"Defer","[",d_,"]",Except["]"]...}]:>
-			Cell[BoxData[d],"InlineFormula","Input"],
+	Replace[b,
 		_:>
 			Cell[
 				CellGroupData[
@@ -1302,7 +1466,7 @@ generateBasicExample[b_BoxData]:=
 					Open
 					]
 				]
-		}];
+		];
 
 
 generateBasicExample[b_TextData]:=
@@ -1543,43 +1707,22 @@ iGenerateFooter~SetAttributes~HoldFirst;
 
 iGenerateMetadata[sym_,ops___]:=
 	With[{s=ToString@Unevaluated[sym]},
-		DeleteDuplicatesBy[First]@{
-			ops,
-			"built"->ToString@First@DateObject[],
-			"history"->{ToString@$VersionNumber,"",""},
-			"context"->Replace[DocLinkBase@s,Nothing->"System"]<>"`",
-			"keywords"->
-				ToLowerCase@
-					Flatten@{
-						s,
-						Map[
-							StringJoin,
-							DeleteCases[{Break}]@
-								SplitBy[
-									Flatten@
-										StringSplit[s,
-											l_?LowerCaseQ~~b:LetterCharacter?(Not@*LowerCaseQ):>
-											{l,Break,b}
-											],
-									MatchQ[Break]
-									]
-							]
-						},
-			"specialkeywords"->{},
-			"tutorialcollectionlinks"->{},
-			"index"->True,
-			"label"->docSymType@sym,
-			"language"->"en",
-			"paclet"->"Mathematica",
-			"status"->"None",
-			"summary"->Replace[sym::usage,Except[_String]->""],
-			"tabletags"->{},
-			"title"->s,
-			"titlemodifier"->"",
-			"windowtitle"->s,
-			"type"->"Symbol",
-			"uri"->StringTrim[pacletLinkBuild[s],"paclet:"]
-			}
+		docMetadata@
+			DeleteDuplicatesBy[First]@{
+				ops,
+				"Context"->DocLinkBase@s,
+				"Keywords"->s,
+				"Label"->docSymType@sym,
+				"Summary"->
+					Replace[sym::usages,
+						Except[_String]:>
+							Replace[sym::usage,Except[_String]->Automatic]
+						],
+				"Title"->s,
+				"WindowTitle"->s,
+				"Type"->"Symbol",
+				"URI"->StringTrim[pacletLinkBuild[s],"paclet:"]
+				}
 		];
 iGenerateMetadata~SetAttributes~HoldFirst
 
@@ -1858,6 +2001,17 @@ containedFunctionOptions[s:Except[_Symbol]?(MatchQ[#,_Symbol]&)]:=
 containedFunctionOptions~SetAttributes~HoldFirst
 
 
+$knownUsageReplaceableSymbols=
+	Alternatives@@{
+		Symbol,
+		Integer,
+		Real,
+		String,
+		List,
+		Association
+		};
+
+
 usagePatternReplace[
 	vals_,
 	reps_:{}
@@ -1893,7 +2047,7 @@ usagePatternReplace[
 					a,
 				Verbatim[Blank][]:>
 					expr,
-				Verbatim[Blank][t:Integer|Real|String|List|Association]:>
+				Verbatim[Blank][t:$knownUsageReplaceableSymbols]:>
 					RuleCondition[
 						Replace[t,{
 							Integer:>int,
@@ -2017,6 +2171,18 @@ AutoGenerateUsage[s:Except[_Symbol]?(MatchQ[#,_Symbol]&)]:=
 AutoGenerateUsage~SetAttributes~HoldFirst;
 
 
+$knownCallReplaceableSymbolsList=
+	Alternatives@@{
+		Integer,
+		String,
+		List,
+		Association,
+		Symbol,
+		Notebook,
+		NotebookObject
+		};
+
+
 callPatternReplace[vals_,
 	reps_:{}
 	]:=
@@ -2052,9 +2218,7 @@ callPatternReplace[vals_,
 							True
 							],
 					Verbatim[Pattern][p_,
-						Verbatim[Blank][
-							t:Integer|String|List|Association|Symbol
-							]
+						Verbatim[Blank][t:$knownCallReplaceableSymbolsList]
 						]:>
 						RuleCondition[
 							With[{pstring=
@@ -2081,7 +2245,11 @@ callPatternReplace[vals_,
 									String->pstring,
 									List->{pstring},
 									Association:>
-										<|pstring->pstring|>
+										<|pstring->pstring|>,
+									Notebook:>
+										Notebook[{}],
+									NotebookObject:>
+										Unevaluated@InputNotebook[]
 									}]
 								],
 							True],
@@ -2198,21 +2366,15 @@ AutoGenerateExamples[sym_,defer:True|False:False]:=
 				If[MemberQ[$ContextPath,c]&&Not@MatchQ[c,"Global`"|"System`"],
 					{
 						Cell["Load "<>StringTrim[c,"`"]<>":","ExampleText"],
-						Cell[BoxData@
-								If[defer,
-									RowBox@{"Defer","[",#,"]"},
-									#
-									]&@RowBox@{"Needs","[","\""<>c<>"\"","]"},
-							"ExamplesInput"](*,
-						Cell["\t","ExampleDelimiter"]*)
+						If[!defer,ToExpression@RowBox@{"Needs","[","\""<>c<>"\"","]"}];
+						Cell[BoxData@RowBox@{"Needs","[","\""<>c<>"\"","]"},
+							"ExamplesInput"
+							]
 						},
 					Nothing
 					]
 				],
-			(*Flatten@Riffle[Partition[#,2],
-				Cell["\t","ExampleDelimiter"]
-				]&@*)
-			Riffle[
+			Flatten@Riffle[
 				Cell[TextData@{"From ",
 					inlineRefBox@Replace[usagePatternReplace@#,
 							Verbatim[HoldPattern][e_]:>{
@@ -2220,21 +2382,33 @@ AutoGenerateExamples[sym_,defer:True|False:False]:=
 							}],":"},
 					"ExampleText"
 					]&/@vals,
-				Cell[
-					BoxData@
-						If[defer,
-							Replace[#,{
-								Verbatim[HoldPattern][e_]:>
-									RowBox@{"Defer","[",
-										toSafeBoxes[Unevaluated@e,StandardForm],
-										"]"}
-								}],
+				If[defer,
+					Cell[
+						BoxData@
 							Replace[#,{
 								Verbatim[HoldPattern][e_]:>
 									toSafeBoxes[Unevaluated@e,StandardForm]
-								}]
+								}],
+						"ExamplesInput"
+						],
+					Cell[CellGroupData[{
+						Cell[
+							BoxData@
+								Replace[#,{
+									Verbatim[HoldPattern][e_]:>
+										toSafeBoxes[Unevaluated@e,StandardForm]
+									}],
+							"ExamplesInput"
 							],
-					"ExamplesInput"
+						Cell[
+							BoxData@
+								Replace[#,{
+									Verbatim[HoldPattern][e_]:>
+										ToBoxes[e]
+									}],
+							"ExamplesOutput"
+							]
+						},Open]]
 					]&/@callPatternReplace[vals]
 					],
 			AutoGenerateOptionExamples[sym,defer]
@@ -2245,6 +2419,96 @@ AutoGenerateExamples[
 	defer:True|False:False]:=
 	AutoGenerateExamples[System`Evaluate@e,defer];
 AutoGenerateExamples~SetAttributes~HoldFirst
+
+
+(*AutoGenerateExamples[sym_,defer:True|False:False]:=
+	With[
+		{
+		vals=
+			Map[First,
+				Join@@
+					Map[dgSymValues[sym,#]&,
+						{UpValues,DownValues,SubValues}
+						]
+				]},
+		Flatten@{
+			With[{c=Context[sym]},
+				If[MemberQ[$ContextPath,c]&&Not@MatchQ[c,"Global`"|"System`"],
+					{
+						Cell["Load "<>StringTrim[c,"`"]<>":","ExampleText"],
+						If[!defer,ToExpression@RowBox@{"Needs","[","\""<>c<>"\"","]"}];
+						Cell[BoxData@RowBox@{"Needs","[","\""<>c<>"\"","]"},
+							"ExamplesInput"
+							]
+						},
+					Nothing
+					]
+				],
+			Flatten@Riffle[
+				Cell[TextData@{"From ",
+					inlineRefBox@Replace[usagePatternReplace@#,
+							Verbatim[HoldPattern][e_]\[RuleDelayed]{
+								toSafeBoxes[Unevaluated[e],StandardForm]
+							}],":"},
+					"ExampleText"
+					]&/@vals,
+				If[defer,
+					Cell[
+						BoxData@
+							Replace[#,{
+								Verbatim[HoldPattern][e_]:>
+									toSafeBoxes[Unevaluated@e,StandardForm]
+								}],
+						"ExamplesInput"
+						],
+					With[{
+						res=
+							Replace[#,{
+								Verbatim[HoldPattern][e_]:>
+									e
+								}]
+						},
+						If[res===Null,
+							Cell[
+								BoxData@
+									Replace[#,{
+										Verbatim[HoldPattern][e_]:>
+											toSafeBoxes[e]
+										}],
+								"ExamplesInput",
+								CellLabel\[Rule]
+									"In[``]:="~TemplateApply~$DocGenLine++
+								],
+							Cell[CellGroupData[{
+								Cell[
+									BoxData@
+										Replace[#,{
+											Verbatim[HoldPattern][e_]:>
+												toSafeBoxes[e]
+											}],
+									"ExamplesInput",
+									CellLabel\[Rule]
+										"In[``]:="~TemplateApply~$DocGenLine
+									],
+								Cell[
+									BoxData@ToBoxes@res,
+									"ExamplesOutput",
+									CellLabel\[Rule]
+										"Out[``]:="~TemplateApply~($DocGenLine++)
+									]
+								},Open]]
+							]
+						]
+					]&/@callPatternReplace[vals]
+					],
+			AutoGenerateOptionExamples[sym,defer]
+			}
+		];
+AutoGenerateExamples[
+	e:Except[_Symbol]?(MatchQ[#,_Symbol]&),
+	defer:True|False:False]:=
+	AutoGenerateExamples[System`Evaluate@e,defer];
+AutoGenerateExamples~SetAttributes~HoldFirst*)
 
 
 AutoGenerateOptionExamples[sym_Symbol,defer:True|False:False]:=
@@ -2277,19 +2541,40 @@ AutoGenerateOptionExamples[sym_Symbol,defer:True|False:False]:=
 					Cell["Options","ExampleSection"],
 					Map[
 						Cell@
-							CellGroupData[{
+							CellGroupData[Flatten@{
 								Cell[ToString@First@#,"ExampleSubsection"],
-								Cell[BoxData@
-									Replace[Last@#,{
-										Verbatim[HoldPattern][e_]:>
-											If[defer,
-												RowBox@{"Defer","[",
-													toSafeBoxes[Unevaluated[e],StandardForm],
-													"]"},
-												toSafeBoxes[Unevaluated[e],StandardForm]
+								If[defer,
+									Cell[
+										BoxData@
+											Replace[Last@#,{
+												Verbatim[HoldPattern][e_]:>
+													toSafeBoxes[Unevaluated@e,StandardForm]
+												}],
+										"ExamplesInput"
+										],
+									With[{
+										res=
+											Replace[Last@#,{
+												Verbatim[HoldPattern][e_]:>
+													e
+												}]
+										},
+										Cell[CellGroupData[{
+											Cell[
+												BoxData@ToBoxes@
+													Replace[Last@#,{
+														Verbatim[HoldPattern][e_]:>
+															toSafeBoxes[Unevaluated@e,StandardForm]
+														}],
+												"ExamplesInput"
+												],
+											Cell[
+												BoxData@ToBoxes@res,
+												"ExamplesOutput"
 												]
-										}],
-									"ExamplesInput"]
+											},Open]]
+										]
+									]
 								},
 								Closed]&,
 						usages
@@ -3260,7 +3545,7 @@ guideFunctionCell[functions_->description_,___]:=
 guideFunctionCell[text_String,___]:=
 	Cell[text,"GuideText"];
 guideFunctionCell[Delimiter,___]:=
-	Cell["\t", "GuideDelimiterSubsection"];
+	Cell["\t", "GuideDelimiter"];
 
 
 iGuideSubsections[subsections_]:=
@@ -3273,7 +3558,8 @@ iGuideSubsections[subsections_]:=
 iGuideMain[title_,abstract_]:=
 	Cell[CellGroupData@Flatten@{
 		Cell[title,"GuideTitle"],
-		Cell[#,"GuideAbstract"]&/@abstract
+		Cell[#,"GuideAbstract"]&/@abstract,
+		Cell["\t", "GuideDelimiterSubsection"]
 		}]
 
 
@@ -3364,27 +3650,15 @@ iGuideRelatedSection[guides_,tuts_,links_]:=
 	 	];
 
 
-iGuideMetadata[guideName_,guideLink_,abstract_]:=
-	{
-		"built"->ToString@First@DateObject[],
-		"history"->{ToString@$VersionNumber,"",""},
-		"context"->"System`",
-		"keywords"->{},
-		"specialkeywords"->{},
-		"tutorialcollectionlinks"->{},
-		"index"->True,
-		"label"->"Guide",
-		"language"->"en",
-		"paclet"->"Mathematica",
-		"status"->"None",
-		"summary"->First@Flatten@abstract,
-		"synonyms"->{},
-		"tabletags"->{},
-		"title"->guideName,
-		"titlemodifier"->"",
-		"windowtitle"->guideName,
-		"type"->"Guide",
-		"uri"->StringTrim[pacletLinkBuild[guideLink,"guide"],"paclet:"]
+iGuideMetadata[guideName_,guideLink_,abstract_,ops___]:=
+	docMetadata@{
+		ops,
+		"Summary"->First@Flatten@abstract,
+		"Keywords"->guideName,
+		"Title"->guideName,
+		"WindowTitle"->guideName,
+		"Type"->"Guide",
+		"URI"->StringTrim[pacletLinkBuild[guideLink,"guide"],"paclet:"]
 		} 
 
 
@@ -3446,7 +3720,12 @@ GuideNotebook[ops:OptionsPattern[]]:=
 			Except[{(_String|_TextData)..}]:>{"No description..."}],
 		f=Replace[OptionValue@"Functions",Except[_List]:>{}],
 		s=Replace[OptionValue@"Subsections",Except[_List]:>{}],
-		g=Replace[OptionValue@"RelatedGuides",Except[_List]:>{}],
+		g=
+			Replace[
+				Replace[OptionValue@"RelatedGuides",
+					Except[_List]:>{}],
+				{}->{"The Wolfram Language"->"guide/LanguageOverview"}
+				],
 		rt=Replace[OptionValue@"RelatedTutorials",Except[_List]:>{}],
 		l=Replace[OptionValue@"RelatedLinks",Except[_List]:>{}]
 		},
@@ -3565,11 +3844,14 @@ GenerateGuide[namePattern_String,ops:OptionsPattern[]]:=
 					"Functions"->
 						ToExpression[names,StandardForm,Hold],
 					"Subsections"->
-						KeyValueMap[
-							Replace[#,
-								Except["Inert"]->#<>"s"
-								]->List@#2&,
-							types
+						Riffle[
+							KeyValueMap[
+								Replace[#,
+									Except["Inert"]->#<>"s"
+									]->List@#2&,
+								types
+								],
+							Delimiter
 							],
 					ops
 					]
@@ -4191,28 +4473,18 @@ iTutorialRelatedSection[guides_,tuts_,links_]:=
 	 	];
 
 
-iTutorialMetadata[guideName_,guideLink_,abstract_]:=
-	{
-		"built"->ToString@First@DateObject[],
-		"history"->{},
-		"context"->"System`",
-		"keywords"->{ToString@$VersionNumber,"",""},
-		"specialkeywords"->{},
-		"tutorialcollectionlinks"->{},
-		"index"->True,
-		"label"->"Tutorial",
-		"language"->"en",
-		"paclet"->"Mathematica",
-		"status"->"None",
-		"summary"->abstract,
-		"synonyms"->{},
-		"tabletags"->{},
-		"title"->guideName,
-		"titlemodifier"->"",
-		"windowtitle"->guideName,
-		"type"->"Tutorial",
-		"uri"->StringTrim[pacletLinkBuild[guideLink,"tutorial"],"paclet:"]
-		} 
+iTutorialMetadata[guideName_,guideLink_,abstract_,ops___]:=
+	docMetadata@
+		{
+			ops,
+			"Label"->"Tutorial",
+			"Keywords"->guideName,
+			"Summary"->abstract,
+			"Title"->guideName,
+			"WindowTitle"->guideName,
+			"Type"->"Tutorial",
+			"URI"->StringTrim[pacletLinkBuild[guideLink,"tutorial"],"paclet:"]
+			} 
 
 
 tutorialPostProcessJumpLinks[nb_]:=
@@ -4894,9 +5166,17 @@ generateDocumentation[
 						]
 					]
 				];
-			If[OptionValue["GenerateHTML"],
-				If[!DirectoryQ@FileNameJoin@{dir,"html"},
-					CreateDirectory@FileNameJoin@{dir,"html"}
+			If[OptionValue["GenerateHTML"]//TrueQ,
+				If[!DirectoryQ@
+					FileNameJoin@{
+							$TemporaryDirectory,
+							"doc_paclets","html"
+							},
+					CreateDirectory@
+						FileNameJoin@{
+							$TemporaryDirectory,
+							"doc_paclets","html"
+							}
 					];
 				html=
 					GenerateHTMLDocumentation[
@@ -5031,7 +5311,8 @@ generateDocumentation[
 						Nothing
 						],
 					If[OptionValue["GenerateHTML"]//TrueQ,	
-						"HTML"->html
+						"HTML"->html,
+						Nothing
 						]
 					|>
 				]
@@ -5605,11 +5886,15 @@ webExportNotebookPrep[nb_,"Guide"]:=
 				c:Cell[_CellGroupData],
 				content:Shortest[__],
 				e:
+					Cell[_,
+						"GuideMoreAboutSection"|"GuideRelatedLinksSection"|
+							"GuideRelatedTutorialsSection"|"FooterCell",
+						___]|
 					Cell[
 						CellGroupData[{
 							Cell[_,
 								"GuideMoreAboutSection"|"GuideRelatedLinksSection"|
-									"GuideRelatedTutorialsSection",
+									"GuideRelatedTutorialsSection"|"FooterCell",
 								___],
 							___
 							},
@@ -5641,16 +5926,17 @@ webExportNotebookPrep[nb_,"Guide"]:=
 		ReplaceAll[{
 			Cell[
 				CellGroupData[{
-					c:Cell[_,
-					"GuideMoreAboutSection"|"GuideRelatedLinksSection"|
-						"GuideRelatedTutorialsSection",___],
+					c:
+						Cell[_,
+							"GuideMoreAboutSection"|"GuideRelatedLinksSection"|
+								"GuideRelatedTutorialsSection",___],
 					e___
 					},
 					s___
 					],
 				o___
 				]:>
-				Cell[CellGroupData[{c,e,Cell["", "SectionHeaderSpacer"]},s],o]
+				Cell[CellGroupData[{c,Cell["", "SectionHeaderSpacer"],e},s],o]
 			}]@
 		ReplaceRepeated[nb,{
 			Cell[
@@ -6462,7 +6748,7 @@ GenerateHTMLDocumentation[
 	ops___?OptionQ
 	]:=
 	With[{n=Names[pattern]},
-		If[Length@n>1,
+		If[Length@n!=1,
 			$Failed,
 			With[{
 				nb=
@@ -6488,7 +6774,8 @@ $webDocsHTMLBuildDirectory=
 	FileNameJoin@{$TemporaryDirectory,"web_docs"};
 GenerateHTMLDocumentation[
 	Optional[Automatic,Automatic],
-	s___
+	s:Except[_?OptionQ],
+	e:Except[(_String|_File)?DirectoryQ]...
 	]:=
 	With[{dir=
 		Quiet[
@@ -6497,9 +6784,10 @@ GenerateHTMLDocumentation[
 			]},
 		GenerateHTMLDocumentation[
 			dir,
-			s
+			s,
+			e
 			]
-		]
+		];
 
 
 End[];
