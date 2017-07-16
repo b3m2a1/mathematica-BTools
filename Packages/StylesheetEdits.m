@@ -29,6 +29,10 @@ SystemStyleNotebook::usage=
 	"Finds the notebook for a given stylesheet";
 
 
+$SSCellDisplayStyleOptions::usage=
+	"A listing of cell style options to make two cells look the same";
+
+
 SSOpen::usage="Opens the style definitions notebook for a given notebook";
 SSTemplate::usage=
 	"Creates a stylesheet editing template
@@ -75,7 +79,7 @@ SSEditEvents::usage=
 	"Edits the \[Star]EventActions";
 SSEditAliases::usage=
 	"Edits the InputAliases";
-SSEditReplacements::usage=
+SSEditAutoReplacements::usage=
 	"Edits the InputAutoReplacements";
 
 
@@ -86,6 +90,40 @@ $TitleCellStyles={"Title","Chapter","Subchapter"};
 $SectionCellStyles={"Section","Subsection","Subsubsection","Subsubsubsection"};
 $IOCellStyles={"Input","Code","Output"};
 $TextCellStyles={"Text","Item","ItemParagraph","Subitem","SubitemParagraph"};
+
+
+$SSCellTextStyleOptions=
+	{
+		FontSize,
+		FontColor,
+		FontSlant,
+		FontWeight,
+		TabSpacings
+		};
+
+
+$SSCellFrameStyleOptions=
+	{
+		CellFrame,
+		Background,
+		CellFrameColor,
+		System`CellFrameStyle
+		};
+
+
+$SSCellSpacingStyleOptions=
+	{
+		CellMargins,
+		CellFrameMargins
+		};
+
+
+$SSCellDisplayStyleOptions:=
+	Join[
+		$SSCellTextStyleOptions,
+		$SSCellFrameStyleOptions,
+		$SSCellSpacingStyleOptions
+		];
 
 
 SystemStyleNotebook[parts___String,name_String]:=
@@ -297,11 +335,11 @@ Options[SSNew]=
 		First];
 SSNew[nb:_NotebookObject|Automatic:Automatic,
 	type:
-		_String|All|_StyleData|_DefaultStyle|_Rule|_RuleDelayed|
-			{(_String|All|_StyleData|_DefaultStyle|_Rule|_RuleDelayed)..},
+		_String|All|_StyleData|_DefaultStyle|
+			{(_String|All|_StyleData|_DefaultStyle)..},
 	parentType:
-		_FrontEnd`FileName|_String|_StyleData|_Rule|_RuleDelayed|None|
-			{(_FrontEnd`FileName|_String|_StyleData|_Rule|_RuleDelayed|None)..}:
+		_FrontEnd`FileName|_String|_StyleData|None|
+			{(_FrontEnd`FileName|_String|_StyleData|None)..}:
 		None,
 	placement:Next|First|Last|Automatic:Automatic,
 	ops:OptionsPattern[]]:=
@@ -416,10 +454,20 @@ SSDefaultStyles[
 		];
 
 
+$SSCellStyleSinglePattern=
+	_String|_StyleData|_Verbatim;
+
+
+$SSCellStylePatterns=
+	$SSCellStyleSinglePattern|{$SSCellStyleSinglePattern..};
+
+
 cellTypeMatchQ[type_String,types_]:=
 	Which[
 		MatchQ[types,"*"],True,
-		MatchQ[types,_Verbatim],cellTypeMatchQ[type,List@@types],
+		MatchQ[types,_Verbatim],
+			Length@First@types<=1&&
+				cellTypeMatchQ[type,First@types],
 		MatchQ[types,StyleData[_]],cellTypeMatchQ[type,First@types],
 		MatchQ[types,
 			Except[
@@ -453,7 +501,16 @@ cellStyleNameMatchQ[s_StyleData,types_]:=
 			cellTypeMatchQ[First@s,Cases[Flatten@{types},_String|_Symbol]]||
 				With[{styleDatas=
 					Replace[Cases[Flatten@{types},_StyleData|_Verbatim],{
-						HoldPattern[Verbatim][StyleData[d__]]:>{d},
+						HoldPattern[Verbatim][d_StyleData]:>
+							If[Length@d!=Length@s,
+								Nothing,
+								List@@d
+								],
+						HoldPattern[Verbatim][e_]:>
+							If[Length@s!=1,
+								Nothing,
+								{e}
+								],
 						d_StyleData:>
 							If[Length@d>Length@s,
 								Nothing,
@@ -550,56 +607,74 @@ stylesheetNotebook[
 		];
 
 
+Options[SSCells]={
+	"MakeCell"->False,
+	"SelectMode"->StyleData
+	};
 SSCells[nb:_Notebook|_NotebookObject|Automatic:Automatic,
-mode:Normal|StyleData:StyleData,
-types:Except[StyleData|Normal|True|False]:"*",
-	make:True|False:False]:=
-	Replace[
-		Select[
+	types:$SSCellStylePatterns:"*",
+	ops:OptionsPattern[]
+	]:=
+	With[{
+		make=TrueQ@OptionValue["MakeCell"],
+		mode=
 			Replace[
-				Replace[nb,Automatic:>SSEditNotebook[]],{
-						n_NotebookObject:>Cells[n],
-						n_Notebook:>(First@NotebookTools`FlattenCellGroups[n])
-						}],
-			cellMatchQ[Replace[#,c_CellObject:>NotebookRead@c],types,mode]&
-			],{
-		l_List:>
-			If[mode===StyleData&&make,
-				With[{missingStyles=
-					Select[Flatten[{types},1],
-						With[{c=NotebookRead/@l},
-							With[{s=#},
-								Not@AnyTrue[c,cellMatchQ[#,s,StyleData]&]
-								]&
+				OptionValue["SelectMode"],
+				Except[Normal|StyleData]->StyleData
+				]
+		},
+		Replace[
+			Select[
+				Replace[
+					Replace[nb,Automatic:>SSEditNotebook[]],{
+							n_NotebookObject:>Cells[n],
+							n_Notebook:>(First@NotebookTools`FlattenCellGroups[n])
+							}],
+				cellMatchQ[Replace[#,c_CellObject:>NotebookRead@c],types,mode]&
+				],{
+			l_List:>
+				If[mode===StyleData&&make,
+					With[{missingStyles=
+						Select[Flatten[{types},1],
+							With[{c=NotebookRead/@l},
+								With[{s=#},
+									Not@AnyTrue[c,cellMatchQ[#,s,StyleData]&]
+									]&
+								]
 							]
-						]
-					},
-					SSNew[nb,missingStyles];
-					Join[SSCells[nb,StyleData,missingStyles,False],l]
-					],
-				l]	
-		}]
+						},
+						SSNew[nb,missingStyles];
+						Join[SSCells[nb,StyleData,missingStyles,False],l]
+						],
+					l]	
+			}]
+		];
 
 
 StylesheetNotebook[nb:_Notebook|_NotebookObject|Automatic:Automatic]:=
 	With[{n=Replace[nb,Automatic:>SSEditNotebook[]]},
 		Module[{styleDefs=StyleDefinitions/.Options[n,StyleDefinitions],
 				parentNB,extraStyles},
-				parentNB=Replace[styleDefs,
-							sd_Notebook:>Replace[SSCells[sd,Default],
-											{
-												{___,c_}:>Last@First@First@c,
-												{}->Notebook[{}]
-											}]
-								];
-				extraStyles=Replace[styleDefs,{
-								sd_Notebook:>SSCells[sd],
-								_:>{}
-								}];
+				parentNB=
+					Replace[styleDefs,
+						sd_Notebook:>
+							Replace[SSCells[sd,Default],
+								{
+									{___,c_}:>Last@First@First@c,
+									{}->Notebook[{}]
+								}]
+							];
+				extraStyles=
+					Replace[styleDefs,{
+						sd_Notebook:>SSCells[sd],
+						_:>{}
+						}];
 				If[MatchQ[parentNB,_String|_FrontEnd`FileName],
-					parentNB=Replace[
-						stylesheetNotebook[n,parentNB],
-						s_String:>Get@s];
+					parentNB=
+						Replace[
+							stylesheetNotebook[n,parentNB],
+							s_String:>Get@s
+							];
 					parentNB
 					];
 				Replace[
@@ -663,19 +738,23 @@ SSApplyEdits[nb:_CellObject|Automatic:Automatic]:=
 	SSApplyEdits[{Replace[nb,Automatic:>EvaluationCell[]]}];
 
 
-SSEdit[cellExprs:_Cell|{__Cell},
-	conf:(_Rule|_RuleDelayed)..]:=
+SSEdit[
+	cellExprs:_Cell|{__Cell},
+	conf:_?OptionQ
+	]:=
 	With[{cells=Flatten@{cellExprs}},
-		With[{del=Alternatives@@(((Rule|RuleDelayed)[First@#,_])&/@{conf})},
+		With[{del=
+			Alternatives@@Map[(Rule|RuleDelayed)[First@#,_]&,Flatten@{conf}]
+			},
 			Table[
 				Join[
-						DeleteCases[c,del],
-						Cell[conf]/.(
-							(h:Rule|RuleDelayed)[k_,f_Function]:>
-								With[{o=f@(k/.Quiet@Options[c,k])},
-									h[k,o]
-									]
-							)
+					DeleteCases[c,del],
+					Cell[conf]/.(
+						(h:Rule|RuleDelayed)[k_,f_Function]:>
+							With[{o=f@(k/.Quiet@Options[c,k])},
+								h[k,o]
+								]
+						)
 					],
 					{c,cells}
 					]
@@ -685,7 +764,7 @@ SSEdit[cellExprs:_Cell|{__Cell},
 
 SSEdit[
 	cellObs:_CellObject|{__CellObject},
-	conf:(_Rule|_RuleDelayed)..
+	conf_?OptionQ
 	]:=
 	With[{cells=Flatten@{cellObs}},
 		Do[
@@ -704,7 +783,7 @@ SSEdit[
 							],
 						o
 						],
-					{o,{conf}}]
+					{o,Flatten@{conf}}]
 					},
 			SetOptions[c,oplist]
 			],
@@ -715,8 +794,8 @@ SSEdit[
 
 SSEdit[
 	StyleData[nb:_NotebookObject],
-	types:Except[_Rule|_RuleDelayed],
-	conf:(_Rule|_RuleDelayed)..
+	types:$SSCellStylePatterns,
+	conf_?OptionQ
 	]:=
 		With[{snb=StyleDefinitions/.Options[nb,StyleDefinitions]},
 			SetOptions[nb,
@@ -731,7 +810,7 @@ SSEdit[
 												With[{stypes=First/@First/@l},
 														Join[l,
 															Cell[StyleData[#]]&/@DeleteCases[Flatten@{types},
-																										Alternatives@@stypes]
+																Alternatives@@stypes]
 															]
 														]
 											]},
@@ -767,12 +846,15 @@ SSEdit[
 			]
 
 
-SSEdit[nb:_NotebookObject|Automatic:Automatic,
-	mode:StyleData|Normal:StyleData,
-	types:Except[_Rule|_RuleDelayed|StyleData|True|False|Normal]:All,
-	make:True|False:False,
-	conf:(_Rule|_RuleDelayed)..]:=
-	With[{cells=SSCells[nb,mode,types,make]},
+Options[SSEdit]=
+	Options[SSCells];
+SSEdit[
+	nb:_NotebookObject|Automatic:Automatic,
+	types:$SSCellStylePatterns:All,
+	conf_?OptionQ,
+	ops:OptionsPattern[]
+	]:=
+	With[{cells=SSCells[nb,types,ops]},
 		If[Length@cells===0,
 			$Failed,
 	SSEdit[cells,conf]
@@ -780,60 +862,159 @@ SSEdit[nb:_NotebookObject|Automatic:Automatic,
 	];
 
 
-SSValue[cellOb:_CellObject|{__CellObject},
-	mode:CurrentValue|AbsoluteCurrentValue:AbsoluteCurrentValue,
-	ops___]:=
-	mode[cellOb,Flatten@{ops}];
+$SSCellOptionPatterns=
+	_String|_Symbol|{(_String|_Symbol)..};
+
+
+Options[SSValue]=
+	Join[
+		Options[SSCells],
+		{
+			"ValueFunction"->CurrentValue
+			}
+		];
+SSValue[
+	cellOb:_CellObject|{__CellObject},
+	ops:$SSCellOptionPatterns,
+	OptionsPattern[]
+	]:=
+	With[{
+		mode=
+			Replace[OptionValue["ValueFunction"],{
+				Automatic->CurrentValue,
+				"Absolute"->AbsoluteCurrentValue
+				}]
+		},
+		If[ListQ@cellOb,
+			If[Length@cellOb>1,
+				Transpose,
+				Flatten[#,1]&
+				],
+			Identity
+			]@
+			Map[mode[cellOb,#]&,
+				Flatten@{ops}
+				]
+		];
 SSValue[
 	nb:_NotebookObject|Automatic:Automatic,
-	mode:CurrentValue|AbsoluteCurrentValue:AbsoluteCurrentValue,
-	cellStyle_,
-	make:True|False:False,
-	ops:Except[True|False]..]:=
-	With[{cells=SSCells[nb,cellStyle,make]},
+	cellStyle:$SSCellStylePatterns,
+	op:$SSCellOptionPatterns,
+	ops:OptionsPattern[]
+	]:=
+	With[{cells=
+		SSCells[nb,cellStyle,
+			FilterRules[{ops},
+				Options[SSCells]
+				]
+			]},
 		Replace[cells,{
-			c:{__}:>SSValue[c,ops],
+			c:{__}:>
+				SSValue[c,op,
+					FilterRules[{ops},
+						Options[SSCells]
+						]
+					],
 			{}:>
-				Map[
-					#->Replace[
+				With[{
+					mode=
+						Replace[OptionValue["ValueFunction"],{
+							Automatic->CurrentValue,
+							"Absolute"->AbsoluteCurrentValue
+							}]
+					},
+					Map[
+						Replace[
 							mode[
 								SSEditNotebook@nb,
 								{StyleDefinitions,cellStyle,#}
 								],
 							$Failed->Inherited
 							]&,
-					Flatten@{ops}
+						Flatten@{op}
+						]
 					]
 			}]
 		];
 
 
+Options[SSSync]=
+	DeleteDuplicatesBy[First]@
+	Join[
+		Options[SSEdit],
+		Options[SSValue]
+		];
 SSSync[
 	nb:_NotebookObject|Automatic:Automatic,
-	toStyle_,
-	fromStyle_,
-	ops___]:=
-	SSEdit[nb,toStyle,Sequence@@SSValue[nb,fromStyle,ops]];
+	toStyle:$SSCellStyleSinglePattern,
+	fromStyle:$SSCellStyleSinglePattern,
+	op:$SSCellOptionPatterns:Automatic,
+	ops:OptionsPattern[]
+	]:=
+	With[{
+		o=
+			Replace[op,Automatic:>$SSCellDisplayStyleOptions],
+		c=
+			SSCells[nb,fromStyle,
+				FilterRules[{ops},
+					Options[SSCells]
+					]
+				]
+		},
+		SSEdit[nb,toStyle,
+			Thread[
+				o->
+					If[Length@c>0,	
+						SSValue[First@c,o,
+							FilterRules[{ops},
+								Options[SSValue]
+								]
+							],
+						SSValue[nb,
+							fromStyle,
+							o,
+							FilterRules[{ops},
+								Options[SSValue]
+								]
+							]
+						]
+				],
+			FilterRules[{ops},
+				Options[SSEdit]
+				]
+			]
+		];
 
 
 SSDrop[cellObs:_CellObject|{__CellObject},ops__]:=
 SSEdit[cellObs,Sequence@@Thread[{ops}->Inherited]]
 
 
+Options[SSDrop]=
+	Options[SSCells];
 SSDrop[
 		nb:_NotebookObject|Automatic:Automatic,
-		mode:StyleData|Normal:StyleData,
-		types:Except[_Rule|StyleData|Normal]:All,
-		ops__]:=
-	With[{cells=SSCells[nb,mode,types]},
-		SSDrop[cells,ops]
+		types:$SSCellStylePatterns:"*",
+		op:$SSCellOptionPatterns,
+		ops:OptionsPattern[]
+		]:=
+	With[{
+		cells=
+			SSCells[nb,types,
+				FilterRules[{ops},Options[SSCells]]
+				]
+			},
+		SSDrop[cells,op,ops]
 		];
 
 
+Options[SSEditRuleListOption]=
+	Options[SSEdit];
 SSEditRuleListOption[
 	obs:{__CellObject}|{__NotebookObject},
 	op_,
-	new:(_Rule|_RuleDelayed)..]:=
+	new_?OptionQ
+	]:=
 	(
 		Do[
 			With[{newops=
@@ -850,56 +1031,84 @@ SSEditRuleListOption[
 		SSApplyEdits[obs];
 		);
 SSEditRuleListOption[
-	nb:_NotebookObject||Automatic:Automatic,
+	nb:_NotebookObject|Automatic:Automatic,
 	cellStyles_,
 	op_,
-	events:(_Rule|_RuleDelayed)..
+	events_?OptionQ,
+	ops:OptionsPattern[]
 	]:=
-	Replace[SSCells[nb,cellStyles],{
+	Replace[
+		SSCells[nb,cellStyles,
+			FilterRules[{ops},Options[SSCells]]
+			],{
 		c:{__}:>
-			editRuleListOption[c,op,events],
+			SSEditRuleListOption[c,op,events],
 		_->Null
 		}];
 
 
-SSEditEvents[
-	nb:(_NotebookObject|_CellObject|{__CellObject}|Automatic):Automatic,
-	op:(NotebookEventActions|CellEventActions|Automatic):Automatic,
-	events:(_Rule|_RuleDelayed)..]:=
-	With[{obop=
-		Replace[nb,{
-			Automatic:>
-				{SSEditNotebook[nb],
-					Replace[op,Automatic:>NotebookEventActions]
-					},
-			_CellObject|{__CellObject}:>
-				{nb,
-					Replace[op,Automatic:>CellEventActions]
-					},
-			_NotebookObject:>
-				{nb,
-					Replace[op,Automatic:>NotebookEventActions]
-					}
-			}]},
-		SSEditRuleListOption[Flatten@{First@obop},Last@obop,events]
+Options[SSEditEvents]=
+	Join[
+		Options[SSEditRuleListOption],
+		{
+			"EditOption"->Automatic
+			}
 		];
 SSEditEvents[
-	nb:_NotebookObject|Automatic:Automatic,
-	cellStyles:Except[NotebookEventActions|CellEventActions|Automatic|True|False],
-	make:True|False:False,
-	op:(NotebookEventActions|CellEventActions|Automatic):Automatic,
-	events:(_Rule|_RuleDelayed)..
+	nb:(_NotebookObject|_CellObject|{__CellObject}|Automatic):Automatic,
+	events:_?OptionQ,
+	ops:OptionsPattern[]
 	]:=
-	Replace[SSCells[nb,cellStyles,make],{
+	With[{
+		op=
+		Replace[OptionValue["EditOption"],
+			Except[CellEventActions|NotebookEventActions|Automatic]->Automatic
+			]
+		},
+		With[{obop=
+			Replace[nb,{
+				Automatic:>
+					{SSEditNotebook[nb],
+						Replace[op,Automatic:>NotebookEventActions]
+						},
+				_CellObject|{__CellObject}:>
+					{nb,
+						Replace[op,Automatic:>CellEventActions]
+						},
+				_NotebookObject:>
+					{nb,
+						Replace[op,Automatic:>NotebookEventActions]
+						}
+				}]},
+			SSEditRuleListOption[
+				Flatten@{First@obop},
+				Last@obop,
+				events,
+				ops
+				]
+			]
+		];
+SSEditEvents[
+	nb:_NotebookObject|Automatic:Automatic,
+	cellStyles:$SSCellStylePatterns,
+	events_?OptionQ,
+	ops:OptionsPattern[]
+	]:=
+	Replace[
+		SSCells[nb,cellStyles,FilterRules[{ops},Options[SSCells]]],{
 		c:{__}:>
-			SSEditEvents[c,op,events],
+			SSEditEvents[c,events,ops],
 		_->Null
 		}];
 
 
+Options[SSEditAliases]=
+	Options[SSEditRuleListOption];
 SSEditAliases[
 	nb:(_NotebookObject|_CellObject|{__CellObject}|Automatic):Automatic,
-	events:(_Rule|_RuleDelayed)..]:=
+	events_?OptionQ,
+	ops:OptionsPattern[]
+	]:=
 	With[{obop=
 		Replace[nb,{
 			Automatic:>
@@ -915,24 +1124,34 @@ SSEditAliases[
 					InputAliases
 					}
 			}]},
-		SSEditRuleListOption[Flatten@{First@obop},Last@obop,events]
+		SSEditRuleListOption[
+			Flatten@{First@obop},
+			Last@obop,
+			events,
+			ops
+			]
 		];
 SSEditAliases[
 	nb:_NotebookObject|Automatic:Automatic,
-	cellStyles:Except[(_Rule|_RuleDelayed|True|False)],
-	make:True|False:False,
-	events:(_Rule|_RuleDelayed)..
+	cellStyles:$SSCellStylePatterns,
+	events_?OptionQ,
+	ops:OptionsPattern[]
 	]:=
-	Replace[SSCells[nb,cellStyles,make],{
+	Replace[
+		SSCells[nb,cellStyles,FilterRules[{ops},Options[SSCells]]],{
 		c:{__}:>
-			SSEditAliases[c,events],
+			SSEditAliases[c,events,ops],
 		_->Null
 		}];
 
 
-SSEditReplacements[
+Options[SSEditAutoReplacements]=
+	Options[SSEditRuleListOption];
+SSEditAutoReplacements[
 	nb:(_NotebookObject|_CellObject|{__CellObject}|Automatic):Automatic,
-	events:(_Rule|_RuleDelayed)..]:=
+	events_?OptionQ,
+	ops:OptionsPattern[]
+	]:=
 	With[{obop=
 		Replace[nb,{
 			Automatic:>
@@ -948,17 +1167,23 @@ SSEditReplacements[
 					InputAutoReplacements
 					}
 			}]},
-		SSEditRuleListOption[Flatten@{First@obop},Last@obop,events]
+		SSEditRuleListOption[
+			Flatten@{First@obop},
+			Last@obop,
+			events,
+			ops
+			]
 		];
-SSEditReplacements[
+SSEditAutoReplacements[
 	nb:_NotebookObject|Automatic:Automatic,
-	cellStyles:Except[(_Rule|_RuleDelayed|True|False)],
-	make:True|False:False,
-	events:(_Rule|_RuleDelayed)..
+	cellStyles:$SSCellStylePatterns,
+	events_?OptionQ,
+	ops:OptionsPattern[]
 	]:=
-	Replace[SSCells[nb,cellStyles,make],{
+	Replace[
+		SSCells[nb,cellStyles,FilterRules[{ops},Options[SSCells]]],{
 		c:{__}:>
-			SSEditReplacements[c,events],
+			SSEditAutoReplacements[c,events,ops],
 		_->Null
 		}];
 
