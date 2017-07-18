@@ -1,3 +1,0 @@
-(* ::Package:: *)
-
-"T6uddzgIduRUtRKNwlFuUg(("
