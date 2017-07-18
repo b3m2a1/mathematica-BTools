@@ -1,0 +1,185 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["$CuratedData Wrapper", "CodeSection",
+ CellChangeTimes->{{3.70472456204084*^9, 
+  3.704724570582034*^9}},ExpressionUUID->"def4b1e8-e79d-4817-a784-\
+5ba4efa8c7a8"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"BeginPackage", "[", "\"\<$CuratedData`\>\"", "]"}], 
+  ";"}]], "InputSection",
+ CellChangeTimes->{{3.703787195817525*^9, 3.70378719853395*^9}, {
+  3.70378724992663*^9, 3.7037872544713984`*^9}, {3.703868927649774*^9, 
+  3.703868930484091*^9}},ExpressionUUID->"eaa3d1e0-ce98-4164-8e58-\
+c3452a3a6438"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"$CuratedData", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<An wrapper to the other DataPaclets\>\""}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.703787168623752*^9, 3.70378717413328*^9}, {
+   3.703787239888528*^9, 3.703787276030592*^9}, 3.703818307313674*^9, {
+   3.704724683941023*^9, 
+   3.704724690569998*^9}},ExpressionUUID->"d6dea44c-c53a-4317-bdc9-\
+3fe33447b26e"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Begin", "[", "\"\<DataPaclets`$CuratedDataDump`\>\"", "]"}], 
+  ";"}]], "InputSection",
+ CellChangeTimes->{{3.703787195817525*^9, 3.70378719853395*^9}, {
+  3.70378724992663*^9, 
+  3.7037872544713984`*^9}},ExpressionUUID->"1bf42919-c650-4497-93ab-\
+f684b1b86300"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$DataFunctions", "=", "\n", "\t", "$CuratedDataFunctions"}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.704724877776558*^9, 
+  3.704724884166699*^9}},ExpressionUUID->"72fec465-f17c-4266-b26b-\
+9a5b626454ec"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{"!", 
+     RowBox[{"AssociationQ", "@", "$DataFunctionsLoaded"}]}], ",", "\n", "\t", 
+    RowBox[{"$DataFunctionsLoaded", "=", 
+     RowBox[{"<|", "|>"}]}]}], "\n", "\t", "]"}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.704725102987226*^9, 3.7047251110870113`*^9}, {
+  3.704731468622183*^9, 
+  3.7047314790191107`*^9}},ExpressionUUID->"1cd0eb4e-ca36-48a1-95a5-\
+a99a8ec8485d"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"$CuratedData", "[", "\"\<DataFunctions\>\"", "]"}], "=", "\n", 
+   "\t", "$DataFunctions"}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7047246982554703`*^9, 3.704724720811376*^9}, {
+   3.704724836797308*^9, 3.704724843098167*^9}, 3.704724886209021*^9, {
+   3.7047314202879133`*^9, 3.704731420596917*^9}, {3.704731483157631*^9, 
+   3.7047314848117113`*^9}},ExpressionUUID->"b69f042f-170e-40d6-863f-\
+ca7094757a96"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"$CuratedData", "[", 
+    RowBox[{
+     RowBox[{"data_", "?", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"KeyMemberQ", "[", 
+         RowBox[{"$DataFunctions", ",", "#"}], "]"}], "&"}], ")"}]}], ",", 
+     "\"\<DataFunction\>\""}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"(", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"!", 
+        RowBox[{"TrueQ", "@", 
+         RowBox[{"Lookup", "[", 
+          RowBox[{"$DataFunctionsLoaded", ",", 
+           RowBox[{"$DataFunctions", "[", "data", "]"}], ",", "False"}], 
+          "]"}]}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"With", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"functionName", "=", 
+           RowBox[{"SymbolName", "[", 
+            RowBox[{"$DataFunctions", "[", "data", "]"}], "]"}]}], "}"}], ",",
+          "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Length", "@", 
+              RowBox[{
+              "PacletManager`PacletFind", "[", "functionName", "]"}]}], "===",
+              "0"}], ",", "\n", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{
+             "PacletManager`PacletInstall", "[", "functionName", "]"}], 
+             ";"}]}], "\n", "\t\t\t\t\t", "]"}], ";", "\n", "\t\t\t\t", 
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Length", "@", 
+              RowBox[{"DownValues", "@", 
+               RowBox[{"Evaluate", "@", 
+                RowBox[{"$DataFunctions", "[", "data", "]"}]}]}]}], "===", 
+             "0"}], ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"Get", "[", 
+             RowBox[{"functionName", "<>", "\"\<`\>\""}], "]"}]}], "\n", 
+           "\t\t\t\t\t", "]"}], ";", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"$DataFunctionsLoaded", "[", 
+            RowBox[{"$DataFunctions", "[", "data", "]"}], "]"}], "=", 
+           "True"}]}]}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}], 
+     ";", "\n", "\t\t", 
+     RowBox[{"$DataFunctions", "[", "data", "]"}]}], "\n", "\t\t", ")"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"$CuratedData", "[", 
+    RowBox[{
+     RowBox[{"data_", "?", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"KeyMemberQ", "[", 
+         RowBox[{"$DataFunctions", ",", "#"}], "]"}], "&"}], ")"}]}], ",", 
+     "args___"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"$CuratedData", "[", 
+     RowBox[{"data", ",", "\"\<DataFunction\>\""}], "]"}], "[", "args", 
+    "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"$CuratedData", "[", "]"}], ":=", "\n", "\t", 
+   RowBox[{"Values", "@", "$DataFunctions"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.704724843904591*^9, 3.704724847549447*^9}, {
+  3.704724887254106*^9, 3.7047249282936974`*^9}, {3.704724971910721*^9, 
+  3.704725192360695*^9}, {3.704725415463991*^9, 3.7047254447061157`*^9}, {
+  3.704730033374262*^9, 3.704730044121663*^9}, {3.704730085550304*^9, 
+  3.704730095293618*^9}, {3.7047301253030167`*^9, 3.70473020543603*^9}, {
+  3.7047306285151367`*^9, 
+  3.704730659722581*^9}},ExpressionUUID->"3f2fdb48-0dfd-441e-bdfb-\
+41f6ac58df8f"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"End", "[", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"6569f5c0-e388-4caf-838b-\
+45935ab63620"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"EndPackage", "[", "]"}], ";"}]], "InputSection",
+ CellChangeTimes->{{3.704724595919054*^9, 
+  3.7047245969153843`*^9}},ExpressionUUID->"05c12a4b-0f9a-4631-9a51-\
+9b599e78217d"]
+}, Open  ]],
+
+Cell["", "SectionSeparator",ExpressionUUID->"52d8d5ce-ab81-4f54-b7bc-\
+203eb5ea79ab"]
+},
+WindowSize->{808, 755},
+WindowMargins->{{Automatic, 37}, {15, Automatic}},
+FrontEndVersion->"11.1 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 16, \
+2017)",
+StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+
