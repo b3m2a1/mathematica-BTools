@@ -91,6 +91,8 @@ GradientSetterBar::usage=
 	"A setter bar based on GradientSetter";
 GradientDock::usage=
 	"A convenience function to build a DockedCell Row";
+GradientDockedCell::usage=
+	"Builds a docked cell from a GradientDock";
 
 
 PopupDropDown::usage=
@@ -271,6 +273,62 @@ AppearanceReadyImage[Mouseover[e1_,e2_],ops:OptionsPattern[]]:=
 		};
 
 
+GradientImagePaddingFormat[where_:None,pad_]:=
+	Switch[where,
+		First,
+			Replace[
+				pad,{
+				Automatic->{{1,0},{1,1}},
+				Center->{{0,0},{1,1}},
+				{Center,i_}:>
+					{{0,0},{i,i}},
+				{Center,_,{b_,t_}}:>
+					{{0,0},{b,t}},
+				{Center,_,b_}:>
+					{{0,0},{b,b}},
+				i:_Integer|Automatic:>({{i,0},{i,i}}/.Automatic->1),
+				{i:_Integer|Automatic,j_}:>
+					({{i,0},{j,j}}/.Automatic->1),
+				{{r_,l_},{b_,t_}}:>
+					({{r,l/.Automatic->0},{b,t}}/.Automatic->1)
+				}],
+		Last,
+			Replace[
+				pad,{
+				Automatic->{{1,1},{1,1}},
+				Center->{{1,0},{1,1}},
+				{Center,i_}:>
+					{{i,0},{i,i}},
+				{Center,i_,{b_,t_}}:>
+					{{i,0},{b,t}},
+				{Center,i_,b_}:>
+					{{i,0},{b,b}},
+				i:_Integer|Automatic:>({{i,i},{i,i}}/.Automatic->1),
+				{i:_Integer|Automatic,j_}:>
+					({{i,i},{j,j}}/.Automatic->1),
+				{{r_,l_},{b_,t_}}:>
+					({{r,l},{b,t}}/.Automatic->1)
+				}],
+		_,
+			Replace[
+				pad,{
+				Automatic->{{1,0},{1,1}},
+				Center->{{1,0},{1,1}},
+				{Center,i_}:>
+					{{i,0},{i,i}},
+				{Center,i_,{b_,t_}}:>
+					{{i,0},{b,t}},
+				{Center,i_,b_}:>
+					{{i,0},{b,b}},
+				i:_Integer|Automatic:>({{i,0},{i,i}}/.Automatic->1),
+				{i:_Integer|Automatic,j_}:>
+					({{i,0},{j,j}}/.Automatic->1),
+				{{r_,l_},{b_,t_}}:>
+					({{r,l/.Automatic->0},{b,t}}/.Automatic->1)
+				}]
+	];
+
+
 Options[GradientAppearance]={
 	ImageSize->{9,24},
 	ImagePadding->1,
@@ -315,7 +373,7 @@ GradientAppearance[
 		pad=
 			If[OptionValue@FrameStyle===None,
 				None,
-				OptionValue[ImagePadding]
+				GradientImagePaddingFormat@OptionValue[ImagePadding]
 				]
 		},
 		With[{cents=
@@ -372,7 +430,9 @@ GradientAppearance[
 			If[pad=!=None,
 				Replace[frameColor,{
 					_?ColorQ:>
-						ImagePad[#,pad,frameColor],
+						ImagePad[#,
+							pad,
+							frameColor],
 					{c1:_?ColorQ|Automatic,c2:_?ColorQ|Automatic}:>
 						Replace[pad,{
 							n_?NumericQ:>
@@ -1025,15 +1085,26 @@ GradientPopupDropDown[
 								{w_,Automatic}:>
 									{w,24}
 								}]
-						]
+						],
+				ImageMargins->0,
+				FilterRules[{ops},
+					BaselinePosition
+					]
 			],
-		Appearance->None,
-		FilterRules[{ops},
-			FilterRules[Options@PopupMenu,
+		FilterRules[{
+			Appearance->None,
+			ops
+			},
+			FilterRules[
+				Options@PopupMenu,
 				Except[
 					Alternatives@@
 						Join[
-							Map[First,Options@GradientDropDownAppearance],{
+							Map[First,
+								FilterRules[Options@GradientDropDownAppearance,
+									Except[BaselinePosition]
+									]
+								],{
 							"UUID"
 							}]
 					]
@@ -1099,7 +1170,11 @@ GradientActionDropDown[actions_List,ops:OptionsPattern[]]:=
 				Except[
 					Alternatives@@
 						Join[
-							Map[First,Options@GradientDropDownAppearance],{
+							Map[First,
+								FilterRules[Options@GradientDropDownAppearance,
+									Except[BaselinePosition]
+									]
+								],{
 							"UUID"
 							}]
 					]
@@ -1138,47 +1213,39 @@ GradientButtonDropDownRow[
 		With[{uuid=
 			Replace[OptionValue["UUID"],
 				Automatic:>CreateUUID["ButtonRow-"]]},
-		Row@{
+		Row[{
 			GradientButton[buttonLbl,buttonCommand,
 				Evaluate@FilterRules[{
 					Appearance->
 						With[{aBase=
-							Flatten@{
+							Flatten[{
 								Replace[OptionValue@Appearance,{
 									{a_List,___}:>a,
 									{a_,___,_List}:>a
 									}],
 								FrameStyle->
 									OptionValue[FrameStyle]
-								}
-							},
-							Replace[aBase,{
-								c:"Palette":>
-									Sequence@@{
-										c,
-										If[FreeQ[aBase,ImagePadding->_],
-											ImagePadding->{{1,0},{1,1}},
-											Nothing
-											]
-										},
-								PopupMenu|ActionMenu:>
-									Sequence@@{
-										White,
-										If[FreeQ[aBase,ImagePadding->_],
-											ImagePadding->{{1,0},{1,1}},
-											Nothing
-											]
-										},
-								Automatic|Generic:>
-									Sequence@@{
-										Automatic,
-										If[FreeQ[aBase,ImagePadding->_],
-											ImagePadding->{{1,0},{1,1}},
-											Nothing
-											]
-										}
 								},
-								1]
+								1
+								]
+							},
+							Flatten@{
+								Replace[aBase,{
+									c:"Palette":>
+										c,
+									PopupMenu|ActionMenu:>
+										White,
+									Automatic|Generic:>
+										Automatic,
+									(ImagePadding->_)->Nothing
+									},
+									1],
+								ImagePadding->
+									GradientImagePaddingFormat[
+										First,
+										Lookup[Select[aBase,OptionQ],ImagePadding,Automatic]
+										]
+								}
 							],
 					ImageSize->
 						imgSize,
@@ -1211,13 +1278,25 @@ GradientButtonDropDownRow[
 				FilterRules[{
 					Appearance->
 						With[{base=
-							Replace[OptionValue@Appearance,{
-								{___,a_List}:>a,
-								{_List,___,a_}:>a
-								}]
+							Flatten[
+								List@Replace[OptionValue@Appearance,{
+									{___,a_List}:>a,
+									{_List,___,a_}:>a
+									}],
+								1
+								]
 							},
 							Flatten@{
-								base,
+								Select[base,Not@*OptionQ],
+								FilterRules[
+									Select[base,OptionQ],
+									Except[ImagePadding]
+									],
+								ImagePadding->
+									GradientImagePaddingFormat[
+										Last,
+										Lookup[Select[base,OptionQ],ImagePadding,Automatic]
+										],
 								FrameStyle->
 									Replace[OptionValue[FrameStyle],{
 										Automatic:>
@@ -1240,11 +1319,31 @@ GradientButtonDropDownRow[
 						ImageSize->
 							Replace[OptionValue@ImageSize,{
 								{_,{i_?NumericQ,h_}}:>
-									{Automatic,If[NumericQ@h,h-2,h]},
+									{
+										Automatic,
+										If[NumericQ@h,
+											h-
+												Switch[
+													OptionValue[Appearance],
+													"Palette"|{"Palette",___},1,
+													_,2
+													],
+											h]
+										},
 								i_?NumericQ:>
 									Automatic,
 								{i:Except[_List],h_}:>
-									{Automatic,If[NumericQ@h,h-2,h]},
+									{
+										Automatic,
+										If[NumericQ@h,
+											h-
+												Switch[
+													OptionValue[Appearance],
+													"Palette"|{"Palette",___},1,
+													_,2
+													],
+											h]
+										},
 								{_,b_}:>
 									b,
 								Except[_List]->
@@ -1257,11 +1356,16 @@ GradientButtonDropDownRow[
 								],
 						"UUID"->
 							uuid,
-						ops},
+						ops
+						},
 				Options@dropDownType
 				]
 			]
-		}
+		},
+		FilterRules[{ops},
+			BaselinePosition
+			]
+		]
 		]
 	];
 GradientButtonDropDownRow~SetAttributes~HoldRest;
@@ -1518,59 +1622,22 @@ GradientButtonBar[args:{_,__},ops:OptionsPattern[]]:=
 									ImagePadding->
 										Switch[ind,
 											1,
-												Replace[
+												GradientImagePaddingFormat[
+													First,
 													Lookup[Select[Flatten@{app},OptionQ],
-														ImagePadding,Automatic],{
-													Automatic->{{1,0},{1,1}},
-													Center->{{0,0},{1,1}},
-													{Center,i_}:>
-														{{0,0},{i,i}},
-													{Center,_,{b_,t_}}:>
-														{{0,0},{b,t}},
-													{Center,_,b_}:>
-														{{0,0},{b,b}},
-													i:_Integer|Automatic:>({{i,0},{i,i}}/.Automatic->1),
-													{i:_Integer|Automatic,j_}:>
-														({{i,0},{j,j}}/.Automatic->1),
-													{{r_,l_},{b_,t_}}:>
-														({{r,l/.Automatic->0},{b,t}}/.Automatic->1)
-													}],
+														ImagePadding,Automatic]
+													],
 											Length@args,
-												Replace[
+												GradientImagePaddingFormat[
+													Last,
 													Lookup[Select[Flatten@{app},OptionQ],
-														ImagePadding,Automatic],{
-													Automatic->{{1,1},{1,1}},
-													Center->{{1,0},{1,1}},
-													{Center,i_}:>
-														{{i,0},{i,i}},
-													{Center,i_,{b_,t_}}:>
-														{{i,0},{b,t}},
-													{Center,i_,b_}:>
-														{{i,0},{b,b}},
-													i:_Integer|Automatic:>({{i,i},{i,i}}/.Automatic->1),
-													{i:_Integer|Automatic,j_}:>
-														({{i,i},{j,j}}/.Automatic->1),
-													{{r_,l_},{b_,t_}}:>
-														({{r,l},{b,t}}/.Automatic->1)
-													}],
+														ImagePadding,Automatic]
+													],
 											_,
-												Replace[
+												GradientImagePaddingFormat[
 													Lookup[Select[Flatten@{app},OptionQ],
-														ImagePadding,Automatic],{
-													Automatic->{{1,0},{1,1}},
-													Center->{{1,0},{1,1}},
-													{Center,i_}:>
-														{{i,0},{i,i}},
-													{Center,i_,{b_,t_}}:>
-														{{i,0},{b,t}},
-													{Center,i_,b_}:>
-														{{i,0},{b,b}},
-													i:_Integer|Automatic:>({{i,0},{i,i}}/.Automatic->1),
-													{i:_Integer|Automatic,j_}:>
-														({{i,0},{j,j}}/.Automatic->1),
-													{{r_,l_},{b_,t_}}:>
-														({{r,l/.Automatic->0},{b,t}}/.Automatic->1)
-													}]
+														ImagePadding,Automatic]
+													]
 											]
 									}
 							],
@@ -1704,6 +1771,9 @@ GradientSetterBar[v_,vals_,ops:OptionsPattern[]]:=
 	];
 
 
+GradientDockElement//ClearAll
+
+
 GradientDockElement[(lab_:>cmd_)->ops_?OptionQ]:=
 	GradientButton[lab,cmd,ops];
 GradientDockElement[lab_:>(cmd_->ops_?OptionQ)]:=
@@ -1712,12 +1782,12 @@ GradientDockElement[actions:{__RuleDelayed}->ops_?OptionQ]:=
 	GradientButtonBar[actions,ops];
 GradientDockElement[lab_:>(cmd_->ops_?OptionQ)]:=
 	GradientDockElement[(lab:>cmd)->ops];
-GradientDockElement[(lab_->actions:{__RuleDelayed})->ops_?OptionQ]:=
+GradientDockElement[(lab_->actions:{(_RuleDelayed|Delimiter)..})->ops_?OptionQ]:=
 	If[lab===None,
 		GradientActionDropDown[actions,ops],
 		GradientActionMenu[lab,actions,ops]
 		];
-GradientDockElement[lab_->(actions:{__RuleDelayed}->ops_?OptionQ)]:=
+GradientDockElement[lab_->(actions:{(_RuleDelayed|Delimiter)..}->ops_?OptionQ)]:=
 	GradientDockElement[(lab->actions)->ops];
 GradientDockElement[(lab_->vals_List)->ops_?OptionQ]:=
 	If[lab===None,
@@ -1726,12 +1796,11 @@ GradientDockElement[(lab_->vals_List)->ops_?OptionQ]:=
 		];
 GradientDockElement[lab_->(vals_List->ops_?OptionQ)]:=
 	GradientDockElement[(lab->vals)->ops];
-GradientDockElement[(lab_->actions:{__RuleDelayed}->f_)->ops_?OptionQ]:=
-	If[MatchQ[lab,_Dynamic],
-		GradientButtonActioPopup[lab,actions,f,ops],
-		GradientButtonActioMenu[lab,actions,f,ops]
-		];
-GradientDockElement[lab_->(actions:{__RuleDelayed}->f_->ops_?OptionQ)]:=
+GradientDockElement[
+	(lab_->actions:{(_RuleDelayed|Delimiter)..}->f_)->ops_?OptionQ
+	]:=
+	GradientButtonActionMenu[lab,actions,f,ops];
+GradientDockElement[lab_->(actions:{(_RuleDelayed|Delimiter)..}->f_->ops_?OptionQ)]:=
 	GradientDockElement[(lab->actions->f)->ops];
 GradientDockElement[(lab_->vals_List->f_)->ops_?OptionQ]:=
 	GradientButtonPopupMenu[lab,vals,f,ops];
@@ -1742,6 +1811,14 @@ GradientDockElement[lab_String->ops_?OptionQ]:=
 		Enabled->False,
 		ops
 		];
+GradientDockElement[e_->(ops_?OptionQ)]:=
+	GradientButton[e,Null,
+		Evaluate@
+			Flatten@{
+				ops,
+				Enabled->False
+				}
+		]
 (*
 GradientDockElement[(assoc_Association)->ops_?OptionQ]:=
 	With[{
@@ -1754,14 +1831,19 @@ GradientDockElement[(assoc_Association)->ops_?OptionQ]:=
 	*)
 GradientDockElement[spec:_Rule|_RuleDelayed,ops__]:=
 	If[
-		MatchQ[Extract[spec,-1,Hold],
-			Hold[(_Rule|_RuleDelayed)|{_Rule|_RuleDelayed}]
+		MatchQ[spec,
+			(Rule|RuleDelayed)[
+				(_Rule|_RuleDelayed),
+				(_Rule|_RuleDelayed)|{(_Rule|_RuleDelayed)...}
+				]
 			],
 		GradientDockElement[
-			Most[spec]->Flatten@{Last@spec,ops}
+			First[spec]->Flatten@{Last@spec,ops}
 			],
-		GradientDockElement[spec->ops]
+		GradientDockElement[spec->{ops}]
 		];	
+GradientDockElement[e_,ops__]:=
+	GradientDockElement[e->{ops}]
 
 
 Options[GradientDock]=
@@ -1775,63 +1857,92 @@ Options[GradientDock]=
 			Options@GradientSetterBar
 			];
 GradientDock[dockThings:{__},ops:OptionsPattern[]]:=
-	Row@{
-		GradientDockElement[First@dockThings,
-			Flatten@{ops,
-				Replace[First@dockThings,
-					{
-						(_RuleDelayed)->{
-							ImageSize->{Automatic,35},
+	Grid[
+		List@Flatten@{
+			GradientDockElement[
+				First@dockThings,
+				Flatten@{
+					ops,
+					ImageSize->{Automatic,40},
+					Appearance->{
+						"Palette",
+						ImagePadding->
+							Switch[First@dockThings,
+								_[_,{(_RuleDelayed|Delimiter)...}]|
+									(_Rule|_RuleDelayed)...,
+									{Center,1,{1,0}},
+								_,
+									{{0,0},{1,0}}
+								]
+						}
+					}],
+			GradientDockElement[#,
+				Flatten@{
+					ops,
+					ImageSize->{Automatic,40},
+					Appearance->{
+						"Palette",
+						ImagePadding->
+							{{1,0},{1,0}}
+						}
+					}]&/@Rest@dockThings,
+			GradientButton["",
+				Null,
+				Evaluate@
+					Replace[
+						Flatten@{
+							Enabled->False,
+							ops,
+							ImageSize->40,
 							Appearance->{
 								"Palette",
-								ImagePadding->
-									{{0,0},{1,0}}
+								ImagePadding->{{1,0},{1,0}}
 								}
 							},
-						_->{
-							ImageSize->{Automatic,34},
-							Appearance->{
-								"Palette",
-								ImagePadding->
-									{{1,0},{1,0}}
-								}
-							}
-						}
-					]
-				}],
-		GradientDockElement[#,
-			Flatten@{ops,
-				Replace[#,
-					{
-						(_RuleDelayed)->{
-							ImageSize->{Automatic,35},
-							Appearance->{
-								"Palette",
-								ImagePadding->
-									{{0,0},{1,0}}
-								}
+						{
+							(ImageSize->s_):>
+								(
+									ImageSize->
+										Replace[s,{
+											{_,i_}:>
+												{Scaled[1],i},
+											i_:>{Scaled[1],i}
+											}]
+									)
 							},
-						_->{
-							ImageSize->{Automatic,34},
-							Appearance->{
-								"Palette",
-								ImagePadding->
-									{Center,1,{1,0}}
-								}
-							}
-						}
+						1
+						]
+				]
+			},
+		Spacings->{0,0},
+		Alignment->Bottom,
+		ItemSize->{{-1->Full},{}}
+		]
+
+
+Options[GradientDockedCell]=
+	Join[
+		Options[GradientDock],
+		Options[Cell]
+		];
+GradientDockedCell[dockThings:{__},ops:OptionsPattern[]]:=
+	Cell[
+		BoxData@ToBoxes@
+			GradientDock[dockThings,
+				FilterRules[{ops},
+					Options[GradientDock]
 					]
-				}]&/@dockThings,
-		GradientButton["",Null,
-			Enabled->False,
+				],
+		FilterRules[{
 			ops,
-			ImageSize->{Scaled[1],35}.
-			Appearance->{
-				"Palette",
-				ImagePadding->{{1,0},{1,0}}
-				}
+			CellMargins->{{0,0},{0,-1}},
+			Background->GrayLevel[.95],
+			CellFrame->None,
+			CellFrameMargins->0
+			},
+			Options[Cell]
 			]
-		};
+		]
 
 
 notRules=

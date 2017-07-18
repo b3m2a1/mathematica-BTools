@@ -455,7 +455,7 @@ SSDefaultStyles[
 
 
 $SSCellStyleSinglePattern=
-	_String|_StyleData|_Verbatim;
+	_String|_StyleData|_Verbatim|Default;
 
 
 $SSCellStylePatterns=
@@ -464,7 +464,8 @@ $SSCellStylePatterns=
 
 cellTypeMatchQ[type_String,types_]:=
 	Which[
-		MatchQ[types,"*"],True,
+		types==="*",True,
+		types==={},False,
 		MatchQ[types,_Verbatim],
 			Length@First@types<=1&&
 				cellTypeMatchQ[type,First@types],
@@ -495,7 +496,7 @@ cellTypeMatchQ[types_][type_]:=cellTypeMatchQ[type,types];
 
 
 cellStyleNameMatchQ[s_StyleData,types_]:=
-	If[Length@s==1,
+	types=!={}&&If[Length@s==1,
 		cellTypeMatchQ[First@s,types],
 		Length@s>0&&(
 			cellTypeMatchQ[First@s,Cases[Flatten@{types},_String|_Symbol]]||
@@ -557,8 +558,7 @@ Cell[_?(
 MatchQ[
 Replace[#,_BoxData:>ToExpression[#,StandardForm,Hold]],
 If[types===Default,
-							StyleData[StyleDefinitions->_,___](*|
-							Hold[StyleData[StyleDefinitions\[Rule]_,___]]*),
+							StyleData[StyleDefinitions->_,___],
 _StyleData?(cellStyleDataMatchQ[types])
 ]
 ]&),
@@ -611,8 +611,9 @@ Options[SSCells]={
 	"MakeCell"->False,
 	"SelectMode"->StyleData
 	};
-SSCells[nb:_Notebook|_NotebookObject|Automatic:Automatic,
-	types:$SSCellStylePatterns:"*",
+SSCells[
+	nb:_Notebook|_NotebookObject|Automatic:Automatic,
+	types:$SSCellStylePatterns|{},
 	ops:OptionsPattern[]
 	]:=
 	With[{
@@ -626,10 +627,12 @@ SSCells[nb:_Notebook|_NotebookObject|Automatic:Automatic,
 		Replace[
 			Select[
 				Replace[
-					Replace[nb,Automatic:>SSEditNotebook[]],{
-							n_NotebookObject:>Cells[n],
-							n_Notebook:>(First@NotebookTools`FlattenCellGroups[n])
-							}],
+					Replace[nb,Automatic:>SSEditNotebook[]],
+					{
+						n_NotebookObject:>Cells[n],
+						n_Notebook:>(First@NotebookTools`FlattenCellGroups[n])
+						}
+					],
 				cellMatchQ[Replace[#,c_CellObject:>NotebookRead@c],types,mode]&
 				],{
 			l_List:>
@@ -644,7 +647,14 @@ SSCells[nb:_Notebook|_NotebookObject|Automatic:Automatic,
 							]
 						},
 						SSNew[nb,missingStyles];
-						Join[SSCells[nb,StyleData,missingStyles,False],l]
+						Join[
+							SSCells[nb,
+								missingStyles,
+								"MakeCell"->False,
+								ops
+								],
+							l
+							]
 						],
 					l]	
 			}]
@@ -850,7 +860,7 @@ Options[SSEdit]=
 	Options[SSCells];
 SSEdit[
 	nb:_NotebookObject|Automatic:Automatic,
-	types:$SSCellStylePatterns:All,
+	types:$SSCellStylePatterns,
 	conf_?OptionQ,
 	ops:OptionsPattern[]
 	]:=

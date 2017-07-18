@@ -48,8 +48,8 @@ GitConfig::usage="Sugar on the GitConfig tool";
 GitHelp::usage="Gets help from the git man pages";
 
 
-GitRemote::usage=
-	"git remote command";
+GitListRemotes::usage=
+	"git remote -v show command";
 GitAddRemote::usage=
 	"git remote add origin command";
 GitRemoveRemote::usage=
@@ -57,6 +57,8 @@ GitRemoveRemote::usage=
 GitFetch::usage="git fetch";
 GitPush::usage="git push";
 GitPushOrigin::usage="git push origin master";
+GitPull::usage="git pull";
+GitPullOrigin::usage="git pull origin master";
 GitBranch::usage="git branch";
 
 
@@ -390,6 +392,10 @@ GitRepoQ[r:(_String|_File)?DirectoryQ]:=
 	(GitRepo@r=!=None);
 
 
+GitListRemotes[dir:_String?DirectoryQ|Automatic:Automatic]:=
+	GitRun[dir,"remote","-v","show"]
+
+
 GitAddRemote[
 	dir:_String?DirectoryQ|Automatic:Automatic,
 	remote:_String|_URL]:=
@@ -422,6 +428,27 @@ GitPush[
 		"push",
 		loc,
 		branch];
+
+
+Options[GitPull]={
+	"Username"->
+		None,
+	"Password"->
+		None
+	};
+GitPull[
+	dir:_String?DirectoryQ,
+	loc_String,
+	branch:_String:"master",
+	ops:OptionsPattern[]]:=
+	GitRun[dir,
+		"pull",
+		loc,
+		branch];
+
+
+GitPullOrigin[dir:_String?DirectoryQ|Automatic:Automatic]:=
+	GitPull[dir,"origin","master"]
 
 
 GitPushOrigin[dir:_String?DirectoryQ|Automatic:Automatic]:=

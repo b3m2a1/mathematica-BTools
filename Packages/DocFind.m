@@ -225,6 +225,8 @@ SymbolDetermineType[s:{__String},e___]:=
 		s,
 		ToExpression[s,StandardForm,Function[Null,SymbolDetermineType[#,e],HoldFirst]]
 		];
+SymbolDetermineType[{},___]:=
+	<||>;
 SymbolDetermineType~SetAttributes~HoldFirst;
 
 

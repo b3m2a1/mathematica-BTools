@@ -53,8 +53,16 @@ MarkdownGenerate::usage=
 	"Generates an XMLObject from a markdown string";
 
 
-PySimpleServer::usage=
-	"Starts a new SimpleServer in a specific directory and opens it";
+$PySimpleServer::usage=
+	"The current simple server instance";
+PySimpleServerStart::usage=
+	"Starts a new SimpleHTTPServer in a specific directory and opens it";
+PySimpleServerOpen::usage=
+	"Opens a file using a SimpleHTTPServer or opens the server itself";
+PySimpleServerRunning::usage=
+	"Specifies whether there's current server running";
+PySimpleServerKill::usage=
+	"Kills the current server";
 
 
 Begin["`Private`"];
@@ -966,48 +974,115 @@ MarkdownGenerate[
 	MarkdownGenerate[Import[f,"Text"],css,ops]
 
 
-PySimpleServer::unsupported=
+$PySimpleServer::unsupported=
 	"$OperatingSystem isn't supported by SimpleHTTPServer";
 
 
-Options[PySimpleServer]={
-	"Port"->Automatic
-	};
-PySimpleServer[
-	dir:(_String|_File)?DirectoryQ,
-	path:_String|{___String}|Automatic|None:{},
+$PySimpleServer:=
+	If[PySimpleServerRunning[],$pySimpleServer,None];
+
+
+PySimpleServerRunning[]:=
+	MatchQ[$pySimpleServer["Process"],_ProcessObject?(ProcessStatus[#,"Running"]&)];
+
+
+PySimpleServerKill[]:=
+	If[PySimpleServerRunning[],
+		KillProcess@$pySimpleServer["Process"]
+		]
+
+
+Options[PySimpleServerStart]=
+	{
+		"Port"->Automatic,
+		"Path"->None
+		};
+PySimpleServerStart[
+	root:(_String|_File)?DirectoryQ|Automatic:Automatic,
 	ops:OptionsPattern[]
 	]:=
-	If[$OperatingSystem=!="Windows",
-		If[MatchQ[$pySimpleServer,_ProcessObject?(ProcessStatus[#,"Running"]&)],
-			KillProcess@$pySimpleServer
-			];
-		$pySimpleServer=
-			StartProcess[{"python","-m","SimpleHTTPServer",
-				Replace[OptionValue["Port"],{
-					Automatic->"7001",
-					e_:>ToString[e]
-					}]
-				},
-				ProcessDirectory->dir
+	With[{
+		port=
+			Replace[OptionValue["Port"],{
+				Automatic->"7001",
+				e_:>ToString[e]
+				}],
+		path=
+			Replace[OptionValue["Path"],{
+				Automatic->{},
+				s_String?FileExistsQ:>
+					FileNameSplit[s],
+				p_String:>
+					URLParse[p,"Path"]
+				}],
+		dir=Replace[root,Automatic:>Directory[]]
+		},
+		If[$OperatingSystem=!="Windows",
+			PySimpleServerKill[];
+			$pySimpleServer=
+				<|
+					"Process"->
+						StartProcess[
+							{"python","-m","SimpleHTTPServer",port},
+							ProcessDirectory->dir
+							],
+					"Root"->dir,
+					"Port"->port
+					|>;
+			If[path=!=None,
+				SystemOpen@
+					URLBuild@<|
+						"Scheme"->"http",
+						"Domain"->"localhost",
+						"Port"->port,
+						"Path"->path
+						|>
 				];
-		If[path=!=None,
+			$pySimpleServer,
+			Message[PySimpleServer::unsupported];
+			$Failed
+			]
+	];
+
+
+Options[PySimpleServerOpen]=
+	Options[PySimpleServerStart];
+PySimpleServerOpen[
+	path:_String?FileExistsQ|Automatic:Automatic,
+	ops:OptionsPattern[]
+	]:=
+	With[{
+		p=
+			Replace[path,
+				Automatic:>If[PySimpleServerRunning[],$pySimpleServer["Root"],Directory[]]
+				]
+		},
+		If[PySimpleServerRunning[]&&
+			StringStartsQ[
+				ExpandFileName[p],
+				ExpandFileName[$pySimpleServer["Root"]]
+				],
 			SystemOpen@
-				URLBuild@<|
-					"Scheme"->"http",
-					"Domain"->"localhost",
-					"Port"->
-						Replace[OptionValue["Port"],{
-							Automatic->"7001",
-							e_:>ToString[e]
-							}],
-					"Path"->Replace[path,Automatic->{}]
-					|>
-			];
-		$pySimpleServer,
-		Message[PySimpleServer::unsupported];
-		$Failed
-		];
+				URLBuild@
+					<|
+						"Scheme"->"http",
+						"Domain"->"localhost",
+						"Port"->$pySimpleServer["Port"],
+						"Path"->
+							FileNameSplit@
+								FileNameDrop[
+									ExpandFileName[p],
+									FileNameDepth@ExpandFileName[$pySimpleServer["Root"]]
+									]
+						|>,
+			PySimpleServerStart[
+				If[DirectoryQ@p,p,DirectoryName[p]],
+				"Path"->
+					If[DirectoryQ@p,Automatic,FileNameTake@p],
+				ops
+				]
+			]
+		]
 
 
 End[];

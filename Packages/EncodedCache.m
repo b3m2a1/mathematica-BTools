@@ -183,9 +183,11 @@ EncodedCacheOptionsLoad[spec_?StringQ]:=
 EncodedCacheOptionsExport[spec_?StringQ]:=
 	(
 		Quiet@
-			CreateDirectory@
+			CreateDirectory[
 				DirectoryName@
-					EncodedCacheOptionsFile[spec];
+					EncodedCacheOptionsFile[spec],
+				CreateIntermediateDirectories->True
+				];
 		Export[
 			EncodedCacheOptionsFile[spec],
 			$EncodedCacheOptions[spec]
@@ -308,6 +310,11 @@ EncodedCachePasswordExport[spec_?StringQ]:=
 			temp,
 			EncodedCachePassword[spec]
 			];
+		Quiet@
+			CreateDirectory[
+				DirectoryName@file,
+				CreateIntermediateDirectories->True
+				];
 		Encode[temp,file];
 		DeleteFile@temp;
 		file
@@ -351,6 +358,11 @@ EncodedCacheExport[(spec_?StringQ)?(KeyMemberQ[$EncodedCaches,#]&)]:=
 			temp,
 			$EncodedCaches[spec]
 			];
+		Quiet@
+			CreateDirectory[
+				DirectoryName@file,
+				CreateIntermediateDirectories->True
+				];
 		If[TrueQ@EncodedCacheOption[spec,"UsePassword"],
 			Encode[temp,
 				file,

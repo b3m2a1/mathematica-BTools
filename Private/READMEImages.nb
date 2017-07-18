@@ -1,0 +1,216 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.1' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      7749,        208]
+NotebookOptionsPosition[      6683,        177]
+NotebookOutlinePosition[      7038,        193]
+CellTagsIndexPosition[      6995,        190]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"$projimgs", ":=", "\[IndentingNewLine]", 
+  RowBox[{"FileBaseName", "/@", "\[IndentingNewLine]", 
+   RowBox[{"FileNames", "[", "\[IndentingNewLine]", 
+    RowBox[{"\"\<*.png\>\"", ",", "\[IndentingNewLine]", 
+     RowBox[{"FileNameJoin", "@", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"ParentDirectory", "@", 
+         RowBox[{"NotebookDirectory", "[", "]"}]}], ",", "\"\<project\>\"", 
+        ",", "\"\<img\>\""}], "}"}]}]}], "\[IndentingNewLine]", 
+    "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.707050131058566*^9, 
+  3.707050186265019*^9}},ExpressionUUID->"fbeabac2-c018-425b-a3be-\
+b24d89e77236"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"projimg", "[", "name_", "]"}], ":=", 
+   RowBox[{"FileNameJoin", "@", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"ParentDirectory", "@", 
+       RowBox[{"NotebookDirectory", "[", "]"}]}], ",", "\"\<project\>\"", 
+      ",", "\"\<img\>\"", ",", 
+      RowBox[{"name", "<>", "\"\<.png\>\""}]}], "}"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"backupimg", "[", "name_", "]"}], ":=", "\[IndentingNewLine]", 
+  RowBox[{"(", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Quiet", "[", 
+     RowBox[{"CreateDirectory", "[", 
+      RowBox[{"FileNameJoin", "@", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"NotebookDirectory", "[", "]"}], ",", "\"\<backups\>\"", 
+         ",", "\"\<img\>\""}], "}"}]}], "]"}], "]"}], ";", 
+    "\[IndentingNewLine]", 
+    RowBox[{"FileNameJoin", "@", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"NotebookDirectory", "[", "]"}], ",", "\"\<backups\>\"", ",", 
+       "\"\<img\>\"", ",", "\[IndentingNewLine]", 
+       RowBox[{"name", "<>", "\"\<_\>\"", "<>", 
+        RowBox[{"DateString", "[", "\"\<ISODateTime\>\"", "]"}], "<>", 
+        "\"\<.png\>\""}]}], "}"}]}]}], "\[IndentingNewLine]", 
+   ")"}]}]}], "Input",
+ CellChangeTimes->{{3.707050013754673*^9, 3.707050049793139*^9}, {
+  3.707051967958775*^9, 3.707052019467869*^9}, {3.70705210701933*^9, 
+  3.707052124750646*^9}, {3.707052211419462*^9, 
+  3.707052215371406*^9}},ExpressionUUID->"a4d9708d-f074-4011-bf22-\
+a179a1f799b9"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"projimgPad", "[", "name_", "]"}], ":=", "\[IndentingNewLine]", 
+  RowBox[{"ImagePad", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ImageCrop", "[", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"ImageResize", "[", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"ImagePad", "[", "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"Import", "@", 
+           RowBox[{"projimg", "[", "name", "]"}]}], ",", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"1", ",", "1"}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"0", ",", "0"}], "}"}]}], "}"}], ",", 
+          RowBox[{"GrayLevel", "[", ".8", "]"}]}], "]"}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{"{", 
+         RowBox[{"Automatic", ",", "200"}], "}"}]}], "\[IndentingNewLine]", 
+       "]"}], ",", "\[IndentingNewLine]", 
+      RowBox[{"{", 
+       RowBox[{"800", ",", "Full"}], "}"}], ",", "\[IndentingNewLine]", 
+      RowBox[{"Padding", "\[Rule]", 
+       RowBox[{"GrayLevel", "[", ".99", "]"}]}]}], "\[IndentingNewLine]", 
+     "]"}], ",", "\[IndentingNewLine]", "1", ",", "\[IndentingNewLine]", 
+    RowBox[{"GrayLevel", "[", ".8", "]"}]}], "\[IndentingNewLine]", 
+   "]"}]}]], "Input",
+ CellChangeTimes->{{3.707050053411952*^9, 3.707050073256596*^9}, {
+   3.707050113059546*^9, 3.707050120005559*^9}, {3.707050259897986*^9, 
+   3.707050270110633*^9}, 3.707050783603239*^9, {3.707050888899599*^9, 
+   3.707050903065426*^9}, {3.707051697778495*^9, 3.707051770534631*^9}, {
+   3.707051922388887*^9, 
+   3.707051930138852*^9}},ExpressionUUID->"cdec3198-b421-4f6c-99d2-\
+2aff066fa862"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"projimgExport", "[", "name_", "]"}], ":=", "\[IndentingNewLine]", 
+   
+   RowBox[{"(", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"CopyFile", "[", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"projimg", "[", "name", "]"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"backupimg", "[", "name", "]"}]}], "\[IndentingNewLine]", 
+      "]"}], ";", "\[IndentingNewLine]", 
+     RowBox[{"Export", "[", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"projimg", "[", "name", "]"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"projimgPad", "[", "name", "]"}]}], "\[IndentingNewLine]", 
+      "]"}]}], "\[IndentingNewLine]", ")"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.707051950735079*^9, 3.707051958111808*^9}, {
+  3.7070520275419493`*^9, 3.707052096536529*^9}, {3.707052176835456*^9, 
+  3.707052179146637*^9}},ExpressionUUID->"c9a0413a-62b3-4d81-aaab-\
+5a28f335b771"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"projimgExport", "[", "\"\<fe-integrations\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.7070521398645773`*^9, 
+  3.7070521448787527`*^9}},ExpressionUUID->"9c955662-d772-4ac6-a4ea-\
+4c03f769acb7"],
+
+Cell[BoxData["\<\"/Users/markb/Documents/Wolfram \
+Mathematica/Applications/BTools/project/img/fe-integrations.png\"\>"], \
+"Output",
+ CellChangeTimes->{
+  3.7070601013373413`*^9},ExpressionUUID->"da4c35b0-70a7-444e-9923-\
+8a63344f700b"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"projimgExport", "/@", 
+  RowBox[{"{", 
+   RowBox[{
+   "\"\<code-package\>\"", ",", "\"\<paclet-page\>\"", ",", 
+    "\"\<sample-doc\>\""}], "}"}]}]], "Input",
+ CellChangeTimes->{{3.7070521672844257`*^9, 
+  3.707052170586583*^9}},ExpressionUUID->"20e1f9ef-c2da-4cc5-89c1-\
+a5142bf91d80"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+  "\"\</Users/markb/Documents/Wolfram \
+Mathematica/Applications/BTools/project/img/code-package.png\>\"", ",", 
+   "\"\</Users/markb/Documents/Wolfram \
+Mathematica/Applications/BTools/project/img/paclet-page.png\>\"", ",", 
+   RowBox[{
+   "\"\</Users/markb/Documents/Wolfram \
+Mathematica/Applications/BTools/project/img/sample-doc.png\>\"", "//", 
+    "Import"}]}], "}"}]], "Input",
+ CellChangeTimes->{{3.707060122020105*^9, 
+  3.707060124106154*^9}},ExpressionUUID->"46b4758b-8892-4bdb-a338-\
+ed74e521185d"]
+},
+WindowSize->{808, 755},
+WindowMargins->{{Automatic, 106}, {Automatic, 0}},
+FrontEndVersion->"11.1 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 16, \
+2017)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 637, 14, 138, "Input", "ExpressionUUID" -> \
+"fbeabac2-c018-425b-a3be-b24d89e77236"],
+Cell[1198, 36, 1499, 37, 180, "Input", "ExpressionUUID" -> \
+"a4d9708d-f074-4011-bf22-a179a1f799b9"],
+Cell[2700, 75, 1680, 37, 306, "Input", "ExpressionUUID" -> \
+"cdec3198-b421-4f6c-99d2-2aff066fa862"],
+Cell[4383, 114, 934, 20, 243, "Input", "ExpressionUUID" -> \
+"c9a0413a-62b3-4d81-aaab-5a28f335b771"],
+Cell[CellGroupData[{
+Cell[5342, 138, 218, 4, 32, "Input", "ExpressionUUID" -> \
+"9c955662-d772-4ac6-a4ea-4c03f769acb7"],
+Cell[5563, 144, 237, 5, 54, "Output", "ExpressionUUID" -> \
+"da4c35b0-70a7-444e-9923-8a63344f700b"]
+}, Open  ]],
+Cell[5815, 152, 310, 8, 32, "Input", "ExpressionUUID" -> \
+"20e1f9ef-c2da-4cc5-89c1-a5142bf91d80"],
+Cell[6128, 162, 551, 13, 138, InheritFromParent, "ExpressionUUID" -> \
+"46b4758b-8892-4bdb-a338-ed74e521185d"]
+}
+]
+*)
+

@@ -889,6 +889,8 @@ generateSymRefs[seeAlso_]:=
 				Replace[Thread[Hold[seeAlso]],
 					Hold[h_Hold]:>h,
 					1],{
+				Hold[s_String]:>
+					ToExpression[s,StandardForm,dgQuietSymbolName],
 				Hold[s_Symbol]:>
 					dgQuietSymbolName@Unevaluated[s],
 				Hold[k_->v_String]:>
@@ -898,10 +900,10 @@ generateSymRefs[seeAlso_]:=
 		Replace[names,{
 			s_String:>
 				With[{p=pacletLinkBuild[s,"ref"]},
-					s:>Documentation`HelpLookup[p]
+					"\""<>s<>"\"":>Documentation`HelpLookup[p]
 					],
 			(k_->v_):>
-				k:>Documentation`HelpLookup[v]
+				"\""<>ToString@k<>"\"":>Documentation`HelpLookup[v]
 			},
 			1]
 		];
@@ -910,7 +912,7 @@ generateSymRefs~SetAttributes~HoldFirst;
 
 generateGuideRefs[guides_]:=
 	With[{g=pacletLinkBuild[Last@#,"guide"]},
-		First@#:>Documentation`HelpLookup[g,EvaluationNotebook[]]
+		"\""<>First@#<>"\"":>Documentation`HelpLookup[g,EvaluationNotebook[]]
 		]&/@
 		Replace[guides,
 			s_String:>(s->s),
@@ -921,7 +923,7 @@ $DocDefaultURLBase=
 	URLBuild@<|
 		"Scheme"->"https",
 		"Domain"->"www.wolframcloud.com",
-		"Path"->{"objects","user-affd7b1c-ecb6-4ccc-8cc4-4d107e2bf04a","reference"}
+		"Path"->{"objects","b3m2a1.paclets","reference"}
 		|>;
 
 
@@ -3495,6 +3497,8 @@ guideRefBox[s_String,styling_:"InlineFunctionSans"]:=
 	guideRefBox[s->s,styling];
 
 
+guideSubsection[Delimiter]=
+	guideFunctionCell[Delimiter,___];
 guideSubsection[
 	name:(_String->_String)|_String|None,
 	fs_]:=
@@ -3564,45 +3568,30 @@ iGuideMain[title_,abstract_]:=
 
 
 iGuideAnchorBar[name_,fs_,relatedGuides_]:=
-	Cell[
-		BoxData@
-			GridBox[{{
-				GridBox[{{
-					anchorBarPacletCell["GUIDE",docTypeColor["GUIDE"]],
-					""
-					}},
-					GridBoxAlignment->{"Rows" -> {{Center}}},
-					GridBoxItemSize->
-						{
-							"Columns" -> 
-								{Full, Scaled[0.02]},
-							"Rows" -> {{2.5}}
-							}
-					],
-					Cell[
-						TextData@
-							Riffle[{
-								anchorBarActionMenu[
-									"Functions",
-									generateSymRefs[fs],
-									"GuideFunction"
-									],
-								anchorBarActionMenu["Related Guides",
-									generateGuideRefs[relatedGuides],
-									"MoreAbout"
-									],
-								anchorBarActionMenu["URL",
-									generateUrlRefs[name],
-									"URLMenu"
-									]
-								},
-							"\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]"
-							],
-						"AnchorBar"
-						]
-				}}
-				],
-		"AnchorBarGrid"
+	anchorBarCell[
+		{
+			"GUIDE",
+			docTypeColor["GUIDE"]
+			},
+		Replace[generateSymRefs[fs],{
+			l:{__}:>
+				{"Functions",l,"GuideFunction"},
+			_:>Sequence@@{}
+			}],
+			Replace[generateGuideRefs[relatedGuides],{
+				l:{__}:>
+					{
+						"Related Guides",
+						l,
+						"MoreAbout"
+						},
+				_:>Sequence@@{}
+				}],
+			Replace[generateUrlRefs[name],{
+				l:{__}:>
+					{ "URL",l,"URLMenu"},
+				_:>Sequence@@{}
+				}]
 		];
 
 
@@ -3754,10 +3743,10 @@ Options[GenerateGuide]=
 		];
 GenerateGuide[ops:OptionsPattern[]]:=
 	CreateDocument[
-		GuideNotebook[FilterRules[{ops},Options@GuideNotebook]],
-		FilterRules[{ops},Options@CreateDocument],
+		GuideNotebook[FilterRules[Flatten@{ops},Options@GuideNotebook]],
+		FilterRules[Flatten@{ops},Options@CreateDocument],
 		WindowTitle->
-			Replace[Lookup[{ops},"Title","No Title"],
+			Replace[Lookup[Flatten@{ops},"Title","No Title"],
 				e:Except[_String]:>
 					FirstCase[e,_String,"No Title",\[Infinity]]
 				]<>" - Guide",
@@ -3860,9 +3849,9 @@ GenerateGuide[namePattern_String,ops:OptionsPattern[]]:=
 		];
 
 
-GenerateGuide[nb_NotebookObject]:=
+GenerateGuide[nb_NotebookObject,ops:OptionsPattern[]]:=
 	Block[{$DocGenLine=0},
-		GenerateGuide@#
+		GenerateGuide[#,ops]
 		]&/@scrapeGuideTemplate@nb
 
 
@@ -3892,22 +3881,25 @@ SaveGuide[
 				CreateIntermediateDirectories->True
 				];
 			Map[
-				Export[
-					FileNameJoin@{
-						dir,
-						If[extension,
-							"Guides",
-							Nothing
-							],
-						URLParse[
-							CurrentValue[
-								#,
-								{TaggingRules,"Metadata","uri"}
+				With[{nbObj=#},
+					Function[NotebookClose[nbObj];#]@
+					Export[
+						FileNameJoin@{
+							dir,
+							If[extension,
+								"Guides",
+								Nothing
 								],
-							"Path"
-							][[-1]]<>".nb"
-						},
-					DeleteCases[NotebookGet@#,Visible->_]
+							URLParse[
+								CurrentValue[
+									#,
+									{TaggingRules,"Metadata","uri"}
+									],
+								"Path"
+								][[-1]]<>".nb"
+							},
+						DeleteCases[NotebookGet@nbObj,Visible->_]
+						]
 					]&,
 				Flatten@{nb}
 			]),
@@ -5319,6 +5311,11 @@ generateDocumentation[
 			];
 
 
+(* ::Subsubsection::Closed:: *)
+(*GenerateDocumentation*)
+
+
+
 Options[GenerateDocumentation]=
 	Options[generateDocumentation];
 GenerateDocumentation[
@@ -5567,7 +5564,40 @@ webExportApplicationsInstall[
 	dir:(_String|_File)?DirectoryQ|_FileName?(DirectoryQ@*ToFileName):
 		FileName[{$UserBaseDirectory,"Applications"}]
 	]:=
-	$Failed(*Download Workbench plugin and install*);
+	If[Length[Join@@PacletManager`PacletFind/@{"DocumentationBuild","Transmogrify"}]<2,
+		If[
+				TrueQ@DialogInput[
+					Grid@{
+						{"Download the DocumentationBuild and Transmogrify packages?"},
+						{DefaultButton[DialogReturn[True]],CancelButton}
+						}
+					],
+			{
+				If[Length@PacletManager`PacletFind["DocumentationBuild"]===0,
+					PacletInstall@
+						URLBuild@<|
+							"Scheme"->"http",
+							"Domain"->"www.wolframcloud.com",
+							"Path"->
+							{"objects","b3m2a1.paclets","paclets",
+								"DocumentationBuild","Paclets","DocumentationBuild-1.0.0.paclet"}
+							|>
+					],
+				If[Length@PacletManager`PacletFind["Transmogrify"]===0,
+					PacletInstall@
+						URLBuild@<|
+							"Scheme"->"http",
+							"Domain"->"www.wolframcloud.com",
+							"Path"->
+							{"objects","b3m2a1.paclets","paclets",
+								"Transmogrify","Paclets","Transmogrify-1.0.0.paclet"}
+							|>
+					]
+				},
+			$Failed
+			],
+		Join@@PacletManager`PacletFind/@{"DocumentationBuild","Transmogrify"}
+		];
 
 
 webExportTransformAndLayout[entityType_String]:=
@@ -5693,7 +5723,10 @@ $webExportParameters=
 webExportGatherParameters[nb_,ops___?OptionQ]:=
 	Normal@
 		KeyMap[
-			Capitalize@*
+			Replace[
+				HoldPattern[Capitalize[s_]]:>
+					Function[ToUpperCase[StringTake[#,1]]<>StringDrop[#,1]][s]
+				]@*Capitalize@*
 				Replace[$webExportParameters],
 			Association@
 				FilterRules[
@@ -5784,10 +5817,13 @@ webExportNotebookPrep//Clear
 webExportNotebookPrep[nb_,"Common"]:=
 	ReplaceRepeated[
 		nb,{
-		TemplateBox[b_,"RefLinkPlain",e___]:>
+		(*Downconvert RefLinkPlain boxes*)
+		TemplateBox[b_,"RefLinkPlain"|"PackageLink",e___]:>
 			TemplateBox[b,"RefLink",e],
+		(*Provide single string BaseStyle*)
 		(BaseStyle->{s_}):>
 			(BaseStyle->s),
+		(*Strip single-space Spacers*)
 		Cell[
 			BoxData[
 				InterpretationBox[
@@ -5802,10 +5838,13 @@ webExportNotebookPrep[nb_,"Common"]:=
 			___
 			]:>
 			Sequence@@{},
+		(*Remove versioning*)
 		DynamicBox[e:If[$VersionNumber<_,__],___]:>
 			e,
+		(*Remove LinkHand MouseAppearance on top action menus*)
 		TagBox[a:ActionMenuBox[_FrameBox,___],MouseAppearanceTag["LinkHand"]]:>
 			a,
+		(*Revert arrows on top action menus*)
 		Cell[
 			TextData[{t_," ",
 				Cell[
@@ -5864,36 +5903,48 @@ webExportNotebookPrep[nb_,"Common"]:=
 
 webExportNotebookPrep[nb_,"Symbol"]:=
 	ReplaceRepeated[nb,{
+		(*Convert TextData cells to plain cells*)
 		Cell[TextData[s_String],r___]:>
 			Cell[s,r],
+		(*Convert reflinks to hyperlinks*)
 		t:TemplateBox[{_,_String},___]:>
 			refLinkRewind[t],
+		(*Remove language protections reflinks to hyperlinks*)
 		Cell[TextData[{c_,___}],"ObjectNameGrid",___]:>
 			c,
 		Cell[_,"NotesThumbnails"|"ObjectNameTranslation",___]:>
 			Sequence@@{},
-		Cell[TextData[{Cell[BoxData[_DynamicBox],___],e__}],
+		(*Remove arrow openers*)
+		Cell[
+			TextData[{
+				Cell[BoxData[_DynamicBox],___]|
+					Cell[BoxData[Cell[BoxData[_TogglerBox],___]],___],
+				e__
+				}],
 			t:"NotesSection"|"PrimaryExamplesSection"|
 			"ExampleSection"|"ExampleSubsection",r___]:>
-			Cell[TextData[e],t,r]
+			Cell[TextData[{e}],t,r]
 		}]
 
 
 webExportNotebookPrep[nb_,"Guide"]:=
 		Replace[
+			(*Reformat guide footer*)
 			Notebook[{
 				a_Cell,
 				c:Cell[_CellGroupData],
 				content:Shortest[__],
 				e:
 					Cell[_,
-						"GuideMoreAboutSection"|"GuideRelatedLinksSection"|
+						"GuideMoreAboutSection"|"GuideTutorialsSection"|
+						"GuideRelatedLinksSection"|"GuideLinksSection"|
 							"GuideRelatedTutorialsSection"|"FooterCell",
 						___]|
 					Cell[
 						CellGroupData[{
 							Cell[_,
-								"GuideMoreAboutSection"|"GuideRelatedLinksSection"|
+								"GuideMoreAboutSection"|"GuideTutorialsSection"|
+								"GuideRelatedLinksSection"|"GuideLinksSection"|
 									"GuideRelatedTutorialsSection"|"FooterCell",
 								___],
 							___
@@ -5924,12 +5975,15 @@ webExportNotebookPrep[nb_,"Guide"]:=
 					]
 			]@
 		ReplaceAll[{
+			(*Reformat Related ___ sections*)
 			Cell[
 				CellGroupData[{
 					c:
 						Cell[_,
-							"GuideMoreAboutSection"|"GuideRelatedLinksSection"|
-								"GuideRelatedTutorialsSection",___],
+							"GuideMoreAboutSection"|"GuideTutorialsSection"|
+							"GuideRelatedLinksSection"|"GuideLinksSection"|
+								"GuideRelatedTutorialsSection"|"FooterCell",
+							___],
 					e___
 					},
 					s___
@@ -5939,20 +5993,49 @@ webExportNotebookPrep[nb_,"Guide"]:=
 				Cell[CellGroupData[{c,Cell["", "SectionHeaderSpacer"],e},s],o]
 			}]@
 		ReplaceRepeated[nb,{
+			(*Remove delimiter subsections*)
 			Cell[
 				CellGroupData[
 					{e__,Cell[_,"GuideDelimiterSubsection",___]},
 					s___
 					],
 				o___]:>
-				Cell[CellGroupData[{e},s],o],
+				Cell[CellGroupData[{e},s],o],(*
+			(*Remove raw text after group headers*)
+			Cell[
+				CellGroupData[{
+					c1:Cell[_,"GuideFunctionsSubsection",___],
+					Cell[_,"GuideText",___],
+					c2__
+					},
+					e1___
+					],
+				e2___
+				]:>
+				Cell[
+					CellGroupData[{c1,c2},e1],
+					e2
+					],
+			Cell[
+				CellGroupData[{
+					c1:Cell[_,"GuideFunctionsSubsection",___],
+					Cell[_,"GuideText",___]
+					},
+					e1___
+					],
+				e2___
+				]:>
+				Sequence@@{},*)
+			(*Downconvert MoreAbout links*)
 			(BaseStyle->"GuideMoreAbout"):>
 				(BaseStyle->"GuideMoreAboutSub"),
 			Cell[b_,"GuideMoreAbout",e___]:>
 				Cell[b,"GuideMoreAboutSub",e],
+			(*Add expected spacer to section names*)
 			Cell[s_String,
-				t:"GuideMoreAboutSection"|"GuideRelatedLinksSection"|
-					"GuideRelatedTutorialsSection",
+				t:"GuideMoreAboutSection"|"GuideTutorialsSection"|
+					"GuideRelatedLinksSection"|"GuideLinksSection"|
+						"GuideRelatedTutorialsSection",
 				e___]:>
 				Cell[
 					TextData[{
@@ -5977,7 +6060,10 @@ webExportNotebookPrep[nb_,_]:=nb
 
 webExportNotebookPrep[nb_]:=
 	With[{t=
-		Capitalize@
+		Replace[
+			HoldPattern[Capitalize[s_]]:>
+				Function[ToUpperCase[StringTake[#,1]]<>StringDrop[#,1]][s]
+			]@Capitalize@
 			Fold[Lookup,
 				Options[nb,TaggingRules],
 				{TaggingRules,"Metadata","type"}
@@ -6017,6 +6103,8 @@ webExportNotebook[file_,nb_,ops___?OptionQ]:=
 	With[{params=Flatten@{ops}},
 		Needs["DocumentationBuild`"];
 		Block[{
+			(*transmogrifyDVs=DownValues[Transmogrify`Private`MakeItSo],
+			Transmogrify`Private`MakeItSo,*)
 			DocumentationBuild`Common`PubsEvaluateWithFE=
 				Identity,
 			DocumentationBuild`Common`Private`PubsStartFrontEnd=
@@ -6049,6 +6137,19 @@ webExportNotebook[file_,nb_,ops___?OptionQ]:=
 				MathLink`CallFrontEnd[
 					FrontEnd`NotebookPutReturnObject[Append[e,Visible->False]]
 					];
+			(*Transmogrify`Private`MakeItSo[s_Symbol]/;!TrueQ[$override]:=
+				Echo@Block[{$override=True},
+					Replace[{Transmogrify`Private`MakeItSo[s]},{
+						{}:>
+							ToString@s(*If[Length@Names[s]>0,s,Sequence@@{}]*),
+						e_\[RuleDelayed]First[e]
+						}]
+					];*)
+			(*DownValues[Transmogrify`Private`MakeItSo]=
+				Join[
+					DownValues[Transmogrify`Private`MakeItSo],
+					transmogrifyDVs
+					];*)
 			Quiet[
 				DocumentationBuild`Export`ExportWebPage[
 					ExpandFileName[expFile],
@@ -6145,61 +6246,95 @@ $webExportAssets:=
 
 
 webExportAssetsCopy1[dir:(_String|_File)?DirectoryQ]:=
-	Block[{d,f},
-		Monitor[
-			Table[
-				With[{depth=a["Drop"],insert=a["Insert"]},
+	With[{resources=$webExportAssets},
+		If[
+			AnyTrue[resources,
+				AnyTrue[
+					#["Files"],
+					With[{depth=#["Drop"],insert=#["Insert"]},
+						Not@FileExistsQ@FileNameJoin@
+							Flatten@{dir,
+								DirectoryName@FileNameDrop[#,depth],
+								insert
+								}&
+						]
+					]&
+				],
+			Block[{d,f},
+				Monitor[
 					Table[
-						d=
-							FileNameJoin@
-								Flatten@{dir,
-									DirectoryName@FileNameDrop[f,depth],
-									insert
-									};
-							If[!DirectoryQ@d,
-								CreateDirectory[d,
-									CreateIntermediateDirectories->True
-									]
-								];
-							If[StringMatchQ[FileExtension[#],"css"|"js"|"html"],
-								webExportPostProcess[#],
-								#
-								]&@
-								CopyFile[f,
+						With[{depth=a["Drop"],insert=a["Insert"]},
+							Table[
+								d=
+									FileNameJoin@
+										Flatten@{dir,
+											DirectoryName@FileNameDrop[f,depth],
+											insert
+											};
+								If[!DirectoryQ@d,
+									CreateDirectory[d,
+										CreateIntermediateDirectories->True
+										]
+									];
+								If[!FileExistsQ@
+										FileNameJoin@
+											Flatten@{
+												d,
+												FileNameTake@f
+												},
+									If[StringMatchQ[FileExtension[#],"css"|"js"|"html"],
+										webExportPostProcess[#],
+										#
+										]&@
+										CopyFile[f,
+											FileNameJoin@
+												Flatten@{
+													d,
+													FileNameTake@f
+													},
+											OverwriteTarget->True
+											],
 									FileNameJoin@
 										Flatten@{
 											d,
 											FileNameTake@f
-											},
-									OverwriteTarget->True
+											}
 									],
-						{f,a["Files"]}
-						]
-					],
-				{a,$webExportAssets}
-				],
-		Internal`LoadingPanel[
-			"Copying `` to ``"~TemplateApply~
-				{
-					f,
-					FileNameJoin@
-						Flatten@{
-							d,
-							FileNameTake@f
+								{f,a["Files"]}
+								]
+							],
+						{a,resources}
+						],
+				Internal`LoadingPanel[
+					"Copying `` to ``"~TemplateApply~
+						{
+							f,
+							FileNameJoin@
+								Flatten@{
+									d,
+									FileNameTake@f
+									}
 							}
-					}
+					]
+				]
+			],
+		Join@@Map[
+			With[{depth=#["Drop"],insert=#["Insert"],files=#["Files"]},
+				Map[
+					FileNameJoin@
+						Flatten@{dir,
+							DirectoryName@FileNameDrop[#,depth],
+							insert
+							}&,
+					files
+					]
+				]&,
+			resources
 			]
 		]
 	];
 webExportAssetsCopy2[dir:(_String|_File)?DirectoryQ]:=
-	URLDownload[
-		URLBuild@
-			Flatten@{
-				"http://reference.wolfram.com/2013",
-				#
-				},
-		FileNameJoin@Flatten{dir,#}
-		]&/@
+	With[{resources=
 		Join[
 			Thread[{"javascript",{
 				"sub-pages.js",
@@ -6208,13 +6343,45 @@ webExportAssetsCopy2[dir:(_String|_File)?DirectoryQ]:=
 				}}],
 			Thread[{"images",{"clipboard@2x.png"}}]
 			]
+		},
+		If[AnyTrue[resources,Not@FileExistsQ@FileNameJoin@Flatten@{dir,#}&],
+			Block[{u,f},
+				Monitor[
+					Table[
+						f=FileNameJoin@Flatten@{dir,p};
+						u=
+							URLBuild@
+								Flatten@{
+									"http://reference.wolfram.com/2013",
+									p
+									};
+						If[!FileExistsQ@f,
+							URLDownload[u,f],
+							f
+							],
+						{
+							p,
+							resources
+							}	
+						],
+					Internal`LoadingPanel[
+						"Downloading `` to ``"~TemplateApply~
+							{
+								u,
+								f
+								}
+						]
+					]
+				]
+			]
+		]
 
 
 webExportAssetsCopy[dir:(_String|_File)?DirectoryQ]:=
-	(
-		webExportAssetsCopy1[dir];
-		(*webExportAssetsCopy2[dir];*)
-		);
+	Join[
+		webExportAssetsCopy1[dir],
+		webExportAssetsCopy2[dir]
+		];
 
 
 webExportPostProcessSingleReplacements//Clear;
@@ -6547,6 +6714,10 @@ webExportCloudDeploy[
 		]
 
 
+GenerateHTMLDocumentation::nopkg=
+	"DocumentationBuild and/or Transmogrify missing";
+
+
 Options[GenerateHTMLDocumentation]=
 	Join[
 		Options[GenerateSymbolPages],
@@ -6556,7 +6727,7 @@ Options[GenerateHTMLDocumentation]=
 			CloudConnect->Automatic,
 			CloudDeploy->False,
 			"DeployAssets"->False,
-			"CopyAssets"->Automatic
+			"CopyAssets"->True
 		}];
 GenerateHTMLDocumentation[dir_String?DirectoryQ,
 	nb:{__Notebook}|None,
@@ -6571,135 +6742,138 @@ GenerateHTMLDocumentation[dir_String?DirectoryQ,
 		},
 		If[
 			TrueQ@OptionValue["CopyAssets"]||
-			And[
-				OptionValue["CopyAssets"]===Automatic||TrueQ@OptionValue["DeployAssets"],
-				AnyTrue[{"css","fonts","images","includes","javascript"},
-					Not@DirectoryQ[FileNameJoin@{dir,#}]&
-					]
-				],
+				TrueQ@OptionValue["DeployAssets"],
 			webExportAssetsCopy[dir]
 			];
-		CheckAbort[
-			Function[
-				CurrentValue[$FrontEndSession,
-					{AutoStyleOptions,"HighlightUndefinedSymbols"}
-					]=
-					highlight;
-				If[deploy,
-					Replace[
-						Replace[OptionValue[CloudConnect],
-							Automatic->Key["PacletsAccount"]
-							],{
-						s_String:>
-							If[$WolframID=!=s,
-								CloudConnect[s]
-								],
-						{s__String}:>
-							CloudConnect[s],
-						k_Key:>
-							KeyChainConnect[k]
-						}]
-					];
-				If[deploy&&OptionValue["DeployAssets"],
-					Replace[
-						Replace[OptionValue["ResourceBase"],{
-							Automatic->"reference",
-							CloudObject[c_,___]:>c
-							}],
-						s_String:>
-							webExportAssetsDeploy[dir,s,
-								FilterRules[
-									{
-										ops
-										},
-									Options@webExportAssetsDeploy
-									]
-								]
-						]
-					];
-				If[deploy,
-					Replace[
-						Replace[OptionValue["URLBase"],{
-							Automatic->"reference",
-							CloudObject[c_,___]:>c
-							}],
-						s_String:>
-							If[#=!=None,
-								webExportCloudDeploy[dir,#,s,
+		If[Length@webExportApplicationsInstall[]<2,
+			Message[GenerateHTMLDocumentation::nopkg];
+			$Failed,
+			CheckAbort[
+				Function[
+					CurrentValue[$FrontEndSession,
+						{AutoStyleOptions,"HighlightUndefinedSymbols"}
+						]=
+						highlight;
+					If[deploy,
+						Replace[
+							Replace[OptionValue[CloudConnect],
+								Automatic->Key["PacletsAccount"]
+								],{
+							s_String:>
+								If[$WolframID=!=s,
+									CloudConnect[s]
+									],
+							{s__String}:>
+								CloudConnect[s],
+							k_Key:>
+								KeyChainConnect[k]
+							}]
+						];
+					If[deploy&&OptionValue["DeployAssets"],
+						Replace[
+							Replace[OptionValue["ResourceBase"],{
+								Automatic->"reference",
+								CloudObject[c_,___]:>c
+								}],
+							s_String:>
+								webExportAssetsDeploy[dir,s,
 									FilterRules[
 										{
 											ops
 											},
-										Options@webExportCloudDeploy
+										Options@webExportAssetsDeploy
 										]
 									]
-								]
-						],
-					#
-					]
-				]@
-			If[nb===None,
-				None,
-					If[Length@nb>1,
-						Monitor[ReleaseHold[#],
-							Internal`LoadingPanel[
-								"Generating HTML page `` of ``"
-									~TemplateApply~
-								{i,Length@nb}
-								]
-							],
-						ReleaseHold@#
-						]&@
-						Hold@
-						Table[
-							With[{
-								params=webExportGatherParameters[nb[[i]],ops]
-								},
-								webExportPostProcess[
-									webExportNotebook[dir,nb[[i]],params],
-									FilterRules[
-										Flatten@{
-											If[deploy,
-												"URLBase"->
-													Replace[OptionValue["URLBase"],{
-														Automatic:>
-															First@CloudObject["reference"],
-														CloudObject[u_,___]:>
-															u,
-														s_String:>
-															First@CloudObject[s]
-														}],
-												Nothing
-												],
-											If[deploy,
-												"ResourceBase"->
-													Replace[OptionValue["ResourceBase"],{
-														Automatic:>
-															First@CloudObject["reference"],
-														CloudObject[u_,___]:>
-															u,
-														s_String:>
-															First@CloudObject[s]
-														}],
-												Nothing
-												],
-											params
-											},
-										Options[webExportPostProcess]
+							]
+						];
+					If[deploy,
+						Replace[
+							Replace[OptionValue["URLBase"],{
+								Automatic->"reference",
+								CloudObject[c_,___]:>c
+								}],
+							s_String:>
+								If[#=!=None,
+									webExportCloudDeploy[dir,#,s,
+										FilterRules[
+											{
+												ops
+												},
+											Options@webExportCloudDeploy
+											]
 										]
+									]
+							],
+						#
+						]
+					]@
+				If[nb===None,
+					None,
+						If[Length@nb>1,
+							Monitor[ReleaseHold[#],
+								Internal`LoadingPanel[
+									"Generating HTML page `` of ``"
+										~TemplateApply~
+									{i,Length@nb}
 									]
 								],
-							{i,Length@nb}
-							]
-						
-				],
-			CurrentValue[$FrontEndSession,
-				{AutoStyleOptions,"HighlightUndefinedSymbols"}
-				]=
-				highlight;
-			$Aborted
+							ReleaseHold@#
+							]&@
+							Hold@
+							Table[
+								With[{
+									params=webExportGatherParameters[nb[[i]],ops]
+									},
+									webExportPostProcess[
+										webExportNotebook[dir,nb[[i]],params],
+										FilterRules[
+											Flatten@{
+												If[deploy,
+													"URLBase"->
+														Replace[OptionValue["URLBase"],{
+															Automatic:>
+																First@CloudObject["reference"],
+															CloudObject[u_,___]:>
+																u,
+															s_String:>
+																First@CloudObject[s]
+															}],
+													Nothing
+													],
+												If[deploy,
+													"ResourceBase"->
+														Replace[OptionValue["ResourceBase"],{
+															Automatic:>
+																First@CloudObject["reference"],
+															CloudObject[u_,___]:>
+																u,
+															s_String:>
+																First@CloudObject[s]
+															}],
+													Nothing
+													],
+												params
+												},
+											Options[webExportPostProcess]
+											]
+										]
+									],
+								{i,Length@nb}
+								]
+							
+					],
+				CurrentValue[$FrontEndSession,
+					{AutoStyleOptions,"HighlightUndefinedSymbols"}
+					]=
+					highlight;
+				$Aborted
+				]
 			]
 		];
+
+
+GenerateHTMLDocumentation::notnb=
+	"`` is not a notebook";
 
 
 GenerateHTMLDocumentation[
@@ -6712,18 +6886,31 @@ GenerateHTMLDocumentation[
 	dir_String?DirectoryQ,
 	f:{__String?FileExistsQ},
 	ops___?OptionQ
-	]:=	
-	With[{nb=Import[#]},
-		If[MatchQ[nb,_Notebook],
-			GenerateHTMLDocumentation[dir,nb,ops],
-			$Failed
+	]:=
+	Block[{file},
+		Monitor[
+			Table[
+				With[{nb=Import[file]},
+					If[MatchQ[nb,_Notebook],
+						GenerateHTMLDocumentation[dir,nb,ops],
+						Message[GenerateHTMLDocumentation::nonb,nb];
+						$Failed
+						]
+					],
+				{file,f}
+				],
+			Internal`LoadingPanel[
+				"Generating HTML for ``"~TemplateApply~
+					file
+				]
 			]
-		]&/@f;
+		];
 GenerateHTMLDocumentation[dir_String?DirectoryQ,
 	nb:_Notebook|_NotebookObject|(_String|_File)?(FileExistsQ@#&&Not@DirectoryQ@#&),
 	ops___?OptionQ
 	]:=
-	Replace[GenerateHTMLDocumentation[dir,{nb},ops],
+	Replace[
+		GenerateHTMLDocumentation[dir,{nb},ops],
 		{l_}:>l
 		];
 GenerateHTMLDocumentation[
@@ -6739,7 +6926,35 @@ GenerateHTMLDocumentation[
 				],
 			\[Infinity]],
 		ops
-		]
+		];
+
+
+GenerateHTMLDocumentation::nopac=
+	"Paclet `` not found at location ``"
+
+
+GenerateHTMLDocumentation[
+	dir_String?DirectoryQ,
+	p_PacletManager`Paclet,
+	ops___?OptionQ
+	]:=
+	With[{d=PacletLookup[p,"Location"]},
+		If[DirectoryQ[d],
+			GenerateHTMLDocumentation[dir,d,ops],
+			Message[GenerateHTMLDocumentation::nopac,p,d];
+			$Failed
+			]
+		];
+GenerateHTMLDocumentation[
+	dir_String?DirectoryQ,
+	p:{__PacletManager`Paclet},
+	ops___?OptionQ
+	]:=
+	GenerateHTMLDocumentation[dir,#,ops]&/@p
+
+
+GenerateHTMLDocumentation::ambig=
+	"No unique symbol for pattern ``";
 
 
 GenerateHTMLDocumentation[
@@ -6749,6 +6964,7 @@ GenerateHTMLDocumentation[
 	]:=
 	With[{n=Names[pattern]},
 		If[Length@n!=1,
+			Message[GenerateHTMLDocumentation::ambig,pattern];
 			$Failed,
 			With[{
 				nb=
@@ -6775,12 +6991,13 @@ $webDocsHTMLBuildDirectory=
 GenerateHTMLDocumentation[
 	Optional[Automatic,Automatic],
 	s:Except[_?OptionQ],
-	e:Except[(_String|_File)?DirectoryQ]...
+	e:Except[(_String|_File)?DirectoryQ|_PacletManager`Paclet]...
 	]:=
 	With[{dir=
 		Quiet[
-			DeleteDirectory[$webDocsHTMLBuildDirectory,DeleteContents->True];
-			CreateDirectory[$webDocsHTMLBuildDirectory]
+			(*DeleteDirectory[$webDocsHTMLBuildDirectory,DeleteContents\[Rule]True];*)
+			CreateDirectory[$webDocsHTMLBuildDirectory];
+			$webDocsHTMLBuildDirectory
 			]},
 		GenerateHTMLDocumentation[
 			dir,
