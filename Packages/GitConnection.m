@@ -1202,7 +1202,10 @@ GitHubImport[a_Association]:=
 		KeyValueMap[
 			StringReplace[
 				StringJoin[
-					Capitalize/@StringSplit[#,"_"]
+					Replace[
+						HoldPattern[Capitalize[s_String]]:>
+							(ToUpperCase@StringTake[s,1]<>StringDrop[s,1])
+						]@*Capitalize/@StringSplit[#,"_"]
 					],{
 				"Id"~~EndOfString->"ID",
 				"Url"->"URL",

@@ -133,6 +133,12 @@ AppPackageSaveGuide::usage=
 	"Saves auto-generated guide for a package";
 
 
+AppGenerateDocumentation::usage=
+	"Generates symbol pages and guide page for an app";
+AppPackageGenerateDocumentation::usage=
+	"Generates symbol pages and guide page for a package";
+
+
 AppGenerateHTMLDocumentation::usage=
 	"Generates HTML documentation for an app"; 
 
@@ -190,6 +196,8 @@ AppRegenerateGitExclude::usage=
 
 AppGitHubConfigure::usage=
 	"Configures the app to be able to push to github";
+AppGitHubPull::usage=
+	"Pulls the app from its master branch";
 AppGitHubPush::usage=
 	"Pushes the app to its master branch"
 AppGitHubDelete::usage=
@@ -1122,6 +1130,28 @@ AppRegenerateLoadInfo[app_String,ops:OptionsPattern[]]:=
 
 
 (* ::Subsubsection::Closed:: *)
+(*DocInfo*)
+
+
+
+Options[AppRegenerateDocInfo]=
+	Options@DocContextTemplate;
+AppRegenerateDocInfo[app_String,ops:OptionsPattern[]]:=
+	Export[AppPath[app,"Documentation","DocInfo.m"],
+		Flatten@{
+			ops,
+			"Usage"->Automatic,
+			"Functions"->Automatic,
+			"Details"->Automatic,
+			"Examples"->Defer,
+			"RelatedLinks"->None,
+			"GuideOptions"->{},
+			"TutorialOptions"->{}
+			}
+		];
+
+
+(* ::Subsubsection::Closed:: *)
 (*AppIndexDocs*)
 
 
@@ -1529,22 +1559,50 @@ AppDocumentationTemplate[app_]:=
 
 
 Options[AppSaveSymbolPages]=
-	Options[AppPackageSymbolNotebook];
-AppSaveSymbolPages[appName_,ops:OptionsPattern[]]:=
+	Join[
+		Options[AppPackageSymbolNotebook],
+		Options[SaveSymbolPages]
+		];
+AppSaveSymbolPages[
+	appName_,
+	dir:(_String|_File)?DirectoryQ|Automatic:Automatic,
+	extension:True|False:False,
+	ops:OptionsPattern[]]:=
 	With[{app=AppFromFile[appName]},
 		With[{pkgs=FileBaseName/@AppPackages[app]},
 			Map[
 				With[{nb=
+					If[TrueQ@OptionValue[Monitor],
+						With[{pkg=#},
+							Function[
+								Null,
+								Monitor[#,
+									Internal`LoadingPanel[
+										"Creating symbol template notebook for ``"~TemplateApply~pkg
+										]
+									],
+								HoldFirst
+								]
+							],
+						Identity
+						]@
 					CreateDocument[
-						AppPackageSymbolNotebook[app,#],
+						AppPackageSymbolNotebook[app,#,
+							FilterRules[{ops},
+								Options[AppPackageSymbolNotebook]
+								]
+							],
 						Visible->False
 						]
 					},
 					Function[NotebookClose[nb]; #]@
 						SaveSymbolPages[
 							nb,
-							AppDirectory[app,"Symbols"],
-							False
+							Replace[dir,Automatic:>AppDirectory[app,"Symbols"]],
+							extension,
+							FilterRules[{ops},
+								Options[SaveSymbolPages]
+								]
 							]
 					]&,
 				pkgs
@@ -1559,23 +1617,48 @@ AppSaveSymbolPages[appName_,ops:OptionsPattern[]]:=
 
 
 Options[AppPackageSaveSymbolPages]=
-	Options[AppPackageSymbolNotebook];
-AppPackageSaveSymbolPages[appName_,pkg_,ops:OptionsPattern[]]:=
+	Join[
+		Options[AppPackageSymbolNotebook],
+		Options[SaveSymbolPages]
+		];
+AppPackageSaveSymbolPages[
+	appName_,
+	pkg_,
+	dir:(_String|_File)?DirectoryQ|Automatic:Automatic,
+	extension:True|False:False,
+	ops:OptionsPattern[]]:=
 	With[{app=AppFromFile[appName]},
-		Map[
-			With[{nb=
-				CreateDocument[
-					AppPackageSymbolNotebook[app,#],
-					Visible->False
-					]
-				},
-				Function[NotebookClose[nb]; #]@
-					SaveSymbolPages[
-						nb,
-						AppDirectory[app,"Symbols"],
-						False
+		With[{nb=
+			If[TrueQ@OptionValue[Monitor],
+				Function[
+					Null,
+					Monitor[#,
+						Internal`LoadingPanel[
+							"Creating symbol template notebook"
+							]
+						],
+					HoldFirst
+					],
+				Identity
+				]@
+			CreateDocument[
+				AppPackageSymbolNotebook[app,pkg,
+					FilterRules[{ops},
+						Options[AppPackageSymbolNotebook]
 						]
-				]&
+					],
+				Visible->False
+				]
+			},
+			Function[NotebookClose[nb]; #]@
+				SaveSymbolPages[
+					nb,
+					Replace[dir,Automatic:>AppDirectory[app,"Symbols"]],
+					extension,
+					FilterRules[{ops},
+						Options[SaveSymbolPages]
+						]
+					]
 			]
 		]
 
@@ -1586,17 +1669,45 @@ AppPackageSaveSymbolPages[appName_,pkg_,ops:OptionsPattern[]]:=
 
 
 Options[AppSaveGuide]=
-	Options[AppGuideNotebook];
-AppSaveGuide[appName_, ops : OptionsPattern[]] :=
+	Join[
+		Options[AppGuideNotebook],
+		Options[SaveGuide]
+		];
+AppSaveGuide[
+	appName_, 
+	dir:(_String|_File)?DirectoryQ|Automatic:Automatic,
+	extension:True|False:False,
+	ops : OptionsPattern[]] :=
 	With[{app = AppFromFile[appName]},
 		With[{nb =
-			CreateDocument[AppGuideNotebook[app, ops], Visible -> False]
+			If[TrueQ@OptionValue[Monitor],
+				Function[
+					Null,
+					Monitor[#,
+						Internal`LoadingPanel[
+							"Creating guide template notebook"
+							]
+						],
+					HoldFirst
+					],
+				Identity
+				]@
+			CreateDocument[
+				AppGuideNotebook[app, 
+					FilterRules[{ops},
+						Options[AppGuideNotebook]
+						]
+					], 
+				Visible -> False]
 			},
 			Function[NotebookClose[nb]; #]@
 				SaveGuide[
 					nb,
-					AppDirectory[app, "Guides"],
-					False
+					Replace[dir,Automatic:>AppDirectory[app, "Guides"]],
+					extension,
+					FilterRules[{ops},
+						Options[SaveGuide]
+						]
 					]
 			]
 		]
@@ -1608,51 +1719,114 @@ AppSaveGuide[appName_, ops : OptionsPattern[]] :=
 
 
 Options[AppPackageSaveGuide]=
-	Options[AppPackageGuideNotebook];
-AppPackageSaveGuide[appName_,pkg_,ops:OptionsPattern[]]:=
+	Join[
+		Options[AppPackageGuideNotebook],
+		Options[SaveGuide]
+		];
+AppPackageSaveGuide[
+	appName_,
+	pkg_,
+	dir:(_String|_File)?DirectoryQ|Automatic:Automatic,
+	extension:True|False:False,
+	ops:OptionsPattern[]
+	]:=
 	With[{
 		app=AppFromFile[appName]
 		},
-		With[{
-			pkgs=FileBaseName/@AppPackages[app]
-			},
-			Map[
-				With[{nb=(
-					CreateDocument[AppPackageGuideNotebook[app,#,ops],Visible->False]
-					)},
-					Function[NotebookClose[nb];#]@
-						SaveGuide[
-							nb,
-							AppDirectory[app,"Guides"],
-							False
+		With[{nb=
+			If[TrueQ@OptionValue[Monitor],
+				Function[
+					Null,
+					Monitor[#,
+						Internal`LoadingPanel[
+							"Creating guide template notebook"
 							]
-					]&,
-				pkgs
+						],
+					HoldFirst
+					],
+				Identity
+				]@
+			CreateDocument[
+				AppPackageGuideNotebook[app,pkg,
+					FilterRules[{ops},
+						Options[AppPackageGuideNotebook]
+						]
+					],
+				Visible->False
 				]
+			},
+			Function[NotebookClose[nb];#]@
+				SaveGuide[
+					nb,
+					Replace[dir,Automatic:>AppDirectory[app,"Guides"]],
+					extension,
+					FilterRules[{ops},
+						Options[SaveGuide]
+						]
+					]
 			]
 		]
 
 
 (* ::Subsubsection::Closed:: *)
-(*DocInfo*)
+(*AppGenerateDocumentation*)
 
 
 
-Options[AppRegenerateDocInfo]=
-	Options@DocContextTemplate;
-AppRegenerateDocInfo[app_String,ops:OptionsPattern[]]:=
-	Export[AppPath[app,"Documentation","DocInfo.m"],
-		Flatten@{
-			ops,
-			"Usage"->Automatic,
-			"Functions"->Automatic,
-			"Details"->Automatic,
-			"Examples"->Defer,
-			"RelatedLinks"->None,
-			"GuideOptions"->{},
-			"TutorialOptions"->{}
-			}
+Options[AppGenerateDocumentation]=
+	Join[
+		Options[AppSaveSymbolPages],
+		Options[AppSaveGuide]
 		];
+AppGenerateDocumentation[
+	app_,
+	dir:(_String|_File)?DirectoryQ|Automatic:Automatic,
+	extension:True|False:False,
+	ops:OptionsPattern[]
+	]:=
+	Module[{docs=dir},
+		If[extension&&dir=!=Automatic,
+			CreateDirectory[
+				FileNameJoin@{dir,"Documentation","English"},
+				CreateIntermediateDirectories->True
+				];
+			docs=FileNameJoin@{dir,"Documentation","English"}
+			];
+		AppSaveSymbolPages[app,docs,extension,ops];
+		AppSaveGuide[app,docs,extension,ops];
+		docs
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppPackageGenerateDocumentation*)
+
+
+
+Options[AppPackageGenerateDocumentation]=
+	Join[
+		Options[AppPackageSaveSymbolPages],
+		Options[AppPackageSaveGuide]
+		];
+AppPackageGenerateDocumentation[
+	app_,
+	pkg_,
+	dir:(_String|_File)?DirectoryQ|Automatic:Automatic,
+	extension:True|False:False,
+	ops:OptionsPattern[]
+	]:=
+	Module[{docs=dir},
+		If[extension&&dir=!=Automatic,
+			CreateDirectory[
+				FileNameJoin@{dir,"Documentation","English"},
+				CreateIntermediateDirectories->True
+				];
+			docs=FileNameJoin@{dir,"Documentation","English"}
+			];
+		AppPackageSaveSymbolPages[app,pkg,docs,extension,ops];
+		AppPackageSaveGuide[app,pkg,docs,extension,ops];
+		docs
+		]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1661,18 +1835,42 @@ AppRegenerateDocInfo[app_String,ops:OptionsPattern[]]:=
 
 
 AppGenerateHTMLDocumentation[
-	app_:Automatic,
+	app_,
+	dir:(_String|_File)?DirectoryQ|Automatic:Automatic,
 	which:"ReferencePages"|"Guides"|"Tutorials"|All:All,
 	pattern:_String:"*",
-	ops:OptionsPattern[]]:=
+	ops:OptionsPattern[]
+	]:=
 	With[{
 		fils=
 			Select[FileExistsQ@#&&StringMatchQ[FileBaseName[#],pattern]&]@
 				FileNames[
 					"*.nb",
 					If[which===All,
-						AppDirectory[app,"Documentation","English"],
-						AppDirectory[app,which]
+						Replace[dir,{
+							Automatic:>
+								AppDirectory[app,"Documentation","English"],
+							d_?DirectoryQ:>
+								If[!FileNameSplit[d][[-2;;]]=={"Documentation","English"},
+									FileNameJoin@{d,"Documentation","English"},
+									d
+									]
+							}],
+						Replace[dir,{
+							Automatic:>
+								AppDirectory[app,which],
+							d_?DirectoryQ:>
+								If[FileNameTake[d]=!=which,
+									FileNameJoin@{
+										If[!FileNameSplit[d][[-2;;]]=={"Documentation","English"},
+											FileNameJoin@{d,"Documentation","English"},
+											d
+											],
+										which
+										},
+									d
+									]
+								}]
 						],
 					\[Infinity]
 					]

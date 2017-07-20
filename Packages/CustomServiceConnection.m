@@ -283,7 +283,10 @@ customServiceConnectionPrep[
 					OptionValue@"ClientInfo",
 				"$ServiceConnectionClientName"->
 					StringReplace[
-						Capitalize@ToLowerCase@
+						Replace[
+							HoldPattern[Capitalize[s_String]]:>
+								(ToUpperCase@StringTake[s,1]<>StringDrop[s,1])
+							]@Capitalize@ToLowerCase@
 							StringTrim[
 								Replace[OptionValue@"Client",{
 									Automatic:>
