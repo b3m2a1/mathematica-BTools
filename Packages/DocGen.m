@@ -75,7 +75,7 @@ SaveSymbolPages::usage=
 
 PackageFEHiddenBlock[
 
-SymbolPageRefLink::usage="Generates RefLink boxes to a symbol";
+DocPageRefLink::usage="Generates RefLink boxes to a symbol";
 SymbolPageTemplate::usage="Makes a template cell group to fill out from";
 SymbolPageContextTemplate::usage="Makes a template notebook for a context";
 
@@ -663,17 +663,20 @@ docMetadata[ops:OptionsPattern[]]:=
 				Except[_String]->"Symbol"
 				],
 		"uri"->
-			StringTrim[
-				Replace[OptionValue["URI"],
-					s_String?(Not@StringContainsQ[#,"/"]&):>
-						pacletLinkBuild[s,
-							ToLowerCase@
-								Replace[OptionValue["Type"],
-									Except[_String]->"Symbol"
-									]
-							]
+			StringReplace[
+				StringTrim[
+					Replace[OptionValue["URI"],
+						s_String?(Not@StringContainsQ[#,"/"]&):>
+							pacletLinkBuild[s,
+								ToLowerCase@
+									Replace[OptionValue["Type"],
+										Except[_String]->"Symbol"
+										]
+								]
+						],
+					"paclet:"
 					],
-				"paclet:"
+				Except["/"|WordCharacter]->""
 				]
 		} 
 
@@ -683,7 +686,7 @@ docMetadata[ops:OptionsPattern[]]:=
 
 
 
-SymbolPageRefLink[s_String,cell:True|False:True]:=
+DocPageRefLink[s_String,cell:True|False:True]:=
 	Cell@*BoxData@
 		TemplateBox[
 			{
@@ -693,15 +696,15 @@ SymbolPageRefLink[s_String,cell:True|False:True]:=
 			"RefLink",
 			BaseStyle->{"InlineFormula"}
 			];
-SymbolPageRefLink[s_Symbol]:=
+DocPageRefLink[s_Symbol]:=
 	With[{sname=dgQuietSymbolName@Unevaluated[s]},
-		SymbolPageRefLink[sname]
+		DocPageRefLink[sname]
 		];
-SymbolPageRefLink[h_Hyperlink]:=
+DocPageRefLink[h_Hyperlink]:=
 	Cell[BoxData@ToBoxes@h,"Hyperlink"];
-SymbolPageRefLink[e_?BoxQ]:=
-	e/.s_String?makeRefTest:>SymbolPageRefLink[s];
-SymbolPageRefLink~SetAttributes~HoldFirst
+DocPageRefLink[e_?BoxQ]:=
+	e/.s_String?makeRefTest:>DocPageRefLink[s];
+DocPageRefLink~SetAttributes~HoldFirst
 
 
 SymbolPageSeeAlsoRefLink[_[s_String,l_String],cell:True|False:True]:=
@@ -763,7 +766,7 @@ parseRefText[t_]:=
 			]:>
 			Replace[s,{
 				_String?makeRefTest:>
-					SymbolPageRefLink[s],
+					DocPageRefLink[s],
 				"..."->
 					StyleBox["...","TI"],
 				SubscriptBox[a_,b_]:>
@@ -786,7 +789,7 @@ parseRefText[t_]:=
 							hold:(StyleBox|FormBox)[f_,e___]:>
 								StyleBox[parseRefText[f],e],
 							ref_String?makeRefTest:>
-								SymbolPageRefLink[ref],
+								DocPageRefLink[ref],
 							r_String?(StringMatchQ["\"*\""]):>
 								Cell[
 									BoxData@
@@ -1003,7 +1006,7 @@ iGenerateTitleCell~SetAttributes~HoldFirst;
 generateUsageCell[symbol_String,(def:Except[_Rule])|(None->def_)]:=
 	Cell[
 		TextData[{
-			SymbolPageRefLink[symbol],
+			DocPageRefLink[symbol],
 			"\[LineSeparator]",
 			Replace[def,{
 				RawBoxes[b_]:>b,
@@ -1021,7 +1024,7 @@ generateUsageCell[symbol_String,pattern_->def_]:=
 					ReplaceAll[
 						holdPatternStrippedBoxes[pattern],{
 						s_String?makeRefTest:>
-							SymbolPageRefLink[s,False],
+							DocPageRefLink[s,False],
 						s_String?symString:>(
 							StyleBox[Last@StringSplit[s,"`"],"TI"]
 							),
@@ -2094,9 +2097,12 @@ symbolUsageReplacementPattern[names_,conts_]:=
 
 
 toSafeBoxes[e_,___]:=
-	FE`reparseBoxStructure[
-		ToString[Unevaluated@e,InputForm],
-		StandardForm
+	ReplaceAll[
+		FE`reparseBoxStructure[
+			ToString[Unevaluated@e,InputForm],
+			StandardForm
+			],
+		RowBox[{"Removed","[",o_,"]"}]:>ToExpression@o
 		];
 toSafeBoxes~SetAttributes~HoldFirst;
 
@@ -3089,10 +3095,10 @@ scrapeDetails[details_]:=
 
 scrapeExamples[examples_]:=
 	Replace[
-		DeleteCases[{"- BreakPoint -"}]@
+		DeleteCases[{"- BreakPoint -"..}]@
 		SplitBy[
 			Replace[
-				DeleteCases[{"- ExampleBreak -"}]@
+				DeleteCases[{"- ExampleBreak -"..}]@
 				SplitBy[
 					Replace[NotebookTools`FlattenCellGroups@examples,{
 						Cell[n_,"ExampleSection",___]:>
@@ -5554,10 +5560,14 @@ DocAddUsage~SetAttributes~HoldFirst;
 refLinkRewind//Clear
 
 
+refLinksRewindable=
+	RefLinkPlain|RefLink|OrangeLink|
+	"RefLinkPlain"|"RefLink"|"OrangeLink";
+
+
 refLinkRewind[
 	TemplateBox[{title_Cell,link_},
-		RefLinkPlain|RefLink|
-		"RefLinkPlain"|"RefLink",
+		refLinksRewindable,
 	___]]:=
 	ButtonBox[FE`makePlainText@title,
 		BaseStyle->"Link",
@@ -6041,7 +6051,7 @@ webExportNotebookPrep[nb_,"Symbol"]:=
 		Cell[TextData[s_String],r___]:>
 			Cell[s,r],
 		(*Convert reflinks to hyperlinks*)
-		t:TemplateBox[{_,_String},___]:>
+		t:TemplateBox[{_,_String},refLinksRewindable,___]:>
 			refLinkRewind[t],
 		(*Remove language protections reflinks to hyperlinks*)
 		Cell[TextData[{c_,___}],"ObjectNameGrid",___]:>
@@ -6258,7 +6268,8 @@ webExportNotebook[file_,nb_,ops___?OptionQ]:=
 									"DocPage-"<>ToString[RandomInteger[10000]]
 									}
 								],
-							"Path"]
+							"Path"
+							]
 						}<>".html",
 					file
 					]
@@ -6284,22 +6295,28 @@ webExportNotebook[file_,nb_,ops___?OptionQ]:=
 					DownValues[Transmogrify`Private`MakeItSo],
 					transmogrifyDVs
 					];*)
-			Quiet[
-				DocumentationBuild`Export`ExportWebPage[
-					ExpandFileName[expFile],
-					webExportNotebookPrep@nb,
-					Normal@KeyDrop[params,{"Format","Layout"}],
-					Sequence@@
+			With[{
+				nbprep=webExportNotebookPrep@nb,
+				fexpd=ExpandFileName[expFile],
+				kdparams=Normal@KeyDrop[params,{"Format","Layout"}],
+				passops=
+					FilterRules[
+						Flatten@{
+							ops,
+							"CompleteHTMLQ" -> True
+							},
 						FilterRules[
-							Flatten@{
-								ops,
-								"CompleteHTMLQ" -> True
-								},
-							FilterRules[
-								Options[DocumentationBuild`Export`ExportWebPage],
-								Except["HistoryData"|"Language"]
-								]
+							Options[DocumentationBuild`Export`ExportWebPage],
+							Except["HistoryData"|"Language"]
 							]
+						]},
+				Quiet[
+					DocumentationBuild`Export`ExportWebPage[
+						fexpd,
+						nbprep,
+						kdparams,
+						Sequence@@passops
+						]
 					]
 				]
 			]

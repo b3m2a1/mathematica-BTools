@@ -800,7 +800,11 @@ FEAttachCell//Clear;
 FEAttachCell[
 	parent:(_CellObject|_NotebookObject|_BoxObject|Automatic):Automatic,
 	expr_,
-	radialAway:_Integer|_Scaled|Automatic:Automatic,
+	radialAway:
+		_Offset|_Integer|_Scaled|
+		{_Integer|_Scaled,_Integer|_Scaled}|
+		Automatic:
+		Automatic,
 	alignment:
 		{
 			Center|Left|Right,
@@ -861,7 +865,10 @@ FEAttachCell[
 							Cell[BoxData@ToBoxes@expr]
 							]
 					],
-				{radialAway,
+				{
+					Replace[radialAway,
+						{a_,b_}:>Offset[{a,b},0]
+						],
 					Replace[alignment,
 						Automatic:>
 							If[MatchQ[parent,_NotebookObject],

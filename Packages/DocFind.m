@@ -242,6 +242,7 @@ Options@DocFind=
 			ButtonFunction->Automatic,
 			Select->Identity
 			},
+		Options[Names],
 		Options@PaneColumn
 		];
 
@@ -278,7 +279,7 @@ DocFind[
 						"autocomp"->
 							Replace[name,{_Verbatim->False,_:>TrueQ[OptionValue@Autocomplete]}]
 						|>;
-		names=Names@searchName;
+		names=Names[searchName,FilterRules[{ops},Options[Names]]];
 		
 		names=
 			Replace[
