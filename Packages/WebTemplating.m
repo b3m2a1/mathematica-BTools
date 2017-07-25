@@ -1941,6 +1941,27 @@ $PelicanRoot=
 		};
 
 
+PelicanSiteBase[f_String]:=
+	Replace[FileNameSplit[f],{
+		{d:Shortest[___],"content"|"output",___}:>FileNameJoin@{d},
+		_:>f
+		}]
+
+
+PelicanContentPath[f_String]:=
+	Replace[FileNameSplit[f],{
+		{Shortest[___],"content",p___}:>FileNameJoin@{p},
+		_:>f
+		}]
+
+
+PelicanOutputPath[f_String]:=
+	Replace[FileNameSplit[f],{
+		{Shortest[___],"output",p___}:>FileNameJoin@{p},
+		_:>f
+		}]
+
+
 PelicanInitializedQ[]:=
 	(
 		$PyVenv;
@@ -2387,6 +2408,77 @@ PelicanNewSite[
 		];
 
 
+$PelicanSiteSettingsBoundary="\" ----!!!!----!!!!-----!!!!----- \"";
+
+
+PelicanSiteSettings[
+	site_String?DirectoryQ,
+	settings:(_String|{__String}|All):All
+	]:=
+	Replace[
+		SetDirectory[site];
+		(ResetDirectory[];#)&@
+			PyVenvRun["pelican",
+				{
+					"python",
+					"-c",
+					"'"<>(
+						StringRiffle[{
+							"from __future__ import print_function",
+							"from pelicanconf import *",
+							"glob = locals()",
+							"print(0, end=`boundary`)",
+							If[settings === All,
+								"[ print(\"-\",\"\\\"\"+s+\"\\\"\",\"->\",\"\\\"\",glob[s],\"\\\"\",\"-\", end=`boundary`, sep=\"\") if s not in (\"glob\", \"unicode_literals\", \"print_function\", \"__name__\", \"__builtins__\") else None for s in glob.keys() ]",
+								"[ print(\"-\",glob[s],\"-\", end=`boundary`, sep=\"\") if s in glob else print(\"$Failed\",end=`boundary`) for s in `settings` ]"
+								],
+							"print(0, end=`boundary`)"
+							},
+							"; "
+							]~TemplateApply~<|
+								"boundary"->
+									$PelicanSiteSettingsBoundary,
+								"settings"->
+									If[settings===All,
+										"",
+										"["<>StringRiffle["\""<>#<>"\""&/@Flatten@{settings},", "]<>"]"
+										]
+								|>
+						)<>"'"
+				}
+				],
+		a_Association:>
+			If[settings === All,
+				Association@
+					ToExpression@
+						StringTrim[
+							Most@Rest@
+								StringSplit[
+									a["StandardOutput"],
+									StringTrim[$PelicanSiteSettingsBoundary,"\""]
+									],
+							"-"
+							],
+				AssociationThread[
+					settings,
+					StringTrim[
+						Most@Rest@
+							StringSplit[
+								a["StandardOutput"],
+								StringTrim[$PelicanSiteSettingsBoundary,"\""]
+								],
+						"- "|" -"
+						]
+					]
+				]
+		]
+PelicanSiteSettings[s_String,settings:(_String|{__String}|All):All]:=
+	If[DirectoryQ[FileNameJoin@{$PelicanRoot,s}],
+		PelicanSiteSettings[FileNameJoin@{$PelicanRoot,s},settings],
+		$Failed
+		]
+
+
 $pelicannewmdfiletemplate=
 "
 `headers`
@@ -2462,6 +2554,25 @@ PelicanNewFile[
 	ops:OptionsPattern[]
 	]:=
 	With[{siteDir=Replace[site,Automatic:>NotebookDirectory[]]},
+		If[!DirectoryQ@
+			FileNameJoin@{
+				siteDir,
+				"content",
+				Replace[OptionValue["Folder"],
+					Except[_String]->Nothing
+					]
+				},
+			CreateDirectory[
+				FileNameJoin@{
+					siteDir,
+					"content",
+					Replace[OptionValue["Folder"],
+						Except[_String]->Nothing
+						]
+					},
+				CreateIntermediateDirectories->True
+				]
+			];
 		If[OptionValue["Notebook"]//TrueQ,
 			If[open,SystemOpen,Identity]@
 				Export[
@@ -2541,7 +2652,7 @@ PelicanNewFile[
 PelicanBuild[f_String?(FileExistsQ[#]&&MemberQ[FileNameSplit[#],"content"]&)]:=
 	With[{path=Reverse@FileNameSplit[f]},
 		PelicanBuild[
-			Echo@FileNameJoin@Reverse@Flatten@#[[3;;]],
+			FileNameJoin@Reverse@Flatten@#[[3;;]],
 			FileNameJoin@Reverse@#[[1]]
 			]&@SplitBy[path,MatchQ["content"]]
 		];
@@ -2577,35 +2688,81 @@ PelicanBuild[
 		];
 
 
+PelicanDeploy[
+	file:(_String?(FileExistsQ@#&&Not@DirectoryQ@#&)),
+	uri:_String|Automatic:Automatic,
+	ops:OptionsPattern[]
+	]:=
+	PelicanDeploy[
+		PelicanSiteBase[file],
+		FileNameForms->FileNameJoin@{"output",PelicanOutputPath[file]},
+		ops
+		]
+
+
 Options[PelicanDeploy]=
 	Options[WebSiteDeploy];
 PelicanDeploy[
-	site:(_String?DirectoryQ|Automatic):Automatic,
+	site:(_String?DirectoryQ|Automatic),
 	uri:_String|Automatic:Automatic,
 	ops:OptionsPattern[]
 	]:=
 	With[{
-		outDir=Replace[site,Automatic:>NotebookDirectory[]]
+		outDir=
+			PelicanSiteBase[Replace[site,Automatic:>NotebookDirectory[]]]
 		},
-		WebSiteDeploy[
-			FileNameJoin@{outDir,"output"},
-			Replace[uri,Automatic:>FileBaseName[outDir]],
-			ops
+		With[{
+			info=
+				If[FileExistsQ[FileNameJoin@{outDir,"deployInfo.m"}],
+					Import[FileNameJoin@{outDir,"deployInfo.m"}],
+					{}
+					]
+			},
+			Export[FileNameJoin@{outDir,"deployInfo.m"},
+				KeyDrop[
+					Association@
+						Flatten@{
+							Normal@info,
+							ops,
+							"LastDeployment"->Now
+							},
+					FileNameForms
+					]
+				];
+			WebSiteDeploy[
+				FileNameJoin@{outDir,"output"},
+				Replace[uri,Automatic:>FileBaseName[outDir]],
+				Flatten@{
+					ops,
+					Normal@info
+					}
+				]
 			]
+		];
+PelicanDeploy[
+	s_String?(Not@*DirectoryQ),
+	uri:_String|Automatic:Automatic,
+	ops:OptionsPattern[]
+	]:=
+	If[DirectoryQ@FileNameJoin@{$PelicanRoot,s,"output"},
+		PelicanDeploy[
+			FileNameJoin@{$PelicanRoot,s},
+			uri,
+			ops
+			],
+		$Failed
 		]
 
 
 PelicanThemes[Optional["List","List"],verbose:True|False:False]:=
 	PyVenvRun["pelican",
-		{"pelican-themes","-l",If[verbose,"-v",Nothing]},
-		"Delay"->.1
+		{"pelican-themes","-l",If[verbose,"-v",Nothing]}
 		]
 
 
 PelicanThemes["Install",f_String?FileExistsQ]:=
 	PyVenvRun["pelican",
-		{"pelican-themes","--install",f},
-		"Delay"->.1
+		{"pelican-themes","--install",f}
 		];
 PelicanThemes["Install",f_String]:=
 	With[{u=
@@ -2625,6 +2782,22 @@ PelicanThemes["Install",f_String]:=
 		]
 
 
+PelicanNotebookMetadata[c:{Cell[_BoxData,"Metadata",___]...}]:=
+	Join@@Select[Normal@ToExpression[First@First@#]&/@c,OptionQ];
+PelicanNotebookMetadata[nb_Notebook]:=
+	PelicanNotebookMetadata@
+		Cases[
+			NotebookTools`FlattenCellGroups[First@nb],
+			Cell[_BoxData,"Metadata",___]
+			];
+PelicanNotebookMetadata[nb_NotebookObject]:=
+	PelicanNotebookMetadata@
+		Cases[
+			NotebookRead@Cells[nb,CellStyle->"Metadata"],
+			Cell[_BoxData,___]
+			]
+
+
 PelicanNotebookToMarkdown//Clear
 
 
@@ -2636,15 +2809,9 @@ PelicanNotebookToMarkdown[nb_NotebookObject]:=
 			$Failed,
 			With[{
 				d2=
-					Replace[FileNameSplit@dir,
-						{d___,"content",___}:>
-							FileNameJoin@{d}
-						],
+					PelicanSiteBase[dir],
 				path=
-					Replace[FileNameSplit@dir,
-						{___,"content",d___}:>
-							FileNameJoin@ConstantArray["..",1+Length[{d}]]
-						]
+					FileNameJoin@ConstantArray["..",1+FileNameDepth[PelicanContentPath[dir]]]
 				},
 				StringRiffle[
 					DeleteCases[""]@
@@ -2656,8 +2823,8 @@ PelicanNotebookToMarkdown[nb_NotebookObject]:=
 							Cells[nb,
 								CellStyle->{
 									"Section","Subsection","Subsubsection",
-									"Input","Code","Output","Text",
-									"Quote"
+									"Code","Output","Text",
+									"Quote","PageBreak","Item","Subitem"
 									}
 								],
 					"\n\n"
@@ -2667,6 +2834,24 @@ PelicanNotebookToMarkdown[nb_NotebookObject]:=
 		];
 
 
+PelicanNotebookToMarkdown[root_,path_,Cell[a___,CellTags->t_,b___]]:=
+	Replace[PelicanNotebookToMarkdown[root,path,Cell[a,b]],
+		s:Except[""]:>
+			TemplateApply[
+				"< a id=\"``\" />",
+				StringJoin@Flatten@{t}
+				]<>"\n\n"<>s
+		];
+PelicanNotebookToMarkdown[root_,path_,Cell[a___,FontSlant->"Italic"|Italic,b___]]:=
+	Replace[PelicanNotebookToMarkdown[root,path,Cell[a,b]],
+		s:Except[""]:>
+			"_"<>s<>"_"
+		];
+PelicanNotebookToMarkdown[root_,path_,Cell[a___,FontWeight->"Bold"|Bold,b___]]:=
+	Replace[PelicanNotebookToMarkdown[root,path,Cell[a,b]],
+		s:Except[""]:>
+			"*"<>s<>"*"
+		];
 PelicanNotebookToMarkdown[root_,path_,Cell[t_,"Section",___]]:=
 	Replace[PelicanNotebookToMarkdown[root,path,t],
 		s:Except[""]:>"# "<>s
@@ -2679,6 +2864,10 @@ PelicanNotebookToMarkdown[root_,path_,Cell[t_,"Subsubsection",___]]:=
 	Replace[PelicanNotebookToMarkdown[root,path,t],
 		s:Except[""]:>"### "<>s
 		];
+
+
+PelicanNotebookToMarkdown[root_,path_,Cell[t_,"PageBreak",___]]:=
+	"---"
 
 
 PelicanNotebookToMarkdown[root_,path_,Cell[t_,"Text",___]]:=
@@ -2701,28 +2890,10 @@ PelicanNotebookToMarkdown[root_,path_,Cell[t_,"Quote",___]]:=
 		];
 
 
-PelicanNotebookToMarkdown[root_,path_,Cell[e_,"Code"|"Input",___]]:=
-	Replace[
-		First@
-			FrontEndExecute@
-				FrontEnd`ExportPacket[
-					Cell[e],
-					"InputText"
-					],
-		s:Except[""]:>
-			StringReplace[s,StartOfLine->"\t"]
+PelicanNotebookToMarkdown[root_,path_,Cell[t_,"Quote",___]]:=
+	Replace[PelicanNotebookToMarkdown[root,path,t],
+		s:Except[""]:>StringReplace[s,StartOfString->"> "]
 		];
-PelicanNotebookToMarkdown[root_,path_,Cell[e_,"InlineInput",___]]:=
-	Replace[
-		First@
-			FrontEndExecute@
-				FrontEnd`ExportPacket[
-					Cell[e],
-					"InputText"
-					],
-		s:Except[""]:>
-			"```"<>s<>"```"
-		]
 
 
 PelicanNotebookToMarkdownOutputStringForms=
@@ -2739,7 +2910,8 @@ $PelicanNotebookToMarkdownUnIndentedLine=
 	"\"<!NO_INDENT>\"";
 
 
-PelicanNotebookToMarkdown[root_,path_,Cell[e_,"Output",___]]:=
+pelicanCodeCellGraphicsFormat[root_,path_,e_,
+	style_,postFormat_]:=
 	Replace[
 		StringReplace[
 			First@
@@ -2753,9 +2925,11 @@ PelicanNotebookToMarkdown[root_,path_,Cell[e_,"Output",___]]:=
 										$PelicanNotebookToMarkdownToStripStart<>
 											StringTrim@s<>
 											$PelicanNotebookToMarkdownToStripEnd<>"\n"
-								]
+								],
+						s_String?(StringMatchQ["\t"..]):>
+							StringReplace[s,"\t"->" "]
 						}],
-					"PlainText"
+					style
 					],{
 				$PelicanNotebookToMarkdownUnIndentedLine~~" \\\n"->
 					$PelicanNotebookToMarkdownUnIndentedLine,
@@ -2765,14 +2939,30 @@ PelicanNotebookToMarkdown[root_,path_,Cell[e_,"Output",___]]:=
 					StringReplace[inner,"\\\n"->""]
 				}],
 		s:Except[""]:>
-			StringReplace[
-				StringReplace["(*Out:*)\n\n"<>s,{
-					StartOfLine->"\t"
-					}],{
+				StringReplace[postFormat@s,{
 				("\t"...)~~$PelicanNotebookToMarkdownUnIndentedLine->
 					""
 				}]
 		];
+
+
+PelicanNotebookToMarkdown[root_,path_,Cell[e_,"Code"|"Input",___]]:=
+	pelicanCodeCellGraphicsFormat[root,path,e,
+		"InputText",
+		StringReplace[#,StartOfLine->"\t"]&
+		];
+PelicanNotebookToMarkdown[root_,path_,Cell[e_,"InlineInput",___]]:=
+	pelicanCodeCellGraphicsFormat[root,path,e,
+		"InputText",
+		"```"<>#<>"```"&
+		];
+PelicanNotebookToMarkdown[root_,path_,Cell[e_,"Output",___]]:=
+	pelicanCodeCellGraphicsFormat[root,path,e,
+		"PlainText",
+		StringReplace["(*Out:*)\n\n"<>#,{
+			StartOfLine->"\t"
+			}]&
+		]
 
 
 PelicanNotebookToMarkdown[root_,path_,s_String]:=
@@ -2782,18 +2972,23 @@ PelicanNotebookToMarkdown[root_,path_,s_TextData]:=
 		Map[PelicanNotebookToMarkdown[root,path,#]&,List@@s//Flatten]
 		];
 PelicanNotebookToMarkdown[root_,path_,b_BoxData]:=
-	First@
-		FrontEndExecute@
-			FrontEnd`ExportPacket[
-				Cell[b],
-				"PlainText"
-				];
+	Replace[
+		PelicanNotebookToMarkdown[root,path,First@b],
+		"":>
+			First@
+				FrontEndExecute@
+					FrontEnd`ExportPacket[
+						Cell[b],
+						"PlainText"
+						]
+		];
 PelicanNotebookToMarkdown[root_,path_,Cell[e_,___]]:=
 	PelicanNotebookToMarkdown[root,path,e]
 
 
 PelicanNotebookToMarkdown[
 	root_,
+	path_,
 	ButtonBox[d_,
 		o___,
 		BaseStyle->"Hyperlink",
@@ -2801,16 +2996,22 @@ PelicanNotebookToMarkdown[
 		]]:=
 	With[{t=PelicanNotebookToMarkdown[root,path,d]},
 		"["<>t<>"]("<>
-			FirstCase[
-				Lookup[{o,r},ButtonData,t],
-				_String,
-				t
+			PelicanNotebookToMarkdown[root,path,
+				FirstCase[
+					Replace[
+						Lookup[{o,r},ButtonData,t],
+						s_String?(StringFreeQ["/"]):>"#"<>s
+						],
+					_String|_FrontEnd`FileName|_URL|_File,
+					t
+					]
 				]<>")"
 		];
 
 
 PelicanNotebookToMarkdown[
 	root_,
+	path_,
 	ButtonBox[d_,
 		o___,
 		BaseStyle->"Link",
@@ -2903,6 +3104,14 @@ PelicanNotebookToMarkdown[
 		]
 
 
+PelicanNotebookToMarkdown[root_,path_,f_FrontEnd`FileName]:=
+	StringRiffle[FileNameSplit[ToFileName[f]],"/"];
+PelicanNotebookToMarkdown[root_,path_,u:_URL]:=
+	First@u;
+PelicanNotebookToMarkdown[root_,path_,f_File]:=
+	StringRiffle[FileNameSplit[First[f]],"/"];
+
+
 PelicanNotebookToMarkdown[root_,path_,e_]:=
 	"";
 
@@ -2918,13 +3127,7 @@ PelicanNotebookSave[
 					Flatten[
 						{
 							"Modified":>Now,
-							Select[
-								Normal@ToExpression@
-									Map[First@*First@*NotebookRead,
-										Cells[nb,CellStyle->"Metadata"]
-										],
-								OptionQ
-								]
+							PelicanNotebookMetadata[nb]
 							}
 						]
 				]

@@ -1018,12 +1018,16 @@ SSDrop[
 		];
 
 
+$SSRuleListOptionPattern=
+	_Rule|_RuleDelayed|{(_Rule|_RuleDelayed)..};
+
+
 Options[SSEditRuleListOption]=
 	Options[SSEdit];
 SSEditRuleListOption[
 	obs:{__CellObject}|{__NotebookObject},
 	op_,
-	new_?OptionQ
+	new:$SSRuleListOptionPattern
 	]:=
 	(
 		Do[
@@ -1044,7 +1048,7 @@ SSEditRuleListOption[
 	nb:_NotebookObject|Automatic:Automatic,
 	cellStyles_,
 	op_,
-	events_?OptionQ,
+	events:$SSRuleListOptionPattern,
 	ops:OptionsPattern[]
 	]:=
 	Replace[
@@ -1066,7 +1070,7 @@ Options[SSEditEvents]=
 		];
 SSEditEvents[
 	nb:(_NotebookObject|_CellObject|{__CellObject}|Automatic):Automatic,
-	events:_?OptionQ,
+	events:$SSRuleListOptionPattern,
 	ops:OptionsPattern[]
 	]:=
 	With[{
@@ -1101,7 +1105,7 @@ SSEditEvents[
 SSEditEvents[
 	nb:_NotebookObject|Automatic:Automatic,
 	cellStyles:$SSCellStylePatterns,
-	events_?OptionQ,
+	events:$SSRuleListOptionPattern,
 	ops:OptionsPattern[]
 	]:=
 	Replace[
@@ -1116,7 +1120,7 @@ Options[SSEditAliases]=
 	Options[SSEditRuleListOption];
 SSEditAliases[
 	nb:(_NotebookObject|_CellObject|{__CellObject}|Automatic):Automatic,
-	events_?OptionQ,
+	events:$SSRuleListOptionPattern,
 	ops:OptionsPattern[]
 	]:=
 	With[{obop=
@@ -1144,7 +1148,7 @@ SSEditAliases[
 SSEditAliases[
 	nb:_NotebookObject|Automatic:Automatic,
 	cellStyles:$SSCellStylePatterns,
-	events_?OptionQ,
+	events:$SSEventPatterns,
 	ops:OptionsPattern[]
 	]:=
 	Replace[
@@ -1159,7 +1163,7 @@ Options[SSEditAutoReplacements]=
 	Options[SSEditRuleListOption];
 SSEditAutoReplacements[
 	nb:(_NotebookObject|_CellObject|{__CellObject}|Automatic):Automatic,
-	events_?OptionQ,
+	events:$SSRuleListOptionPattern,
 	ops:OptionsPattern[]
 	]:=
 	With[{obop=
@@ -1187,7 +1191,7 @@ SSEditAutoReplacements[
 SSEditAutoReplacements[
 	nb:_NotebookObject|Automatic:Automatic,
 	cellStyles:$SSCellStylePatterns,
-	events_?OptionQ,
+	events:$SSRuleListOptionPattern,
 	ops:OptionsPattern[]
 	]:=
 	Replace[

@@ -175,6 +175,7 @@ Options[PyVenvRun]=
 		"PollTime"->.01
 		};
 PyVenvRun[s:_String|_List,ops:OptionsPattern[]]:=
+	Catch@
 	If[PyVenvActive[],
 		Block[{
 			poll=Replace[OptionValue["PollTime"],Except[_?NumericQ]->.01],
@@ -183,26 +184,30 @@ PyVenvRun[s:_String|_List,ops:OptionsPattern[]]:=
 			doneflag=CreateUUID["process-"]
 			},
 			PyVenvWrite["echo \""<>startflag<>"\""];
+			PyVenvWrite[">&2 echo \""<>startflag<>"\""];
 			PyVenvWrite[s];
+			PyVenvWrite[">&2 echo \""<>doneflag<>"\""];
 			PyVenvWrite["echo \""<>doneflag<>"\""];
 			Pause[poll];
-			reads=PyVenvRead[];
+			reads=Replace[PyVenvRead[],$Failed:>Throw[$Failed]];
 			TimeConstrained[
 				While[!StringContainsQ[reads["StandardOutput"],doneflag],
-					reads=Merge[{reads,PyVenvRead[]},StringJoin]
+					reads=Merge[{reads,Replace[PyVenvRead[],$Failed:>Throw[$Failed]]},StringJoin]
 					],
 				Replace[OptionValue[TimeConstraint],
 					Except[_?NumericQ]->1
 					],
-				reads=Merge[{reads,PyVenvRead[]},StringJoin]
+				reads=Merge[{reads,Replace[PyVenvRead[],$Failed:>Throw[$Failed]]},StringJoin]
 				];
-			ReplacePart[#,
-				"StandardOutput"->
-					StringTrim[
-						Last@StringSplit[#["StandardOutput"],startflag,2],
-						"\n"|("\n"<>doneflag)
-						]
-				]&[StringTrim[#,"\n"~~EndOfString]&/@reads]
+			StringTrim[
+				StringTrim[
+					Last@StringSplit[#,startflag,2],
+					"\n"|("\n"<>doneflag)
+					],
+				("\n"~~EndOfString)|
+					startflag|
+					doneflag
+				]&/@reads
 			],
 		$Failed
 		];

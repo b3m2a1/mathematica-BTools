@@ -58,19 +58,20 @@ MakeIndentable[
 			Except[_CellObject|{__CellObject}]:>
 				SSCells[SSEditNotebook@nb,cell,True]
 			]},
-		SSEdit[s,
+		SSEdit[s,{
 			AutoIndent->True,
 			LineIndent->1,
 			TabSpacings->1.5
-			];
-		SSEditEvents[s,
+			}];
+		SSEditEvents[s,{
 			{"KeyDown","\t"}:>
 				Quiet@Check[
 					Needs["BTools`"];
 					IndentationEvent[],
 					SetAttributes[EvaluationCell[],CellEventActions->None]
 					],
-			PassEventsDown->False]
+			PassEventsDown->False
+			}]
 		];
 
 
