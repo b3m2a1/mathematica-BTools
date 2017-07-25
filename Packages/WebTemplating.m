@@ -1890,7 +1890,7 @@ HTMLTemplateNotebook[
 		f_:>CreateDocument@Import@f
 		}]@
 	SelectFirst[
-		FileNames["*.nb",PackageFilePath["Packages","__Templates__","HTML"]],
+		FileNames["*.nb",PackageFilePath["Templates","HTML"]],
 		FileBaseName[#]===name&,
 		Notebook[{
 			Cell[name,"PAGE"],
