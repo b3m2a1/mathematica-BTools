@@ -6,7 +6,9 @@
 		"FormattingTools",
 		"FETools",
 		"SearchTools",
-		"GraphTools"
+		"GraphTools",
+		"StackExchangeAPI",
+		"GoogleDrive"
 		},
 	"HiddenContexts"->None
 	}

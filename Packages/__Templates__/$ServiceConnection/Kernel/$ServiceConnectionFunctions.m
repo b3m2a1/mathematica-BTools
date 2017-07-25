@@ -32,9 +32,9 @@ $serviceconnectionprivateoauthtokenfile::usage=
 	"A fake OAuth token for when a real OAuth token isn't needed by the OAuth client is desired";
 
 
-$$serviceconnectionaccesscodecloudlink::usage=
+$$serviceconnectionoauthcodecloudlink::usage=
 	"A static cloud object URL for getting code copied"
-$$serviceconnectionaccesstokencloudlink::usage=
+$$serviceconnectionoauthaccesstokencloudlink::usage=
 	"A static cloud object URL for getting an access_token copied"
 
 
@@ -46,7 +46,7 @@ $serviceconnectionprivateoauthpagelink::usage;
 $serviceconnectiontokenechocloudlink::usage;
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Credentials*)
 
 
@@ -62,7 +62,7 @@ $serviceconnectionprivateclearcredentials::usage=
 	"Clears stored credentials";
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Request Formatting*)
 
 
@@ -131,9 +131,52 @@ $serviceconnectionprivateoauthtokenfile[tokenName_:"access_token"]:=
 (*Local Loopback*)
 
 
-$serviceconnectionprivateoauthpagetemplate[key_]:=
+$serviceconnectionprivateoauthpagetemplate[keys_]:=
 "<html>
 	<head>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;	
+				border: 0;
+				outline: 0;
+				font-size: 100%;
+				vertical-align: baseline;
+				background: transparent;
+    }
+			body { background: #fcfcfc; padding: 0; width: 100%;}
+			.top-bar {
+				width: 100%; background: #cc0000; height: 100px; 
+				border-bottom: solid 1px gray;
+      margin: 0px 0px 25px 0px;
+				}
+			.key-field { 
+				background: white; 
+      padding: 15px 50px 15px 50px;
+				margin: 5px 0px 5px 0px;
+				width: 100%;
+				border-top: solid 1px gray; 
+      border-bottom: solid 1px gray;
+				}
+			.footer-bar { 
+				position: absolute;
+				bottom: 0;
+				background: #555;
+				width: 100%; height: 50px; 
+				border-top: solid 1px gray; 
+				}
+      h3 {
+       color: #777;
+      }
+      .key-field p {
+       color: black;
+       font-weight: normal;
+      }
+				.muted p {
+       color: grey;
+       font-weight: normal;
+      }
+		</style>
 		<script>
 			function pullAuthCode () {
 				// Copped from stack overflow. 
@@ -145,7 +188,7 @@ $serviceconnectionprivateoauthpagetemplate[key_]:=
 					} else {
 						query = query.slice(1)
 					};
-				console.log(query)
+				// console.log(query)
 				var vars = query.split(\"&\");
 				for (var i=0;i<vars.length;i++) {
 				 	var pair = vars[i].split(\"=\");
@@ -161,49 +204,67 @@ $serviceconnectionprivateoauthpagetemplate[key_]:=
 				 				query_string[pair[0]].push(decodeURIComponent(pair[1]));
 				 				}
 				 			};
-	 		return query_string.``
-	 		};
+	 		return { `keys` }
+			};
+			function authCodeInsert () { 
+				// Inserts the pulled parameters into the page
+				var query_strings = pullAuthCode();
+				for ( key in query_strings ){
+					// console.log(key);
+					document.getElementById(key).innerHTML=query_strings[key]
+					}
+				};
+
 		</script>
 	</head>
 	<body>
-		<h3>Your authentication code is:</h3>
-		<p id=\"auth_code\"></p>
-		<p>copy this back into Mathematica to continue</p>
-		<script>document.getElementById(\"auth_code\").innerHTML=pullAuthCode()</script>
+	<div class=\"top-bar\">
+	</div>
+	`fields`
+	<script> authCodeInsert()</script>
+	<div class=\"footer-bar\">
+	</div>
 	</body>
-</html>"~TemplateApply~key;
+</html>"~TemplateApply~
+		<|
+			"keys"->StringRiffle["\""<>#<>"\" : "<>"query_string."<>#&/@Flatten@{keys},","],
+			"fields"->
+				StringRiffle[
+					"
+		<div class=\"key-field\">
+			<h3>Your `` is:</h3>
+			<p id=\"``\"></p>
+		</div>
+		"~TemplateApply~{
+						StringRiffle[
+							Replace[
+								Capitalize/@StringSplit[#,"_"],
+								Capitalize[s_]:>
+								(ToUpperCase@StringTake[s,1]<>StringDrop[s,1]),
+								1
+								]
+							],#}&/@Flatten@{keys},
+					"\n"
+					]
+		|>
 
 
-$serviceconnectionprivateoauthcloudlink[key_]:=
+$serviceconnectionprivateoauthcloudlink[keys_]:=
 	First@
 		CloudExport[
-			$serviceconnectionprivateoauthpagetemplate[key],
+			$serviceconnectionprivateoauthpagetemplate[keys],
 			"HTML",
-			"o/oauthflow/oauth2callback",
+			"o/oauthflow/oauth2callback"<>"-"<>StringRiffle[Flatten@{keys},"-"],
 			Permissions->"Public"
 			];
 
 
-$$serviceconnectionaccesscodecloudlink=
-	"https://www.wolframcloud.com/objects/user-affd7b1c-ecb6-4ccc-8cc4-4d107e2bf04a/o/oauthflow/accesscodecallback";
-	(*First@
-				CloudExport[
-					$serviceconnectionprivateoauthpagetemplate["code"],
-					"HTML",
-					"o/oauthflow/accesscodecallback",
-					Permissions->"Public"
-					]*)
+$$serviceconnectionoauthcodecloudlink=
+	"https://www.wolframcloud.com/objects/b3m2a1/o/oauthflow/oauth2callback-code";
 
 
-$$serviceconnectionaccesstokencloudlink=
-	"https://www.wolframcloud.com/objects/user-affd7b1c-ecb6-4ccc-8cc4-4d107e2bf04a/o/oauthflow/accesstokencallback";
-	(*First@
-			CloudExport[
-				$serviceconnectionprivateoauthpagetemplate["access_token"],
-				"HTML",
-				"o/oauthflow/accesstokencallback",
-				Permissions->"Public"
-				];*)
+$$serviceconnectionoauthaccesstokencloudlink=
+	"https://www.wolframcloud.com/objects/b3m2a1/o/oauthflow/oauth2callback-access_token";
 
 
 $serviceconnectionprivateoauthfile=
