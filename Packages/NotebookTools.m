@@ -2699,7 +2699,7 @@ MonitorMap[f_,l_,ops:OptionsPattern[]]:=
 PaletteTemplateNotebook[title_:None]:=
 	CreateDocument[
 		Import@
-			PackageAppPath["Templates","PaletteTemplate.nb"]/.
+			PackageFilePath["Templates","PaletteTemplate.nb"]/.
 				If[!StringQ@title,
 					{
 						Cell[

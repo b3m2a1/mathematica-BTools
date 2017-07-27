@@ -134,6 +134,7 @@ $serviceconnectionprivateoauthtokenfile[tokenName_:"access_token"]:=
 $serviceconnectionprivateoauthpagetemplate[keys_]:=
 "<html>
 	<head>
+		<title> OAuth Callback </title>
 		<style>
 			* {
 				margin: 0;
