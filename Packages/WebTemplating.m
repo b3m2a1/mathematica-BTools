@@ -3007,10 +3007,16 @@ iPelicanNotebookToMarkdown[root_,path_,name_,Cell[e_,___]]:=
 	iPelicanNotebookToMarkdown[root,path,name,e]
 
 
+$iPelicanNotebookToMarkdownToStripStartBlockFlag=
+	"\n\"<!--<<<[[<<!\"\n";
+$iPelicanNotebookToMarkdownToStripEndBlockFlag=
+	"\n\"!>>]]>>>--!>\"\n";
+
+
 $iPelicanNotebookToMarkdownToStripStart=
-	"\"<!STRIP_ME_FROM_OUTPUT>";
+	"\"<!--STRIP_ME_FROM_OUTPUT>";
 $iPelicanNotebookToMarkdownToStripEnd=
-	"</!STRIP_ME_FROM_OUTPUT>\""
+	"<STRIP_ME_FROM_OUTPUT--!>\"";
 
 
 $iPelicanNotebookToMarkdownUnIndentedLine=
@@ -3020,6 +3026,7 @@ $iPelicanNotebookToMarkdownUnIndentedLine=
 pelicanCodeCellGraphicsFormat[root_,path_,name_,e_,
 	style_,postFormat_]:=
 	Replace[
+		StringReplace[
 		StringReplace[
 			First@
 			FrontEndExecute@
@@ -3034,19 +3041,25 @@ pelicanCodeCellGraphicsFormat[root_,path_,name_,e_,
 										}]
 									],
 								s:Except[""]:>
-									"\n"<>$iPelicanNotebookToMarkdownUnIndentedLine<>
-										$iPelicanNotebookToMarkdownToStripStart<>
-											StringTrim@s<>
-											$iPelicanNotebookToMarkdownToStripEnd<>"\n"
+									$iPelicanNotebookToMarkdownToStripStartBlockFlag<>
+										$iPelicanNotebookToMarkdownUnIndentedLine<>
+											$iPelicanNotebookToMarkdownToStripStart<>
+												StringTrim@s<>
+												$iPelicanNotebookToMarkdownToStripEnd<>
+												$iPelicanNotebookToMarkdownToStripEndBlockFlag
 							],
 						g:$iPelicanNotebookToMarkdownOutputStringForms:>
 							Replace[
 								iPelicanNotebookToMarkdown[root,path,name,g],
 								s:Except[""]:>
-									"\n"<>$iPelicanNotebookToMarkdownUnIndentedLine<>
-										$iPelicanNotebookToMarkdownToStripStart<>
-											StringTrim@s<>
-											$iPelicanNotebookToMarkdownToStripEnd<>"\n"
+									Echo[
+									$iPelicanNotebookToMarkdownToStripStartBlockFlag<>
+										$iPelicanNotebookToMarkdownUnIndentedLine<>
+											$iPelicanNotebookToMarkdownToStripStart<>
+												StringTrim@s<>
+												$iPelicanNotebookToMarkdownToStripEnd<>
+												$iPelicanNotebookToMarkdownToStripEndBlockFlag
+									]
 								],
 						s_String?(StringMatchQ["\t"..]):>
 							StringReplace[s,"\t"->" "]
@@ -3054,13 +3067,19 @@ pelicanCodeCellGraphicsFormat[root_,path_,name_,e_,
 					PageWidth->700
 					],
 					First@Flatten@{style}
-					],{
+					],
+				{
+					$iPelicanNotebookToMarkdownToStripStartBlockFlag~~
+						inner:Shortest[__]~~
+						$iPelicanNotebookToMarkdownToStripEndBlockFlag:>
+							StringReplace[inner,"\\\n"->""]
+				}],{
 				$iPelicanNotebookToMarkdownUnIndentedLine~~" \\\n"->
 					$iPelicanNotebookToMarkdownUnIndentedLine,
 				$iPelicanNotebookToMarkdownToStripStart~~
 					inner:Shortest[__]~~
 					$iPelicanNotebookToMarkdownToStripEnd:>
-					StringReplace[inner,"\\\n"->""]
+						StringReplace[inner,"\\\n"->""]
 				}],
 		s:Except[""]:>
 				StringReplace[postFormat@s,{
@@ -3436,7 +3455,7 @@ PelicanNotebookSave[
 													}
 												]
 										],
-								"body"->iPelicanNotebookToMarkdown[nb]
+								"body"->PelicanNotebookToMarkdown[nb]
 								|>
 							],
 					"Text"
