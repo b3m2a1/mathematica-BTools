@@ -59,6 +59,7 @@ PelicanThemes::usage="";
 
 
 PelicanNotebookToMarkdown::usage="";
+PelicanNotebookSave::usage="";
 
 
 Begin["`Private`"];
