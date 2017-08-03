@@ -2473,7 +2473,7 @@ PelicanSiteSettings[
 					]
 				]
 		]
-PelicanSiteSettings[s_String,settings:(_String|{__String}|All):All]:=
+PelicanSiteSettings[s_String]:=
 	If[DirectoryQ[FileNameJoin@{$PelicanRoot,s}],
 		PelicanSiteSettings[FileNameJoin@{$PelicanRoot,s},settings],
 		$Failed
@@ -2500,7 +2500,10 @@ pelicanFileMetadataSlug[t_,name_]:=
 		{
 			Automatic:>
 				ToLowerCase@
-					StringReplace[pelicanFileMetadataTitle[t,name],Whitespace->"-"]
+					StringReplace[pelicanFileMetadataTitle[t,name],{
+						Whitespace->"-",
+						Except[WordCharacter]->""
+						}]
 			}];
 
 
@@ -2756,9 +2759,23 @@ PelicanDeploy[
 
 
 PelicanThemes[Optional["List","List"],verbose:True|False:False]:=
-	PyVenvRun["pelican",
-		{"pelican-themes","-l",If[verbose,"-v",Nothing]}
-		]
+	If[verbose,
+		AssociationThread[
+			FileBaseName/@#,
+			#
+			]&,
+		Identity
+		]@
+		StringSplit[
+			Lookup[
+				PyVenvRun["pelican",
+					{"pelican-themes","-l",If[verbose,"-v",Nothing]}
+					],
+				"StandardOutput",
+				""
+				],
+			"\n"
+			];
 
 
 PelicanThemes["Install",f_String?FileExistsQ]:=
@@ -2780,6 +2797,17 @@ PelicanThemes["Install",f_String]:=
 			]
 		},
 		PelicanThemes["Install",u]
+		]
+
+
+PelicanOpenTheme[s_String]:=
+	Replace[PelicanSiteSettings[s],
+		a_Association:>
+			SystemOpen@
+				Lookup[
+					PelicanThemes[True],
+					StringTrim[Lookup[a,"THEME"],"'"|"\""]
+					]
 		]
 
 
@@ -2867,7 +2895,9 @@ $iPelicanNotebookToMarkdownRasterizeForms=
 
 $iPelicanNotebookToMarkdownOutputStringBaseForms=
 	_GraphicsBox|_Graphics3DBox|
-		TagBox[__,_Manipulate`InterpretManipulate];
+		TagBox[__,_Manipulate`InterpretManipulate]|
+		TagBox[_GridBox,"Column"|"Grid"]|
+		TemplateBox[_,"Legended",___];
 $iPelicanNotebookToMarkdownOutputStringForms=
 	$iPelicanNotebookToMarkdownOutputStringBaseForms|
 	TooltipBox[
@@ -2877,6 +2907,16 @@ $iPelicanNotebookToMarkdownOutputStringForms=
 	InterpretationBox[
 		_?(MatchQ[#,$iPelicanNotebookToMarkdownOutputStringForms]&),
 		__
+		];
+
+
+pelicanMarkdownIDHook[id_]:=
+	TemplateApply[
+		"<a id=\"``\" >&zwnj;</a>",
+		ToLowerCase@
+			StringReplace[StringTrim@id,
+				{Whitespace->"-",Except[WordCharacter]->""}
+				]
 		];
 
 
@@ -2927,10 +2967,7 @@ iPelicanNotebookToMarkdown[root_,path_,name_,Cell[t_,"Section",___]]:=
 				FrontEndExecute@
 					ExportPacket[Cell[t],"PlainText"],{
 				{id_String,___}:>
-					TemplateApply[
-						"<a id=\"``\" >&zwnj;</a>",
-						ToLowerCase@StringReplace[id,Whitespace->"-"]
-						]<>"\n\n",
+					pelicanMarkdownIDHook[id]<>"\n\n",
 				_->""
 				}]<>
 			"# "<>s
@@ -2942,10 +2979,7 @@ iPelicanNotebookToMarkdown[root_,path_,name_,Cell[t_,"Subsection",___]]:=
 				FrontEndExecute@
 					ExportPacket[Cell[t],"PlainText"],{
 				{id_String,___}:>
-					TemplateApply[
-						"<a id=\"``\" >&zwnj;</a>",
-						ToLowerCase@StringReplace[id,Whitespace->"-"]
-						]<>"\n\n",
+					pelicanMarkdownIDHook[id]<>"\n\n",
 				_->""
 				}]<>
 			"## "<>s
@@ -3024,63 +3058,69 @@ $iPelicanNotebookToMarkdownUnIndentedLine=
 	"\"<!NO_INDENT>\"";
 
 
+pelicanNotebookToMarkdownStripBlock[s_]:=
+	$iPelicanNotebookToMarkdownToStripStartBlockFlag<>
+		$iPelicanNotebookToMarkdownUnIndentedLine<>
+			$iPelicanNotebookToMarkdownToStripStart<>
+				StringTrim@s<>
+			$iPelicanNotebookToMarkdownToStripEnd<>
+	$iPelicanNotebookToMarkdownToStripEndBlockFlag
+
+
 pelicanCodeCellGraphicsFormat[root_,path_,name_,e_,
 	style_,postFormat_]:=
 	Replace[
 		StringReplace[
-		StringReplace[
-			First@
-			FrontEndExecute@
-				FrontEnd`ExportPacket[
-					Cell[e/.{
-						b:$iPelicanNotebookToMarkdownRasterizeForms:>
-							Replace[
-								iPelicanNotebookToMarkdown[root,path,name,b,
-									Replace[style,{
-										"InputText"->"Input",
-										_->Last@Flatten@{style}
-										}]
-									],
-								s:Except[""]:>
-									$iPelicanNotebookToMarkdownToStripStartBlockFlag<>
-										$iPelicanNotebookToMarkdownUnIndentedLine<>
-											$iPelicanNotebookToMarkdownToStripStart<>
-												StringTrim@s<>
-												$iPelicanNotebookToMarkdownToStripEnd<>
-												$iPelicanNotebookToMarkdownToStripEndBlockFlag
-							],
-						g:$iPelicanNotebookToMarkdownOutputStringForms:>
-							Replace[
-								iPelicanNotebookToMarkdown[root,path,name,g],
-								s:Except[""]:>
-									Echo[
-									$iPelicanNotebookToMarkdownToStripStartBlockFlag<>
-										$iPelicanNotebookToMarkdownUnIndentedLine<>
-											$iPelicanNotebookToMarkdownToStripStart<>
-												StringTrim@s<>
-												$iPelicanNotebookToMarkdownToStripEnd<>
-												$iPelicanNotebookToMarkdownToStripEndBlockFlag
-									]
+			StringReplace[
+				First@FrontEndExecute@
+					FrontEnd`ExportPacket[
+						Cell[e/.{
+							b:$iPelicanNotebookToMarkdownRasterizeForms:>
+								Replace[
+									iPelicanNotebookToMarkdown[root,path,name,b,
+										Replace[style,{
+											"InputText"->"Input",
+											_->Last@Flatten@{style}
+											}]
+										],
+									s:Except[""]:>
+										pelicanNotebookToMarkdownStripBlock[s]
 								],
-						s_String?(StringMatchQ["\t"..]):>
-							StringReplace[s,"\t"->" "]
-						},
-					PageWidth->700
-					],
-					First@Flatten@{style}
-					],
-				{
-					$iPelicanNotebookToMarkdownToStripStartBlockFlag~~
-						inner:Shortest[__]~~
-						$iPelicanNotebookToMarkdownToStripEndBlockFlag:>
-							StringReplace[inner,"\\\n"->""]
-				}],{
+							g:$iPelicanNotebookToMarkdownOutputStringForms:>
+								Replace[
+									iPelicanNotebookToMarkdown[root,path,name,g],
+									s:Except[""]:>
+										pelicanNotebookToMarkdownStripBlock[s]
+									],
+							s_String?(StringMatchQ["\t"..]):>
+								StringReplace[s,"\t"->" "]
+							},
+						PageWidth->700
+						],
+						First@Flatten@{style}
+						],
+					{
+						$iPelicanNotebookToMarkdownToStripStartBlockFlag~~
+							inner:Shortest[__]~~
+							$iPelicanNotebookToMarkdownToStripEndBlockFlag:>
+								StringReplace[
+									StringReplace[inner,{"\\\n"->""}],{
+									$iPelicanNotebookToMarkdownToStripStart|
+										$iPelicanNotebookToMarkdownToStripEnd->"",
+									StartOfLine->$iPelicanNotebookToMarkdownUnIndentedLine
+									}]
+						}],
+			{
 				$iPelicanNotebookToMarkdownUnIndentedLine~~" \\\n"->
 					$iPelicanNotebookToMarkdownUnIndentedLine,
 				$iPelicanNotebookToMarkdownToStripStart~~
 					inner:Shortest[__]~~
 					$iPelicanNotebookToMarkdownToStripEnd:>
-						StringReplace[inner,"\\\n"->""]
+						StringReplace[inner,{
+							StartOfLine->$iPelicanNotebookToMarkdownUnIndentedLine,
+							StartOfLine~~Whitespace->"",
+							"\\\n"->""
+							}]
 				}],
 		s:Except[""]:>
 				StringReplace[postFormat@s,{
@@ -3125,6 +3165,41 @@ iPelicanNotebookToMarkdown[root_,path_,name_,b_BoxData]:=
 						Cell[b],
 						"PlainText"
 						]
+		];
+
+
+iPelicanNotebookToMarkdown[root_,path_,name_,
+	TagBox[
+		GridBox[rows_,___],
+		"Column"
+		]
+	]:=
+	StringRiffle[
+		StringReplace[
+			iPelicanNotebookToMarkdown[root,path,name,#],
+			"\n"->""
+			]&/@First/@rows,
+		"\n\n"
+		];
+
+
+iPelicanNotebookToMarkdown[root_,path_,name_,
+	TagBox[
+		GridBox[rows_,___],
+		"Grid"
+		]
+	]:=
+	StringRiffle[
+		StringRiffle[
+			Map[
+				StringReplace[
+					iPelicanNotebookToMarkdown[root,path,name,#],
+					"\n"->""
+					]&,
+				#],
+			"    "
+			]&/@rows,
+		"\n\n"
 		];
 
 
@@ -3403,7 +3478,7 @@ iPelicanNotebookToMarkdown[
 	root_,
 	path_,
 	name_,
-	g:_GraphicsBox|_Graphics3DBox,
+	g:_GraphicsBox|_Graphics3DBox|TemplateBox[_,"Legended",___],
 	fbase_:Automatic,
 	alt_:Automatic
 	]:=

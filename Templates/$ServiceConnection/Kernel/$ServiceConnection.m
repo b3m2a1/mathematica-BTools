@@ -537,7 +537,7 @@ KeyValueMap[
 			$serviceconnectioncookeddata[callName, id_,args_] :=
 				postFunction@
 	   	 	Block[{ 
-	   	 		params = (*preFunction@*)Join[Association[args],defaultPars],
+	   	 		params = (*preFunction@*)Join[defaultPars,Association[args]],
 	   	 		$$serviceconnectionlastrequest
 	   	 		},
 	   	 		ServiceConnections`Private`urlfetchFun[id]=
@@ -598,7 +598,7 @@ KeyValueMap[
 			 			preFunction[
 				 			callName,
 				 			id,
-				 			Join[Association[args],defaultPars]
+				 			Join[defaultPars,Association[args]]
 				 			],
 			 		req = reqParams,
 			 		pars = paramList,
