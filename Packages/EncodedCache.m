@@ -933,8 +933,22 @@ KeyChainGet[
 	
 
 
+$baseCloudAccounts=
+	"TestingAccount"|"DeploymentsAccount"|
+		"PacletsAccount"|"DatasetsAccount"|
+			"ServiceConnectionsAccount";
+
+
+`Package`PackageAddAutocompletions[
+	"KeyChainConnect",
+	{List@@$baseCloudAccounts}
+	]
+
+
 Options[KeyChainConnect]=
 	Options[CloudConnect];
+KeyChainConnect[acc:$baseCloudAccounts,ops:OptionsPattern[]]:=
+	KeyChainConnect[Key[acc],ops];
 KeyChainConnect[
 	acct:_String|Key[_String]:Key["DeploymentsAccount"],
 	ops:OptionsPattern[]

@@ -116,18 +116,19 @@ BannerDialogConfig[
 										s[[2]];DialogReturn[],
 										ImageSize->{100,30},
 										Appearance->
-											Replace[OptionValue@Appearance,{
-												c_?ColorQ:>
-													GradientButtonAppearance[
-														{c,c,
-															Replace[ColorConvert[c,Hue],
-																Hue[h_,s_,b_]:>
-																	Hue[h,s,b*1.1]
-																]
-															}
-														],
-												"OAuth"->
-													{"Default"->Image[CompressedData["
+											Replace[
+												Replace[OptionValue@Appearance,{
+													c_?ColorQ:>
+														GradientButtonAppearance[
+															{c,c,
+																Replace[ColorConvert[c,Hue],
+																	Hue[h_,s_,b_]:>
+																		Hue[h,s,b*1.1]
+																	]
+																}
+															],
+													"OAuth"->
+														{"Default"->Image[CompressedData["
 1:eJxTTMoPSmNiYGAo5gASQYnljkVFiZXBAkBOaF5xZnpeaopnXklqemqRRRIz
 UFAGiHmBmIUBBfwngFFAmrHxf2Ixsp6Zvr4E8TDW859EPf+Hgp5ZQDFCGF3P
 HD8/ghhdz1x/f4IYXc98oBghjK5nYUAAQYyuZ1FgIEGMrmdJUBBBjK5nWXAw
@@ -144,8 +145,8 @@ cCCI0fU0OzoSxOh6Wp2dCWJ0PR0uLgQxup5uV1eCGF1Pr7s7QYyuZ4KHB0GM
 rmeylxdBjK5nmrc3QYyuZ7qPD0FMoR4GEvUwDAU9JJaJhMpcjDIYAHUsdEc=
 
 "], "Byte", ColorSpace -> "RGB", Interleaving -> True]},
-												"Password"->
-													{"Default"->Image[CompressedData["
+													"Password"->
+														{"Default"->Image[CompressedData["
 1:eJxTTMoPSmNiYGAo5gASQYnljkVFiZXBAkBOaF5xZnpeaopnXklqemqRRRIz
 UFAGiHmBmIUBBfwngFGAa5rtf2Ixsp6MmTEE8TDW859EPf+Hgp7MWTEEMbqe
 rDmxBDG6nuy5cQQxup6c+fEEMbqe3IUJBDG6nrxFiQQxup6CJUkEMbqewmXJ
@@ -161,8 +162,8 @@ UFAGiHmBmIUBBfwngFGAXYz5f2Ixsp7QWm+CeBjr+U+inv9DQU94gy9BjK4n
 stmPIEbXE90aQBCj64npCCKI0fXEdQcTxOh6EnpDCWJ0PUkTwglidD0pkyMI
 YnQ9adOiCGJ0PenTowliCvUwkKiHYSjoIbFMJFTmYpTBADDZm5A=
 "], "Byte", ColorSpace -> "RGB", Interleaving -> True]},
-												_:>
-													{"Default"->Image[CompressedData["
+													_:>
+														{"Default"->Image[CompressedData["
 1:eJxTTMoPSmNiYGAo5gASQYnljkVFiZXBAkBOaF5xZnpeaopnXklqemqRRRIz
 UFAGiHmBmIUBBfwngFGBTv5/ojGyHqdlhPHw1fOfRD3/h4Qe5+WEMboel1WE
 Mboe17WEMboetw2EMboe982EMboez62EMboerx2EMboe792EMboen32EMboe
@@ -178,7 +179,11 @@ UFAGiHmBmIUBBfwngFGBRvJ/ojGyHvMOwnj46vlPop7/9NfTSRij67HoJozR
 9Vj2EcboeqwmEsboeqwnE8boemymE8boeuxmE8boehwWEMboepyWEsboelxW
 EcboelzXEMaU6WEgUQ/DkNBDWplIqMzFKIMBfRg0Sw==
 "], "Byte", ColorSpace -> "RGB", Interleaving -> True]}
-												}]
+													}
+												],
+											l_List:>
+												Append[l,"ButtonType" -> "Default"]
+											]
 										]
 									],
 								Spacer[{10,0}],
@@ -189,31 +194,36 @@ EcboelzXEMaU6WEgUQ/DkNBDWplIqMzFKIMBfRg0Sw==
 												Button["Cancel",DialogReturn[$Canceled]]
 											]
 									},
-									CancelButton[
+									Button[
 										First@c,
 										c[[2]];
-											DialogReturn[$Canceled],
+										DialogReturn[$Canceled],
 										ImageSize->{100,30},
 										Appearance->
-											{"Default"->Image[CompressedData["
+											{
+												"Default"->Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
 Qh3Kz5lsIhuJzrSkzpim2X7bu7Esi4bGtm0aGsdxaGhc16Wh8TyP9mYed9/3
 aU/TvkwQBDQ0YRjS0ERRREMTxzENTZIkNDRpmtLQZFlGQ5PnOQ1NURQ0NGVZ
 0tBUVUVDU9c1DU3TNLQfjehpxD+YnjuR7dyPHXwHy1co2w==
-"], "Byte", ColorSpace -> "RGB", Interleaving -> True],"Hover"->Image[CompressedData["
+"], "Byte", ColorSpace -> "RGB", Interleaving -> True],
+												"Hover"->Image[CompressedData["
 1:eJzV1E0KgkAYxvGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKx/MDP1FRUZc2REE+
 LZ6kVS/8h5mB3/adq6f1fiCEOI/lsVauS8NQbpupfGz18/Gga7uVftEOmrFQ
 h/JzJpvIRqIzLakzpmm23/ZuLMuiobFtm4bGcRwaGtd1aWg8z6O9mcfd933a
 07QvEwQBDU0YhjQ0URTR0MRxTEOTJAkNTZqmNDRZltHQ5HlOQ1MUBQ1NWZY0
 NFVV0dDUdU1D0zQN7UcjehrxD6bnTmQ792MH3wFFhzOd
-"], "Byte", ColorSpace -> "RGB", Interleaving -> True],"Pressed"->Image[CompressedData["
+"], "Byte", ColorSpace -> "RGB", Interleaving -> True],
+												"Pressed"->Image[CompressedData["
 1:eJxTTMoPSmNiYGAo5gASQYnljkVFiZXBAkBOaF5xZnpeaopnXklqemqRRRIz
 UFAGiHmBmIUBBfwngFHAzJkz/xOLkfVs27aNIB7Gev6TqOc/vfVs376dIEbX
 s2fPHoIYXc/BgwcJYnQ9x44dI4jR9Zw+fZogRtdz/vx5ghhdz6VLlwhidD1X
 r14liNH13LhxgyBG13P79m2CGF3PnTt3CGIK9TCQqIdhKOghsUwkVOZilMEA
 mEXTyg==
-"], "Byte", ColorSpace -> "RGB", Interleaving -> True]}
+"], "Byte", ColorSpace -> "RGB", Interleaving -> True],
+												"ButtonType" -> "Cancel"
+												}
 										]
 									]
 								},
