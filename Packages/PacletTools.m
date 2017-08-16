@@ -2490,7 +2490,13 @@ pacletServerXML[
 				pacletSectionXML[site,#]&/@
 					Map[Normal,
 						Select[
-							SortBy[{#Name,#Version}&]@Flatten@{pacletSpecs},
+							SortBy[
+								DeleteDuplicatesBy[
+									Reverse@SortBy[#Version&]@Flatten@{pacletSpecs},
+									#Name&
+									],
+								#Name&
+								],
 							!StringEndsQ[#Name,("_Part"~~NumberString)|"_Index"]&
 							]
 						]

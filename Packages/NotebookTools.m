@@ -19,48 +19,46 @@
 
 
 
-$CompressionIcon::usage=
-	"The icon to use when creating compressed expressions"
-
-
-SummarizedForm::usage="Summarizes an expression in a summary box";
-IconForm::usage="Formats an expression inside an interpretation frame";
-
-
-CompressedForm::usage=
-	"Compresses an expression in either a summarized form or icon form";
+PackageFEHiddenBlock[
+	$CompressionIcon::usage=
+		"The icon to use when creating compressed expressions";
+	SummarizedForm::usage="Summarizes an expression in a summary box";
+	IconForm::usage="Formats an expression inside an interpretation frame";
+	CompressedForm::usage=
+		"Compresses an expression in either a summarized form or icon form";
+	]
 
 
 StoreExpression::usage=
 	"Prints a cell from which the data can be revived";
 
 
-CompileNotebook::usage=
-	"Compiles a notebook and resource references into a single document";
-GenerateNewPackage::usage=
-	"Opens a new package file template";
-GenerateCodePackage::usage=
-	"Copies a package file to a notebook and styles it as a CodePackage";
-CleanStyledNotebook::usage=
-	"Generates a notebook where no personalized styling is used";
-$CleanStylingRules::usage=
-	"Maps styles to their simplified versions";
+PackageFEHiddenBlock[
+	CompileNotebook::usage=
+		"Compiles a notebook and resource references into a single document";
+	GenerateNewPackage::usage=
+		"Opens a new package file template";
+	GenerateCodePackage::usage=
+		"Copies a package file to a notebook and styles it as a CodePackage";
+	CleanStyledNotebook::usage=
+		"Generates a notebook where no personalized styling is used";
+	$CleanStylingRules::usage=
+		"Maps styles to their simplified versions";
+	]
 
 
-SetDockedCells::usage="Sets the docked cells of a notebook";
-EditDockedCells::usage=
-	"Applies the specified function to the expressions in the docked cells";
-ClearDockedCells::usage="Clears the docked cells for the notebook";
-
-
-SetToolbar::usage="Sets a toolbar found by FEResourceFind";
-AvailableToolbars::usage="Alias for FEResourceFind";
-
-
-SelectAbove::usage="Selects cells above a given cell";
-SelectBelow::usage="Selects cells below a given cell";
-EvaluateAbove::usage="Evaluates cells above a given cell";
-EvaluateBelow::usage="Evaluates cells below a given cell";
+PackageScopeBlock[
+	SetDockedCells::usage="Sets the docked cells of a notebook";
+	EditDockedCells::usage=
+		"Applies the specified function to the expressions in the docked cells";
+	ClearDockedCells::usage="Clears the docked cells for the notebook";
+	SetToolbar::usage="Sets a toolbar found by FEResourceFind";
+	AvailableToolbars::usage="Alias for FEResourceFind";
+	SelectAbove::usage="Selects cells above a given cell";
+	SelectBelow::usage="Selects cells below a given cell";
+	EvaluateAbove::usage="Evaluates cells above a given cell";
+	EvaluateBelow::usage="Evaluates cells below a given cell";
+	]
 
 
 NotebookSaveRename::usage="Uses save rename on a file / notebook";

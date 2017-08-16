@@ -2,13 +2,14 @@
 
 {
 	"PreLoad"-> None,
-	"Hidden" -> {
+	"FEHidden" -> {
 		"FormattingTools",
-		"FETools",
-		"SearchTools",
-		"GraphTools",
-		"StackExchangeAPI",
-		"GoogleDrive"
+		"FETools"
 		},
-	"HiddenContexts"->None
+	"PackageScope"->{
+		"GoogleDrive",
+		"StackExchangeAPI",
+		"SearchTools",
+		"GraphTools"
+		}
 	}

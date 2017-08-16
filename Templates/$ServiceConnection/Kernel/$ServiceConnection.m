@@ -462,27 +462,33 @@ $serviceconnectioncookeddata["RequestData",id_, query_String]:=
 						Lookup::invrl
 					],
 					$Failed:>
-						FirstCase[
-							Select[
-								DownValues@$serviceconnectioncookeddata,
-								!FreeQ[First@#,query]&
-								],
-							With[{fn=
-								Switch[$$serviceconnectionclientname,
-									"OAuthClient"|"oauthclient"|"OauthClient",
-										OAuthClient`rawoauthdata,
-									"KeyClient"|"keyclient",
-										KeyClient`rawkeydata,
-									"OtherClient"|"otherclient",
-										OtherClient`rawotherdata
-									]
-								},
-								HoldPattern[fn[_,q_,___]]:>
+							FirstCase[
+								Select[
+									DownValues@$serviceconnectioncookeddata,
+									!FreeQ[First@#,query]&
+									],
+								With[{fn=
+									HoldPattern[
+										Switch[$$serviceconnectionclientname,
+											"OAuthClient"|"oauthclient"|"OauthClient",
+												OAuthClient`rawoauthdata,
+											"KeyClient"|"keyclient",
+												KeyClient`rawkeydata,
+											"OtherClient"|"otherclient",
+												OtherClient`rawotherdata
+											]
+										]
+									},
+									HoldPattern[fn[_,q_,___]]:>
 										$serviceconnectioncookeddata["RequestData",id, q]
-								],
-							Missing["UnkownRequest"]	
-							]
-					]
+									],
+								Quiet[
+									Check[$serviceconnectionpsuedodata[id,query],Missing["UnknownRequest"]],
+									Lookup::invrl
+									],
+								Infinity	
+								]
+						]
 			],
 			l_List:>
 				AssociationThread[
@@ -533,10 +539,37 @@ KeyValueMap[
 				#2
 				]
 		},
+		With[{
+			basePseudo=
+				{
+						"URL"->Lookup[#2,"URL",Missing["NotAvailable"]],
+						"Method"->Lookup[#2,"Method",Missing["NotAvailable"]],
+						"Path"->Lookup[#2,"Path",{}],
+						"Parameters"->paramList,
+						"BodyData"->Lookup[#2,"BodyData",Missing["NotAvailable"]],
+						"MultipartData"->Lookup[#2,"MultipartData",Missing["NotAvailable"]],
+						"Headers"->Lookup[#2,"Headers",{}],
+						"RequiredParameters"->reqParams,
+						"RequiredPermissions"->Lookup[#2,"RequiredPermissions",{}],
+						"ReturnContentData"->Lookup[#2,"ReturnContentData",False],
+						"IncludeAuth"->Lookup[#2,"IncludeAuth",True]
+						}
+			},
 		If[!MissingQ@baseCall,
+			$serviceconnectionpsuedodata[id_,callName]:=
+				Merge[
+					{
+						Replace[
+							$serviceconnectioncookeddata["RequestData",id,baseCall],
+							_Missing->{}
+							],
+						basePseudo
+						},
+					Replace[{{s_String,_}:>s,{_,e_}:>e,l_:>DeleteDuplicates[Join@@l]}]
+					];
 			$serviceconnectioncookeddata[callName, id_,args_] :=
 				postFunction@
-	   	 	Block[{ 
+	   	 	Block[{
 	   	 		params = (*preFunction@*)Join[defaultPars,Association[args]],
 	   	 		$$serviceconnectionlastrequest
 	   	 		},
@@ -545,7 +578,7 @@ KeyValueMap[
 	   	 	If[MatchQ[$$serviceconnectionclientname,"KeyClient"|"keyclient"],
 	   	 		params=
 	   	 			$serviceconnectionreformatbodydata[
-									If[MatchQ[baseCall,_Function],baseCall[params],baseCall],
+								If[MatchQ[baseCall,_Function],baseCall[params],baseCall],
 									id,
 									params
 									]
@@ -575,6 +608,8 @@ KeyValueMap[
 			       	Dataset[a]
 			       }]
 			    ],
+			 $serviceconnectionpsuedodata[_,callName]=
+			 	basePseudo;
 			 $serviceconnectioncookeddata[
 	 			"RequestData",
  				_, 
@@ -606,7 +641,11 @@ KeyValueMap[
 			 		},
 			 		Catch[
 			 			With[{missing=
-				 			Select[req,!KeyMemberQ[params,#]&]
+				 			Select[req,
+				 				With[{p=#},
+				 					!AnyTrue[Keys@params,StringMatchQ[#,p]&]
+				 					]&
+				 				]
 				 			},
 				 			If[Length@missing>0,
 				 				Message[
@@ -636,9 +675,13 @@ KeyValueMap[
 			 			]
 			 		]
 			 ]
+			]
 		]&,
 	$$serviceconnectioncookingfunctions
 	];
+
+
+$serviceconnectionpsuedodata[_,_]:=$Failed
 
 
 (* ::Subsubsection::Closed:: *)

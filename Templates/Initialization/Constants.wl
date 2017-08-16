@@ -11,5 +11,6 @@ $PackageName=
 $PackageListing=<||>;
 $PackageContexts={
 	"$Name`",
-	$Context
+	"$Name`Private`Package`",
+	"$Name`Private`Hidden`"
 	};

@@ -388,7 +388,7 @@ If[MatchQ[$DocumentationColoring,{Except[_Rule]..}|Except[_List]],
 		"BUILT-IN SYMBOL"->RGBColor[0.023529, 0.427451, 0.729412],
 		"GUIDE"->RGBColor[0.8, 0.4, 0],
 		"TUTORIAL"->RGBColor[0.641154, 0.223011, 0.0623026],
-		"BTools"->Hue[0.7, 0.5, 0.79],
+		$PackageName->Hue[0.7, 0.5, 0.79],
 		"Global"->Hue[0.99, 0.6900000000000001, 0.71],
 		"Package"->Hue[0.6, 0.3, 0.7]
 		}
@@ -676,7 +676,7 @@ docMetadata[ops:OptionsPattern[]]:=
 						],
 					"paclet:"
 					],
-				Except["/"|WordCharacter]->""
+				Except["/"|WordCharacter|"$"]->""
 				]
 		} 
 
@@ -684,6 +684,14 @@ docMetadata[ops:OptionsPattern[]]:=
 (* ::Subsection:: *)
 (*SymbolPages*)
 
+
+
+$DocDefaultURLBase=
+	URLBuild@<|
+		"Scheme"->"https",
+		"Domain"->"www.wolframcloud.com",
+		"Path"->{"objects","b3m2a1.paclets","reference"}
+		|>;
 
 
 DocPageRefLink[s_String,cell:True|False:True]:=
@@ -920,14 +928,6 @@ generateGuideRefs[guides_]:=
 		Replace[guides,
 			s_String:>(s->s),
 			1];
-
-
-$DocDefaultURLBase=
-	URLBuild@<|
-		"Scheme"->"https",
-		"Domain"->"www.wolframcloud.com",
-		"Path"->{"objects","b3m2a1.paclets","reference"}
-		|>;
 
 
 generateUrlRefs[refString_String]:=
@@ -3815,7 +3815,6 @@ GenerateGuide[namePattern_String,ops:OptionsPattern[]]:=
 				]
 		},
 		With[{names=contextNames[namePattern<>"*"]},
-			DocFind; (* To get the DocFind package loaded for the private SymbolDetermineType *)
 			With[{types=GroupBy[Keys@#,#]&@SymbolDetermineType[names]},
 				GenerateGuide[
 					"Title"->

@@ -245,7 +245,7 @@ SHConfigureSyntaxColoring[
 	objs:Except[_?OptionQ]..,
 	ops:OptionsPattern[]
 	]:=
-	SSEdit[objs,
+	SSEdit[objs,{
 		AutoStyleWords->
 			Join[
 				Thread[
@@ -332,7 +332,7 @@ SHConfigureSyntaxColoring[
 			"UnwantedAssignmentStyle"->
 				"UnwantedAssignmentStyle"
 				}
-			];
+			}];
 
 
 SHRemoveSyntaxColoring[objs_]:=

@@ -78,26 +78,32 @@ AppRegenerateInit::usage=
 
 
 
-AppGet::usage=
-	"Runs get on the specified app package";
-AppNeeds::usage=
-	"Runs Needs on the specified package";
-AppPackageOpen::usage=
-	"Opens a package .m file";
-AppFromFile::usage=
-	"Gets an app from the current file";
+PackageFEHiddenBlock[
+	AppGet::usage=
+		"Runs get on the specified app package";
+	AppNeeds::usage=
+		"Runs Needs on the specified package";
+	AppPackageOpen::usage=
+		"Opens a package .m file";
+	AppFromFile::usage=
+		"Gets an app from the current file";
+	]
 
 
-AppGenerateTestingNotebook::usage=
-	"Generates a standard testing notebook for an app";
+PackageScopeBlock[
+	AppGenerateTestingNotebook::usage=
+		"Generates a standard testing notebook for an app";
+	]
 
 
-AppPackageFunctions::usage=
-	"Gets the function names declared in a package or set of packages";
-AppFunctionDependencies::usage=
-	"Gets the package dependency chain for a function";
-AppPackageDependencies::usage=
-	"Gets the dependency structure for a full app package";
+PackageScopeBlock[
+	AppPackageFunctions::usage=
+		"Gets the function names declared in a package or set of packages";
+	AppFunctionDependencies::usage=
+		"Gets the package dependency chain for a function";
+	AppPackageDependencies::usage=
+		"Gets the dependency structure for a full app package";
+	]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -105,32 +111,36 @@ AppPackageDependencies::usage=
 
 
 
-AppRegenerateDocInfo::usage=
-	"Regenerates the DocInfo.m file";
-AppIndexDocs::usage=
-	"Indexes the doc pages of an app";
-AppSymbolNotebook::usage=
-	"Generates a doc template for an app";
-AppPackageSymbolNotebook::usage=
-	"Generates a doc template for a package";
-AppGuideNotebook::usage=
-	"Generates a guide overview for the app";
-AppPackageGuideNotebook::usage=
-	"Generates a guide overview for a package";
-AppTutorialNotebook::usage=
-	"Generates a tutorial overview for the app";
-AppDocumentationTemplate::usage=
-	"Creates a total documentation template for an app";
+PackageFEHiddenBlock[
+	AppRegenerateDocInfo::usage=
+		"Regenerates the DocInfo.m file";
+	AppIndexDocs::usage=
+		"Indexes the doc pages of an app";
+	AppSymbolNotebook::usage=
+		"Generates a doc template for an app";
+	AppPackageSymbolNotebook::usage=
+		"Generates a doc template for a package";
+	AppGuideNotebook::usage=
+		"Generates a guide overview for the app";
+	AppPackageGuideNotebook::usage=
+		"Generates a guide overview for a package";
+	AppTutorialNotebook::usage=
+		"Generates a tutorial overview for the app";
+	AppDocumentationTemplate::usage=
+		"Creates a total documentation template for an app";
+	]
 
 
-AppSaveSymbolPages::usage=
-	"Saves auto-generated symbol pages";
-AppPackageSaveSymbolPages::usage=
-	"Saves auto-generated symbol pages for a package";
-AppSaveGuide::usage=
-	"Saves an auto-generated guide for an app";
-AppPackageSaveGuide::usage=
-	"Saves auto-generated guide for a package";
+PackageFEHiddenBlock[
+	AppSaveSymbolPages::usage=
+		"Saves auto-generated symbol pages";
+	AppPackageSaveSymbolPages::usage=
+		"Saves auto-generated symbol pages for a package";
+	AppSaveGuide::usage=
+		"Saves an auto-generated guide for an app";
+	AppPackageSaveGuide::usage=
+		"Saves auto-generated guide for a package";
+	]
 
 
 AppGenerateDocumentation::usage=
@@ -152,14 +162,16 @@ AppRegenerateBundleInfo::usage=
 	"Regenerates the BundleInfo file";
 AppRegenerateLoadInfo::usage=
 	"Regenerates the LoadInfo file";
-AppBundle::usage="Creates a sync bunde for an app";
-AppUpload::usage="Uploads an application zip to the cloud";
-AppDownload::usage="Downloads an app into a directory";
-AppInstall::usage="Downloads/installs an application";
-AppBackup::usage="Backs up the app";
-AppBackups::usage="Gets all the backed-up versions of the app";
-AppRestore::usage="Restores the most recent version of the app";
-$AppCloudExtension::usage="The cloud extension for applications";
+PackageFEHiddenBlock[
+	AppBundle::usage="Creates a sync bunde for an app";
+	AppUpload::usage="Uploads an application zip to the cloud";
+	AppDownload::usage="Downloads an app into a directory";
+	AppInstall::usage="Downloads/installs an application";
+	AppBackup::usage="Backs up the app";
+	AppBackups::usage="Gets all the backed-up versions of the app";
+	AppRestore::usage="Restores the most recent version of the app";
+	$AppCloudExtension::usage="The cloud extension for applications";
+	]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -291,6 +303,8 @@ AppDirectory[app_,extensions___]:=
 		Replace[{extensions},{
 				"Palettes"->{"FrontEnd","Palettes"},
 				"StyleSheets"->{"FrontEnd","StyleSheets"},
+				"TextResources"->{"FrontEnd","TextResources"},
+				"SystemResources"->{"FrontEnd","SystemResources"},
 				"Guides"->{"Documentation","English","Guides"},
 				"ReferencePages"->{"Documentation","English","ReferencePages"},
 				"Symbols"->{"Documentation","English","ReferencePages","Symbols"},
@@ -496,7 +510,7 @@ $appInitStrings:=
 appInitTemplate[pkg_]:=
 	With[{strings=$appInitStrings},
 		TemplateApply[
-			TemplateApply[strings["__init__"],<|
+			TemplateApply[strings["init"],<|
 				"cores"->
 					StringRiffle[StringTrim/@{
 						strings["Constants"],
@@ -564,6 +578,60 @@ configureDocs[
 			],
 		{d,docNotebooks}
 		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*configureFE*)
+
+
+
+configureFENewPath[
+	app_,
+	type_,
+	old_
+	]:=
+	With[{f=Replace[old,(b_->n_):>n]},
+		Replace[FileNameSplit[f],{
+			{___,type,r__}:>
+				AppPath[app,type,r],
+			{___,r_}:>
+				AppPath[app,type,r]
+			}]
+		]
+
+
+configureFE[app_,
+	stylesheets_,
+	palettes_,
+	textresources_,
+	systemresources_
+	]:=
+	MapThread[
+		With[{type=#2,files=#},
+			With[{f=Replace[#,(b_->n_):>b]},
+				If[FileExistsQ[f],
+					With[{path=configureFENewPath[app,type,#]},
+						If[!DirectoryQ@DirectoryName[path],
+							CreateDirectory[DirectoryName[path],
+								CreateIntermediateDirectories->True
+								]
+							];
+						If[DirectoryQ[f],
+							CopyDirectory[f,path],
+							CopyFile[f,path,
+								OverwriteTarget->True
+								]
+							]
+						]
+					]
+				]&/@files
+			]&,{
+		Replace[
+			Flatten@*List/@{stylesheets,palettes,textresources,systemresources},
+			Except[{(_String|_File|_Rule)...}]->{},
+			1],
+		{"StyleSheets","Palettes","TextResources","SystemResources"}
+		}]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -655,9 +723,11 @@ AppRegeneratePacletInfo[name_,
 Options[AppConfigure]={
 	Directory->Automatic,
 	Extension->Automatic,
-	"Palettes"->{},
 	"Documentation"->{},
 	"StyleSheets"->{},
+	"Palettes"->{},
+	"TextResources"->{},
+	"SystemResources"->{},
 	"AutoCompletionData"->{},
 	"PacletInfo"->{},
 	"BundleInfo"->{},
@@ -700,6 +770,12 @@ AppConfigure[
 		configureDocs[name,
 			Sequence@@Flatten@{OptionValue@"Documentation"}
 			];
+		configureFE[name,
+			OptionValue["StyleSheets"],
+			OptionValue["Palettes"],
+			OptionValue["TextResources"],
+			OptionValue["SystemResources"]
+			];
 		If[OptionValue["PacletInfo"]=!=None,
 			AppRegeneratePacletInfo[name,
 				Sequence@@Flatten@{OptionValue@"PacletInfo"}]
@@ -721,6 +797,29 @@ AppConfigure~SetAttributes~HoldAll;
 (* ::Subsubsection::Closed:: *)
 (*AppConfigureSubapp*)
 
+
+
+appConfigureSubResource[app_,new_,resType_,resList_]:=
+	Map[
+		#->
+			StringReplace[#,
+				StringTrim@FileNameJoin@{" ",app," "}->
+					StringTrim@FileNameJoin@{" ",new," "}
+				]&
+		]@
+	DeleteCases[Except[_String?(StringLength@#>0&&FileExistsQ@#&)]]@
+	Map[
+		If[
+			FileExistsQ@
+				AppPath[app,resType,
+					StringTrim[#,".nb"]<>".nb"],
+			AppPath[app,resType,
+				StringTrim[#,".nb"]<>".nb"],
+			AppPath[app,resType,app,
+				StringTrim[#,".nb"]<>".nb"]
+			]&,
+		Flatten[{resList},1]
+		]
 
 
 Options[AppConfigureSubapp]=
@@ -768,20 +867,33 @@ AppConfigureSubapp[
 											]
 									]
 								}&/@
-								Flatten[{OptionValue["Packages"]},1]
+								Replace[Flatten[{OptionValue["Packages"]},1],
+									Except[_String]->Nothing,
+									1
+									]
 							],
 			palettes=
-				DeleteCases[Except[_String?(StringLength@#>0&&FileExistsQ@#&)]]@
-				AppPath[app,"Palettes",
-					StringTrim[#,".nb"]<>".nb"]&/@
-					Flatten@{OptionValue["Palettes"]},
+				appConfigureSubResource[app,FileBaseName[path],
+					"Palettes",
+					OptionValue["Palettes"]
+					],
 			stylesheets=
-				DeleteCases[Except[_String?(StringLength@#>0&&FileExistsQ@#&)]]@
-				AppPath[app,"StyleSheets",
-					StringTrim[#,".nb"]<>".nb"]&/@
-					Flatten@{OptionValue["StyleSheets"]},
+				appConfigureSubResource[app,FileBaseName[path],
+					"StyleSheets",
+					OptionValue["StyleSheets"]
+					],
+			textresources=
+				appConfigureSubResource[app,FileBaseName[path],
+					"TextResources",
+					OptionValue["TextResources"]
+					],
+			systemresources=
+				appConfigureSubResource[app,FileBaseName[path],
+					"SystemResources",
+					OptionValue["SystemResources"]
+					],
 			docs=
-				DeleteCases[Except[_String?(StringLength@#>0&&FileExistsQ@#&)]]@
+				{}(*DeleteCases[Except[_String?(StringLength@#>0&&FileExistsQ@#&)]]@
 				Join[
 					AppPath[app,"Symbols",
 						StringTrim[#,".nb"]<>".nb"]&/@
@@ -796,18 +908,20 @@ AppConfigureSubapp[
 						If[StringQ@#,StringTrim[#,".nb"]<>".nb",#]
 						]&/@
 							Flatten@{OptionValue["Documentation"]}
-					]
+					]*)
 			},
 			AppConfigure[
 				FileBaseName@path,
 				packages,
 				Evaluate@FilterRules[{
-					ops,
 					"Palettes"->palettes,
 					"StyleSheets"->stylesheets,
+					"TextResources"->textresources,
+					"SystemResources"->systemresources,
 					"Documentation"->docs,
 					Directory->DirectoryName@path,
-					Extension->None
+					Extension->None,
+					ops
 					},
 					Options@AppConfigure
 					]
@@ -815,8 +929,9 @@ AppConfigureSubapp[
 			]
 		];
 AppConfigureSubapp[
-	app_:Automatic,
+	app_,
 	name:_String|{__String},
+	dir:(_String?DirectoryQ|Automatic):Automatic,
 	ops:OptionsPattern[]
 	]:=
 	With[{
@@ -824,16 +939,17 @@ AppConfigureSubapp[
 			Replace[OptionValue@"Name",
 				Automatic:>
 					First@Flatten@{name}
-				]
+				],
+		buildd=Replace[dir,Automatic:>$TemporaryDirectory]
 		},
 		AppConfigureSubapp[
 			app,
 			Quiet@
 				DeleteDirectory[
-					FileNameJoin@{$TemporaryDirectory,appName},
+					FileNameJoin@{buildd,appName},
 					DeleteContents->True
 					];
-			FileNameJoin@{$TemporaryDirectory,appName},
+			FileNameJoin@{buildd,appName},
 			FilterRules[{
 				"Packages"->
 					Join[
@@ -842,8 +958,11 @@ AppConfigureSubapp[
 						],
 				ops,
 				"LoadInfo"->{
-					"Hidden"->
-						DeleteCases[#,Alternatives@@Flatten@{name}]
+					"PackageScope"->
+						DeleteCases[
+							Select[#,StringQ],
+							Alternatives@@Flatten@{name}
+							]
 					}
 				},
 				Options@AppConfigureSubapp
@@ -1110,8 +1229,8 @@ AppRegenerateBundleInfo[app_String,ops:OptionsPattern[]]:=
 Options[AppRegenerateLoadInfo]=
 	{
 		"PreLoad"-> None,
-		"Hidden" -> {},
-		"HiddenContexts"->None
+		"FEHidden" -> {},
+		"PackageScope"->None
 		};
 AppRegenerateLoadInfo[app_String,ops:OptionsPattern[]]:=
 	Export[AppPath[app,"LoadInfo.m"],
@@ -2255,7 +2374,13 @@ AppGet[appName_,pkgName_String]:=
 						];
 					$ContextPath=
 						DeleteDuplicates@
-							Join[`Package`$PackageContexts,$ContextPath];
+							Join[
+								Replace[
+									ToExpression[$Context<>"Private`Package`$PackageContexts"],
+									Except[{__String}]->{}
+									],
+								$ContextPath
+								];
 					CheckAbort[
 						Get@pkg;
 						EndPackage[],
@@ -2459,6 +2584,9 @@ AppPackageFunctions[
 
 
 
+AppFunctionPackage//Clear
+
+
 AppFunctionPackage[app_:Automatic,f:{__String}]:=
 	With[{funcs=AppPackageFunctions[app]},
 		AssociationMap[
@@ -2475,17 +2603,31 @@ AppFunctionPackage[app_:Automatic,f:{(_Symbol|_String)..}]:=
 	AppFunctionPackage[
 		Replace[app,
 			Automatic:>
-				FirstCase[f,s_Symbol:>StringTrim[Context[s],"`"]]
+				FirstCase[Hold@f,s_Symbol:>StringTrim[Context[s],"`"],"System`",{2}]
 			],
-		Replace[f,s_Symbol:>SymbolName[s],1]
+		First/@
+			Replace[
+				Thread[Hold[f]],
+				Hold[s_Symbol]:>Hold[SymbolName[Unevaluated@s]],
+				1]//Evaluate
 		];
 AppFunctionPackage[app_:Automatic,f_Symbol]:=
 	AppFunctionPackage[
 		Replace[app,
 			Automatic:>StringTrim[Context[f],"`"]
 			],
-		SymbolName[f]
+		SymbolName[Unevaluated@f]
 		];
+AppFunctionPackage[app_:Automatic,f:{__HoldPattern}]:=
+	Replace[Thread[f,HoldPattern],
+		Verbatim[HoldPattern][s_]:>
+			AppFunctionPackage[app,s]
+		];
+AppFunctionPackage[app_:Automatic,e_]/;!TrueQ[AppFunctionPackage$recurseProtect]:=
+	Block[{AppFunctionPackage$recurseProtect=True},
+		AppFunctionPackage[app,Evaluate[e]]
+		];
+AppFunctionPackage~SetAttributes~HoldAll
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2495,14 +2637,7 @@ AppFunctionPackage[app_:Automatic,f_Symbol]:=
 
 functionCallChain[conts_,function_]:=
 	With[{cpats=Alternatives@@Map[#<>"*"&,conts]},
-		Cases[
-			Hold[s_Symbol]?(
-				Function[Null,
-					Quiet[StringMatchQ[Context@@#,cpats],Context::ssle]&&
-						Length[OwnValues@@#]==0,
-					HoldFirst
-					]):>s
-			]@
+		HoldPattern@@@
 		FixedPoint[
 			Union[#,
 				Cases[
@@ -2530,20 +2665,29 @@ functionCallChain[conts_,function_]:=
 					Heads->True
 					]
 				]&,
-			Thread[Hold[Evaluate@Flatten@{function}]],
-			25
+			Flatten@List@Thread@Hold[function],
+			50
 			]
 		];
+functionCallChain~SetAttributes~HoldRest
+
+
+AppFunctionDependencies//ClearAll
+
+
 AppFunctionDependencies[app_:Automatic,function:_Symbol|{__Symbol}]:=
 	With[{conts=
-		{#,#<>"Private`"}&@Quiet@Context@Evaluate@First@Flatten@{function}
+		{#,#<>"Private`"}&@
+			Quiet@
+				Extract[Flatten@List@Thread@Hold[function],{1,1},Context]
 		},
 		Replace[
 			AppFunctionPackage[app,
 				Select[functionCallChain[conts,function],
 					With[{c=First@conts},
-						Quiet@Context[#]==c
-						]&]
+						Quiet[Context@@#==c]&
+						]
+					]
 				],{
 			a_Association:>
 				GroupBy[First->Last]@
@@ -2552,6 +2696,12 @@ AppFunctionDependencies[app_:Automatic,function:_Symbol|{__Symbol}]:=
 				<||>
 			}]
 		];
+AppFunctionDependencies[app_:Automatic,f_]/;
+	!TrueQ[AppFunctionDependencies$recurseProtect]:=
+	Block[{AppFunctionDependencies$recurseProtect=True},
+		AppFunctionDependencies[app,Evaluate[f]]
+		];
+AppFunctionDependencies~SetAttributes~HoldAll
 
 
 (* ::Subsubsection::Closed:: *)

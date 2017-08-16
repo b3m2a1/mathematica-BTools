@@ -1013,6 +1013,10 @@ Map[
 
 
 
+$EntityNameList=
+	Keys@Import@DataPaclets`GetDataPacletResource["$CuratedData_Index","Names.wdx"];
+
+
 If[$VersionNumber>=11,
 	If[MissingQ@EntityFramework`FindEntityStore["$CuratedDataType"],
 		Unprotect@Internal`$DefaultEntityStores;
@@ -1044,6 +1048,7 @@ If[$VersionNumber>=11,
 					"$CuratedDataType"->
 						<|
 							"EntityValidationFunction"->(True&),
+							"Entities"->Association@Thread[$EntityNameList-><||>],
 							"Properties"->props
 							|>
 					]

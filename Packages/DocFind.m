@@ -19,28 +19,36 @@
 
 
 
-DocFile::usage="Returns the doc file for a given symbol";
 DocFind::usage="Finds all the docs for a given pattern";
 SymbolNameMatchQ::usage=
 	"StringMatchQ on just the SymbolName (also works for strings)";
+SymbolDetermineType::usage=
+	"Determines symbol type";
 OpsFind::usage=
 	"Finds all the options for a given object and pattern";
 MsgFind::usage="Finds all the messages for a given object and MessageName pattern";
-GetUsage::usage=
-	"Finds the uses of a symbol";
-FormattedUsage::usage=
-	"Formats a GetUsage call";
-FormattedDefs::usage=
-	"FormattedUsage with Full"; 
 
 
-OpenDocs::usage="Opens a documentation notebook for the symbol name";
-ContextOrdering::usage="The ordering function for context notebooks";
-ContextNotebook::usage="Formats a notebook to give docs for an entire context";
-DocsDialog::usage=
-	"Creates a documentation search dialog";
-$DockDocDialog::usage=
-	"A symbol formatted to the docs dialog in the documentation search palette";
+PackageFEHiddenBlock[
+	GetUsage::usage=
+		"Finds the uses of a symbol";
+	FormattedUsage::usage=
+		"Formats a GetUsage call";
+	FormattedDefs::usage=
+		"FormattedUsage with Full"; 
+	]
+
+
+PackageScopeBlock[
+	DocFile::usage="Returns the doc file for a given symbol";
+	OpenDocs::usage="Opens a documentation notebook for the symbol name";
+	ContextOrdering::usage="The ordering function for context notebooks";
+	ContextNotebook::usage="Formats a notebook to give docs for an entire context";
+	DocsDialog::usage=
+		"Creates a documentation search dialog";
+	$DockDocDialog::usage=
+		"A symbol formatted to the docs dialog in the documentation search palette";
+	]
 
 
 Begin["`Private`"];
