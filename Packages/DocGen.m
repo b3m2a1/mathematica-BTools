@@ -154,10 +154,8 @@ GenerateHTMLDocumentation::usage=
 	"Exports doc pages as HTML";
 
 
-`Private`Package`PackageFEHiddenBlock[
-	$DocDefaultURLBase::usage=
-		"The default URL base for web docs";
-	]
+$DocDefaultURLBase::usage=
+	"The default URL base for web docs";
 
 
 `Private`Package`PackageFEHiddenBlock[

@@ -498,6 +498,8 @@ $GitActions=
 			GitAdd,
 		"Commit"->
 			GitCommit,
+		"ListRemotes"->
+			GitListRemotes,
 		"AddRemote"->
 			GitAddRemote,
 		"RemoveRemote"->
