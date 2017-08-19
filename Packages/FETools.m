@@ -133,12 +133,15 @@ FEAddAutocompletions::usage=
 
 
 FEHiddenBlock::usage="";
-FEUnhideSymbols::usage="";
-FERehideSymbols::usage="";
+FESetSymbolColoring::usage="";
 
 
 FESelectCells::usage=
 	"Selects cells by criterion";
+
+
+FEFindFileOnPath::usage=
+	"Safe version of FrontEnd`FindFileOnPath"
 
 
 Begin["`Private`"];
@@ -796,140 +799,67 @@ FEToFileName[FrontEnd`ToFileName[a___]]:=
 	FEToFileName[FrontEnd`FileName[a]];
 
 
-FEAttachCell//Clear;
-FEAttachCell[
-	parent:(_CellObject|_NotebookObject|_BoxObject|Automatic):Automatic,
-	expr_,
-	radialAway:
-		_Offset|_Integer|_Scaled|
-		{_Integer|_Scaled,_Integer|_Scaled}|
-		Automatic:
-		Automatic,
-	alignment:
+$FEPathMap=
+	Thread/@
 		{
-			Center|Left|Right,
-			Center|Bottom|Top
-			}|
-		Center|Left|Right|Bottom|Top|
-		Automatic:Automatic,
-	anchor:
-		{
-			Center|Left|Right|_Scaled|_Integer|_Real,
-			Center|Bottom|Top|_Scaled|_Integer|_Real
-			}|
-		Center|Left|Right|Bottom|Top|
-		Automatic:Automatic,
-	closingActions:{
-		("ParentChanged"|"EvauatorQuit"|
-			"OutsideMouseClick"|"SelectionDeparture"|"MouseExit")...}:
-		{"ParentChanged","EvauatorQuit"}
-		]:=
-		FrontEndExecute@
-			FrontEnd`AttachCell[
-				Replace[parent,Automatic:>EvaluationCell[]],
-				Replace[expr,
-					Except[_Cell]:>
-						If[MatchQ[parent,_NotebookObject],
-							Cell[BoxData@ToBoxes@expr,
-								"DockedCell",
-								Background->GrayLevel[.95],
-								TextAlignment->Center,
-								CellSize->
-									Replace[
-										Replace[alignment,
-											Automatic:>
-												Replace[anchor,Automatic->Top]],{
-										Bottom|Top->{
-											Dynamic[First@CurrentValue[parent,WindowSize]],
-											Automatic
-											},
-										Left|Right->{
-											Automatic,
-											Dynamic[Last@CurrentValue[parent,WindowSize]]
-											},
-										_->{Scaled[1],Automatic}
-										}],
-								CellFrame->
-									Replace[
-										Replace[alignment,
-											Automatic:>
-												Replace[anchor,Automatic->Top]],{
-										Bottom->{{0,0},{0,1}},
-										Top->{{0,0},{1,0}},
-										Left->{{0,1},{0,0}},
-										Right->{{1,0},{0,0}},
-										_->{{1,1},{1,1}}
-										}]
-												
-								],
-							Cell[BoxData@ToBoxes@expr]
-							]
-					],
-				{
-					Replace[radialAway,
-						{a_,b_}:>Offset[{a,b},0]
-						],
-					Replace[alignment,
-						Automatic:>
-							If[MatchQ[parent,_NotebookObject],
-								Replace[anchor,{
-									Automatic->
-										{Center,Top}
-									tb:(Top|Bottom):>
-										{Center,tb},
-									lr:(Left|Right):>
-										{lr,Center}
-									}],
-								{Left,Bottom}
-								]
-						]},
-				Replace[anchor,
-					Automatic:>
-						If[MatchQ[parent,_NotebookObject],
-							Replace[alignment,{
-								Automatic->
-									{Center,Top}
-								tb:(Top|Bottom):>
-									{Center,tb},
-								lr:(Left|Right):>
-									{lr,Center}
-									}],
-							{Left,Top}
-							]
-					],
-				"ClosingActions"->
-					If[MatchQ[parent,_NotebookObject],
-						DeleteDuplicates[closingActions/."ParentChanged"->"OutsideMouseClick"],
-						closingActions
-						]
-				];
+			{"StyleSheets","StyleSheet","StyleSheetPath"}->
+				"StyleSheetPath",
+			{"Palettes","Palette","PalettePath"}->
+				"PalettePath",
+			{"TextResources","TextResource",
+				"PrivatePathsTextResources"}->
+				"PrivatePathsTextResources",
+			{"SystemResources","SystemResource",
+				"PrivatePathsSystemResources"}->
+				"PrivatePathsSystemResources",
+				{"AFM","PrivatePathsAFM"}->"PrivatePathsAFM",
+			{"AutoCompletionData","PrivatePathsAutoCompletionData"}->
+				"PrivatePathsAutoCompletionData",
+			{"AutoCompletionDataBase","PrivatePathsAutoCompletionDataBase"}->
+				"PrivatePathsAutoCompletionDataBase",
+			{"Bitmaps","Bitmap","PrivatePathsBitmaps"}->
+				"PrivatePathsBitmaps",
+			{"Fonts","Font","PrivatePathsFonts"}->
+				"PrivatePathsFonts",
+			{"TranslationData","PrivatePathsTranslationData"}->
+				"PrivatePathsTranslationData"
+			}//Flatten//Association;
 
 
-FENotebooks[f_String?FileExistsQ]:=
-	List@SelectFirst[FrontEndExecute@FrontEnd`ObjectChildren[$FrontEnd],
-Quiet@NotebookFileName@#===f&
-		];
-FENotebooks[Optional["*","*"]]:=
-	FrontEndExecute@FrontEnd`ObjectChildren[$FrontEnd];
-FENotebooks[pat:Except["*"|_String?FileExistsQ]]:=
-	Select[FrontEndExecute@FrontEnd`ObjectChildren[$FrontEnd],
-		Replace[Quiet@NotebookFileName@#,{
-				s_String:>
-					StringMatchQ[s,pat],
-				_->False
-				}
-			]||
-		Replace[Quiet@NotebookFileName@#,{
-				s_String:>
-					FileBaseName@StringMatchQ[s,pat],
-				_->False
-				}
-			]||
-		StringMatchQ[
-			WindowTitle/.AbsoluteOptions[#,WindowTitle],
-			pat
-			]&
-		]
+FEFindFileOnPath[
+	file_,
+	path:_String?(KeyMemberQ[$FEPathMap,#]&):"TextResource"
+	]:=
+	Catch@
+	FrontEndExecute@
+		FrontEnd`FindFileOnPath[
+			Switch[file,
+				_FileName|_FrontEnd`FileName,
+					ToFileName[file],
+				_List,
+					FileNameJoin@file,
+				_File,
+					First[file],
+				_String,
+					file,
+				_,
+					Throw@$Failed
+				],
+			$FEPathMap[path]
+			];
+
+
+`Package`PackageAddAutocompletions[
+	"FEFindFileOnPath",
+	{"0",
+		StringTrim[
+			StringTrim[
+				DeleteDuplicates@Values@$FEPathMap,
+				"PrivatePaths"|"Path"
+				],
+			"s"
+			]}
+	];
 
 
 Options[FEBoxRef]={
@@ -1405,6 +1335,142 @@ FEAddAutocompletions[l_,v_]:=
 			};
 
 
+FEAttachCell//Clear;
+FEAttachCell[
+	parent:(_CellObject|_NotebookObject|_BoxObject|Automatic):Automatic,
+	expr_,
+	radialAway:
+		_Offset|_Integer|_Scaled|
+		{_Integer|_Scaled,_Integer|_Scaled}|
+		Automatic:
+		Automatic,
+	alignment:
+		{
+			Center|Left|Right,
+			Center|Bottom|Top
+			}|
+		Center|Left|Right|Bottom|Top|
+		Automatic:Automatic,
+	anchor:
+		{
+			Center|Left|Right|_Scaled|_Integer|_Real,
+			Center|Bottom|Top|_Scaled|_Integer|_Real
+			}|
+		Center|Left|Right|Bottom|Top|
+		Automatic:Automatic,
+	closingActions:{
+		("ParentChanged"|"EvauatorQuit"|
+			"OutsideMouseClick"|"SelectionDeparture"|"MouseExit")...}:
+		{"ParentChanged","EvauatorQuit"}
+		]:=
+		FrontEndExecute@
+			FrontEnd`AttachCell[
+				Replace[parent,Automatic:>EvaluationCell[]],
+				Replace[expr,
+					Except[_Cell]:>
+						If[MatchQ[parent,_NotebookObject],
+							Cell[BoxData@ToBoxes@expr,
+								"DockedCell",
+								Background->GrayLevel[.95],
+								TextAlignment->Center,
+								CellSize->
+									Replace[
+										Replace[alignment,
+											Automatic:>
+												Replace[anchor,Automatic->Top]],{
+										Bottom|Top->{
+											Dynamic[First@CurrentValue[parent,WindowSize]],
+											Automatic
+											},
+										Left|Right->{
+											Automatic,
+											Dynamic[Last@CurrentValue[parent,WindowSize]]
+											},
+										_->{Scaled[1],Automatic}
+										}],
+								CellFrame->
+									Replace[
+										Replace[alignment,
+											Automatic:>
+												Replace[anchor,Automatic->Top]],{
+										Bottom->{{0,0},{0,1}},
+										Top->{{0,0},{1,0}},
+										Left->{{0,1},{0,0}},
+										Right->{{1,0},{0,0}},
+										_->{{1,1},{1,1}}
+										}]
+												
+								],
+							Cell[BoxData@ToBoxes@expr]
+							]
+					],
+				{
+					Replace[radialAway,
+						{a_,b_}:>Offset[{a,b},0]
+						],
+					Replace[alignment,
+						Automatic:>
+							If[MatchQ[parent,_NotebookObject],
+								Replace[anchor,{
+									Automatic->
+										{Center,Top}
+									tb:(Top|Bottom):>
+										{Center,tb},
+									lr:(Left|Right):>
+										{lr,Center}
+									}],
+								{Left,Bottom}
+								]
+						]},
+				Replace[anchor,
+					Automatic:>
+						If[MatchQ[parent,_NotebookObject],
+							Replace[alignment,{
+								Automatic->
+									{Center,Top}
+								tb:(Top|Bottom):>
+									{Center,tb},
+								lr:(Left|Right):>
+									{lr,Center}
+									}],
+							{Left,Top}
+							]
+					],
+				"ClosingActions"->
+					If[MatchQ[parent,_NotebookObject],
+						DeleteDuplicates[closingActions/."ParentChanged"->"OutsideMouseClick"],
+						closingActions
+						]
+				];
+
+
+FENotebooks[f_String?FileExistsQ]:=
+	List@SelectFirst[FrontEndExecute@FrontEnd`ObjectChildren[$FrontEnd],
+Quiet@NotebookFileName@#===f&
+		];
+FENotebooks[Optional["*","*"]]:=
+	FrontEndExecute@FrontEnd`ObjectChildren[$FrontEnd];
+FENotebooks[pat:Except["*"|_String?FileExistsQ]]:=
+	Select[FrontEndExecute@FrontEnd`ObjectChildren[$FrontEnd],
+		Replace[Quiet@NotebookFileName@#,{
+				s_String:>
+					StringMatchQ[s,pat],
+				_->False
+				}
+			]||
+		Replace[Quiet@NotebookFileName@#,{
+				s_String:>
+					FileBaseName@StringMatchQ[s,pat],
+				_->False
+				}
+			]||
+		StringMatchQ[
+			WindowTitle/.AbsoluteOptions[#,WindowTitle],
+			pat
+			]&
+		]
+
+
 FESelectCells[
 	nbObj:_NotebookObject|Automatic:Automatic,
 	test_:(True&)
@@ -1519,6 +1585,62 @@ FERehideSymbols[names_String,mode:"Update"|"Set":"Update"]:=
 		Hold[{s__}]:>FERehideSymbols[s,mode]
 		];
 FERehideSymbols~SetAttributes~HoldAllComplete;
+
+
+FESetSymbolColoring[
+	{syms__},
+	cont:_String|Automatic:Automatic,
+	contPath:{__String}|Automatic:Automatic,
+	which:
+	"Undefined"|"Removed"|"Defined"|"Cleared"|
+	1|2|3|4|{(1|2|3|4|"Undefined"|"Removed"|"Defined"|"Cleared")..}
+	]:=
+	With[{
+			stuff=
+			Map[
+				Function[Null,
+					If[StringQ@Unevaluated[#],
+						Replace[
+							StringSplit[#,"`",2],
+							{{c_,s_}:>{c<>"`",s},{s_}:>{$Context,s}}
+							],
+						{Context@#,SymbolName@Unevaluated@#}
+						],
+					HoldAllComplete
+					],
+				HoldComplete[syms]
+				]//Apply[List],
+			whi=
+			Replace[Flatten@{which},
+				{
+					"Undefined"->1,
+					"Removed"->2,
+					"Defined"->3,
+					"Cleared"->4
+					},
+				1
+				]
+			},
+		FrontEndExecute@
+		FrontEnd`UpdateKernelSymbolContexts[
+			Replace[cont,Automatic:>$Context],
+			Replace[contPath,Automatic:>$ContextPath],
+			KeyValueMap[
+				With[{symlist=#2},
+					Prepend[Replace[cont,Automatic:>#]]@
+					Fold[
+						ReplacePart[#,#2->symlist]&,
+						ConstantArray[{},4],
+						whi
+						]
+					]&,
+				GroupBy[stuff,First->Last]
+				]
+			]
+		];
+FESetSymbolColoring[s_,a___]:=
+	FESetSymbolColoring[{s},a];
+FESetSymbolColoring~SetAttributes~HoldAllComplete;
 
 
 End[];

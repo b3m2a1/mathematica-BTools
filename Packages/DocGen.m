@@ -155,11 +155,15 @@ GenerateHTMLDocumentation::usage=
 
 
 `Private`Package`PackageFEHiddenBlock[
+	$DocDefaultURLBase::usage=
+		"The default URL base for web docs";
+	]
 
-DocAddUsage::usage=
-	"Adds a usage to the usages for a symbol";
-	
-];
+
+`Private`Package`PackageFEHiddenBlock[
+	DocAddUsage::usage=
+		"Adds a usage to the usages for a symbol";
+	];
 
 
 Begin["`Private`"];
@@ -5717,7 +5721,7 @@ webExportApplicationsInstall[
 					],
 			{
 				If[Length@PacletManager`PacletFind["DocumentationBuild"]===0,
-					PacletInstall@
+					PacletManager`PacletInstall@
 						URLBuild@<|
 							"Scheme"->"http",
 							"Domain"->"www.wolframcloud.com",
@@ -5727,7 +5731,7 @@ webExportApplicationsInstall[
 							|>
 					],
 				If[Length@PacletManager`PacletFind["Transmogrify"]===0,
-					PacletInstall@
+					PacletManager`PacletInstall@
 						URLBuild@<|
 							"Scheme"->"http",
 							"Domain"->"www.wolframcloud.com",
@@ -6244,7 +6248,7 @@ webExportNotebookPrep[nb_]:=
 
 webExportNotebook[file_,nb_,ops___?OptionQ]:=
 	With[{params=Flatten@{ops}},
-		Needs["DocumentationBuild`"];
+		Block[{$ContextPath},Needs["DocumentationBuild`"]];
 		Block[{
 			(*transmogrifyDVs=DownValues[Transmogrify`Private`MakeItSo],
 			Transmogrify`Private`MakeItSo,*)

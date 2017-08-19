@@ -29,18 +29,22 @@
 
 
 
-$AppDirectoryRoot::usage="The directory root for finding apps";
-$AppDirectoryName::usage="The basic extension to a directory for locating apps";
+PackageFEHiddenBlock[
+	$AppDirectoryRoot::usage="The directory root for finding apps";
+	$AppDirectoryName::usage="The basic extension to a directory for locating apps";
+	];
 $AppDirectory::usage="Joins the root and name";
 AppPath::usage=
 	"A path parser for a given app name";
 AppDirectory::usage=
 	"Used by AppPath find appropriate directories";
-AppNames::usage="Finds the names of apps matching a pattern";
-AppPackage::usage="A function to find a package by name";
-AppPackages::usage=
-	"Finds the packages in a given app";
-AppStylesheet::usage="A function to find a stylesheet by name";
+PackageScopeBlock[
+	AppNames::usage="Finds the names of apps matching a pattern";
+	AppPackage::usage="A function to find a package by name";
+	AppPackages::usage=
+		"Finds the packages in a given app";
+	AppStylesheet::usage="A function to find a stylesheet by name";
+	]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -54,17 +58,15 @@ AppConfigureSubapp::usage=
 	"Creates a subapplication out of a set of packages or specs";
 
 
-AppAddContent::usage="Adds a file to the app";
-
-
-(*
-AppAddPackage::usage="Adds a package";
-AppAddPalette::usage="Adds a palette to the app";
-AppAddStylesheet::usage="Adds a stylesheet to the app";
-AppAddDocPage::usage="Adds a doc page for a symbol to the app";
-AppAddGuidePage::usage="Adds a guide to the app";
-AppAddTutorialPage::usage="Adds a tutorial page to the app";
-*)
+PackageScopeBlock[
+	AppAddContent::usage="Adds a file to the app";
+	AppAddPackage::usage="Adds a package";
+	AppAddPalette::usage="Adds a palette to the app";
+	AppAddStylesheet::usage="Adds a stylesheet to the app";
+	AppAddDocPage::usage="Adds a doc page for a symbol to the app";
+	AppAddGuidePage::usage="Adds a guide to the app";
+	AppAddTutorialPage::usage="Adds a tutorial page to the app";
+	]
 
 
 AppRegenerateDirectories::usage=
@@ -78,16 +80,14 @@ AppRegenerateInit::usage=
 
 
 
-PackageFEHiddenBlock[
-	AppGet::usage=
-		"Runs get on the specified app package";
-	AppNeeds::usage=
-		"Runs Needs on the specified package";
-	AppPackageOpen::usage=
-		"Opens a package .m file";
-	AppFromFile::usage=
-		"Gets an app from the current file";
-	]
+AppGet::usage=
+	"Runs get on the specified app package";
+AppNeeds::usage=
+	"Runs Needs on the specified package";
+AppPackageOpen::usage=
+	"Opens a package .m file";
+AppFromFile::usage=
+	"Gets an app from the current file";
 
 
 PackageScopeBlock[
@@ -111,7 +111,7 @@ PackageScopeBlock[
 
 
 
-PackageFEHiddenBlock[
+PackageScopeBlock[
 	AppRegenerateDocInfo::usage=
 		"Regenerates the DocInfo.m file";
 	AppIndexDocs::usage=
@@ -131,7 +131,7 @@ PackageFEHiddenBlock[
 	]
 
 
-PackageFEHiddenBlock[
+PackageScopeBlock[
 	AppSaveSymbolPages::usage=
 		"Saves auto-generated symbol pages";
 	AppPackageSaveSymbolPages::usage=
@@ -150,7 +150,7 @@ AppPackageGenerateDocumentation::usage=
 
 
 AppGenerateHTMLDocumentation::usage=
-	"Generates HTML documentation for an app"; 
+	"Generates HTML documentation for an app";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -158,11 +158,13 @@ AppGenerateHTMLDocumentation::usage=
 
 
 
-AppRegenerateBundleInfo::usage=
-	"Regenerates the BundleInfo file";
-AppRegenerateLoadInfo::usage=
-	"Regenerates the LoadInfo file";
 PackageFEHiddenBlock[
+	AppRegenerateBundleInfo::usage=
+		"Regenerates the BundleInfo file";
+	AppRegenerateLoadInfo::usage=
+		"Regenerates the LoadInfo file";
+	];
+PackageScopeBlock[
 	AppBundle::usage="Creates a sync bunde for an app";
 	AppUpload::usage="Uploads an application zip to the cloud";
 	AppDownload::usage="Downloads an app into a directory";
@@ -179,14 +181,16 @@ PackageFEHiddenBlock[
 
 
 
-AppDeployReadme::usage=
-	"Deploys the app README.md file";
-AppDeployHTML::usage=
-	"Deploys app HTML files";
-AppDeployImages::usage=
-	"Deploys the app img files";
-AppDeployCSS::usage=
-	"Deploys the app css files";
+PackageScopeBlock[
+	AppDeployReadme::usage=
+		"Deploys the app README.md file";
+	AppDeployHTML::usage=
+		"Deploys app HTML files";
+	AppDeployImages::usage=
+		"Deploys the app img files";
+	AppDeployCSS::usage=
+		"Deploys the app css files";
+	]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -194,30 +198,28 @@ AppDeployCSS::usage=
 
 
 
-AppGitInit::usage=
-	"Configures a Git repository for the app";
-AppGitClone::usage=
-	"Clones a Git repo";
-AppGitCommit::usage=
-	"Configures pushes to the git repo";
-AppRegenerateGitIgnore::usage=
-	"Rebuilds the .gitignore file";
-AppRegenerateGitExclude::usage=
-	"Rebuilds the .git/info/exclude file";
-
-
-AppGitHubConfigure::usage=
-	"Configures the app to be able to push to github";
-AppGitHubPull::usage=
-	"Pulls the app from its master branch";
-AppGitHubPush::usage=
-	"Pushes the app to its master branch"
-AppGitHubDelete::usage=
-	"Removes a repo from github";
-
-
-AppRegenerateReadme::usage=
-	"Generates a GitHub README.md file for the app";
+PackageScopeBlock[
+	AppGitInit::usage=
+		"Configures a Git repository for the app";
+	AppGitClone::usage=
+		"Clones a Git repo";
+	AppGitCommit::usage=
+		"Configures pushes to the git repo";
+	AppRegenerateGitIgnore::usage=
+		"Rebuilds the .gitignore file";
+	AppRegenerateGitExclude::usage=
+		"Rebuilds the .git/info/exclude file";
+	AppGitHubConfigure::usage=
+		"Configures the app to be able to push to github";
+	AppGitHubPull::usage=
+		"Pulls the app from its master branch";
+	AppGitHubPush::usage=
+		"Pushes the app to its master branch";
+	AppGitHubDelete::usage=
+		"Removes a repo from github";
+	AppRegenerateReadme::usage=
+		"Generates a GitHub README.md file for the app";
+	];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -225,38 +227,38 @@ AppRegenerateReadme::usage=
 
 
 
-AppRegenerateUploadInfo::usage=
-	"Regenerates the UploadInfo.m file";
-AppPacletBundle::usage=
-	"Packs the .paclet file, removing the specified paths first";
-AppPaclet::usage=
-	"Generates the paclet expression for app";
-AppPacletInfo::usage=
-	"Gathers paclet info as an association";
-AppRegeneratePacletInfo::usage=
-	"Regenerates the PacletInfo file";
-AppPacletSiteBundle::usage=
-	"Generates the PacletSite.mz file for a collection of apps";
-AppPacletSiteInfo::usage=
-	"Pulls PacletSite expressions";
-AppPacletUpload::usage=
-	"Uploads paclet files to a server";
-AppPacletDirectoryAdd::usage=
-	"PacletDirectoryAdd on an app name";
-AppPacletSiteURL::usage=
-	"Gets an app paclet site to add";
-AppPacletInstallerURL::usage=
-	"Gets the URL to the auto-configured installer";
-AppPacletUninstallerURL::usage=
-	"Gets the URL to the auto-configure uninstaller";
+PackageScopeBlock[
+	AppRegenerateUploadInfo::usage=
+		"Regenerates the UploadInfo.m file";
+	AppPacletBundle::usage=
+		"Packs the .paclet file, removing the specified paths first";
+	AppPaclet::usage=
+		"Generates the paclet expression for app";
+	AppPacletInfo::usage=
+		"Gathers paclet info as an association";
+	AppRegeneratePacletInfo::usage=
+		"Regenerates the PacletInfo file";
+	AppPacletSiteBundle::usage=
+		"Generates the PacletSite.mz file for a collection of apps";
+	AppPacletSiteInfo::usage=
+		"Pulls PacletSite expressions";
+	AppPacletUpload::usage=
+		"Uploads paclet files to a server";
+	AppPacletDirectoryAdd::usage=
+		"PacletDirectoryAdd on an app name";
+	AppPacletSiteURL::usage=
+		"Gets an app paclet site to add";
+	AppPacletInstallerURL::usage=
+		"Gets the URL to the auto-configured installer";
+	AppPacletUninstallerURL::usage=
+		"Gets the URL to the auto-configure uninstaller";
+	AppPacletServerPage::usage=
+		"Uploads a paclet access page to a server";
+	];
 
 
 AppSubpacletUpload::usage=
 	"Uploads a sub-app";
-
-
-AppPacletServerPage::usage=
-	"Uploads a paclet access page to a server";
 
 
 Begin["`Private`"];
@@ -267,7 +269,7 @@ Begin["`Private`"];
 
 
 
-If[$appBuilderConfigLoaded//TrueQ//Not,
+If[!ValueQ[$AppDirectoryRoot],
 	$AppDirectoryRoot=$UserBaseDirectory;
 	$AppDirectoryName="Applications";
 	$AppDirectory:=

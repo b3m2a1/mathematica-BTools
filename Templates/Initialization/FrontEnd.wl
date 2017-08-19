@@ -90,15 +90,65 @@ PackageFEInstallPalettes[]:=
 		];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*PackageFEHiddenBlock*)
 
 
-PackageFEHiddenBlock[expr_]:=
-	(
-		Internal`SymbolList[False];
-		(Internal`SymbolList[True];#)&@expr
-		);
+$PackageFEHideExprSymbols=TrueQ[$PackageFEHideExprSymbols];
+$PackageFEHideEvalExpr=TrueQ[$PackageFEHideEvalExpr];
+PackageFEHiddenBlock[expr_,
+	hide:True|False|Automatic:Automatic,
+	eval:True|False|Automatic:Automatic
+	]:=
+	If[!$PackageDeclared&&ListQ@$PackageFEHiddenSymbols,
+		With[{
+			s=
+				Cases[
+					HoldComplete[expr],
+					sym_Symbol?(
+						Function[Null,
+							MemberQ[$PackageContexts,Quiet[Context[#]]],
+							HoldAllComplete
+							]
+						):>
+						HoldPattern[sym],
+					\[Infinity]
+					]
+			},
+			$PackageFEHiddenSymbols=
+				{
+					$PackageFEHiddenSymbols,
+					s
+					}
+			],
+		Block[{feBlockReturn},
+			Internal`SymbolList[False];
+			feBlockReturn=If[Replace[eval,Automatic:>$PackageFEHideEvalExpr],expr];
+			If[Replace[hide,Automatic:>$PackageFEHideExprSymbols],
+				With[{
+					s=
+						Cases[
+							HoldComplete[expr],
+							sym_Symbol?(
+								Function[Null,
+									MemberQ[$PackageContexts,Quiet[Context[#]]],
+									HoldAllComplete
+									]
+								):>
+								HoldPattern[sym],
+							\[Infinity]
+							]
+					},
+					Replace[Thread[s,HoldPattern],
+						Verbatim[HoldPattern][{sym__}]:>
+							PackageFERehideSymbols[sym]
+						]
+					]
+				];
+			Internal`SymbolList[True];
+			feBlockReturn
+			]
+		];
 PackageFEHiddenBlock~SetAttributes~HoldFirst
 
 

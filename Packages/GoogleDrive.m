@@ -27,6 +27,23 @@ GoogleDrive::usage=
 	"A standard head for accessing the Google Drive API";
 
 
+PackageScopeBlock[
+	GAFileInfo::usage="";
+	GAFileSearch::usage="";
+	GAFileUpload::usage="";
+	GAFileUpdate::usage="";
+	GAFileDownload::usage="";
+	GAFileDownloadURL::usage="";
+	GAFileDelete::usage="";
+	GAFilePermissions::usage="";
+	GAFileCreatePermissions::usage="";
+	GAFileUpdatePermissions::usage="";
+	GAFileDeletePermissions::usage="";
+	GAFilePublish::usage="";
+	GAFilePrivatize::usage="";
+	]
+
+
 Begin["`Private`"];
 
 

@@ -19,7 +19,7 @@
 
 
 
-`Package`PackageFEHiddenbBlock[
+PackageScopeBlock[
 
 $BundleMetaInformationFile::usage="The meta info file created by CreateSyncBundle";
 CreateSyncBundle::usage="Create a bundle with various bits of metadata for syncing";
@@ -31,7 +31,7 @@ SyncPath::usage=
 	"A sync path finder for even non-standard dirs";
 
 
-`Package`PackageFEHiddenbBlock[
+PackageScopeBlock[
 
 UploadFile::usage="Uploads a directory to the cloud";
 DownloadFile::usage="Downloads a directory from the cloud";
@@ -42,7 +42,7 @@ RestoreFile::usage="Restores a directory";
 ]
 
 
-`Package`PackageFEHiddenbBlock[
+PackageScopeBlock[
 
 $SyncUploads::usage="The spec of what to upload / download";
 SyncUploadWork::usage="Uploads current work projects in one fell swoop";

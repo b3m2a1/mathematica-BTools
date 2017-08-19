@@ -1359,8 +1359,8 @@ feUnspoolMenuExpr[e_]:=
 		{
 			MenuItem[l_,arg_,ops___]:>
 				(
-					If[MemberQ[{ops},_MenuKey],
-						{l,FirstCase[{ops},_MenuKey]},
+					If[MemberQ[{ops},_System`MenuKey],
+						{l,FirstCase[{ops},_System`MenuKey]},
 						l
 						]-><|
 					"Command":>arg,

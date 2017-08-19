@@ -4,7 +4,9 @@
 	"PreLoad"-> None,
 	"FEHidden" -> {
 		"FormattingTools",
-		"FETools"
+		"FETools",
+		"ScrapeTools",
+		"TRTools"
 		},
 	"PackageScope"->{
 		"GoogleDrive",

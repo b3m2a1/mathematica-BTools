@@ -124,12 +124,30 @@ PackagePostProcessExposePackages[]:=
 	(
 		PackageAppGet/@
 			$PackagePreloadedPackages;
-		If[$Notebooks&&
-			!MemberQ[$PackageHiddenPackages,
-				PackagePostProcessFileNamePrep[#]
-				],
-			PackageFEUnhidePackage@#
-			]&/@Keys@$DeclaredPackages;
+		With[{
+			syms=
+				If[
+					!MemberQ[$PackageHiddenPackages,
+						PackagePostProcessFileNamePrep[#]
+						],
+					$DeclaredPackages[#],
+					{}
+					]&/@Keys@$DeclaredPackages//Flatten
+			},
+			Replace[
+				Thread[
+					If[ListQ@$PackageFEHiddenSymbols,
+						DeleteCases[syms,
+							Alternatives@@
+								(Verbatim[HoldPattern]/@Flatten@$PackageFEHiddenSymbols)
+							],
+						syms
+						],
+					HoldPattern],
+				Verbatim[HoldPattern][{s__}]:>
+					PackageFEUnhideSymbols[s]
+				]
+			]
 		)
 
 
@@ -200,20 +218,29 @@ End[];
 (* Load *)
 
 
+Internal`SymbolList[False];
+
+
 (* ::Subsubsection:: *)
 (*Basic Load*)
 
 
 `Private`Package`$loadAbort=False;
 CheckAbort[
-	`Private`Package`PackageFEHiddenBlock[
-		`Private`Package`PackageAppLoad[];
-		],
+	`Private`Package`PackageAppLoad[];
+	`Private`Package`$PackageFEHideExprSymbols=True;
+	`Private`Package`$PackageFEHideEvalExpr=True;
+	`Private`Package`$PackageScopeBlockEvalExpr=True;
+	`Private`Package`$PackageDeclared=True;,
 	`Private`Package`$loadAbort=True;
-	EndPackage[]
+	EndPackage[];
 	];
 Protect["`Private`Package`*"];
 Unprotect[`Private`Package`$loadAbort];
+
+
+(* ::Subsubsection:: *)
+(*Post-Process*)
 
 
 If[!`Private`Package`$loadAbort,
@@ -222,6 +249,14 @@ If[!`Private`Package`$loadAbort,
 	`Private`Package`PackagePostProcessRehidePackages[];
 	`Private`Package`PackagePostProcessDecontextPackages[];
 	]
+
+
+Unprotect[`Private`Package`$PackageFEHiddenSymbols];
+Clear[`Private`Package`$PackageFEHiddenSymbols];
+
+
+(* ::Subsubsection:: *)
+(*EndPackage / Reset $ContextPath*)
 
 
 EndPackage[];

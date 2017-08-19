@@ -10,7 +10,11 @@ $PackageName=
 	"$Name";
 $PackageListing=<||>;
 $PackageContexts={
-	"$Name`",
-	"$Name`Private`Package`",
-	"$Name`Private`Hidden`"
-	};
+		"$Name`",
+		"$Name`Private`Package`",
+		"$Name`Private`Hidden`"
+		};
+$PackageDeclared=
+	TrueQ[$PackageDeclared];
+$PackageFEHiddenSymbols={};
+$PackageScopedSymbols={};
