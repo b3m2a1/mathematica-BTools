@@ -5745,6 +5745,32 @@ webExportApplicationsInstall[
 		];
 
 
+webExportDocumentationBuildLoad[]:=
+	If[!ListQ@$webExportDocumentationBuildContexts,
+		Block[{
+			cpathOld=$ContextPath,
+			$ContextPath=$ContextPath
+			},
+			Needs["DocumentationBuild`"];
+			$webExportDocumentationBuildContexts=
+				DeleteCases[$ContextPath,Alternatives@@cpathOld]
+			]
+		];
+
+
+webExportDocumentationBuildRemove[]:=
+	(
+		Remove@Evaluate[#<>"*"]&/@
+			$webExportDocumentationBuildContexts;
+		Unprotect[$Packages];
+		$Packages=
+			DeleteCases[$Packages,
+				Alternatives@@$webExportDocumentationBuildContexts
+				];
+		Protect[$Packages];
+		)
+
+
 webExportTransformAndLayout[entityType_String]:=
 	{
 		FileNameJoin@Flatten@{
@@ -5956,12 +5982,82 @@ $webExportGuideReferenceCell=
 		];
 
 
+webExportNotesSectionCell=
+	Cell[
+		TextData[Cell[BoxData[
+			ButtonBox[
+				Cell[
+					TextData[
+						{Cell[
+								BoxData[InterpretationBox[
+									StyleBox[
+										GraphicsBox[{},
+											BaselinePosition->Baseline,ImageSize->{6,0}],
+										CacheGraphics->False],Spacer[6]]]],"Details and Options"}],
+					"NotesFrameText"
+					],
+				Appearance->{Automatic,None},BaseStyle->None,
+				ButtonFunction:>
+					(FrontEndExecute[{
+							FrontEnd`SelectionMove[
+								FrontEnd`SelectedNotebook[],
+								All,ButtonCell
+								],
+						FrontEndToken["OpenCloseGroup"],
+						FrontEnd`SelectionMove[FrontEnd`SelectedNotebook[],After,CellContents]
+						}]&),
+				Evaluator->None,Method->"Preemptive"]
+				]]],
+		 "NotesSection",
+		 System`WholeCellGroupOpener->True,
+		 CellGroupingRules->{"SectionGrouping", 50}
+		];
+
+
+webPrimaryExamplesCell[examplesCountCell_]:=
+	Cell[
+		TextData[
+			{Cell[
+				BoxData[InterpretationBox[
+					StyleBox[GraphicsBox[{},BaselinePosition->Baseline,ImageSize->{6,0}],
+						CacheGraphics->False],Spacer[6]]]],
+				"Examples","\[NonBreakingSpace]\[NonBreakingSpace]",
+				examplesCountCell
+			}],"PrimaryExamplesSection",
+		System`WholeCellGroupOpener->True,CellTags->"PrimaryExamplesSection"
+		]
+
+
 webExportNotebookPrep//Clear
 
 
 webExportNotebookPrep[nb_,"Common"]:=
 	ReplaceRepeated[
 		nb,{
+		(*String versioning *)
+		FEPrivate`If[
+     FEPrivate`Or[
+      FEPrivate`SameQ[FEPrivate`$ProductVersion, "6.0"], 
+      FEPrivate`SameQ[FEPrivate`$ProductVersion, "7.0"], 
+      FEPrivate`SameQ[FEPrivate`$ProductVersion, "8.0"]
+      ],
+      t_,
+      f_
+      ]:>
+      If[6<=$VersionNumber<9,
+      	t,
+      	f
+      	],
+    (* Remove WWBCommon Details Section*)
+     Cell["", "NotesSection",___]:>
+     	webExportNotesSectionCell,
+    Cell["", "PrimaryExamplesSection",e___]:>
+    	webPrimaryExamplesCell@
+    		FirstCase[{e},
+    			Cell[___,"ExampleCount",___],
+    			"",
+    			\[Infinity]
+    			],
 		(*Downconvert RefLinkPlain boxes*)
 		TemplateBox[b_,"RefLinkPlain"|"PackageLink",e___]:>
 			TemplateBox[b,"RefLink",e],
@@ -6011,6 +6107,7 @@ webExportNotebookPrep[nb_,"Common"]:=
 				}],
 			___
 			]|
+			t_String?(StringContainsQ[("See Also"|"More About"|"URL")~~" \[RightGuillemet]"])|
 		TemplateBox[{t_,_,
 			GraphicsBox[
 				_List?(
@@ -6026,7 +6123,11 @@ webExportNotebookPrep[nb_,"Common"]:=
 		"RowDefault"
 		]:>
 		RuleCondition[
-			With[{t2=StringTrim[t,"\""]},
+			With[{t2=
+				StringReplace[StringTrim[t,"\""],{
+					"More About"->"Related Guides",
+					" \[RightGuillemet]"->""
+					}]},
 				InterpretationBox[
 					Cell[
 						TextData[{
@@ -6041,7 +6142,45 @@ webExportNotebookPrep[nb_,"Common"]:=
 					]
 				],
 			True
-			]
+			],
+		"\"Copy Mathematica url\""->
+			"\"Copy Wolfram Documentation Center URL\"",
+		uname:("\"Copy web url\""|
+			"\"Go to web url\""):>
+				StringReplace[uname,"url"->"URL"],
+		ActionMenuBox[
+			FrameBox[s_,e___],
+			actions_,
+			a___?(OptionQ[#]&&First[#]=!=MenuStyle&)
+			]:>
+			With[{a2=
+				Sequence@@
+					If[!MemberQ[Keys[Cases[{a},_Rule]],MenuStyle],
+						{
+							a,
+							MenuStyle->
+								Which[
+									StringContainsQ[s,"See Also"],
+										"SeeAlso",
+									StringContainsQ[s,"More About"|"Related Guides"],
+										"MoreAbout",
+									StringContainsQ[s,"URL"],
+										"URLMenu",
+									StringContainsQ[s,"Related Links"],
+										"RelatedLinks",
+									StringContainsQ[s,"Tutorials"],
+										"Tutorials"
+									]
+							},
+						{a}
+						]
+				},
+				ActionMenuBox[
+					FrameBox[s,e],
+					actions,
+					a2
+					]
+				]
 		}
 	]
 
@@ -6072,30 +6211,92 @@ webExportNotebookPrep[nb_,"Symbol"]:=
 		}]
 
 
+$webExportRelatedStuffStyles=
+	"GuideMoreAboutSection"|"GuideTutorialsSection"|
+	"GuideRelatedLinksSection"|"GuideLinksSection"|
+	"GuideRelatedTutorialsSection";
+
+
+$webExportRelatedStuffCell=
+	Cell[_,
+		$webExportRelatedStuffStyles,
+		___]|
+	Cell[
+		CellGroupData[
+			{
+				Cell[_,
+					$webExportRelatedStuffStyles,
+					___],
+				___
+				},
+			___],
+		___];
+
+
+$webExportRefBlockCellStyles=
+	"GuideFunctionsSection"|"GuideReferenceSection"
+
+
+$webExportRefEndBlockStyles=
+	$webExportRelatedStuffStyles|
+		"FooterCell";
+
+
+$webExportGuiderSpacerStyles=
+	"SectionFooterSpacer"|"SectionHeaderSpacer";
+$webExportGuiderSpacerCell=
+	Cell[_,"SectionFooterSpacer"|"SectionHeaderSpacer",___];
+
+
+$webExportEndBlockCell=
+	Cell[_,
+		$webExportRefEndBlockStyles,
+		___]|
+	Cell[
+		CellGroupData[
+			{
+				Cell[_,
+					$webExportRefEndBlockStyles,
+					___],
+				___
+				},
+			___],
+		___];
+
+
 webExportNotebookPrep[nb_,"Guide"]:=
 		Replace[
-			(*Reformat guide footer*)
+			(* Fix case of improperly formatted reference cells *)
+			(*Reformat guide layout*)
 			Notebook[{
-				a_Cell,
-				c:Cell[_CellGroupData],
-				content:Shortest[__],
-				e:
-					Cell[_,
-						"GuideMoreAboutSection"|"GuideTutorialsSection"|
-						"GuideRelatedLinksSection"|"GuideLinksSection"|
-							"GuideRelatedTutorialsSection"|"FooterCell",
-						___]|
+				(*Pre-title cells*)
+				a:Shortest[__Cell],
+				(*title cell*)
+				title:
 					Cell[
 						CellGroupData[{
-							Cell[_,
-								"GuideMoreAboutSection"|"GuideTutorialsSection"|
-								"GuideRelatedLinksSection"|"GuideLinksSection"|
-									"GuideRelatedTutorialsSection"|"FooterCell",
-								___],
+							Cell[_,"GuideTitle",___],
 							___
-							},
+							},___],
+						___
+						],
+				(*Ref sections*)
+				c:
+				Longest[
+					Cell[
+						CellGroupData[
+							{
+								Cell[_,$webExportRefBlockCellStyles,___],
+								___
+								},
 							___],
-						___],
+						___
+						]...
+					],
+				(*Unencapsulated data*)
+				content:Except[$webExportEndBlockCell]...,
+				(*Footer*)
+				e:$webExportEndBlockCell,
 				r___
 				},
 				o___
@@ -6103,31 +6304,127 @@ webExportNotebookPrep[nb_,"Guide"]:=
 				Notebook[
 					{
 						a,
+						title,
 						c,
-						Cell[
-							CellGroupData[{
-								$webExportGuideReferenceCell,
-								Cell["", "SectionHeaderSpacer"],
-								content,
-								Cell["", "SectionFooterSpacer"]
-								},Open
-								]
+						If[Length[
+							DeleteCases[{content},
+								$webExportGuiderSpacerCell
+								]]>0,
+							Cell[
+								CellGroupData[
+									{
+										$webExportGuideReferenceCell,
+										Cell["", "SectionHeaderSpacer"],
+										Sequence@@
+											DeleteCases[{content},
+												$webExportGuiderSpacerCell
+												],
+										Cell["", "SectionFooterSpacer"]
+										},
+									Open
+									]
+								],
+							Nothing
 							],
 						e,
 						r
+						}/.{
+						CellGroupData[{
+							start:Except[Cell["", "SectionFooterSpacer",___]]...,
+							Cell["", "SectionFooterSpacer",___]..,
+							foot1:Except[Cell["", "SectionFooterSpacer",___]],
+							foot2___
+							},setting___]:>
+							CellGroupData[{
+								start,
+								Cell["", "SectionFooterSpacer"],
+								foot1,
+								foot2
+								},setting]
+						}/.{
+						Cell[
+							name_?(Not@*FreeQ["Reference"]),
+							$webExportRefBlockCellStyles,
+							rest___
+							]:>
+							Cell[
+								name,
+								"GuideReferenceSection",
+								rest
+								]
+						}/.{
+						Cell[
+							CellGroupData[
+								data:{
+									Cell[_,
+										DeleteCases[$webExportRefBlockCellStyles,
+											"GuideReferenceSection"
+											],
+										___
+										],
+									___
+									},
+								___
+								],
+							cellstuff___
+							]:>
+							Cell[CellGroupData[data,Closed],cellstuff]
 						},
 					o
 					]
 			]@
+		Replace[{
+			(* Fix case of no reference cell *)
+			Notebook[
+				{
+					a:Shortest[__Cell],
+					Cell[
+						CellGroupData[{
+							title:Cell[_,"GuideTitle",___],
+							abstract:
+								Cell[_,"GuideAbstract",___]..,
+							content___
+							},
+							___
+							],
+						___
+						],
+					e:$webExportEndBlockCell,
+					r___
+					},
+				o___
+				]:>
+				Notebook[{
+					a,
+					Cell[
+						CellGroupData[{
+							title,
+							abstract
+							}]
+						],
+					Cell[
+						CellGroupData[
+							{
+								$webExportGuideReferenceCell,
+								Cell["", "SectionHeaderSpacer"],
+								content,
+								Cell["", "SectionFooterSpacer"]
+								}
+							]
+						],
+					e,
+					r
+					},
+					o
+					]
+			}]@
 		ReplaceAll[{
 			(*Reformat Related ___ sections*)
 			Cell[
 				CellGroupData[{
 					c:
 						Cell[_,
-							"GuideMoreAboutSection"|"GuideTutorialsSection"|
-							"GuideRelatedLinksSection"|"GuideLinksSection"|
-								"GuideRelatedTutorialsSection"|"FooterCell",
+							$webExportRelatedStuffStyles,
 							___],
 					e___
 					},
@@ -6137,6 +6434,20 @@ webExportNotebookPrep[nb_,"Guide"]:=
 				]:>
 				Cell[CellGroupData[{c,Cell["", "SectionHeaderSpacer"],e},s],o]
 			}]@
+		ReplaceAll[{
+			Cell[
+				CellGroupData[{
+					___,
+					c:$webExportRelatedStuffCell,
+					r___
+					},s___],
+				o___
+				]:>
+				Cell[
+					CellGroupData[{c,r},s],
+					o
+					]
+			}]@
 		ReplaceRepeated[nb,{
 			(*Remove delimiter subsections*)
 			Cell[
@@ -6145,42 +6456,16 @@ webExportNotebookPrep[nb_,"Guide"]:=
 					s___
 					],
 				o___]:>
-				Cell[CellGroupData[{e},s],o],(*
-			(*Remove raw text after group headers*)
-			Cell[
-				CellGroupData[{
-					c1:Cell[_,"GuideFunctionsSubsection",___],
-					Cell[_,"GuideText",___],
-					c2__
-					},
-					e1___
-					],
-				e2___
-				]:>
-				Cell[
-					CellGroupData[{c1,c2},e1],
-					e2
-					],
-			Cell[
-				CellGroupData[{
-					c1:Cell[_,"GuideFunctionsSubsection",___],
-					Cell[_,"GuideText",___]
-					},
-					e1___
-					],
-				e2___
-				]:>
-				Sequence@@{},*)
+				Cell[CellGroupData[{e},s],o],
 			(*Downconvert MoreAbout links*)
 			(BaseStyle->"GuideMoreAbout"):>
 				(BaseStyle->"GuideMoreAboutSub"),
 			Cell[b_,"GuideMoreAbout",e___]:>
 				Cell[b,"GuideMoreAboutSub",e],
 			(*Add expected spacer to section names*)
-			Cell[s_String,
-				t:"GuideMoreAboutSection"|"GuideTutorialsSection"|
-					"GuideRelatedLinksSection"|"GuideLinksSection"|
-						"GuideRelatedTutorialsSection",
+			Cell[
+				s_String,
+				t:$webExportRelatedStuffStyles,
 				e___]:>
 				Cell[
 					TextData[{
@@ -6220,34 +6505,14 @@ webExportNotebookPrep[nb_]:=
 			webExportNotebookPrep[
 				webExportNotebookPrep[nb,"Common"],
 				t]
-			(*
-			Block[{
-				nbobj,
-				nbexpr=
-					webExportNotebookPrep[
-						webExportNotebookPrep[nb,"Common"],
-						t]
-				},
-				nbobj=NotebookPut[nbexpr,Visible\[Rule]False];
-				SelectionMove[nbobj,All,Notebook];
-				FrontEndTokenExecute[nbobj,"ToggleShowExpression"]~Do~2;
-				nbexpr=
-					If[#=!=nbexpr,
-						#,
-						Print[$Failed];
-						nbexpr
-						]&@NotebookGet[nbobj];
-				NotebookClose[nbobj];
-				nbexpr
-				]
-			*)
 		]
 
 
 webExportNotebook[file_,nb_,ops___?OptionQ]:=
 	With[{params=Flatten@{ops}},
-		Block[{$ContextPath},Needs["DocumentationBuild`"]];
+		webExportDocumentationBuildLoad[];
 		Block[{
+			$ContextPath=Join[$webExportDocumentationBuildContexts,$ContextPath],
 			(*transmogrifyDVs=DownValues[Transmogrify`Private`MakeItSo],
 			Transmogrify`Private`MakeItSo,*)
 			DocumentationBuild`Common`PubsEvaluateWithFE=
@@ -6283,19 +6548,6 @@ webExportNotebook[file_,nb_,ops___?OptionQ]:=
 				MathLink`CallFrontEnd[
 					FrontEnd`NotebookPutReturnObject[Append[e,Visible->False]]
 					];
-			(*Transmogrify`Private`MakeItSo[s_Symbol]/;!TrueQ[$override]:=
-				Echo@Block[{$override=True},
-					Replace[{Transmogrify`Private`MakeItSo[s]},{
-						{}:>
-							ToString@s(*If[Length@Names[s]>0,s,Sequence@@{}]*),
-						e_\[RuleDelayed]First[e]
-						}]
-					];*)
-			(*DownValues[Transmogrify`Private`MakeItSo]=
-				Join[
-					DownValues[Transmogrify`Private`MakeItSo],
-					transmogrifyDVs
-					];*)
 			With[{
 				nbprep=webExportNotebookPrep@nb,
 				fexpd=ExpandFileName[expFile],
@@ -6488,11 +6740,12 @@ webExportAssetsCopy1[dir:(_String|_File)?DirectoryQ]:=
 webExportAssetsCopy2[dir:(_String|_File)?DirectoryQ]:=
 	With[{resources=
 		Join[
-			Thread[{"javascript",{
-				"sub-pages.js",
-				"image-swap.js",
-				"clipboard.js"
-				}}],
+			Thread[{
+				"javascript",{
+					"sub-pages.js",
+					"image-swap.js",
+					"clipboard.js"
+					}}],
 			Thread[{"images",{"clipboard@2x.png"}}]
 			]
 		},
@@ -6508,7 +6761,15 @@ webExportAssetsCopy2[dir:(_String|_File)?DirectoryQ]:=
 									p
 									};
 						If[!FileExistsQ@f,
-							URLDownload[u,f],
+							Quiet@
+								Check[
+									URLDownload[u,f],
+									Message["Download failed for `` to ``",
+										 p,
+										 to
+										 ],
+									URLDownload::invhttp
+									],
 							f
 							],
 						{
@@ -6568,7 +6829,13 @@ webExportPostProcessMultiReplacements[strip_,res_,url_]:=
 			l:("<script src=\""~~(paddedRes|"")~~"javascript/reference.js\"></script>"):>
 				"<script src=\""<>
 					URLBuild@{trimmedRes,"javascript",
-						"jquery","core","1.7.2","jquery.min.js"}<>"\" /></script>\n"<>l
+						"jquery","core","1.7.2","jquery.min.js"}<>"\" /></script>\n"<>l,
+			(("<script src=\""<>
+					URLBuild@{trimmedRes,"javascript",
+						"jquery","core","1.7.2","jquery.min.js"}<>"\" /></script>\n")..):>
+				"<script src=\""<>
+					URLBuild@{trimmedRes,"javascript",
+						"jquery","core","1.7.2","jquery.min.js"}<>"\" /></script>\n"
 			}
 		];
 
@@ -6619,7 +6886,7 @@ webExportPostProcessSingleReplacements[strip_,res_,url_]:=
 			(* Patch includes to work a resource base *)
 			"\"/includes"->
 				"\""<>URLBuild@{trimmedRes,"includes"},
-			(* Downconvert 2013 resources to the standard resoruce base *)
+			(* Downconvert 2013 resources to the standard resource base *)
 			"/2013/"->
 				paddedRes,
 			(* Delete duplicates *)
