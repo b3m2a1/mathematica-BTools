@@ -211,6 +211,10 @@ PackageScopeBlock[
 		"Rebuilds the .git/info/exclude file";
 	AppGitHubConfigure::usage=
 		"Configures the app to be able to push to github";
+	AppGitHubRepo::usage=
+		"The GitHub repo for the app";
+	AppGitHubSetRemote::usage=
+		"Sets the remote for the app";
 	AppGitHubPull::usage=
 		"Pulls the app from its master branch";
 	AppGitHubPush::usage=
@@ -2252,16 +2256,40 @@ $AppGitHubPrefix=
 	"mathematica-";
 
 
-AppGitHubRepo[appName_,password_:Automatic]:=
-	Replace[AppFromFile[appName],
+AppGitHubRepo[appName_,password_:None]:=
+	Replace[
+		AppFromFile[appName],
 		s_String:>
-			formatGitHubPath[$AppGitHubPrefix<>s,"Password"->password]
+			formatGitHubPath[
+				$AppGitHubPrefix<>s,
+				"Password"->password
+				]
 		];
 
 
 (* ::Subsubsection::Closed:: *)
 (*GitHubConfigure*)
 
+
+
+AppGitHubSetRemote[appName_,remote_:Automatic]:=
+	With[{app=AppFromFile[appName]},
+		Replace[Replace[remote,Except[_String]:>AppGitHubRepo[appName]],
+			r_String:>
+				Quiet@
+					Check[
+						GitAddRemote[AppDirectory[app],
+							r
+							],
+						GitRemoveRemote[AppDirectory[app],
+							r
+							];
+						GitAddRemote[AppDirectory[app],
+							r
+							]
+						]
+			]
+		]
 
 
 AppGitHubConfigure[appName_:Automatic]:=
@@ -2272,19 +2300,8 @@ AppGitHubConfigure[appName_:Automatic]:=
 					If[Not@Between[URLRead[r,"StatusCode"],{200,299}],
 						GitHubImport["Create",$AppGitHubPrefix<>app]
 						];
-					Quiet@
-						Check[
-							GitAddRemote[AppDirectory[app],
-								r
-								],
-							GitRemoveRemote[AppDirectory[app],
-								r
-								];
-							GitAddRemote[AppDirectory[app],
-								r
-								]
-							];
-						r
+					AppGitHubSetRemote[app];
+					r
 					)
 				}]
 			]

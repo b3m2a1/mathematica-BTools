@@ -117,10 +117,12 @@ SVN::usage=
 
 
 
-$GitHubUserName::usage=
-	"The user's github username";
-$GitHubPassword::usage=
-	"The user's github password";
+PackageScopeBlock[
+	$GitHubUserName::usage=
+		"The user's github username";
+	$GitHubPassword::usage=
+		"The user's github password";
+	];
 
 
 GitHubPath::usage=
@@ -697,7 +699,7 @@ $GitHubEncodePassword=False;
 
 
 Options[GitHubPath]={
-	"Username"->Automatic,
+	"Username"->None,
 	"Password"->None
 	};
 Options[formatGitHubPath]=

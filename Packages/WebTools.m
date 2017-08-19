@@ -33,10 +33,12 @@ SSHKeys::usage=
 	"Lists the available SSH keys";
 SSHKnownHosts::usage=
 	"Lists the available known_hosts";
-SSHAddHost::usage=
-	"Adds a host to a host file";
-SSHKeyCreate::usage=
-	"Configures an SSH key pair in a given directory";
+SSHGen::usage=
+	"Generate an SSH key";
+SSHAdd::usage=
+	"Uses ssh-add to add a key file";
+(*SSHKeyCreate::usage=
+	"Configures an SSH key pair in a given directory";*)
 SSHConfigure::usage=
 	"Configures an SSH tunnel to a given server";
 
@@ -147,6 +149,97 @@ SSHKeys[dir_String?DirectoryQ]:=
 		];
 SSHKeys[Optional[Automatic,Automatic]]:=
 	SSHKeys@$SSHDirectory;
+
+
+$sshKeygenOptionMap=
+	<|
+		"Comment"->"C",
+		"Bits"->"B",
+		"HostName"->"F",
+		"FileName"->"f",
+		"Password"->"N",
+		"Type"->"t"
+		|>
+
+
+Options[sshKeyCreate]=
+	{
+		"Comment"->Automatic,
+		"Bits"->Automatic,
+		"HostName"->Automatic,
+		"FileName"->Automatic,
+		"Password"->Automatic,
+		"Type"->Automatic
+		};
+sshKeyCreate[ops:OptionsPattern[]]:=
+	RunProcess[
+		Replace[
+			{
+				"ssh-keygen",
+				ops
+				},{
+			(_->Automatic)->Nothing,
+			(Rule|RuleDelayed)[k_,v_]:>
+				Replace[k,$sshKeygenOptionMap]->v
+			},
+			1
+		]
+	];
+
+
+Options[]=
+	Normal@
+		Join[
+			KeyDrop[Association@Options[sshKeyCreate],
+				"FileName"
+				],
+			<|
+				"Password"->"\"\""
+				|>
+			];
+SSHKeyCreate[
+	keyFile_String?(DirectoryQ@*DirectoryName),
+	ops___
+	]:=
+	sshKeyCreate[
+		"FileName"->keyFile,
+		Join[{ops},Options[SSHKeyCreate]]
+		];
+SSHKeyCreate[
+	fName_String?(StringMatchQ[Except["."|$PathnameSeparator]..]),
+	ops:OptionsPattern[]
+	]:=
+	SSHKeyCreate[
+		FileNameJoin@{$HomeDirectory,".ssh",fName},
+		ops
+		]
+
+
+BTools`Private`Hidden`AppGitHubSetRemote["BTools"]
+
+
+SSHKeyAdd[
+	keyFile_String?FileExistsQ
+	]:=
+	RunProcess[
+		{
+			"ssh-add",
+			"-k",
+			keyFile
+			}
+		];
+SSHKeyAdd[fName_String?(StringMatchQ[Except["."|$PathnameSeparator]..])]:=
+	SSHKeyAdd[
+		FileNameJoin@{$HomeDirectory,".ssh",fName}
+		]
+
+
+SSHConfigure[
+	publicKeyFile_,
+	privateKeyFile_,
+	server_
+	]:=
+	
 
 
 SSHKnownHostImportString[hostString_]:=
