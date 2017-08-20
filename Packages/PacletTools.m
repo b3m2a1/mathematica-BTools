@@ -132,7 +132,7 @@ PacletServerPage::usage=
 Begin["`Private`"];
 
 
-$pacletConfigLoaded//ClearAll
+(*$pacletConfigLoaded//ClearAll*)
 
 
 If[$pacletConfigLoaded//TrueQ//Not,
@@ -1152,6 +1152,9 @@ PacletInstallerScript[ops:OptionsPattern[]]:=
 								},
 								If[Between[URLSave[#,file,"StatusCode"],{200,299}],
 									PacletManager`PacletInstall@file,
+									PacletInstallerScript::savefail=
+										"No paclet found at ``";
+									Message[PacletInstallerScript::savefail,file];
 									$Failed
 									]
 								]&/@pacletFiles
@@ -1247,6 +1250,9 @@ PacletInstallerScript[ops:OptionsPattern[]]:=
 									Hold[
 										If[FileExistsQ@#,
 											PacletManager`PacletInstall@#,
+											PacletInstallerScript::savefail=
+												"No paclet found at ``";
+											Message[PacletInstallerScript::savefail,file];
 											$Failed
 											]&/@paclets
 										]
@@ -1254,6 +1260,8 @@ PacletInstallerScript[ops:OptionsPattern[]]:=
 								]
 						}],
 				True,
+					PacletInstallerScript::unclear="Unclear how to install paclet from site ``";
+					Message[PacletInstallerScript::unclear,ps];
 					$Failed
 				]
 		];
@@ -1441,6 +1449,8 @@ PacletUninstallerScript[ops:OptionsPattern[]]:=
 								]
 					}],
 				True,
+					PacletUninstallerScript::unclear="Unclear how to uninstall paclet from site ``";
+					Message[PacletUninstallerScript::unclear,ps];
 					$Failed
 				]
 		];
@@ -1835,6 +1845,7 @@ Options[PacletUpload]=
 				Permissions->Automatic
 				}
 			];
+PacletUpload::nobby="Unkown site base ``"
 PacletUpload::nopac="Unable to find paclet files ``";
 PacletUpload[pacletFiles]~~`Package`PackageAddUsage~~
 	"uploads pacletFiles to the specified server and configures installers";
@@ -1867,6 +1878,8 @@ pacletUpload[
 	Catch@
 		DeleteCases[Nothing]@
 		With[{
+			base=
+				pacletStandardServerBase@OptionValue["ServerBase"],
 			site=
 				PacletSiteURL[
 					FilterRules[{
@@ -1911,7 +1924,7 @@ pacletUpload[
 								]
 						]
 					]},
-				Switch[OptionValue["ServerBase"],
+				Switch[base,
 					(* ------------------- Wolfram Cloud Paclets ------------------- *)
 					"Cloud"|CloudObject|CloudDirectory|Automatic,
 						With[{url=site},
@@ -2097,7 +2110,7 @@ pacletUpload[
 								|>	
 							],
 					_?SyncPathQ,
-						With[{p=SyncPath@OptionValue["ServerBase"]},
+						With[{p=SyncPath@base},
 							Quiet@CreateDirectory[p,
 								CreateIntermediateDirectories->True];
 							PacletUpload[
@@ -2107,6 +2120,7 @@ pacletUpload[
 								]
 							],
 					_,
+						Message[PacletUpload::nobby,base];
 						$Failed
 						]
 				]

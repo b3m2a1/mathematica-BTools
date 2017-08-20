@@ -2091,7 +2091,7 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 					],
 			"PushToGitHub"->
 				If[gitHubPush,
-					AppGitHubPush[app]
+					Quiet[AppGitHubPush[app],Git::err]
 					],
 			"PushToServer"->
 				If[pacletServerPush,
