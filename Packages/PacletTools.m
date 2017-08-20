@@ -660,7 +660,7 @@ PacletSiteURL[ops:OptionsPattern[]]:=
 				pacletStandardServerName@OptionValue["ServerName"]
 			},
 			Switch[base,
-				$CloudBase|CloudObject|CloudDirectory|_CloudObject|_CloudDirectory,
+				$CloudBase|"Cloud"|CloudObject|CloudDirectory|_CloudObject|_CloudDirectory,
 					Replace[
 						Replace[OptionValue@CloudConnect,
 							Automatic:>
@@ -695,7 +695,7 @@ PacletSiteURL[ops:OptionsPattern[]]:=
 							"Scheme"->"http",
 							"Domain"->
 								Replace[base,{
-									CloudObject|CloudDirectory->
+									"Cloud"|CloudObject|CloudDirectory->
 										URLParse[$CloudBase,"Domain"],
 									CloudObject[d_,___]:>
 										URLParse[d,"Domain"]
@@ -1905,7 +1905,7 @@ pacletUpload[
 					]},
 				Switch[OptionValue["ServerBase"],
 					(* ------------------- Wolfram Cloud Paclets ------------------- *)
-					CloudObject|CloudDirectory|Automatic,
+					"Cloud"|CloudObject|CloudDirectory|Automatic,
 						With[{url=site},
 							Replace[OptionValue@"UploadInstallLink",{
 								True:>

@@ -936,7 +936,7 @@ KeyChainGet[
 $baseCloudAccounts=
 	"TestingAccount"|"DeploymentsAccount"|
 		"PacletsAccount"|"DatasetsAccount"|
-			"ServiceConnectionsAccount";
+			"ServiceConnectionsAccount"|"DocumentationAccount";
 
 
 `Package`PackageAddAutocompletions[
@@ -950,7 +950,7 @@ Options[KeyChainConnect]=
 KeyChainConnect[acc:$baseCloudAccounts,ops:OptionsPattern[]]:=
 	KeyChainConnect[Key[acc],ops];
 KeyChainConnect[
-	acct:_String|Key[_String]:Key["DeploymentsAccount"],
+	acct:_String|Key[_String]:Key["TestingAccount"],
 	ops:OptionsPattern[]
 	]:=
 	With[{

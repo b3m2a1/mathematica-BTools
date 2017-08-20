@@ -463,6 +463,38 @@ GitPush[
 		branch];
 
 
+GitFetch[
+	dir:_String?DirectoryQ
+	]:=
+	GitRun[
+		dir,
+		"fetch"
+		];
+
+
+GitReset[
+	dir:_String?DirectoryQ,
+	src_
+	]:=
+	GitRun[
+		dir,
+		"reset",
+		src
+		];
+
+
+GitCheckout[
+	dir:_String?DirectoryQ,
+	src_
+	]:=
+	GitCheckout[
+		dir,
+		"checkout",
+		"-t",
+		src
+		];
+
+
 Options[GitPull]={
 	"Username"->
 		None,
@@ -506,6 +538,12 @@ $GitActions=
 			GitAddRemote,
 		"RemoveRemote"->
 			GitRemoveRemote,
+		"Fetch"->
+			GitFetch,
+		"Reset"->
+			GitReset,
+		"Checkout"->
+			GitCheckout,
 		"Pull"->
 			GitPull,
 		"PullOrigin"->

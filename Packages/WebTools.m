@@ -33,14 +33,16 @@ SSHKeys::usage=
 	"Lists the available SSH keys";
 SSHKnownHosts::usage=
 	"Lists the available known_hosts";
-SSHGen::usage=
+SSHKeyCreate::usage=
 	"Generate an SSH key";
-SSHAdd::usage=
+SSHKeyAdd::usage=
 	"Uses ssh-add to add a key file";
-(*SSHKeyCreate::usage=
-	"Configures an SSH key pair in a given directory";*)
+SSHKeyRemove::usage=
+	"Removes an SSH key";
 SSHConfigure::usage=
 	"Configures an SSH tunnel to a given server";
+SSHConnect::usage=
+	"Connects to a server via SSH and returns the ProcessObject";
 
 
 XMLGenerate::usage=
@@ -187,14 +189,15 @@ sshKeyCreate[ops:OptionsPattern[]]:=
 	];
 
 
-Options[]=
+Options[SSHKeyCreate]=
 	Normal@
 		Join[
 			KeyDrop[Association@Options[sshKeyCreate],
 				"FileName"
 				],
 			<|
-				"Password"->"\"\""
+				"Password"->"\"\"",
+				"Type"->"rsa"
 				|>
 			];
 SSHKeyCreate[
@@ -203,10 +206,11 @@ SSHKeyCreate[
 	]:=
 	sshKeyCreate[
 		"FileName"->keyFile,
-		Join[{ops},Options[SSHKeyCreate]]
+		DeleteDuplicatesBy[First]@
+			Join[{ops},Options[SSHKeyCreate]]
 		];
 SSHKeyCreate[
-	fName_String?(StringMatchQ[Except["."|$PathnameSeparator]..]),
+	fName_String?(Not@*FileExistsQ),
 	ops:OptionsPattern[]
 	]:=
 	SSHKeyCreate[
@@ -215,11 +219,8 @@ SSHKeyCreate[
 		]
 
 
-BTools`Private`Hidden`AppGitHubSetRemote["BTools"]
-
-
 SSHKeyAdd[
-	keyFile_String?FileExistsQ
+	keyFile_String?(FileExistsQ@FileNameJoin@{$HomeDirectory,".ssh",#}&)
 	]:=
 	RunProcess[
 		{
@@ -234,12 +235,249 @@ SSHKeyAdd[fName_String?(StringMatchQ[Except["."|$PathnameSeparator]..])]:=
 		]
 
 
+SSHKeyRemove[
+	keyFile_String?(FileExistsQ@FileNameJoin@{$HomeDirectory,".ssh",#}&)
+	]:=
+	RunProcess[
+		{
+			"ssh-add",
+			"-d",
+			keyFile
+			}
+		];
+SSHKeyRemove[fName_String?(StringMatchQ[Except["."|$PathnameSeparator]..])]:=
+	SSHKeyRemove[
+		FileNameJoin@{$HomeDirectory,".ssh",fName}
+		]
+
+
+serverGetUserNamePassword[server_,u_,p_,usekeychain_]:=
+	Block[{
+		username=u,password=p
+		},
+		If[(!StringQ[username]||!StringQ[password])&&usekeychain,
+			If[!StringQ[username],
+				Replace[KeyChainGet[server->{None,"Username"}],
+					s_String:>
+						(username=s)
+					]
+				];
+			If[!StringQ[password],
+				Replace[KeyChainGet[{server,username}],
+					s_String:>
+						(password=s)
+					]
+				];
+			];
+		If[!StringQ[username]||!StringQ[password],
+			With[{res=
+				AuthenticationDialog[
+					"SSH Tunnel",
+					{server,
+						Replace[username,Except[_String]->""],
+						Replace[password,Except[_String]->""]
+						}
+					]
+				},
+				If[res===$Canceled,Throw[$Failed];
+					{username,password}=
+						res[server]
+					]
+				]
+			];
+		If[usekeychain,
+			KeyChainAdd[{
+				server->{"Username",username},
+				server->{username,password}
+				}]
+			];
+		{username,password}
+		];
+
+
+Options[SSHConfigure]=
+	{
+		"Username"->Automatic,
+		"Password"->Automatic,
+		Verbose->False,
+		"UseKeyChain"->False
+		};
 SSHConfigure[
-	publicKeyFile_,
-	privateKeyFile_,
-	server_
+	keyFile_String?FileExistsQ,
+	server_String,
+	ops:OptionsPattern[]
+	]:=
+	Catch@
+		Block[
+			{
+				serv=server,
+				key=If[!StringEndsQ[keyFile,".pub"],keyFile<>".pub",keyFile],
+				verbose=TrueQ@OptionValue[Verbose],
+				username=OptionValue["Username"],
+				password=OptionValue["Password"],
+				usekeychain=TrueQ@OptionValue["UseKeyChain"],
+				outstring="",
+				pauseTime
+				},
+				pauseTime=If[verbose,.5,.1];
+				If[StringContainsQ[serv,"@"],
+					{username,serv}=StringSplit[serv,"@",2];
+					If[StringContainsQ[username,":"],
+						{username,password}=StringSplit[username,":"]
+						]
+					];
+				{username,password}=
+					serverGetUserNamePassword[server,username,password,usekeychain];
+			If[verbose,
+				Function[Null,
+					Monitor[
+						#,
+						Internal`LoadingPanel[outstring]
+						],
+					HoldAllComplete
+					],
+				Identity
+				]@
+			With[{term=StartProcess[$SystemShell]},
+				outstring="Copying file to server";
+				Pause[pauseTime];
+				WriteLine[
+					term,
+					StringRiffle@
+						{
+							"scp",
+							"'"<>key<>"'",
+							"'"<>username<>"@"<>server<>":"<>"'"
+							}
+					];
+				outstring="Entering password";
+				Pause[pauseTime];
+				WriteLine[term, password ];
+				outstring=ReadString[term];
+				Pause[pauseTime];
+				outstring="Adding known host";
+				WriteLine[
+					term,
+					StringRiffle@
+						{
+							"cat","'"<>key<>"'","|",
+							"ssh","-o","PubkeyAuthentication=no",
+							"'"<>username<>"@"<>server<>"'",
+							"\"",
+							"mkdir -p ~/.ssh",
+							"&&",
+							"cat >>",
+							"~/.ssh/authorized_keys;",
+							"chmod 700 ~/.ssh;",
+							"chmod 600 ~/.ssh/authorized_keys;",
+							"rm ~/"<>FileNameTake[key],
+							"\""
+							}
+					];
+				Pause[pauseTime];
+				outstring=ReadString[term];
+				Pause[pauseTime];
+				outstring="Configured";
+				]
+			];
+SSHConfigure[
+	keyFile_String?FileExistsQ,
+	server_String,
+	ops:OptionsPattern[]
 	]:=
 	
+
+
+Options[SSHConnect]=
+	{
+		"Username"->Automatic,
+		"Password"->Automatic,
+		Verbose->False,
+		"UseKeyChain"->False,
+		"Configuration"->{"-T"}
+		};
+SSHConnect[server_String,ops:OptionsPattern[]]:=
+	Catch@
+	Block[{
+		term,
+		serv=server,
+		username=OptionValue["Username"],
+		password=OptionValue["Password"],
+		usekeychain=OptionValue["UseKeyChain"]//TrueQ
+		},
+		If[StringContainsQ[serv,"@"],
+			{username,serv}=StringSplit[serv,"@",2];
+			If[StringContainsQ[username,":"],
+				{username,password}=StringSplit[username,":"]
+				]
+			];
+		If[!StringQ[username]&&usekeychain,
+			Replace[KeyChainGet[server->{None,"Username"}],
+				s_String:>
+					(username=s)
+				]
+			];
+		If[!StringQ[username],
+			username=
+				PasswordDialog[
+					"Username",
+					"Enter username for server ``"~TemplateApply~serv,
+					username
+					]
+			];
+		If[!StringQ[username],Throw@$Failed];
+		term=
+			StartProcess[{
+				"ssh",
+				Sequence@@
+					Replace[
+						Flatten@{OptionValue["Configuration"]},
+						Except[_String|_Rule|_RuleDelayed]->Nothing,
+						1
+						],
+				"'"<>username<>"@"<>serv<>"'"
+				}];
+		Pause[.1];
+		If[
+			StringContainsQ[
+				Nest[
+					Replace[{
+						EndOfBuffer:>
+							(Pause[1];ReadString[term]),
+						EndOfFile:>
+							If[ProcessStatus[term, "Finished"],
+								Throw[$Failed],
+								Throw[$Failed]
+								],
+						Except[_String]:>Throw[$Failed]
+						}],
+					ReadString[term],
+					5
+					],
+				"password",
+				IgnoreCase->True],
+			If[!StringQ[password]&&usekeychain,
+				Replace[KeyChainGet[{server,username}],
+					s_String:>
+						(password=s)
+					]
+				];
+			If[!StringQ[password],	
+				username=
+					PasswordDialog[
+						"Username",
+						"Enter username for server ``"~TemplateApply~serv,
+						username
+						]
+				];
+			If[!StringQ[password],
+				KillProcess[term];Throw@$Failed];
+			WriteLine[term,password];
+			];
+		Pause[.1];
+		ReadString[term];
+		term
+		]
 
 
 SSHKnownHostImportString[hostString_]:=

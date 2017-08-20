@@ -228,7 +228,7 @@ PackagePullDeclarations[pkgFile_]:=
 			]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*PackageLoadPackage*)
 
 
@@ -368,7 +368,7 @@ PackageAppNeeds[pkg_String]:=
 		];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*PackageScopeBlock*)
 
 
@@ -376,16 +376,29 @@ $PackageScopeBlockEvalExpr=TrueQ[$PackageScopeBlockEvalExpr];
 PackageScopeBlock[e_,scope_String:"Hidden"]:=
 	With[{s="BTools`Private`"<>StringTrim[scope,"`"]<>"`"},
 		If[!MemberQ[$PackageContexts,s],AppendTo[$PackageContexts,s]];
-		Cases[
-			HoldComplete[e],
-			sym_Symbol?(
-				Function[Null,
-					MemberQ[$PackageContexts,Quiet[Context[#]]],
-					HoldAllComplete
-					]
-				):>
-				RuleCondition[Set[Context[sym],s],True],
-			\[Infinity]
+		Replace[
+			Thread[
+				Cases[
+					HoldComplete[e],
+					sym_Symbol?(
+						Function[Null,
+							MemberQ[$PackageContexts,Quiet[Context[#]]],
+							HoldAllComplete
+							]
+						):>
+						HoldComplete[sym];
+					\[Infinity]
+					],
+				HoldComplete
+				],
+			HoldComplete[{s__}]:>
+				(
+					Map[
+						Function[Null,Set[Context[#],s],HoldAllComplete],
+						HoldComplete[s]
+						]//ReleaseHold;
+					PackageFERehideSymbols[s]
+					)
 			];
 		If[$PackageScopeBlockEvalExpr,e]
 		];
@@ -1120,7 +1133,7 @@ PackagePostProcessPrepSpecs[]:=
 		);
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*ExposePackages*)
 
 
@@ -1243,6 +1256,10 @@ Protect["`Private`Package`*"];
 Unprotect[`Private`Package`$loadAbort];
 
 
+(* ::Subsubsection:: *)
+(*Post-Process*)
+
+
 If[!`Private`Package`$loadAbort,
 	`Private`Package`PackagePostProcessPrepSpecs[];
 	`Private`Package`PackagePostProcessExposePackages[];
@@ -1252,7 +1269,11 @@ If[!`Private`Package`$loadAbort,
 
 
 Unprotect[`Private`Package`$PackageFEHiddenSymbols];
-(*Clear[`Private`Package`$PackageFEHiddenSymbols];*)
+Clear[`Private`Package`$PackageFEHiddenSymbols];
+
+
+(* ::Subsubsection:: *)
+(*EndPackage / Reset $ContextPath*)
 
 
 EndPackage[];

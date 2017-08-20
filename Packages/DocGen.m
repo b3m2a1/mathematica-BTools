@@ -102,11 +102,13 @@ SaveGuide::usage=
 
 
 PackageScopeBlock[
-
+	
 	GuideTemplate::usage=
 		"Generates a template to build a guide from";
 	GuideContextTemplate::usage=
 		"Generates a template that autofills with all the function in a context";
+	DocumentationMultiPackageOverviewNotebook::usage=
+		"Generates a multipackage documentation overview notebook"
 		
 	];
 
@@ -662,19 +664,22 @@ docMetadata[ops:OptionsPattern[]]:=
 				],
 		"uri"->
 			StringReplace[
-				StringTrim[
-					Replace[OptionValue["URI"],
-						s_String?(Not@StringContainsQ[#,"/"]&):>
-							pacletLinkBuild[s,
-								ToLowerCase@
-									Replace[OptionValue["Type"],
-										Except[_String]->"Symbol"
-										]
-								]
+				StringReplace[
+					StringTrim[
+						Replace[OptionValue["URI"],
+							s_String?(Not@StringContainsQ[#,"/"]&):>
+								pacletLinkBuild[s,
+									ToLowerCase@
+										Replace[OptionValue["Type"],
+											Except[_String]->"Symbol"
+											]
+									]
+							],
+						"paclet:"
 						],
-					"paclet:"
+					Except["/"|WordCharacter|"$"]->""
 					],
-				Except["/"|WordCharacter|"$"]->""
+				StartOfString~~"System/"->""
 				]
 		} 
 
@@ -688,7 +693,7 @@ $DocDefaultURLBase=
 	URLBuild@<|
 		"Scheme"->"https",
 		"Domain"->"www.wolframcloud.com",
-		"Path"->{"objects","b3m2a1.paclets","reference"}
+		"Path"->{"objects","b3m2a1.docs","reference"}
 		|>;
 
 
@@ -3516,27 +3521,42 @@ SaveSymbolPages~SetAttributes~HoldFirst
 
 
 
-guideRefBox[name_String->f_String,styling_:"InlineFunctionSans"]:=
-	Cell[
-		BoxData@
-			TemplateBox[{
-				Cell[TextData[Last@StringSplit[name,"`"]]],
-						Which[
-							StringMatchQ[f,"\"*"],
-								pacletLinkBuild[{"format",f}],
-							StringMatchQ[f,"paclet:*"],
-								f,
-							True,
-								pacletLinkBuild@f
-							]
-					},
-		   "RefLink",
-		   BaseStyle->styling]
+guideRefBox//ClearAll
+
+
+guideRefBox[name_String->f_String,styling_:Automatic]:=
+	Which[
+		styling===Automatic&&StringContainsQ[f,"/guide/"],
+			Cell[BoxData@guideRefBox[name->f,"GuideMoreAbout"],
+			  "GuideMoreAbout"],
+		styling===Automatic&&StringContainsQ[f,"/tutorial/"],
+			Cell[BoxData@guideRefBox[name->f,"RelatedTutorials"],
+			  "RelatedTutorials"],
+		True,
+			Cell[
+				BoxData@
+					TemplateBox[{
+						Cell[TextData[Last@StringSplit[name,"`"]]],
+								Which[
+									StringMatchQ[f,"\"*"],
+										pacletLinkBuild[{"format",f}],
+									StringMatchQ[f,"paclet:*"],
+										f,
+									True,
+										pacletLinkBuild@f
+									]
+							},
+				   "RefLink",
+				   BaseStyle->Replace[styling,Automatic:>"InlineFunctionSans"]]
+				]
 		];
 guideGuideRefBox[n_,g_]:=
 	TemplateBox[{
 		Cell[Replace[n,{None->"...",_:>TextData[n<>" \[RightGuillemet]"]}]],
-			pacletLinkBuild[g,"guide"]},
+			If[StringContainsQ[g,"/guide/"],
+				"paclet:"<>StringTrim[g,"paclet:"],
+				pacletLinkBuild[g,"guide"]
+				]},
 	 	 "OrangeLink",
 		  BaseStyle->"GuideFunctionsSubsection"
 		];
@@ -3548,7 +3568,8 @@ guideSubsection[Delimiter]=
 	guideFunctionCell[Delimiter,___];
 guideSubsection[
 	name:(_String->_String)|_String|None,
-	fs_]:=
+	fs_
+	]:=
 	Cell@
 		CellGroupData[Flatten@{
 			Replace[name,{
@@ -3560,6 +3581,8 @@ guideSubsection[
 			}];
 guideSubsection[name_->fs_]:=
 	guideSubsection[name,fs];
+
+
 guideSubsectionHead[name_]:=
 	Cell[
 		Replace[name,{
@@ -3568,14 +3591,25 @@ guideSubsectionHead[name_]:=
 			}],
 		"GuideFunctionsSubsection"
 		];
-guideFunctionCell[functions:{__String},name_:None]:=
+
+
+guideFunctionCell//ClearAll
+
+
+guideFunctionCell[functions:{(_String|_Rule)..},name_:None]:=
 	Cell[TextData[Flatten@{
 		If[Length@#>1,
 			Riffle[#,
 				{{"\[NonBreakingSpace]",StyleBox["\[MediumSpace]\[FilledVerySmallSquare]\[MediumSpace]", "InlineSeparator"]," "}}
 				],
 			#]&[
-				Append[guideRefBox/@functions,
+				Append[
+					Replace[
+						functions,{
+							f:_Rule|_String?(StringMatchQ[(WordCharacter|"$")..]):>
+								guideRefBox[f]
+						},
+						1],
 					Replace[name,{
 						(n_->g_):>
 							Cell[BoxData@guideGuideRefBox[None,g]],
@@ -3586,17 +3620,44 @@ guideFunctionCell[functions:{__String},name_:None]:=
 		}],
 		"InlineGuideFunctionListing"
 		];
-guideFunctionCell[functions_->description_,___]:=
-	Cell[TextData@Flatten@{
-		Riffle[guideRefBox/@Replace[functions,_Rule:>{functions}],", "],
-		StyleBox[" \[LongDash] ", "GuideEmDash"],
-		description
-		},
+
+
+guideFunctionCell[Column[l_],___]:=
+	Cell[
+		CellGroupData@
+			Map[guideFunctionCell,l]
+		]
+
+
+guideFunctionCell[
+	header_String->(functions:_List|Column[_List,___]),
+	___
+	]:=
+	Cell@
+		CellGroupData[
+			Flatten@{
+				Cell[header,"GuideFunctionsSubsection"],
+				guideFunctionCell@functions
+				}
+			];
+
+
+guideFunctionCell[functions_List->(description:_String|_Cell),___]:=
+	Cell[
+		TextData@Flatten@{
+			Riffle[guideRefBox/@Replace[functions,_Rule:>{functions}],", "],
+			StyleBox[" \[LongDash] ", "GuideEmDash"],
+			description
+			},
 		"GuideText"];
+guideFunctionCell[f_String->p_String,___]:=
+	Cell[TextData@{guideRefBox[f->p]},"GuideText"];
 guideFunctionCell[text_String,___]:=
 	Cell[text,"GuideText"];
 guideFunctionCell[Delimiter,___]:=
 	Cell["\t", "GuideDelimiter"];
+(*guideFunctionCell[t___]:=
+	Cell[FE`makePlainText[Cell[TextData@{t}]],"GuideText"]*)
 
 
 iGuideSubsections[subsections_]:=
@@ -3614,10 +3675,13 @@ iGuideMain[title_,abstract_]:=
 		}]
 
 
+$GuideAnchorTitle="GUIDE"
+
+
 iGuideAnchorBar[name_,fs_,relatedGuides_]:=
 	anchorBarCell[
 		{
-			"GUIDE",
+			$GuideAnchorTitle,
 			docTypeColor["GUIDE"]
 			},
 		Replace[generateSymRefs[fs],{
@@ -3648,7 +3712,7 @@ iGuideRelatedSection[guides_,tuts_,links_]:=
 			If[ListQ@guides&&Length@guides>0,
 				Cell[CellGroupData@Flatten@{
 					Cell["Related Guides", "GuideMoreAboutSection",
-			 			WholeCellGroupOpener->True],
+			 			System`WholeCellGroupOpener->True],
 			 	 Cell[BoxData@guideRefBox[#,"GuideMoreAbout"],
 			 	 	"GuideMoreAbout"]&/@guides
 			 		}],
@@ -3657,7 +3721,7 @@ iGuideRelatedSection[guides_,tuts_,links_]:=
 			If[ListQ@tuts&&Length@tuts>0,
 				Cell[CellGroupData@Flatten@{
 					Cell["Related Tutorials", "GuideTutorialsSection",
-			 			WholeCellGroupOpener->True],
+			 			System`WholeCellGroupOpener->True],
 			 	 Cell[BoxData@guideRefBox[#,"RelatedTutorials"],
 			 	 	"RelatedTutorials"]&/@tuts
 			 		}],
@@ -3666,7 +3730,7 @@ iGuideRelatedSection[guides_,tuts_,links_]:=
 			If[ListQ@links&&Length@links>0,
 				Cell[CellGroupData@Flatten@{
 					Cell["Related Links", "GuideRelatedLinksSection",
-			 			WholeCellGroupOpener->True],
+			 			System`WholeCellGroupOpener->True],
 			 	 Cell[
 						TextData@
 							Cell[
@@ -4360,6 +4424,319 @@ scrapeGuideTemplate[nb_NotebookObject]:=
 			_:>
 				Cells@nb
 			}];
+
+
+DocumentationMultiPackageOverviewNotebook//ClearAll
+
+
+extractPackageOverviewSections[
+	pkgName_->ops_?OptionQ
+	]:=
+	Module[{syms,guides,tuts},
+		{syms,guides,tuts}=
+			Lookup[
+				Flatten@{ops},
+				{"Symbols","Guides","Tutorials"},
+				{}
+				];
+		syms=
+			Replace[syms,
+				{
+					(r_->s_String):>
+						(r->
+							If[!StringContainsQ[s,"/"],
+								URLBuild@{pkgName,"ref",s}
+								]
+							),
+					s_String?FileExistsQ:>
+						(s->
+							URLBuild@{pkgName,"ref",FileBaseName[s]}),
+					s_String:>
+						If[StringContainsQ[s,"/"],
+							URLParse[s,"Path"][[-1]]->
+								s,
+							s->URLBuild@{pkgName,"ref",s}
+							],
+					_->Nothing
+					},
+				1];
+		guides=
+			Replace[guides,
+				{
+					(r_->s_String):>
+						(r->
+							If[!StringContainsQ[s,"/"],
+								URLBuild@{pkgName,"guide",s}
+								]
+							),
+					s_String?FileExistsQ:>
+						List@@Fold[
+							Lookup,
+							List@@
+								Rest@Import[s],
+							{
+								"Metadata",
+								{"title","uri"}
+								}
+							],
+					s_String:>
+						If[StringContainsQ[s,"/"],
+							URLParse[s,"Path"][[-1]]->
+								s,
+							s->URLBuild@{pkgName,"guide",s}
+							],
+					_->Nothing
+					},
+				1
+				];
+		tuts=
+			Replace[tuts,
+				{
+					(r_->s_String):>
+						(r->
+							If[!StringContainsQ[s,"/"],
+								URLBuild@{pkgName,"tutorial",s}
+								]
+							),
+					s_String?FileExistsQ:>
+						List@@Fold[
+							Lookup,
+							List@@
+								Rest@Import[s],
+							{
+								"Metadata",
+								{"title","uri"}
+								}
+							],
+					s_String:>
+						If[StringContainsQ[s,"/"],
+							URLParse[s,"Path"][[-1]]->
+								s,
+							s->URLBuild@{pkgName,"tutorial",s}
+							],
+					_->Nothing
+					},
+				1
+				];
+		pkgName->{syms,guides,tuts}
+		]
+
+
+formatPackageOverview//ClearAll
+
+
+formatPackageOverview[
+	pkgName_->
+		{syms_,guides_,tuts_}
+	]:=
+	pkgName->{
+		"`name` has `symbols`, `guides`, `tutorials`"
+			~TemplateApply~
+			<|
+				"name"->pkgName,
+				"symbols"->
+					Replace[Length[syms],{
+						0->"no symbol pages",
+						1->"one symbol page",
+						n_:>ToString[n]<>" symbol pages"
+						}],
+				"guides"->
+					Replace[Length[guides],{
+						0->"no guides",
+						1->"one guide",
+						n_:>ToString[n]<>" guides"
+						}],
+				"tutorials"->
+					Replace[Length[tuts],{
+						0->"no tutorials",
+						1->"one tutorial",
+						n_:>ToString[n]<>" tutorials"
+						}]
+				|>,
+			If[Length[syms]>0,
+				"Symbols"->
+					If[Length[syms]>15,
+						Append["..."],Identity]@
+							Take[syms,UpTo[15]
+						],
+				Nothing
+				],
+			If[Length[guides]>0,
+				"Guides"->Column@Take[guides,UpTo[5]],
+				Nothing
+				],
+			If[Length[tuts]>0,
+				"Tutorials"->Column@Take[tuts,UpTo[5]],
+				Nothing
+				]
+			}
+
+
+Options[DocumentationMultiPackageOverviewNotebook]=
+	Options[GuideNotebook]
+DocumentationMultiPackageOverviewNotebook[
+	pkgs:{__Rule},
+	ops:OptionsPattern[]
+	]:=
+	Block[{
+		$DocActive="System",
+		$GuideAnchorTitle="Documentation Overview",
+		data=formatPackageOverview@*extractPackageOverviewSections/@pkgs,
+		relguides
+		},
+		relguides=
+			Map[
+				Replace[
+					Map[Last]@
+					Select[
+						First@
+							Lookup[Cases[_Rule]@#[[2]],"Guides",Column@{}],
+						With[{p=#[[1]]},
+							StringMatchQ[
+								FileBaseName[Last@#],
+								p|p<>"Overview"
+								]&
+							]
+						],
+					{
+						{l_,___}:>(#[[1]]->l),
+						_->Nothing
+						}
+					]&,
+				data
+				];
+		data=
+			Replace[data,
+				(k_String->v_):>
+					With[{g=Lookup[relguides,k]},
+						If[StringQ[g],
+							(k->g)->v,
+							k->v
+							]
+						],
+				1
+				];
+		GuideNotebook[
+			"Subsections"->
+				Flatten@Join[
+					Replace[OptionValue["Subsections"],{
+						{r__}:>
+							{r,Delimiter},
+						Except[_List]->{}
+						}],
+					Riffle[
+						data,
+						Delimiter
+						]
+					],
+			ops,
+			"Title"->"Documentation Overview",
+			"Abstract"->
+				"This is a documentation overview for ``"~TemplateApply~
+					StringJoin@
+						Switch[Length[pkgs],
+							1,
+								First/@pkgs,
+							2,
+								Riffle[First/@pkgs," and "],
+							_,
+								Insert[
+									Riffle[First/@pkgs,", "],
+									" and ",
+									-2
+									]
+							],
+			"RelatedGuides"->
+				Join[
+					Replace[Except[_List]->{}]@OptionValue["Subsections"],
+					relguides
+					]
+			]
+		];
+
+
+extractDirectoryDocs[d_]:=
+	Which[
+		DirectoryQ@FileNameJoin@{d,"Documentation"}&&
+			Length@FileNames[
+				"ReferencePages"|"Guides"|"Tutorials",
+				d,
+				2
+				]>0,
+			FileBaseName[d]->
+				{
+					"Symbols"->FileNames["ReferencePages/Symbols/*.nb",d,\[Infinity]],
+					"Guides"->FileNames["Guides/*.nb",d,\[Infinity]],
+					"Tutorials"->FileNames["Tutorials/*.nb",d,\[Infinity]]
+					},
+		DirectoryQ@FileNameJoin@{d,"ref"}||
+			DirectoryQ@FileNameJoin@{d,"guide"}||
+			DirectoryQ@FileNameJoin@{d,"tutorial"},
+			Append[
+				extractDirectoryDocs/@
+					Select[FileNames["*",d],DirectoryQ],
+				FileBaseName[d]->
+					{
+						"Symbols"->
+							(FileBaseName/@
+								Select[FileNames["ref/*.html",d,\[Infinity]],
+									FileBaseName@DirectoryName[#]==="ref"&
+									]),
+						"Guides"->
+							(FileBaseName/@
+								Select[FileNames["guide/*.html",d,\[Infinity]],
+									FileBaseName@DirectoryName[#]==="guide"&
+									]),
+						"Tutorials"->
+							(FileBaseName/@
+								Select[FileNames["tutorial/*.html",d,\[Infinity]],
+									FileBaseName@DirectoryName[#]==="tutorial"&
+									])
+						}
+				],
+		True,
+			extractDirectoryDocs/@
+				Select[FileNames["*",d],DirectoryQ]
+		];
+
+
+DocumentationMultiPackageOverviewNotebook[
+	d:_String?DirectoryQ|{__String?DirectoryQ},
+	pattern_:"*",
+	ops:OptionsPattern[]
+	]:=
+	With[{d2=
+		Select[
+			Flatten[extractDirectoryDocs/@Flatten@{d}],
+			If[StringQ[pattern],StringMatchQ,MatchQ][First[#],pattern]&
+			]},
+		DocumentationMultiPackageOverviewNotebook[d2,
+			ops
+			]
+		];
+DocumentationMultiPackageOverviewNotebook[
+	co_CloudObject,
+	pattern_:"*",
+	ops:OptionsPattern[]
+	]:=
+	DocumentationMultiPackageOverviewNotebook[
+		Select[If[StringQ[pattern],StringMatchQ,MatchQ][First[#],pattern]&]@
+		Flatten@CloudEvaluate@
+			With[{
+				d=
+					FileNameJoin@Flatten@{
+						$HomeDirectory,
+						Rest@
+							URLParse[
+								CloudObjectInformation[co][[1,"Path"]],
+								"Path"
+								]
+						}
+				},
+				extractDirectoryDocs[d]
+				],
+		ops
+		];
 
 
 (* ::Subsection:: *)
@@ -5701,6 +6078,20 @@ SymbolPageExtractInfo[nb_Notebook,Optional[All,All]]:=
 		];
 
 
+(* ::Subsection:: *)
+(*WebExport*)
+
+
+
+$DocDefaultResourceBase=
+	URLBuild@
+		<|
+			"Scheme"->"https",
+			"Domain"->"www.wolframcloud.com",
+			"Path"->{"objects","b3m2a1.docs","reference"}
+			|>;
+
+
 webExportApplicationsInstall[
 	dir:(_String|_File)?DirectoryQ|_FileName?(DirectoryQ@*ToFileName):
 		FileName[{$UserBaseDirectory,"Applications"}]
@@ -5747,23 +6138,34 @@ webExportDocumentationBuildLoad[]:=
 			cpathOld=$ContextPath,
 			$ContextPath=$ContextPath
 			},
-			Needs["DocumentationBuild`"];
+			Quiet[
+				Needs["DocumentationBuild`"],
+				General::shdw
+				];
 			$webExportDocumentationBuildContexts=
-				DeleteCases[$ContextPath,Alternatives@@cpathOld]
+				Select[
+					DeleteCases[$ContextPath,Alternatives@@cpathOld],
+					Not@*StringStartsQ["XML`"|"JLink`"]
+					]
 			]
 		];
 
 
 webExportDocumentationBuildRemove[]:=
 	(
-		Remove@Evaluate[#<>"*"]&/@
+		Quiet[Through@*{Unprotect,Remove}/@{#<>"*",#<>"*`*"},Remove::rmnsm]&/@
 			$webExportDocumentationBuildContexts;
 		Unprotect[$Packages];
 		$Packages=
 			DeleteCases[$Packages,
-				Alternatives@@$webExportDocumentationBuildContexts
+				Alternatives@@
+					Append[
+						$webExportDocumentationBuildContexts,
+						_?(StringStartsQ["DocumentationBuild`"|"Transmogrify`"])
+						]
 				];
 		Protect[$Packages];
+		$webExportDocumentationBuildContexts=.
 		)
 
 
@@ -6559,12 +6961,27 @@ webExportNotebook[file_,nb_,ops___?OptionQ]:=
 							Except["HistoryData"|"Language"]
 							]
 						]},
+				Quiet@DeleteFile[fexpd];
 				Quiet[
-					DocumentationBuild`Export`ExportWebPage[
-						fexpd,
-						nbprep,
-						kdparams,
-						Sequence@@passops
+					Replace[
+						DocumentationBuild`Export`ExportWebPage[
+							fexpd,
+							nbprep,
+							kdparams,
+							Sequence@@passops
+							],
+						$Failed:>
+							(
+								webExportDocumentationBuildRemove[];
+								webExportDocumentationBuildLoad[];
+								DocumentationBuild`Export`ExportWebPage[
+									fexpd,
+									nbprep,
+									kdparams,
+									Sequence@@passops
+									]
+								)
+								
 						]
 					]
 				]
@@ -6742,7 +7159,16 @@ webExportAssetsCopy2[dir:(_String|_File)?DirectoryQ]:=
 					"image-swap.js",
 					"clipboard.js"
 					}}],
-			Thread[{"images",{"clipboard@2x.png"}}]
+			Thread[{
+				"images",{
+					"clipboard@2x.png"
+					}
+				}],
+			Thread[{
+				"css",{
+					"reference-special-styles.css"
+					}
+				}]
 			]
 		},
 		If[AnyTrue[resources,Not@FileExistsQ@FileNameJoin@Flatten@{dir,#}&],
@@ -7129,6 +7555,35 @@ webExportCloudDeploy[
 		]
 
 
+webExportGetURLBase[url_,doc:"Docs"|"Resource":"Docs",deploy:True|False:False]:=
+	Replace[
+		Replace[
+			url,
+			Except[_URL|_String|_CloudObject|Automatic?(!deploy&)]:>
+				Switch[
+					doc,
+					"Docs",
+						If[deploy,
+							$DocDefaultURLBase,
+							"/"
+							],
+					"Resource",
+						If[deploy,
+							$DocDefaultResourceBase,
+							"/"
+							]
+					]
+			],{
+		CloudObject[u_,___]:>
+			u,
+		s_String?(URLParse[#,"Scheme"]===None&):>
+			If[deploy,
+				First@CloudObject[s],
+				s
+				]
+		}];
+
+
 GenerateHTMLDocumentation::nopkg=
 	"DocumentationBuild and/or Transmogrify missing";
 
@@ -7150,7 +7605,7 @@ GenerateHTMLDocumentation[
 	ops:OptionsPattern[]
 	]:=
 	With[{
-		deploy=OptionValue[CloudDeploy],
+		deploy=TrueQ@OptionValue[CloudDeploy],
 		highlight=
 			CurrentValue[$FrontEndSession,
 				{AutoStyleOptions,"HighlightUndefinedSymbols"}
@@ -7173,7 +7628,7 @@ GenerateHTMLDocumentation[
 					If[deploy,
 						Replace[
 							Replace[OptionValue[CloudConnect],
-								Automatic->Key["PacletsAccount"]
+								Automatic->Key["DocumentationAccount"]
 								],{
 							s_String:>
 								If[$WolframID=!=s,
@@ -7187,10 +7642,11 @@ GenerateHTMLDocumentation[
 						];
 					If[deploy&&OptionValue["DeployAssets"],
 						Replace[
-							Replace[OptionValue["ResourceBase"],{
-								Automatic->"reference",
-								CloudObject[c_,___]:>c
-								}],
+							webExportGetURLBase[
+								OptionValue["ResourceBase"],
+								"Resource",
+								deploy
+								],
 							s_String:>
 								webExportAssetsDeploy[dir,s,
 									FilterRules[
@@ -7204,10 +7660,7 @@ GenerateHTMLDocumentation[
 						];
 					If[deploy,
 						Replace[
-							Replace[OptionValue["URLBase"],{
-								Automatic->"reference",
-								CloudObject[c_,___]:>c
-								}],
+							webExportGetURLBase[OptionValue["URLBase"],deploy],
 							s_String:>
 								If[#=!=None,
 									webExportCloudDeploy[dir,#,s,
@@ -7244,30 +7697,17 @@ GenerateHTMLDocumentation[
 										webExportNotebook[dir,nb[[i]],params],
 										FilterRules[
 											Flatten@{
-												If[deploy,
-													"URLBase"->
-														Replace[OptionValue["URLBase"],{
-															Automatic:>
-																First@CloudObject["reference"],
-															CloudObject[u_,___]:>
-																u,
-															s_String:>
-																First@CloudObject[s]
-															}],
-													Nothing
-													],
-												If[deploy,
-													"ResourceBase"->
-														Replace[OptionValue["ResourceBase"],{
-															Automatic:>
-																First@CloudObject["reference"],
-															CloudObject[u_,___]:>
-																u,
-															s_String:>
-																First@CloudObject[s]
-															}],
-													Nothing
-													],
+												(* Link URL base and Resources *)
+												"URLBase"->
+													webExportGetURLBase[
+														OptionValue["URLBase"],
+														deploy
+														],
+												"ResourceBase"->
+													webExportGetURLBase[
+														OptionValue["ResourceBase"],
+														"Resource",
+														deploy],
 												params
 												},
 											Options[webExportPostProcess]

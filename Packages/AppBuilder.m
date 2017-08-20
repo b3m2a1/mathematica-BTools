@@ -158,6 +158,10 @@ AppGenerateHTMLDocumentation::usage=
 
 
 
+AppPublish::usage=
+	"Publishes the app to GitHub and PacletServer";
+
+
 PackageFEHiddenBlock[
 	AppRegenerateBundleInfo::usage=
 		"Regenerates the BundleInfo file";
@@ -205,6 +209,8 @@ PackageScopeBlock[
 		"Clones a Git repo";
 	AppGitCommit::usage=
 		"Configures pushes to the git repo";
+	AppGitSafeCommit::usage=
+		"Commits, making sure the ignore and exclude exist";
 	AppRegenerateGitIgnore::usage=
 		"Rebuilds the .gitignore file";
 	AppRegenerateGitExclude::usage=
@@ -215,6 +221,8 @@ PackageScopeBlock[
 		"The GitHub repo for the app";
 	AppGitHubSetRemote::usage=
 		"Sets the remote for the app";
+	AppGitRealignRemotes::usage=
+		"Makes sure git will work across remotes";
 	AppGitHubPull::usage=
 		"Pulls the app from its master branch";
 	AppGitHubPush::usage=
@@ -248,6 +256,8 @@ PackageScopeBlock[
 		"Pulls PacletSite expressions";
 	AppPacletUpload::usage=
 		"Uploads paclet files to a server";
+	AppPacletBackup::usage=
+		"Backs up an app to a server";
 	AppPacletDirectoryAdd::usage=
 		"PacletDirectoryAdd on an app name";
 	AppPacletSiteURL::usage=
@@ -278,6 +288,10 @@ If[!ValueQ[$AppDirectoryRoot],
 	$AppDirectoryName="Applications";
 	$AppDirectory:=
 		FileNameJoin@{$AppDirectoryRoot,$AppDirectoryName};
+	$AppUploadDefault=
+		"Cloud";
+	$AppBackupDefault=
+		"GoogleDrive";
 	Replace[
 		SelectFirst[
 			`Package`PackageFilePath["Private","AppBuilderConfig."<>#]&/@{"m","wl"},
@@ -286,7 +300,6 @@ If[!ValueQ[$AppDirectoryRoot],
 			f_String:>Get@f
 		]
 	];
-$appBuilderConfigLoaded=True
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2035,6 +2048,66 @@ AppPackageGenerateHTMLDocumentation[
 
 
 (* ::Subsection:: *)
+(*Publish*)
+
+
+
+Options[AppPublish]=
+	{
+		"PacletBackup"->True,
+		"UpdatePaclet"->True,
+		"GitCommit"->Automatic,
+		"ConfigureGitHub"->Automatic,
+		"PushToGitHub"->True,
+		"PushToServer"->True
+		};
+AppPublish[app_,ops:OptionsPattern[]]:=
+	With[{
+		updatePac=TrueQ[OptionValue["UpdatePaclet"]],
+		gitCommit=OptionValue["GitCommit"],
+		gitHubConfigure=OptionValue["ConfigureGitHub"],
+		gitHubPush=TrueQ[OptionValue["PushToGitHub"]],
+		pacletServerPush=TrueQ[OptionValue["PushToServer"]],
+		pacletBackup=TrueQ[OptionValue["PacletBackup"]]
+		},
+		<|
+			"PacletBackup"->
+				If[pacletBackup,
+					AppPacletBackup[app]
+					],
+			"UpdatePaclet"->
+				If[updatePac,
+					AppRegeneratePacletInfo[app]
+					],
+			"GitCommit"->
+				If[gitCommit||(gitHubPush&&gitCommit=!=False),
+					AppGitSafeCommit[app]
+					],
+			"ConfigureGitHub"->
+				If[gitHubConfigure||(gitHubPush&&gitHubConfigure=!=Automatic),
+					AppGitHubConfigure[app]
+					],
+			"PushToGitHub"->
+				If[gitHubPush,
+					AppGitHubPush[app]
+					],
+			"PushToServer"->
+				If[pacletServerPush,
+					<|
+						"Upload"->
+							AppPacletUpload[app,
+								"ServerBase"->Default,
+								"ServerName"->Default
+								],
+						"ServerPage"->
+							PacletServerPage[]
+					|>
+				]
+			|>
+		]
+
+
+(* ::Subsection:: *)
 (*Git*)
 
 
@@ -2061,8 +2134,13 @@ AppGitInit[appName_:Automatic]:=
 
 
 AppRegenerateGitIgnore[appName_:Automatic,
-	patterns:_String|{__String}:{
-		"Packages/*.nb","Packages/*/*.nb","Packages/*/*/*/*.nb"}]:=
+	patterns:_String|{__String}:
+		{
+			"Packages/*.nb",
+			"Packages/*/*.nb",
+			"Packages/*/*/*/*.nb",
+			".DS_Store"
+			}]:=
 	With[{
 		app=
 			AppFromFile[appName]
@@ -2247,6 +2325,22 @@ AppGitCommit[
 		];
 
 
+AppGitSafeCommit[
+	appName:_String|Automatic:Automatic,
+	message:_String|Automatic:Automatic,
+	add:True|False:True
+	]:=
+	With[{app=AppFromFile[appName]},
+		If[!FileExistsQ@AppPath[app,".gitignore"],	
+			AppRegenerateGitIgnore[]
+			];
+		If[!FileExistsQ@AppPath[app,".git","info","exclude"],	
+			AppRegenerateGitExclude[]
+			];
+		AppGitCommit[app,message,add]
+		]
+
+
 (* ::Subsubsection::Closed:: *)
 (*GitHubRepo*)
 
@@ -2292,20 +2386,41 @@ AppGitHubSetRemote[appName_,remote_:Automatic]:=
 		]
 
 
-AppGitHubConfigure[appName_:Automatic]:=
-	With[{app=AppFromFile[appName]},
-		If[GitRepoQ@AppDirectory[app],
-			Replace[AppGitHubRepo[appName],{
-				r:Except[$Failed]:>(
-					If[Not@Between[URLRead[r,"StatusCode"],{200,299}],
-						GitHubImport["Create",$AppGitHubPrefix<>app]
-						];
-					AppGitHubSetRemote[app];
-					r
-					)
-				}]
-			]
+AppGitRealignRemotes[appName_]:=
+	With[{
+		app=AppFromFile[appName]
+		},
+		Git["Fetch",AppDirectory[app]];
+		Git["Reset",AppDirectory[app],"origin/master"];
+		Git["Checkout",AppDirectory[app],"origin/master"];
 		];
+
+
+AppGitHubConfigure[appName_:Automatic]:=
+	Catch@
+		Module[{app=AppFromFile[appName],repo,repoExistsQ},
+			repo=AppGitHubRepo[app];
+			If[repo===$Failed,
+				Throw[$Failed]
+				];
+			If[!GitRepoQ@AppDirectory[app],
+				AppGitInit[app];
+				AppGitHubSetRemote[app,repo];
+				repoExistsQ=Between[URLRead[repo,"StatusCode"],{200,299}];
+				If[repoExistsQ,
+					AppGitRealignRemotes[app]
+					]
+				];
+			If[GitRepoQ@AppDirectory[app],
+				If[!ValueQ[repoExistsQ],
+					repoExistsQ=Between[URLRead[repo,"StatusCode"],{200,299}]
+					];
+				If[!repoExistsQ,
+					GitHubImport["Create",$AppGitHubPrefix<>app];
+					AppGitHubSetRemote[app,repo]
+					]
+				]
+			];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -3652,6 +3767,10 @@ AppPacletUpload[apps__String,ops:OptionsPattern[]]:=
 										Automatic:>First@{apps}
 										}],
 								ops,
+								"ServerBase"->
+									Replace[OptionValue["ServerBase"],
+										Automatic:>$AppUploadDefault
+										],
 								Options[AppPacletUpload],
 								"SiteFile"->site
 								},
@@ -3659,6 +3778,31 @@ AppPacletUpload[apps__String,ops:OptionsPattern[]]:=
 							]]
 					]
 			}];
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppPacletBackup*)
+
+
+
+AppPacletBackup[
+	app_,
+	server:Automatic|"Cloud"|"GoogleDrive"|"DropBox"|"OneDrive":Automatic
+	]:=
+	AppPacletUpload[
+		app,
+		"ServerBase"->
+			Replace[server,
+				Automatic:>$AppBackupDefault
+				],
+		"ServerExtension"->"backups",
+		"RemovePaths"->{},
+		"RemovePatterns"->".DS_Store",
+		"UploadSiteFile"->False,
+		"UploadInstaller"->False,
+		"UploadUninstaller"->False,
+		"UploadInstallLink"->False
+		]
 
 
 (* ::Subsubsection::Closed:: *)
