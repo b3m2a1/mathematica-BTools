@@ -254,8 +254,6 @@ PackageScopeBlock[
 		"Generates the PacletSite.mz file for a collection of apps";
 	AppPacletSiteInfo::usage=
 		"Pulls PacletSite expressions";
-	AppPacletUpload::usage=
-		"Uploads paclet files to a server";
 	AppPacletBackup::usage=
 		"Backs up an app to a server";
 	AppPacletDirectoryAdd::usage=
@@ -271,6 +269,8 @@ PackageScopeBlock[
 	];
 
 
+AppPacletUpload::usage=
+		"Uploads paclet files to a server";
 AppSubpacletUpload::usage=
 	"Uploads a sub-app";
 

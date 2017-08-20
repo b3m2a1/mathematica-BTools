@@ -640,6 +640,9 @@ pacletStandardServerExtension[serverExtension_]:=
 		}]
 
 
+PacletSiteURL::nobby="Unkown site base ``";
+
+
 Options[PacletSiteURL]={
 	"ServerBase"->Automatic,
 	"ServerName"->Default,
@@ -750,6 +753,7 @@ PacletSiteURL[ops:OptionsPattern[]]:=
 								name
 								}]//StringReplace[URLDecode[#]," "->"%20"]&,
 				_,
+					Message[PacletSiteURL::nobby,base];
 					$Failed
 				]
 			];
@@ -1853,6 +1857,7 @@ PacletUpload[
 		];
 
 
+PacletUpload::nosite="Site `` isn't a string";
 Options[pacletUpload]=
 	Options@PacletUpload;
 pacletUpload[
@@ -1885,7 +1890,10 @@ pacletUpload[
 					],
 			pacletFiles=builtPacletFileFind/@Flatten@{pacletSpecs}
 			},
-			If[MatchQ[site,Except[_String]],Throw@$Failed];
+			If[MatchQ[site,Except[_String]],
+				Message[PacletUpload::nosite,site];
+				Throw@$Failed
+				];
 			With[{pacletMZ=
 				If[OptionValue["UploadSiteFile"]//TrueQ,
 					Replace[OptionValue["SiteFile"],

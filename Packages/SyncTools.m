@@ -21,10 +21,10 @@
 
 PackageScopeBlock[
 
-$BundleMetaInformationFile::usage="The meta info file created by CreateSyncBundle";
-CreateSyncBundle::usage="Create a bundle with various bits of metadata for syncing";
-
-]
+	$BundleMetaInformationFile::usage="The meta info file created by CreateSyncBundle";
+	CreateSyncBundle::usage="Create a bundle with various bits of metadata for syncing";
+	
+	]
 
 
 SyncPath::usage=
@@ -33,22 +33,23 @@ SyncPath::usage=
 
 PackageScopeBlock[
 
-UploadFile::usage="Uploads a directory to the cloud";
-DownloadFile::usage="Downloads a directory from the cloud";
-$BackupDirectoryName="The extension for backups to be sent to";
-BackupFile::usage="Backs up a directory";
-RestoreFile::usage="Restores a directory";
-
-]
+	SyncPathQ::usage="Tests whether is a sync path";
+	UploadFile::usage="Uploads a directory to the cloud";
+	DownloadFile::usage="Downloads a directory from the cloud";
+	$BackupDirectoryName="The extension for backups to be sent to";
+	BackupFile::usage="Backs up a directory";
+	RestoreFile::usage="Restores a directory";
+	
+	]
 
 
 PackageScopeBlock[
 
-$SyncUploads::usage="The spec of what to upload / download";
-SyncUploadWork::usage="Uploads current work projects in one fell swoop";
-SyncDownloadWork::usage="Downloads current work projects in one fell swoop";
-
-]
+	$SyncUploads::usage="The spec of what to upload / download";
+	SyncUploadWork::usage="Uploads current work projects in one fell swoop";
+	SyncDownloadWork::usage="Downloads current work projects in one fell swoop";
+	
+	]
 
 
 Begin["`Private`"];
