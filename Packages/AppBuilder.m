@@ -2082,11 +2082,11 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 					AppRegeneratePacletInfo[app]
 					],
 			"GitCommit"->
-				If[gitCommit||(gitHubPush&&gitCommit=!=False),
+				If[TrueQ[gitCommit]||(gitHubPush&&gitCommit=!=False),
 					AppGitSafeCommit[app]
 					],
 			"ConfigureGitHub"->
-				If[gitHubConfigure||(gitHubPush&&gitHubConfigure=!=Automatic),
+				If[TrueQ[gitHubConfigure]||(gitHubPush&&gitHubConfigure=!=Automatic),
 					AppGitHubConfigure[app]
 					],
 			"PushToGitHub"->
@@ -3788,9 +3788,12 @@ AppPacletUpload[apps__String,ops:OptionsPattern[]]:=
 
 
 
+Options[AppPacletBackup]=
+	Options[AppPacletUpload];
 AppPacletBackup[
 	app_,
-	server:Automatic|"Cloud"|"GoogleDrive"|"DropBox"|"OneDrive":Automatic
+	server:Automatic|"Cloud"|"GoogleDrive"|"DropBox"|"OneDrive":Automatic,
+	ops:OptionsPattern[]
 	]:=
 	AppPacletUpload[
 		app,
@@ -3798,6 +3801,7 @@ AppPacletBackup[
 			Replace[server,
 				Automatic:>$AppBackupDefault
 				],
+		ops,
 		"ServerExtension"->"backups",
 		"RemovePaths"->{},
 		"RemovePatterns"->".DS_Store",
