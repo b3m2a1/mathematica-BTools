@@ -2059,7 +2059,8 @@ Options[AppPublish]=
 		"GitCommit"->Automatic,
 		"ConfigureGitHub"->Automatic,
 		"PushToGitHub"->True,
-		"PushToServer"->True
+		"PushToServer"->True,
+		Verbose->True
 		};
 AppPublish[app_,ops:OptionsPattern[]]:=
 	With[{
@@ -2068,7 +2069,8 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 		gitHubConfigure=OptionValue["ConfigureGitHub"],
 		gitHubPush=TrueQ[OptionValue["PushToGitHub"]],
 		pacletServerPush=TrueQ[OptionValue["PushToServer"]],
-		pacletBackup=TrueQ[OptionValue["PacletBackup"]]
+		pacletBackup=TrueQ[OptionValue["PacletBackup"]],
+		verb=TrueQ@OptionValue[Verbose]
 		},
 		<|
 			"PacletBackup"->
@@ -2354,10 +2356,11 @@ AppGitHubRepo[appName_,password_:None]:=
 	Replace[
 		AppFromFile[appName],
 		s_String:>
-			formatGitHubPath[
-				$AppGitHubPrefix<>s,
-				"Password"->password
-				]
+			URL@
+				GitHubPath[
+					$AppGitHubPrefix<>s,
+					"Password"->password
+					]
 		];
 
 

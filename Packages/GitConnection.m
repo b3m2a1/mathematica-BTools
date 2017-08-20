@@ -122,6 +122,7 @@ PackageScopeBlock[
 		"The user's github username";
 	$GitHubPassword::usage=
 		"The user's github password";
+	FormatGitHubPath::usage=""
 	];
 
 
@@ -737,12 +738,12 @@ $GitHubEncodePassword=False;
 
 
 Options[GitHubPath]={
-	"Username"->None,
+	"Username"->Automatic,
 	"Password"->None
 	};
-Options[formatGitHubPath]=
+Options[FormatGitHubPath]=
 	Options[GitHubPath];
-formatGitHubPath[path__String,ops:OptionsPattern[]]:=
+FormatGitHubPath[path__String,ops:OptionsPattern[]]:=
 	URLBuild@<|
 		"Scheme"->
 			"https",
@@ -783,7 +784,7 @@ formatGitHubPath[path__String,ops:OptionsPattern[]]:=
 			}
 		|>;
 GitHubPath[path__String,ops:OptionsPattern[]]/;(TrueQ@$GitHubPathFormat):=
-	formatGitHubPath[path,ops];
+	FormatGitHubPath[path,ops];
 
 
 GitHubPath/:
@@ -797,7 +798,7 @@ GitHubPath/:
 			};
 GitHubPath/:
 	URL[GitHubPath[path__String,ops:OptionsPattern[]]]:=
-		formatGitHubPath[path,ops]
+		FormatGitHubPath[path,ops]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -814,7 +815,7 @@ formatGitHubSVN[
 	ops:OptionsPattern[]
 	]:=
 	URLBuild@{
-		formatGitHubPath[root,ops],
+		FormatGitHubPath[root,ops],
 		"trunk",
 		subparts
 		};
