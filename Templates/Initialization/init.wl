@@ -156,12 +156,12 @@ PackagePostProcessExposePackages[]:=
 
 
 PackagePostProcessRehidePackages[]:=
-If[
-	MemberQ[$PackageHiddenPackages,
-		PackagePostProcessFileNamePrep[#]
-		],
-	PackageFERehidePackage@#
-	]&/@Keys@$DeclaredPackages
+	If[
+		MemberQ[$PackageHiddenPackages,
+			PackagePostProcessFileNamePrep[#]
+			],
+		PackageFERehidePackage@#
+		]&/@Keys@$DeclaredPackages
 
 
 (* ::Subsubsection::Closed:: *)
@@ -169,13 +169,42 @@ If[
 
 
 PackagePostProcessDecontextPackages[]:=
-If[
-	MemberQ[$PackageDecontextedPackages,
-		PackagePostProcessFileNamePrep[#]
-		],
-	PackageFERehidePackage@#;
-	PackageDecontext@#
-	]&/@Keys@$DeclaredPackages;
+	(
+		If[
+			MemberQ[$PackageDecontextedPackages,
+				PackagePostProcessFileNamePrep[#]
+				],
+			PackageFERehidePackage@#;
+			PackageDecontext@#
+			]&/@Keys@$DeclaredPackages;
+		If[ListQ@$PackageScopedSymbols,
+			KeyValueMap[
+				With[{newcont=#},
+					Replace[Join@@#2,
+						HoldComplete[s__]:>
+							(
+								PackageFERehideSymbols[s];
+								Map[
+									Function[Null,
+										Quiet[
+											Check[
+												Set[Context[#],newcont],
+												Remove[#],
+												Context::cxdup
+												],
+											Context::cxdup
+											],
+										HoldAllComplete
+										],
+									HoldComplete[s]
+									]//ReleaseHold;
+								)
+						]
+					]&,
+				GroupBy[Flatten@$PackageScopedSymbols,First->Last]
+				];
+			]
+		)
 
 
 (* ::Subsubsection::Closed:: *)
@@ -253,6 +282,8 @@ If[!`Private`Package`$loadAbort,
 
 Unprotect[`Private`Package`$PackageFEHiddenSymbols];
 Clear[`Private`Package`$PackageFEHiddenSymbols];
+Unprotect[`Private`Package`$PackageScopedSymbols];
+Clear[`Private`Package`$PackageScopedSymbols];
 
 
 (* ::Subsubsection:: *)

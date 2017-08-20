@@ -263,14 +263,14 @@ PackageAppNeeds[pkg_String]:=
 		];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*PackageScopeBlock*)
 
 
 $PackageScopeBlockEvalExpr=TrueQ[$PackageScopeBlockEvalExpr];
 PackageScopeBlock[e_,scope_String:"Hidden"]:=
-	With[{s="$Name`Private`"<>StringTrim[scope,"`"]<>"`"},
-		If[!MemberQ[$PackageContexts,s],AppendTo[$PackageContexts,s]];
+	With[{newcont="$Name`Private`"<>StringTrim[scope,"`"]<>"`"},
+		If[!MemberQ[$PackageContexts,newcont],AppendTo[$PackageContexts,newcont]];
 		Replace[
 			Thread[
 				Cases[
@@ -281,19 +281,35 @@ PackageScopeBlock[e_,scope_String:"Hidden"]:=
 							HoldAllComplete
 							]
 						):>
-						HoldComplete[sym];
+						HoldComplete[sym],
 					\[Infinity]
 					],
 				HoldComplete
 				],
 			HoldComplete[{s__}]:>
-				(
+				If[!$PackageDeclared&&ListQ@$PackageScopedSymbols,
+					$PackageScopedSymbols=
+						{
+							$PackageScopedSymbols,
+							newcont->
+								HoldComplete[s]
+							},
+					PackageFERehideSymbols[s];
 					Map[
-						Function[Null,Set[Context[#],s],HoldAllComplete],
+						Function[Null,
+							Quiet[
+								Check[
+									Set[Context[#],newcont],
+									Remove[#],
+									Context::cxdup
+									],
+								Context::cxdup
+								],
+							HoldAllComplete
+							],
 						HoldComplete[s]
 						]//ReleaseHold;
-					PackageFERehideSymbols[s]
-					)
+					]
 			];
 		If[$PackageScopeBlockEvalExpr,e]
 		];

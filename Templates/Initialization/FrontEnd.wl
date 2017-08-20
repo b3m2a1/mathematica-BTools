@@ -90,7 +90,7 @@ PackageFEInstallPalettes[]:=
 		];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*PackageFEHiddenBlock*)
 
 
