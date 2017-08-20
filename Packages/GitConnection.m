@@ -256,23 +256,23 @@ gitDoInDir~SetAttributes~HoldRest;
 
 
 ProcessRun;
-GitRun::err=ProcessRun::err;
+Git::err=ProcessRun::err;
 
 
 GitRun[dir:_String?DirectoryQ|None|Automatic:None,cmds__String]:=
 	With[{d=Replace[dir,Automatic:>$GitRepo]},
 		Replace[
-			GitRun::err,
+			Git::err,
 			_MessageName:>
-				(GitRun::err=ProcessRun::err)
+				(Git::err=ProcessRun::err)
 			];
 		If[MatchQ[d,_String],
-			ProcessRun[{"git",cmds},GitRun::err,ProcessDirectory->d],
-			ProcessRun[{"git",cmds},GitRun::err]
+			ProcessRun[{"git",cmds},Git::err,ProcessDirectory->d],
+			ProcessRun[{"git",cmds},Git::err]
 			]
 		];
-GitRun::nodir="`` is not a valid directory";
-GitRun::nrepo="`` not a git repository";
+Git::nodir="`` is not a valid directory";
+Git::nrepo="`` not a git repository";
 
 
 GitRepoQ[d:(_String|_File)?DirectoryQ]:=
