@@ -1,0 +1,26 @@
+With[{
+  tempArgs=
+    (Join@@
+      Flatten@{
+        #,
+        Replace[Templating`$TemplateArgumentStack,{
+            {___,a_}:>a,
+            _-><||>
+          }]
+        })
+  },
+  TrueQ[
+    Replace[
+      tempArgs@
+        Replace[tempArgs["var"],
+          t_TemplateObject:>
+            TemplateApply[t,tempArgs]
+          ],
+      TemplateObject[{
+        Templating`Evaluator`PackagePrivate`apply["HTMLFragment",
+          a_
+          ]
+        }]:>a
+      ]
+    ]
+  ]&

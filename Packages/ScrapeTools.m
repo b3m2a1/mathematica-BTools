@@ -64,6 +64,10 @@ SpelunkValuesContains::usage=
 	"Selects symbols whose *Values contain a pattern";
 
 
+WithOverrideDefs::usage=
+	"Uses definition overrides for spelunking";
+
+
 Begin["`Private`"];
 
 
@@ -262,7 +266,7 @@ trFileExpressions[f_]:=
 
 Options[SystemExpressionsSearch]=
 	Flatten@{
-		Monitor->False,
+		Monitor->True,
 		Options@Cases
 		};
 SystemExpressionsSearch[pat_,
@@ -307,7 +311,8 @@ SystemExpressionsSearch[pat_,
 											],
 									{i,Length@fileListing}
 									],
-							Row@{"Scanning file ",i," of ",Length@fileListing}
+							Internal`LoadingPanel@
+								Row@{"Scanning file ",i," of ",Length@fileListing}
 							],	
 						Table[
 							filesNew[f]=
@@ -1047,6 +1052,72 @@ SpelunkValuesContains[
 			{}
 			]&/@SpelunkValues[s,vals],
 		<||>];
+
+
+WithOverrideDefs[{blocks___Rule},e_]:=
+	With[{
+			drorder=Lookup[SystemOptions["DefinitionsReordering"],"DefinitionsReordering"],
+			blockSyms=
+					Thread[
+							Extract[
+								HoldComplete[blocks],
+								Map[{#,1}&,Range@Length[HoldComplete[blocks]]],
+								HoldComplete
+								]//Apply[List],
+						HoldComplete
+						]},
+		Replace[blockSyms,
+			HoldComplete[s_]:>
+			Internal`InheritedBlock[s,
+				SetSystemOptions["DefinitionsReordering"->False];
+				Replace[
+					HoldComplete[blocks],
+					(blockSym_->blockFunction_):>
+						(
+							Unprotect[blockSym];
+							If[Length@OwnValues[blockSym]>0||System`Private`HasOwnCodeQ[blockSym],
+								With[{ov=OwnValues[blockSym]},
+									blockSym=
+										Function[Null,
+											OwnValues[blockSym]=
+												ov;
+											blockFunction[##];
+											blockSym[##],
+											HoldAllComplete
+											];
+									],
+								blockSym[args___]/;!TrueQ[$WithOverrideDefs[HoldComplete@blockSym]]:=
+									CheckAbort[
+										$WithOverrideDefs[HoldComplete@blockSym]=True;
+										blockFunction[args];
+										($WithOverrideDefs[HoldComplete@blockSym]=False;#)&@
+											blockSym[args],
+										$WithOverrideDefs[HoldComplete@blockSym]=False
+										];
+								DownValues[blockSym]=
+									RotateRight[DownValues[blockSym]];
+								]
+							),
+					1
+					]//Apply[List];
+				SetSystemOptions["DefinitionsReordering"->drorder];
+				e
+				]
+			]
+		];
+WithOverrideDefs[{blocks:(_Symbol|_Rule)...},e_]:=
+	Replace[
+		Replace[HoldComplete[blocks],
+			s_Symbol:>
+			(s->Print@*List),
+			1
+			],
+		HoldComplete[l___]:>
+			WithOverrideDefs[{l},e]
+		];
+WithOverrideDefs[s:(_Symbol|_Rule),e_]:=
+	WithOverrideDefs[{s},e];
+WithOverrideDefs~SetAttributes~HoldAllComplete;
 
 
 End[];

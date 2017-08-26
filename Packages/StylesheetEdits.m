@@ -731,11 +731,17 @@ SSApplyEdits[cells:{__CellObject}]:=
 		},
 		KeyValueMap[
 			With[{nb=#},
-				Map[
-					SelectionMove[#,All,Cell];
-					FrontEndTokenExecute[nb,"ToggleShowExpression"]~Do~2;
-					&,
-					#2
+				CheckAll[
+					FrontEndExecute@
+						FrontEnd`NotebookSuspendScreenUpdates@nb;
+					Map[
+						SelectionMove[#,All,Cell];
+						FrontEndTokenExecute[nb,"ToggleShowExpression"]~Do~2;
+						&,
+						#2
+						],
+					FrontEndExecute@
+						FrontEnd`NotebookResumeScreenUpdates@nb;
 					]
 				]&,
 			groups

@@ -646,6 +646,7 @@ CuratedDataIndexPaclet[
 $CuratedDataPackageTemplate:=
 	Import[
 		PackageFilePath[
+			"Resources",
 			"Templates",
 			"CuratedData",
 			"$CuratedData.m"
@@ -739,6 +740,7 @@ CuratedDataPaclet[
 				StringReplace[
 					Import[
 						PackageFilePath[
+							"Resources",
 							"Templates",
 							"CuratedData",
 							"$CuratedDataCompletions.tr"
@@ -809,6 +811,7 @@ CuratedDataPaclet[
 $CuratedDataWrapperPackageTemplate:=
 	Import[
 		PackageFilePath[
+			"Resources",
 			"Templates",
 			"CuratedData",
 			"$CuratedDataWrapper.m"],
@@ -878,6 +881,7 @@ CuratedDataWrapperPaclet[
 				StringReplace[
 					Import[
 						PackageFilePath[
+							"Resources",
 							"Templates",
 							"CuratedData",
 							"$CuratedDataCompletions.tr"

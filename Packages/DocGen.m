@@ -7599,6 +7599,8 @@ Options[GenerateHTMLDocumentation]=
 			"DeployAssets"->False,
 			"CopyAssets"->True
 		}];
+Options[GenerateHTMLDocumentation]=
+	Options[GenerateHTMLDocumentation];
 GenerateHTMLDocumentation[
 	dir_String?DirectoryQ,
 	nb:{__Notebook}|None,

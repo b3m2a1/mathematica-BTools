@@ -148,12 +148,14 @@ customServiceTemplateExport[
 	params_
 	]:=
 	With[{
-		tf=PackageFilePath[
-			"Templates",
-			"$ServiceConnection",
-			"Kernel",
-			template<>".m"
-			],
+		tf=
+			PackageFilePath[
+				"Resources",
+				"Templates",
+				"$ServiceConnection",
+				"Kernel",
+				template<>".m"
+				],
 		out=
 			FileNameJoin@{
 				dir,

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+
+<html lang="<wolfram:slot id='Language'/>">
+
+<wolfram:expr>
+  Clear[$$templateLib];
+  Import[FileNameJoin@{"include","lib","loadTemplateLib.m"}];
+</wolfram:expr>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>
+      <wolfram:slot id="PageTitle">
+        <wolfram:get path="include/lib/varDefinedBlock.html">
+          <wolfram:slot id="var">Title</wolfram:slot>
+          <wolfram:slot id="Title"><wolfram:slot id="Title"/></wolfram:slot>
+          <wolfram:slot id="if">
+            <wolfram:slot id="Title"/>
+          </wolfram:slot>
+          <wolfram:slot id="else">
+            <wolfram:expr>$$templateLib["getSiteName"][#]</wolfram:expr>
+          </wolfram:slot>
+        </wolfram:get>
+      </wolfram:slot>
+    </title>
+
+    <wolfram:get path="include/lib/varTrueBlock.html">
+      <wolfram:slot id="var">UseIcons</wolfram:slot>
+      <wolfram:slot id="if">
+        <wolfram:expr>
+          $$templateLib["makeSiteIcons"][
+            Replace[#Icons,
+              Except[_List]:>
+                Import[FileNameJoin@{"include","config","icons.m"}]
+              ],
+            #
+            ]
+        </wolfram:expr>
+      </wolfram:slot>
+    </wolfram:get>
+
+    <wolfram:get path="include/lib/varNotFalseBlock.html">
+      <wolfram:slot id="var">StyleSheets</wolfram:slot>
+      <wolfram:slot id="if">
+        <wolfram:expr>
+          $$templateLib["makeSiteStylesheet"][
+            Replace[#StyleSheets,{
+              None->{},
+              Except[_List]:>
+                Prepend[
+                  Import[FileNameJoin@{"include","config","stylesheets.m"}],
+                  URLBuild@{
+                    "pygments",
+                    Replace[#PygmentsStyle,
+                      Except[_String]:>"default"
+                      ]<>".min.css"
+                    }
+                  ]
+              }],
+            #
+            ]
+        </wolfram:expr>
+      </wolfram:slot>
+    </wolfram:get>
+
+    <wolfram:slot id="head"></wolfram:slot>
+
+  </head>
+
+<body onload="<wolfram:slot id='OnLoad' />">
+
+  <header class="header">
+
+    <div class="top-bar">
+
+      <wolfram:get path="include/lib/varDefinedBlock.html">
+        <wolfram:slot id="var">SiteImage</wolfram:slot>
+
+        <wolfram:slot id="if">
+          <div class="site-image">
+            <wolfram:expr>
+              $$templateLib["makeSiteImg"][
+                {
+                  <|
+                      "src"->TemplateSlot["SiteImage"],
+                      "alt"->
+                        Replace[TemplateSlot["SiteName"],
+                          Except[_String]:>
+                            URLParse[#SiteURL,"Path"][[-1]]
+                          ]
+                      |>
+                  },
+                #
+                ]
+            </wolfram:expr>
+          </div>
+        </wolfram:slot>
+
+      </wolfram:get>
+
+      <div class=
+        "<wolfram:get path='include/lib/varDefinedBlock.html'>
+          <wolfram:slot id='var'>SiteImage</wolfram:slot>
+          <wolfram:slot id='if'>site-links bubble floating</wolfram:slot>
+          <wolfram:slot id='else'>site-links container</wolfram:slot>
+        </wolfram:get>">
+
+        <h1 class="title">
+          <wolfram:expr>
+            $$templateLib["makeSiteHyperlink"][
+              {
+                <|
+                  "href"->
+                    Replace[#SiteExtension,
+                      Except[_String]:>
+                        Nothing
+                      ],
+                  "body"->
+                    Replace[TemplateSlot["SiteName"],
+                      Except[_String]:>
+                        URLParse[#SiteURL,"Path"][[-1]]
+                      ]
+                  |>
+                },
+              #
+              ]
+          </wolfram:expr>
+        </h1>
+
+        <wolfram:get path="include/lib/varDefinedBlock.html">
+          <wolfram:slot id="var">SiteSubtitle</wolfram:slot>
+          <wolfram:slot id="SiteSubtitle">
+            <wolfram:slot id="SiteSubtitle"/>
+          </wolfram:slot>
+          <wolfram:slot id="if">
+            <p class="text-muted"><wolfram:slot id="SiteSubtitle"/></p>
+          </wolfram:slot>
+        </wolfram:get>
+          <wolfram:expr>
+            $$templateLib["makeSiteLinkList"][
+              Replace[#PageLinks,{
+                Except[_List]:>
+                  Import[FileNameJoin@{"include","config","page_links.m"}]
+                }],
+              #
+              ]
+          </wolfram:expr>
+
+      </div>
+
+    </div>
+  </header>
+
+  <div class="main" id="main-content">
+
+    <div class="right-bar">
+
+      <wolfram:expr>
+        Replace[
+          Replace[#Links,{
+            Except[_List]:>
+              Quiet@Import[FileNameJoin@{"include","config","links.m"}]
+            }],
+          l_List:>
+            With[{
+              blogroll=
+                $$templateLib["makeBlogrollLinkList"][
+                  l,
+                  #
+                  ]
+              },
+              TemplateObject[
+                {
+                  "<div class=\"blogroll bubble inset\">",
+                  "<p>Links</p>",
+                  blogroll,
+                  "</div>"
+                  },
+                InsertionFunction->"HTMLFragment",
+                CombinerFunction->Function@StringRiffle[#,"\n"]
+                ]
+            ]
+          ]
+      </wolfram:expr>
+
+
+      <wolfram:expr>
+        Replace[
+          Replace[#SocialLinks,{
+            Except[SocialLinks]:>
+              Quiet@Import[FileNameJoin@{"include","config","social_links.m"}]
+            }],
+          l_List:>
+            With[{
+              social=
+                $$templateLib["makeSocialLinkList"][
+                  l,
+                  #
+                  ]
+              },
+              TemplateObject[
+                {
+                  "<div class=\"social bubble inset\">",
+                  "<p>Social</p>",
+                  social,
+                  "</div>"
+                  },
+                InsertionFunction->"HTMLFragment",
+                CombinerFunction->Function@StringRiffle[#,"\n"]
+                ]
+            ]
+          ]
+      </wolfram:expr>
+
+    </div>
+
+    <div class="left-content">
+      <div class="container">
+
+        <h1><wolfram:slot id="PageHeader"/></h1>
+
+        <hr>
+
+        <wolfram:slot id="PrimaryContent">
+          <wolfram:get path="include/lib/varDefinedBlock.html">
+            <wolfram:slot id="var">Content</wolfram:slot>
+            <wolfram:slot id="Content">
+              <wolfram:slot id="Content"/>
+            </wolfram:slot>
+            <wolfram:slot id="if">
+              <wolfram:slot id="Content"/>
+            </wolfram:slot>
+          </wolfram:get>
+        </wolfram:slot>
+
+      </div>
+    </div>
+
+  </div>
+
+<footer class="footer">
+  <p class="col-sm-6 text-sm-right text-muted acknowledgement">
+    <wolfram:slot id="Footer"/>
+  </p>
+</footer>
+
+</body>
+
+<wolfram:expr>
+  Clear[$$templateLib];
+</wolfram:expr>
+
+</html>

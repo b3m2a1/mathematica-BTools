@@ -483,19 +483,22 @@ OpsFind[options_List,
 				],{
 										f:_Function|_Symbol?(#=!=None&):>
 											With[{firsts=SortBy[First/@c,f]},
-												Last/@SortBy[c,Position[firsts,First@#]&]
+												SortBy[c,Position[firsts,First@#]&]
 											],
 										_:>Replace[OptionValue@Sort,{
 												f:_Function|_Symbol?(#=!=None&):>
 													With[{firsts=Sort[First/@c]},
-														Last/@SortBy[c,Position[firsts,First@#]&]
+														SortBy[c,Position[firsts,First@#]&]
 														],
 												_:>With[{firsts=SortBy[First/@c,StringLength]},
-														Last/@SortBy[c,Position[firsts,First@#]&]
+														SortBy[c,Position[firsts,First@#]&]
 														]
 													}]
 											}]},
-						PaneColumn[sortedC,FilterRules[{ops,Options@OpsFind},Options@PaneColumn]]
+						PaneColumn[
+							Last/@sortedC,
+							FilterRules[{ops,Options@OpsFind},Options@PaneColumn]
+							]
 						],
 			None]
 					]

@@ -56,6 +56,8 @@ AppConfigure::usage=
 	"Compiles an application from a series of packages or definitions";
 AppConfigureSubapp::usage=
 	"Creates a subapplication out of a set of packages or specs";
+AppReconfigureSubapp::usage=
+	"Reconfigures a subapp, preserving files, etc.";
 
 
 PackageScopeBlock[
@@ -311,27 +313,33 @@ AppPath[app_,e___]:=
 	AppDirectory[app,e];
 
 
+AppPathFormat[pspec_]:=
+	Replace[Flatten@{pspec},{
+		"Palettes"->{"FrontEnd","Palettes"},
+		"StyleSheets"->{"FrontEnd","StyleSheets"},
+		"TextResources"->{"FrontEnd","TextResources"},
+		"SystemResources"->{"FrontEnd","SystemResources"},
+		"Guides"->{"Documentation","English","Guides"},
+		"ReferencePages"->{"Documentation","English","ReferencePages"},
+		"Symbols"->{"Documentation","English","ReferencePages","Symbols"},
+		"Tutorials"->{"Documentation","English","Tutorials"},
+		"Objects"->{"Objects"},
+		"Private"->{"Private"}
+		},
+		1]
+
+
 (* ::Subsubsection::Closed:: *)
 (*AppDirectory*)
 
 
 
 AppDirectory[app_,extensions___]:=
-	FileNameJoin@Flatten@{
-		$AppDirectoryRoot,$AppDirectoryName,app,
-		Replace[{extensions},{
-				"Palettes"->{"FrontEnd","Palettes"},
-				"StyleSheets"->{"FrontEnd","StyleSheets"},
-				"TextResources"->{"FrontEnd","TextResources"},
-				"SystemResources"->{"FrontEnd","SystemResources"},
-				"Guides"->{"Documentation","English","Guides"},
-				"ReferencePages"->{"Documentation","English","ReferencePages"},
-				"Symbols"->{"Documentation","English","ReferencePages","Symbols"},
-				"Tutorials"->{"Documentation","English","Tutorials"},
-				"Objects"->{"Objects"},
-				"Private"->{"Private"}
-				},
-			1]};
+	FileNameJoin@
+		Flatten@{
+			$AppDirectoryRoot,$AppDirectoryName,app,
+			AppPathFormat@{extensions}
+			};
 
 
 AppPackage[app_:Automatic,pkg_String]:=
@@ -377,7 +385,7 @@ Table[Flatten@{name,e},
 				{"FrontEnd","StyleSheets",name},
 "Documentation",
 {"Documentation","English"},
-				"Objects",
+				"Config",
 				"Private",
 				$AppProjectExtension,
 				{$AppProjectExtension,$AppProjectImages},
@@ -519,6 +527,7 @@ $appInitStrings:=
 				FileNames[
 					"*.wl",
 					`Package`PackageFilePath[
+						"Resources",
 						"Templates",
 						"Initialization"
 						]
@@ -769,10 +778,11 @@ AppConfigure[
 	]:=
 	Block[{
 		$AppDirectoryRoot=
-			Replace[OptionValue@Directory,Automatic:>$AppDirectoryRoot],
+			Replace[OptionValue@Directory,
+				Automatic:>$AppDirectoryRoot],
 		$AppDirectoryName=
 			Replace[OptionValue@Extension,{
-				Automatic:>$AppDirectoryRoot,
+				Automatic:>$AppDirectoryName,
 				Except[_String]->Nothing
 				}]
 		},
@@ -988,6 +998,116 @@ AppConfigureSubapp[
 				]&@Keys@AppPackageDependencies[app,name]
 			]
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppReconfigureSubapp*)
+
+
+
+appCopyContent[
+	files_,
+	oldDir_,
+	newDir_
+	]:=
+	With[
+			{
+				old=
+					FileNameJoin@
+						Flatten@
+							{
+								oldDir,
+								AppPathFormat[#]
+								},
+				new=
+					FileNameJoin@
+						Flatten@{
+							newDir,
+							AppPathFormat[#]
+							}
+				},
+			If[FileExistsQ@old,
+				If[!DirectoryQ@DirectoryName[new],
+					CreateDirectory[DirectoryName[new],
+						CreateIntermediateDirectories->True]
+					];
+				If[DirectoryQ@old,
+					If[DirectoryQ@new,
+						DeleteDirectory[new,DeleteContents->True]
+						];
+					CopyDirectory[old,new],
+					CopyFile[old,new,
+						OverwriteTarget->True
+						]
+					]
+				]
+			]&/@files
+
+
+Options[AppReconfigureSubapp]=
+	Join[
+		Options[AppConfigureSubapp],
+		{
+			"PreserveFiles"->{".git",".gitignore","README.md"},
+			"PreservePacletInfo"->True
+			}
+		];
+AppReconfigureSubapp[
+	app_,
+	name:_String|{__String},
+	dir:(_String?DirectoryQ|Automatic):Automatic,
+	ops:OptionsPattern[]
+	]:=
+	Module[
+		{
+			appName=
+				Replace[OptionValue@"Name",
+					Automatic:>
+						First@Flatten@{name}
+					],
+			appDir,
+			presFiles=
+				OptionValue["PreserveFiles"],
+			presPI=
+				OptionValue["PreservePacletInfo"],
+			tmp
+			},
+		appDir=
+			FileNameJoin@{
+				Replace[dir,
+					Automatic:>
+						$TemporaryDirectory
+					],
+				appName
+				};
+		tmp=CreateDirectory[];
+		CheckAbort[
+			appCopyContent[presFiles,appDir,tmp];
+			AppConfigureSubapp[
+				app,
+				name,
+				dir,
+				If[presPI,
+					"PacletInfo"->
+						Flatten@
+							{
+								Replace[OptionValue["PacletInfo"],
+									Except[_List]->{}
+									],
+									Normal@PacletInfoAssociation[appDir]
+									},
+					Sequence@@{}
+					],
+				ops
+				];
+			appCopyContent[presFiles,tmp,appDir];
+			DeleteDirectory[tmp,
+				DeleteContents->True],
+			DeleteDirectory[tmp,
+				DeleteContents->True]
+			];
+		appDir
+		]
 
 
 (* ::Subsection:: *)
@@ -1223,7 +1343,7 @@ AppAddTutorialPage[name_,file_]:=AppAddContent[name,file,"Tutorials"];
 Options[AppRegenerateBundleInfo]=
 	Options@AppPacletBundle;
 AppRegenerateBundleInfo[app_String,ops:OptionsPattern[]]:=
-	Export[AppPath[app,"BundleInfo.m"],
+	Export[AppPath[app,"Config","BundleInfo.m"],
 		DeleteDuplicatesBy[First]@
 			Flatten@{
 				ops,
@@ -1252,7 +1372,7 @@ Options[AppRegenerateLoadInfo]=
 		"PackageScope"->None
 		};
 AppRegenerateLoadInfo[app_String,ops:OptionsPattern[]]:=
-	Export[AppPath[app,"LoadInfo.m"],
+	Export[AppPath[app,"Config","LoadInfo.m"],
 		DeleteDuplicatesBy[First]@
 			Flatten@{
 				ops,
@@ -1274,7 +1394,7 @@ AppRegenerateLoadInfo[app_String,ops:OptionsPattern[]]:=
 Options[AppRegenerateDocInfo]=
 	Options@DocContextTemplate;
 AppRegenerateDocInfo[app_String,ops:OptionsPattern[]]:=
-	Export[AppPath[app,"Documentation","DocInfo.m"],
+	Export[AppPath[app,"Config","DocInfo.m"],
 		Flatten@{
 			ops,
 			"Usage"->Automatic,
@@ -1313,7 +1433,7 @@ AppSymbolNotebook[app_,ops:OptionsPattern[]]:=
 			AppSymbolNotebook[app,
 				"DocInfo"->
 					AppPath[app,
-						"Documentation",
+						"Config",
 						"DocInfo.m"],
 				ops],
 		f_String?FileExistsQ:>
@@ -1379,7 +1499,7 @@ AppPackageSymbolNotebook[app_,pkg_,ops:OptionsPattern[]]:=
 			AppPackageSymbolNotebook[app,pkg,
 				"DocInfo"->
 					AppPath[app,
-						"Documentation",
+						"Config",
 						"DocInfo.m"],
 				ops],
 		f_String?FileExistsQ:>
@@ -1443,7 +1563,7 @@ AppGuideNotebook[app_,ops:OptionsPattern[]]:=
 			AppGuideNotebook[app,
 				"DocInfo"->
 					AppPath[app,
-						"Documentation",
+						"Config",
 						"DocInfo.m"],
 				ops],
 		f_String?FileExistsQ:>
@@ -1519,7 +1639,7 @@ AppPackageGuideNotebook[app_,pkg_,ops:OptionsPattern[]]:=
 			AppPackageGuideNotebook[app,pkg,
 				"DocInfo"->
 					AppPath[app,
-						"Documentation",
+						"Config",
 						"DocInfo.m"],
 				ops],
 		f_String?FileExistsQ:>
@@ -1594,7 +1714,7 @@ AppTutorialNotebook[app_,ops:OptionsPattern[]]:=
 			AppTutorialNotebook[app,
 				"DocInfo"->
 					AppPath[app,
-						"Documentation",
+						"Config",
 						"DocInfo.m"],
 				ops],
 		f_String?FileExistsQ:>
@@ -2193,7 +2313,7 @@ AppRegenerateGitExclude[appName_:Automatic,
 appREADMETemplate:=
 	StringReplace[
 		Import[
-			PackageAppPath["Templates","README.md"],
+			PackageAppPath["Resources","Templates","README.md"],
 			"Text"
 			],{
 		"`"->"`tick`",
@@ -3064,9 +3184,12 @@ AppBundle[
 		Automatic:>
 			AppBundle[paths,exportDir,metadata,
 				"BundleInfo"->
-					Replace[AppPath[First@Flatten@{paths},"BundleInfo.m"],
+					Replace[
+						AppPath[First@Flatten@{paths},
+							"Config","BundleInfo.m"],
 						Except[_String?FileExistsQ]:>
-							AppPath[First@Flatten@{paths},"BundleInfo.wl"]
+							AppPath[First@Flatten@{paths},
+								"Config","BundleInfo.wl"]
 						],
 				ops
 				],
@@ -3509,7 +3632,7 @@ Options[AppRegenerateUploadInfo]=
 		Options@AppPacletSiteMZ
 		];
 AppRegenerateUploadInfo[app_String,ops:OptionsPattern[]]:=
-	Export[AppPath[app,"UploadInfo.m"],
+	Export[AppPath[app,"Config","UploadInfo.m"],
 		Flatten@{
 			ops,
 			"ServerName"->
@@ -3598,7 +3721,7 @@ AppPacletBundle[app_String?(FileExistsQ[AppDirectory[#]]&),
 		Automatic:>
 			AppPacletBundle[app,
 				"BundleInfo"->
-					Replace[AppPath[First@{app},"BundleInfo.m"],
+					Replace[AppPath[First@{app},"Config","BundleInfo.m"],
 						Except[_String?FileExistsQ]:>
 							AppPath[First@{app},"BundleInfo.wl"]
 						],
@@ -3707,7 +3830,7 @@ AppPacletUpload[apps__String,ops:OptionsPattern[]]:=
 								OptionValue@"ServerName"]
 							},
 							If[StringQ@app,
-								Replace[AppPath[app,"UploadInfo.m"],
+								Replace[AppPath[app,"Config","UploadInfo.m"],
 									Except[_String?FileExistsQ]:>
 										AppPath[app,"UploadInfo.wl"]
 									],

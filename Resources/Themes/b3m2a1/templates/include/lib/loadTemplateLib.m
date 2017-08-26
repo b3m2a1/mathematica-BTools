@@ -1,0 +1,9 @@
+With[{Templating`lib`libdir=DirectoryName[$InputFileName]},
+  $$templateLib[f_]:=
+    $$templateLib[f]=
+      (
+        Begin["Templating`lib`"];
+        (End[];#)&@
+          Import@FileNameJoin[{Templating`lib`libdir,f<>".m"}]
+        )
+  ]

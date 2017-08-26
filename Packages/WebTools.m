@@ -57,9 +57,6 @@ MarkdownGenerate::usage=
 	"Generates an XMLObject from a markdown string";
 
 
-WebSiteDeploy::usage="Deploys a directory to the web";
-
-
 Begin["`Private`"];
 
 
@@ -1294,92 +1291,6 @@ MarkdownGenerate[
 	ops:OptionsPattern[]
 	]:=
 	MarkdownGenerate[Import[f,"Text"],css,ops]
-
-
-$WebFileFormats=
-	"html"|"css"|"js"|
-	"png"|"jpg"|"gif"|
-	"woff"|"tff"|"eot"|"svg";
-
-
-Options[WebSiteDeploy]=
-	Join[
-		{
-			FileNameForms->"*."~~$WebFileFormats,
-			Select->(True&),
-			CloudConnect->False,
-			"LastDeployment"->None,
-			Permissions->"Public"
-			},
-		Options[CloudObject]
-		];
-WebSiteDeploy[
-	outDir_String?DirectoryQ,
-	uri:_String|Automatic:Automatic,
-	ops:OptionsPattern[]
-	]:=
-	With[{select=OptionValue[Select],last=OptionValue["LastDeployment"]},
-		KeyChainConnect[OptionValue[CloudConnect]];
-		Block[{file},
-			Monitor[
-				Map[
-					Function[
-						file=#;
-						With[{url=
-							URLBuild@Flatten@{
-									Replace[uri,Automatic:>FileBaseName[outDir]],
-									FileNameSplit@
-										FileNameDrop[
-											#,
-											FileNameDepth[outDir]
-											]
-									}
-							},
-							If[StringEndsQ[url,"/index.html"],
-								CopyFile[
-										#,
-										CloudObject[
-											StringTrim[url,"/index.html"]<>"/main.html",
-											FilterRules[
-												Flatten@{ops,Options[WebSiteDeploy]},
-												Options[CloudObject]
-												]
-											]
-										]
-								];
-							Most@
-								CopyFile[
-									#,
-									CloudObject[
-										url,
-										FilterRules[
-											Flatten@{ops,Options[WebSiteDeploy]},
-											Options[CloudObject]
-											]
-										]
-									]
-							]
-						],
-					Select[
-						!DirectoryQ[#]&&
-							(!DateObjectQ[last]||Quiet[FileDate[#]>last,Greater::nordol])&&
-							select[#]&
-							]@
-						SortBy[FileBaseName[#]==="index"&]@
-						FileNames[
-							Replace[
-								OptionValue[FileNameForms],
-								All->"*"
-								],
-							outDir,
-							\[Infinity]]
-					],
-				Internal`LoadingPanel[
-					TemplateApply["Deploying ``",file]
-					]
-				]
-			]
-		];
 
 
 End[];

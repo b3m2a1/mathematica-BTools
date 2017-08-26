@@ -1367,7 +1367,7 @@ FEAttachCell[
 			FrontEnd`AttachCell[
 				Replace[parent,Automatic:>EvaluationCell[]],
 				Replace[expr,
-					Except[_Cell]:>
+					Except[_Cell|_TextCell|_ExpressionCell]:>
 						If[MatchQ[parent,_NotebookObject],
 							Cell[BoxData@ToBoxes@expr,
 								"DockedCell",

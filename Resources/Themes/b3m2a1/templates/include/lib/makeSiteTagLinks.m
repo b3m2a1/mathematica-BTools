@@ -1,0 +1,23 @@
+$$templateLib["makeSiteHyperlink"][
+  With[{args=#2,tags=StringTrim@If[StringQ[#],StringSplit[#,","],#]},
+    Append[
+      <|
+        "href"->
+          URLBuild@{
+            Lookup[args,"TagBase","tag"],
+            #<>".html"
+            },
+        "body"->#<>", "
+        |>&/@Most@tags,
+      <|
+        "href"->
+          URLBuild@{
+            Lookup[args,"TagBase","tag"],
+            #<>".html"
+            },
+        "body"->#
+        |>&@Last[tags]
+      ]
+    ],
+  #2
+  ]&
