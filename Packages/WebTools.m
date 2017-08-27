@@ -19,14 +19,14 @@
 
 
 
-JSONTree::usage="Formats a JSON object as a tree";
+(*JSONTree::usage="Formats a JSON object as a tree";*)
 
 
-JSONLookup::usage="Looks up attributes in a JSON object or object set";
+(*JSONLookup::usage="Looks up attributes in a JSON object or object set";*)
 
 
-JSONObject::usage=
-	"Mutable JSON object for eason of manipulation. Can be renormalized out to plain JSON.";
+(*JSONObject::usage=
+	"Mutable JSON object for eason of manipulation. Can be renormalized out to plain JSON.";*)
 
 
 SSHKeys::usage=
@@ -45,7 +45,7 @@ SSHConnect::usage=
 	"Connects to a server via SSH and returns the ProcessObject";
 
 
-XMLGenerate::usage=
+(*XMLGenerate::usage=
 	"Generates an XMLObject from data";
 XMLDeploy::usage=
 	"CloudExports an XMLObject";
@@ -54,7 +54,7 @@ XMLExport::usage=
 $CSStylesheets::usage=
 	"A cache of named stylesheets";
 MarkdownGenerate::usage=
-	"Generates an XMLObject from a markdown string";
+	"Generates an XMLObject from a markdown string";*)
 
 
 Begin["`Private`"];

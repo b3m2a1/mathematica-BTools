@@ -48,7 +48,24 @@ WebSiteInitialize[dir_String?(DirectoryQ@*DirectoryName),
 			];
 		Export[FileNameJoin@{dir,"SiteConfig.wl"},{ops}];
 		dir
-		)
+		);
+
+
+(*WebSiteInitialize[s_String?(Not@FileExistsQ[#]&&StringFreeQ[#,$PathnameSeparator]&)]:=
+	(
+		If[!DirectoryQ@$WebSiteDirectory,
+			CreateDirectory[$WebSiteDirectory,CreateIntermediateDirectories\[Rule]True]
+			];
+		With[{r=
+			WebSiteInitialize@
+				FileNameJoin@{
+					$WebSiteDirectory,
+					s
+					}
+			},
+			r/;DirectoryQ[r]
+			]
+	)*)
 
 
 WebSiteOptions[dir_String?(DirectoryQ@*DirectoryName)]:=
@@ -150,6 +167,34 @@ WebSiteNew[
 			$Failed
 			]
 		]
+
+
+(*WebSiteNew[
+	dir_String?(Not@FileExistsQ[#]&&StringFreeQ[#,$PathnameSeparator]&),
+	place_String,
+	name:_String|Automatic:Automatic,
+	ops:OptionsPattern[]
+	]:=
+	With[{
+		d=
+			If[DirectoryQ@
+				FileNameJoin@{
+					$WebSiteDirectory,
+					dir
+					},
+				WebSiteNew[
+					FileNameJoin@{
+						$WebSiteDirectory,
+						dir
+						},
+					place,
+					name,
+					ops
+					]
+				]
+	},
+	d/;(d===$Failed||FileExistsQ[d])
+	]*)
 
 
 $TemplateLibDirectory=

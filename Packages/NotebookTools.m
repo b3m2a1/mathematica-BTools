@@ -33,7 +33,7 @@ StoreExpression::usage=
 	"Prints a cell from which the data can be revived";
 
 
-PackageFEHiddenBlock[
+PackageScopeBlock[
 	CompileNotebook::usage=
 		"Compiles a notebook and resource references into a single document";
 	GenerateNewPackage::usage=

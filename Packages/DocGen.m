@@ -166,6 +166,49 @@ Begin["`Private`"];
 
 
 (* ::Subsection:: *)
+(*Config*)
+
+
+
+If[!TrueQ@$docGenInitialized,
+	$DocGenBuildPermanent=
+		False;
+	If[FileExistsQ@PackageFilePath["Private","DocGenConfig.wl"],
+		Import@PackageFilePath["Private","DocGenConfig.wl"]
+		];
+	$docGenInitialized=False
+	];
+
+
+If[!StringQ@$WebDocsHTMLBuildDirectory,
+	$WebDocsHTMLBuildDirectory=
+		If[$DocGenBuildPermanent//TrueQ,
+			FileNameJoin@{
+				$UserBaseDirectory,
+				"ApplicationData",
+				"DocGen",
+				"WebDocs"
+				},
+			FileNameJoin@{$TemporaryDirectory,"web_docs"};
+			];
+	]
+
+
+If[!StringQ@$DocPacletsDirectory,
+	$DocPacletsDirectory=
+		If[$DocGenBuildPermanent//TrueQ,
+			FileNameJoin@{
+				$UserBaseDirectory,
+				"ApplicationData",
+				"DocGen",
+				"DocPaclets"
+				},
+			FileNameJoin@{$TemporaryDirectory,"doc_paclets"};
+			];
+	]
+
+
+(* ::Subsection:: *)
 (*Utils*)
 
 
@@ -3310,6 +3353,9 @@ GenerateSymbolPages[s_Symbol,ops:OptionsPattern[]]:=
 		postFunc=
 			OptionValue["PostFunction"]
 		},
+		If[MatchQ[OwnValues[s],{_:>(_PackageLoadPackage)}],
+			s
+			];
 		CheckAbort[
 			$DocGenLine=1;
 			If[postFunc=!=None,
@@ -5615,10 +5661,7 @@ generateDocumentation[
 			FileNameJoin@{
 				Replace[base,
 					Automatic:>
-						FileNameJoin@{
-							$TemporaryDirectory,
-							"doc_paclets"
-							}
+						$DocPacletsDirectory
 					],
 				StringReplace[pattern,Except["$"|WordCharacter]->""]
 				},
@@ -5675,20 +5718,19 @@ generateDocumentation[
 			If[OptionValue["GenerateHTML"]//TrueQ,
 				If[!DirectoryQ@
 					FileNameJoin@{
-							$TemporaryDirectory,
-							"doc_paclets","html"
+							$DocPacletsDirectory,
+							"html"
 							},
 					CreateDirectory@
 						FileNameJoin@{
-							$TemporaryDirectory,
-							"doc_paclets","html"
+							$DocPacletsDirectory,
+							"html"
 							}
 					];
 				html=
 					GenerateHTMLDocumentation[
 						FileNameJoin@{
-							$TemporaryDirectory,
-							"doc_paclets",
+							$DocPacletsDirectory,
 							"html"
 							},
 						dir,
@@ -5723,26 +5765,8 @@ generateDocumentation[
 			PacletManager`PacletDirectoryRemove@
 				Replace[base,
 					Automatic:>
-						FileNameJoin@{
-							$TemporaryDirectory,
-							"doc_paclets"
-							}
+						$DocPacletsDirectory
 					];
-			(*CurrentValue[$FrontEndSession,
-				{"NotebookSecurityOptions", "TrustedPath"}
-				]=
-				DeleteCases[
-					CurrentValue[$FrontEndSession,
-						{"NotebookSecurityOptions", "TrustedPath"}
-						],
-					Replace[base,
-						Automatic\[RuleDelayed]
-							FrontEnd`FileName@{
-								$TemporaryDirectory,
-								"doc_paclets"
-								}
-						]
-					];*)
 			bundle=
 				If[TrueQ@OptionValue["Install"]||
 					TrueQ@OptionValue["Upload"],
@@ -5750,10 +5774,7 @@ generateDocumentation[
 						"BuildRoot"->
 							Replace[base,
 								Automatic:>
-									FileNameJoin@{
-										$TemporaryDirectory,
-										"doc_paclets"
-										}
+									$DocPacletsDirectory
 								]
 						]
 					];
@@ -5769,19 +5790,13 @@ generateDocumentation[
 								],
 							Replace[base,
 								Automatic:>
-									FrontEnd`FileName@{
-										$TemporaryDirectory,
-										"doc_paclets"
-										}
+									$DocPacletsDirectory
 								]
 							];
 					PacletManager`PacletDirectoryAdd@
 						Replace[base,
 							Automatic:>
-								FileNameJoin@{
-									$TemporaryDirectory,
-									"doc_paclets"
-									}
+								$DocPacletsDirectory
 							]
 					]
 				];
@@ -5893,6 +5908,11 @@ GenerateDocumentation[
 		open,
 		ops
 		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*AddUsage*)
+
 
 
 DocAddUsage[sym_Symbol,usage_String]:=
@@ -7846,8 +7866,6 @@ GenerateHTMLDocumentation[
 		];
 
 
-$webDocsHTMLBuildDirectory=
-	FileNameJoin@{$TemporaryDirectory,"web_docs"};
 GenerateHTMLDocumentation[
 	Optional[Automatic,Automatic],
 	s:Except[_?OptionQ],
@@ -7855,9 +7873,9 @@ GenerateHTMLDocumentation[
 	]:=
 	With[{dir=
 		Quiet[
-			(*DeleteDirectory[$webDocsHTMLBuildDirectory,DeleteContents\[Rule]True];*)
-			CreateDirectory[$webDocsHTMLBuildDirectory];
-			$webDocsHTMLBuildDirectory
+			(*DeleteDirectory[$WebDocsHTMLBuildDirectory,DeleteContents\[Rule]True];*)
+			CreateDirectory[$WebDocsHTMLBuildDirectory];
+			$WebDocsHTMLBuildDirectory
 			]},
 		GenerateHTMLDocumentation[
 			dir,

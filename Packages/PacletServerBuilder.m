@@ -510,6 +510,33 @@ PacletServerRemove[
 
 
 
+pacletMarkdownNotebookDownloadLink[a_]:=
+	Cell[
+		TextData[
+			ButtonBox["Download",
+				BaseStyle->"Hyperlink",
+					ButtonData->
+					{
+						URLBuild@{
+							"Paclets",
+							Lookup[a,"Name"]<>"-"<>
+								Lookup[a,"Version"]<>".paclet"
+							},
+						None
+						}
+				]
+			],
+		"Text",
+		CellTags->"DownloadLink"
+		]
+
+
+pacletMarkdownNotebookDescriptionText[a_]:=
+	Cell[Lookup[a,"Description",""],"Text",
+		CellTags->"DescriptionText"
+		]
+
+
 pacletMarkdownNotebookBasicInfoSection[a_,thing_]:=
 	With[{d=Lookup[a,thing]},
 		If[StringQ@d,
@@ -579,29 +606,9 @@ PacletMarkdownNotebook[
 			Cell@CellGroupData@
 				Flatten@{
 					Cell[Lookup[a,"Name","Unnamed Paclet"],"Section"],
-					Cell[
-						TextData[
-							ButtonBox["Download",
-								BaseStyle->"Hyperlink",
-									ButtonData->
-									{
-										URLBuild@{
-											"Paclets",
-											Lookup[a,"Name"]<>"-"<>
-												Lookup[a,"Version"]<>".paclet"
-											},
-										None
-										}
-								]
-							],
-						"Text"
-						],
-					With[{d=Lookup[a,"Description"]},
-						If[StringQ@d,
-							Cell[Lookup[a,"Description",""],"Text"],
-							Nothing
-							]
-						],
+					pacletMarkdownNotebookDownloadLink[a],
+					pacletMarkdownNotebookDescriptionText[a],
+					Prepend[Cell["","PageBreak"]]@
 					Riffle[
 						{
 							Cell[
@@ -663,23 +670,36 @@ PacletMarkdownNotebookUpdate[notebook_Notebook,a_]:=
 						"Metadata"
 						]
 				];
+		nb=
+			ReplaceAll[nb,
+				Cell[___,CellTags->"DownloadLink",___]:>
+					pacletMarkdownNotebookDownloadLink[a]
+				];
+		nb=
+			ReplaceAll[nb,
+				Cell[___,CellTags->"DescriptionText",___]:>
+					pacletMarkdownNotebookDescriptionText[a]
+				];
 		Map[
 			Function[
 				nb=	
+				Echo@
 					ReplaceAll[nb,
 						Cell[
 							CellGroupData[{
 								Cell[___,
 									CellTags->#,
 									___
-									]
-								},___],
+									],
+								___
+								},
+								___],
 							___
 							]:>
 								pacletMarkdownNotebookBasicInfoSection[a,#]
 						]
 				],
-			DeleteCases[Keys[a],"Extensions"]
+			Echo@DeleteCases[Keys[a],"Extensions"]
 			];
 		nb=
 			DeleteCases[nb,
@@ -688,7 +708,8 @@ PacletMarkdownNotebookUpdate[notebook_Notebook,a_]:=
 						Cell[___,
 							CellTags->Except[Alternatives@@Keys[a]],
 							___
-							]
+							],
+						___
 						},___],
 					___
 					],
