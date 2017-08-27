@@ -2304,8 +2304,16 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 							"Path"->
 								Append[Most[#Path],"main.html"]
 							]&@
-						URLParse@First@First@
-							PacletServerBuild["AutoDeploy"->True]
+						URLParse@
+							First@
+								MinimalBy[
+									Select[
+										First/@
+											PacletServerBuild["AutoDeploy"->True],
+										StringEndsQ["/index.html"]
+										],
+									Length@URLParse[#,"Path"]&
+									]
 					]
 			|>
 		]

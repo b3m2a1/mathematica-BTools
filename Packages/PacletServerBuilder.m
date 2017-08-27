@@ -73,6 +73,9 @@ When the server is built the Paclets and PacletSite.mz are copied to output for 
 *)
 
 
+$PacletServer//Clear
+
+
 If[!OptionQ@$PacletServer,
 	$PacletServer=
 		{
@@ -83,7 +86,9 @@ If[!OptionQ@$PacletServer,
 			"ServerName"->
 				"PacletServer",
 			Permissions->
-				"Public"
+				"Public",
+			CloudConnect->
+				"PacletsAccount"
 			}
 	]
 
