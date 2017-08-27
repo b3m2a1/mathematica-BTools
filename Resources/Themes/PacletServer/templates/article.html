@@ -32,50 +32,13 @@
   </script>
 </wolfram:slot>
 
-<wolfram:slot id="PageHeader">
-  <wolfram:get path="include/lib/varDefinedBlock.html">
-    <wolfram:slot id="var">Title</wolfram:slot>
-    <wolfram:slot id="Title" ><wolfram:slot id="Title" /></wolfram:slot>
-    <wolfram:slot id="if">
-      <wolfram:slot id="Title" />
-    </wolfram:slot>
-    <wolfram:slot id="else">
-      ""
-    </wolfram:slot>
-  </wolfram:get>
-</wolfram:slot>
-
 <wolfram:slot id="OnLoad">
   PR.prettyPrint(); moveWindow()
 </wolfram:slot>
 
-<wolfram:slot id="Content">
+<wolfram:slot id="PrimaryContent">
   <article class="article">
-    <header>
-      <ul class="list-inline">
-        <li class="list-inline-item text-muted"
-          title='<wolfram:expr>DateString[#Date,"ISODateTime"]</wolfram:expr>'>
-          <i class="fa fa-clock-o"></i>
-          <wolfram:expr>DateString[#Date]</wolfram:expr>
-        </li>
-        <wolfram:get path="include/lib/varDefinedBlock.html">
-          <wolfram:slot id="var">Tags</wolfram:slot>
-          <wolfram:slot id="Tags"><wolfram:slot id="Tags"/></wolfram:slot>
-          <wolfram:slot id="if">
-            <li class="list-inline-item">
-              <i class="fa fa-files-o"></i>
-              <wolfram:expr>
-                Import[FileNameJoin@{"include","lib","makeSiteTagLinks.m"}][
-                  TemplateSlot["Tags"],
-                  #2
-                  ]
-              </wolfram:expr>
-            </li>
-          </wolfram:slot>
-        </wolfram:get>
-      </ul>
-    </header>
-    <div class="content">
+    <div class="article content">
       <wolfram:slot id="Content"/>
     </div>
   </article>

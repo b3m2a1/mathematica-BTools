@@ -387,6 +387,7 @@ Table[Flatten@{name,e},
 {"Documentation","English"},
 				"Config",
 				"Private",
+				"Resources",
 				$AppProjectExtension,
 				{$AppProjectExtension,$AppProjectImages},
 				{$AppProjectExtension,$AppProjectCSS}
@@ -663,6 +664,57 @@ configureFE[app_,
 
 
 (* ::Subsubsection::Closed:: *)
+(*configureResources*)
+
+
+
+configureResourcesNewPath[
+	app_,
+	type_,
+	old_
+	]:=
+	With[{f=Replace[old,(b_->n_):>n]},
+		Replace[FileNameSplit[f],{
+			{___,type,r__}:>
+				AppPath[app,type,r],
+			{___,r_}:>
+				AppPath[app,type,r]
+			}]
+		]
+
+
+configureResources[app_,
+	resListing_
+	]:=
+	MapThread[
+		With[{type=#2,files=#},
+			With[{f=Replace[#,(b_->n_):>b]},
+				If[FileExistsQ[f],
+					With[{path=configureResourcesNewPath[app,type,#]},
+						If[!DirectoryQ@DirectoryName[path],
+							CreateDirectory[DirectoryName[path],
+								CreateIntermediateDirectories->True
+								]
+							];
+						If[DirectoryQ[f],
+							CopyDirectory[f,path],
+							CopyFile[f,path,
+								OverwriteTarget->True
+								]
+							]
+						]
+					]
+				]&/@files
+			]&,{
+		Replace[
+			Flatten@*List/@{resListing},
+			Except[{(_String|_File|_Rule)...}]->{},
+			1],
+		{"Resources"}
+		}]
+
+
+(* ::Subsubsection::Closed:: *)
 (*AppPacletDocs*)
 
 
@@ -757,6 +809,7 @@ Options[AppConfigure]={
 	"TextResources"->{},
 	"SystemResources"->{},
 	"AutoCompletionData"->{},
+	"Resources"->{},
 	"PacletInfo"->{},
 	"BundleInfo"->{},
 	"LoadInfo"->None,
@@ -805,6 +858,9 @@ AppConfigure[
 			OptionValue["TextResources"],
 			OptionValue["SystemResources"]
 			];
+		configureResources[name,
+			OptionValue["Resources"]
+			];
 		If[OptionValue["PacletInfo"]=!=None,
 			AppRegeneratePacletInfo[name,
 				Sequence@@Flatten@{OptionValue@"PacletInfo"}]
@@ -838,14 +894,17 @@ appConfigureSubResource[app_,new_,resType_,resList_]:=
 		]@
 	DeleteCases[Except[_String?(StringLength@#>0&&FileExistsQ@#&)]]@
 	Map[
-		If[
-			FileExistsQ@
+		SelectFirst[
+			{
+				AppPath[app,resType,#],
 				AppPath[app,resType,
 					StringTrim[#,".nb"]<>".nb"],
-			AppPath[app,resType,
-				StringTrim[#,".nb"]<>".nb"],
-			AppPath[app,resType,app,
-				StringTrim[#,".nb"]<>".nb"]
+				AppPath[app,resType,app,#],
+				AppPath[app,resType,app,
+					StringTrim[#,".nb"]<>".nb"]
+				},
+			FileExistsQ,
+			Nothing
 			]&,
 		Flatten[{resList},1]
 		]
@@ -921,6 +980,11 @@ AppConfigureSubapp[
 					"SystemResources",
 					OptionValue["SystemResources"]
 					],
+			resources=
+				appConfigureSubResource[app,FileBaseName[path],
+					"Resources",
+					OptionValue["Resources"]
+					],
 			docs=
 				{}(*DeleteCases[Except[_String?(StringLength@#>0&&FileExistsQ@#&)]]@
 				Join[
@@ -948,6 +1012,7 @@ AppConfigureSubapp[
 					"TextResources"->textresources,
 					"SystemResources"->systemresources,
 					"Documentation"->docs,
+					"Resources"->resources,
 					Directory->DirectoryName@path,
 					Extension->None,
 					ops

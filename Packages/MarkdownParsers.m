@@ -80,7 +80,9 @@ markdownFileMetadataSlug[t_,name_,opsassoc_]:=
 					StringReplace[
 						markdownFileMetadataTitle[
 							Lookup[opsassoc,"Title",t],
-							name],{
+							name,
+							opsassoc
+							],{
 						Whitespace->"-",
 						Except[WordCharacter]->""
 						}]
@@ -101,15 +103,18 @@ markdownMetadataFormat[name_,ops_]:=
 		Function[StringRiffle[#,"\n"]]@
 			KeyValueMap[
 				#<>": "<>
-					ToString@
-						Switch[#,
-							"Title",
-								markdownFileMetadataTitle[#2,name,opsassoc],
-							"Slug",
-								markdownFileMetadataSlug[#2,name,opsassoc],
-							_,
-								markdownFileMetadata[#2,opsassoc]
-							]&,
+					StringReplace[
+						ToString@
+							Switch[#,
+								"Title",
+									markdownFileMetadataTitle[#2,name,opsassoc],
+								"Slug",
+									markdownFileMetadataSlug[#2,name,opsassoc],
+								_,
+									markdownFileMetadata[#2,opsassoc]
+								],
+						"\n"->"\ "
+						]&,
 				KeySortBy[
 					Switch[#,"Title",0,_,1]&
 					]@opsassoc
@@ -220,7 +225,7 @@ $iNotebookToMarkdownOutputStringForms=
 
 markdownIDHook[id_]:=
 	TemplateApply[
-		"<a id=\"``\" >&zwnj;</a>",
+		"<a id=\"``\" style=\"width:0;height:0;margin:0;padding:0;\">&zwnj;</a>",
 		ToLowerCase@
 			StringReplace[StringTrim@id,
 				{Whitespace->"-",Except[WordCharacter]->""}
@@ -251,8 +256,7 @@ iNotebookToMarkdown[root_,path_,name_,
 iNotebookToMarkdown[root_,path_,name_,Cell[a___,CellTags->t_,b___]]:=
 	Replace[iNotebookToMarkdown[root,path,name,Cell[a,b]],
 		s:Except[""]:>
-			TemplateApply[
-				"<a id=\"``\" >&zwnj;</a>",
+			markdownIDHook[
 				ToLowerCase@StringJoin@Flatten@{t}
 				]<>"\n\n"<>s
 		];
@@ -1167,7 +1171,12 @@ $markdownToXMLCodeBlock=
 
 
 $markdownToXMLDelimiter=
-	t:(StartOfLine~~(Whitespace|"")~~Repeated["-",{3,\[Infinity]}]~~Except["\n"]..):>
+	t:(
+		(StartOfString|StartOfLine)~~
+			(Whitespace|"")~~
+			Repeated["-"|"_",{3,\[Infinity]}]~~
+			Except["\n"]...
+			):>
 		"Delimiter"->t
 
 
@@ -1299,6 +1308,9 @@ markdownToXMLPrep[text_String,rules:_List|Automatic:Automatic]:=
 		If[StringQ@baseData,
 			baseData,
 			Flatten@
+				ReplaceAll[
+					("Orphan"->_):>Sequence@@{}
+					]@
 				ReplaceRepeated[
 					Flatten[List@@baseData],
 					{a___,t_String,"Orphan"->o_,b___}:>
@@ -1314,21 +1326,8 @@ markdownToXML[text_String,rules:_List|Automatic:Automatic]:=
 			markdownToXMLPrep[text,rules],{
 				s_String:>
 					If[rules===Automatic,
-						XMLElement["p",{},#]&/@
-							DeleteCases[{__String?(StringMatchQ[Whitespace])}]@
-							SplitBy[
-								XMLElement["p",{},
-									Flatten@List@
-										markdownToXML[#,$markdownToXMLElementRules]
-									]&/@
-										Select[Not@*StringMatchQ[Whitespace]]@
-											StringSplit[s,"\n\n"]//Flatten,
-								Replace[{
-									XMLElement[Alternatives@@$markdownToXMLNewLineElements,__]:>
-										RandomReal[],
-									_->True
-									}]
-								],
+						Flatten@List@
+							markdownToXMLPostProcess1[s],
 						{s}
 						],
 				l_List:>
@@ -1336,20 +1335,7 @@ markdownToXML[text_String,rules:_List|Automatic:Automatic]:=
 						{
 							s_String:>
 								If[rules===Automatic,
-									SplitBy[
-											XMLElement["p",{},
-												DeleteCases[{__String?(StringMatchQ[Whitespace])}]@
-													Flatten@List@
-														markdownToXML[#,$markdownToXMLElementRules]
-												]&/@
-												Select[Not@*StringMatchQ[Whitespace]]@
-													StringSplit[s,"\n\n"]//Flatten,
-										Replace[{
-											XMLElement[Alternatives@@$markdownToXMLNewLineElements,__]:>
-												RandomReal[],
-											_->True
-											}]
-										],
+									markdownToXMLPostProcess1[s],
 									s
 									],
 							(r_->s_):>
@@ -1358,6 +1344,34 @@ markdownToXML[text_String,rules:_List|Automatic:Automatic]:=
 						1
 						]
 			}]
+
+
+markdownToXMLPostProcess1[s_]:=
+	SplitBy[
+		Replace[
+			DeleteCases[_String?(StringMatchQ[Whitespace])]@
+				Flatten@List@
+					markdownToXML[#,$markdownToXMLElementRules],
+			{
+				{e_XMLElement}:>e,
+				e:Except[{_XMLElement}]:>
+					XMLElement["p",{},
+						Replace[Flatten@{e},
+							str_String:>
+								StringTrim[str],
+							1
+							]
+						]
+				}
+			]&/@
+			Select[Not@*StringMatchQ[Whitespace]]@
+				StringSplit[s,"\n\n"]//Flatten,
+		Replace[{
+			XMLElement[Alternatives@@$markdownToXMLNewLineElements,__]:>
+				RandomReal[],
+			_->True
+			}]
+		]
 
 
 markdownToXMLPreProcess[t_String]:=

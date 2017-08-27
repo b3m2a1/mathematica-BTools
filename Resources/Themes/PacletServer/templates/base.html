@@ -2,11 +2,6 @@
 
 <html lang="<wolfram:slot id='Language'/>">
 
-<wolfram:expr>
-  Clear[$$templateLib];
-  Import[FileNameJoin@{"include","lib","loadTemplateLib.m"}];
-</wolfram:expr>
-
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -73,8 +68,7 @@
 
     <div class="top-bar">
 
-      <div class="site-links container">
-
+      <div class="site-title">
         <h1 class="title">
           <wolfram:expr>
             $$templateLib["makeSiteHyperlink"][
@@ -83,7 +77,11 @@
                   "href"->
                     Replace[#SiteExtension,
                       Except[_String]:>
-                        Nothing
+                        Replace[#SiteURL,{
+                          s_String?(URLParse[#,"Domain"]=="www.wolframcloud.com"&):>
+                            "main.html",
+                          _->Nothing
+                          }]
                       ],
                   "body"->
                     Replace[TemplateSlot["SiteName"],
@@ -96,7 +94,9 @@
               ]
           </wolfram:expr>
         </h1>
+      </div>
 
+      <div class="site-links">
         <wolfram:expr>
           $$templateLib["makeSiteLinkList"][
             Replace[#PageLinks,{
@@ -106,7 +106,6 @@
             #
             ]
         </wolfram:expr>
-
       </div>
 
     </div>
@@ -116,7 +115,15 @@
 
     <div class="main-content">
       <div class="container centered">
-        <wolfram:slot id="PageHeader"/>
+        <wolfram:get path="include/lib/varDefinedBlock.html">
+          <wolfram:slot id="var">PageHeader</wolfram:slot>
+          <wolfram:slot id="PageHeader"><wolfram:slot id="PageHeader"/></wolfram:slot>
+          <wolfram:slot id="if">
+            <h3 class="page-header">
+              <wolfram:slot id="PageHeader"/>
+            </h3>
+          </wolfram:slot>
+        </wolfram:get>
         <br>
         <wolfram:slot id="PrimaryContent">
           <wolfram:get path="include/lib/varDefinedBlock.html">
@@ -141,9 +148,5 @@
 </footer>
 
 </body>
-
-<wolfram:expr>
-  Clear[$$templateLib];
-</wolfram:expr>
 
 </html>

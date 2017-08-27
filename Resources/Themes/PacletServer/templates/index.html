@@ -50,18 +50,37 @@ This generates the index.html page
 
   <wolfram:sequence
     values="Replace[#IndexListing,Except[_List]:>#Articles]"
-    slot="IndexItem" delimiters="\n<hr>\n"
+    slot="IndexItem" delimiters="<hr>"
     >
 
-    <div class="paclet">
+    <div class="paclet centered">
       <article class="teaser">
           <h4 class="title">
             <a href='<wolfram:slot id="SiteURL"/>/<wolfram:expr>#IndexItem["URL"]</wolfram:expr>'>
-              <wolfram:expr>Lookup[#IndexItem,"Title",""]</wolfram:expr>
+              <wolfram:which>
+                <wolfram:if test='MatchQ[#IndexItem["Name"],Except[_Missing|False|""]]'>
+                  <wolfram:expr>#IndexItem["Name"]</wolfram:expr>
+                </wolfram:if>
+                <wolfram:else>
+                  <wolfram:expr>#IndexItem["Title"]</wolfram:expr>
+                </wolfram:else>
+              </wolfram:which>
+              <wolfram:if test='MatchQ[#IndexItem["Version"],_String]'>
+                <span style="color:gray;">
+                   &nbsp;v<wolfram:expr>#IndexItem["Version"]</wolfram:expr>
+                </span>
+              </wolfram:if>
             </a>
           </h4>
           <div class="content paclet-summary">
-            <wolfram:expr>#IndexItem["Summary"]</wolfram:expr>
+            <wolfram:which>
+              <wolfram:if test='MatchQ[#IndexItem["Description"],Except[_Missing|False|""]]'>
+                <wolfram:expr>#IndexItem["Description"]</wolfram:expr>
+              </wolfram:if>
+              <wolfram:else>
+                <wolfram:expr>#IndexItem["Summary"]</wolfram:expr>
+              </wolfram:else>
+            </wolfram:which>
           </div>
       </article>
     </div>

@@ -2,5 +2,13 @@
   <|
     "href"->"pages/about.html",
     "body"->"About"
+    |>,
+  <|
+    "href"->"tags.html",
+    "body"->"Tags"
+    |>,
+  <|
+    "href"->"authors.html",
+    "body"->"Authors"
     |>
   }

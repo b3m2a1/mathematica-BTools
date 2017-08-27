@@ -7632,6 +7632,8 @@ GenerateHTMLDocumentation[
 							Replace[OptionValue[CloudConnect],
 								Automatic->Key["DocumentationAccount"]
 								],{
+							a:$KeyChainCloudAccounts:>
+								KeyChainConnect[a],
 							s_String:>
 								If[$WolframID=!=s,
 									CloudConnect[s]

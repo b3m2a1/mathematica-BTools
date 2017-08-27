@@ -56,6 +56,13 @@ $KeyChainDirectory::usage=
 	"A settable directory to change where the $KeyChain loads from";
 
 
+$KeyChainCloudAccounts::usage=
+	"A collection of known accounts for KeyChainConnect";
+
+
+(*KeyChainGenerateWord::usage="Futurized password-management function for building secure passwords"*)
+
+
 Begin["`Private`"];
 
 
@@ -933,7 +940,7 @@ KeyChainGet[
 	
 
 
-$baseCloudAccounts=
+$KeyChainCloudAccounts=
 	"TestingAccount"|"DeploymentsAccount"|
 		"PacletsAccount"|"DatasetsAccount"|
 			"ServiceConnectionsAccount"|"DocumentationAccount";
@@ -941,13 +948,13 @@ $baseCloudAccounts=
 
 `Package`PackageAddAutocompletions[
 	"KeyChainConnect",
-	{List@@$baseCloudAccounts}
+	{List@@$KeyChainCloudAccounts}
 	]
 
 
 Options[KeyChainConnect]=
 	Options[CloudConnect];
-KeyChainConnect[acc:$baseCloudAccounts,ops:OptionsPattern[]]:=
+KeyChainConnect[acc:$KeyChainCloudAccounts,ops:OptionsPattern[]]:=
 	KeyChainConnect[Key[acc],ops];
 KeyChainConnect[
 	acct:_String|Key[_String]:Key["TestingAccount"],

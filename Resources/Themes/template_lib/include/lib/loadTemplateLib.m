@@ -1,0 +1,9 @@
+With[{Templating`lib`Private`libdir=DirectoryName[$InputFileName]},
+  Templating`lib`$$templateLib[f_]:=
+    Templating`lib`$$templateLib[f]=
+      (
+        Begin["Templating`lib`Private`"];
+        (End[];#)&@
+          Import@FileNameJoin[{Templating`lib`Private`libdir,f<>".m"}]
+        )
+  ]

@@ -26,6 +26,18 @@ WebSiteDeploy::usage="Deploys a directory to the web";
 Begin["`Private`"];
 
 
+$WebSiteDirectory=
+	FileNameJoin@{
+		$UserBaseDirectory,
+		"ApplicationData",
+		"WebSites"
+		}
+
+
+$TemplateLibDirectory=
+	PackageFilePath["Resources","Themes","template_lib"];
+
+
 WebSiteXMLTemplateApply[
 	root:_String|{__String}|Automatic:Automatic,
 	template:(_String|_File)?FileExistsQ,
@@ -37,23 +49,37 @@ WebSiteXMLTemplateApply[
 					Join[
 						Flatten@List@
 							Replace[root,Automatic:>DirectoryName@template],
+						{
+							$TemplateLibDirectory
+							},
 						$TemplatePath
 						],
 				$Path=
 					Join[
 						Flatten@List@
 							Replace[root,Automatic:>DirectoryName@template],
+						{
+							$TemplateLibDirectory
+							},
 						$Path
-						]
+						],
+				$ContextPath=
+					Join[{"Templating`lib`",$Context},$ContextPath],
+				$Context=
+					"Templating`lib`"
 				},
-			Nest[
-				TemplateApply[
-					XMLTemplate[#],
-					args
-					]&,
-				File[template],
-				1
-				]
+			Unprotect[Templating`lib`$$templateLib];
+			Clear[Templating`lib`$$templateLib];
+  		Import[FileNameJoin@{"include","lib","loadTemplateLib.m"}];
+			(Remove["Templating`lib`*"];#)&@
+				Nest[
+					TemplateApply[
+						XMLTemplate[#],
+						args
+						]&,
+					File[template],
+					1
+					]
 			],
 		{
 			s_String:>
@@ -71,6 +97,56 @@ WebSiteBuildSlug[fname_]:=
 WebSiteBuildURL[fname_]:=
 	URLBuild@FileNameSplit@
 		WebSiteBuildSlug@fname
+
+
+WebSiteBuildContentType[fname_,dir_]:=
+	If[StringStartsQ[fname,dir],
+		Replace[
+			FileNameTake[
+				If[FileNameTake[#,1]=="content",
+					FileNameDrop[#,1],
+					#
+					]&@
+					FileNameDrop[fname,FileNameDepth@dir],
+				1
+				],
+			{
+				"posts"->"post",
+				"pages"->"page",
+				_->"misc"
+				}
+			],
+		"misc"
+		]
+
+
+$WebSiteContentDirectoryTemplateMap=
+	<|
+		"post"->"article.html",
+		"page"->"page.html",
+		"misc"->"base.html"
+		|>;
+
+
+WebSiteBuildGetTemplates[content_,dir_]:=
+	Replace[
+		Fold[
+			Lookup[#,#2,<||>]&,
+			{$ContentStack,"Attributes","Templates"}
+			],
+		{
+			s_String:>
+				StringTrim@StringSplit[s,","],
+			Except[_String|{__String}]:>
+				Lookup[$WebSiteContentDirectoryTemplateMap,
+					WebSiteBuildContentType[
+						content,
+						longDir
+						],
+					"base.html"
+					]
+			}
+		]
 
 
 WebSiteBuildFilePath[fname_,dir_]:=
@@ -242,8 +318,8 @@ WebSiteTemplateGatherArgs[fileContent_,args_]:=
 									]:>
 									Function[
 										If[
-											StringLength[#]>sl,
-											StringTake[#,sl-3]<>"...",
+											StringLength[#]>i,
+											StringTake[#,i-3]<>"...",
 											#
 											]
 										]@
@@ -256,7 +332,7 @@ WebSiteTemplateGatherArgs[fileContent_,args_]:=
 											StringSplit[cont,"\n"],
 											UpTo[i]
 											],
-								Quantity[i_,t_]:>
+								Quantity[i_,IndependentUnit[t_]|t_]:>
 									StringRiffle[
 										TextCases[cont,
 											ToUpperCase[StringTake[#,1]]<>
@@ -281,14 +357,19 @@ WebSiteTemplateGatherArgs[fileContent_,args_]:=
 								URLParse[s,"Path"][[-1]],
 							Except[_String]:>
 								Replace[
-									Lookup[args,"SiteURL"],{
+									Lookup[args,"SiteURL"],
+									{
 										Except[_String]:>
-											Replace[$WolframID,{
-												s_String:>
-													StringSplit[s,"@"][[1]],
-												_->$UserName
-												}]
-									}]
+											Replace[Lookup[args,"SiteDirectory"],
+												Except[_String]:>
+													Replace[$WolframID,{
+														s_String:>
+															StringSplit[s,"@"][[1]],
+														_->$UserName
+														}]
+												]
+										}
+									]
 							}
 						],
 				"SiteURL"->
@@ -352,7 +433,7 @@ WebSiteBuild::nocnt=
 WebSiteTemplateApply[
 	root:_String?DirectoryQ|{__String?DirectoryQ},
 	content:_String|_File|None,
-	templates_List,
+	templates:{__String}|_String,
 	info:_Association:<||>
 	]:=
 	If[AssociationQ@$ContentStack,
@@ -361,7 +442,7 @@ WebSiteTemplateApply[
 				Select[
 					FileNameJoin@{
 						First@Flatten@List@root,
-						#}&/@templates,
+						#}&/@Flatten@List@templates,
 					FileExistsQ
 					],
 			args=
@@ -841,7 +922,6 @@ WebSiteGenerateContent[dir_,files_,outDir_,theme_,config_]:=
 			longDir=ExpandFileName@dir,
 			thm=WebSiteFindTheme[dir,theme]
 			},
-		WebSiteExtractPageData[longDir,files,config];
 		Block[
 			{
 				genfile,
@@ -860,8 +940,14 @@ WebSiteGenerateContent[dir_,files_,outDir_,theme_,config_]:=
 								Replace[#,
 									{
 										Except[_String|_File]:>Last[#],
-										_->{"base.html"}
-										}]
+										_:>
+											WebSiteBuildGetTemplates[
+												ExpandFileName@
+													Replace[#,Except[_String|_File]:>First[#]],
+												longDir
+												]
+										}
+									]
 							},
 					With[
 						{
@@ -1135,19 +1221,29 @@ WebSiteBuild[
 		Block[{
 			$ContentStack=<||>
 			},
+			If[AnyTrue[{
+					OptionValue["GenerateContent"],
+					OptionValue["GenerateAggregations"],
+					OptionValue["GenerateIndex"]
+					},TrueQ],
+				WebSiteExtractPageData[ExpandFileName@dir,fileNames,config]
+				];
 			If[OptionValue["GenerateContent"],
 				WebSiteGenerateContent[
 					dir,fileNames,outDir,
 					Lookup[config,"Theme",OptionValue["DefaultTheme"]],
-					config
+					Join[
+						<|
+							"SiteDirectory"->dir,
+							"OutputDirectory"->outDir
+							|>,
+						config
+						]
 					]
 				];
 			If[Replace[OptionValue["GenerateAggregations"],
 					Automatic:>OptionValue["GenerateContent"]
 					],
-				If[!TrueQ[OptionValue["GenerateContent"]],
-					WebSiteExtractPageData[ExpandFileName@dir,fileNames,config];
-					];
 				WebSiteGenerateAggregationPages[
 					dir,outDir,
 					Lookup[config,"Theme",OptionValue["DefaultTheme"]],
@@ -1157,9 +1253,6 @@ WebSiteBuild[
 			If[Replace[OptionValue["GenerateIndex"],
 					Automatic:>OptionValue["GenerateContent"]
 					],
-				If[!TrueQ[OptionValue["GenerateContent"]],
-					WebSiteExtractPageData[ExpandFileName@dir,fileNames,config];
-					];
 				WebSiteGenerateIndexPage[
 					dir,outDir,
 					Lookup[config,"Theme",OptionValue["DefaultTheme"]],
@@ -1204,7 +1297,41 @@ WebSiteDeploy[
 	uri:_String|Automatic:Automatic,
 	ops:OptionsPattern[]
 	]:=
-	With[{select=OptionValue[Select],last=OptionValue["LastDeployment"]},
+	With[{
+		trueDir=
+			If[
+				FileBaseName[outDir]==="output"&&
+					FileExistsQ@
+						FileNameJoin@{
+							DirectoryName[outDir],
+							"SiteConfig.wl"
+							},
+				DirectoryName[outDir],
+				outDir
+				]
+		},
+	With[{
+			info=
+				If[FileExistsQ[FileNameJoin@{trueDir,"DeploymentInfo.m"}],
+					Import[FileNameJoin@{trueDir,"DeploymentInfo.m"}],
+					{}
+					]
+			},
+			Export[FileNameJoin@{trueDir,"DeploymentInfo.m"},
+				KeyDrop[
+					Association@
+						Flatten@{
+							Normal@info,
+							ops,
+							"LastDeployment"->Now
+							},
+					FileNameForms
+					]
+				];
+	With[{
+		select=OptionValue[Select],
+		last=Lookup[info,"LastDeployment",OptionValue["LastDeployment"]]
+		},
 		KeyChainConnect[OptionValue[CloudConnect]];
 		Block[{file},
 			Monitor[
@@ -1213,7 +1340,10 @@ WebSiteDeploy[
 						file=#;
 						With[{url=
 							URLBuild@Flatten@{
-									Replace[uri,Automatic:>FileBaseName[outDir]],
+									Replace[uri,
+										Automatic:>
+											FileBaseName[trueDir]
+										],
 									FileNameSplit@
 										FileNameDrop[
 											#,
@@ -1265,6 +1395,8 @@ WebSiteDeploy[
 					]
 				]
 			]
+		]
+		]
 		];
 
 
