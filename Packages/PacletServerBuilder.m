@@ -803,13 +803,17 @@ PacletServerBuild[ops:OptionsPattern[]]:=
 							],
 				PacletServerDeploy@
 					FilterRules[{
-						Merge[{
-							OptionValue[ops,"DeployOptions"],
+						Normal@Merge[{
+							Replace[
+								OptionValue["DeployOptions"],
+								Except[_?OptionQ]->{}
+								],
 							Lookup[
 								Replace[Quiet@Import[PacletServerFile["SiteConfig.wl"]],
 									Except[_Association]:>{}
 									],
-								"DeployOptions"
+								"DeployOptions",
+								{}
 								]
 							},
 							First

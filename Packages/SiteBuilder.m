@@ -19,6 +19,10 @@
 
 
 
+WebSiteInitialize::usage="Makes a new website in a directory";
+WebSiteOptions::usage="Gets configuration options for a website";
+WebSiteSetOptions::usage="Sets configuration options for a website";
+WebSiteNew::usage="Makes a new post notebook";
 WebSiteBuild::usage="Builds a website";
 WebSiteDeploy::usage="Deploys a directory to the web";
 
@@ -32,6 +36,120 @@ $WebSiteDirectory=
 		"ApplicationData",
 		"WebSites"
 		}
+
+
+WebSiteInitialize[dir_String?(DirectoryQ@*DirectoryName),
+	ops:OptionsPattern[]
+	]:=
+	(
+		CopyDirectory[
+			PackageFilePath["Resources","Templates","WebSite"],
+			dir
+			];
+		Export[FileNameJoin@{dir,"SiteConfig.wl"},{ops}];
+		dir
+		)
+
+
+WebSiteOptions[dir_String?(DirectoryQ@*DirectoryName)]:=
+	Replace[Quiet@Import[FileNameJoin@{dir,"SiteConfig.wl"}],
+		Except[_?OptionQ]->
+			{}
+		]
+
+
+WebSiteSetOptions[dir_String?(DirectoryQ@*DirectoryName),
+	ops:OptionsPattern[]
+	]:=
+	Export[FileNameJoin@{dir,"SiteConfig.wl"},
+		Merge[
+			{
+				WebSiteOptions[dir],
+				ops
+				},
+			Last
+			]
+		];
+
+
+WebSiteNew[
+	dir_String?DirectoryQ,
+	place_String,
+	name:_String|Automatic:Automatic,
+	ops:OptionsPattern[]
+	]/;DirectoryQ@FileNameJoin@{dir,"content",place}:=
+	With[{
+		autoname=
+			StringTrim[#,"."<>FileExtension[#]]<>".nb"&@
+				Replace[name,
+					Automatic:>
+						"Post #"<>ToString@Length@
+						DeleteDuplicatesBy[FileBaseName]@
+							FileNames["*.nb"|"*.md",FileNameJoin@{dir,"content",place}]
+					]
+		},
+		If[!FileExistsQ@FileNameJoin@{dir,"content",place,autoname},
+			SystemOpen@
+			Export[FileNameJoin@{dir,"content",place,autoname},
+				Notebook[{
+					Cell[
+						BoxData@ToBoxes@
+							Merge[{
+								Switch[place,
+									"posts",
+										<|
+											"Title"->"< Post Title >",
+											"Slug"->Automatic,
+											"Date"->Now,
+											"Tags"->{},
+											"Authors"->{},
+											"Categories"->{}
+											|>,
+									"pages",
+										<|
+											"Title"->"< Page Title >",
+											"Slug"->Automatic
+											|>,
+									_,
+										<|
+											"Title"->"< Title >",
+											"Slug"->Automatic
+											|>
+									],
+								{ops}
+								},
+								Last
+								],
+						"Metadata"
+						],
+					Cell[
+						"Supports: Section, Subsection, Subsubsection, Text, Code, Item, Quote, and NonWLCode styles",
+						"Text"
+						],
+					Switch[place,
+						"posts",
+							Cell[
+								"This is a post, so article.html is the theme template for it.",
+								"Text"
+								],
+						"pages",
+							Cell[
+								"This is a page, so page.html is the theme template for it.",
+								"Text"
+								],
+						_,
+							Nothing
+						]
+					},
+					StyleDefinitions->
+						FrontEnd`FileName[Evaluate@{$PackageName},
+							"MarkdownNotebook.nb"
+							]
+					]
+				],
+			$Failed
+			]
+		]
 
 
 $TemplateLibDirectory=
@@ -359,6 +477,8 @@ WebSiteTemplateGatherArgs[fileContent_,args_]:=
 								Replace[
 									Lookup[args,"SiteURL"],
 									{
+										s_String:>
+											URLParse[s,"Path"][[-1]],
 										Except[_String]:>
 											Replace[Lookup[args,"SiteDirectory"],
 												Except[_String]:>
@@ -1155,7 +1275,7 @@ Options[WebSiteBuild]=
 	"GenerateAggregations"->Automatic,
 	"Configuration"->Automatic,
 	"OutputDirectory"->Automatic,
-	"DefaultTheme"->"b3m2a1",
+	"DefaultTheme"->"minimal",
 	"AutoDeploy"->Automatic,
 	"DeployOptions"->Automatic
 	};

@@ -11,6 +11,6 @@ With[{
   },
   Replace[tempArgs["SiteName"],
     Except[_String]:>
-      URLParse["SiteURL","Path"][[-1]]
+      URLParse[tempArgs["SiteURL"],"Path"][[-1]]
     ]
   ]&

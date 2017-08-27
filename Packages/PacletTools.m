@@ -937,8 +937,12 @@ PacletSiteInfo[infoFiles_,ops:OptionsPattern[]]:=
 									}
 								]
 							},
-							Replace[#,
-								(s_Symbol->v_):>(SymbolName[s]->v),
+							Replace[#,{
+								(s_Symbol->v_):>
+									(SymbolName[s]->v),
+								Except[_Rule]:>
+									Sequence@@{}
+								},
 								1]&/@Flatten@{imp}
 							]&,
 						pacletInfos

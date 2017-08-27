@@ -2556,7 +2556,7 @@ PelicanNewFile[
 						StyleDefinitions->
 							FrontEnd`FileName[
 								Evaluate@{`Package`$PackageName},
-								"MarkdownSave.nb"
+								"PelicanMarkdown.nb"
 								]
 						]
 					],

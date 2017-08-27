@@ -1,0 +1,25 @@
+{
+  <|
+    "type"->"link",
+    "rel"->"apple-touch-icon",
+    "href"->"apple-touch-icon.png",
+    "sizes"->"180x180"
+    |>,
+  <|
+    "type"->"link",
+    "rel"->"icon",
+    "href"->"favicon-32x32.png",
+    "sizes"->"32x32"
+    |>,
+  <|
+    "type"->"link",
+    "rel"->"icon",
+    "href"->"favicon-16x16.png",
+    "sizes"->"16x16"
+    |>,
+  <|
+    "type"->"link",
+    "rel"->"manifest",
+    "href"->"manifest.json"
+    |>
+  }

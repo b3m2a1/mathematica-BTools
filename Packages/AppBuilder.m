@@ -2244,6 +2244,7 @@ Options[AppPublish]=
 		"GitCommit"->Automatic,
 		"ConfigureGitHub"->Automatic,
 		"PushToGitHub"->True,
+		"PushToCloud"->True,
 		"PushToServer"->True,
 		Verbose->True
 		};
@@ -2253,6 +2254,7 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 		gitCommit=OptionValue["GitCommit"],
 		gitHubConfigure=OptionValue["ConfigureGitHub"],
 		gitHubPush=TrueQ[OptionValue["PushToGitHub"]],
+		pacletCloudPush=TrueQ[OptionValue["PushToCloud"]],
 		pacletServerPush=TrueQ[OptionValue["PushToServer"]],
 		pacletBackup=TrueQ[OptionValue["PacletBackup"]],
 		verb=TrueQ@OptionValue[Verbose]
@@ -2278,18 +2280,33 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 				If[gitHubPush,
 					Quiet[AppGitHubPush[app],Git::err]
 					],
-			"PushToServer"->
-				If[pacletServerPush,
-					<|
+			"PushToCloud"->
+				If[pacletCloudPush,
+					(*<|
 						"Upload"->
 							AppPacletUpload[app,
-								"ServerBase"->Default,
-								"ServerName"->Default
+								"ServerBase"\[Rule]Default,
+								"ServerName"\[Rule]Default
 								],
 						"ServerPage"->
 							PacletServerPage[]
-					|>
-				]
+					|>*)
+					AppPacletUpload[app,
+						"ServerBase"->Default,
+						"ServerName"->Default
+						]
+					],
+			"PushToServer"->
+				If[pacletServerPush,
+					PacletServerAdd[app];
+					URLBuild@
+						ReplacePart[#,
+							"Path"->
+								Append[Most[#Path],"main.html"]
+							]&@
+						URLParse@First@First@
+							PacletServerBuild["AutoDeploy"->True]
+					]
 			|>
 		]
 
