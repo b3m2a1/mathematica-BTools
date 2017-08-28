@@ -87,10 +87,10 @@ PackagePostProcessPrepSpecs[]:=
 			$PackageHiddenContexts,
 			$PackageDecontextedPackages
 			];
-		If[FileExistsQ@PackageFilePath["LoadInfo.m"],
+		If[FileExistsQ@PackageFilePath["Config","LoadInfo.m"],
 			Replace[
 				Quiet[
-					Import@PackageFilePath["LoadInfo.m"],
+					Import@PackageFilePath["Config","LoadInfo.m"],
 					Import::nffil
 					],
 				specs:{__Rule}|_Association:>
