@@ -347,6 +347,10 @@ GitAdd[dir:_String?DirectoryQ|Automatic:Automatic,files___]:=
 	GitRun[dir,"add",files];
 
 
+GitRemove[dir:_String?DirectoryQ|Automatic:Automatic,files___]:=
+	GitRemove[dir,"rm",files];
+
+
 Options[GitCommit]={Message->"Commited via Mathematica"};
 GitCommit[dir:_String?DirectoryQ|Automatic:Automatic,
 	opts___String,
@@ -531,6 +535,8 @@ $GitActions=
 			GitIgnore,
 		"Add"->
 			GitAdd,
+		"Remove"->
+			GitRemove,
 		"Commit"->
 			GitCommit,
 		"ListRemotes"->

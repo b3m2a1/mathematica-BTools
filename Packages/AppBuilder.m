@@ -1705,7 +1705,8 @@ AppPackageGuideNotebook[app_,pkg_,ops:OptionsPattern[]]:=
 				"DocInfo"->
 					AppPath[app,
 						"Config",
-						"DocInfo.m"],
+						"DocInfo.m"
+						],
 				ops],
 		f_String?FileExistsQ:>
 			AppPackageGuideNotebook[app,pkg,
@@ -1720,47 +1721,49 @@ AppPackageGuideNotebook[app_,pkg_,ops:OptionsPattern[]]:=
 					],
 		e_:>
 			With[{fs=AppPackageFunctions[app,pkg]},
-				GuideTemplate[pkg,
-					Sequence@@FilterRules[{ops},
-						Options@GuideTemplate],
-					"Title"->pkg<>" Package Overview",
-					"Link"->pkg<>"Package",
-					"Abstract"->
-						TemplateApply[
-							"The `` package has `` top-level functions",{
-								pkg,
-								Length@fs
-								}],
-					"Functions"->
-						fs,
-					"Subsections"->
-						Normal@GroupBy[Sort[fs],StringTake[#,1]&],
-					"RelatedGuides"->
-						{
-							(app<>" Application Overview")->app
-							},
-					"RelatedTutorials"->
-						Flatten@{
-							app<>" Tutorial"
-							},
-					"RelatedLinks"->
-						None
-					]//
-					Replace[
-						Notebook[{a__},o___]:>
-							Notebook[{
-								Cell[app<>" "<>pkg,"Title"],
-								Cell[BoxData@RowBox@{"<<",app<>"`"},
-									"Input"],
-								Cell[BoxData@RowBox@{"$DocActive","=","\""<>app<>"\"",";"},
-									"Input"],
-								Cell["","BlockSeparator"],
-								a
+				With[{types=GroupBy[Keys@#,#]&@SymbolDetermineType[fs]},
+					GuideTemplate[pkg,
+						Sequence@@FilterRules[{ops},
+							Options@GuideTemplate],
+						"Title"->pkg<>" Package Overview",
+						"Link"->pkg<>"Package",
+						"Abstract"->
+							guideAutoAbstract[
+								"in the `pkg` package",
+								fs,
+								types
+								],
+						"Functions"->
+							guideAutoSubsections[types],
+						"Subsections"->
+							Normal@GroupBy[Sort[fs],StringTake[#,1]&],
+						"RelatedGuides"->
+							{
+								(app<>" Application Overview")->app
 								},
-								o
-								]
-							
-						]
+						"RelatedTutorials"->
+							Flatten@{
+								app<>" Tutorial"
+								},
+						"RelatedLinks"->
+							None
+						]//
+						Replace[
+							Notebook[{a__},o___]:>
+								Notebook[{
+									Cell[app<>" "<>pkg,"Title"],
+									Cell[BoxData@RowBox@{"<<",app<>"`"},
+										"Input"],
+									Cell[BoxData@RowBox@{"$DocActive","=","\""<>app<>"\"",";"},
+										"Input"],
+									Cell["","BlockSeparator"],
+									a
+									},
+									o
+									]
+								
+							]
+					]
 				]
 		}];
 
@@ -2068,6 +2071,7 @@ AppPackageSaveGuide[
 					],
 				Identity
 				]@
+			Function[Global`bleb=NotebookGet[#];#]@
 			CreateDocument[
 				AppPackageGuideNotebook[app,pkg,
 					FilterRules[{ops},
@@ -2115,6 +2119,8 @@ AppGenerateDocumentation[
 			docs=FileNameJoin@{dir,"Documentation","English"}
 			];
 		AppSaveSymbolPages[app,docs,extension,ops];
+		AppPackageSaveGuide[app,#,docs,extension,ops]&/@
+			FileBaseName/@AppPackages[app];
 		AppSaveGuide[app,docs,extension,ops];
 		docs
 		]

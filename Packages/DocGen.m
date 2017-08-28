@@ -2142,6 +2142,13 @@ symbolUsageReplacementPattern[names_,conts_]:=
 			True]
 
 
+(*toSafeBoxes[e_,___]/;!TrueQ[$eToSafeBoxes]:=
+	toSafeTagBoxesTag[
+		HoldComplete[e],
+		RandomInteger[{100000,1000000}]
+		];
+toSafeTagBoxesTag/;TrueQ[$eToSafeBoxes]:=
+	*)
 toSafeBoxes[e_,___]:=
 	ReplaceAll[
 		FE`reparseBoxStructure[
@@ -3796,6 +3803,76 @@ iGuideRelatedSection[guides_,tuts_,links_]:=
 	 	];
 
 
+guideAutoSubsections[types_]:=
+	Riffle[
+		KeyValueMap[
+			Replace[#,
+				Except["Inert"]->#<>"s"
+				]->List@#2&,
+			types
+			],
+		Delimiter
+		]
+
+
+guideAutoAbstractContextName[namePattern_]:=
+	If[StringEndsQ[namePattern,"`"],
+		"in the "<>StringTrim[namePattern,"`"]<>" context",
+		"matching "<>namePattern
+		]
+
+
+guideAutoAbstract[inwhat_,names_,types_]:=
+	StringRiffle[
+		Flatten@{
+			Switch[Length@names,
+				0,
+					TemplateApply[
+						"There are no symbols ``",
+						inwhat
+						],
+				1,
+					TemplateApply[
+						"There is one symbol ``",
+						inwhat
+						],
+				_,
+					TemplateApply[
+						"There are `` symbols ``",
+						{
+							Length@names,
+							inwhat
+							}
+						]
+				],
+			KeyValueMap[
+				TemplateApply[
+					"`` ``",
+					{
+						Length@#2,
+						If[Length@#2>1,
+							"are "<>
+								ToLowerCase@
+									Replace[#,
+										Except["Inert"]->#<>"s"
+										],
+							"is "<>
+								ToLowerCase@
+									Replace[#,
+										Except["Inert"]->
+											If[StringMatchQ[#,("A"|"E"|"I"|"O"|"U")~~__],
+												"an",
+												"a"
+												]<>" "<>#
+										]
+							]
+						}]&,
+				types
+				]
+			},
+		"\n"]
+
+
 iGuideMetadata[guideName_,guideLink_,abstract_,ops___]:=
 	docMetadata@{
 		ops,
@@ -3893,6 +3970,10 @@ GuideNotebook[ops:OptionsPattern[]]:=
 		];
 
 
+GenerateGuide::gfail=
+	"Failed to generate guide for ``";
+
+
 Options[GenerateGuide]=
 	Join[
 		Options[GuideNotebook],
@@ -3929,79 +4010,15 @@ GenerateGuide[namePattern_String,ops:OptionsPattern[]]:=
 						StringTrim[namePattern,"`"]<>" Symbols"->
 							StringReplace[namePattern,Except["$"|WordCharacter]->""],
 					"Abstract"->
-						StringRiffle[
-							Flatten@{
-								Switch[Length@names,
-									0,
-										TemplateApply[
-											"There are no symbols ``",
-											{
-												If[StringEndsQ[namePattern,"`"],
-													"in the "<>StringTrim[namePattern,"`"]<>" context",
-													"matching "<>namePattern
-													]
-												}
-											],
-									1,
-										TemplateApply[
-											"There is one symbol ``",
-											{
-												If[StringEndsQ[namePattern,"`"],
-													"in the "<>StringTrim[namePattern,"`"]<>" context",
-													"matching "<>namePattern
-													]
-												}
-											],
-									_,
-										TemplateApply[
-											"There are `` symbols ``",
-											{
-												Length@names,
-												If[StringEndsQ[namePattern,"`"],
-													"in the "<>StringTrim[namePattern,"`"]<>" context",
-													"matching "<>namePattern
-													]
-												}
-											]
-									],
-								KeyValueMap[
-									TemplateApply[
-										"`` ``",
-										{
-											Length@#2,
-											If[Length@#2>1,
-												"are "<>
-													ToLowerCase@
-														Replace[#,
-															Except["Inert"]->#<>"s"
-															],
-												"is "<>
-													ToLowerCase@
-														Replace[#,
-															Except["Inert"]->
-																If[StringMatchQ[#,("A"|"E"|"I"|"O"|"U")~~__],
-																	"an",
-																	"a"
-																	]<>" "<>#
-															]
-												]
-											}]&,
-									types
-									]
-								},
-							"\n"],
+						guideAutoAbstract[
+							guideAutoAbstractContextName[namePattern],
+							names,
+							types
+							],
 					"Functions"->
 						ToExpression[names,StandardForm,Hold],
 					"Subsections"->
-						Riffle[
-							KeyValueMap[
-								Replace[#,
-									Except["Inert"]->#<>"s"
-									]->List@#2&,
-								types
-								],
-							Delimiter
-							],
+						guideAutoSubsections[types],
 					ops
 					]
 				]
@@ -4148,7 +4165,8 @@ SaveGuide[
 					]&,
 				Flatten@{nb}
 			]),
-		_->$Failed
+		_:>
+			(Message[GenerateGuide::gfail,If[guide=!=None,guide,{ops}]];$Failed)
 		}];
 
 

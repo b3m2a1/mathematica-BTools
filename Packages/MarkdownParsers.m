@@ -165,7 +165,9 @@ NotebookToMarkdown[nb_NotebookObject]:=
 								CellStyle->{
 									"Section","Subsection","Subsubsection",
 									"Code","Output","Text",
-									"Quote","PageBreak","Item","Subitem",
+									"Quote","PageBreak",
+									"Item","Subitem",
+									"ItemNumbered","SubitemNumbered",
 									"FencedCode"
 									}
 								],
@@ -338,9 +340,27 @@ iNotebookToMarkdown[root_,path_,name_,Cell[t_,"Subitem",___]]:=
 	Replace[iNotebookToMarkdown[root,path,name,t],
 		s:Except[""]:>"  * "<>s
 		];
+iNotebookToMarkdown[root_,path_,name_,Cell[t_,"Subsubitem",___]]:=
+	Replace[iNotebookToMarkdown[root,path,name,t],
+		s:Except[""]:>"    * "<>s
+		];
 iNotebookToMarkdown[root_,path_,name_,Cell[t_,"SubitemParagraph",___]]:=
 	Replace[iNotebookToMarkdown[root,path,name,t],
 		s:Except[""]:>StringReplace[s,StartOfLine->"   "]
+		];
+
+
+iNotebookToMarkdown[root_,path_,name_,Cell[t_,"ItemNumbered",___]]:=
+	Replace[iNotebookToMarkdown[root,path,name,t],
+		s:Except[""]:>"1. "<>s
+		];
+iNotebookToMarkdown[root_,path_,name_,Cell[t_,"SubitemNumbered",___]]:=
+	Replace[iNotebookToMarkdown[root,path,name,t],
+		s:Except[""]:>"  1. "<>s
+		];
+iNotebookToMarkdown[root_,path_,name_,Cell[t_,"SubsubitemNumbered",___]]:=
+	Replace[iNotebookToMarkdown[root,path,name,t],
+		s:Except[""]:>"    1. "<>s
 		];
 
 

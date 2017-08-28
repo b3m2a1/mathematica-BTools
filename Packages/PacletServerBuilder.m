@@ -141,7 +141,8 @@ PacletServerExposedPaclets[pacletSpecs:_Association|{___Association}]:=
 		Select[
 			SortBy[
 				DeleteDuplicatesBy[
-					Reverse@SortBy[#Version&]@Flatten@{pacletSpecs},
+					Reverse@SortBy[ToExpression@StringSplit[#Version,"."]&]@
+						Flatten@{pacletSpecs},
 					#Name&
 					],
 				#Name&
@@ -698,7 +699,9 @@ PacletMarkdownNotebookUpdate[notebook_Notebook,a_]:=
 								pacletMarkdownNotebookBasicInfoSection[a,#]
 						]
 				],
-			DeleteCases[Keys[a],"Extensions"]
+			DeleteCases[Keys[a],
+				"Extensions"|"Tags"|"Categories"|"Authors"
+				]
 			];
 		nb=
 			DeleteCases[nb,

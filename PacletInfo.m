@@ -7,12 +7,12 @@ Paclet[
 functionality for application development including distribution, \
 documentation generation, formatting, front-end manipulation, application \
 editing, etc.",
-"Tags"->{"web", "front-end", "paclets","documentation"},
-"Categories"->{"Development"},
+Tags->{"web", "front-end", "paclets","documentation"},
+Categories->{"Development"},
 Extensions -> {
-    {"Documentation", "Language" -> "English",
+    {"Documentation", "Language" -> "English"},
     {"Kernel", Root -> ".",
       Context -> {"BTools`"}},
-      {"FrontEnd", Prepend -> True}
+    {"FrontEnd", Prepend -> True}
     }
-    ]
+]

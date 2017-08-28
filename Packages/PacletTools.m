@@ -127,6 +127,12 @@ PackageScopeBlock[
 	"Downloads pieces of a paclet from a server";*)
 
 
+(*
+PacletServerInterface::usage=
+	"Generates an interface listing what's on a paclet server and providing install buttons"
+	*)
+
+
 (* ::Subsubsection::Closed:: *)
 (*Install*)
 
@@ -196,7 +202,7 @@ PacletInfo[infoFile:(_String|_File)?FileExistsQ]:=
 		Replace[infoFile,{
 			d:(_String|_File)?DirectoryQ:>
 				FileNameJoin@{d,"PacletInfo.m"},
-			f:(_String|_File)?(FileExtension[#]=="paclet"&):>
+			f:(_String|_File)?(FileExtension[#]=="paclet"&&FileExistsQ[#]&):>
 				With[{rd=CreateDirectory[]},
 					First@ExtractArchive[f,rd,"*PacletInfo.m"]
 					]
@@ -217,7 +223,6 @@ PacletInfo[infoFile:(_String|_File)?FileExistsQ]:=
 				DeleteDirectory[Nest[DirectoryName,pacletInfo,2],DeleteContents->True]
 				];#)&@
 		If[FileExistsQ@pacletInfo,
-			
 			Begin["PacletManager`"];
 			(End[];
 				Map[
@@ -230,11 +235,16 @@ PacletInfo[infoFile:(_String|_File)?FileExistsQ]:=
 			]
 		];
 PacletInfo[pac_PacletManager`Paclet]:=
-	pac;
+	With[{pf=pac["Location"]},
+		If[FileExistsQ@FileNameJoin@{pf,"PacletInfo.m"},
+			PacletInfo@FileNameJoin@{pf,"PacletInfo.m"},
+			pac
+			]
+		];
 PacletInfo[p_String]:=
 	Replace[PacletManager`PacletFind[p],
 		{pac_}:>
-			pac
+			PacletInfo[pac]
 		]
 
 
@@ -445,8 +455,12 @@ Options[PacletExpression]=
 			"Internal"->Automatic,
 			"Loading"->Automatic,
 			"Qualifier"->Automatic,
+			"SystemID"->Automatic,
 			"BuildNumber"->Automatic,
-			"Extensions"->Automatic
+			"Extensions"->Automatic,
+			"Tags"->Automatic,
+			"Categories"->Automatic,
+			"Authors"->Automatic
 			},
 		Options@PacletExtensionData
 		];
@@ -543,10 +557,7 @@ PacletExpressionBundle[
 	With[{pacletFile=FileNameJoin@{dest,"PacletInfo.m"}},
 		Begin["PacletManager`"];
 		Block[{$ContextPath={"System`","PacletManager`"}},
-			With[{pac=
-				Replace[paclet,
-					(n_->v_):>(ToExpression[n]->v),
-					1]},
+			With[{pac=Map[ToExpression[#[[1]]]->#[[2]]&, Select[paclet,OptionQ]]},
 				Export[pacletFile,pac]
 				]
 			];
@@ -834,16 +845,19 @@ PacletSiteFiles[infoFiles_,ops:OptionsPattern[]]:=
 
 
 pacletSiteMExtract[mzFile_,dirExt_:Automatic]:=
-	With[{dir=CreateDirectory[]},
-		Replace[
-			Quiet[ExtractArchive[mzFile,dir,"PacletSite.m"],ExtractArchive::infer],
-			Except[{__}]:>
-				Quiet[
-					ExtractArchive[mzFile,dir,"*/PacletInfo.m"],
-					ExtractArchive::infer
-					]
-			]
-		]
+	If[FileExistsQ@mzFile,
+		With[{dir=CreateDirectory[]},
+			Replace[
+				Quiet[ExtractArchive[mzFile,dir,"PacletSite.m"],ExtractArchive::infer],
+				Except[{__}]:>
+					Quiet[
+						ExtractArchive[mzFile,dir,"*/PacletInfo.m"],
+						ExtractArchive::infer
+						]
+				]
+			],
+		$Failed
+		];
 
 
 Options[PacletSiteInfo]=
@@ -920,7 +934,7 @@ PacletSiteInfo[infoFiles_,ops:OptionsPattern[]]:=
 							]
 						],
 					True,
-					Nothing
+						Nothing
 				]&/@PacletSiteFiles[infoFiles,ops]//Flatten
 		},
 		Begin["PacletManager`"];
@@ -940,7 +954,9 @@ PacletSiteInfo[infoFiles_,ops:OptionsPattern[]]:=
 							Replace[#,{
 								(s_Symbol->v_):>
 									(SymbolName[s]->v),
-								Except[_Rule]:>
+								(s_String->v_):>
+									s->v,
+								_:>
 									Sequence@@{}
 								},
 								1]&/@Flatten@{imp}
@@ -1065,6 +1081,17 @@ PacletBundle[dir:(_String|_File)?DirectoryQ,ops:OptionsPattern[]]:=
 		With[{pacletFile=PacletManager`PackPaclet[pacletDir]},
 			pacletFile
 			]
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*PacletServerInterface*)
+
+
+
+PacletServerInterface[site_]:=	
+	With[{ds=PacletSiteInfoDataset[site]},
+		blah
 		];
 
 

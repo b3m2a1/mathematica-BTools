@@ -1,8 +1,8 @@
 Title: About
-Modified: 2017-08-27 03:55:59
+Modified: 2017-08-28 12:54:32
 Slug: about
 
-<a id="about-this-site" >&zwnj;</a>
+<a id="about-this-site" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
 
 ## About This Site
 
@@ -17,16 +17,16 @@ There are two ways to do this:
 	
 	PacletInstall[$paclet]
 
-* Via a the paclet site:
+* Via a paclet site:
 
 	$pacletName = "NameOfPaclet";
 	PacletSiteAdd["https://this.paclet.server", "Paclet site description"];
 	PacletInstall[$pacletName]
 
-<a id="about-paclets" >&zwnj;</a>
+<a id="about-paclets" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
 
 ## About Paclets
 
 Paclets are the standard Mathematica package distribution format. They’re the source code for a package compressed with a PacletInfo.m file that provides meta-information about the package.
 
-Paclets installed via  ```PacletInstall```  can automatically be loaded via  ```Get```  without passing the source name and provide all of the conveniences of a Mathematica apllication.
+Paclets installed via  ```PacletInstall```  can automatically be loaded via  ```Get```  without passing the source name and provide all of the conveniences of a Mathematica application.
