@@ -138,12 +138,40 @@ MarkdownNotebookMetadata[nb_NotebookObject]:=
 			]
 
 
+MarkdownNotebookDirectory[nb_]:=
+	Replace[Quiet@NotebookDirectory[nb],
+		Except[_String?DirectoryQ]:>
+			With[{
+				d=
+					FileNameJoin@{
+						$TemporaryDirectory,
+						"markdown_export"
+						}
+				},
+				If[!DirectoryQ[d],
+					CreateDirectory[d]
+					];
+				d
+				]
+		];
+
+
+MarkdownNotebookContentPath[nb_]:=
+	MarkdownContentPath@
+		Replace[Quiet@NotebookFileName[nb],
+			Except[_String?FileExistsQ]:>
+				FileNameJoin@{
+					$TemporaryDirectory,
+					"markdown_export",
+					"markdown_notebook.nb"
+					}
+			]
+
+
 NotebookToMarkdown[nb_NotebookObject]:=
 	With[{
-		dir=NotebookDirectory[nb],
-		name=
-			MarkdownContentPath@
-				NotebookFileName[nb]
+		dir=MarkdownNotebookDirectory[nb],
+		name=MarkdownNotebookContentPath[nb]
 		},
 		If[!DirectoryQ[dir],
 			$Failed,
@@ -176,6 +204,17 @@ NotebookToMarkdown[nb_NotebookObject]:=
 				]
 			]
 		];
+NotebookToMarkdown[nb_Notebook]:=
+	With[{
+		nb2=CreateDocument@Insert[nb,Visible->False,2]
+		},
+		CheckAbort[
+			(NotebookClose[nb2];#)&@
+				NotebookToMarkdown[nb2],
+			NotebookClose[nb2];
+			$Aborted
+			]
+		]
 
 
 iNotebookToMarkdown//Clear
@@ -688,14 +727,9 @@ markdownNotebookHashExport[
 						]<>"-"<>ToString@Replace[hash,Automatic:>Hash[expr]]<>"."<>ext
 				]
 		},
-		If[!DirectoryQ[FileNameJoin@{root,"content","img"}],
-			CreateDirectory[FileNameJoin@{root,"content","img"}]
-			];
-		If[!FileExistsQ[FileNameJoin@{root,"content","img",fname}],
-			Export[
-				FileNameJoin@{root,"content","img",fname},
-				pre@expr
-				]
+		Sow[
+			{"img",fname}->pre@expr,
+			"MarkdownExport"
 			];
 		"!["<>
 			Replace[alt,
@@ -861,37 +895,55 @@ NotebookMarkdownSave[
 			meta=MarkdownNotebookMetadata[nb]
 			},
 			If[Lookup[meta,"_Save",True]=!=False,
-				Export[
-					StringReplace[NotebookFileName[nb],".nb"~~EndOfString->".md"],
-					StringTrim@
-						TemplateApply[
-							$markdownnewmdfiletemplate,
-							<|
-								"headers"->
-									markdownMetadataFormat[
-										FileBaseName@NotebookFileName[nb],
-										Association@
-											Flatten[
-												{
-													"Modified":>Now,
-													meta
-													}
-												]
-										],
-								"body"->NotebookToMarkdown[nb]
-								|>
+				With[{
+					md=
+						Reap[
+							NotebookToMarkdown[nb],
+							"MarkdownExport"
 							],
-					"Text"
+					root=
+						MarkdownSiteBase@
+							MarkdownNotebookDirectory[nb]
+					},
+					If[!FileExistsQ@
+							FileNameJoin@Flatten@{root,"content",First[#]},
+						Export[
+							FileNameJoin@Flatten@{root,"content",First[#]},
+							Last[#]
+							]
+						]&/@Last[md];
+					Export[
+						StringReplace[NotebookFileName[nb],".nb"~~EndOfString->".md"],
+						StringTrim@
+							TemplateApply[
+								$markdownnewmdfiletemplate,
+								<|
+									"headers"->
+										markdownMetadataFormat[
+											FileBaseName@NotebookFileName[nb],
+											Association@
+												Flatten[
+													{
+														"Modified":>Now,
+														meta
+														}
+													]
+											],
+									"body"->md[[1]]
+									|>
+								],
+						"Text"
+						]
 					]
 				]
 			]
 		]
 
 
-markdownToXML//ClearAll
+markdownToXMLFormat//ClearAll
 
 
-markdownToXML["Meta",text_]:=
+markdownToXMLFormat["Meta",text_]:=
 	XMLElement["meta",
 		Normal@AssociationThread[
 			{"name","content"},
@@ -902,7 +954,7 @@ markdownToXML["Meta",text_]:=
 		]&/@StringSplit[text,"\n"];
 
 
-markdownToXML[
+markdownToXMLFormat[
 	"FenceBlock",
 	text_
 	]:=
@@ -937,7 +989,7 @@ markdownToXML[
 		]
 
 
-markdownToXML[
+markdownToXMLFormat[
 	"CodeBlock",
 	text_
 	]:=
@@ -970,7 +1022,25 @@ markdownToXML[
 		]
 
 
-markdownToXML[
+markdownToXMLFormat[
+	"QuoteBlock",
+	text_
+	]:=
+	With[{
+		quoteStripped=
+			StringReplace[
+				text,
+				StartOfLine~~">"->""
+				]
+		},
+		XMLElement["blockquote",
+			{},
+			markdownToXML[quoteStripped]
+			]
+		]
+
+
+markdownToXMLFormat[
 	"Header",
 	text_
 	]:=
@@ -1018,7 +1088,7 @@ markdownToXMLItemRecursiveFormat[l_]:=
 		]
 
 
-markdownToXML["Item",text_String]:=
+markdownToXMLFormat["Item",text_String]:=
 	With[{
 		lines=
 			StringJoin/@
@@ -1065,14 +1135,14 @@ markdownToXML["Item",text_String]:=
 	]
 
 
-markdownToXML[
+markdownToXMLFormat[
 	"Delimiter",
 	_
 	]:=
 	XMLElement["hr",{},{}]
 
 
-markdownToXML[
+markdownToXMLFormat[
 	"CodeLine",
 	text_
 	]:=
@@ -1090,7 +1160,7 @@ markdownToXML[
 		]
 
 
-markdownToXML[
+markdownToXMLFormat[
 	"XMLBlock"|"XMLLine",
 	text_
 	]:=
@@ -1102,7 +1172,7 @@ markdownToXML[
 		]
 
 
-markdownToXML[
+markdownToXMLFormat[
 	"Link",
 	text_
 	]:=
@@ -1127,7 +1197,7 @@ markdownToXML[
 		]
 
 
-markdownToXML[
+markdownToXMLFormat[
 	"Image",
 	text_
 	]:=
@@ -1151,14 +1221,17 @@ markdownToXML[
 		]
 
 
-markdownToXML[t_,text_String]:=
+markdownToXMLFormat[t_,text_String]:=
 	XMLElement[t,{},{text}]
 
 
 $markdownToXMLMeta=
 	meta:(
 		StartOfString~~
-			((StartOfLine~~Except["\n"]..~~":"~~Except["\n"]...~~"\n")..)
+			((StartOfLine~~
+					(Whitespace|"")~~
+					Except[WhitespaceCharacter]..~~
+					(Whitespace|"")~~":"~~Except["\n"]...~~"\n")..)
 		):>
 			{
 				"Meta"->meta
@@ -1203,6 +1276,15 @@ $markdownToXMLDelimiter=
 $markdownToXMLHeader=
 	t:(StartOfLine~~(Whitespace|"")~~Longest["#"..]~~Except["\n"]..):>
 		"Header"->t
+
+
+$markdownToXMLQuoteBlock=
+	q:(
+			(StartOfLine~~">"~~
+				Except["\n"]..~~("\n"|EndOfString)
+				)..
+			):>
+		"QuoteBlock"->q
 
 
 $markdownToXMLLineIdentifier=
@@ -1275,12 +1357,12 @@ $markdownToXMLXMLBlock=
 
 
 $markdownToXMLBlockRules={
-	$markdownToXMLMeta,
 	$markdownToXMLFenceBlock,
 	$markdownToXMLCodeBlock,
 	$markdownToXMLDelimiter,
 	$markdownToXMLHeader,
-	$markdownToXMLItemBlock
+	$markdownToXMLItemBlock,
+	$markdownToXMLQuoteBlock
 	};
 
 
@@ -1340,30 +1422,45 @@ markdownToXMLPrep[text_String,rules:_List|Automatic:Automatic]:=
 		]
 
 
-markdownToXML[text_String,rules:_List|Automatic:Automatic]:=
-	Flatten@
-		Replace[
-			markdownToXMLPrep[text,rules],{
-				s_String:>
-					If[rules===Automatic,
-						Flatten@List@
-							markdownToXMLPostProcess1[s],
-						{s}
-						],
-				l_List:>
-					Replace[l,
-						{
-							s_String:>
-								If[rules===Automatic,
-									markdownToXMLPostProcess1[s],
-									s
-									],
-							(r_->s_):>
-								markdownToXML[r,s]
-							},
-						1
-						]
-			}]
+markdownToXML//Clear
+
+
+markdownToXML[
+	text_String,
+	rules:_List|Automatic:Automatic,
+	extraBlockRules:_List:{},
+	extraElementRules:_List:{}
+	]:=
+	Block[{
+		$markdownToXMLBlockRules=
+			Join[extraBlockRules,$markdownToXMLBlockRules],
+		$markdownToXMLElementRules=
+			Join[extraElementRules,$markdownToXMLElementRules]
+		},
+		Flatten@
+			Replace[
+				markdownToXMLPrep[text,rules],{
+					s_String:>
+						If[rules===Automatic,
+							Flatten@List@
+								markdownToXMLPostProcess1[s],
+							{s}
+							],
+					l_List:>
+						Replace[l,
+							{
+								s_String:>
+									If[rules===Automatic,
+										markdownToXMLPostProcess1[s],
+										s
+										],
+								(r_->s_):>
+									markdownToXMLFormat[r,s]
+								},
+							1
+							]
+				}]
+		]
 
 
 markdownToXMLPostProcess1[s_]:=
@@ -1402,30 +1499,59 @@ markdownToXMLPreProcess[t_String]:=
 		}]
 
 
-MarkdownToXML[s_String?(Not@*FileExistsQ)]:=
-	Replace[
-		GatherBy[
-			markdownToXML@
-				markdownToXMLPreProcess[s],
-			First[#]==="meta"&
-			],
+Options[MarkdownToXML]=
 	{
-		{h_,b_}:>
-			XMLElement["html",
-				{},
-				{
-					XMLElement["head",{},h],
-					XMLElement["body",{},b]
-					}
+		"StripMetaInformation"->True,
+		"HeaderElements"->{"meta"},
+		"BlockRules"->{},
+		"ElementRules"->{}
+		};
+MarkdownToXML[
+	s_String?(Not@*FileExistsQ),
+	ops:OptionsPattern[]
+	]:=
+	With[{
+		sm=TrueQ@OptionValue["StripMetaInformation"],
+		he=OptionValue["HeaderElements"],
+		er=Replace[OptionValue["ElementRules"],Except[_?OptionQ]:>{}],
+		br=Replace[OptionValue["BlockRules"],Except[_?OptionQ]:>{}]
+		},
+		Replace[
+			GatherBy[
+				markdownToXML[
+					markdownToXMLPreProcess[s],
+					Automatic,
+					Join[
+						br,
+						If[sm,
+							{
+								$markdownToXMLMeta
+								},
+							{}
+							]
+						],
+					er
+					],
+				MatchQ[First[#],he]&
 				],
-		{b_}:>
-			XMLElement["html",
-				{},
-				{
-					XMLElement["body",{},b]
-					}
-				]
-		}];
+		{
+			{h_,b_}:>
+				XMLElement["html",
+					{},
+					{
+						XMLElement["head",{},h],
+						XMLElement["body",{},b]
+						}
+					],
+			{b_}:>
+				XMLElement["html",
+					{},
+					{
+						XMLElement["body",{},b]
+						}
+					]
+			}]
+		];
 MarkdownToXML[f:(_File|_String?FileExistsQ)]:=
 	MarkdownToXML@
 		Import[f,"Text"]
