@@ -683,7 +683,6 @@ PacletMarkdownNotebookUpdate[notebook_Notebook,a_]:=
 		Map[
 			Function[
 				nb=	
-				Echo@
 					ReplaceAll[nb,
 						Cell[
 							CellGroupData[{
@@ -699,14 +698,24 @@ PacletMarkdownNotebookUpdate[notebook_Notebook,a_]:=
 								pacletMarkdownNotebookBasicInfoSection[a,#]
 						]
 				],
-			Echo@DeleteCases[Keys[a],"Extensions"]
+			DeleteCases[Keys[a],"Extensions"]
 			];
 		nb=
 			DeleteCases[nb,
 				Cell[
 					CellGroupData[{
 						Cell[___,
-							CellTags->Except[Alternatives@@Keys[a]],
+							CellTags->
+								Except[
+									Alternatives@@
+										Join[{
+											"DescriptionText",
+											"DownloadLink",
+											"BasicInformation"
+											},
+											Keys[a]
+											]
+									],
 							___
 							],
 						___
@@ -828,24 +837,9 @@ PacletServerBuild[ops:OptionsPattern[]]:=
 							"AutoDeploy"
 							],
 				PacletServerDeploy@
-					FilterRules[{
-						Normal@Merge[{
-							Replace[
-								OptionValue["DeployOptions"],
-								Except[_?OptionQ]->{}
-								],
-							Lookup[
-								Replace[Quiet@Import[PacletServerFile["SiteConfig.wl"]],
-									Except[_Association]:>{}
-									],
-								"DeployOptions",
-								{}
-								]
-							},
-							First
-							]
-						},
-						Options@PacletServerDeploy
+					Replace[
+						OptionValue["DeployOptions"],
+						Except[_?OptionQ]->{}
 						],
 				s
 				]
@@ -888,7 +882,26 @@ PacletServerDeploy[ops:OptionsPattern[]]:=
 				DeleteContents->True
 				];
 			#
-			)&@WebSiteDeploy[PacletServerFile["output"],ops],
+			)&@
+			WebSiteDeploy[PacletServerFile["output"],
+				FilterRules[{
+					Normal@
+						Merge[{
+							ops,
+							Lookup[
+								Replace[Quiet@Import[PacletServerFile["SiteConfig.wl"]],
+									Except[_?OptionQ]:>{}
+									],
+								"DeployOptions",
+								{}
+								]
+							},
+							First
+							]
+						},
+						Options@PacletServerDeploy
+						]
+				],
 		Message[PacletServerDeploy::nobld];
 		$Failed
 		]

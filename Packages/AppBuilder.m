@@ -2246,6 +2246,7 @@ Options[AppPublish]=
 		"PushToGitHub"->True,
 		"PushToCloud"->True,
 		"PushToServer"->True,
+		"PublishServer"->Automatic,
 		Verbose->True
 		};
 AppPublish[app_,ops:OptionsPattern[]]:=
@@ -2297,24 +2298,35 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 						]
 					],
 			"PushToServer"->
-				If[pacletServerPush,
-					PacletServerAdd[app];
-					URLBuild@
-						ReplacePart[#,
-							"Path"->
-								Append[Most[#Path],"main.html"]
-							]&@
-						URLParse@
-							First@
-								MinimalBy[
-									Select[
-										First/@
-											PacletServerBuild["AutoDeploy"->True],
-										StringEndsQ["/index.html"]
-										],
-									Length@URLParse[#,"Path"]&
-									]
-					]
+				Association@{
+					If[TrueQ@pacletServerPush,
+						"ServerPaclet"->
+							PacletServerAdd[app],
+						Nothing
+						],
+					If[TrueQ@OptionValue["PublishServer"]||
+						TrueQ[pacletServerPush]&&OptionValue["PublishServer"]===Automatic,
+						"ServerURL"->
+							(
+								URLBuild@
+									ReplacePart[#,
+										"Path"->
+											Append[Most[#Path],"main.html"]
+										]&@
+									URLParse@
+										First@
+											MinimalBy[
+												Select[
+													First/@
+														PacletServerBuild["AutoDeploy"->True],
+													StringEndsQ["/index.html"]
+													],
+												Length@URLParse[#,"Path"]&
+												]
+									),
+							Nothing
+							]
+						}
 			|>
 		]
 
