@@ -207,7 +207,7 @@ Create a simple authentication dialog:
 
 	(*Out:*)
 	
- ![readme-7327455162654501707](project/img/readme-7327455162654501707.png)
+ ![readme-5901025740602307845](project/img/readme-5901025740602307845.png)
 	<|"https://github.com" -> {"me@me.com", 
 	   "me password's on the internet!"}|>
 
