@@ -764,6 +764,8 @@ markdownNotebookHashExport[
 				Switch[pathInfo["ContentExtension"],
 					"content",
 						"{filename}",
+					_String,
+						pathInfo["ContentExtension"],
 					_,
 						Nothing
 					],

@@ -40,7 +40,7 @@ On the development side, the  [CodePackage](FrontEnd/StyleSheets/BTools/CodePack
 
 	(*Out:*)
 	
- ![readme-1409732338692002428](img/readme-1409732338692002428.png)
+ ![readme-1409732338692002428](project/img/readme-1409732338692002428.png)
 
 ---
 
@@ -69,7 +69,7 @@ On the development side, the  [CodePackage](FrontEnd/StyleSheets/BTools/CodePack
 
 	(*Out:*)
 	
- ![readme-7442896922375253717](img/readme-7442896922375253717.png)
+ ![readme-7442896922375253717](project/img/readme-7442896922375253717.png)
 
 ---
 
@@ -95,7 +95,7 @@ Install a paclet from a non-standard source:
 
 	(*Out:*)
 	
- ![readme-7627680171142513795](img/readme-7627680171142513795.png)
+ ![readme-7627680171142513795](project/img/readme-7627680171142513795.png)
 
 Add a paclet to the default paclet server and deploy it:
 
@@ -104,7 +104,7 @@ Add a paclet to the default paclet server and deploy it:
 
 	(*Out:*)
 	
- ![readme-3169777872084840222](img/readme-3169777872084840222.png)
+ ![readme-3169777872084840222](project/img/readme-3169777872084840222.png)
 
 ---
 
@@ -141,7 +141,7 @@ Add a paclet to the default paclet server and deploy it:
 
 	(*Out:*)
 	
- ![readme-1601186910705832175](img/readme-1601186910705832175.png)
+ ![readme-1601186910705832175](project/img/readme-1601186910705832175.png)
 
 ---
 
@@ -173,7 +173,7 @@ Add a paclet to the default paclet server and deploy it:
 
 	(*Out:*)
 	
- ![readme-5436828446961647922](img/readme-5436828446961647922.png)
+ ![readme-5436828446961647922](project/img/readme-5436828446961647922.png)
 
 Add an attached cell to the evaluation cell:
 
@@ -181,7 +181,7 @@ Add an attached cell to the evaluation cell:
 
 	(*Out:*)
 	
- ![readme-4499149176453005575](img/readme-4499149176453005575.png)
+ ![readme-4499149176453005575](project/img/readme-4499149176453005575.png)
 
 ---
 
@@ -207,7 +207,7 @@ Create a simple authentication dialog:
 
 	(*Out:*)
 	
- ![readme-7327455162654501707](img/readme-7327455162654501707.png)
+ ![readme-7327455162654501707](project/img/readme-7327455162654501707.png)
 	<|"https://github.com" -> {"me@me.com", 
 	   "me password's on the internet!"}|>
 
