@@ -205,9 +205,10 @@ Create a simple authentication dialog:
 
 	AuthenticationDialog["GitHub", "https://github.com"]
 
+![readme-7327455162654501707](project/img/readme-7327455162654501707.png)
+
 	(*Out:*)
 	
- ![readme-5901025740602307845](project/img/readme-5901025740602307845.png)
 	<|"https://github.com" -> {"me@me.com", 
 	   "me password's on the internet!"}|>
 
