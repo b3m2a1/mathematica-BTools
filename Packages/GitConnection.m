@@ -1244,7 +1244,6 @@ GitHubClone[
 					],
 				dir],
 			d:Except[_String?GitRepoQ]:>(
-				Print@d;
 				SVNCheckOut[repo,
 					If[MatchQ[repo,_GitHubPath],
 						URL@repo,

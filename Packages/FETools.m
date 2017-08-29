@@ -1301,6 +1301,8 @@ $FEAutocompletionTable={
 	Package|"Package"->7,
 	Directory|"Directory"->8,
 	Interpreter|"InterpreterType"->9,
+	Notebook|"Notebook"->"MenuListNotebooksMenu",
+	"Font"->"MenuListFonts",
 	s_String:>{s}
 	};
 

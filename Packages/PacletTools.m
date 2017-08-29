@@ -155,6 +155,7 @@ If[$pacletConfigLoaded//TrueQ//Not,
 	$PacletExtension="paclets";
 	$PacletServerBase=CloudObject;
 	$PacletUseKeyChain=False;
+	$FormatPaclets=False;
 	Replace[
 		SelectFirst[
 			`Package`PackageFilePath["Private","PacletConfig."<>#]&/@{"m","wl"},
@@ -2536,9 +2537,9 @@ gitPacletPull//Clear
 
 
 gitPacletPull[loc:(_String|_File|_URL)?GitHubPathQ]:=
-	GitHub["Pull",loc];
+	Quiet[GitHub["Clone",loc],Git::err];
 gitPacletPull[loc:(_String|_File|_URL)?(Not@*GitHubPathQ)]:=
-	GitClone[loc];
+	Quiet[Git["Clone",loc],Git::err];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2794,6 +2795,45 @@ PacletInstallPaclet[
 						]
 					]
 			];
+
+
+(* ::Subsection:: *)
+(*Format*)
+
+
+
+Format[BTools`Private`p_PacletManager`Paclet/;
+	(BTools`Private`$FormatPaclets&&AssociationQ@
+		BTools`Private`Hidden`PacletInfoAssociation[BTools`Private`p])]:=
+	With[{BTools`Private`a=BTools`Private`Hidden`PacletInfoAssociation[BTools`Private`p]},
+		RawBoxes@
+		BoxForm`ArrangeSummaryBox[
+			"Paclet",
+			BTools`Private`p,
+			Pane[
+				Style[Last@StringSplit[BTools`Private`a["Name"],"_"],"Input"],
+				{Automatic,28},
+				Alignment->Center
+				],
+			KeyValueMap[
+				BoxForm`MakeSummaryItem[
+					{Row[{#, ": "}],#2},
+					StandardForm
+					]&,
+				BTools`Private`a[[{"Name","Version"}]]
+				],
+			KeyValueMap[
+				BoxForm`MakeSummaryItem[
+					{Row[{#, ": "}],#2},
+					StandardForm
+					]&,
+				KeyDrop[BTools`Private`a,{"Name","Version"}]
+				],
+			StandardForm
+			]
+		];
+FormatValues[Paclet]=
+	SortBy[FormatValues[Paclet],FreeQ[HoldPattern[BTools`Private`$FormatPaclets]]];
 
 
 End[];

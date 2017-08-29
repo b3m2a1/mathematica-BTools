@@ -6,12 +6,10 @@
 		"FormattingTools",
 		"FETools",
 		"ScrapeTools",
-		"TRTools"
+		"TRTools",
+		"AuthDialogs"
 		},
 	"PackageScope"->{
-		"GoogleDrive",
-		"StackExchangeAPI",
-		"SearchTools",
-		"GraphTools"
+		"GoogleDrive"
 		}
 	}

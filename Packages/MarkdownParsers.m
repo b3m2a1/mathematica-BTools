@@ -37,16 +37,35 @@ $MarkdownSiteRoot=
 		};
 
 
+$MarkdownStandardContentExtensions=
+	{
+		"content",
+		"project",
+		"proj"
+		};
+
+
 MarkdownSiteBase[f_String]:=
 	Replace[FileNameSplit[f],{
-		{d:Shortest[___],"content"|"output",___}:>FileNameJoin@{d},
-		_:>f
+		{d:Shortest[___],
+			(Alternatives@@$MarkdownStandardContentExtensions)|"output",___}:>
+			FileNameJoin@{d},
+		_:>If[DirectoryQ@f,f,DirectoryName[f]]
 		}]
+
+
+MarkdownContentExtension[root_]:=
+	SelectFirst[$MarkdownStandardContentExtensions,
+		DirectoryQ@FileNameJoin@{root,#}&,
+		Nothing
+		];
 
 
 MarkdownContentPath[f_String]:=
 	Replace[FileNameSplit[f],{
-		{Shortest[___],"content",p___}:>FileNameJoin@{p},
+		{Shortest[___],
+			Alternatives@@$MarkdownStandardContentExtensions,p___}:>
+			FileNameJoin@{p},
 		_:>f
 		}]
 
@@ -156,37 +175,46 @@ MarkdownNotebookDirectory[nb_]:=
 		];
 
 
+MarkdownNotebookFileName[nb_]:=
+	Replace[Quiet@NotebookFileName[nb],
+		Except[_String?FileExistsQ]:>
+			FileNameJoin@{
+				$TemporaryDirectory,
+				"markdown_export",
+				"markdown_notebook.nb"
+				}
+		];
+
+
 MarkdownNotebookContentPath[nb_]:=
 	MarkdownContentPath@
-		Replace[Quiet@NotebookFileName[nb],
-			Except[_String?FileExistsQ]:>
-				FileNameJoin@{
-					$TemporaryDirectory,
-					"markdown_export",
-					"markdown_notebook.nb"
-					}
-			]
+		MarkdownNotebookFileName[nb];
 
 
 NotebookToMarkdown[nb_NotebookObject]:=
 	With[{
 		dir=MarkdownNotebookDirectory[nb],
-		name=MarkdownNotebookContentPath[nb]
+		name=FileBaseName@MarkdownNotebookFileName[nb]
 		},
 		If[!DirectoryQ[dir],
 			$Failed,
 			With[{
 				d2=
 					MarkdownSiteBase[dir],
+				cext=
+					MarkdownContentExtension[MarkdownSiteBase@dir],
 				path=
 					FileNameJoin@ConstantArray["..",1+FileNameDepth[MarkdownContentPath[dir]]]
 				},
 				StringRiffle[
 					DeleteCases[""]@
 						iNotebookToMarkdown[
-							d2,
-							path,
-							name,
+							<|
+								"Root"->d2,
+								"Path"->path,
+								"Name"->name,
+								"ContentExtension"->cext
+								|>,
 							#
 							]&/@NotebookRead@
 							Cells[nb,
@@ -274,47 +302,47 @@ markdownIDHook[id_]:=
 		];
 
 
-iNotebookToMarkdown[root_,path_,name_,
+iNotebookToMarkdown[pathInfo_,
 	StyleBox[a__,FontSlant->"Italic",b___]]:=
-	Replace[iNotebookToMarkdown[root,path,name,StyleBox[a,b]],
+	Replace[iNotebookToMarkdown[pathInfo,StyleBox[a,b]],
 		s:Except[""]:>
 			"_"<>s<>"_"
 		];
-iNotebookToMarkdown[root_,path_,name_,
+iNotebookToMarkdown[pathInfo_,
 	StyleBox[a___,FontWeight->"Bold"|Bold,b___]]:=
-	Replace[iNotebookToMarkdown[root,path,name,StyleBox[a,b]],
+	Replace[iNotebookToMarkdown[pathInfo,StyleBox[a,b]],
 		s:Except[""]:>
 			"*"<>s<>"*"
 		];
-iNotebookToMarkdown[root_,path_,name_,
+iNotebookToMarkdown[pathInfo_,
 	StyleBox[a_,___]]:=
-	Replace[iNotebookToMarkdown[root,path,name,a],
+	Replace[iNotebookToMarkdown[pathInfo,a],
 		s:Except[""]:>
 			"*"<>s<>"*"
 		];
 
 
-iNotebookToMarkdown[root_,path_,name_,Cell[a___,CellTags->t_,b___]]:=
-	Replace[iNotebookToMarkdown[root,path,name,Cell[a,b]],
+iNotebookToMarkdown[pathInfo_,Cell[a___,CellTags->t_,b___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,Cell[a,b]],
 		s:Except[""]:>
 			markdownIDHook[
 				ToLowerCase@StringJoin@Flatten@{t}
 				]<>"\n\n"<>s
 		];
-iNotebookToMarkdown[root_,path_,name_,Cell[a___,FontSlant->"Italic"|Italic,b___]]:=
-	Replace[iNotebookToMarkdown[root,path,name,Cell[a,b]],
+iNotebookToMarkdown[pathInfo_,Cell[a___,FontSlant->"Italic"|Italic,b___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,Cell[a,b]],
 		s:Except[""]:>
 			"_"<>s<>"_"
 		];
-iNotebookToMarkdown[root_,path_,name_,Cell[a___,FontWeight->"Bold"|Bold,b___]]:=
-	Replace[iNotebookToMarkdown[root,path,name,Cell[a,b]],
+iNotebookToMarkdown[pathInfo_,Cell[a___,FontWeight->"Bold"|Bold,b___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,Cell[a,b]],
 		s:Except[""]:>
 			"*"<>s<>"*"
 		];
 
 
-iNotebookToMarkdown[root_,path_,name_,Cell[t_,"Section",___]]:=
-	Replace[iNotebookToMarkdown[root,path,name,t],
+iNotebookToMarkdown[pathInfo_,Cell[t_,"Section",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>
 			Replace[
 				FrontEndExecute@
@@ -325,8 +353,8 @@ iNotebookToMarkdown[root_,path_,name_,Cell[t_,"Section",___]]:=
 				}]<>
 			"# "<>s
 		];
-iNotebookToMarkdown[root_,path_,name_,Cell[t_,"Subsection",___]]:=
-	Replace[iNotebookToMarkdown[root,path,name,t],
+iNotebookToMarkdown[pathInfo_,Cell[t_,"Subsection",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>
 			Replace[
 				FrontEndExecute@
@@ -337,80 +365,80 @@ iNotebookToMarkdown[root_,path_,name_,Cell[t_,"Subsection",___]]:=
 				}]<>
 			"## "<>s
 		];
-iNotebookToMarkdown[root_,path_,name_,Cell[t_,"Subsubsection",___]]:=
-	Replace[iNotebookToMarkdown[root,path,name,t],
+iNotebookToMarkdown[pathInfo_,Cell[t_,"Subsubsection",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>
 			"### "<>s
 		];
-iNotebookToMarkdown[root_,path_,name_,Cell[t_,"Subsububsection",___]]:=
-	Replace[iNotebookToMarkdown[root,path,name,t],
+iNotebookToMarkdown[pathInfo_,Cell[t_,"Subsububsection",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>
 			"#### "<>s
 		];
-iNotebookToMarkdown[root_,path_,name_,Cell[t_,"Subsububsubsection",___]]:=
-	Replace[iNotebookToMarkdown[root,path,name,t],
+iNotebookToMarkdown[pathInfo_,Cell[t_,"Subsububsubsection",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>
 			"##### "<>s
 		];
-iNotebookToMarkdown[root_,path_,name_,Cell[t_,"Subsububsubsubsection",___]]:=
-	Replace[iNotebookToMarkdown[root,path,name,t],
+iNotebookToMarkdown[pathInfo_,Cell[t_,"Subsububsubsubsection",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>
 			"###### "<>s
 		];
 
 
-iNotebookToMarkdown[root_,path_,name_,Cell[t_,"PageBreak",___]]:=
+iNotebookToMarkdown[pathInfo_,Cell[t_,"PageBreak",___]]:=
 	"---"
 
 
-iNotebookToMarkdown[root_,path_,name_,Cell[t_,"Text",___]]:=
-	iNotebookToMarkdown[root,path,name,t];
+iNotebookToMarkdown[pathInfo_,Cell[t_,"Text",___]]:=
+	iNotebookToMarkdown[pathInfo,t];
 
 
-iNotebookToMarkdown[root_,path_,name_,Cell[t_,"Item",___]]:=
-	Replace[iNotebookToMarkdown[root,path,name,t],
+iNotebookToMarkdown[pathInfo_,Cell[t_,"Item",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>"* "<>s
 		];
-iNotebookToMarkdown[root_,path_,name_,Cell[t_,"ItemParagraph",___]]:=
-	Replace[iNotebookToMarkdown[root,path,name,t],
+iNotebookToMarkdown[pathInfo_,Cell[t_,"ItemParagraph",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>StringReplace[s,StartOfLine->"  "]
 		];
-iNotebookToMarkdown[root_,path_,name_,Cell[t_,"Subitem",___]]:=
-	Replace[iNotebookToMarkdown[root,path,name,t],
+iNotebookToMarkdown[pathInfo_,Cell[t_,"Subitem",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>"  * "<>s
 		];
-iNotebookToMarkdown[root_,path_,name_,Cell[t_,"Subsubitem",___]]:=
-	Replace[iNotebookToMarkdown[root,path,name,t],
+iNotebookToMarkdown[pathInfo_,Cell[t_,"Subsubitem",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>"    * "<>s
 		];
-iNotebookToMarkdown[root_,path_,name_,Cell[t_,"SubitemParagraph",___]]:=
-	Replace[iNotebookToMarkdown[root,path,name,t],
+iNotebookToMarkdown[pathInfo_,Cell[t_,"SubitemParagraph",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>StringReplace[s,StartOfLine->"   "]
 		];
 
 
-iNotebookToMarkdown[root_,path_,name_,Cell[t_,"ItemNumbered",___]]:=
-	Replace[iNotebookToMarkdown[root,path,name,t],
+iNotebookToMarkdown[pathInfo_,Cell[t_,"ItemNumbered",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>"1. "<>s
 		];
-iNotebookToMarkdown[root_,path_,name_,Cell[t_,"SubitemNumbered",___]]:=
-	Replace[iNotebookToMarkdown[root,path,name,t],
+iNotebookToMarkdown[pathInfo_,Cell[t_,"SubitemNumbered",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>"  1. "<>s
 		];
-iNotebookToMarkdown[root_,path_,name_,Cell[t_,"SubsubitemNumbered",___]]:=
-	Replace[iNotebookToMarkdown[root,path,name,t],
+iNotebookToMarkdown[pathInfo_,Cell[t_,"SubsubitemNumbered",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>"    1. "<>s
 		];
 
 
-iNotebookToMarkdown[root_,path_,name_,Cell[t_,"Quote",___]]:=
-	Replace[iNotebookToMarkdown[root,path,name,t],
+iNotebookToMarkdown[pathInfo_,Cell[t_,"Quote",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>StringReplace[s,StartOfString->"> "]
 		];
 
 
-iNotebookToMarkdown[root_,path_,name_,Cell[e_,___]]:=
-	iNotebookToMarkdown[root,path,name,e]
+iNotebookToMarkdown[pathInfo_,Cell[e_,___]]:=
+	iNotebookToMarkdown[pathInfo,e]
 
 
 $iNotebookToMarkdownToStripStartBlockFlag=
@@ -438,7 +466,7 @@ notebookToMarkdownStripBlock[s_]:=
 	$iNotebookToMarkdownToStripEndBlockFlag
 
 
-markdownCodeCellGraphicsFormat[root_,path_,name_,e_,
+markdownCodeCellGraphicsFormat[pathInfo_,e_,
 	style_,postFormat_]:=
 	Replace[
 		StringReplace[
@@ -448,7 +476,7 @@ markdownCodeCellGraphicsFormat[root_,path_,name_,e_,
 						Cell[e/.{
 							b:$iNotebookToMarkdownRasterizeForms:>
 								Replace[
-									iNotebookToMarkdown[root,path,name,b,
+									iNotebookToMarkdown[pathInfo,b,
 										Replace[style,{
 											"InputText"->"Input",
 											_->Last@Flatten@{style}
@@ -459,7 +487,7 @@ markdownCodeCellGraphicsFormat[root_,path_,name_,e_,
 								],
 							g:$iNotebookToMarkdownOutputStringForms:>
 								Replace[
-									iNotebookToMarkdown[root,path,name,g],
+									iNotebookToMarkdown[pathInfo,g],
 									s:Except[""]:>
 										notebookToMarkdownStripBlock[s]
 									],
@@ -501,8 +529,8 @@ markdownCodeCellGraphicsFormat[root_,path_,name_,e_,
 		];
 
 
-iNotebookToMarkdown[root_,path_,name_,Cell[e_,"FencedCode",___]]:=
-	markdownCodeCellGraphicsFormat[root,path,name,e,
+iNotebookToMarkdown[pathInfo_,Cell[e_,"FencedCode",___]]:=
+	markdownCodeCellGraphicsFormat[pathInfo,e,
 		"InputText",
 		Replace[StringSplit[#,"\n",2],
 			{
@@ -516,18 +544,18 @@ iNotebookToMarkdown[root_,path_,name_,Cell[e_,"FencedCode",___]]:=
 				}
 			]&
 		];
-iNotebookToMarkdown[root_,path_,name_,Cell[e_,"Code"|"Input",___]]:=
-	markdownCodeCellGraphicsFormat[root,path,name,e,
+iNotebookToMarkdown[pathInfo_,Cell[e_,"Code"|"Input",___]]:=
+	markdownCodeCellGraphicsFormat[pathInfo,e,
 		"InputText",
 		StringReplace[#,StartOfLine->"\t"]&
 		];
-iNotebookToMarkdown[root_,path_,name_,Cell[e_,"InlineInput",___]]:=
-	markdownCodeCellGraphicsFormat[root,path,name,e,
+iNotebookToMarkdown[pathInfo_,Cell[e_,"InlineInput",___]]:=
+	markdownCodeCellGraphicsFormat[pathInfo,e,
 		"InputText",
 		"```"<>#<>If[StringEndsQ[#,"`"]," ",""]<>"```"&
 		];
-iNotebookToMarkdown[root_,path_,name_,Cell[e_,"Output",___]]:=
-	markdownCodeCellGraphicsFormat[root,path,name,e,
+iNotebookToMarkdown[pathInfo_,Cell[e_,"Output",___]]:=
+	markdownCodeCellGraphicsFormat[pathInfo,e,
 		{"InputText","Output"},
 		StringReplace["(*Out:*)\n\n"<>#,{
 			StartOfLine->"\t"
@@ -535,15 +563,15 @@ iNotebookToMarkdown[root_,path_,name_,Cell[e_,"Output",___]]:=
 		]
 
 
-iNotebookToMarkdown[root_,path_,name_,s_String]:=
+iNotebookToMarkdown[pathInfo_,s_String]:=
 	s;
-iNotebookToMarkdown[root_,path_,name_,s_TextData]:=
+iNotebookToMarkdown[pathInfo_,s_TextData]:=
 	StringRiffle[
-		Map[iNotebookToMarkdown[root,path,name,#]&,List@@s//Flatten]
+		Map[iNotebookToMarkdown[pathInfo,#]&,List@@s//Flatten]
 		];
-iNotebookToMarkdown[root_,path_,name_,b_BoxData]:=
+iNotebookToMarkdown[pathInfo_,b_BoxData]:=
 	Replace[
-		iNotebookToMarkdown[root,path,name,First@b],
+		iNotebookToMarkdown[pathInfo,First@b],
 		"":>
 			First@
 				FrontEndExecute@
@@ -554,7 +582,7 @@ iNotebookToMarkdown[root_,path_,name_,b_BoxData]:=
 		];
 
 
-iNotebookToMarkdown[root_,path_,name_,
+iNotebookToMarkdown[pathInfo_,
 	TagBox[
 		GridBox[rows_,___],
 		"Column"
@@ -562,14 +590,14 @@ iNotebookToMarkdown[root_,path_,name_,
 	]:=
 	StringRiffle[
 		StringReplace[
-			iNotebookToMarkdown[root,path,name,#],
+			iNotebookToMarkdown[pathInfo,#],
 			"\n"->""
 			]&/@First/@rows,
 		"\n\n"
 		];
 
 
-iNotebookToMarkdown[root_,path_,name_,
+iNotebookToMarkdown[pathInfo_,
 	TagBox[
 		GridBox[rows_,___],
 		"Grid"
@@ -579,7 +607,7 @@ iNotebookToMarkdown[root_,path_,name_,
 		StringRiffle[
 			Map[
 				StringReplace[
-					iNotebookToMarkdown[root,path,name,#],
+					iNotebookToMarkdown[pathInfo,#],
 					"\n"->""
 					]&,
 				#],
@@ -590,15 +618,13 @@ iNotebookToMarkdown[root_,path_,name_,
 
 
 iNotebookToMarkdown[
-	root_,
-	path_,
-	name_,
+	pathInfo_,
 	ButtonBox[d_,
 		o___,
 		BaseStyle->"Hyperlink",
 		r___
 		]]:=
-	With[{t=iNotebookToMarkdown[root,path,name,d]},
+	With[{t=iNotebookToMarkdown[pathInfo,d]},
 		Replace[
 			FirstCase[
 				Flatten@List@
@@ -621,27 +647,25 @@ iNotebookToMarkdown[
 											KeyDrop[Association@parse["Query"],"_download"]
 									]<>"\" download>"<>t<>"</a>",
 						"["<>t<>"]("<>
-							iNotebookToMarkdown[root,path,name,s]<>")"
+							iNotebookToMarkdown[pathInfo,s]<>")"
 						]
 					],
 			e_:>
 				"["<>t<>"]("<>
-					iNotebookToMarkdown[root,path,name,e]<>")"
+					iNotebookToMarkdown[pathInfo,e]<>")"
 			}]
 		
 		];
 
 
 iNotebookToMarkdown[
-	root_,
-	path_,
-	name_,
+	pathInfo_,
 	ButtonBox[d_,
 		o___,
 		BaseStyle->"Link",
 		r___
 		]]:=
-	With[{t=iNotebookToMarkdown[root,path,name,d]},
+	With[{t=iNotebookToMarkdown[pathInfo,d]},
 		"[```"<>t<>If[StringEndsQ[t,"`"]," ",""]<>"```]("<>
 			Replace[
 				FirstCase[
@@ -703,10 +727,11 @@ iNotebookToMarkdown[
 		];
 
 
+markdownNotebookHashExport//Clear
+
+
 markdownNotebookHashExport[
-	root_,
-	path_,
-	name_,
+	pathInfo_,
 	expr_,
 	ext_,
 	fbase_:Automatic,
@@ -720,7 +745,7 @@ markdownNotebookHashExport[
 				Automatic:>
 					ToLowerCase[
 						StringReplace[
-							StringTrim[name,FileExtension[name]],{
+							StringTrim[pathInfo["Name"],FileExtension@pathInfo["Name"]],{
 							Whitespace|$PathnameSeparator->"-",
 							Except[WordCharacter]->""
 							}]
@@ -735,14 +760,21 @@ markdownNotebookHashExport[
 			Replace[alt,
 				Automatic:>StringTrim[fname,"."<>ext]
 				]<>"]("<>
-			StringRiffle[{"{filename}","img",fname},"/"]<>")"
+			StringRiffle[{
+				Switch[pathInfo["ContentExtension"],
+					"content",
+						"{filename}",
+					_,
+						Nothing
+					],
+				"img",
+				fname
+				},"/"]<>")"
 		]
 
 
 iNotebookToMarkdown[
-	root_,
-	path_,
-	name_,
+	pathInfo_,
 	InterpretationBox[
 		g_?(MatchQ[$iNotebookToMarkdownOutputStringForms]),
 		__
@@ -761,9 +793,7 @@ iNotebookToMarkdown[
 
 
 iNotebookToMarkdown[
-	root_,
-	path_,
-	name_,
+	pathInfo_,
 	TooltipBox[
 		g:$iNotebookToMarkdownOutputStringForms,
 		t_,
@@ -782,16 +812,12 @@ iNotebookToMarkdown[
 
 
 iNotebookToMarkdown[
-	root_,
-	path_,
-	name_,
+	pathInfo_,
 	g:$iNotebookToMarkdownRasterizeForms,
 	style_:"Output"
 	]:=
 	markdownNotebookHashExport[
-		root,
-		path,
-		name,
+		pathInfo,
 		g,
 		"png",
 		Automatic,
@@ -801,9 +827,7 @@ iNotebookToMarkdown[
 
 
 iNotebookToMarkdown[
-	root_,
-	path_,
-	name_,
+	pathInfo_,
 	g:TagBox[__,_Manipulate`InterpretManipulate],
 	fbase_:Automatic,
 	alt_:Automatic
@@ -818,9 +842,7 @@ iNotebookToMarkdown[
 				]
 		},
 		markdownNotebookHashExport[
-			root,
-			path,
-			name,
+			pathInfo,
 			expr,
 			"gif",
 			alt,
@@ -856,17 +878,13 @@ iNotebookToMarkdown[
 
 
 iNotebookToMarkdown[
-	root_,
-	path_,
-	name_,
+	pathInfo_,
 	g:_GraphicsBox|_Graphics3DBox|TemplateBox[_,"Legended",___],
 	fbase_:Automatic,
 	alt_:Automatic
 	]:=
 	markdownNotebookHashExport[
-		root,
-		path,
-		name,
+		pathInfo,
 		g,
 		"png",
 		alt,
@@ -875,15 +893,15 @@ iNotebookToMarkdown[
 		]
 
 
-iNotebookToMarkdown[root_,path_,name_,f_FrontEnd`FileName]:=
+iNotebookToMarkdown[pathInfo_,f_FrontEnd`FileName]:=
 	StringRiffle[FileNameSplit[ToFileName[f]],"/"];
-iNotebookToMarkdown[root_,path_,name_,u:_URL]:=
+iNotebookToMarkdown[pathInfo_,u:_URL]:=
 	First@u;
-iNotebookToMarkdown[root_,path_,name_,f_File]:=
+iNotebookToMarkdown[pathInfo_,f_File]:=
 	StringRiffle[FileNameSplit[First[f]],"/"];
 
 
-iNotebookToMarkdown[root_,path_,name_,e_]:=
+iNotebookToMarkdown[pathInfo_,e_]:=
 	"";
 
 
@@ -906,33 +924,39 @@ NotebookMarkdownSave[
 							MarkdownNotebookDirectory[nb]
 					},
 					If[!FileExistsQ@
-							FileNameJoin@Flatten@{root,"content",First[#]},
+							FileNameJoin@Flatten@{root,MarkdownContentExtension@root,First[#]},
 						Export[
-							FileNameJoin@Flatten@{root,"content",First[#]},
-							Last[#]
+							FileNameJoin@Flatten@{root,MarkdownContentExtension@root,First[#]},
+							ReleaseHold@Last[#]
 							]
-						]&/@Last[md];
-					Export[
-						StringReplace[NotebookFileName[nb],".nb"~~EndOfString->".md"],
-						StringTrim@
-							TemplateApply[
-								$markdownnewmdfiletemplate,
-								<|
-									"headers"->
-										markdownMetadataFormat[
-											FileBaseName@NotebookFileName[nb],
-											Association@
-												Flatten[
-													{
-														"Modified":>Now,
-														meta
-														}
-													]
-											],
-									"body"->md[[1]]
-									|>
-								],
-						"Text"
+						]&/@Flatten@Last[md];
+					If[StringLength@StringTrim@md[[1]]>0,
+						Export[
+							StringReplace[NotebookFileName[nb],".nb"~~EndOfString->".md"],
+							StringTrim@
+								TemplateApply[
+									$markdownnewmdfiletemplate,
+									<|
+										"headers"->
+											If[Length@meta>0,
+												markdownMetadataFormat[
+													FileBaseName@
+														MarkdownNotebookContentPath[nb],
+													Association@
+														Flatten[
+															{
+																"Modified":>Now,
+																meta
+																}
+															]
+													],
+												""
+												],
+										"body"->md[[1]]
+										|>
+									],
+							"Text"
+							]
 						]
 					]
 				]
@@ -1502,7 +1526,7 @@ markdownToXMLPreProcess[t_String]:=
 Options[MarkdownToXML]=
 	{
 		"StripMetaInformation"->True,
-		"HeaderElements"->{"meta"},
+		"HeaderElements"->{"meta","style"},
 		"BlockRules"->{},
 		"ElementRules"->{}
 		};
