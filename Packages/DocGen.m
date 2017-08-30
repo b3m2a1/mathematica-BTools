@@ -239,7 +239,9 @@ contextNames[s_String]:=
 $docGen="DocGen`Private`";
 docGenBlock[cmd_]:=(
 	Begin[$docGen];
-	CheckAbort[(End[];#)&@cmd,If[$Context==$docGen,End[]]]
+	CheckAbort[(End[];#)&@cmd,
+		If[$Context==$docGen,End[]]
+		]
 	);
 docGenBlock~SetAttributes~HoldFirst
 
@@ -695,7 +697,7 @@ docMetadata[ops:OptionsPattern[]]:=
 		"title"->
 			Replace[OptionValue["Title"],Except[_String]->"No title..."],
 		"titlemodifier"->
-			Replace[OptionValue["Title"],Except[_String]->""],
+			Replace[OptionValue["TitleModifier"],Except[_String]->""],
 		"windowtitle"->
 			Replace[OptionValue["WindowTitle"],
 				Except[_String]:>
@@ -4507,19 +4509,23 @@ extractPackageOverviewSections[
 			Replace[syms,
 				{
 					(r_->s_String):>
-						(r->
-							If[!StringContainsQ[s,"/"],
-								URLBuild@{pkgName,"ref",s}
-								]
+						(
+							r->
+								If[!StringContainsQ[s,"/"],
+									URLBuild@{pkgName,"ref",s}
+									]
 							),
 					s_String?FileExistsQ:>
-						(s->
-							URLBuild@{pkgName,"ref",FileBaseName[s]}),
+						(
+							FileBaseName[s]->
+								URLBuild@{pkgName,"ref",FileBaseName[s]}
+							),
 					s_String:>
 						If[StringContainsQ[s,"/"],
 							URLParse[s,"Path"][[-1]]->
 								s,
-							s->URLBuild@{pkgName,"ref",s}
+							s->
+								URLBuild@{pkgName,"ref",s}
 							],
 					_->Nothing
 					},
@@ -4534,11 +4540,12 @@ extractPackageOverviewSections[
 								]
 							),
 					s_String?FileExistsQ:>
-						List@@Fold[
+						Rule@@Fold[
 							Lookup,
 							List@@
 								Rest@Import[s],
 							{
+								TaggingRules,
 								"Metadata",
 								{"title","uri"}
 								}
@@ -4563,11 +4570,12 @@ extractPackageOverviewSections[
 								]
 							),
 					s_String?FileExistsQ:>
-						List@@Fold[
+						Rule@@Fold[
 							Lookup,
 							List@@
 								Rest@Import[s],
 							{
+								TaggingRules,
 								"Metadata",
 								{"title","uri"}
 								}
@@ -4725,14 +4733,52 @@ extractDirectoryDocs[d_]:=
 			Length@FileNames[
 				"ReferencePages"|"Guides"|"Tutorials",
 				d,
-				2
+				3
 				]>0,
-			FileBaseName[d]->
-				{
-					"Symbols"->FileNames["ReferencePages/Symbols/*.nb",d,\[Infinity]],
-					"Guides"->FileNames["Guides/*.nb",d,\[Infinity]],
-					"Tutorials"->FileNames["Tutorials/*.nb",d,\[Infinity]]
-					},
+			Append[
+				extractDirectoryDocs/@
+					Select[FileNames["*",d],DirectoryQ],
+				FileBaseName[d]->
+					{
+						"Symbols"->
+							Select[
+								FileNames["*.nb",d,5],
+								StringMatchQ[
+									FileNameJoin@{
+										d,
+										"*",
+										"ReferencePages",
+										"Symbols",
+										"*.nb"
+										}
+									]
+								],
+						"Guides"->
+							Select[
+								FileNames["*.nb",d,4],
+								StringMatchQ[
+									FileNameJoin@{
+										d,
+										"*",
+										"Guides",
+										"*.nb"
+										}
+									]
+								],
+						"Tutorials"->
+							Select[
+								FileNames["*.nb",d,4],
+								StringMatchQ[
+									FileNameJoin@{
+										d,
+										"*",
+										"Tutorials",
+										"*.nb"
+										}
+									]
+								]
+						}
+				],
 		DirectoryQ@FileNameJoin@{d,"ref"}||
 			DirectoryQ@FileNameJoin@{d,"guide"}||
 			DirectoryQ@FileNameJoin@{d,"tutorial"},
@@ -7031,7 +7077,11 @@ $webExportAssets:=
 	Map[
 		<|
 			"Drop"->FileNameDepth[#[[1]]]-FileNameDepth@#[[2]],
-			"Files"->FileNames[#[[3]],#[[1]],\[Infinity]],
+			"Files"->
+				(*Drop the Japanese and Chinese resources *)
+				Select[FileNames[#[[3]],#[[1]],\[Infinity]],
+					Not@*StringContainsQ[".ja."|".zh."]
+					],
 			"Insert"->If[Length@#>3,#[[4]],Nothing]
 			|>&,
 		{
@@ -7110,13 +7160,15 @@ webExportAssetsCopy1[dir:(_String|_File)?DirectoryQ]:=
 						Not@FileExistsQ@FileNameJoin@
 							Flatten@{dir,
 								DirectoryName@FileNameDrop[#,depth],
-								insert
+								insert,
+								StringReplace[FileNameTake[#],".en."->"."]
 								}&
 						]
 					]&
 				],
 			Block[{d,f},
 				Monitor[
+					Flatten@
 					Table[
 						With[{depth=a["Drop"],insert=a["Insert"]},
 							Table[
@@ -7135,7 +7187,7 @@ webExportAssetsCopy1[dir:(_String|_File)?DirectoryQ]:=
 										FileNameJoin@
 											Flatten@{
 												d,
-												FileNameTake@f
+												StringReplace[FileNameTake[f],".en."->"."]
 												},
 									If[StringMatchQ[FileExtension[#],"css"|"js"|"html"],
 										webExportPostProcess[#],
@@ -7145,14 +7197,14 @@ webExportAssetsCopy1[dir:(_String|_File)?DirectoryQ]:=
 											FileNameJoin@
 												Flatten@{
 													d,
-													FileNameTake@f
+													StringReplace[FileNameTake[f],".en."->"."]
 													},
 											OverwriteTarget->True
 											],
 									FileNameJoin@
 										Flatten@{
 											d,
-											FileNameTake@f
+											StringReplace[FileNameTake[f],".en."->"."]
 											}
 									],
 								{f,a["Files"]}
@@ -7167,25 +7219,27 @@ webExportAssetsCopy1[dir:(_String|_File)?DirectoryQ]:=
 							FileNameJoin@
 								Flatten@{
 									d,
-									FileNameTake@f
+									StringReplace[FileNameTake[f],".en."->"."]
 									}
 							}
 					]
 				]
 			],
-		Join@@Map[
-			With[{depth=#["Drop"],insert=#["Insert"],files=#["Files"]},
-				Map[
-					FileNameJoin@
-						Flatten@{dir,
-							DirectoryName@FileNameDrop[#,depth],
-							insert
-							}&,
-					files
-					]
-				]&,
-			resources
-			]
+		Join@@
+			Map[
+				With[{depth=#["Drop"],insert=#["Insert"],files=#["Files"]},
+					Map[
+						FileNameJoin@
+							Flatten@{dir,
+								DirectoryName@FileNameDrop[#,depth],
+								insert,
+								StringReplace[FileNameTake[#],".en."->"."]
+								}&,
+						files
+						]
+					]&,
+				resources
+				]
 		]
 	];
 webExportAssetsCopy2[dir:(_String|_File)?DirectoryQ]:=
@@ -7195,7 +7249,7 @@ webExportAssetsCopy2[dir:(_String|_File)?DirectoryQ]:=
 				"javascript",{
 					"sub-pages.js",
 					"image-swap.js",
-					"clipboard.js"
+					"clipboard.js"->"clipboard.en.js"
 					}}],
 			Thread[{
 				"images",{
@@ -7209,23 +7263,33 @@ webExportAssetsCopy2[dir:(_String|_File)?DirectoryQ]:=
 				}]
 			]
 		},
-		If[AnyTrue[resources,Not@FileExistsQ@FileNameJoin@Flatten@{dir,#}&],
+		If[AnyTrue[resources,
+				Not@FileExistsQ@FileNameJoin@
+					Flatten@{dir,
+						ReplacePart[#,
+							-1->If[StringQ@#[[-1]],#[[-1]],#[[-1,1]]]
+							]
+						}&],
 			Block[{u,f},
 				Monitor[
 					Table[
-						f=FileNameJoin@Flatten@{dir,p};
+						f=FileNameJoin@Flatten@{dir,If[StringQ@p,p,First@p]};
 						u=
 							URLBuild@
 								Flatten@{
 									"http://reference.wolfram.com/2013",
-									p
+									ReplacePart[p,
+										-1->If[StringQ@p[[-1]],p[[-1]],p[[-1,1]]]
+										]
 									};
 						If[!FileExistsQ@f,
 							Quiet@
 								Check[
 									URLDownload[u,f],
 									Message["Download failed for `` to ``",
-										 p,
+										 ReplacePart[p,
+											-1->If[StringQ@p[[-1]],p[[-1]],p[[-1,1]]]
+											],
 										 to
 										 ],
 									URLDownload::invhttp
@@ -7245,7 +7309,8 @@ webExportAssetsCopy2[dir:(_String|_File)?DirectoryQ]:=
 								}
 						]
 					]
-				]
+				],
+			{}
 			]
 		]
 
@@ -7477,7 +7542,8 @@ Options[webExportAssetsDeploy]=
 	DeleteDuplicatesBy[First]@
 		Join[
 			{
-				Permissions->"Public"
+				Permissions->"Public",
+				"LastDeployment"->None
 				},
 			Options[CloudObject]
 			];
@@ -7488,6 +7554,12 @@ webExportAssetsDeploy[
 	]:=
 	With[{
 		files=
+			Replace[OptionValue["LastDeployment"],{
+				d_DateObject:>
+					Select[Quiet[FileDate[#]>d,Greater::nordol]&],
+				_:>
+					Identity
+				}]@
 			Select[
 				FileNames[
 					"css"|"fonts"|"images"|"includes"|"javascript"~~

@@ -2642,7 +2642,8 @@ PelicanDeploy[
 	]:=
 	PelicanDeploy[
 		PelicanSiteBase[file],
-		FileNameForms->FileNameJoin@{"output",PelicanOutputPath[file]},
+		FileNameForms->
+			FileNameJoin@{"output",PelicanOutputPath[file]},
 		ops
 		]
 
@@ -2760,6 +2761,15 @@ PelicanNotebookToMarkdown[a___]:=
 			$PelicanRoot
 		},
 		NotebookToMarkdown[a]
+		]
+
+
+PelicanNotebookSave[e___]:=
+	Block[{
+		$MarkdownSiteRoot=
+			$PelicanRoot
+		},
+		NotebookMarkdownSave[e]
 		]
 
 

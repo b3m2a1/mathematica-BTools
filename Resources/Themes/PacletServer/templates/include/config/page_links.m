@@ -14,5 +14,12 @@
   <|
     "href"->"authors.html",
     "body"->"Authors"
-    |>
+    |>,
+  Replace[Templating`$TemplateArguments["DocumentationURL"],{
+    s_String:>
+      <|
+        "href"->s,
+        "body"->"Documentation"
+        |>
+    }]
   }

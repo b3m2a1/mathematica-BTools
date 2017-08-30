@@ -2112,10 +2112,11 @@ AppGenerateDocumentation[
 	]:=
 	Module[{docs=dir},
 		If[extension&&dir=!=Automatic,
-			CreateDirectory[
-				FileNameJoin@{dir,"Documentation","English"},
-				CreateIntermediateDirectories->True
-				];
+			Quiet@
+				CreateDirectory[
+					FileNameJoin@{dir,"Documentation","English"},
+					CreateIntermediateDirectories->True
+					];
 			docs=FileNameJoin@{dir,"Documentation","English"}
 			];
 		AppSaveSymbolPages[app,docs,extension,ops];
@@ -2145,10 +2146,11 @@ AppPackageGenerateDocumentation[
 	]:=
 	Module[{docs=dir},
 		If[extension&&dir=!=Automatic,
-			CreateDirectory[
-				FileNameJoin@{dir,"Documentation","English"},
-				CreateIntermediateDirectories->True
-				];
+			Quiet@
+				CreateDirectory[
+					FileNameJoin@{dir,"Documentation","English"},
+					CreateIntermediateDirectories->True
+					];
 			docs=FileNameJoin@{dir,"Documentation","English"}
 			];
 		AppPackageSaveSymbolPages[app,pkg,docs,extension,ops];
@@ -2865,13 +2867,66 @@ AppPackageOpen[Optional[Automatic,Automatic]]:=
 
 
 (* ::Subsubsection::Closed:: *)
+(*AppPackagePullDeclarationsAction*)
+
+
+
+AppPackagePullDeclarationsAction//Clear
+AppPackagePullDeclarationsAction[
+	Hold[
+		_Begin|_BeginPackage|
+			CompoundExpression[_Begin|_BeginPackage,___]
+		]
+	]:=
+	Throw[Begin];
+AppPackagePullDeclarationsAction[e:Except[Hold[Expression]]]:=
+	Sow@e;
+
+
+AppPackagePackagePullDeclarations[
+	pkgFile_,
+	casePattern_
+	]:=
+		Cases[
+			Reap[
+				With[{f=OpenRead[pkgFile]},
+					CheckAbort[
+						Catch@
+							Do[
+								If[
+									Length[
+										ReadList[
+											f,
+											AppPackagePullDeclarationsAction@Hold[Expression],
+											1
+											]
+										]===0,
+										Throw[EndOfFile]
+									],
+								Infinity
+								];
+						Close[f],
+						Close[f]
+						]
+					]
+				][[2,1]],
+			casePattern,
+			Infinity
+			]
+
+
+(* ::Subsubsection::Closed:: *)
 (*AppPackageFunctions*)
 
 
 
-AppPackageFunctions[app_:Automatic,pkgFile_String?FileExistsQ]:=
+AppPackageFunctions[app:_String|Automatic:Automatic,pkgFile_String?FileExistsQ]:=
 	With[{
-		f=OpenRead[pkgFile],
+		appName=
+			Replace[app,{
+				Automatic:>AppFromFile[pkgFile],
+				_:>AppFromFile[app]
+				}],
 		cont=
 			Replace[
 				Replace[app,{
@@ -2882,27 +2937,30 @@ AppPackageFunctions[app_:Automatic,pkgFile_String?FileExistsQ]:=
 					StringTrim[s,"`"]<>"`"
 				]
 		},
-		Block[{pkgFuncCheckedCache=<||>},
-			Cases[
-				Reap[
-					Do[Replace[
-						ReadList[f,Hold[Expression],1],{
-							{}->Return[EndOfFile],
-							{Hold[_Begin|_BeginPackage|
-								CompoundExpression[_Begin|_BeginPackage,___]]}:>
-								Return[Begin],
-							{e_}:>Sow[e]
-							}],
-						Infinity];
-					Close@f;
-					][[2,1]],
+		Block[{
+			pkgFuncCheckedCache=<||>,
+			$Context=
+				Replace[cont,None:>{appName,"`"}]<>"Private`",
+			$ContextPath=
+				Join[
+					Replace[ToExpression[appName<>"`Private`Package`$PackageContexts"],
+						Except[{__String}]->{}
+						],
+					{
+						appName<>"`",
+						"System`"
+						}
+					]
+			},
+			AppPackagePackagePullDeclarations[
+				pkgFile,
 				s_Symbol?(
 					Function[sym,
 						Not@KeyMemberQ[pkgFuncCheckedCache,Hold[sym]]&&
 						With[{v=
 								If[cont===None,
 									!StringMatchQ[Quiet[Context[sym]],
-										"System`"|("*`*Private*")|$Context
+										"System`"|("*`*Private*")
 										],
 									With[{pcont=Quiet[Context[sym]]},
 										StringMatchQ[pcont,cont<>"*"]&&
@@ -2914,8 +2972,7 @@ AppPackageFunctions[app_:Automatic,pkgFile_String?FileExistsQ]:=
 							],
 						HoldFirst]
 						):>
-						ToString[Unevaluated[s]],
-				Infinity
+						ToString[Unevaluated[s]]
 				]
 			]
 		];

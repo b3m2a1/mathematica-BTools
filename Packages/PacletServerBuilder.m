@@ -479,8 +479,8 @@ PacletServerAdd[
 			FilterRules[
 				Normal@$PacletServer,
 				Options@PacletUpload
-				],(*
-		"UploadInstallLink"\[Rule]Automatic,*)
+				],
+		"UseCachedPaclets"->False,
 		"UploadSiteFile"->True
 		];
 
@@ -897,7 +897,12 @@ PacletServerDeploy[ops:OptionsPattern[]]:=
 									],
 								"DeployOptions",
 								{}
-								]
+								],
+							"ExtraFileNameForms"->
+								{
+									"PacletSite.mz",
+									"*.paclet"
+									}
 							},
 							First
 							]

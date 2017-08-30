@@ -1450,9 +1450,10 @@ Options[WebSiteDeploy]=
 	Join[
 		{
 			FileNameForms->"*."~~$WebFileFormats,
+			"ExtraFileNameForms"->{},
 			Select->(True&),
 			CloudConnect->False,
-			"LastDeployment"->None,
+			"LastDeployment"->Automatic,
 			Permissions->"Public"
 			},
 		Options[CloudObject]
@@ -1490,12 +1491,15 @@ WebSiteDeploy[
 							ops,
 							"LastDeployment"->Now
 							},
-					FileNameForms
+					{FileNameForms,"ExtraFileNameForms"}
 					]
 				];
 	With[{
 		select=OptionValue[Select],
-		last=Lookup[info,"LastDeployment",OptionValue["LastDeployment"]]
+		last=
+			Replace[OptionValue["LastDeployment"],
+				Automatic:>Lookup[info,"LastDeployment",None]
+				]
 		},
 		KeyChainConnect[OptionValue[CloudConnect]];
 		Block[{file},
@@ -1549,7 +1553,10 @@ WebSiteDeploy[
 						SortBy[FileBaseName[#]==="index"&]@
 						FileNames[
 							Replace[
-								OptionValue[FileNameForms],
+								Alternatives@@List@{
+									OptionValue[FileNameForms],
+									OptionValue["ExtraFileNameForms"]
+									},
 								All->"*"
 								],
 							outDir,

@@ -1872,67 +1872,102 @@ urlBasedPacletRedirect[site_]:=
 	URLParse[site,"Path"][[-1]]->HTTPRedirect[site];
 
 
+builtPacletFileFind//Clear
+
+
+Options[builtPacletFileFind]=
+	{
+		"UseCachedPaclets"->True,
+		"BuildPaclets"->True
+		};
 builtPacletFileFind[
-	f:_PacletManager`Paclet|_String|_URL|_File
+	f:_PacletManager`Paclet|_String|_URL|_File,
+	ops:OptionsPattern[]
 	]:=
-	Which[
-		MatchQ[f,_PacletManager`Paclet],
-			With[{
-				info=
-					Lookup[
-						PacletManager`PacletInformation@f,
-						{"Location","Name","Version"}
-						]},
-				If[FileExistsQ@(info[[1]]<>".paclet"),
-					info[[1]]<>".paclet",
-					Replace[builtPacletFileFind@info[[2;;3]],
-						None:>
-							If[DirectoryQ@info[[1]],
-								PacletBundle[info[[1]]],
-								None
-								]
+	With[{
+		useCached=TrueQ@OptionValue["UseCachedPaclets"],
+		build=TrueQ@OptionValue@"BuildPaclets"
+		},
+		Which[
+			MatchQ[f,_PacletManager`Paclet],
+				(* We're handed a Paclet expression so we confirm that a .paclet file exists for it or build it ourselves *)
+				With[{
+					info=
+						Lookup[
+							PacletManager`PacletInformation@f,
+							{"Location","Name","Version"}
+							]},
+					If[useCached&&FileExistsQ@(info[[1]]<>".paclet"),
+						info[[1]]<>".paclet",
+						Replace[builtPacletFileFind[info[[2;;3]],ops],
+							None:>
+								If[DirectoryQ@info[[1]],
+									If[build,
+										PacletBundle[info[[1]]],
+										True
+										],
+									None
+									]
+							]
 						]
-					]
-				],
-		MatchQ[f,(_String|_URL)?urlBasedPacletQ],
-			First@Flatten[URL[f],1,URL],
-		MatchQ[f,_String?(Length@PacletManager`PacletFind[#]>0&)],
-			builtPacletFileFind@First@PacletManager`PacletFind[f],
-		True,
-			Replace[{
-				File[fil_]:>fil
-				}]@
-				SelectFirst[
-					{
-						If[DirectoryQ@f,
-							If[FileExistsQ@FileNameJoin@{f,"PacletInfo.m"},
-								With[{a=PacletInfoAssociation[FileNameJoin@{f,"PacletInfo.m"}]},
-									Replace[builtPacletFileFind@Lookup[a,{"Name","Version"}],
-										None:>
-											PacletBundle[f]
-										]
+					],
+			MatchQ[f,(_String|_URL)?urlBasedPacletQ],
+				(* We're handed a URL so we just return that *)
+				First@Flatten[URL[f],1,URL],
+			MatchQ[f,_String?(Length@PacletManager`PacletFind[#]>0&)],
+				builtPacletFileFind[
+					First@PacletManager`PacletFind[f],
+					ops
+					],
+			True,
+				Replace[{
+					File[fil_]:>fil
+					}]@
+					SelectFirst[
+						{
+							If[DirectoryQ@f,
+								If[FileExistsQ@FileNameJoin@{f,"PacletInfo.m"},
+									(* if f is a paclet directory *)
+									With[{a=PacletInfoAssociation[FileNameJoin@{f,"PacletInfo.m"}]},
+										(* check again for the paclet file by version*)
+										Replace[builtPacletFileFind[Lookup[a,{"Name","Version"}],ops],
+											None:>
+												(* needs to be built *)
+												If[build,
+													PacletBundle[f],
+													True
+													]
+											]
+										],
+									Nothing
 									],
-								Nothing
+								(* Only thing left if could be is a file *)
+								StringTrim[f,"."<>FileExtension[f]]<>".paclet"
 								],
-							f
-							],
-						FileNameJoin@{
-							$PacletBuildRoot,
-							$PacletBuildExtension,
-							StringTrim[f,".paclet"]<>".paclet"
-							}
-					},
-					FileExistsQ,
-					None
-					]
+							If[useCached,
+								(* Check for default cached paclet *)
+								FileNameJoin@{
+									$PacletBuildRoot,
+									$PacletBuildExtension,
+									StringTrim[f,"."<>FileExtension[f]]<>".paclet"
+									},
+								Nothing
+								]
+						},
+						FileExistsQ,
+						None
+						]
+			]
 		];
-builtPacletFileFind[{f_String,v_String}]:=
-	builtPacletFileFind[f<>"-"<>v<>".paclet"];
-builtPacletFileFind[Rule[s_,p_]]:=
-	Rule[s,builtPacletFileFind[p]];
-builtPacletFileFind[None]:=None;
-builtPacletFileQ[spec_]:=
-	!MatchQ[builtPacletFileFind[spec],None|(_->None)];
+builtPacletFileFind[{f_String,v_String},ops:OptionsPattern[]]:=
+	builtPacletFileFind[f<>"-"<>v<>".paclet",ops];
+builtPacletFileFind[Rule[s_,p_],ops:OptionsPattern[]]:=
+	Rule[s,builtPacletFileFind[p,ops]];
+builtPacletFileFind[None,___]:=None;
+builtPacletFileQ[spec_,
+	ops:OptionsPattern[]
+	]:=
+	!MatchQ[builtPacletFileFind[spec,"BuildPaclets"->False,ops],None|(_->None)];
 
 
 Options[PacletUpload]=
@@ -1947,6 +1982,7 @@ Options[PacletUpload]=
 				"UploadInstaller"->False,
 				"UploadInstallLink"->False,
 				"UploadUninstaller"->False,
+				"UseCachedPaclets"->True,
 				Permissions->Automatic
 				}
 			];
@@ -1960,9 +1996,10 @@ PacletUpload[
 	]:=
 	Block[{
 		$PacletBuildRoot=OptionValue["BuildRoot"],
+		bPFFOps=FilterRules[{ops},Options[builtPacletFileFind]],
 		files
 		},
-		files=builtPacletFileFind/@Flatten@{pacletSpecs};
+		files=builtPacletFileFind[#,bPFFOps]&/@Flatten@{pacletSpecs};
 		If[!AllTrue[files,builtPacletFileQ],
 			Message[PacletUpload::nopac,
 				Pick[Flatten@{pacletSpecs},MatchQ[None|(_->None)]/@files]
@@ -1980,256 +2017,260 @@ pacletUpload[
 	pacletSpecs:$PacletUploadPatterns,
 	ops:OptionsPattern[]
 	]:=
-	Catch@
-		DeleteCases[Nothing]@
-		With[{
-			base=
-				pacletStandardServerBase@OptionValue["ServerBase"],
-			site=
-				PacletSiteURL[
-					FilterRules[{
-						ops,
-						"ServerName"->
-							Replace[Flatten@{pacletSpecs},{
-								{p_PacletManager`Paclet->_,___}:>
-									Lookup[List@@p,"Name"],
-								{s_String->_,___}:>
-									First@StringSplit[URLParse[s,"Path"][[-1]],"-"],
-								{f_String?FileExistsQ,___}:>
-									First@StringSplit[FileBaseName@f,"-"],
-								{p_String,___}:>
-									First@StringSplit[URLParse[p,"Path"][[-1]],"-"],
-								{p_PacletManager`Paclet,___}:>
-									Lookup[List@@p,"Name"]
-								}]
-						},
-						Options@PacletSiteURL
-						]
-					],
-			pacletFiles=builtPacletFileFind/@Flatten@{pacletSpecs}
-			},
-			If[MatchQ[site,Except[_String]],
-				Message[PacletUpload::nosite,site];
-				Throw@$Failed
-				];
-			With[{pacletMZ=
-				If[OptionValue["UploadSiteFile"]//TrueQ,
-					Replace[OptionValue["SiteFile"],
-						Automatic:>
-							PacletSiteBundle[
-								Replace[pacletFiles,
-									(k_->_):>k
-									],
-								FilterRules[{ops,
-									"MergePacletInfo"->
-										If[OptionValue["OverwriteSiteFile"]//TrueQ,None,site]
-									},
-									Options@PacletSiteBundle
+	With[{
+		bPFFOps=FilterRules[{ops},Options[builtPacletFileFind]]
+		},
+		Catch@
+			DeleteCases[Nothing]@
+			With[{
+				base=
+					pacletStandardServerBase@OptionValue["ServerBase"],
+				site=
+					PacletSiteURL[
+						FilterRules[{
+							ops,
+							"ServerName"->
+								Replace[Flatten@{pacletSpecs},{
+									{p_PacletManager`Paclet->_,___}:>
+										Lookup[List@@p,"Name"],
+									{s_String->_,___}:>
+										First@StringSplit[URLParse[s,"Path"][[-1]],"-"],
+									{f_String?FileExistsQ,___}:>
+										First@StringSplit[FileBaseName@f,"-"],
+									{p_String,___}:>
+										First@StringSplit[URLParse[p,"Path"][[-1]],"-"],
+									{p_PacletManager`Paclet,___}:>
+										Lookup[List@@p,"Name"]
+									}]
+							},
+							Options@PacletSiteURL
+							]
+						],
+				pacletFiles=builtPacletFileFind[#,bPFFOps]&/@Flatten@{pacletSpecs}
+				},
+				If[MatchQ[site,Except[_String]],
+					Message[PacletUpload::nosite,site];
+					Throw@$Failed
+					];
+				With[{pacletMZ=
+					If[OptionValue["UploadSiteFile"]//TrueQ,
+						Replace[OptionValue["SiteFile"],
+							Automatic:>
+								PacletSiteBundle[
+									Replace[pacletFiles,
+										(k_->_):>k
+										],
+									FilterRules[{ops,
+										"MergePacletInfo"->
+											If[OptionValue["OverwriteSiteFile"]//TrueQ,None,site]
+										},
+										Options@PacletSiteBundle
+										]
 									]
-								]
-						]
-					]},
-				Switch[base,
-					(* ------------------- Wolfram Cloud Paclets ------------------- *)
-					"Cloud"|CloudObject|CloudDirectory|Automatic,
-						With[{url=site},
-							Replace[OptionValue@"UploadInstallLink",{
-								True:>
-									Append[#,
-										"PacletInstallLinks"->
-											PacletInstallerLink[
-												#["PacletFiles"],
-												URLBuild@{site,"InstallerNotebook.nb"},
-												Permissions->
-													pacletStandardServerPermissions@OptionValue[Permissions]
-												]
-										],
-								s_String:>
-									Append[#,
-										"PacletInstallLinks"->
-											PacletInstallerLink[
-												#["PacletFiles"],
-												URLBuild@{site,s},
-												Permissions->
-													pacletStandardServerPermissions@OptionValue[Permissions]
-												]
-										],
-								Automatic:>
-									Append[#,
-										"PacletInstallLinks"->
-											Map[
-												Function[
-													PacletInstallerLink[
-														#,
-														URLBuild@{
-															site,
-															StringReplace[
-																URLParse[#,"Path"][[-1]],
-																".paclet"~~EndOfString->".nb"
-																]},
-														Permissions->
-															pacletStandardServerPermissions@OptionValue[Permissions]
-														]
-													],
-												#["PacletFiles"]
-												]
-										],
-								_:>#
-								}]&@
-							<|
-								"PacletSiteFile"->
-									If[OptionValue["UploadSiteFile"]//TrueQ,
-										Replace[
-											PacletSiteUpload[CloudObject@site,pacletMZ,
-												FilterRules[{ops},Options@PacletSiteUpload]
-												],
-											_PacletSiteUpload->$Failed
-											],
-										Nothing
-										],
-								"PacletFiles"->
-									Map[
-										With[{
-											co=
-												CloudObject[
-													URLBuild@{
-														url,
-														"Paclets",
-														Replace[#,{
-															Rule[n_PacletManager`Paclet,_]:>
-																StringJoin@
-																	Riffle[
-																		Lookup[List@@n,{"Name","Version"}],
-																		{"-",".paclet"}
-																		],
-															Rule[n_String,_]:>
-																n,
-															URL[u_]:>
-																URLParse[u,"Path"][[-1]],
-															_:>
-																If[FileExistsQ@#,
-																	FileNameTake@#,
-																	URLParse[#,"Path"][[-1]]
-																	]
-															}]
-														},
-													Permissions->pacletStandardServerPermissions@OptionValue[Permissions]
-													],
-											fil=
-												Replace[#,
-													Rule[_,f_]:>f
+							]
+						]},
+					Switch[base,
+						(* ------------------- Wolfram Cloud Paclets ------------------- *)
+						"Cloud"|CloudObject|CloudDirectory|Automatic,
+							With[{url=site},
+								Replace[OptionValue@"UploadInstallLink",{
+									True:>
+										Append[#,
+											"PacletInstallLinks"->
+												PacletInstallerLink[
+													#["PacletFiles"],
+													URLBuild@{site,"InstallerNotebook.nb"},
+													Permissions->
+														pacletStandardServerPermissions@OptionValue[Permissions]
 													]
-											},
-											Most@
-												If[
-													Switch[#,
-														_File|_String,
-															FileExistsQ@#,
-														_URL,
-															False,
-														_Rule,
-															FileExistsQ@Last@#
+											],
+									s_String:>
+										Append[#,
+											"PacletInstallLinks"->
+												PacletInstallerLink[
+													#["PacletFiles"],
+													URLBuild@{site,s},
+													Permissions->
+														pacletStandardServerPermissions@OptionValue[Permissions]
+													]
+											],
+									Automatic:>
+										Append[#,
+											"PacletInstallLinks"->
+												Map[
+													Function[
+														PacletInstallerLink[
+															#,
+															URLBuild@{
+																site,
+																StringReplace[
+																	URLParse[#,"Path"][[-1]],
+																	".paclet"~~EndOfString->".nb"
+																	]},
+															Permissions->
+																pacletStandardServerPermissions@OptionValue[Permissions]
+															]
 														],
-													CopyFile[
-														If[MatchQ[#,_Rule],Last@#,#],
-														co],
-													CloudDeploy[
-														HTTPRedirect@
-															If[MatchQ[#,_Rule],
-																Last@#,
-																#],
-														co]
+													#["PacletFiles"]
 													]
-											]&,
-										pacletFiles
-										],
-								"PacletInstaller"->
-									If[OptionValue["UploadInstaller"]//TrueQ,
-										PacletUploadInstaller[ops,
-											Permissions->
-												pacletStandardServerPermissions@OptionValue[Permissions],
-											"PacletSiteFile"->
-												pacletMZ
 											],
-										Nothing
-										],
-								"PacletUninstaller"->
-									If[OptionValue["UploadUninstaller"]//TrueQ,
-										PacletUploadUninstaller[ops,
-											Permissions->
-												pacletStandardServerPermissions@OptionValue[Permissions],
-											"PacletSiteFile"->
-												pacletMZ
+									_:>#
+									}]&@
+								<|
+									"PacletSiteFile"->
+										If[OptionValue["UploadSiteFile"]//TrueQ,
+											Replace[
+												PacletSiteUpload[CloudObject@site,pacletMZ,
+													FilterRules[{ops},Options@PacletSiteUpload]
+													],
+												_PacletSiteUpload->$Failed
+												],
+											Nothing
 											],
-										Nothing
+									"PacletFiles"->
+										Map[
+											With[{
+												co=
+													CloudObject[
+														URLBuild@{
+															url,
+															"Paclets",
+															Replace[#,{
+																Rule[n_PacletManager`Paclet,_]:>
+																	StringJoin@
+																		Riffle[
+																			Lookup[List@@n,{"Name","Version"}],
+																			{"-",".paclet"}
+																			],
+																Rule[n_String,_]:>
+																	n,
+																URL[u_]:>
+																	URLParse[u,"Path"][[-1]],
+																_:>
+																	If[FileExistsQ@#,
+																		FileNameTake@#,
+																		URLParse[#,"Path"][[-1]]
+																		]
+																}]
+															},
+														Permissions->pacletStandardServerPermissions@OptionValue[Permissions]
+														],
+												fil=
+													Replace[#,
+														Rule[_,f_]:>f
+														]
+												},
+												Most@
+													If[
+														Switch[#,
+															_File|_String,
+																FileExistsQ@#,
+															_URL,
+																False,
+															_Rule,
+																FileExistsQ@Last@#
+															],
+														CopyFile[
+															If[MatchQ[#,_Rule],Last@#,#],
+															co],
+														CloudDeploy[
+															HTTPRedirect@
+																If[MatchQ[#,_Rule],
+																	Last@#,
+																	#],
+															co]
+														]
+												]&,
+											pacletFiles
+											],
+									"PacletInstaller"->
+										If[OptionValue["UploadInstaller"]//TrueQ,
+											PacletUploadInstaller[ops,
+												Permissions->
+													pacletStandardServerPermissions@OptionValue[Permissions],
+												"PacletSiteFile"->
+													pacletMZ
+												],
+											Nothing
+											],
+									"PacletUninstaller"->
+										If[OptionValue["UploadUninstaller"]//TrueQ,
+											PacletUploadUninstaller[ops,
+												Permissions->
+													pacletStandardServerPermissions@OptionValue[Permissions],
+												"PacletSiteFile"->
+													pacletMZ
+												],
+											Nothing
+											]
+									|>	
+								],
+						(* ------------------- Local Paclets ------------------- *)
+						_String?(StringMatchQ[FileNameJoin@{$RootDirectory,"*"}]),
+							With[{dir=URLDecode@StringTrim[site,"file://"]},
+								If[Not@DirectoryQ@dir,
+									CreateDirectory[dir,
+										CreateIntermediateDirectories->True
 										]
-								|>	
-							],
-					(* ------------------- Local Paclets ------------------- *)
-					_String?(StringMatchQ[FileNameJoin@{$RootDirectory,"*"}]),
-						With[{dir=URLDecode@StringTrim[site,"file://"]},
-							If[Not@DirectoryQ@dir,
-								CreateDirectory[dir,
-									CreateIntermediateDirectories->True
-									]
-								];
-							<|
-								"PacletSite"->
-									If[MatchQ[pacletMZ,(_String|_File)?FileExistsQ],
-										CopyFile[pacletMZ,
-											FileNameJoin@{dir,"PacletSite.mz"},
-											OverwriteTarget->True
-											],
-										Nothing
-										],
-								"PacletFiles"->
-									Map[
-										(
-											Quiet@
-												CreateFile[
-													FileNameJoin@{dir,"Paclets",FileNameTake@#}
-													];
-											CopyFile[#,
-												FileNameJoin@{dir,"Paclets",FileNameTake@#},
+									];
+								<|
+									"PacletSite"->
+										If[MatchQ[pacletMZ,(_String|_File)?FileExistsQ],
+											CopyFile[pacletMZ,
+												FileNameJoin@{dir,"PacletSite.mz"},
 												OverwriteTarget->True
-												]
-											)&,
-										pacletFiles
-										],
-								"PacletInstaller"->
-									If[OptionValue["UploadInstaller"]//TrueQ,
-										PacletUploadInstaller@
-											FilterRules[{ops},
-												Options@PacletUploadInstaller
 												],
-										Nothing
-										],
-								"PacletUninstaller"->
-									If[OptionValue["UploadUninstaller"]//TrueQ,
-										PacletUploadUninstaller@
-											FilterRules[{ops},
-												Options@PacletUploadUninstaller
-												],
-										Nothing
-										]
-								|>	
-							],
-					_?SyncPathQ,
-						With[{p=SyncPath@base},
-							Quiet@CreateDirectory[p,
-								CreateIntermediateDirectories->True];
-							PacletUpload[
-								pacletFiles,
-								"ServerBase"->p,
-								ops
-								]
-							],
-					_,
-						Message[PacletUpload::nobby,base];
-						$Failed
-						]
+											Nothing
+											],
+									"PacletFiles"->
+										Map[
+											(
+												Quiet@
+													CreateFile[
+														FileNameJoin@{dir,"Paclets",FileNameTake@#}
+														];
+												CopyFile[#,
+													FileNameJoin@{dir,"Paclets",FileNameTake@#},
+													OverwriteTarget->True
+													]
+												)&,
+											pacletFiles
+											],
+									"PacletInstaller"->
+										If[OptionValue["UploadInstaller"]//TrueQ,
+											PacletUploadInstaller@
+												FilterRules[{ops},
+													Options@PacletUploadInstaller
+													],
+											Nothing
+											],
+									"PacletUninstaller"->
+										If[OptionValue["UploadUninstaller"]//TrueQ,
+											PacletUploadUninstaller@
+												FilterRules[{ops},
+													Options@PacletUploadUninstaller
+													],
+											Nothing
+											]
+									|>	
+								],
+						_?SyncPathQ,
+							With[{p=SyncPath@base},
+								Quiet@CreateDirectory[p,
+									CreateIntermediateDirectories->True];
+								PacletUpload[
+									pacletFiles,
+									"ServerBase"->p,
+									ops
+									]
+								],
+						_,
+							Message[PacletUpload::nobby,base];
+							$Failed
+							]
+					]
 				]
-			];
+		];
 
 
 (* ::Subsection:: *)
@@ -2833,7 +2874,10 @@ Format[BTools`Private`p_PacletManager`Paclet/;
 			]
 		];
 FormatValues[Paclet]=
-	SortBy[FormatValues[Paclet],FreeQ[HoldPattern[BTools`Private`$FormatPaclets]]];
+	SortBy[
+		FormatValues[Paclet],
+		FreeQ[HoldPattern[BTools`Private`$FormatPaclets]]
+		];
 
 
 End[];
