@@ -156,6 +156,12 @@ $DocDefaultURLBase::usage=
 	"The default URL base for web docs";
 
 
+DocumentationSiteBuild::usage=
+	"Builds the documentation site";
+DocumentationSiteDeploy::usage=
+	"Deploys the documentation site";
+
+
 PackageScopeBlock[
 	DocAddUsage::usage=
 		"Adds a usage to the usages for a symbol";
@@ -239,7 +245,7 @@ contextNames[s_String]:=
 $docGen="DocGen`Private`";
 docGenBlock[cmd_]:=(
 	Begin[$docGen];
-	CheckAbort[(End[];#)&@cmd,
+	CheckAbort[(If[$Context==$docGen,End[]];#)&@cmd,
 		If[$Context==$docGen,End[]]
 		]
 	);
@@ -7112,7 +7118,7 @@ $webExportAssets:=
 					},
 				"",
 				{
-					"*.js","*.json","*.css","*.png","*.gif","*.jpg",
+					(*"*.js",*)"*.json","*.css","*.png","*.gif","*.jpg",
 					"*.svg","*.eot","*.otf","*.ttf","*.woff","*.html"
 					}
 				},
@@ -7973,6 +7979,77 @@ GenerateHTMLDocumentation[
 			e
 			]
 		];
+
+
+(* ::Subsection:: *)
+(*DocumentationSite*)
+
+
+
+$DocSiteDirectory:=
+	$DocSiteDirectory=
+		FileNameJoin@{
+			$WebSiteDirectory,
+			"DocumentationSite"
+			};
+
+
+$DocSiteInitialized:=
+	With[{d=$DocSiteDirectory},
+		AllTrue[{d,FileNameJoin@{d,"content"},FileNameJoin@{d,"SiteConfig.wl"}},
+			FileExistsQ
+			]
+		]
+
+
+DocumentationSiteInitialize[]:=
+	If[!$DocSiteInitialized,
+		With[{d=$DocSiteDirectory},
+			If[!DirectoryQ@d,	
+				CreateDirectory[d,CreateIntermediateDirectories->True]
+				];
+			With[{tempDir=PackageFilePath["Resources","Templates","DocumentationSite"]},
+				Map[
+					With[{
+						tf=FileNameJoin@{d,FileNameDrop[#,FileNameDepth[tempDir]]}
+						},
+						If[!FileExistsQ@tf,
+							If[DirectoryQ@#,
+								CopyDirectory[#,tf],
+								CopyFile[#,tf]
+								]
+							]
+						]&,
+					FileNames["*",tempDir]
+					];
+				]
+			]
+		]
+
+
+Options[DocumentationSiteBuild]=
+	Join[
+		{
+			"BuildOverview"->False
+			},
+		Options[WebSiteBuild]
+		];
+DocumentationSiteBuild[ops:OptionsPattern[]]:=
+	(
+		DocumentationSiteInitialize[];
+		WebSiteBuild[$DocSiteDirectory,
+			Sequence@@FilterRules[{ops},Options[WebSiteBuild]]
+			]
+		);
+Options[DocumentationSiteDeploy]=
+	Options[WebSiteDeploy];
+DocumentationSiteDeploy[ops:OptionsPattern[]]:=
+	WebSiteDeploy[
+		$DocSiteDirectory,
+		"/",
+		Sequence@@
+			FilterRules[{ops},Options[WebSiteDeploy]]
+		]
 
 
 End[];

@@ -3,23 +3,11 @@
     "href"->"pages/about.html",
     "body"->"About"
     |>,
-  <|
-    "href"->"categories.html",
-    "body"->"Categories"
-    |>,
-  <|
-    "href"->"tags.html",
-    "body"->"Tags"
-    |>,
-  <|
-    "href"->"authors.html",
-    "body"->"Authors"
-    |>,
-  Replace[$$templateLib["getTemplateArguments"][#]["DocumentationURL"],{
+  Replace[$$templateLib["getTemplateArguments"][#]["PacletsURL"],{
     s_String:>
       <|
         "href"->s,
-        "body"->"Documentation"
+        "body"->"Paclets"
         |>,
     _->Nothing
     }],

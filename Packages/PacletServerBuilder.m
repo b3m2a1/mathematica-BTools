@@ -587,21 +587,7 @@ PacletMarkdownNotebook[
 		{
 			Cell[
 				BoxData@ToBoxes@
-					Join[
-						<|
-							"Title"->Lookup[a,"Name","Unnamed Paclet"],
-							"Categories"->"misc",
-							"Slug"->Automatic,
-							"Authors"->
-								StringTrim@
-									Map[
-										StringSplit[#,"@"][[1]]&,
-										StringSplit[Lookup[a,"Creator",""],","]
-										],
-							"Tags"->StringSplit[Lookup[a,"Keywords",""],","]
-							|>,
-						a
-						],
+					a,
 				"Metadata"
 				],
 			Cell@CellGroupData@
@@ -813,7 +799,21 @@ PacletServerBuild[ops:OptionsPattern[]]:=
 			With[{nbout=PacletServerFile[{"content","posts",#Name<>".nb"}]},
 				PacletMarkdownNotebook[
 					nbout,
-					#
+					Join[
+						<|
+							"Title"->Lookup[#,"Name","Unnamed Paclet"],
+							"Categories"->"misc",
+							"Slug"->Automatic,
+							"Authors"->
+								StringTrim@
+									Map[
+										StringSplit[#,"@"][[1]]&,
+										StringSplit[Lookup[#,"Creator",""],","]
+										],
+							"Tags"->StringSplit[Lookup[#,"Keywords",""],","]
+							|>,
+						#
+						]
 					];
 				Function[NotebookMarkdownSave[#];NotebookClose[#]]@
 					NotebookOpen[nbout,Visible->False];

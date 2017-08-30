@@ -1,0 +1,10 @@
+(Merge[
+  Flatten@{
+    Templating`$TemplateArguments,
+    Replace[Templating`$TemplateArgumentStack,{
+        {___,a_}:>a,
+        _-><||>
+      }]
+    },
+  First
+  ])&

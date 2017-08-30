@@ -660,6 +660,14 @@ WebSiteTemplateApply[
 									$ContentStack[[All,"Attributes"]],
 								MemberQ[#["Templates"],"article.html"]&
 								],
+						(* The archives *)
+						"Archives":>
+							Reverse@
+								GatherBy[
+									Values@
+										$ContentStack[[All,"Attributes"]],
+									#["Date"]&
+									],
 						info,
 						(* Include extracted attributes *)
 						Lookup[
@@ -1384,16 +1392,29 @@ WebSiteBuild[
 				WebSiteCopyContent[dir,outDir,p]
 			}];
 		Block[{
-			$ContentStack=<||>
+			$ContentStack=<||>,
+			genCont:=
+				Replace[OptionValue["GenerateContent"],
+					Automatic:>
+						Lookup[config,"GenerateContent",Automatic]
+					],
+			genAggs:=
+				Replace[OptionValue["GenerateAggregations"],
+					Automatic:>
+						Lookup[config,"GenerateAggregations",genCont]
+					],
+			genInd:=
+				Replace[OptionValue["GenerateIndex"],
+					Automatic:>
+						Lookup[config,"GenerateIndex",genCont]
+					],
+			newconf=
+				KeyDrop[config,{"GenerateContent","GenerateAggregations","GenerateIndex"}]
 			},
-			If[AnyTrue[{
-					OptionValue["GenerateContent"],
-					OptionValue["GenerateAggregations"],
-					OptionValue["GenerateIndex"]
-					},TrueQ],
-				WebSiteExtractPageData[ExpandFileName@dir,fileNames,config]
+			If[AnyTrue[{genCont,genAggs,genInd},TrueQ],
+				WebSiteExtractPageData[ExpandFileName@dir,fileNames,newconf]
 				];
-			If[OptionValue["GenerateContent"],
+			If[genCont,
 				WebSiteGenerateContent[
 					dir,fileNames,outDir,
 					Lookup[config,"Theme",OptionValue["DefaultTheme"]],
@@ -1402,26 +1423,22 @@ WebSiteBuild[
 							"SiteDirectory"->dir,
 							"OutputDirectory"->outDir
 							|>,
-						config
+						newconf
 						]
 					]
 				];
-			If[Replace[OptionValue["GenerateAggregations"],
-					Automatic:>OptionValue["GenerateContent"]
-					],
+			If[genAggs,
 				WebSiteGenerateAggregationPages[
 					dir,outDir,
 					Lookup[config,"Theme",OptionValue["DefaultTheme"]],
-					config
+					newconf
 					];
 				];
-			If[Replace[OptionValue["GenerateIndex"],
-					Automatic:>OptionValue["GenerateContent"]
-					],
+			If[genInd,
 				WebSiteGenerateIndexPage[
 					dir,outDir,
 					Lookup[config,"Theme",OptionValue["DefaultTheme"]],
-					config
+					newconf
 					];
 				];
 			];
@@ -1429,9 +1446,16 @@ WebSiteBuild[
 			OptionValue["AutoDeploy"]===Automatic&&
 				OptionQ@OptionValue["DeployOptions"],
 			WebSiteDeploy[outDir,
-				Lookup[config,"SiteURL",config],
+				Lookup[config,"SiteURL",
+					Replace[FileBaseName[dir],
+						"output":>
+							FileBaseName@DirectoryName[dir]
+						]
+					],
 				Replace[
-					OptionValue["DeployOptions"],
+					Replace[OptionValue["DeployOptions"],
+						Automatic:>Lookup[config,"DeployOptions",{}]
+						],
 					Except[_?OptionQ]->{}
 					]
 				],

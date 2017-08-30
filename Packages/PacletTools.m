@@ -361,7 +361,9 @@ PacletExtensionData[pacletInfo_Association,dest_,ops:OptionsPattern[]]:=
 										\[Infinity]
 										]&,{
 									"TextResources",
-									"SystemResources"
+									"SystemResources",
+									"StyleSheets",
+									"Palettes"
 									}]
 								]>0,
 							"FrontEnd"->
@@ -387,7 +389,7 @@ PacletExtensionData[pacletInfo_Association,dest_,ops:OptionsPattern[]]:=
 				}],
 			Replace[OptionValue["Resource"],{
 				Automatic:>
-					If[Length@
+					Which[Length@
 							Select[
 								FileNames["*",
 									FileNameJoin@{dest,"Data"},
@@ -412,6 +414,31 @@ PacletExtensionData[pacletInfo_Association,dest_,ops:OptionsPattern[]]:=
 												]
 											]
 									|>,
+						Length@
+							Select[
+								FileNames["*",
+									FileNameJoin@{dest,"Resources"},
+									\[Infinity]],
+								Not@DirectoryQ@#&&
+									Not@StringMatchQ[FileNameTake@#,".DS_Store"]&
+								]>0,
+							"Resource"->
+								<|
+									"Root" -> "Resources",
+									"Resources" -> 
+										Map[
+											FileNameDrop[#,
+												FileNameDepth[dest]+1
+												]&,
+											Select[
+												FileNames["*",
+													FileNameJoin@{dest,"Resources"}
+													],
+												Not@StringMatchQ[FileNameTake@#,".DS_Store"]&
+												]
+											]
+									|>,
+						True,
 							Nothing
 							],
 				r:_Rule|{___Rule}:>
