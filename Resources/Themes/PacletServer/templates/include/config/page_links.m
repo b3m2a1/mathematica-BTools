@@ -15,6 +15,14 @@
     "href"->"authors.html",
     "body"->"Authors"
     |>,
+  Replace[$$templateLib["getTemplateArguments"][#]["MainSiteURL"],{
+    s_String:>
+      <|
+        "href"->s,
+        "body"->"Main"
+        |>,
+    _->Nothing
+    }],
   Replace[$$templateLib["getTemplateArguments"][#]["DocumentationURL"],{
     s_String:>
       <|

@@ -3,6 +3,14 @@
     "href"->"pages/about.html",
     "body"->"About"
     |>,
+  Replace[$$templateLib["getTemplateArguments"][#]["MainSiteURL"],{
+    s_String:>
+      <|
+        "href"->s,
+        "body"->"Main"
+        |>,
+    _->Nothing
+    }],
   Replace[$$templateLib["getTemplateArguments"][#]["PacletsURL"],{
     s_String:>
       <|

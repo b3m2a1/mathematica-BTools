@@ -1113,7 +1113,7 @@ Options[AppReconfigureSubapp]=
 	Join[
 		Options[AppConfigureSubapp],
 		{
-			"PreserveFiles"->{".git",".gitignore","README.md"},
+			"PreserveFiles"->{".git",".gitignore","README.md","README.nb"},
 			"PreservePacletInfo"->True
 			}
 		];
@@ -1721,22 +1721,33 @@ AppPackageGuideNotebook[app_,pkg_,ops:OptionsPattern[]]:=
 					],
 		e_:>
 			With[{fs=AppPackageFunctions[app,pkg]},
-				With[{types=GroupBy[Keys@#,#]&@SymbolDetermineType[fs]},
+				With[{types=
+					GroupBy[Keys@#,#]&@SymbolDetermineType[fs]
+					},
 					GuideTemplate[pkg,
-						Sequence@@FilterRules[{ops},
-							Options@GuideTemplate],
+						Sequence@@FilterRules[{ops},Options@GuideTemplate],
 						"Title"->pkg<>" Package Overview",
 						"Link"->pkg<>"Package",
 						"Abstract"->
 							guideAutoAbstract[
-								"in the `pkg` package",
+								TemplateApply[
+									"in the `pkg` package",
+									<|
+										"pkg"->pkg
+										|>
+									],
 								fs,
 								types
 								],
 						"Functions"->
-							guideAutoSubsections[types],
+							fs,
 						"Subsections"->
-							Normal@GroupBy[Sort[fs],StringTake[#,1]&],
+							DeleteCases[Delimiter]@
+							Replace[
+								guideAutoSubsections[types],
+								(f_->l_):>(f->Flatten@l),
+								1
+								],
 						"RelatedGuides"->
 							{
 								(app<>" Application Overview")->app
