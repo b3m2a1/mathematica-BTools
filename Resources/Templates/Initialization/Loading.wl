@@ -43,7 +43,7 @@ PackageFileContext[f_String?FileExistsQ]:=
 	PackageFileContext[DirectoryName[f]];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*PackageExecute*)
 
 
@@ -221,7 +221,7 @@ PackageAppLoad[]:=
 PackageAppLoad~SetAttributes~Listable;
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*PackageAppGet*)
 
 

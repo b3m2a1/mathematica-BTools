@@ -2,10 +2,11 @@
 {
 
 	"RemovePaths" -> {
-		"Private"
-		}, 
+		"Private",
+		".git"
+		},
 	"RemovePatterns" -> {
-		"Packages/*.nb", 
+		"Packages/*.nb",
 		".DS_Store"
 		}
  	}

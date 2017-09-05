@@ -571,12 +571,15 @@ AppRegenerateInit[name]~`Package`PackageAddUsage~
 	"regenerates the main package .m file for the application name";
 AppRegenerateInit[name_String]:=
 	With[{
-		p=name<>"`"<>name<>"`",
+		packageGet=name<>"`"<>name<>"`",
+		loaderGet=name<>"`"<>name<>"Loader`",
+		loader=AppDirectory[name,name<>"Loader.m"],
 		pkg=AppDirectory[name,name<>".wl"],
 		init=AppDirectory[name,"Kernel","init.m"]
 		},
-		Export[pkg,appInitTemplate[name],"Text"];
-		Put[Unevaluated[Get[p];],init]
+		Export[loader,appInitTemplate[name],"Text"];
+		Put[Unevaluated[Get[packageGet];],init];
+		Put[Unevaluated[Get[loaderGet];],pkg]
 		];
 
 
@@ -1413,7 +1416,8 @@ AppRegenerateBundleInfo[app_String,ops:OptionsPattern[]]:=
 			Flatten@{
 				ops,
 				"RemovePaths"->{
-					"Private"
+					"Private",
+					".git"
 					},
 				"RemovePatterns"->{
 					"Packages/*.nb",

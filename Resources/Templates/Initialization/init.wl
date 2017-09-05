@@ -85,6 +85,7 @@ PackagePostProcessPrepSpecs[]:=
 			$PackagePreloadedPackages,
 			$PackageHiddenPackages,
 			$PackageHiddenContexts,
+			$PackageExposedContexts,
 			$PackageDecontextedPackages
 			];
 		If[FileExistsQ@PackageFilePath["Config","LoadInfo.m"],
@@ -108,6 +109,11 @@ PackagePostProcessPrepSpecs[]:=
 						$PackageDecontextedPackages=
 							Replace[
 								Lookup[specs,"PackageScope"],
+								Except[{__String}]->{}
+								],
+						$PackageExposedContexts=
+							Replace[
+								Lookup[specs,"ExposedContexts"],
 								Except[{__String}]->{}
 								]
 						]
@@ -215,11 +221,16 @@ PackagePostProcessContextPathReassign[]:=
 (
 	$ContextPath=
 		Join[
-			DeleteCases[
+			Replace[
+				Flatten@{$PackageExposedContexts},
+				Except[_String?(StringEndsQ["`"])]->Nothing,
+				1
+				]
+			(*DeleteCases[
 				Alternatives@@
 					Join[
 						Replace[
-							Flatten@{$HiddenContexts},
+							Flatten@{$PackageHiddenContexts},
 							Except[_String?(StringEndsQ["`"])]->Nothing,
 							1
 							],
@@ -229,7 +240,7 @@ PackagePostProcessContextPathReassign[]:=
 					Select[
 						$PackageContexts,
 						Not@*StringContainsQ["Private"]
-						],
+						]*),
 			$ContextPath
 			];
 	FrontEnd`Private`GetUpdatedSymbolContexts[];
