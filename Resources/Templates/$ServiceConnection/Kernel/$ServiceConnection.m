@@ -28,7 +28,7 @@ Begin["$ServiceConnectionAPI`"]
 Begin["`Private`"]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Template Info*)
 
 
@@ -147,7 +147,7 @@ $$serviceconnectionstate:=
 		$ServiceConnectionState;
 
 
-$$serviceconnectionauthorizationendpointurl[url_]:=
+$$serviceconnectionauthorizationendpointurl[url_String]:=
 	URLBuild@
 	ReplacePart[#,
 		"Query":>
@@ -179,6 +179,7 @@ $$serviceconnectionauthorizationendpointurl[url_]:=
 				},
 				Replace[{f_}:>f]@*Flatten
 				];
+$$serviceconnectionauthorizationendpointurl[e_]:=e
 
 
 (* ::Text:: *)

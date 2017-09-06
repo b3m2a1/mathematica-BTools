@@ -130,10 +130,8 @@ PackageScopeBlock[
 	"Downloads pieces of a paclet from a server";*)
 
 
-(*
 PacletServerInterface::usage=
-	"Generates an interface listing what's on a paclet server and providing install buttons"
-	*)
+	"Generates an interface listing what's on a paclet server with install buttons"
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1181,9 +1179,172 @@ PacletBundle[dir:(_String|_File)?DirectoryQ,ops:OptionsPattern[]]:=
 
 
 
+pacletServerInterfacePage[
+	var_,
+	site_,
+	coreAssoc_,
+	pacletFindData_
+	]:=
+	With[{
+		name=coreAssoc["Name"],
+		version=coreAssoc["Version"],
+		creator=Lookup[coreAssoc, "Creator", ""],
+		description=Lookup[coreAssoc,"Description",""],
+		extensions=
+			Replace[
+				Lookup[coreAssoc,"Extensions",Nothing],
+				ds_Association:>Dataset[ds]
+				]
+		},
+		Column[{
+			Row@{name,Style["v"<>version,Gray]},
+			Row@{Style["Creator: ",Gray],creator},
+			TextCell[description,
+				CellSize->{500,Automatic},
+				ParagraphIndent->None
+				],
+			Style["Extensions: ",Gray],
+			extensions,
+			If[Length[pacletFindData]===0,
+				Button["Install",
+					PacletInstall[name,"Site"->site],
+					ImageSize->Automatic
+					],
+				Button["Update",
+					PacletUpdate[name,
+						"Site"->site,
+						"UpdateSites"->False
+						],
+					Enabled->
+						AllTrue[
+							ToExpression/@
+								StringSplit[Lookup[pacletFindData,"Version"],"."],
+							!OrderedQ[
+								ToExpression@StringSplit[coreAssoc["Version"],"."],
+								#
+								]&
+							],
+					ImageSize->Automatic
+					]
+				],
+			Button[Hyperlink@"\[ReturnIndicator]",
+				var=Automatic,
+				Appearance->None,
+				BaseStyle->"Hyperlink"
+				]
+			},
+			BaseStyle->"Text",
+			Frame->True,
+			FrameStyle->GrayLevel[.8]
+			]
+		];
+pacletServerInterfacePage~SetAttributes~HoldFirst
+
+
+pacletServerInterfaceEntry[
+	var_,
+	site_,
+	coreAssoc_,
+	pacletFindData_
+	]:=
+	With[{
+		name=coreAssoc["Name"],
+		version=coreAssoc["Version"],
+		creator=Lookup[coreAssoc, "Creator", ""],
+		description=Lookup[coreAssoc,"Description",""],
+		page=
+			pacletServerInterfacePage[var,site,coreAssoc,pacletFindData]
+		},
+		{
+			(* Name *)
+			Button[
+				Hyperlink@name,
+				var=page,
+				Appearance->None,
+				BaseStyle->"Hyperlink"
+				],
+			(* Version *)
+			Row@{"v",version},
+			(* Creator *)
+			creator,
+			(* Update / Install *)
+			If[Length[pacletFindData]===0,
+				Button["Install",
+					PacletInstall[name,"Site"->site]
+					],
+				Button["Update",
+					PacletUpdate[name,
+						"Site"->site,
+						"UpdateSites"->False
+						],
+					Enabled->
+						AllTrue[
+							ToExpression/@
+								StringSplit[Lookup[pacletFindData,"Version"],"."],
+							!OrderedQ[
+								ToExpression@StringSplit[coreAssoc["Version"],"."],
+								#
+								]&
+							]
+					]
+				]
+			}
+		];
+pacletServerInterfaceEntry~SetAttributes~HoldFirst;
+
+
 PacletServerInterface[site_]:=	
-	With[{ds=PacletSiteInfoDataset[site]},
-		blah
+	With[{
+		ds=
+			DeleteDuplicatesBy[#["Name"]&]@
+			SortBy[
+				{
+					Lookup[#,"Name"],
+					100000+-ToExpression@StringSplit[Lookup[#,"Version"],"."]
+					}&
+				]@
+				Normal@PacletSiteInfoDataset[site]
+		},
+		DynamicModule[{
+			main,
+			display=Automatic
+			},
+			main=
+				Grid[
+					Map[
+						pacletServerInterfaceEntry[
+							display,
+							site,
+							#,
+							PacletInfoAssociation/@
+								PacletManager`PacletFind[#["Name"]]
+							]&,
+						ds
+						],
+					Background->
+						{
+							Automatic,
+							Flatten@ConstantArray[{White,GrayLevel[.95]},Length[ds]]
+							},
+					Frame->True,
+					FrameStyle->GrayLevel[.8],
+					Dividers->{
+						Flatten@
+							{
+								Table[n+1->GrayLevel[.9],{n,3}]
+								},
+						Flatten@{
+							Table[1+n->GrayLevel[.8],{n,Length[ds]-1}]
+							}
+						},
+					BaseStyle->"Text",
+					Alignment->Left
+					];
+			Dynamic[
+				Replace[display,Automatic:>main],
+				None
+				]
+			]
 		];
 
 
@@ -2960,43 +3121,62 @@ PacletInstallPaclet[
 
 
 SetPacletFormatting[]:=
-(
-	Format[BTools`Private`p_PacletManager`Paclet/;
-		(BTools`Private`$FormatPaclets&&AssociationQ@
-			BTools`Private`Hidden`PacletInfoAssociation[BTools`Private`p])]:=
-		With[{BTools`Private`a=BTools`Private`Hidden`PacletInfoAssociation[BTools`Private`p]},
-			RawBoxes@
-			BoxForm`ArrangeSummaryBox[
-				"Paclet",
-				BTools`Private`p,
-				Pane[
-					Style[Last@StringSplit[BTools`Private`a["Name"],"_"],"Input"],
-					{Automatic,28},
-					Alignment->Center
-					],
-				KeyValueMap[
-					BoxForm`MakeSummaryItem[
-						{Row[{#, ": "}],#2},
-						StandardForm
-						]&,
-					BTools`Private`a[[{"Name","Version"}]]
-					],
-				KeyValueMap[
-					BoxForm`MakeSummaryItem[
-						{Row[{#, ": "}],#2},
-						StandardForm
-						]&,
-					KeyDrop[BTools`Private`a,{"Name","Version"}]
-					],
-				StandardForm
+	(
+		Format[BTools`Private`p_PacletManager`Paclet/;
+			(BTools`Private`$FormatPaclets&&AssociationQ@
+				BTools`Private`Hidden`PacletInfoAssociation[BTools`Private`p])]:=
+			With[{BTools`Private`a=BTools`Private`Hidden`PacletInfoAssociation[BTools`Private`p]},
+				RawBoxes@
+				BoxForm`ArrangeSummaryBox[
+					"Paclet",
+					BTools`Private`p,
+					Pane[
+						Style[Last@StringSplit[BTools`Private`a["Name"],"_"],"Input"],
+						{Automatic,28},
+						Alignment->Center
+						],
+					KeyValueMap[
+						BoxForm`MakeSummaryItem[
+							{Row[{#, ": "}],#2},
+							StandardForm
+							]&,
+						BTools`Private`a[[{"Name","Version"}]]
+						],
+					Join[
+						{
+							If[KeyMemberQ[BTools`Private`a,"Location"],
+								BoxForm`MakeSummaryItem[
+									{Row[{"Location", ": "}],
+										With[{l=BTools`Private`a["Location"]},
+											Button[
+												Hyperlink[l],
+												SystemOpen[l],
+												Appearance->None,
+												BaseStyle->"Hyperlink"
+												]
+											]},
+									StandardForm
+									],
+								Nothing
+								]
+							},
+						KeyValueMap[
+							BoxForm`MakeSummaryItem[
+								{Row[{#, ": "}],#2},
+								StandardForm
+								]&,
+							KeyDrop[BTools`Private`a,{"Name","Version","Location"}]
+							]
+						],
+					StandardForm
+					]
+				];
+		FormatValues[PacletManager`Paclet]=
+			SortBy[
+				FormatValues[PacletManager`Paclet],
+				FreeQ[HoldPattern[BTools`Private`$FormatPaclets]]
 				]
-			];
-	FormatValues[PacletManager`Paclet]=
-		SortBy[
-			FormatValues[PacletManager`Paclet],
-			FreeQ[HoldPattern[BTools`Private`$FormatPaclets]]
-			]
-	);
+		);
 SetPacletFormatting[]
 
 

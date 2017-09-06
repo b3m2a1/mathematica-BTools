@@ -180,8 +180,8 @@ If[!TrueQ@$docGenInitialized,
 	];
 
 
-If[!StringQ@$WebDocsHTMLBuildDirectory,
-	$WebDocsHTMLBuildDirectory=
+If[!StringQ@$WebDocsDirectory,
+	$WebDocsDirectory=
 		If[$DocGenBuildPermanent//TrueQ,
 			FileNameJoin@{
 				$UserBaseDirectory,
@@ -6198,7 +6198,13 @@ webExportApplicationsInstall[
 	dir:(_String|_File)?DirectoryQ|_FileName?(DirectoryQ@*ToFileName):
 		FileName[{$UserBaseDirectory,"Applications"}]
 	]:=
-	If[Length[Join@@PacletManager`PacletFind/@{"DocumentationBuild","Transmogrify"}]<2,
+	If[Length[
+			Join@@(
+				Select[#["Version"]=!="0"&]@*
+					PacletManager`PacletFind/@
+						{"DocumentationBuild","Transmogrify"}
+				)
+				]<2,
 		If[
 				TrueQ@DialogInput[
 					Grid@{
@@ -6207,30 +6213,42 @@ webExportApplicationsInstall[
 						}
 					],
 			{
-				If[Length@PacletManager`PacletFind["DocumentationBuild"]===0,
-					PacletManager`PacletInstall@
-						URLBuild@<|
-							"Scheme"->"http",
-							"Domain"->"www.wolframcloud.com",
-							"Path"->
-							{"objects","b3m2a1.paclets","paclets",
-								"DocumentationBuild","Paclets","DocumentationBuild-1.0.0.paclet"}
-							|>
+				If[Length@Select[#["Version"]=!="0"&]@
+					PacletManager`PacletFind["DocumentationBuild"]===0,
+					If[Length@PacletManager`PacletFind["DocumentationBuild"]>0,
+						PacletManager`PacletUpdate,
+						PacletManager`PacletInstall
+						][
+						"DocumentationBuild",
+						"Site"->
+							URLBuild@<|
+								"Scheme"->"http",
+								"Domain"->"www.wolframcloud.com",
+								"Path"->{"objects","b3m2a1.paclets","DocumentationBuild"}
+								|>
+							]
 					],
-				If[Length@PacletManager`PacletFind["Transmogrify"]===0,
-					PacletManager`PacletInstall@
-						URLBuild@<|
-							"Scheme"->"http",
-							"Domain"->"www.wolframcloud.com",
-							"Path"->
-							{"objects","b3m2a1.paclets","paclets",
-								"Transmogrify","Paclets","Transmogrify-1.0.0.paclet"}
-							|>
+				If[Length@Select[#["Version"]=!="0"&]@
+					PacletManager`PacletFind["Transmogrify"]===0,
+					If[Length@PacletManager`PacletFind["Transmogrify"]>0,
+						PacletManager`PacletUpdate,
+						PacletManager`PacletInstall
+						][
+						"Transmogrify",
+						"Site"->
+							URLBuild@<|
+								"Scheme"->"http",
+								"Domain"->"www.wolframcloud.com",
+								"Path"->{"objects","b3m2a1.paclets","Transmogrify"}
+								|>
+							]
 					]
 				},
 			$Failed
 			],
-		Join@@PacletManager`PacletFind/@{"DocumentationBuild","Transmogrify"}
+		Join@@
+			(Select[#["Version"]=!="0"&]@*PacletManager`PacletFind)/@
+				{"DocumentationBuild","Transmogrify"}
 		];
 
 
@@ -7026,12 +7044,19 @@ webExportNotebookPrep[nb_]:=
 		]
 
 
-If[!MatchQ[OwnValues[$DocGenFE],{_:>_LinkObject}],
+If[!MatchQ[OwnValues[$DocGenFE],{_:>_LinkObject?LinkReadyQ}],
 	$DocGenFE:=
-		$DocGenFE=
+		With[{fe=
 			Block[{System`UseFrontEndDump`LocalFEQ=(False&)},
 				Developer`InstallFrontEnd[]
 				]
+			},
+			MathLink`FrontEndBlock[
+				FrontEndResource["GetFEKernelInit"],
+				fe
+				];
+			$DocGenFE=fe
+			]
 	]
 
 
@@ -7109,7 +7134,7 @@ webExportNotebook[file_,nb_,ops___?OptionQ]:=
 							webExportDocumentationBuildLoad[];
 							Replace[
 								GeneralUtilities`WithMessageHandler[
-									$DocGenMessageStack={};
+									$DocGenMessageStack[fexpd]={};
 									MathLink`FrontEndBlock[
 										DocumentationBuild`Export`ExportWebPage[
 											fexpd,
@@ -7119,12 +7144,13 @@ webExportNotebook[file_,nb_,ops___?OptionQ]:=
 											],
 										$DocGenFE
 										],
-									($DocGenMessageStack=
-										{$DocGenMessageStack,#})&
+									($DocGenMessageStack[fexpd]=
+										{$DocGenMessageStack[fexpd],#})&
 									],
 								Except[_String?FileExistsQ]:>
 									(
-										$DocGenMessageStack=Flatten[$DocGenMessageStack];
+										$DocGenMessageStack[fexpd]=
+											Flatten[$DocGenMessageStack[fexpd]];
 										$Failed
 										)
 								]
@@ -7523,8 +7549,12 @@ webExportPostProcessSingleReplacements["html",strip_,res_,base_,uri_]:=
 			"<script type=\"text/javascript\" src=\""~~___~~"/sub-pages.js\">":>
 				"<script src=\""<>
 					URLBuild@{trimmedRes,"javascript","sub-pages.js"}<>"\" /></script>",
-			"src=\"\""~~w:Whitespace~~"data-src=\""~~src:Except["\""]..~~"\"":>
-				"src=\""<>src<>"\""<>w<>"data-src=\""<>src<>"\""
+			"src=\"\""~~w:Whitespace~~
+				"data-src=\""~~src:Except["\""]..~~"\"":>
+				"src=\""<>src<>"\""<>w<>"data-src=\""<>src<>"\"",
+			"data-big=\""~~data:Except["\""]..~~"\"":>
+				"data-big=\""<>data<>"\" "<>
+					"width="<>StringSplit[data][[1]]<>"px "
 			}
 		];
 
@@ -8098,9 +8128,9 @@ GenerateHTMLDocumentation[
 	]:=
 	With[{dir=
 		Quiet[
-			(*DeleteDirectory[$WebDocsHTMLBuildDirectory,DeleteContents\[Rule]True];*)
-			CreateDirectory[$WebDocsHTMLBuildDirectory];
-			$WebDocsHTMLBuildDirectory
+			(*DeleteDirectory[$WebDocsDirectory,DeleteContents\[Rule]True];*)
+			CreateDirectory[$WebDocsDirectory];
+			$WebDocsDirectory
 			]},
 		GenerateHTMLDocumentation[
 			dir,
