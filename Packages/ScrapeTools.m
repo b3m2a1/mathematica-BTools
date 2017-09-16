@@ -1069,7 +1069,7 @@ WithOverrideDefs[{blocks___Rule},e_]:=
 		Replace[blockSyms,
 			HoldComplete[s_]:>
 			Internal`InheritedBlock[s,
-				SetSystemOptions["DefinitionsReordering"->False];
+				SetSystemOptions["DefinitionsReordering"->None];
 				Replace[
 					HoldComplete[blocks],
 					(blockSym_->blockFunction_):>

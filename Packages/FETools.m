@@ -822,7 +822,21 @@ $FEPathMap=
 			{"Fonts","Font","PrivatePathsFonts"}->
 				"PrivatePathsFonts",
 			{"TranslationData","PrivatePathsTranslationData"}->
-				"PrivatePathsTranslationData"
+				"PrivatePathsTranslationData",
+			"AddOnHelp"->"AddOnHelpPath",
+			"Autoload"->"AutoloadPath",
+			{"CharacterEncoding","CharacterEncodings"}->
+				"CharacterEncodingsPath",
+			"Configuration"->"ConfigurationPath",
+			{"Converter","Converters"}->"ConvertersPath",
+			"Notebook"->"NotebookPath",
+			"Preferences"->"PreferencesPath",
+			"SpellingDictionaries"->"SpellingDictionariesPath",
+			"SystemHelp"->"SystemHelpPath",
+			{"Trusted","TrustedPath"}->
+				"NotebookSecurityOptionsTrustedPath",
+			{"Untrusted","UntrustedPath"}->
+				"NotebookSecurityOptionsUntrustedPath"
 			}//Flatten//Association;
 
 
@@ -855,7 +869,7 @@ FEFindFileOnPath[
 		StringTrim[
 			StringTrim[
 				DeleteDuplicates@Values@$FEPathMap,
-				"PrivatePaths"|"Path"
+				"PrivatePaths"|"Path"|"NotebookSecurityOptions"
 				],
 			"s"
 			]}

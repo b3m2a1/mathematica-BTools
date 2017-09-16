@@ -943,7 +943,8 @@ KeyChainGet[
 $KeyChainCloudAccounts=
 	"TestingAccount"|"DeploymentsAccount"|
 		"PacletsAccount"|"DatasetsAccount"|
-			"ServiceConnectionsAccount"|"DocumentationAccount";
+		"ServiceConnectionsAccount"|"DocumentationAccount"|
+		"PaidAccount"|"FreeAccount";
 
 
 `Package`PackageAddAutocompletions[

@@ -2487,7 +2487,21 @@ AutoGenerateExamples[sym_,defer:True|False:False]:=
 						},Open]]
 					]&/@callPatternReplace[vals]
 					],
-			AutoGenerateOptionExamples[sym,defer]
+			AutoGenerateOptionExamples[sym,defer],
+			Cell[CellGroupData[{
+				Cell["Definitions","ExampleSection"],
+				Cell["Examine all definitions:","ExampleText"],
+				Cell[
+					BoxData@
+						RowBox@{
+							"GeneralUtilities`PrintDefinitionsLocal",
+							"[",
+							Block[{$ContextPath},ToString[Unevaluated@sym,InputForm]],
+							"]"
+							},
+					"ExamplesInput"
+					]
+				}]]
 			}
 		];
 AutoGenerateExamples[
@@ -2495,96 +2509,6 @@ AutoGenerateExamples[
 	defer:True|False:False]:=
 	AutoGenerateExamples[System`Evaluate@e,defer];
 AutoGenerateExamples~SetAttributes~HoldFirst
-
-
-(*AutoGenerateExamples[sym_,defer:True|False:False]:=
-	With[
-		{
-		vals=
-			Map[First,
-				Join@@
-					Map[dgSymValues[sym,#]&,
-						{UpValues,DownValues,SubValues}
-						]
-				]},
-		Flatten@{
-			With[{c=Context[sym]},
-				If[MemberQ[$ContextPath,c]&&Not@MatchQ[c,"Global`"|"System`"],
-					{
-						Cell["Load "<>StringTrim[c,"`"]<>":","ExampleText"],
-						If[!defer,ToExpression@RowBox@{"Needs","[","\""<>c<>"\"","]"}];
-						Cell[BoxData@RowBox@{"Needs","[","\""<>c<>"\"","]"},
-							"ExamplesInput"
-							]
-						},
-					Nothing
-					]
-				],
-			Flatten@Riffle[
-				Cell[TextData@{"From ",
-					inlineRefBox@Replace[usagePatternReplace@#,
-							Verbatim[HoldPattern][e_]\[RuleDelayed]{
-								toSafeBoxes[Unevaluated[e],StandardForm]
-							}],":"},
-					"ExampleText"
-					]&/@vals,
-				If[defer,
-					Cell[
-						BoxData@
-							Replace[#,{
-								Verbatim[HoldPattern][e_]:>
-									toSafeBoxes[Unevaluated@e,StandardForm]
-								}],
-						"ExamplesInput"
-						],
-					With[{
-						res=
-							Replace[#,{
-								Verbatim[HoldPattern][e_]:>
-									e
-								}]
-						},
-						If[res===Null,
-							Cell[
-								BoxData@
-									Replace[#,{
-										Verbatim[HoldPattern][e_]:>
-											toSafeBoxes[e]
-										}],
-								"ExamplesInput",
-								CellLabel\[Rule]
-									"In[``]:="~TemplateApply~$DocGenLine++
-								],
-							Cell[CellGroupData[{
-								Cell[
-									BoxData@
-										Replace[#,{
-											Verbatim[HoldPattern][e_]:>
-												toSafeBoxes[e]
-											}],
-									"ExamplesInput",
-									CellLabel\[Rule]
-										"In[``]:="~TemplateApply~$DocGenLine
-									],
-								Cell[
-									BoxData@ToBoxes@res,
-									"ExamplesOutput",
-									CellLabel\[Rule]
-										"Out[``]:="~TemplateApply~($DocGenLine++)
-									]
-								},Open]]
-							]
-						]
-					]&/@callPatternReplace[vals]
-					],
-			AutoGenerateOptionExamples[sym,defer]
-			}
-		];
-AutoGenerateExamples[
-	e:Except[_Symbol]?(MatchQ[#,_Symbol]&),
-	defer:True|False:False]:=
-	AutoGenerateExamples[System`Evaluate@e,defer];
-AutoGenerateExamples~SetAttributes~HoldFirst*)
 
 
 AutoGenerateOptionExamples[sym_Symbol,defer:True|False:False]:=

@@ -100,6 +100,7 @@ PyVenvKill[]:=
 
 pyVenvDirQ[dir_String?DirectoryQ]:=
 	FileExistsQ[FileNameJoin@{dir,"bin","activate"}];
+pyVenvDirQ[_]:=False;
 
 
 PyVenvStart[dir_String?pyVenvDirQ,startDir:_String?DirectoryQ|Automatic:Automatic]:=
