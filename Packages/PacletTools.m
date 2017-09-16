@@ -225,14 +225,7 @@ PacletInfo[infoFile:(_String|_File)?FileExistsQ]:=
 				DeleteDirectory[Nest[DirectoryName,pacletInfo,2],DeleteContents->True]
 				];#)&@
 		If[FileExistsQ@pacletInfo,
-			Begin["PacletManager`"];
-			(End[];
-				Map[
-					Replace[#,
-						(s_Symbol->v_):>
-							(SymbolName[s]->v)
-						]&,
-					#])&@Import[pacletInfo],
+			PacletManager`CreatePaclet[pacletInfo],
 			PacletManager`Paclet[]
 			]
 		];
