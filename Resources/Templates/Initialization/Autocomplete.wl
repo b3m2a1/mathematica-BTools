@@ -4,14 +4,28 @@
 (*Autocompletion*)
 
 
-(* ::Subsubsection::Closed:: *)
-(* $PackageAutoCompletionFormats *)
+(* ::Subsubsection:: *)
+(*Formats*)
 
 
 $PackageAutoCompletionFormats=
 	Alternatives@@Join@@{
-		Range[9],
-		{{__String}},
+		Range[0,9],
+		{
+			_String?(FileExtension[#]==="trie"&),
+			{
+				_String|(Alternatives@@Range[0,9])|{__String},
+				(("URI"|"DependsOnArgument")->_)...
+				},
+			{
+				_String|(Alternatives@@Range[0,9])|{__String},
+				(("URI"|"DependsOnArgument")->_)...,
+				(_String|(Alternatives@@Range[0,9])|{__String})
+				},
+			{
+				__String
+				}
+			},
 		{
 			"codingNoteFontCom",
 			"ConvertersPath",
@@ -44,8 +58,8 @@ $PackageAutoCompletionFormats=
 		};
 
 
-(* ::Subsubsection::Closed:: *)
-(* PackageAddAutocompletions Basic*)
+(* ::Subsubsection:: *)
+(*AddAutocompletions Base*)
 
 
 PackageAddAutocompletions[pats:{(_String->{$PackageAutoCompletionFormats..})..}]:=
@@ -62,28 +76,59 @@ PackageAddAutocompletions[pat:(_String->{$PackageAutoCompletionFormats..})]:=
 	PackageAddAutocompletions[{pat}];
 
 
-(* ::Subsubsection::Closed:: *)
-(* $autocompletionTable *)
+(* ::Subsubsection:: *)
+(*AddAutocompletions Helpers*)
+
+
+$PackageAutocompletionAliases=
+	{
+		"None"|None|Normal->0,
+		"AbsoluteFileName"|AbsoluteFileName->2,
+		"FileName"|File|FileName->3,
+		"Color"|RGBColor|Hue|XYZColor->4,
+		"Package"|Package->7,
+		"Directory"|Directory->8,
+		"Interpreter"|Interpreter->9,
+		"Notebook"|Notebook->"MenuListNotebooksMenu",
+		"StyleSheet"->"MenuListStylesheetMenu",
+		"Palette"->"MenuListPalettesMenu",
+		"Evaluator"|Evaluator->"MenuListGlobalEvaluators",
+		"FontFamily"|FontFamily->"MenuListFonts",
+		"CellTag"|CellTags->"MenuListCellTags",
+		"FormatType"|FormatType->"MenuListDisplayAsFormatTypes",
+		"ConvertFormatType"->"MenuListConvertFormatTypes",
+		"DisplayAsFormatType"->"MenuListDisplayAsFormatTypes",
+		"GlobalEvaluator"->"MenuListGlobalEvaluators",
+		"HelpWindow"->"MenuListHelpWindows",
+		"NotebookEvaluator"->"MenuListNotebookEvaluators",
+		"PrintingStyleEnvironment"|PrintingStyleEnvironment->
+			"PrintingStyleEnvironment",
+		"ScreenStyleEnvironment"|ScreenStyleEnvironment->
+			ScreenStyleEnvironment,
+		"QuitEvaluator"->"MenuListQuitEvaluators",
+		"StartEvaluator"->"MenuListStartEvaluators",
+		"StyleDefinitions"|StyleDefinitions->
+			"MenuListStyleDefinitions",
+		"CharacterEncoding"|CharacterEncoding|
+			ExternalDataCharacterEncoding->
+			"ExternalDataCharacterEncoding",
+		"Style"|Style->"Style",
+		"Window"->"MenuListWindows"
+		};
+
+
+(* ::Subsubsection:: *)
+(*AddAutocompletions Convenience*)
 
 
 $PackageAutocompletionTable={
 	f:$PackageAutoCompletionFormats:>f,
-	None|Normal|"Standard"->0,
-	AbsoluteFileName|"AbsoluteFileName"->2,
-	FileName->3,
-	"Color"->4,
-	Package|"Package"->7,
-	Directory|"Directory"->8,
-	Interpreter|"InterpreterType"->9,
+	Sequence@@$PackageAutocompletionAliases,
 	s_String:>{s}
 	};
 
 
-(* ::Subsubsection::Closed:: *)
-(* PackageAddAutocompletions Formatted *)
-
-
-PackageAddAutocompletions[o:{__Rule}]/;(!TrueQ@$PackageRecursionProtect):=
+PackageAddAutocompletions[o:{__Rule}]/;(!TrueQ@$recursionProtect):=
 	Block[{$recursionProtect=True},
 		Replace[
 			PackageAddAutocompletions@
@@ -111,6 +156,19 @@ PackageAddAutocompletions[l_,v_]:=
 					Map[l->#&,v]
 					]
 			};
+
+
+PackageAddAutocompletions[PackageAddAutocompletions,
+	{None,
+		Join[
+			Replace[Keys[$PackageAutocompletionAliases],
+				Verbatim[Alternatives][s_,___]:>s,
+				1
+				],
+			{FileName,AbsoluteFileName}/.$PackageAutocompletionAliases
+			]
+		}
+	]
 
 
 (* ::Subsubsection::Closed:: *)

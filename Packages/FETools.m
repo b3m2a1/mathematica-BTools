@@ -1258,8 +1258,22 @@ FEScreenRecorder[var_:"ScreenRecorder"]:=
 
 $FEAutoCompletionFormats=
 	Alternatives@@Join@@{
-		Range[9],
-		{{__String}},
+		Range[0,9],
+		{
+			_String?(FileExtension[#]==="trie"&),
+			{
+				_String|(Alternatives@@Range[0,9])|{__String},
+				(("URI"|"DependsOnArgument")->_)...
+				},
+			{
+				_String|(Alternatives@@Range[0,9])|{__String},
+				(("URI"|"DependsOnArgument")->_)...,
+				(_String|(Alternatives@@Range[0,9])|{__String})
+				},
+			{
+				__String
+				}
+			},
 		{
 			"codingNoteFontCom",
 			"ConvertersPath",
@@ -1306,17 +1320,46 @@ FEAddAutocompletions[pat:(_String->{$FEAutoCompletionFormats..})]:=
 	FEAddAutocompletions[{pat}];
 
 
+$FEAutocompletionAliases=
+	{
+		"None"|None|Normal->0,
+		"AbsoluteFileName"|AbsoluteFileName->2,
+		"FileName"|File|FileName->3,
+		"Color"|RGBColor|Hue|XYZColor->4,
+		"Package"|Package->7,
+		"Directory"|Directory->8,
+		"Interpreter"|Interpreter->9,
+		"Notebook"|Notebook->"MenuListNotebooksMenu",
+		"StyleSheet"->"MenuListStylesheetMenu",
+		"Palette"->"MenuListPalettesMenu",
+		"Evaluator"|Evaluator->"MenuListGlobalEvaluators",
+		"FontFamily"|FontFamily->"MenuListFonts",
+		"CellTag"|CellTags->"MenuListCellTags",
+		"FormatType"|FormatType->"MenuListDisplayAsFormatTypes",
+		"ConvertFormatType"->"MenuListConvertFormatTypes",
+		"DisplayAsFormatType"->"MenuListDisplayAsFormatTypes",
+		"GlobalEvaluator"->"MenuListGlobalEvaluators",
+		"HelpWindow"->"MenuListHelpWindows",
+		"NotebookEvaluator"->"MenuListNotebookEvaluators",
+		"PrintingStyleEnvironment"|PrintingStyleEnvironment->
+			"PrintingStyleEnvironment",
+		"ScreenStyleEnvironment"|ScreenStyleEnvironment->
+			ScreenStyleEnvironment,
+		"QuitEvaluator"->"MenuListQuitEvaluators",
+		"StartEvaluator"->"MenuListStartEvaluators",
+		"StyleDefinitions"|StyleDefinitions->
+			"MenuListStyleDefinitions",
+		"CharacterEncoding"|CharacterEncoding|
+			ExternalDataCharacterEncoding->
+			"ExternalDataCharacterEncoding",
+		"Style"|Style->"Style",
+		"Window"->"MenuListWindows"
+		};
+
+
 $FEAutocompletionTable={
 	f:$FEAutoCompletionFormats:>f,
-	None|Normal|"Standard"->0,
-	AbsoluteFileName|"AbsoluteFileName"->2,
-	FileName->3,
-	"Color"->4,
-	Package|"Package"->7,
-	Directory|"Directory"->8,
-	Interpreter|"InterpreterType"->9,
-	Notebook|"Notebook"->"MenuListNotebooksMenu",
-	"Font"->"MenuListFonts",
+	Sequence@@$FEAutocompletionAliases,
 	s_String:>{s}
 	};
 
@@ -1349,6 +1392,19 @@ FEAddAutocompletions[l_,v_]:=
 					Map[l->#&,v]
 					]
 			};
+
+
+FEAddAutocompletions[FEAddAutocompletions,
+	{None,
+		Join[
+			Replace[Keys[$FEAutocompletionAliases],
+				Verbatim[Alternatives][s_,___]:>s,
+				1
+				],
+			{FileName,AbsoluteFileName}/.$FEAutocompletionAliases
+			]
+		}
+	]
 
 
 FEAttachCell//Clear;
