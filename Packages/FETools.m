@@ -814,9 +814,9 @@ $FEPathMap=
 				"PrivatePathsSystemResources",
 				{"AFM","PrivatePathsAFM"}->"PrivatePathsAFM",
 			{"AutoCompletionData","PrivatePathsAutoCompletionData"}->
-				"PrivatePathsAutoCompletionData",
-			{"AutoCompletionDataBase","PrivatePathsAutoCompletionDataBase"}->
-				"PrivatePathsAutoCompletionDataBase",
+				"PrivatePathsAutoCompletionData",(*
+			{"AutoCompletionDataBase","PrivatePathsAutoCompletionDataBase"}\[Rule]
+				"PrivatePathsAutoCompletionDataBase",*)
 			{"Bitmaps","Bitmap","PrivatePathsBitmaps"}->
 				"PrivatePathsBitmaps",
 			{"Fonts","Font","PrivatePathsFonts"}->

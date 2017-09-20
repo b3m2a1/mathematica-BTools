@@ -191,43 +191,56 @@ MarkdownNotebookContentPath[nb_]:=
 		MarkdownNotebookFileName[nb];
 
 
+$NotebookToMarkdownStyles=
+	{
+		"Section","Subsection","Subsubsection",
+		"Code","Output","Text",
+		"Quote","PageBreak",
+		"Item","Subitem",
+		"ItemNumbered","SubitemNumbered",
+		"FencedCode","Message","FormattedOutput",
+		"RawMarkdown","RawHTML","RawPre","Program"
+		};
+
+
 NotebookToMarkdown[nb_NotebookObject]:=
-	With[{
-		dir=MarkdownNotebookDirectory[nb],
-		name=FileBaseName@MarkdownNotebookFileName[nb]
-		},
-		If[!DirectoryQ[dir],
-			$Failed,
-			With[{
-				d2=
-					MarkdownSiteBase[dir],
-				cext=
-					MarkdownContentExtension[MarkdownSiteBase@dir],
-				path=
-					FileNameJoin@ConstantArray["..",1+FileNameDepth[MarkdownContentPath[dir]]]
-				},
-				StringRiffle[
-					DeleteCases[""]@
-						iNotebookToMarkdown[
-							<|
-								"Root"->d2,
-								"Path"->path,
-								"Name"->name,
-								"ContentExtension"->cext
-								|>,
-							#
-							]&/@NotebookRead@
-							Cells[nb,
-								CellStyle->{
-									"Section","Subsection","Subsubsection",
-									"Code","Output","Text",
-									"Quote","PageBreak",
-									"Item","Subitem",
-									"ItemNumbered","SubitemNumbered",
-									"FencedCode"
-									}
-								],
-					"\n\n"
+	With[{meta=meta=MarkdownNotebookMetadata[nb]},
+		With[{
+			dir=MarkdownNotebookDirectory[nb],
+			name=
+				Replace[
+					Lookup[meta,"Slug","Title"],
+					Automatic:>
+						FileBaseName@MarkdownNotebookFileName[nb]
+					]
+			},
+			If[!DirectoryQ[dir],
+				$Failed,
+				With[{
+					d2=
+						MarkdownSiteBase[dir],
+					cext=
+						MarkdownContentExtension[MarkdownSiteBase@dir],
+					path=
+						FileNameJoin@ConstantArray["..",1+FileNameDepth[MarkdownContentPath[dir]]]
+					},
+					StringRiffle[
+						DeleteCases[""]@
+							iNotebookToMarkdown[
+								<|
+									"Root"->d2,
+									"Path"->path,
+									"Name"->name,
+									"ContentExtension"->cext,
+									"Meta"->meta
+									|>,
+								#
+								]&/@NotebookRead@
+								Cells[nb,
+									CellStyle->$NotebookToMarkdownStyles
+									],
+						"\n\n"
+						]
 					]
 				]
 			]
@@ -387,6 +400,38 @@ iNotebookToMarkdown[pathInfo_,Cell[t_,"Subsububsubsubsection",___]]:=
 		];
 
 
+notebookToMarkdownPlainTextExport[t_,ops:OptionsPattern[]]:=
+	FrontEndExecute[
+		FrontEnd`ExportPacket[
+			Cell[t],
+			"PlainText"
+			]
+		][[1]]
+
+
+iNotebookToMarkdown[pathInfo_,Cell[t_,"RawMarkdown",___]]:=
+	notebookToMarkdownPlainTextExport[t];
+iNotebookToMarkdown[pathInfo_,Cell[t_,"RawHTML",___]]:=
+	With[{md=notebookToMarkdownPlainTextExport[t]},
+		With[{block=StringSplit[md,"\n",2]},
+			"<"<>block[[1]]<>">\n"<>
+				block[[2]]<>
+				"\n</"<>StringSplit[block[[1]]][[1]]<>">"
+			]
+		];
+iNotebookToMarkdown[pathInfo_,Cell[t_,"RawPre",___]]:=
+	With[{md=notebookToMarkdownPlainTextExport[t]},
+		ExportString[XMLElement["pre",{},{md}],"XML"]
+		];
+iNotebookToMarkdown[pathInfo_,Cell[t_,"Program",___]]:=
+	With[{md=notebookToMarkdownPlainTextExport[t]},
+		ExportString[
+			XMLElement["pre",{"class"->"program"},{XMLElement["code",{},{"\n"<>md<>"\n"}]}],
+			"XML"
+			]
+		];
+
+
 iNotebookToMarkdown[pathInfo_,Cell[t_,"PageBreak",___]]:=
 	"---"
 
@@ -441,6 +486,22 @@ iNotebookToMarkdown[pathInfo_,Cell[e_,___]]:=
 	iNotebookToMarkdown[pathInfo,e]
 
 
+iNotebookToMarkdown[pathInfo_,
+	TemplateBox[{msgHead_,msgName_,text_,___},"MessageTemplate",___]
+	]:=
+	"
+<div class='mma-message'>
+	<span class='mma-message-name'>`head`::`name`:</span>
+	<span class='mma-message-text'>`body`</span>
+</div>"~
+	TemplateApply~
+	<|
+		"head"->msgHead,
+		"name"->msgName,
+		"body"->ToString@ToExpression@text
+		|>;
+
+
 $iNotebookToMarkdownToStripStartBlockFlag=
 	"\n\"<!--<<<[[<<!\"\n";
 $iNotebookToMarkdownToStripEndBlockFlag=
@@ -467,7 +528,9 @@ notebookToMarkdownStripBlock[s_]:=
 
 
 markdownCodeCellGraphicsFormat[pathInfo_,e_,
-	style_,postFormat_]:=
+	style_,postFormat_,
+	ops:OptionsPattern[]
+	]:=
 	Replace[
 		StringReplace[
 			StringReplace[
@@ -494,6 +557,7 @@ markdownCodeCellGraphicsFormat[pathInfo_,e_,
 							s_String?(StringMatchQ["\t"..]):>
 								StringReplace[s,"\t"->" "]
 							},
+						ops,
 						PageWidth->700
 						],
 						First@Flatten@{style}
@@ -531,9 +595,14 @@ markdownCodeCellGraphicsFormat[pathInfo_,e_,
 
 iNotebookToMarkdown[pathInfo_,Cell[e_,"FencedCode",___]]:=
 	markdownCodeCellGraphicsFormat[pathInfo,e,
-		"InputText",
+		"PlainText",
 		Replace[StringSplit[#,"\n",2],
 			{
+				{
+					s_?(StringContainsQ["="]),
+					b_
+					}:>
+					"<?prettify "<>s<>" ?>\n"<>"```\n"<>b<>"\n"<>"```",
 				{
 					s_?(StringMatchQ[Except[WhitespaceCharacter]..]@*StringTrim),
 					b_
@@ -560,6 +629,17 @@ iNotebookToMarkdown[pathInfo_,Cell[e_,"Output",___]]:=
 		StringReplace["(*Out:*)\n\n"<>#,{
 			StartOfLine->"\t"
 			}]&
+		];
+iNotebookToMarkdown[pathInfo_,Cell[e_,"FormattedOutput",___]]:=
+	markdownCodeCellGraphicsFormat[pathInfo,e,
+		{"PlainText","Output"},
+		ExportString[
+			XMLElement["pre",{"class"->"program"},{
+				XMLElement["code",{},{"-----------Out-----------\n"<>#}]
+				}],
+			"XML"
+			]&,
+		ShowStringCharacters->False
 		]
 
 

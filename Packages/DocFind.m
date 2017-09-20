@@ -203,19 +203,19 @@ SymbolDetermineType[s_Symbol,all:True|False:False]:=
 			]
 		];
 SymbolDetermineType[s_Symbol,$SymbolTypeNames[OwnValues]]:=
-	System`Private`HasOwnCodeQ@s||
+	(10.4<=$VersionNumber&&System`Private`HasOwnCodeQ@s)||
 		Length@docFindValues[s,OwnValues]>0;
 SymbolDetermineType[s_Symbol,$SymbolTypeNames[DownValues]]:=
-	System`Private`HasDownCodeQ@s||
+	(10.4<=$VersionNumber&&System`Private`HasDownCodeQ@s)||
 		Length@docFindValues[s,DownValues]>0;
 SymbolDetermineType[s_Symbol,$SymbolTypeNames[SubValues]]:=
-	System`Private`HasSubCodeQ@s||
+	(10.4<=$VersionNumber<=11.1&&System`Private`HasSubCodeQ@s)||
 		Length@docFindValues[s,SubValues]>0;
 SymbolDetermineType[s_Symbol,$SymbolTypeNames[UpValues]]:=
-	System`Private`HasUpCodeQ@s||
+	(10.4<=$VersionNumber&&System`Private`HasUpCodeQ@s)||
 		Length@docFindValues[s,UpValues]>0;
 SymbolDetermineType[s_Symbol,$SymbolTypeNames[FormatValues]]:=
-	System`Private`HasPrintCodeQ@s||
+	(10.4<=$VersionNumber&&System`Private`HasPrintCodeQ@s)||
 		Length@docFindValues[s,FormatValues]>0;
 SymbolDetermineType[s_Symbol,"Inert"]:=
 	SymbolDetermineType[s]==="Inert";

@@ -932,9 +932,12 @@ AutoGenerateExamples[sym_,defer:True|False:False]:=
 				If[MemberQ[$ContextPath,c]&&Not@MatchQ[c,"Global`"|"System`"],
 					{
 						Cell["Load "<>StringTrim[c,"`"]<>":","ExampleText"],
-						If[!defer,ToExpression@RowBox@{"Needs","[","\""<>c<>"\"","]"}];
+						If[!defer,
+							ToExpression@RowBox@{"Needs","[","\""<>c<>"\"","]"}
+							];
 						Cell[BoxData@RowBox@{"Needs","[","\""<>c<>"\"","]"},
-							"ExamplesInput"
+							"ExamplesInput",
+							InitializationCell->True
 							]
 						},
 					Nothing
