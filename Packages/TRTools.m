@@ -1581,10 +1581,25 @@ feMenuPath[path__]:=
 
 FEMenuSetupGet[{path___String,key:{_String,___}|_String|_Integer}]:=
 	With[{p=Sequence@@feMenuPath[path]},
-		If[IntegerQ@key,
-			Normal[$FEMenuSetup[p]][[key]],
-			Lookup[$FEMenuSetup[p],Key@key]
-			]
+		Replace[$FEMenuSetup[p],
+			a_Association:>
+				Which[
+					IntegerQ@key,
+						Normal[a][[key]],
+					StringQ@key,
+						Lookup[a,key,
+							 If[Length[#]>0,
+							 	First@#,
+							 	Missing["KeyAbsent",key]
+							 	]&@
+							 	KeySelect[a,
+							 		MatchQ[{key,___}]
+						 			]
+					 		],
+					True,
+						Lookup[$FEMenuSetup[p], Key[key]]
+					 ]
+					]
 		];
 FEMenuSetupGet[path_String]:=
 	FEMenuSetupGet@{path};

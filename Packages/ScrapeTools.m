@@ -48,7 +48,7 @@ SystemFunctionSearch::usage=
 SpelunkDefinitions::usage="Works with GeneralUtilities to spelunk definitions";
 SpelunkObject::usage=
 	"Object returned after spelunking definitions";
-SpelunkCases::usage=
+SpelunkCallsCases::usage=
 	"Finds spelunked symbols matching a pattern";
 SpelunkGraph::usage=
 	"Returns the graph of a SpelunkObject";
@@ -62,6 +62,8 @@ SpelunkValues::usage=
 	"Plumbs the entire *Values structure of a symbol";
 SpelunkValuesContains::usage=
 	"Selects symbols whose *Values contain a pattern";
+SpelunkValuesCases::usage=
+	"Cases on the *Values";
 
 
 WithOverrideDefs::usage=
@@ -443,10 +445,15 @@ spelunkHasOVs[s_Symbol]:=
 	}~SetAttributes~HoldFirst;
 
 
-$spelunkSymPattern=
+$spelunkSymPatternNonSys=
 	(((s_Symbol?spelunkNonSystemQ)?spelunkHasOVs)|
 		(((s_Symbol?spelunkNonSystemQ)?spelunkHasCVs)[___])|
 		(_[___,(s_Symbol?spelunkNonSystemQ)?spelunkHasUVs,___])
+		):>HoldPattern[s];
+$spelunkSymPatternAll=
+	(((s_Symbol)?spelunkHasOVs)|
+		(((s_Symbol)?spelunkHasCVs)[___])|
+		(_[___,(s_Symbol)?spelunkHasUVs,___])
 		):>HoldPattern[s];
 
 
@@ -480,7 +487,9 @@ $spelunkPatternConversions=
 spelunkPatternConvert[selectPattern_]:=
 	Replace[selectPattern,{
 		Automatic->
-			$spelunkSymPattern,
+			$spelunkSymPatternNonSys,
+		All->
+			$spelunkSymPatternAll,
 		(vs:(OwnValues|DownValues|UpValues|SubValues)->pat_):>
 			With[{p=Replace[pat,$spelunkPatternConversions]},
 				(s_Symbol?(
@@ -548,17 +557,20 @@ SpelunkDefinitions[s:{__String},selectPattern_:Automatic]:=
 	SpelunkDefinitions[#,selectPattern]&/@s;
 
 
-SpelunkCases[splob:SpelunkObject[a_?AssociationQ],selectPattern_,
-	key:"CallsOn"|"CalledBy"|{("CalledBy"|"CallsOn")..}:"CallsOn"]:=
+SpelunkCallsCases[splob:SpelunkObject[a_?AssociationQ],
+	selectPattern_,
+	key:"CallsOn"|"CalledBy"|{("CalledBy"|"CallsOn")..}:"CallsOn",
+	ops:OptionsPattern[]
+	]:=
 	With[{
 		syms=DeleteDuplicates[Keys/@Lookup[a,Flatten@{key}]],
 		pat=spelunkPatternConvert[selectPattern]
 		},
 		Cases[syms,pat]
 		];
-SpelunkCases[sym_,selectPattern_,
+SpelunkCallsCases[sym_,selectPattern_,
 	key:"CallsOn"|"CalledBy"|{("CalledBy"|"CallsOn")..}:"CallsOn"]:=
-	SpelunkCases[#,selectPattern,key]&/@
+	SpelunkCallsCases[#,selectPattern,key]&/@
 		Flatten@{SpelunkDefinitions[sym]};
 
 
@@ -959,7 +971,15 @@ spelunkValuesQuiet~SetAttributes~HoldFirst;
 
 
 $SpelunkValuesCallLimit=100;
-SpelunkValues[{},_]:=<||>;
+
+
+SpelunkValues[{},__]:=<||>;
+
+
+Options[SpelunkValues]=
+	{
+		"ExcludeSystem"->True
+		}
 SpelunkValues[s:{__Symbol},
 	vals:
 		{
@@ -967,11 +987,14 @@ SpelunkValues[s:{__Symbol},
 			}:
 		{
 			DownValues
-			}]:=
+			},
+	ops:OptionsPattern[]
+	]:=
 	Block[{
 		DVCache=<||>,
 		DVCacheOld=<||>,
-		n=1
+		n=1,
+		excludeSys=TrueQ@OptionValue["ExcludeSystem"]
 		},
 		Map[
 			Function[
@@ -984,10 +1007,13 @@ SpelunkValues[s:{__Symbol},
 				Values@DVCache,
 				sym_Symbol?(
 					Function[Null,
-						Quiet[
-							Context[#]=!="System`",
-							Context::notfound
-							]&&
+						(
+							!excludeSys||
+							Quiet[
+								Context[#]=!="System`",
+								Context::notfound
+								]
+							)&&
 						Not@KeyMemberQ[DVCache,Hold[#]],
 						HoldAllComplete
 						]
@@ -998,7 +1024,10 @@ SpelunkValues[s:{__Symbol},
 			];
 			DVCacheOld=DVCache;
 			];
-		DVCache
+		Select[
+			DVCache,
+			Total@Map[Length,#]>0&
+			]
 		];
 SpelunkValues[s_Symbol,
 	vals:
@@ -1007,8 +1036,10 @@ SpelunkValues[s_Symbol,
 			}:
 		{
 			DownValues
-			}]:=
-	SpelunkValues[{s},vals];
+			},
+	ops:OptionsPattern[]
+	]:=
+	SpelunkValues[{s},vals,ops];
 SpelunkValues[s_String,
 	vals:
 		{
@@ -1016,7 +1047,9 @@ SpelunkValues[s_String,
 			}:
 		{
 			DownValues
-			}]:=
+			},
+	ops:OptionsPattern[]
+	]:=
 	SpelunkValues[
 		ToExpression[Names[s],
 			StandardForm,
@@ -1028,8 +1061,10 @@ SpelunkValues[s_String,
 				HoldFirst
 				]
 			],
-		vals
+		vals,
+		ops
 		];
+Options[SpelunkValuesContains]=Options@SpelunkValues;
 SpelunkValuesContains[
 	s:_Symbol|_String|{__Symbol},
 	vals:
@@ -1039,7 +1074,8 @@ SpelunkValuesContains[
 		{
 			DownValues
 			},
-	pat_
+	pat_,
+	ops:OptionsPattern[]
 	]:=
 	DeleteCases[
 		DeleteCases[
@@ -1052,6 +1088,32 @@ SpelunkValuesContains[
 			{}
 			]&/@SpelunkValues[s,vals],
 		<||>];
+Options[SpelunkValuesCases]=
+	Join[
+		Options@Cases,
+		Options@SpelunkValues
+		];
+SpelunkValuesCases[
+	s:_Symbol|_String|{__Symbol},
+	vals:
+		{
+			(DownValues|UpValues|SubValues)..
+			}:
+		{
+			DownValues
+			},
+	pat_,
+	levelSpec:
+		_Integer?Positive|Infinity|
+		{_Integer?Positive,_Integer?Positive|Infinity}:Infinity,
+	ops:OptionsPattern[]
+	]:=
+	Map[
+		Cases[#,pat,levelSpec,
+			FilterRules[{ops},Options@Cases]
+			]&
+		]/@SpelunkValues[s,vals,FilterRules[{ops},Options@SpelunkValues]]//
+		Select[Total@Map[Length,#]>0&];
 
 
 WithOverrideDefs[{blocks___Rule},e_]:=

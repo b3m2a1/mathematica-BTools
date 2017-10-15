@@ -813,10 +813,14 @@ $FEPathMap=
 				"PrivatePathsSystemResources"}->
 				"PrivatePathsSystemResources",
 				{"AFM","PrivatePathsAFM"}->"PrivatePathsAFM",
-			{"AutoCompletionData","PrivatePathsAutoCompletionData"}->
-				"PrivatePathsAutoCompletionData",(*
-			{"AutoCompletionDataBase","PrivatePathsAutoCompletionDataBase"}\[Rule]
-				"PrivatePathsAutoCompletionDataBase",*)
+			{
+				"AutoCompletionData",
+				"PrivatePathsAutoCompletionData"
+				}->
+				{
+					"SystemResourcesAutoCompletionData",
+					"PrivatePathsAutoCompletionData"
+					},
 			{"Bitmaps","Bitmap","PrivatePathsBitmaps"}->
 				"PrivatePathsBitmaps",
 			{"Fonts","Font","PrivatePathsFonts"}->
@@ -840,32 +844,59 @@ $FEPathMap=
 			}//Flatten//Association;
 
 
+FEFindFileOnPath//Clear
+
+
 FEFindFileOnPath[
 	file_,
-	path:_String?(KeyMemberQ[$FEPathMap,#]&):"TextResource"
+	path:{__String?(KeyMemberQ[$FEPathMap,#]&)}
 	]:=
 	Catch@
-	FrontEndExecute@
-		FrontEnd`FindFileOnPath[
-			Switch[file,
-				_FileName|_FrontEnd`FileName,
-					ToFileName[file],
-				_List,
-					FileNameJoin@file,
-				_File,
-					First[file],
-				_String,
-					file,
-				_,
-					Throw@$Failed
-				],
-			$FEPathMap[path]
+		SelectFirst[
+			Flatten@Lookup[$FEPathMap,path],
+			Replace[
+				FrontEndExecute@
+				FrontEnd`FindFileOnPath[
+					Switch[file,
+						_FileName|_FrontEnd`FileName,
+							ToFileName[file],
+						_List,
+							FileNameJoin@file,
+						_File,
+							First[file],
+						_String,
+							file,
+						_,
+							Throw@$Failed
+						],
+					#
+					],
+				s:Except[$Failed]:>((*Print[#];*)Throw[s])
+				]&,
+			$Failed
 			];
+FEFindFileOnPath[file_,path:_String:"TextResource"]:=
+	FEFindFileOnPath[file,{path}];
+
+
+(*$FEPathMapSpecial=
+	<|
+		"ImportFormat"->
+			Function[{
+				FileNameJoin@{"SystemFiles",#,"Import.m"}
+		|>;*)
+
+
+(*FEFindFileOnPath[
+	file_,
+	"Format"
+	]*)
 
 
 `Package`PackageAddAutocompletions[
 	"FEFindFileOnPath",
-	{"0",
+	{
+		None,
 		StringTrim[
 			StringTrim[
 				DeleteDuplicates@Values@$FEPathMap,

@@ -45,35 +45,81 @@ IndentationRestore::usage=
 Begin["`Private`"];
 
 
+$IndentationCharDefault="\t";
+GetIndentationChar[]:=
+	Set[$IndentationChar, 
+		Replace[CurrentValue[InputNotebook[], {TaggingRules, "TabCharacter"}],
+			Except[_String]->$IndentationCharDefault
+			]
+		];
+
+
 (* ::Subsection:: *)
 (*Make Indentable*)
 
 
 
+With[{pkg=$PackageName<>"`"},
+Options[MakeIndentable]=
+	{
+		"TabCharacter"->Automatic
+		};
 MakeIndentable[
 	nb:_NotebookObject|Automatic:Automatic,
-	cell:_String|All|{(All|_String)..}|_CellObject|{__CellObject}:All
+	cell:_String|All|{(All|_String)..}|_CellObject|{__CellObject}:All,
+	ops:OptionsPattern[]
 	]:=
-	With[{s=
+	Replace[
 		Replace[cell,
 			Except[_CellObject|{__CellObject}]:>
 				SSCells[SSEditNotebook@nb,cell,"MakeCell"->True]
-			]},
-		SSEdit[s,{
-			AutoIndent->True,
-			LineIndent->1,
-			TabSpacings->1.5
-			}];
-		SSEditEvents[s,{
-			{"KeyDown","\t"}:>
-				Quiet@Check[
-					Needs["BTools`"];
-					IndentationEvent[],
-					SetAttributes[EvaluationCell[],CellEventActions->None]
-					],
-			PassEventsDown->False
-			}]
-		];
+			],{
+		s:{__CellObject}:>
+			CompoundExpression[
+				SSEdit[s,{
+					AutoIndent->True,
+					LineIndent->1,
+					TabSpacings->1.5
+					}];
+				Replace[OptionValue["TabCharacter"],
+					t_String:>
+						SSEditTaggingRules[s,
+							{
+								"TabCharacter"->t
+								}
+							]
+					];
+				SSEditEvents[s,{
+					{"MenuCommand","SelectionCloseAllGroups"}:>
+						Quiet@Check[
+							Needs[pkg];
+							IndentationEvent["Indent"],
+							SetAttributes[EvaluationCell[],CellEventActions->None]
+							],
+					{"MenuCommand","SelectionOpenAllGroups"}:>
+						Quiet@Check[
+							Needs[pkg];
+							IndentationEvent["Dedent"],
+							SetAttributes[EvaluationCell[],CellEventActions->None]
+							],
+					{"MenuCommand","InsertMatchingBrackets"}:>
+					Quiet@Check[
+							Needs[pkg];
+							IndentationEvent["Toggle"],
+							SetAttributes[EvaluationCell[],CellEventActions->None]
+							],
+					PassEventsDown->False
+					}]
+				],
+			_->$Failed
+			}
+		]
+	];
+
+
+(* ::Subsection:: *)
+(*Indentation Replacement*)
+
 
 
 $indentingNewLine="\[IndentingNewLine]";
@@ -135,7 +181,7 @@ indentingNewLineReplace[r:RowBox[data_]]:=
 					$intentationPreviousLevels=$indentationUnbalancedBrackets,
 					"\n"<>
 						If[Total@$indentationLevel>0,
-							StringRepeat["\t",Total@$indentationLevel],
+							StringRepeat[$IndentationChar,Total@$indentationLevel],
 							""
 							]
 					]
@@ -179,7 +225,7 @@ IndentingNewLineRestore[r:RowBox[data_]]:=
 					"\n"|$rawNewLine,
 						repTabs=True;
 						$indentingNewLine,
-					_String?(repTabs&&StringMatchQ[#,"\t"~~(""|Whitespace)]&),
+					_String?(repTabs&&StringMatchQ[#,$IndentationChar~~(""|Whitespace)]&),
 						Nothing,
 					_RowBox,
 						repTabs=False;
@@ -223,24 +269,24 @@ indentationAddTabsRecursiveCall[RowBox[d:{___}]]:=
 			r_RowBox:>
 				indentationAddTabsRecursiveCall[r],
 			s_String?(StringMatchQ[$indentingNewLine~~___]):>
-				StringInsert[StringDrop[s,1],"\n\t",1],
+				StringInsert[StringDrop[s,1],"\n"<>$IndentationChar,1],
 			s_String?(StringMatchQ["\n"~~___]):>
-				StringInsert[s,"\t",2]
+				StringInsert[s,$IndentationChar,2]
 				},
 			1];
 indentationAddTabs[sel_]:=
 	Replace[
 		sel,{
-			{}:>"\t",
+			{}:>$IndentationChar,
 		_String:>
 			StringReplace[sel,{
-				"\n":>"\n\t",
-				StartOfString:>"\t"
+				"\n":>"\n"<>$IndentationChar,
+				StartOfString:>$IndentationChar
 				}],
 		_:>
 			Replace[indentationAddTabsRecursiveCall[sel],
 				RowBox[{data___}]:>
-					RowBox[{"\t",data}]
+					RowBox[{$IndentationChar,data}]
 					]
 		}];
 
@@ -256,6 +302,11 @@ All]]
 ];
 
 
+(* ::Text:: *)
+(*Need a way to make sure final lines aren\[CloseCurlyQuote]t ignored.*)
+
+
+
 indentationDelTabsRecursiveCall[RowBox[d:{___}]]:=
 	RowBox@
 		Replace[d,{
@@ -268,11 +319,11 @@ indentationDelTabsRecursiveCall[RowBox[d:{___}]]:=
 					$dedentationRequired=True,
 					"\n"
 					],
-			s_String?(StringMatchQ["\t"~~___]):>
+			s_String?(StringMatchQ[$IndentationChar~~___]):>
 				CompoundExpression[
 					If[$dedentationRequired,
 						$dedentationRequired=False;
-						StringDrop[s,1],
+						StringDrop[s,StringLength[$IndentationChar]],
 						s
 						]
 					]
@@ -283,8 +334,8 @@ indentationDelTabs[sel_]:=
 		{
 		_String:>
 			StringReplace[sel,{
-				"\n\t":>"\n",
-					StartOfLine~~"\t":>""
+				"\n"<>$IndentationChar:>"\n",
+					StartOfLine~~$IndentationChar:>""
 				}],
 		{}:>"",
 		_RowBox:>
@@ -308,21 +359,51 @@ IndentationDecrease[nb_:Automatic]:=
 		];
 
 
-IndentationEvent[]:=
-	If[AllTrue[
-			{"OptionKey","ShiftKey"},
-			CurrentValue[EvaluationNotebook[],#]&
-			],
-		IndentationRestore[],
-		Which[
-			Not@FreeQ[NotebookRead@EvaluationNotebook[],$indentingNewLine],
-				IndentationReplace[],
-			CurrentValue["OptionKey"],
-				IndentationDecrease[],
-			True,
-				IndentationIncrease[]
+IndentationEvent["Indent"]:=
+	(
+		GetIndentationChar[];
+		If[Not@FreeQ[NotebookRead@EvaluationNotebook[],$indentingNewLine],
+			IndentationReplace[],
+			IndentationIncrease[]
 			]
-		];
+		)
+
+
+IndentationEvent["Dedent"]:=
+	(
+		GetIndentationChar[];
+		IndentationDecrease[]
+		)
+
+
+IndentationEvent["Toggle"]:=
+	(
+		GetIndentationChar[];
+		If[Not@FreeQ[NotebookRead@EvaluationNotebook[],$indentingNewLine],
+			IndentationReplace[],
+			IndentationRestore[]
+			]
+			)
+
+
+IndentationEvent[]:=
+	(
+		GetIndentationChar[];
+		If[AllTrue[
+				{"OptionKey","ShiftKey"},
+				CurrentValue[EvaluationNotebook[],#]&
+				],
+			IndentationRestore[],
+			Which[
+				Not@FreeQ[NotebookRead@EvaluationNotebook[],$indentingNewLine],
+					IndentationReplace[],
+				CurrentValue["OptionKey"],
+					IndentationDecrease[],
+				True,
+					IndentationIncrease[]
+				]
+			];
+			)
 
 
 End[];

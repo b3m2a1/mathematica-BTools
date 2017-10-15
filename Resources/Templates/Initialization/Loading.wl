@@ -43,7 +43,7 @@ PackageFileContext[f_String?FileExistsQ]:=
 	PackageFileContext[DirectoryName[f]];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*PackageExecute*)
 
 
@@ -221,15 +221,30 @@ PackageAppLoad[]:=
 PackageAppLoad~SetAttributes~Listable;
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*PackageAppGet*)
 
 
 PackageAppGet[f_]:=
-	PackageExecute[
-		If[FileExistsQ@f,
-			Get@f,
-			Get@PackageFilePath["Packages",f<>".m"]
+	PackageExecute@
+		With[{fBase = 
+			If[FileExistsQ@f,
+				f,
+				PackageFilePath["Packages",f<>".m"]
+				]
+			},
+			With[{cont = 
+				Most@
+					FileNameSplit[
+						FileNameDrop[fBase, FileNameDepth[PackageFilePath["Packages"]]]
+						]},
+				If[Length[cont]>0,
+					(End[];#)&[
+						Begin[StringRiffle[Append[""]@Prepend[""]@cont, "`"]];
+						Get[fBase]
+						],
+					Get[fBase]
+				]
 			]
 		];
 PackageAppGet[c_,f_]:=
