@@ -837,7 +837,7 @@ PacletSiteFiles[infoFiles_,ops:OptionsPattern[]]:=
 	DeleteCases[Except[$PacletFilePatterns]]@
 		Replace[
 			Replace[
-				Flatten@{infoFiles,OptionValue["MergePacletInfo"]},{
+				Flatten@{ infoFiles, OptionValue["MergePacletInfo"] },{
 					(p_PacletManager`Paclet->_):>
 						p,
 					(_->f_):>f
@@ -997,14 +997,15 @@ PacletSiteInfo[infoFiles_,ops:OptionsPattern[]]:=
 									}
 								]
 							},
-							Replace[#,{
-								(s_Symbol->v_):>
-									(SymbolName[s]->v),
-								(s_String->v_):>
-									s->v,
-								_:>
-									Sequence@@{}
-								},
+							Replace[#,
+								{
+									(s_Symbol->v_):>
+										(SymbolName[s](*s*)->v),
+									(s_String->v_):>
+										(*ToExpression[s]*)s->v,
+									_:>
+										Sequence@@{}
+									},
 								1]&/@Flatten@{imp}
 							]&,
 						pacletInfos
@@ -1041,17 +1042,24 @@ PacletSiteInfoDataset[files__,ops:OptionsPattern[]]:=
 
 
 Options[PacletSiteBundle]=
-	Join[{
-		"BuildRoot":>$TemporaryDirectory,
-		"FilePrefix"->None
-		},
+	Join[
+		{
+			"BuildRoot":>$TemporaryDirectory,
+			"FilePrefix"->None
+			},
 		Options@PacletSiteInfo
 		];
-PacletSiteBundle[infoFiles]~~`Package`PackageAddUsage~~
-	"bundles the PacletInfo.m files found in infoFiles into a compressed PacletSite file";
+(*PacletSiteBundle[infoFiles]~~`Package`PackageAddUsage~~
+	"bundles the PacletInfo.m files found in infoFiles into a compressed PacletSite file";*)
+PacletSiteBundle[dir_String?DirectoryQ, ops:OptionsPattern[]]:=
+	PacletSiteBundle[
+		FileNames["*.paclet",dir,2],
+		ops
+		];
 PacletSiteBundle[
 	infoFiles:$PacletFilePatterns|{$PacletFilePatterns...},
-	ops:OptionsPattern[]]:=
+	ops:OptionsPattern[]
+	]:=
 	Export[
 		FileNameJoin@{
 			With[{d=
@@ -2329,10 +2337,15 @@ pacletUpload[
 									Replace[pacletFiles,
 										(k_->_):>k
 										],
-									FilterRules[{ops,
-										"MergePacletInfo"->
-											If[OptionValue["OverwriteSiteFile"]//TrueQ,None,site]
-										},
+									FilterRules[
+										{
+											ops,
+											"MergePacletInfo"->
+												If[OptionValue["OverwriteSiteFile"]//TrueQ,
+													None,
+													site
+													]
+												},
 										Options@PacletSiteBundle
 										]
 									]

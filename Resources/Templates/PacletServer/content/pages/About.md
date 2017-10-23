@@ -1,5 +1,5 @@
 Title: About
-Modified: 2017-08-28 12:54:32
+Modified: 2017-10-17 00:04:02
 Slug: about
 
 <a id="about-this-site" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
@@ -8,7 +8,7 @@ Slug: about
 
 This is a paclet server. It lists the currently available paclets at this site. You can download any paclet via the “Download” link on its page. Alternatively, you can install paclets via  [```PacletInstall```](https://www.wolframcloud.com/objects/b3m2a1.paclets/reference/PacletManager/ref/PacletInstall.html) .
 
-There are two ways to do this:
+There are three ways to do this:
 
 * Via the paclet download link
 
@@ -18,6 +18,12 @@ There are two ways to do this:
 	PacletInstall[$paclet]
 
 * Via a paclet site:
+
+	$pacletName = "NameOfPaclet";
+	$pacletSite = "https://this.paclet.server";
+	PacletInstall[$pacletName, "Site" -> $pacletSite]
+
+* Via an update-able paclet site:
 
 	$pacletName = "NameOfPaclet";
 	PacletSiteAdd["https://this.paclet.server", "Paclet site description"];

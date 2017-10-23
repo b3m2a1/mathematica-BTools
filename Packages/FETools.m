@@ -817,10 +817,7 @@ $FEPathMap=
 				"AutoCompletionData",
 				"PrivatePathsAutoCompletionData"
 				}->
-				{
-					"SystemResourcesAutoCompletionData",
-					"PrivatePathsAutoCompletionData"
-					},
+					"PrivatePathsAutoCompletionData",
 			{"Bitmaps","Bitmap","PrivatePathsBitmaps"}->
 				"PrivatePathsBitmaps",
 			{"Fonts","Font","PrivatePathsFonts"}->
@@ -847,36 +844,67 @@ $FEPathMap=
 FEFindFileOnPath//Clear
 
 
+Options[FEFindFileOnPath]=
+	{
+		"ReturnKey"->False,
+		"SelectFirst"->True
+		};
 FEFindFileOnPath[
 	file_,
-	path:{__String?(KeyMemberQ[$FEPathMap,#]&)}
+	path:{__String?(KeyMemberQ[$FEPathMap,#]&)},
+	ops:OptionsPattern[]
 	]:=
-	Catch@
-		SelectFirst[
-			Flatten@Lookup[$FEPathMap,path],
-			Replace[
-				FrontEndExecute@
-				FrontEnd`FindFileOnPath[
-					Switch[file,
-						_FileName|_FrontEnd`FileName,
-							ToFileName[file],
-						_List,
-							FileNameJoin@file,
-						_File,
-							First[file],
-						_String,
-							file,
-						_,
-							Throw@$Failed
-						],
-					#
-					],
-				s:Except[$Failed]:>((*Print[#];*)Throw[s])
-				]&,
-			$Failed
-			];
-FEFindFileOnPath[file_,path:_String:"TextResource"]:=
-	FEFindFileOnPath[file,{path}];
+	Replace[{
+		{_,{}}->$Failed,
+		{_,{e_}}:>
+			If[OptionValue@"SelectFirst"//TrueQ,
+				First@e,
+				e
+				]
+		}]@
+	Reap@
+		Catch@
+			Map[
+				Replace[
+					FrontEndExecute@
+						FrontEnd`FindFileOnPath[
+							Switch[file,
+								_FileName|_FrontEnd`FileName,
+									ToFileName[file],
+								_List,
+									FileNameJoin@file,
+								_File,
+									First[file],
+								_String,
+									file,
+								_,
+									Throw@$Failed
+								],
+							#
+							],
+					s:Except[$Failed]:>
+						CompoundExpression[
+							Sow@
+								If[OptionValue@"ReturnKey"//TrueQ,
+									#->s,
+									s
+									],
+							If[OptionValue@"SelectFirst",Throw[Break]]
+							]
+					]&,
+				Flatten@Lookup[$FEPathMap,path]
+				];
+FEFindFileOnPath[file_,
+	path:_String|Automatic:Automatic,
+	ops:OptionsPattern[]
+	]:=
+	If[path===Automatic,
+		FEFindFileOnPath[file,
+			Keys@DeleteDuplicates@$FEPathMap,
+			ops
+			],
+		FEFindFileOnPath[file,{path},ops]
+		];
 
 
 (*$FEPathMapSpecial=
