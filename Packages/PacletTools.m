@@ -506,7 +506,7 @@ PacletExpression[dir]~~`Package`PackageAddUsage~~
 PacletExpression[
 	dest_String?DirectoryQ,
 	ops:OptionsPattern[]]:=
-	With[{pacletInfo=PacletInfoAssociation[dest]},
+	With[{pacletInfo=KeyDrop[PacletInfoAssociation[dest], "Location"]},
 		PacletExpression[
 			Sequence@@FilterRules[{ops},
 				Except["Kernel"|"Documentation"|"Extensions"|"FrontEnd"]],

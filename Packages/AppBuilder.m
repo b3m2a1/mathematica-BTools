@@ -2845,20 +2845,27 @@ AppNeeds[Optional[Automatic,Automatic]]:=
 
 
 AppFromFile[f_String]:=
-	Which[
-		StringMatchQ[ExpandFileName@f,$AppDirectory~~__],
-			FileNameTake[
-				FileNameDrop[f,FileNameDepth@$AppDirectory],
-				1
+	With[{splitPath=FileNameSplit[DirectoryName[ExpandFileName@f]]},
+		Replace[
+			SelectFirst[Range[Length@splitPath,1,-1],
+				FileExistsQ@FileNameJoin@Append[Take[splitPath,#],"PacletInfo.m"]&,
+				Which[
+					StringMatchQ[ExpandFileName@f,$AppDirectory~~__],
+						FileNameTake[
+							FileNameDrop[f,FileNameDepth@$AppDirectory],
+							1
+							],
+					StringMatchQ[f,"http*"~~"/"~~WordCharacter..],
+						URLParse[f]["Path"]//Last,
+					MemberQ[FileNameTake/@AppNames[], f],
+						f,
+					True,
+						$Failed
+					]
 				],
-		StringMatchQ[f,"http*"~~"/"~~WordCharacter..],
-			URLParse[f]["Path"]//Last,
-		MemberQ[FileNameTake/@AppNames[],f],
-			f,
-		True,
-			(
-				$Failed
-				)
+			i_Integer:>
+				Take[splitPath,{i}]
+			]
 		];
 AppFromFile[nb_NotebookObject]:=
 	Replace[Quiet@NotebookFileName[nb],
