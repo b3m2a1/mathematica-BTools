@@ -153,16 +153,19 @@ PackageFileContext[f_String?FileExistsQ]:=
 
 
 PackageExecute[expr_]:=
-	(
+	CompoundExpression[
 		BeginPackage["BTools`"];
 		$ContextPath=
-			DeleteDuplicates[Join[$ContextPath,$PackageContexts]];
+			DeleteDuplicates[
+				Join[$ContextPath,$PackageContexts]
+				];
 		(EndPackage[];#)&@
 			CheckAbort[
 				expr,
 				EndPackage[]
-				]
-		);
+				](*,
+		Print@$ContextPath*)
+		];
 PackageExecute~SetAttributes~HoldFirst
 
 
@@ -326,15 +329,30 @@ PackageAppLoad[]:=
 PackageAppLoad~SetAttributes~Listable;
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*PackageAppGet*)
 
 
 PackageAppGet[f_]:=
-	PackageExecute[
-		If[FileExistsQ@f,
-			Get@f,
-			Get@PackageFilePath["Packages",f<>".m"]
+	PackageExecute@
+		With[{fBase = 
+			If[FileExistsQ@f,
+				f,
+				PackageFilePath["Packages",f<>".m"]
+				]
+			},
+			With[{cont = 
+				Most@
+					FileNameSplit[
+						FileNameDrop[fBase, FileNameDepth[PackageFilePath["Packages"]]]
+						]},
+				If[Length[cont]>0,
+					(End[];#)&[
+						Begin[StringRiffle[Append[""]@Prepend[""]@cont, "`"]];
+						Get[fBase]
+						],
+					Get[fBase]
+				]
 			]
 		];
 PackageAppGet[c_,f_]:=

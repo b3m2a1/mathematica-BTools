@@ -50,6 +50,8 @@ PackageScopeBlock[
 
 PackageScopeBlock[
 	GitStatus::usage="Gets the status of a repository";
+	GitListTree::usage="Lists files on the tree";
+	GitListTreeRecursive::usage="Lists files on the tree recursively";
 	GitLog::usage="Gets the log of the git repo";
 	GitConfig::usage="Sugar on the GitConfig tool";
 	GitHelp::usage="Gets help from the git man pages";
@@ -271,6 +273,27 @@ GitRun[dir:_String?DirectoryQ|None|Automatic:None,cmds__String]:=
 			ProcessRun[{"git",cmds},Git::err]
 			]
 		];
+GitRun[dir:_String?DirectoryQ|None|Automatic:None,
+	cmds:_String|{__String}..
+	]:=
+	With[{
+		d=Replace[dir,Automatic:>$GitRepo],
+		cmdBits=
+			Flatten[
+				Riffle[Prepend["git"]@*Flatten@*List/@{cmds},"\n\n"],
+				1
+				]
+		},
+		Replace[
+			Git::err,
+			_MessageName:>
+				(Git::err=ProcessRun::err)
+			];
+		If[MatchQ[d,_String],
+			ProcessRun[cmdBits,Git::err,ProcessDirectory->d],
+			ProcessRun[cmdBits,Git::err]
+			]
+		];
 Git::nodir="`` is not a valid directory";
 Git::nrepo="`` not a git repository";
 
@@ -361,7 +384,7 @@ GitRemoveCached[dir:_String?DirectoryQ|Automatic:Automatic,files___]:=
 		files];
 
 
-GitRemoveCached[dir:_String?DirectoryQ|Automatic:Automatic,files___]:=
+GitRemoveCachedRecursive[dir:_String?DirectoryQ|Automatic:Automatic,files___]:=
 	GitRun[dir,"rm",
 		"-r",
 		"--cached",
@@ -543,6 +566,142 @@ GitPushOrigin[dir:_String?DirectoryQ|Automatic:Automatic]:=
 	GitPush[dir,"origin","master"];
 
 
+Options[GitListTree]=
+	{
+		"NameOnly"->True
+		};
+GitListTree[
+	dir:_String?DirectoryQ|Automatic:Automatic,
+	branch:_String:"master",
+	ops:OptionsPattern[]
+	]:=
+	StringSplit[
+		GitRun[dir,"ls-tree",branch,
+			If[OptionValue["NameOnly"]//TrueQ,
+				"--name-only",
+				Sequence@@{}
+				]
+			],
+		"\n"
+		];
+
+
+Options[GitListTreeRecursive]=
+	Options@GitListTree;
+GitListTreeRecursive[
+	dir:_String?DirectoryQ|Automatic:Automatic,
+	branch:_String:"master",
+	ops:OptionsPattern[]
+	]:=
+	StringSplit[
+		GitRun[dir,"ls-tree","-r",branch,
+			If[OptionValue["NameOnly"]//TrueQ,
+				"--name-only",
+				Sequence@@{}
+				]
+			],
+		"\n"
+		]
+
+
+GitRefLog[
+	dir:_String?DirectoryQ|Automatic:Automatic,
+	args___
+	]:=
+	GitRun[dir,"reflog"]
+
+
+GitRefLogExpire[
+	dir:_String?DirectoryQ|Automatic:Automatic,
+	expireTime_:"--all"
+	]:=
+	GitRun[dir,"reflog","expire",expireTime]
+
+
+Options[GitClean]=
+	{
+		"reflogExpire"->Automatic,
+		"reflogExpireUnreachable"->Automatic,
+		"rerereresolved"->Automatic,
+		"rerereunresolved"->Automatic,
+		"pruneExpire"->Automatic
+		}
+GitClean[
+	dir:_String?DirectoryQ|Automatic:Automatic,
+	args___String,
+	ops:OptionsPattern[]
+	]:=
+	With[
+		{
+			conf=
+				Map[
+					StringJoin@
+						Prepend[Insert[List@@ToString/@#," ",2],"--gc."]&, 
+					Flatten@{ops}
+					]
+				},
+			GitRun[dir,"gc",args,Sequence@@conf]
+		]
+
+
+(*(* Taken from here: https://stackoverflow.com/a/14729486 *)
+GitCleanEverything[
+	dir:_String?DirectoryQ|Automatic:Automatic,
+	args___
+	]:=
+	GitClean[dir,"\"$@\"",args,
+		{
+			"reflogExpire"\[Rule]0,
+			"reflogExpireUnreachable"\[Rule]0,
+			"rerereresolved"\[Rule]0,
+			"rerereunresolved"\[Rule]0,
+			"pruneExpire"\[Rule]"now"
+			}
+		]*)
+
+
+GitFilterBranch//Clear
+
+
+GitFilterBranch[
+	dir:_String?DirectoryQ|Automatic:Automatic,
+	filterType_String?(StringStartsQ["--"]),
+	filterCMD_String,
+	args___
+	]:=
+	GitRun[dir,"filter-branch",
+		If[StringQ@branch,branch,Sequence@@{}],
+		filterType, 
+		"''``''"~TemplateApply~filterCMD,
+		args
+		];
+
+
+GitFilterTree//Clear
+
+
+GitFilterTree[
+	dir:_String?DirectoryQ|Automatic:Automatic,
+	filterCMD_String,
+	args___
+	]:=
+	GitFilterBranch[dir, "--tree-filter",filterCMD, args];
+
+
+GitPrune[
+	dir:_String?DirectoryQ|Automatic:Automatic,
+	args___String,
+	ops:OptionsPattern[]
+	]:=
+	GitRun[dir,"prune",args,
+		Sequence@@
+			Map[
+				StringJoin[Flatten@{"--",Insert[List@@ToString/@#," ",2]}]&,
+				Flatten@{ops}
+				]
+		]
+
+
 $GitActions=
 	<|
 		"Init"->
@@ -589,6 +748,22 @@ $GitActions=
 			GitLog,
 		"Status"->
 			GitStatus,
+		"ListTree"->
+			GitListTree,
+		"ListTreeRecursive"->
+			GitListTreeRecursive,
+		"RefLog"->
+			GitRefLog,
+		"RefLogExpire"->
+			GitRefLogExpire,
+		"Clean"->
+			GitClean,(*
+		"CleanEverything"->
+			GitCleanEverything,*)
+		"FilterBranch"->
+			GitFilterBranch,
+		"FilterTree"->
+			GitFilterTree,
 		"Config"->
 			GitConfig,
 		"Help"->

@@ -43,21 +43,24 @@ PackageFileContext[f_String?FileExistsQ]:=
 	PackageFileContext[DirectoryName[f]];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*PackageExecute*)
 
 
 PackageExecute[expr_]:=
-	(
+	CompoundExpression[
 		BeginPackage["$Name`"];
 		$ContextPath=
-			DeleteDuplicates[Join[$ContextPath,$PackageContexts]];
+			DeleteDuplicates[
+				Join[$ContextPath,$PackageContexts]
+				];
 		(EndPackage[];#)&@
 			CheckAbort[
 				expr,
 				EndPackage[]
-				]
-		);
+				](*,
+		Print@$ContextPath*)
+		];
 PackageExecute~SetAttributes~HoldFirst
 
 

@@ -310,7 +310,16 @@ If[!ValueQ[$AppDirectoryRoot],
 
 
 AppPath[app_,e___]:=
-	AppDirectory[app,e];
+	With[{base=AppDirectory[app,e]},
+		If[!FileExistsQ@base,
+			Replace[PacletManager`PacletFind[app],{
+				{p_,___}:>
+					FileNameJoin@{p["Location"],e},
+				_->base
+				}],
+			base
+			]
+		];
 
 
 AppPathFormat[pspec_]:=
@@ -2725,8 +2734,14 @@ AppGet[appName_,pkgName_String]:=
 		Replace[
 			Names[app<>"`Private`Package`PackageAppGet"],{
 				{n_}:>
-					ToExpression[n]@
-						First[FileNames[pkgName~~".wl"|".m",AppDirectory[app,"Packages"],\[Infinity]]],
+					Replace[
+						FileNames[pkgName~~".wl"|".m",
+							AppPath[app,"Packages"],
+							\[Infinity]
+							],
+						{f_,___}:>
+							ToExpression[n][ExpandFileName@f]
+						],
 			_:>(
 				If[DirectoryQ@AppPath[app,"Packages",pkgName],
 					BeginPackage[app<>"`"];
@@ -2845,7 +2860,9 @@ AppNeeds[Optional[Automatic,Automatic]]:=
 
 
 AppFromFile[f_String]:=
-	With[{splitPath=FileNameSplit[DirectoryName[ExpandFileName@f]]},
+	With[{
+		splitPath=FileNameSplit[DirectoryName[ExpandFileName@f]]
+		},
 		Replace[
 			SelectFirst[Range[Length@splitPath,1,-1],
 				FileExistsQ@FileNameJoin@Append[Take[splitPath,#],"PacletInfo.m"]&,
@@ -2859,12 +2876,14 @@ AppFromFile[f_String]:=
 						URLParse[f]["Path"]//Last,
 					MemberQ[FileNameTake/@AppNames[], f],
 						f,
+					Length@PacletManager`PacletFind[f]>0,	
+						PacletManager`PacletFind[f][[1]]["Location"]//FileBaseName,
 					True,
 						$Failed
 					]
 				],
 			i_Integer:>
-				Take[splitPath,{i}]
+				splitPath[[i]]
 			]
 		];
 AppFromFile[nb_NotebookObject]:=

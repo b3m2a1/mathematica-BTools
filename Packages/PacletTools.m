@@ -535,13 +535,13 @@ PacletExpression[
 									Automatic:>
 										Replace[Lookup[baseData,#],{
 											a_Association:>
-												Flatten@{#,Normal@a},
+												Flatten@{#,DeleteDuplicates@Normal@a},
 											_->Nothing
 											}],
 									r:_Rule|{___Rule}|_Association:>
 										Flatten@{
 											#,
-											Normal@r
+											DeleteDuplicates@Normal@r
 											},
 									_->Nothing
 									}]&,
