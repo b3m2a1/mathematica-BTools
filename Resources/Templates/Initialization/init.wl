@@ -298,6 +298,31 @@ Clear[`Private`Package`$PackageScopedSymbols];
 
 
 (* ::Subsubsection:: *)
+(*Preempt Shadowing*)
+
+
+(* Hide `Private`Package` shadowing *)
+
+
+Replace[
+	Hold[{`Private`Package`m___}]:>
+		Off[`Private`Package`m]
+		]@
+Thread[
+	ToExpression[
+		Map[#<>"$"&,Names["`Private`Package`*"]
+		],
+		StandardForm,
+		Function[Null, 
+			Hold[MessageName[#, "shdw"]],
+			HoldAllComplete
+			]
+		],
+	Hold
+	]
+
+
+(* ::Subsubsection:: *)
 (*EndPackage / Reset $ContextPath*)
 
 

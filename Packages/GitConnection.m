@@ -496,7 +496,8 @@ Options[GitPush]={
 	"Username"->
 		None,
 	"Password"->
-		None
+		None,
+	"Force"->False
 	};
 GitPush[
 	dir:_String?DirectoryQ,
@@ -505,6 +506,10 @@ GitPush[
 	ops:OptionsPattern[]]:=
 	GitRun[dir,
 		"push",
+		If[TrueQ@OptionValue["Force"],
+			"-f",
+			Sequence@@{}
+			],
 		loc,
 		branch];
 
@@ -520,7 +525,7 @@ GitFetch[
 
 GitReset[
 	dir:_String?DirectoryQ,
-	src_
+	src___
 	]:=
 	GitRun[
 		dir,
@@ -529,15 +534,28 @@ GitReset[
 		];
 
 
+GitCheckout//Clear
+
+
 GitCheckout[
 	dir:_String?DirectoryQ,
-	src_
+	args__
 	]:=
-	GitCheckout[
+	GitRun[dir,
+		"checkout",
+		args
+		]
+
+
+GitCheckoutTracked[
+	dir:_String?DirectoryQ,
+	args__
+	]:=
+	GitRun[
 		dir,
 		"checkout",
 		"-t",
-		src
+		args
 		];
 
 
@@ -562,8 +580,14 @@ GitPullOrigin[dir:_String?DirectoryQ|Automatic:Automatic]:=
 	GitPull[dir,"origin","master"]
 
 
-GitPushOrigin[dir:_String?DirectoryQ|Automatic:Automatic]:=
-	GitPush[dir,"origin","master"];
+GitPushOrigin[dir:_String?DirectoryQ|Automatic:Automatic,
+	force:True|False:False
+	]:=
+	GitPush[dir,
+		If[force,"-f",Sequence@@{}],
+		"origin",
+		"master"
+		];
 
 
 Options[GitListTree]=
@@ -702,6 +726,30 @@ GitPrune[
 		]
 
 
+GitBranch[dir:_String?DirectoryQ|Automatic:Automatic,
+	args___
+	]:=
+	GitRun[dir,"branch",args]
+
+
+GitWipeTheSlate//Clear
+
+
+(* Take from here: https://stackoverflow.com/a/26000395 *)
+GitWipeTheSlate[
+	dir:_String?DirectoryQ|Automatic:Automatic
+	]:=
+	(
+		GitCheckout[dir, "--orphan", "latest_branch"];
+		GitAdd[dir, "-A"];
+		GitCommit[dir, "-a",
+			Message->"Wiped the slate clean"
+			];
+		GitBranch[dir, "-D", "master"];
+		GitBranch[dir, "-m", "master"];
+		)
+
+
 $GitActions=
 	<|
 		"Init"->
@@ -734,6 +782,8 @@ $GitActions=
 			GitReset,
 		"Checkout"->
 			GitCheckout,
+		"CheckoutTracked"->
+			GitCheckoutTracked,
 		"Pull"->
 			GitPull,
 		"PullOrigin"->
@@ -757,9 +807,9 @@ $GitActions=
 		"RefLogExpire"->
 			GitRefLogExpire,
 		"Clean"->
-			GitClean,(*
-		"CleanEverything"->
-			GitCleanEverything,*)
+			GitClean,
+		"WipeTheSlate"->
+			GitWipeTheSlate,
 		"FilterBranch"->
 			GitFilterBranch,
 		"FilterTree"->

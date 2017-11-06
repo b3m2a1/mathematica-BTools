@@ -43,7 +43,7 @@ PackageFileContext[f_String?FileExistsQ]:=
 	PackageFileContext[DirectoryName[f]];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*PackageExecute*)
 
 
@@ -54,11 +54,13 @@ PackageExecute[expr_]:=
 			DeleteDuplicates[
 				Join[$ContextPath,$PackageContexts]
 				];
-		(EndPackage[];#)&@
-			CheckAbort[
-				expr,
-				EndPackage[]
-				](*,
+		CheckAbort[
+			With[{res=expr},
+				EndPackage[];
+				res
+				],
+			EndPackage[]
+			](*,
 		Print@$ContextPath*)
 		];
 PackageExecute~SetAttributes~HoldFirst
@@ -145,7 +147,6 @@ PackageLoadPackage[heldSym_,context_,pkgFile_->syms_]:=
 					];
 				If[Not@MemberQ[$ContextPath,context],
 					$ContextPath=Prepend[$ContextPath,context];
-					(*FrontEnd`Private`GetUpdatedSymbolContexts[]*)
 					];
 				Block[{PackageFEHiddenBlock=Null},
 					PackageAppGet[context,pkgFile];
@@ -242,10 +243,8 @@ PackageAppGet[f_]:=
 						FileNameDrop[fBase, FileNameDepth[PackageFilePath["Packages"]]]
 						]},
 				If[Length[cont]>0,
-					(End[];#)&[
-						Begin[StringRiffle[Append[""]@Prepend[""]@cont, "`"]];
-						Get[fBase]
-						],
+					Begin[StringRiffle[Append[""]@Prepend[""]@cont, "`"]];
+					(End[];#)&@Get[fBase],
 					Get[fBase]
 				]
 			]
@@ -255,7 +254,7 @@ PackageAppGet[c_,f_]:=
 		Begin[c];
 		(End[];#)&@
 			If[FileExistsQ@f,
-				Get@f,
+				Get@f;,
 				Get@PackageFilePath["Packages",f<>".m"]
 				]
 		];

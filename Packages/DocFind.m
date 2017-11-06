@@ -395,24 +395,27 @@ DocFind[
 									{n,names}
 									],
 						_,
-							PaneColumn[
-								Table[
-									With[{n=n,h=DocFile[n,OptionValue@Hyperlink]},
-										Interpretation[
-											Button[
-												Mouseover[
-													Style[n,"Hyperlink"],
-													Style[n,"HyperlinkActive"]],
-												buttonFunction[n,h],
-												Appearance->"Frameless",
-												Method->"Queued"
-												],
-											ToExpression@n
-											]
+							Interpretation[
+								PaneColumn[
+									Table[
+										With[{n=n,h=DocFile[n,OptionValue@Hyperlink]},
+											Interpretation[
+												Button[
+													Mouseover[
+														Style[n,"Hyperlink"],
+														Style[n,"HyperlinkActive"]],
+													buttonFunction[n,h],
+													Appearance->"Frameless",
+													Method->"Queued"
+													],
+												ToExpression@n
+												]
+											],
+										{n,names}
 										],
-									{n,names}
+									FilterRules[{ops,Options@DocFind},Options@PaneColumn]
 									],
-								FilterRules[{ops,Options@DocFind},Options@PaneColumn]
+								ToExpression[names, StandardForm, Defer]
 								]
 							]
 						],
