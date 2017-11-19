@@ -89,9 +89,9 @@ $$serviceconnectionclientid:=
 		Replace[$ServiceConnectionClientID,{
 			f_Function:>f[],
 			Automatic:>
-				serviceconnectionprivategetcredentials["ClientID"],
+				$serviceconnectionclearclientdata["ClientID"],
 			Key[k_]:>
-				serviceconnectionprivategetcredentials[k]
+				$serviceconnectionclearclientdata[k]
 			}],{
 		Except[_String]:>
 			"not_supported"
@@ -103,9 +103,9 @@ $$serviceconnectionclientsecret:=
 		Replace[$ServiceConnectionClientSecret,{
 			f_Function:>f[],
 			Automatic:>
-				serviceconnectionprivategetcredentials["ClientSecret"],
+				$serviceconnectionclearclientdata["ClientSecret"],
 			Key[k_]:>
-				serviceconnectionprivategetcredentials[k]
+				$serviceconnectionclearclientdata[k]
 			}],{
 		Except[_String]:>
 			"not_supported"

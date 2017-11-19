@@ -251,7 +251,9 @@ mEXTyg==
 				_->{400,450}
 				}],
 		Sequence@@
-			FilterRules[{ops},
+			FilterRules[{
+				ops
+				},
 				Options@DialogInput
 				],
 		DockedCells->
@@ -295,23 +297,24 @@ mEXTyg==
 						}],
 				CellFrame->{{0,0},{1,0}}
 				],
+		NotebookDynamicExpression :>
+			Refresh[
+				FrontEnd`MoveCursorToInputField[
+					EvaluationNotebook[], 
+					"password"
+					];
+				FrontEnd`MoveCursorToInputField[
+					EvaluationNotebook[], 
+					"username"
+					];,
+				None
+			],
 		WindowFrameElements->{"CloseBox"},
 		WindowElements->None,
 		WindowTitle->"",
 		Background->White,
 		ImageMargins->0,
-		CellMargins->0(*,
-		NotebookEventActions\[Rule]{
-			"ReturnKeyDown":>
-				Cells[
-					First@Cells[
-						Last@Cells@InputNotebook[],
-						CellTags\[Rule]{"FooterCell"}
-						],
-					CellTags\[Rule]{"Return"}
-					],
-			PassEventsDown\[Rule]True
-			}*)
+		CellMargins->0
 		};
 
 
@@ -368,7 +371,9 @@ authUserNameField[Verbatim[Dynamic][var_],site_,default_]:=
 					_->{#,""}
 					}];&
 			],
-		String];
+		String,
+		BoxID->"username"
+		];
 
 
 authPasswordField[Verbatim[Dynamic][var_],site_,default_]:=
@@ -394,7 +399,8 @@ authPasswordField[Verbatim[Dynamic][var_],site_,default_]:=
 					}];&
 			],
 		String,
-		FieldMasked->$authDialogFieldMasked
+		FieldMasked->$authDialogFieldMasked,
+		BoxID->"password"
 		];
 
 

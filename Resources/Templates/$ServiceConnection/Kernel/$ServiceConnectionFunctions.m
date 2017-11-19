@@ -18,7 +18,7 @@ BeginPackage["$ServiceConnectionFunction`"];
 $ServiceConnectionHelperNames
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*OAuth loopback*)
 
 
@@ -38,7 +38,7 @@ $$serviceconnectionoauthaccesstokencloudlink::usage=
 	"A static cloud object URL for getting an access_token copied"
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Token Echo*)
 
 
@@ -46,23 +46,27 @@ $serviceconnectionprivateoauthpagelink::usage;
 $serviceconnectiontokenechocloudlink::usage;
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Credentials*)
 
 
-$serviceconnectionprivategetcredentials::usage=
-	"Credential getting function. Useful for things like client secrets";
+$$serviceconnectionclientdatacaching::usage=
+	"Caching flag";
 
 
-$serviceconnectionprivatestorecredentials::usage=
+$serviceconnectiongetclientdata::usage=
+	"Credential getting function. Useful for things like client secrets.";
+
+
+$serviceconnectionstoreclientdata::usage=
 	"Credential storing function. Uses a raw Encode if BTools isn't installed";
 
 
-$serviceconnectionprivateclearcredentials::usage=
+$serviceconnectionclearclientdata::usage=
 	"Clears stored credentials";
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Request Formatting*)
 
 
@@ -128,7 +132,7 @@ $serviceconnectionprivateoauthtokenfile[tokenName_:"access_token"]:=
 
 
 (* ::Subsubsection:: *)
-(*Local Loopback*)
+(*Cloud Loopback*)
 
 
 $serviceconnectionprivateoauthpagetemplate[keys_]:=
@@ -503,10 +507,65 @@ mEXTyg==
 
 
 (* ::Subsubsection::Closed:: *)
+(*ClientInfoFile*)
+
+
+$$serviceconnectionclientsecretsjsonfile=
+	If[StringQ@#,
+		FileNameJoin@{
+			#,
+			"client_secrets.json"
+			},
+		None
+		]&@
+	SelectFirst[
+		{
+			ParentDirectory@DirectoryName@$InputFileName,
+			FileNameJoin@{
+				$UserBaseDirectory, 
+				"ApplicationData",
+				"ServiceConnections",
+				"$ServiceConnection"
+				}
+			},
+		FileExistsQ@
+		FileNameJoin@{
+			#,
+			"client_secrets.json"
+			}&
+		]
+
+
+$$serviceconnectionclientsecretsinfo=
+	With[{
+		raw=
+	If[StringQ[#]&&FileExistsQ[#]&@$$serviceconnectionclientsecretsjsonfile,
+		Import[$$serviceconnectionclientsecretsjsonfile, "RawJSON"],
+		<|
+			"installed"-><||>,
+			"web"-><||>
+			|>
+		]
+		},
+		Lookup[raw, "installed",
+			Lookup[raw, "web", <||>]
+			]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Caching Flag*)
+
+
+$$serviceconnectionclientdatacaching=
+	Length@PacletManager`PacletFind["BTools"]>0
+
+
+(* ::Subsubsection::Closed:: *)
 (*Auth Credentials Get*)
 
 
-$serviceconnectionprivategetcredentialsfallback[cred_]:=
+$serviceconnectiongetclientdatafallback[cred_]:=
 	If[FileExistsQ@
 		FileNameJoin@{
 			$TemporaryDirectory,
@@ -522,39 +581,54 @@ $serviceconnectionprivategetcredentialsfallback[cred_]:=
 		Replace[
 			bannerCredDialog[cred],
 			val_String?(StringLength@#>0&):>
-				(
-					$serviceconnectionprivatestorecredentialsfallback[cred,val];
+				If[$$serviceconnectionclientdatacaching,
+					$serviceconnectionstoreclientdatafallback[cred,val];
+					val,
 					val
-					)
+					]
 			]
 		];
 
 
-$serviceconnectionprivategetcredentialskeychain[cred_]:=
+$serviceconnectiongetclientdatakeychain[cred_]:=
 	BTools`KeyChainGet[
-		"$ServiceConnection"->{None,StringJoin@Flatten@{cred}},
+		"$ServiceConnection"->{None, StringJoin@Flatten@{cred}},
 		True
 		];
 
 
-$serviceconnectionprivategetcredentials[cred_]:=
-	Quiet[
-		Check[
-			Needs["BTools`"];
-			$serviceconnectionprivategetcredentialskeychain[
-				StringJoin@Flatten@{"$ServiceConnection",cred}],
-			$serviceconnectionprivategetcredentialsfallback[
-				StringJoin@Flatten@{"$ServiceConnection",cred}]
+$serviceconnectiongetclientdata//Clear
+
+
+$serviceconnectiongetclientdata[cred_, fallback_:Automatic, post_:Identity]:=
+post@Lookup[
+	$$serviceconnectionclientsecretsinfo,
+	ToLowerCase@
+	StringReplace[cred,
+		l:LetterCharacter?LowerCaseQ~~d:LetterCharacter?(Not@*LowerCaseQ):>
+			l<>"_"<>d
+		],
+	If[fallback===Automatic,
+		Quiet[
+			Check[
+				Needs["BTools`"];
+				$serviceconnectiongetclientdatakeychain[
+					StringJoin@Flatten@{"$ServiceConnection",cred}],
+				$serviceconnectiongetclientdatafallback[
+					StringJoin@Flatten@{"$ServiceConnection",cred}]
+				],
+			{Get::noopen,Needs::nocont}
 			],
-		{Get::noopen,Needs::nocont}
-		];	
+		fallback
+		]
+	];	
 
 
 (* ::Subsubsection::Closed:: *)
 (*Auth Credentials Store*)
 
 
-$serviceconnectionprivatestorecredentialsfallback[cred_,val_]:=
+$serviceconnectionstoreclientdatafallback[cred_,val_]:=
 	With[{dir=
 		FileNameJoin@{
 				$TemporaryDirectory,
@@ -573,21 +647,21 @@ $serviceconnectionprivatestorecredentialsfallback[cred_,val_]:=
 		];
 
 
-$serviceconnectionprivatestorecredentialskeychain[cred_,val_]:=
+$serviceconnectionstoreclientdatakeychain[cred_,val_]:=
 	BTools`KeyChainAdd[
 		"$ServiceConnection"->{cred,val}
 		];
 
 
-$serviceconnectionprivatestorecredentials[cred_,val_]:=
+$serviceconnectionstoreclientdata[cred_,val_]:=
 	Quiet[
 		Check[
 			Needs["BTools`"];
-			$serviceconnectionprivatestorecredentialskeychain[
+			$serviceconnectionstoreclientdatakeychain[
 				"$ServiceConnection"->{None,StringJoin@Flatten@{cred}},
 				val
 				],
-			$serviceconnectionprivatestorecredentialsfallback[
+			$serviceconnectionstoreclientdatafallback[
 				StringJoin@Flatten@{"$ServiceConnection",cred},
 				val]
 			],
@@ -599,7 +673,7 @@ $serviceconnectionprivatestorecredentials[cred_,val_]:=
 (*Auth Credentials Clear*)
 
 
-$serviceconnectionprivateclearcredentialsfallback[cred_]:=
+$serviceconnectionclearclientdatafallback[cred_]:=
 	With[{dir=
 		FileNameJoin@{
 				$TemporaryDirectory,
@@ -610,12 +684,12 @@ $serviceconnectionprivateclearcredentialsfallback[cred_]:=
 		];
 
 
-$serviceconnectionprivateclearcredentials[cred_]:=
+$serviceconnectionclearclientdata[cred_]:=
 	Quiet[
 		Check[
 			Needs["BTools`"];
 			BTools`$KeyChain[{"$ServiceConnection",StringJoin@Flatten@{cred}}]=.,
-			$serviceconnectionprivateclearcredentialsfallback[
+			$serviceconnectionclearclientdatafallback[
 				StringJoin@Flatten@{"$ServiceConnection",cred}
 				]
 			],
