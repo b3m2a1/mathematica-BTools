@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     95581,       1866]
-NotebookOptionsPosition[     95008,       1844]
-NotebookOutlinePosition[     95567,       1866]
-CellTagsIndexPosition[     95524,       1863]
+NotebookDataLength[     96836,       1884]
+NotebookOptionsPosition[     96377,       1865]
+NotebookOutlinePosition[     96822,       1884]
+CellTagsIndexPosition[     96779,       1881]
 WindowTitle->Paclet Server Manager
 WindowFrame->Palette*)
 
@@ -194,7 +194,7 @@ s2fPCGI6qWcgQT3DYFVPSnlFoCxEKRMB+xLGWw==
                  PopupMenu[
                   Dynamic[
                   PacletServerManagerPalette`Private`currentPacletServer], {
-                  "servers"}, "Default", 
+                  "servers"}, "Delete", 
                   Button[
                   "", Null, Appearance -> {"Default" -> Image[CompressedData["
 
@@ -366,14 +366,18 @@ c/v2bYIYXc/9+/cJYnQ9jx8/JojR9Tx//pwgRtfz8uVLghhdz4sXLwhiarjt
                   PacletServerManagerPalette`Private`oldPacletServer, 
                   Unset[PacletServerManagerPalette`Private`currentPaclet]]; 
                 PacletServerManagerPalette`Private`oldPacletServer = 
-                 PacletServerManagerPalette`Private`currentPacletServer; 
+                 PacletServerManagerPalette`Private`currentPacletServer; If[
+                  Not[
+                   BooleanQ[PacletServerManagerPalette`Private`deployedFlag]],
+                   PacletServerManagerPalette`Private`deployedFlag = False]; 
                 With[{PacletServerManagerPalette`Private`ds$ = 
                    PacletServerManagerPalette`Private`whichPacF[
                     "PacletServerDataset"][
-                    PacletServerManagerPalette`Private`whichPacF[
-                    "PacletServer"][
-                    PacletServerManagerPalette`Private`currentPacletServer]]},
-                   PacletServerManagerPalette`Private`installEnabled = 
+                    PacletServerManagerPalette`Private`$serverList[
+                    PacletServerManagerPalette`Private`currentPacletServer], 
+                    "DeployedServer" -> 
+                    TrueQ[PacletServerManagerPalette`Private`deployedFlag]]}, 
+                  PacletServerManagerPalette`Private`installEnabled = 
                    Length[PacletServerManagerPalette`Private`ds$] > 0; Column[{
                     Framed[
                     (
@@ -390,7 +394,9 @@ c/v2bYIYXc/9+/cJYnQ9jx8/JojR9Tx//pwgRtfz8uVLghhdz4sXLwhiarjt
                     If[#2 =!= #, 
                     PacletServerManagerPalette`Private`currentPaclet = #, 
                     PacletServerManagerPalette`Private`loadPacletInterface[
-                    PacletServerManagerPalette`Private`ds$, True]]]& ], 
+                    PacletServerManagerPalette`Private`ds$, 
+                    TrueQ[PacletServerManagerPalette`Private`deployedFlag], 
+                    True]]]& ], 
                     If[Length[PacletServerManagerPalette`Private`ds$] > 0, 
                     Map[# -> Slot["Name"]& , 
                     DeleteDuplicatesBy[
@@ -408,6 +414,16 @@ c/v2bYIYXc/9+/cJYnQ9jx8/JojR9Tx//pwgRtfz8uVLghhdz4sXLwhiarjt
                     GrayLevel[0.95]}}, Appearance -> "Frameless", 
                     Multiselection -> False]], Background -> GrayLevel[0.98], 
                     FrameStyle -> None, FrameMargins -> None], 
+                    If[
+                    DirectoryQ[
+                    PacletServerManagerPalette`Private`$serverList[
+                    PacletServerManagerPalette`Private`currentPacletServer][
+                    "ServerBase"]], 
+                    Row[{"Web Server: ", 
+                    Checkbox[
+                    Dynamic[
+                    PacletServerManagerPalette`Private`deployedFlag]]}], 
+                    Nothing], 
                     ReplaceAll[
                     EventHandler[
                     Button[
@@ -415,18 +431,18 @@ c/v2bYIYXc/9+/cJYnQ9jx8/JojR9Tx//pwgRtfz8uVLghhdz4sXLwhiarjt
                     GrayLevel[0.2]], 
                     CheckAbort[
                     PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "ea64f1ec-60d8-4c66-94cf-077fd2f89ade"] = True; 
+                    "03e0a0bc-4a9b-4fa3-b5b6-731a1d160d36"] = True; 
                     Needs["BTools`"]; 
                     CheckAbort[
                     PacletServerManagerPalette`Private`cmd, 
                     PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "ea64f1ec-60d8-4c66-94cf-077fd2f89ade"] = False]; 
+                    "03e0a0bc-4a9b-4fa3-b5b6-731a1d160d36"] = False]; 
                     PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "ea64f1ec-60d8-4c66-94cf-077fd2f89ade"] = False, 
+                    "03e0a0bc-4a9b-4fa3-b5b6-731a1d160d36"] = False, 
                     BTools`Private`UUIDActive[
-                    "Button-5e49310e-47dd-4f74-870a-bdfa9dfe6ff8"] = False]; 
+                    "Button-2e3e97ae-6f63-46e8-850f-10b65fa0bdd3"] = False]; 
                     BTools`Private`UUIDActive[
-                    "Button-5e49310e-47dd-4f74-870a-bdfa9dfe6ff8"] = False, 
+                    "Button-2e3e97ae-6f63-46e8-850f-10b65fa0bdd3"] = False, 
                     Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -455,7 +471,7 @@ mEXTyg==
                     If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-5e49310e-47dd-4f74-870a-bdfa9dfe6ff8"]], 
+                    "Button-2e3e97ae-6f63-46e8-850f-10b65fa0bdd3"]], 
                     "Pressed", Automatic]]}, Enabled -> 
                     Dynamic[
                     PacletServerManagerPalette`Private`installEnabled], 
@@ -468,7 +484,7 @@ mEXTyg==
                     If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-5e49310e-47dd-4f74-870a-bdfa9dfe6ff8"]], 
+                    "Button-2e3e97ae-6f63-46e8-850f-10b65fa0bdd3"]], 
                     "Pressed", Automatic]]}], {"MouseClicked" :> If[
                     TrueQ[
                     Replace[
@@ -477,7 +493,7 @@ mEXTyg==
                     Pattern[BTools`Private`Package`d, 
                     Blank[Dynamic]] :> First[BTools`Private`Package`d]]], 
                     BTools`Private`UUIDActive[
-                    "Button-5e49310e-47dd-4f74-870a-bdfa9dfe6ff8"] = True], 
+                    "Button-2e3e97ae-6f63-46e8-850f-10b65fa0bdd3"] = True], 
                     PassEventsDown -> True}], {
                     PacletServerManagerPalette`Private`cmd :> 
                     PacletServerManagerPalette`Private`loadPacletInterface[
@@ -485,7 +501,8 @@ mEXTyg==
                     Spacings -> 0]], 
                 TrackedSymbols :> {
                  PacletServerManagerPalette`Private`refreshFlag, 
-                  PacletServerManagerPalette`Private`currentPacletServer}], 
+                  PacletServerManagerPalette`Private`currentPacletServer, 
+                  PacletServerManagerPalette`Private`deployedFlag}], 
                Panel["", ImageSize -> {
                   Dynamic[If[
                     TrueQ[PacletServerManagerPalette`Private`expandedDisplay],
@@ -509,14 +526,16 @@ UVdVBS7LErWUErUQAlwUBWrO+aIZY7MJpRT+Mmdfqc/QmA==
                   GrayLevel[0.2]], 
                  CheckAbort[
                   PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "f683155d-98af-4305-a577-94cd979c3d53"] = True; 
+                    "7fd8e817-175c-4276-867a-fcc6181d9883"] = True; 
                    Needs["BTools`"]; CheckAbort[
                     With[{PacletServerManagerPalette`Private`f = If[
                     TrueQ[PacletServerManagerPalette`Private`addFile], 
                     SystemDialogInput["FileOpen"], 
                     SystemDialogInput["Directory"]]}, 
                     If[
-                    FileExistsQ[PacletServerManagerPalette`Private`f], If[
+                    And[
+                    StringQ[PacletServerManagerPalette`Private`f], 
+                    FileExistsQ[PacletServerManagerPalette`Private`f]], If[
                     DirectoryQ[
                     PacletServerManagerPalette`Private`$serverList[
                     PacletServerManagerPalette`Private`currentPacletServer][
@@ -539,13 +558,13 @@ UVdVBS7LErWUErUQAlwUBWrO+aIZY7MJpRT+Mmdfqc/QmA==
                     PacletServerManagerPalette`Private`refreshFlag = 
                     RandomReal[]]], 
                     PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "f683155d-98af-4305-a577-94cd979c3d53"] = False]; 
+                    "7fd8e817-175c-4276-867a-fcc6181d9883"] = False]; 
                    PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "f683155d-98af-4305-a577-94cd979c3d53"] = False, 
+                    "7fd8e817-175c-4276-867a-fcc6181d9883"] = False, 
                    BTools`Private`UUIDActive[
-                    "Button-fc5e83f4-151d-41a9-a3ba-e88249ba425a"] = False]; 
+                    "Button-361074bf-826c-435c-9710-8061c95f8b75"] = False]; 
                  BTools`Private`UUIDActive[
-                   "Button-fc5e83f4-151d-41a9-a3ba-e88249ba425a"] = False, 
+                   "Button-361074bf-826c-435c-9710-8061c95f8b75"] = False, 
                  Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -574,7 +593,7 @@ mEXTyg==
                     If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-fc5e83f4-151d-41a9-a3ba-e88249ba425a"]], 
+                    "Button-361074bf-826c-435c-9710-8061c95f8b75"]], 
                     "Pressed", Automatic]]}, Enabled :> Dynamic[
                    DirectoryQ[
                     PacletServerManagerPalette`Private`$serverList[
@@ -588,7 +607,7 @@ mEXTyg==
                     If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-fc5e83f4-151d-41a9-a3ba-e88249ba425a"]], 
+                    "Button-361074bf-826c-435c-9710-8061c95f8b75"]], 
                     "Pressed", Automatic]]}], {"MouseClicked" :> If[
                    TrueQ[
                     Replace[
@@ -599,7 +618,7 @@ mEXTyg==
                     "ServerBase"]]], Pattern[BTools`Private`Package`d, 
                     Blank[Dynamic]] :> First[BTools`Private`Package`d]]], 
                    BTools`Private`UUIDActive[
-                    "Button-fc5e83f4-151d-41a9-a3ba-e88249ba425a"] = True], 
+                    "Button-361074bf-826c-435c-9710-8061c95f8b75"] = True], 
                  PassEventsDown -> True}], 
                EventHandler[
                 Button[
@@ -607,7 +626,7 @@ mEXTyg==
                   GrayLevel[0.2]], 
                  CheckAbort[
                   PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "43308000-8985-4ab0-8847-3cd5f37b24a4"] = True; 
+                    "86c33e7b-972d-4f9a-b3cc-761beedcc7b3"] = True; 
                    Needs["BTools`"]; CheckAbort[If[
                     DirectoryQ[
                     PacletServerManagerPalette`Private`$serverList[
@@ -636,13 +655,13 @@ mEXTyg==
                     PacletServerManagerPalette`Private`refreshFlag = 
                     RandomReal[], 
                     PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "43308000-8985-4ab0-8847-3cd5f37b24a4"] = False]; 
+                    "86c33e7b-972d-4f9a-b3cc-761beedcc7b3"] = False]; 
                    PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "43308000-8985-4ab0-8847-3cd5f37b24a4"] = False, 
+                    "86c33e7b-972d-4f9a-b3cc-761beedcc7b3"] = False, 
                    BTools`Private`UUIDActive[
-                    "Button-cb79b255-2618-4698-818b-8b13196677d3"] = False]; 
+                    "Button-03491745-8f6d-4899-93e7-9d99a844fea3"] = False]; 
                  BTools`Private`UUIDActive[
-                   "Button-cb79b255-2618-4698-818b-8b13196677d3"] = False, 
+                   "Button-03491745-8f6d-4899-93e7-9d99a844fea3"] = False, 
                  Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -671,7 +690,7 @@ mEXTyg==
                     If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-cb79b255-2618-4698-818b-8b13196677d3"]], 
+                    "Button-03491745-8f6d-4899-93e7-9d99a844fea3"]], 
                     "Pressed", Automatic]]}, Enabled :> Dynamic[
                    And[
                     DirectoryQ[
@@ -688,7 +707,7 @@ mEXTyg==
                     If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-cb79b255-2618-4698-818b-8b13196677d3"]], 
+                    "Button-03491745-8f6d-4899-93e7-9d99a844fea3"]], 
                     "Pressed", Automatic]]}], {"MouseClicked" :> If[
                    TrueQ[
                     Replace[
@@ -702,7 +721,7 @@ mEXTyg==
                     0]], Pattern[BTools`Private`Package`d, 
                     Blank[Dynamic]] :> First[BTools`Private`Package`d]]], 
                    BTools`Private`UUIDActive[
-                    "Button-cb79b255-2618-4698-818b-8b13196677d3"] = True], 
+                    "Button-03491745-8f6d-4899-93e7-9d99a844fea3"] = True], 
                  PassEventsDown -> True}], 
                Row[{
                  Style["Add File: ", 
@@ -730,7 +749,7 @@ UVdVBS7LErWUErUQAlwUBWrO+aIZY7MJpRT+Mmdfqc/QmA==
                   GrayLevel[0.2]], 
                  CheckAbort[
                   PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "f818868c-6622-4931-af1a-a89b99502fa4"] = True; 
+                    "04abc929-9bcb-407a-bff8-ed289ba755d8"] = True; 
                    Needs["BTools`"]; CheckAbort[
                     PacletServerManagerPalette`Private`whichPacF[
                     "PacletServerBuild"][
@@ -741,16 +760,16 @@ UVdVBS7LErWUErUQAlwUBWrO+aIZY7MJpRT+Mmdfqc/QmA==
                     "BuildSite" -> 
                     TrueQ[PacletServerManagerPalette`Private`makeSiteFlag], 
                     "DeployOptions" -> {
-                    "DeployPages" -> 
+                    Monitor -> False, "DeployPages" -> 
                     TrueQ[PacletServerManagerPalette`Private`makeSiteFlag]}], 
                     PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "f818868c-6622-4931-af1a-a89b99502fa4"] = False]; 
+                    "04abc929-9bcb-407a-bff8-ed289ba755d8"] = False]; 
                    PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "f818868c-6622-4931-af1a-a89b99502fa4"] = False, 
+                    "04abc929-9bcb-407a-bff8-ed289ba755d8"] = False, 
                    BTools`Private`UUIDActive[
-                    "Button-4b915a5d-fd8d-4bfd-bf1b-1dfaaa61985b"] = False]; 
+                    "Button-b17dc5b4-36f0-4f73-b452-32d402cd92c6"] = False]; 
                  BTools`Private`UUIDActive[
-                   "Button-4b915a5d-fd8d-4bfd-bf1b-1dfaaa61985b"] = False, 
+                   "Button-b17dc5b4-36f0-4f73-b452-32d402cd92c6"] = False, 
                  Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -779,7 +798,7 @@ mEXTyg==
                     If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-4b915a5d-fd8d-4bfd-bf1b-1dfaaa61985b"]], 
+                    "Button-b17dc5b4-36f0-4f73-b452-32d402cd92c6"]], 
                     "Pressed", Automatic]]}, Method -> "Queued", 
                  FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> Dynamic[
                    If[
@@ -789,13 +808,13 @@ mEXTyg==
                     If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-4b915a5d-fd8d-4bfd-bf1b-1dfaaa61985b"]], 
+                    "Button-b17dc5b4-36f0-4f73-b452-32d402cd92c6"]], 
                     "Pressed", Automatic]]}], {"MouseClicked" :> If[
                    TrueQ[
                     Replace[Automatic, Pattern[BTools`Private`Package`d, 
                     Blank[Dynamic]] :> First[BTools`Private`Package`d]]], 
                    BTools`Private`UUIDActive[
-                    "Button-4b915a5d-fd8d-4bfd-bf1b-1dfaaa61985b"] = True], 
+                    "Button-b17dc5b4-36f0-4f73-b452-32d402cd92c6"] = True], 
                  PassEventsDown -> True}], 
                EventHandler[
                 Button[
@@ -803,7 +822,7 @@ mEXTyg==
                   GrayLevel[0.2]], 
                  CheckAbort[
                   PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "3574d4d5-78a4-4b03-9ce4-3589325dd998"] = True; 
+                    "f34cb285-1601-4785-8891-abeca837b77a"] = True; 
                    Needs["BTools`"]; CheckAbort[
                     CopyToClipboard[
                     PacletServerManagerPalette`Private`whichPacF[
@@ -811,13 +830,13 @@ mEXTyg==
                     PacletServerManagerPalette`Private`$serverList[
                     PacletServerManagerPalette`Private`currentPacletServer]]],
                      PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "3574d4d5-78a4-4b03-9ce4-3589325dd998"] = False]; 
+                    "f34cb285-1601-4785-8891-abeca837b77a"] = False]; 
                    PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "3574d4d5-78a4-4b03-9ce4-3589325dd998"] = False, 
+                    "f34cb285-1601-4785-8891-abeca837b77a"] = False, 
                    BTools`Private`UUIDActive[
-                    "Button-bdc4e641-7cde-4f36-bb15-249a6eea3761"] = False]; 
+                    "Button-84708858-4bca-44fc-8e6a-361a8526d54d"] = False]; 
                  BTools`Private`UUIDActive[
-                   "Button-bdc4e641-7cde-4f36-bb15-249a6eea3761"] = False, 
+                   "Button-84708858-4bca-44fc-8e6a-361a8526d54d"] = False, 
                  Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -846,7 +865,7 @@ mEXTyg==
                     If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-bdc4e641-7cde-4f36-bb15-249a6eea3761"]], 
+                    "Button-84708858-4bca-44fc-8e6a-361a8526d54d"]], 
                     "Pressed", Automatic]]}, Method -> "Queued", 
                  FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> Dynamic[
                    If[
@@ -856,13 +875,13 @@ mEXTyg==
                     If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-bdc4e641-7cde-4f36-bb15-249a6eea3761"]], 
+                    "Button-84708858-4bca-44fc-8e6a-361a8526d54d"]], 
                     "Pressed", Automatic]]}], {"MouseClicked" :> If[
                    TrueQ[
                     Replace[Automatic, Pattern[BTools`Private`Package`d, 
                     Blank[Dynamic]] :> First[BTools`Private`Package`d]]], 
                    BTools`Private`UUIDActive[
-                    "Button-bdc4e641-7cde-4f36-bb15-249a6eea3761"] = True], 
+                    "Button-84708858-4bca-44fc-8e6a-361a8526d54d"] = True], 
                  PassEventsDown -> True}], 
                EventHandler[
                 Button[
@@ -870,7 +889,7 @@ mEXTyg==
                   GrayLevel[0.2]], 
                  CheckAbort[
                   PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "5bc56504-02fc-4c9a-882e-590c7dae5add"] = True; 
+                    "0053d528-33ee-4fda-9e85-9127fbd17251"] = True; 
                    Needs["BTools`"]; 
                    CheckAbort[
                     PacletServerManagerPalette`Private`PacletServerInitialize[
@@ -881,13 +900,13 @@ mEXTyg==
                     PacletServerManagerPalette`Private`currentPacletServer, 
                     "SiteConfig.wl"]], 
                     PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "5bc56504-02fc-4c9a-882e-590c7dae5add"] = False]; 
+                    "0053d528-33ee-4fda-9e85-9127fbd17251"] = False]; 
                    PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "5bc56504-02fc-4c9a-882e-590c7dae5add"] = False, 
+                    "0053d528-33ee-4fda-9e85-9127fbd17251"] = False, 
                    BTools`Private`UUIDActive[
-                    "Button-d88d7738-709b-4f98-b66b-1291c4826205"] = False]; 
+                    "Button-e5ddb7c9-5271-438d-bfe6-bbb0642d1ffc"] = False]; 
                  BTools`Private`UUIDActive[
-                   "Button-d88d7738-709b-4f98-b66b-1291c4826205"] = False, 
+                   "Button-e5ddb7c9-5271-438d-bfe6-bbb0642d1ffc"] = False, 
                  Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -916,7 +935,7 @@ mEXTyg==
                     If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-d88d7738-709b-4f98-b66b-1291c4826205"]], 
+                    "Button-e5ddb7c9-5271-438d-bfe6-bbb0642d1ffc"]], 
                     "Pressed", Automatic]]}, Method -> "Queued", 
                  FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> Dynamic[
                    If[
@@ -926,13 +945,13 @@ mEXTyg==
                     If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-d88d7738-709b-4f98-b66b-1291c4826205"]], 
+                    "Button-e5ddb7c9-5271-438d-bfe6-bbb0642d1ffc"]], 
                     "Pressed", Automatic]]}], {"MouseClicked" :> If[
                    TrueQ[
                     Replace[Automatic, Pattern[BTools`Private`Package`d, 
                     Blank[Dynamic]] :> First[BTools`Private`Package`d]]], 
                    BTools`Private`UUIDActive[
-                    "Button-d88d7738-709b-4f98-b66b-1291c4826205"] = True], 
+                    "Button-e5ddb7c9-5271-438d-bfe6-bbb0642d1ffc"] = True], 
                  PassEventsDown -> True}], 
                Row[{
                  Style["Make Pages:", 
@@ -957,7 +976,7 @@ mEXTyg==
                     PacletServerManagerPalette`Private`currentPacletServer, 
                     "ServerName"][#]& ], String, Appearance -> "Frameless", 
                     BoxID -> 
-                    "input-field-510cbfdd-b197-4c70-8a5e-93c5b7c8f233", 
+                    "input-field-9e87fba6-0099-452c-9c8b-380515eb2f4f", 
                     ImageSize -> Dynamic[
                     If[
                     TrueQ[PacletServerManagerPalette`Private`expandedDisplay],
@@ -969,7 +988,7 @@ mEXTyg==
                     SelectedNotebook[]; SetSelectedNotebook[
                     EvaluationNotebook[]]; FrontEnd`MoveCursorToInputField[
                     EvaluationNotebook[], 
-                    "input-field-510cbfdd-b197-4c70-8a5e-93c5b7c8f233"]], 
+                    "input-field-9e87fba6-0099-452c-9c8b-380515eb2f4f"]], 
                     "MouseDragged" :> 
                     If[EvaluationNotebook[] =!= SelectedNotebook[], 
                     CurrentValue[
@@ -977,7 +996,7 @@ mEXTyg==
                     SelectedNotebook[]; SetSelectedNotebook[
                     EvaluationNotebook[]]; FrontEnd`MoveCursorToInputField[
                     EvaluationNotebook[], 
-                    "input-field-510cbfdd-b197-4c70-8a5e-93c5b7c8f233"]], 
+                    "input-field-9e87fba6-0099-452c-9c8b-380515eb2f4f"]], 
                     PassEventsDown -> True, PassEventsUp -> False}], 
                   FrameStyle -> GrayLevel[0.7], 
                   FrameMargins -> {{3, 0}, {1, 1}}, Background -> 
@@ -996,7 +1015,7 @@ mEXTyg==
                     PacletServerManagerPalette`Private`currentPacletServer, 
                     "ServerBase"][#]& ], String, Appearance -> "Frameless", 
                     BoxID -> 
-                    "input-field-ad4582bd-ad5a-4682-8d93-f22b42a707b4", 
+                    "input-field-52a0b946-1934-4080-bc39-294e2123b502", 
                     ImageSize -> Dynamic[
                     If[
                     TrueQ[PacletServerManagerPalette`Private`expandedDisplay],
@@ -1008,7 +1027,7 @@ mEXTyg==
                     SelectedNotebook[]; SetSelectedNotebook[
                     EvaluationNotebook[]]; FrontEnd`MoveCursorToInputField[
                     EvaluationNotebook[], 
-                    "input-field-ad4582bd-ad5a-4682-8d93-f22b42a707b4"]], 
+                    "input-field-52a0b946-1934-4080-bc39-294e2123b502"]], 
                     "MouseDragged" :> 
                     If[EvaluationNotebook[] =!= SelectedNotebook[], 
                     CurrentValue[
@@ -1016,7 +1035,7 @@ mEXTyg==
                     SelectedNotebook[]; SetSelectedNotebook[
                     EvaluationNotebook[]]; FrontEnd`MoveCursorToInputField[
                     EvaluationNotebook[], 
-                    "input-field-ad4582bd-ad5a-4682-8d93-f22b42a707b4"]], 
+                    "input-field-52a0b946-1934-4080-bc39-294e2123b502"]], 
                     PassEventsDown -> True, PassEventsUp -> False}], 
                   FrameStyle -> GrayLevel[0.7], 
                   FrameMargins -> {{3, 0}, {1, 1}}, Background -> 
@@ -1037,7 +1056,7 @@ mEXTyg==
                     "ServerExtension"][
                     Replace[#, "" -> Nothing]]& ], String, Appearance -> 
                     "Frameless", BoxID -> 
-                    "input-field-739b8d77-0101-44f3-96ac-76991e24915e", 
+                    "input-field-a4642f94-1b97-4a73-8409-20a78cc0afa6", 
                     ImageSize -> Dynamic[
                     If[
                     TrueQ[PacletServerManagerPalette`Private`expandedDisplay],
@@ -1049,7 +1068,7 @@ mEXTyg==
                     SelectedNotebook[]; SetSelectedNotebook[
                     EvaluationNotebook[]]; FrontEnd`MoveCursorToInputField[
                     EvaluationNotebook[], 
-                    "input-field-739b8d77-0101-44f3-96ac-76991e24915e"]], 
+                    "input-field-a4642f94-1b97-4a73-8409-20a78cc0afa6"]], 
                     "MouseDragged" :> 
                     If[EvaluationNotebook[] =!= SelectedNotebook[], 
                     CurrentValue[
@@ -1057,7 +1076,7 @@ mEXTyg==
                     SelectedNotebook[]; SetSelectedNotebook[
                     EvaluationNotebook[]]; FrontEnd`MoveCursorToInputField[
                     EvaluationNotebook[], 
-                    "input-field-739b8d77-0101-44f3-96ac-76991e24915e"]], 
+                    "input-field-a4642f94-1b97-4a73-8409-20a78cc0afa6"]], 
                     PassEventsDown -> True, PassEventsUp -> False}], 
                   FrameStyle -> GrayLevel[0.7], 
                   FrameMargins -> {{3, 0}, {1, 1}}, Background -> 
@@ -1078,7 +1097,7 @@ mEXTyg==
                     CloudConnect][
                     Replace[#, "" -> None]]& ], String, Appearance -> 
                     "Frameless", BoxID -> 
-                    "input-field-04def2c6-5675-48f4-ac40-517a211c66db", 
+                    "input-field-457dc5b2-56c2-42d3-9222-34496bcb175e", 
                     ImageSize -> Dynamic[
                     If[
                     TrueQ[PacletServerManagerPalette`Private`expandedDisplay],
@@ -1090,7 +1109,7 @@ mEXTyg==
                     SelectedNotebook[]; SetSelectedNotebook[
                     EvaluationNotebook[]]; FrontEnd`MoveCursorToInputField[
                     EvaluationNotebook[], 
-                    "input-field-04def2c6-5675-48f4-ac40-517a211c66db"]], 
+                    "input-field-457dc5b2-56c2-42d3-9222-34496bcb175e"]], 
                     "MouseDragged" :> 
                     If[EvaluationNotebook[] =!= SelectedNotebook[], 
                     CurrentValue[
@@ -1098,7 +1117,7 @@ mEXTyg==
                     SelectedNotebook[]; SetSelectedNotebook[
                     EvaluationNotebook[]]; FrontEnd`MoveCursorToInputField[
                     EvaluationNotebook[], 
-                    "input-field-04def2c6-5675-48f4-ac40-517a211c66db"]], 
+                    "input-field-457dc5b2-56c2-42d3-9222-34496bcb175e"]], 
                     PassEventsDown -> True, PassEventsUp -> False}], 
                   FrameStyle -> GrayLevel[0.7], 
                   FrameMargins -> {{3, 0}, {1, 1}}, Background -> 
@@ -1116,7 +1135,7 @@ mEXTyg==
                     PacletServerManagerPalette`Private`pacletServersEdit[
                     PacletServerManagerPalette`Private`currentPacletServer, 
                     Permissions][#]& ], Appearance -> "Frameless", BoxID -> 
-                    "input-field-bd1c1a2c-d5c2-4ad1-80d1-297f26f9f0ad", 
+                    "input-field-a5e7ebdc-0cf4-4430-b703-8f2574896ae1", 
                     ImageSize -> Dynamic[
                     If[
                     TrueQ[PacletServerManagerPalette`Private`expandedDisplay],
@@ -1128,7 +1147,7 @@ mEXTyg==
                     SelectedNotebook[]; SetSelectedNotebook[
                     EvaluationNotebook[]]; FrontEnd`MoveCursorToInputField[
                     EvaluationNotebook[], 
-                    "input-field-bd1c1a2c-d5c2-4ad1-80d1-297f26f9f0ad"]], 
+                    "input-field-a5e7ebdc-0cf4-4430-b703-8f2574896ae1"]], 
                     "MouseDragged" :> 
                     If[EvaluationNotebook[] =!= SelectedNotebook[], 
                     CurrentValue[
@@ -1136,7 +1155,7 @@ mEXTyg==
                     SelectedNotebook[]; SetSelectedNotebook[
                     EvaluationNotebook[]]; FrontEnd`MoveCursorToInputField[
                     EvaluationNotebook[], 
-                    "input-field-bd1c1a2c-d5c2-4ad1-80d1-297f26f9f0ad"]], 
+                    "input-field-a5e7ebdc-0cf4-4430-b703-8f2574896ae1"]], 
                     PassEventsDown -> True, PassEventsUp -> False}], 
                   FrameStyle -> GrayLevel[0.7], 
                   FrameMargins -> {{3, 0}, {1, 1}}, Background -> 
@@ -1158,41 +1177,43 @@ UVdVBS7LErWUErUQAlwUBWrO+aIZY7MJpRT+Mmdfqc/QmA==
                   GrayLevel[0.2]], 
                  CheckAbort[
                   PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "01b8c79b-1178-4494-a790-a7da54abc789"] = True; 
+                    "8dc745ec-4276-4f18-b857-3f8728df38e4"] = True; 
                    Needs["BTools`"]; CheckAbort[
                     
                     With[{PacletServerManagerPalette`Private`sure = 
                     DialogInput[{
+                    PacletServerManagerPalette`Private`deleteKey = True, 
                     PacletServerManagerPalette`Private`deleteServerComplete = 
                     False, PacletServerManagerPalette`Private`\
 deleteCloudServer = False}, 
                     
-                    Column[{
-                    "Are you sure you want to remove this server? This cannot \
-be undone.", 
-                    Row[{
+                    Grid[{{"Are you sure you want to remove this server? This \
+cannot be undone.", SpanFromLeft}, {"", 
                     DefaultButton["Cancel", 
                     DialogReturn[
-                    ConstantArray[$Canceled, 3]]], 
+                    ConstantArray[$Canceled, 3]], 
+                    ImageSize -> {100, Automatic}], 
                     Button["Delete", 
                     
                     DialogReturn[{
-                    True, PacletServerManagerPalette`Private`\
-deleteServerComplete, 
-                    PacletServerManagerPalette`Private`deleteCloudServer}]]}], 
-                    Row[{
+                    PacletServerManagerPalette`Private`deleteKey, 
+                    PacletServerManagerPalette`Private`deleteServerComplete, 
+                    PacletServerManagerPalette`Private`deleteCloudServer}], 
+                    ImageSize -> {100, Automatic}]}, {
+                    Style["Delete server entry: ", Gray], 
+                    Checkbox[
+                    Dynamic[PacletServerManagerPalette`Private`deleteKey]]}, {
+                    
                     Style["Delete server directory: ", Gray], 
                     Checkbox[
                     Dynamic[
                     PacletServerManagerPalette`Private`deleteServerComplete]]}\
-], 
-                    Row[{
+, {
                     Style["Delete cloud server: ", Gray], 
                     Checkbox[
                     Dynamic[
-                    PacletServerManagerPalette`Private`deleteCloudServer]]}]}]\
-]}, If[
-                    Part[PacletServerManagerPalette`Private`sure, 1], If[
+                    PacletServerManagerPalette`Private`deleteCloudServer]]}}, 
+                    Alignment -> {Left, Top}]]}, If[
                     Or[
                     Part[PacletServerManagerPalette`Private`sure, 2], 
                     Part[PacletServerManagerPalette`Private`sure, 3]], 
@@ -1203,17 +1224,18 @@ deleteServerComplete,
                     "DeleteLocal" -> 
                     Part[PacletServerManagerPalette`Private`sure, 2], 
                     "DeleteCloud" -> 
-                    Part[PacletServerManagerPalette`Private`sure, 3]]]; 
+                    Part[PacletServerManagerPalette`Private`sure, 3]]]; If[
+                    Part[PacletServerManagerPalette`Private`sure, 1], 
                     PacletServerManagerPalette`Private`pacletServersRemove[
                     PacletServerManagerPalette`Private`currentPacletServer]]; 
                     Null], PacletServerManagerPalette`Private`\
-paletteButtonRunning["01b8c79b-1178-4494-a790-a7da54abc789"] = False]; 
+paletteButtonRunning["8dc745ec-4276-4f18-b857-3f8728df38e4"] = False]; 
                    PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "01b8c79b-1178-4494-a790-a7da54abc789"] = False, 
+                    "8dc745ec-4276-4f18-b857-3f8728df38e4"] = False, 
                    BTools`Private`UUIDActive[
-                    "Button-4e2decb3-3859-499f-825f-3358c81a3056"] = False]; 
+                    "Button-398de210-01d0-4528-b81b-5b00252f1fa2"] = False]; 
                  BTools`Private`UUIDActive[
-                   "Button-4e2decb3-3859-499f-825f-3358c81a3056"] = False, 
+                   "Button-398de210-01d0-4528-b81b-5b00252f1fa2"] = False, 
                  Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -1242,7 +1264,7 @@ mEXTyg==
                     If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-4e2decb3-3859-499f-825f-3358c81a3056"]], 
+                    "Button-398de210-01d0-4528-b81b-5b00252f1fa2"]], 
                     "Pressed", Automatic]]}, Method -> "Queued", 
                  FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> Dynamic[
                    If[
@@ -1252,13 +1274,13 @@ mEXTyg==
                     If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-4e2decb3-3859-499f-825f-3358c81a3056"]], 
+                    "Button-398de210-01d0-4528-b81b-5b00252f1fa2"]], 
                     "Pressed", Automatic]]}], {"MouseClicked" :> If[
                    TrueQ[
                     Replace[Automatic, Pattern[BTools`Private`Package`d, 
                     Blank[Dynamic]] :> First[BTools`Private`Package`d]]], 
                    BTools`Private`UUIDActive[
-                    "Button-4e2decb3-3859-499f-825f-3358c81a3056"] = True], 
+                    "Button-398de210-01d0-4528-b81b-5b00252f1fa2"] = True], 
                  PassEventsDown -> True}]}, "New" -> {
                
                DynamicModule[{
@@ -1502,17 +1524,17 @@ mEXTyg==
                     GrayLevel[0.2]], 
                     CheckAbort[
                     PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "2dbd6c71-bf9a-46c3-b596-ddf4a6967f51"] = True; 
+                    "09e7cc5e-11e5-4bce-bf6f-9306ab37536b"] = True; 
                     Needs["BTools`"]; CheckAbort[
                     PacletServerManagerPalette`Private`validateSubmit[], 
                     PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "2dbd6c71-bf9a-46c3-b596-ddf4a6967f51"] = False]; 
+                    "09e7cc5e-11e5-4bce-bf6f-9306ab37536b"] = False]; 
                     PacletServerManagerPalette`Private`paletteButtonRunning[
-                    "2dbd6c71-bf9a-46c3-b596-ddf4a6967f51"] = False, 
+                    "09e7cc5e-11e5-4bce-bf6f-9306ab37536b"] = False, 
                     BTools`Private`UUIDActive[
-                    "Button-16ce54d6-51c9-4916-9685-b7224afd9569"] = False]; 
+                    "Button-eba3ebb9-e27b-4ec6-ac68-9368735bb3f8"] = False]; 
                     BTools`Private`UUIDActive[
-                    "Button-16ce54d6-51c9-4916-9685-b7224afd9569"] = False, 
+                    "Button-eba3ebb9-e27b-4ec6-ac68-9368735bb3f8"] = False, 
                     Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -1541,7 +1563,7 @@ mEXTyg==
                     If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-16ce54d6-51c9-4916-9685-b7224afd9569"]], 
+                    "Button-eba3ebb9-e27b-4ec6-ac68-9368735bb3f8"]], 
                     "Pressed", Automatic]]}, Method -> "Queued", 
                     FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> Dynamic[
                     If[
@@ -1551,13 +1573,13 @@ mEXTyg==
                     If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-16ce54d6-51c9-4916-9685-b7224afd9569"]], 
+                    "Button-eba3ebb9-e27b-4ec6-ac68-9368735bb3f8"]], 
                     "Pressed", Automatic]]}], {"MouseClicked" :> If[
                     TrueQ[
                     Replace[Automatic, Pattern[BTools`Private`Package`d, 
                     Blank[Dynamic]] :> First[BTools`Private`Package`d]]], 
                     BTools`Private`UUIDActive[
-                    "Button-16ce54d6-51c9-4916-9685-b7224afd9569"] = True], 
+                    "Button-eba3ebb9-e27b-4ec6-ac68-9368735bb3f8"] = True], 
                     PassEventsDown -> True}]}, 
                  Dividers -> {2 -> GrayLevel[0.9], -2 -> GrayLevel[0.5]}], 
                 Initialization :> {
@@ -1672,6 +1694,7 @@ mEXTyg==
   DownValues[PacletServerManagerPalette`Private`refreshPacletServer] = {
     HoldPattern[
        PacletServerManagerPalette`Private`refreshPacletServers[]] :> (
+      PacletServerManagerPalette`Private`whichPacF["LoadPacletServers"][]; 
       PacletServerManagerPalette`Private`$serverList = Replace[
          PacletServerManagerPalette`Private`whichPacF["$PacletServers"], 
          Except[
@@ -1765,7 +1788,8 @@ mEXTyg==
          Blank[]], 
         Pattern[PacletServerManagerPalette`Private`a, 
          Blank[]]]] :> 
-     With[{PacletServerManagerPalette`Private`k1 = 
+     With[{
+       PacletServerManagerPalette`Private`k1 = 
         PacletServerManagerPalette`Private`whichPacF["$PacletServers"]}, 
        Replace[
          PacletServerManagerPalette`Private`whichPacF[
@@ -1815,11 +1839,8 @@ mEXTyg==
              CreateIntermediateDirectories -> True]]; 
           Export[PacletServerManagerPalette`Private`f, 
             PacletServerManagerPalette`Private`k2]]; 
-        PacletServerManagerPalette`Private`refreshPacletServers[]]]}; If[
-    Not[
-     ValueQ[
-      First[PacletServerManagerPalette`Private`$serverList]]], 
-    PacletServerManagerPalette`Private`refreshPacletServers[]]; If[
+        PacletServerManagerPalette`Private`refreshPacletServers[]]]}; 
+  PacletServerManagerPalette`Private`refreshPacletServers[]; If[
     Not[
      ValueQ[
       First[
@@ -1840,16 +1861,13 @@ mEXTyg==
  ShowStringCharacters->False,
  FontFamily:>CurrentValue["PanelFontFamily"],
  FontSize:>CurrentValue[
-  "PanelFontSize"],ExpressionUUID->"a00be112-bc15-4e64-b7fc-80c4c86ad4c0"]
+  "PanelFontSize"],ExpressionUUID->"88e7d076-eff3-4cfc-bca2-b4e4d3dc81c4"]
 },
 ClosingSaveDialog->False,
 WindowSize->{All, All},
 WindowMargins->{{Automatic, 0}, {1, 0}},
 WindowElements->{"StatusArea"},
 WindowTitle->"Paclet Server Manager",
-TaggingRules->{"OldSelection" -> NotebookObject[
-    FrontEndObject[
-     LinkObject["2ki2n_shm", 345, 6]], 17]},
 FrontEndVersion->"11.2 for Mac OS X x86 (32-bit, 64-bit Kernel) (September \
 10, 2017)",
 StyleDefinitions->"Palette.nb"
@@ -1865,10 +1883,12 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[594, 21, 94410, 1821, 849, InheritFromParent,ExpressionUUID->"a00be112-bc15-4e64-b7fc-80c4c86ad4c0",
+Cell[594, 21, 95779, 1842, 849, InheritFromParent,ExpressionUUID->"88e7d076-eff3-4cfc-bca2-b4e4d3dc81c4",
  PageBreakAbove->True,
  PageBreakWithin->False]
 }
 ]
 *)
+
+(* End of internal cache information *)
 

@@ -1052,6 +1052,12 @@ PacletSiteURL[ops:OptionsPattern[]]:=
 							|>,
 				_String?(KeyMemberQ[$PacletUploadDomains, URLParse[#, "Domain"]]&),
 					pacletToolsThrow["Non-cloud paclet support not yet complete"],
+				_String?(AllTrue[URLParse[#, {"Scheme", "Domain"}], #=!=None&]&),
+					URLBuild@Flatten@{
+						base,
+						ext,
+						name
+						},
 				_String?(StringMatchQ[FileNameJoin@{$RootDirectory,"*"}]),
 					"file://"<>
 						URLBuild@Key["Path"]@URLParse@

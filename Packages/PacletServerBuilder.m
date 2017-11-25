@@ -26,6 +26,7 @@ PackageScopeBlock[
 		"Generates a markdown notebook for the paclet";
 	PacletMarkdownNotebookUpdate::usage=
 		"Updates a markdown notebook for a paclet";
+	LoadPacletServers::usage="";
 	$PacletServers::usage=
 		"The listing of possible servers";
 	$DefaultPacletServer::usage=
@@ -89,26 +90,30 @@ $PacletServersFile=
 
 
 LoadPacletServers[]:=
-	If[
-		FileExistsQ@$PacletServersFile,
-		$PacletServers=Import[$PacletServersFile],
-		$PacletServers=
-			<|
-				"Default"->
-					<|
-						"ServerBase"->
-							$WebSiteDirectory,
-						"ServerExtension"->
-							Nothing,
-						"ServerName"->
-							"PacletServer",
-						Permissions->
-							"Public",
-						CloudConnect->
-							"PacletsAccount"
-						|>
-				|>
-		]
+	(
+		If[FileExistsQ@$PacletServersFile,
+			$PacletServers=
+				Import[$PacletServersFile]
+			];
+		If[!AssociationQ@$PacletServers||Length@$PacletServers==0,
+			$PacletServers=
+				<|
+					"Default"->
+						<|
+							"ServerBase"->
+								$WebSiteDirectory,
+							"ServerExtension"->
+								Nothing,
+							"ServerName"->
+								"PacletServer",
+							Permissions->
+								"Public",
+							CloudConnect->
+								"PacletsAccount"
+							|>
+					|>
+			]
+		)
 
 
 (* ::Subsubsection::Closed:: *)
@@ -176,7 +181,14 @@ $PacletServer:=
 
 
 localPacletServerPat=
-	KeyValuePattern[{"ServerBase"->_String?DirectoryQ, "ServerName"->_}];
+	KeyValuePattern[{
+		"ServerBase"->
+			(
+				_String?DirectoryQ|
+				_String?(MatchQ[URLParse[#, "Scheme"], "file"|"http"]&)
+				),
+		"ServerName"->_
+		}];
 localPacletServer=
 	MatchQ[localPacletServerPat]
 
@@ -247,11 +259,22 @@ $PacletServerDirectory:=
 
 
 
+Options[PacletServerDataset]=
+	{
+		"DeployedServer"->
+			True
+		};
 PacletServerDataset[
-	server:localPacletServerPat
+	server:localPacletServerPat,
+	ops:OptionsPattern[]
 	]:=
 	PacletSiteInfoDataset@
-		FilterRules[Normal@server,
+		FilterRules[
+			If[TrueQ@OptionValue["DeployedServer"],
+				Prepend["ServerBase"->Automatic],
+				Identity
+				]@
+				Normal@server,
 			Options[PacletSiteInfoDataset]
 			];
 
@@ -1092,11 +1115,12 @@ Options[PacletServerDelete]=
 		"DeleteCloud"->False
 		};
 PacletServerDelete[
-	server:localPacletServerPat
+	server:localPacletServerPat,
+	ops:OptionsPattern[]
 	]:=
 	(
-		If[OptionValue["DeleteLocal"],	
-			With[{d=PacletServerDirectory[server]},
+		If[OptionValue["DeleteLocal"],
+			With[{d=Echo@PacletServerDirectory[server]},
 				If[DirectoryQ[d],
 					DeleteDirectory[PacletServerDirectory[server],
 						DeleteContents->True
@@ -1405,6 +1429,9 @@ PacletServerInitialize[server:localPacletServer]:=
 
 
 
+PacletServerBuild//Clear
+
+
 Options[PacletServerBuild]=
 	Join[
 		Options[WebSiteBuild],
@@ -1444,25 +1471,26 @@ PacletServerBuild[
 				]&/@Association/@siteData
 			];
 		With[{s=
-			If[OptionValue["BuildSite"],
+			If[TrueQ@OptionValue["BuildSite"],
 				WebSiteBuild[
 					PacletServerDirectory[server],
 					"AutoDeploy"->False,
 					"Configuration"->
 						With[
 							{
-								conf=Replace[
-									Quiet@Import@
-										If[FileExistsQ@PacletServeFile[server, "SiteConfig.m"],
-											PacletServeFile[server, "SiteConfig.m"],
-											PacletServeFile[server, "SiteConfig.wl"]
-											],
-									{
-										o_?OptionQ:>
-											Association[o],
-										_-><||>
-										}
-									]
+								conf=
+									Replace[
+										Quiet@Import@
+											If[FileExistsQ@PacletServeFile[server, "SiteConfig.m"],
+												PacletServeFile[server, "SiteConfig.m"],
+												PacletServeFile[server, "SiteConfig.wl"]
+												],
+										{
+											o_?OptionQ:>
+												Association[o],
+											_-><||>
+											}
+										]
 								},
 							Join[
 								<|
@@ -1516,15 +1544,14 @@ PacletServerBuild[
 				]
 			]
 		];
-PacletServerBuild[
-	ops:Except[localPacletServerPat, _?OptionQ]
-	]:=
-	PacletServerBuild[$PacletServer, ops]
 
 
 (* ::Subsubsection::Closed:: *)
 (*PacletServerDeploy*)
 
+
+
+PacletServerDeploy//Clear
 
 
 PacletServerDeploy::nobld=
@@ -1542,66 +1569,61 @@ PacletServerDeploy[
 	server:localPacletServerPat,
 	ops:OptionsPattern[]
 	]:=
-	If[DirectoryQ@PacletServerFile[server, "output"],
-		CopyFile[
-			PacletServerFile[server, "PacletSite.mz"],
-			PacletServerFile[server, {"output","PacletSite.mz"}],
-			OverwriteTarget->True
-			];
-		If[DirectoryQ@PacletServerFile[server, {"output","Paclets"}],
-			DeleteDirectory[PacletServerFile[server, {"output","Paclets"}],
-				DeleteContents->True]
-			];
-		CopyDirectory[
-			PacletServerFile[server, "Paclets"],
-			PacletServerFile[server, {"output","Paclets"}]
-			];
-		(
-			DeleteFile[
-				PacletServerFile[server, {"output","PacletSite.mz"}]
-				];
-			DeleteDirectory[
-				PacletServerFile[server, {"output","Paclets"}],
-				DeleteContents->True
-				];
-			#
-			)&@
-			WebSiteDeploy[
-				PacletServerFile[server, "output"],
-				FilterRules[{
-					Normal@
-						Merge[{
-							ops,
-							Lookup[
-								Replace[Quiet@Import[PacletServerFile[server, "SiteConfig.wl"]],
-									Except[_?OptionQ]:>{}
-									],
-								"DeployOptions",
-								{}
+	If[
+		DirectoryQ@PacletServerFile[server, "output"]||
+			DirectoryQ@PacletServerFile[server, "Paclets"],
+		With[
+			{
+				baseConfig=
+					Lookup[
+						Replace[Quiet@Import[PacletServerFile[server, "SiteConfig.wl"]],
+							Except[_?OptionQ]:>{}
+							],
+						"DeployOptions",
+						{}
+						]
+				},
+				If[!DirectoryQ@PacletServerFile[server, "output"],
+					CreateDirectory@PacletServerFile[server, "output"]
+					];
+				WebSiteDeploy[
+					PacletServerFile[server, "output"],
+					Lookup[server, "ServerName"],
+					FilterRules[
+						Normal@
+							Merge[
+								{
+									ops,
+									CloudConnect->
+										Lookup[server, CloudConnect],
+									Permissions->
+										Lookup[server, Permissions],
+									baseConfig,
+									"ExtraFileNameForms"->
+										{
+											"PacletSite.mz",
+											"*.paclet"
+											},
+									"IncludeFiles"->
+										{
+											PacletServerFile[server, "PacletSite.mz"],
+											PacletServerFile[server, "Paclets"]
+											}
+										},
+								Replace[
+									{
+										{s:_String|_?OptionQ,___}:>s,
+										e_:>Flatten@e
+										}
+									]
 								],
-						CloudConnect->
-							Lookup[server, CloudConnect],
-						Permissions->
-							Lookup[server, Permissions],
-						"ExtraFileNameForms"->
-							{
-								"PacletSite.mz",
-								"*.paclet"
-								}
-							},
-							First
-							]
-						},
 						Options@WebSiteDeploy
 						]
-				],
+					]
+			],
 		Message[PacletServerDeploy::nobld];
 		$Failed
 		];
-PacletServerDeploy[
-	ops:Except[localPacletServerPat, _?OptionQ]
-	]:=
-	PacletServerDeploy[$PacletServer, ops]
 
 
 End[];

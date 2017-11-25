@@ -1464,6 +1464,108 @@ WebSiteBuild[
 		];
 
 
+webSiteDeploySelectFiles[
+	dir_,
+	last_,
+	select_,
+	fileForms_,
+	alwaysDeployForms_,
+	includes_
+	]:=
+	Select[
+		FileExistsQ[#]&&
+		!DirectoryQ[#]&&
+			(
+				StringMatchQ[
+					#,
+					alwaysDeployForms
+					]||
+				StringMatchQ[
+					FileNameTake[#],
+					alwaysDeployForms
+					]||
+				!DateObjectQ[last]||
+				Quiet[FileDate[#]>last,Greater::nordol]
+				)&&
+			select[#]&
+			]@
+		SortBy[FileBaseName[#]==="index"&]@
+		Join[
+			Sequence@@
+			Map[
+				FileNames[
+					fileForms,
+					#,
+					\[Infinity]]&,
+				Select[Flatten@{dir, includes}, DirectoryQ]
+				],
+			Select[
+				Flatten@List@includes, 
+				Not@DirectoryQ[#]&&
+					StringMatchQ[#,
+						___~~fileForms
+						]&
+				]
+			]
+
+
+webSiteDeployFile[f_, uri_, outDir_, trueDir_, stripDirs_, ops___?OptionQ]:=
+	With[{
+		(* Build export URI *)
+		url=
+			URLBuild@
+				Flatten@{
+					Replace[
+						uri,
+						Automatic:>
+							FileBaseName[trueDir]
+						],
+					FileNameSplit@
+						FileNameDrop[
+							f,
+							FileNameDepth@
+								SelectFirst[
+									SortBy[
+										Minus@*FileNameDepth
+										]@
+									Flatten@{
+										outDir,
+										trueDir,
+										stripDirs
+										},
+									StringStartsQ[f, #]&,
+									outDir
+									]
+							]
+					}
+		},
+		If[StringEndsQ[url,"/index.html"],
+			(* since /index.html isn't supported in the cloud *)
+			CopyFile[
+					f,
+					CloudObject[
+						StringTrim[url,"/index.html"]<>"/main.html",
+						FilterRules[
+							Flatten@{ops,Options[WebSiteDeploy]},
+							Options[CloudObject]
+							]
+						]
+					]
+			];
+		Take[#, 1]&@
+			CopyFile[
+				f,
+				CloudObject[
+					url,
+					FilterRules[
+						Flatten@{ops,Options[WebSiteDeploy]},
+						Options[CloudObject]
+						]
+					]
+				]
+		]
+
+
 $WebFileFormats=
 	"html"|"css"|"js"|
 	"png"|"jpg"|"gif"|
@@ -1479,7 +1581,10 @@ Options[WebSiteDeploy]=
 			CloudConnect->False,
 			"LastDeployment"->Automatic,
 			"AlwaysDeployForms"->"",
-			Permissions->"Public"
+			"IncludeFiles"->{},
+			"StripDirectories"->{},
+			Permissions->"Public",
+			Monitor->True
 			},
 		Options[CloudObject]
 		];
@@ -1488,123 +1593,76 @@ WebSiteDeploy[
 	uri:_String|Automatic:Automatic,
 	ops:OptionsPattern[]
 	]:=
-	With[{
-		trueDir=
-			If[
-				FileBaseName[outDir]==="output"&&
-					FileExistsQ@
-						FileNameJoin@{
-							DirectoryName[outDir],
-							"SiteConfig.wl"
-							},
-				DirectoryName[outDir],
-				outDir
-				]
-		},
-	With[{
-			info=
-				If[FileExistsQ[FileNameJoin@{trueDir,"DeploymentInfo.m"}],
-					Import[FileNameJoin@{trueDir,"DeploymentInfo.m"}],
-					{}
-					]
+	Module[
+		{
+			trueDir=
+				If[
+					FileBaseName[outDir]==="output",
+					DirectoryName[outDir],
+					outDir
+					],
+			info,
+			select,
+			last
 			},
-			Export[FileNameJoin@{trueDir,"DeploymentInfo.m"},
-				KeyDrop[
-					Association@
-						Flatten@{
-							Normal@info,
-							ops,
-							"LastDeployment"->Now
-							},
-					{FileNameForms,"ExtraFileNameForms"}
-					]
+		info=
+			If[FileExistsQ[FileNameJoin@{trueDir,"DeploymentInfo.m"}],
+				Import[FileNameJoin@{trueDir,"DeploymentInfo.m"}],
+				{}
 				];
-	With[{
-		select=OptionValue[Select],
+		Export[FileNameJoin@{trueDir,"DeploymentInfo.m"},
+			KeyDrop[
+				Association@
+					Flatten@{
+						Normal@info,
+						ops,
+						"LastDeployment"->Now
+						},
+				{FileNameForms,"ExtraFileNameForms"}
+				]
+			];
+		select=OptionValue[Select];
 		last=
 			Replace[OptionValue["LastDeployment"],
 				Automatic:>Lookup[info,"LastDeployment",None]
-				]
-		},
+				];
 		KeyChainConnect[OptionValue[CloudConnect]];
 		Block[{file},
-			Monitor[
+			If[TrueQ@OptionValue[Monitor],
+				Function[Null, 
+					Monitor[#, 
+						Internal`LoadingPanel[
+							TemplateApply["Deploying ``",file]
+							]
+						], 
+					HoldAllComplete
+					],
+				Identity
+				]@
 				Map[
 					Function[
 						file=#;
-						With[{url=
-							URLBuild@Flatten@{
-									Replace[uri,
-										Automatic:>
-											FileBaseName[trueDir]
-										],
-									FileNameSplit@
-										FileNameDrop[
-											#,
-											FileNameDepth[outDir]
-											]
-									}
-							},
-							If[StringEndsQ[url,"/index.html"],
-								CopyFile[
-										#,
-										CloudObject[
-											StringTrim[url,"/index.html"]<>"/main.html",
-											FilterRules[
-												Flatten@{ops,Options[WebSiteDeploy]},
-												Options[CloudObject]
-												]
-											]
-										]
-								];
-							Most@
-								CopyFile[
-									#,
-									CloudObject[
-										url,
-										FilterRules[
-											Flatten@{ops,Options[WebSiteDeploy]},
-											Options[CloudObject]
-											]
-										]
-									]
+						webSiteDeployFile[#,
+							uri, outDir, trueDir, OptionValue["StripDirectories"], 
+							ops
 							]
 						],
-					Select[
-						!DirectoryQ[#]&&
-							(
-								StringMatchQ[
-									#,
-									OptionValue@"AlwaysDeployForms"
-									]||
-								StringMatchQ[
-									FileNameTake[#],
-									OptionValue@"AlwaysDeployForms"
-									]||
-								!DateObjectQ[last]||
-								Quiet[FileDate[#]>last,Greater::nordol]
-								)&&
-							select[#]&
-							]@
-						SortBy[FileBaseName[#]==="index"&]@
-						FileNames[
-							Replace[
-								Alternatives@@List@{
-									OptionValue[FileNameForms],
-									OptionValue["ExtraFileNameForms"]
-									},
-								All->"*"
-								],
-							outDir,
-							\[Infinity]]
-					],
-				Internal`LoadingPanel[
-					TemplateApply["Deploying ``",file]
+					webSiteDeploySelectFiles[
+						outDir,
+						last,
+						select,
+						Replace[
+							Alternatives@@List@{
+								OptionValue[FileNameForms],
+								OptionValue["ExtraFileNameForms"]
+								},
+							All->"*"
+							],
+						OptionValue@"AlwaysDeployForms",
+						OptionValue@"IncludeFiles"
+						]
 					]
-				]
 			]
-		]
-		]
 		];
 
 
