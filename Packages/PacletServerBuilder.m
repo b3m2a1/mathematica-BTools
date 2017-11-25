@@ -1580,14 +1580,14 @@ PacletServerDeploy[
 								{}
 								],
 						CloudConnect->
-							server[CloudConnect],
+							Lookup[server, CloudConnect],
 						Permissions->
-							server[Permissions],
-							"ExtraFileNameForms"->
-								{
-									"PacletSite.mz",
-									"*.paclet"
-									}
+							Lookup[server, Permissions],
+						"ExtraFileNameForms"->
+							{
+								"PacletSite.mz",
+								"*.paclet"
+								}
 							},
 							First
 							]
