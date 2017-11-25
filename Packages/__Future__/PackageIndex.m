@@ -31,8 +31,14 @@
 
 PackageIndexRefresh::usage=
 	"Pulls syncs down the PackageIndex";
+PackageIndex::usage=
+	"Symbolic wrapper for a package index";
+$PackageIndexes::usage=
+	"A listing of available package indexes";
+$DefaultPackageIndex::usage=
+	"The default package index name";
 $PackageIndex::usage=
-	"An index of packages and authors";
+	"The current package index";
 PackageIndexLoad::usage=
 	"Adds the index to the $EntityStores";
 PackageIndexData::usage=
@@ -70,43 +76,310 @@ PackageSubmitForm::usage=
 
 
 
-PackageIndexInstall::usage=
+PackageIndexInstallPaclet::usage=
 	"Installs a package from the index";
-PackageIndexUninstall::usage=
+PackageIndexUninstallPaclet::usage=
 	"Uninstalls a package from the index";
+
+
+(* ::Subsection:: *)
+(*Interface*)
+
 
 
 Begin["`Private`"];
 
 
 (* ::Subsection:: *)
-(*Config*)
+(*PackageIndex Setup*)
 
 
 
-$PackageIndexURIData=
-	<|
-		"Root"->"PackageIndex",
-		"EntityStore"->"EntityStore.mx",
-		"SubmissionForm"->"submit",
-		"API"->"api",
-		"AccountURL"->
-			"user-13f6055a-bf2f-4f56-b49e-4e7b72430c04",
-		"Log"->
-			"log"
-		|>;
-PackageIndexURI[parts__String]:=
-	URLBuild@
-		Lookup[$PackageIndexURIData,{parts}];
-$PackageIndexCloudObject=
-	CloudObject[
-		URLBuild[<|
-			"Scheme"->"user",
-			"Path"->
-				Lookup[$PackageIndexURIData,
-					{"AccountURL","Root","EntityStore"}
+(* ::Subsubsection::Closed:: *)
+(*Defaults*)
+
+
+
+If[!AssociationQ@$PackageIndexes,
+	$PackageIndexes=
+		<|
+			"Default"->
+				<|
+					"URLBase"->
+						"mpmindex",
+					"CloudObject"->
+						True,
+					"Root"->
+						"PackageIndex",
+					"EntityTypes"->
+						{
+							"PackageIndexPackage",
+							"PackageIndexAuthor"
+							},
+					"Extensions"->
+						<|
+							"EntityStore"->
+								"EntityStore.mx",
+							"SubmissionForm"->
+								"submit",
+							"API"->
+								"api",
+							"Log"->
+								"log"
+							|>
+					|>
+			|>
+		];
+If[!ValueQ@$DefaultPackageIndex,
+	$DefaultPackageIndex="Default"
+	];
+If[Length@OwnValues[$PackageIndex]==0,
+	$PackageIndex:=
+		PackageIndex@$DefaultPackageIndex
+	]
+
+
+(* ::Subsubsection::Closed:: *)
+(*PackageIndex*)
+
+
+
+validPackageIndex[PackageIndex[a_Association]]:=
+	AllTrue[
+		{
+			"URLBase",
+			"Root",
+			"EntityTypes",
+			"Extensions"
+			}, 
+		KeyMemberQ[a, #]&
+		]
+
+
+PackageIndex[index:_String|Automatic]:=
+	PackageIndex@
+		Replace[
+			Replace[
+				Replace[index, Automatic:>$PackageIndex],{
+				s_String:>
+					Lookup[$PackageIndexes, s]
+				}],
+			Except[_Association]:>First@$PackageIndexes
+			];
+(p:PackageIndex[a_Association]?validPackageIndex)[k__]:=
+	a[k];
+(p:PackageIndex[a_Association]?validPackageIndex)["Load"]:=
+	PackageIndexLoad[p];
+(p:PackageIndex[a_Association]?validPackageIndex)["Refresh"]:=
+	PackageIndexLoad[p, True];
+Format[PackageIndex[a_Association]]:=
+	RawBoxes@
+		BoxForm`ArrangeSummaryBox[
+			"PackageIndex",
+			PackageIndex[a],
+			None,
+			{
+				BoxForm`MakeSummaryItem[
+					{"URL: ", PackageIndexURL@PackageIndex[a]},
+					StandardForm
 					]
-			|>]
+				},
+			KeyValueMap[
+				BoxForm`MakeSummaryItem[
+					{Row@{#, ": "}, #2},
+					StandardForm
+					]&,
+				a
+				],
+			StandardForm
+			]
+
+
+(* ::Subsubsection::Closed:: *)
+(*PackageIndexURL*)
+
+
+
+PackageIndexURI[PackageIndex[a_Association], parts:{__String}]:=
+	URLBuild@Lookup[a,parts];
+PackageIndexURI[index:_String|Automatic, parts:{__String}]:=
+	PackageIndexURI[PackageIndex[index], parts];
+PackageIndexURI[PackageIndex[a_Association], parts:{__String}, ext_]:=
+	URLBuild@
+		{
+			PackageIndexURI[PackageIndex[a], parts],
+			a["Extensions", ext]
+			}
+
+
+PackageIndexURL[PackageIndex[a_Association]]:=
+	If[a["CloudObject"]//TrueQ,
+		PackageIndexCloudObject[PackageIndex@a],
+		PackageIndexURI[
+			PackageIndex[a],
+			{"URLBase","Root"}
+			]
+		]
+
+
+PackageIndexCloudObject[PackageIndex[a_Association]]:=
+	First@CloudObject[
+		URLBuild[
+			<|
+				"Scheme"->"user",
+				"Path"->
+					Lookup[a,
+						{"URLBase","Root"}
+						]
+				|>
+			]
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*EntityStore*)
+
+
+
+If[!AssociationQ@$PackageIndexEntityStores,
+	$PackageIndexEntityStores=<||>
+	]
+
+
+PackageIndexEntityStoreURL[PackageIndex[a_Association]]:=
+	Replace[PackageIndexURL[PackageIndex[a]],
+		{
+			CloudObject[l_,___]:>
+				URLBuild@{l, a["Extensions", "EntityStore"]},
+			s_String:>
+				URLBuild@{s, a["Extensions", "EntityStore"]}
+			}
+		];
+PackageIndexEntityStoreLocalURI[u_String]:=
+	URLBuild@ReplacePart[URLParse[u], "Scheme"->"file"];
+PackageIndexEntityStoreLocalURI[p:PackageIndex[a_Association]]:=
+	PackageIndexEntityStoreLocalURI[
+		URLBuild@
+			{
+				PackageIndexURI[p, 
+					{"URLBase", "Root"}
+					],
+				a["Extensions", "EntityStore"]
+				}
+		];
+
+
+PackageIndexEntityStore[PackageIndex[a_Association]]:=
+	With[{u=PackageIndexEntityStoreURL[PackageIndex[a]]},
+		If[!KeyMemberQ[$PackageIndexEntityStores, u],
+			AppendTo[$PackageIndexEntityStores,
+				u->PackageIndexEntityStoreLoad[PackageIndex[a]]
+				],
+			$PackageIndexEntityStores[u]
+			]
+		];
+
+
+PackageIndexEntityStoreLoad[p:PackageIndex[a_]]:=
+	With[{u=PackageIndexEntityStoreURL[p]},
+		Replace[
+			If[FileExistsQ@LocalObject[PackageIndexEntityStoreLocalURI[p]],
+				Function[Null, 
+					TimeConstrained[#, 5, 
+						Get@LocalObject[PackageIndexEntityStoreLocalURI[p]]
+						], 
+					HoldAllComplete
+					],
+				Identity
+				][
+					If[TrueQ@a["CloudObject"],
+						CloudImport[u],
+						Import[u, "Package"]
+						]
+					],
+			Except[_EntityStore]->
+				$PackageIndexDefaultEntityStore
+			]
+		]
+
+
+PackageIndexEntityStoreRefresh[p:PackageIndex[a_]]:=
+	AppendTo[$PackageIndexEntityStores,
+		PackageIndexEntityStoreURL[p]->
+			PackageIndexEntityStoreLoad[p]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Default EntityStore*)
+
+
+
+$PackageIndexDefaultEntityStore=
+	EntityStore[{
+		"Package"-><|
+			"Entities"-><|
+			
+				|>,
+			"Properties"-><|
+				"Name"-><|
+					"Label"->"name"
+					|>,
+				"Author"-><|
+					"Label"->"author"
+					|>,
+				"Description"-><|
+					"Label"->"description"
+					|>,
+				"HomePage"-><|
+					"Label"->"home page"
+					|>,
+				"Location"-><|
+					"Label"->"location"
+					|>,
+				"Keywords"-><|
+					"Label"->"keywords"
+					|>,
+				"Label"-><|
+					"Label"->"entity label",
+					"DefaultFunction"->
+						(#["Name"]&)
+					|>
+				|>,
+			"Label"->
+				"Mathematica package",
+			"LabelPlural"->
+				"Mathematica packages"
+			|>,
+		"PackageAuthor"-><|
+			"Entities"-><|
+				
+				|>,
+			"Properties"-><|
+				"Name"-><|
+					"Label"->"name"
+					|>,
+				"Bio"-><|
+					"Label"->"bio"
+					|>,
+				"HomePage"-><|
+					"Label"->"home page"
+					|>,
+				"Links"-><|
+					"Label"->"links"
+					|>,
+				"Label"-><|
+					"Label"->"entity label",
+					"DefaultFunction"->
+						(#["Name"]&)
+					|>
+				|>,
+			"Label"->
+				"package author",
+			"LabelPlural"->
+				"package authors"
+				|>
+			}
 		];
 
 
@@ -116,151 +389,81 @@ $PackageIndexCloudObject=
 
 
 (* ::Subsubsection::Closed:: *)
-(*PackageIndexRefresh*)
+(*PackageIndexLoad*)
 
 
 
-$UseCloudIndex=True;
-$CachePackageIndex=True;
-
-
-PackageIndexRefresh[useCloud:True|False|Automatic:Automatic]:=(
-	Replace[e_EntityStore:>($PackageIndex=e)]@
-	If[Replace[useCloud,Automatic->$UseCloudIndex],
-		Replace[
-			If[FileExistsQ@
-					LocalObject[PackageIndexURI["Root","EntityStore"]],
-				TimeConstrained[
-					CloudImport[$PackageIndexCloudObject],
-					5
-					],
-				CloudImport[$PackageIndexCloudObject]
-				],{
-			Except[_EntityStore]:>
-				Replace[
-					Quiet[
-						Import@LocalObject[PackageIndexURI["Root","EntityStore"]],
-						Import::nffil
-						],
-					Except[_EntityStore]:>
-						EntityStore[{
-							"Package"-><|
-								"Entities"-><|
-								
-									|>,
-								"Properties"-><|
-									"Name"-><|
-										"Label"->"name"
-										|>,
-									"Author"-><|
-										"Label"->"author"
-										|>,
-									"Description"-><|
-										"Label"->"description"
-										|>,
-									"HomePage"-><|
-										"Label"->"home page"
-										|>,
-									"Location"-><|
-										"Label"->"location"
-										|>,
-									"Keywords"-><|
-										"Label"->"keywords"
-										|>,
-									"Label"-><|
-										"Label"->"entity label",
-										"DefaultFunction"->
-											(#["Name"]&)
-										|>
-									|>,
-								"Label"->
-									"Mathematica package",
-								"LabelPlural"->
-									"Mathematica packages"
-								|>,
-							"PackageAuthor"-><|
-								"Entities"-><|
-									
-									|>,
-								"Properties"-><|
-									"Name"-><|
-										"Label"->"name"
-										|>,
-									"Bio"-><|
-										"Label"->"bio"
-										|>,
-									"HomePage"-><|
-										"Label"->"home page"
-										|>,
-									"Links"-><|
-										"Label"->"links"
-										|>,
-									"Label"-><|
-										"Label"->"entity label",
-										"DefaultFunction"->
-											(#["Name"]&)
-										|>
-									|>,
-								"Label"->
-									"package author",
-								"LabelPlural"->
-									"package authors"
-									|>
-								}
+PackageIndexSetEntityStores[PackageIndex[a_], es_]:=
+	With[
+		{
+			valid=
+				Select[$EntityStores,
+					#==es||
+					Intersection[
+						Keys@Flatten@List@#[[1, "Types"]],
+						a["EntityTypes"]
+						]=={}&
+					]
+			},
+			If[valid!=$EntityStores,
+				$EntityStores=Prepend[valid, es];
+					With[{types=es[[1, "Types"]]},
+						With[
+							{
+								comps=
+									{
+										None,
+										Keys@types,
+										Join[
+											Keys@types[[All, "Entities"]],
+											Keys@types[[All, "Properties"]]
+											],
+										Keys@types[[All, "Properties"]],
+										{"Association", "Dataset"}
+										}
+								},
+							MapIndexed[
+								PackageAddAutocompletions[
+									#,
+									If[#2[[1]]==1, 
+										comps,
+										Take[comps, 2]
+										]
+									]&,
+									{
+										PackageIndexData, 
+										PackageIndexEdit, 
+										PackageIndexNew
+										}
+								]
 							]
-					],
-				e_EntityStore:>
-					(
-						Put[e,LocalObject[PackageIndexURI["Root","EntityStore"]]];
-						e
-						)
-				}
-			],
-		Quiet@
-			Import@LocalObject[PackageIndexURI["Root","EntityStore"]]
-			]//
-		Replace[
-			e_EntityStore:>(
-				If[$PackageIndexLoaded,
-					PackageIndexLoad[]
-					];
-				e
-				)
-			]
-	);
+						]
+				]
+		]
 
 
-(* ::Subsubsection::Closed:: *)
-(*$PackageIndex*)
+PackageIndexLoad[
+	p:PackageIndex[a_]?validPackageIndex,
+	refresh:True|False:False
+	]:=
+	Module[{
+		u=PackageIndexEntityStoreURL[p],
+		es,
+		valid},
+		es=
+			If[refresh,
+				PackageIndexEntityStoreRefresh,
+				PackageIndexEntityStoreLoad
+				][p];
+		PackageIndexSetEntityStores[p, es]
+		]
 
 
-
-If[!MatchQ[OwnValues@$PackageIndex,{_:>(_EntityStore)}],
-	$PackageIndex:=PackageIndexRefresh[]
-	];
-
-
-(* ::Subsubsection::Closed:: *)
-(*Install*)
-
-
-
-$PackageIndexLoaded:=
-	!MissingQ@
-		SelectFirst[
-			$EntityStores,
-			Keys[#[[1,"Types"]]]=={"Package","PackageAuthor"}&
-			];
-
-
-PackageIndexLoad[]:=
-	$EntityStores=
-		Prepend[
-			Select[$EntityStores,
-				Keys[#[[1,"Types"]]]!={"Package","PackageAuthor"}&
-				],
-			$PackageIndex
-			];
+PackageIndexLoaded[PackageIndex[a_]?validPackageIndex]:=
+	AnyTrue[$EntityStores,
+		Keys@Flatten@List@#[[1, "Types"]]==
+			a["EntityTypes"]&
+		]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -268,30 +471,38 @@ PackageIndexLoad[]:=
 
 
 
-PackageIndexData[name_String]:=
-	(
-		If[!$PackageIndexLoaded,PackageIndexLoad[]];
+PackageIndexData::badtype="PackageIndex `` doesn't support type ``";
+PackageIndexData[
+	p:PackageIndex[a_]?validPackageIndex,
+	type_String,
+	selectors:_?OptionQ
+	]:=
+	With[{types=a["EntityTypes"]},
+		If[!PackageIndexLoaded[p],PackageIndexLoad[p]];
 		EntityList@
 			EntityClass[
-				"Package",
-				"Name"->StringMatchQ[name]
-				]
-		);
-PackageIndexData[name_String,properties_]:=
-	EntityValue[PackageIndexData[name],properties];
-
-
-PackageAuthorData[name_]:=
-	(
-		If[!$PackageIndexLoaded,PackageIndexLoad[]];
-		EntityList@
-			EntityClass[
-				"PackageAuthor",
-				"Name"->StringMatchQ[name]
-				]
-		);
-PackageAuthorData[name_String,properties_]:=
-	EntityValue[PackageAuthorData[name],properties];
+				type,
+				selectors
+				]/;If[!MemberQ[types, type], 
+					Message[PackageIndexData::badtype, p, type];False, 
+					True
+					]
+		];
+PackageIndexData[
+	p:PackageIndex[a_]?validPackageIndex,
+	type_String,
+	name_String
+	]:=
+	PackageIndexData[p, type, "Name"->StringMatchQ[name]];
+PackageIndexData[
+	p:PackageIndex[a_]?validPackageIndex,
+	type_String,
+	name_String|selectors:_?OptionQ, 
+	properties:Repeated[(_String|{__String}), {1, 2}]
+	]:=
+	With[{r=PackageIndexData[p, type, name]},
+		EntityValue[r,properties]/;Head[r]=!=PackageIndexData
+		];
 
 
 (* ::Subsection:: *)
@@ -305,7 +516,8 @@ PackageAuthorData[name_String,properties_]:=
 
 
 (PackageIndexEdit[
-	ent:"Package"|"PackageAuthor":"Package",
+	p:PackageIndex[a_]?validPackageIndex,
+	ent_String,
 	data_Association,
 	property:"Entities"|"Properties":"Entities"
 	]/;If[property==="Entities",
@@ -314,93 +526,128 @@ PackageAuthorData[name_String,properties_]:=
 			AllTrue[Keys@data,StringQ]
 			]
 	):=
-	(
-		$PackageIndex=
-			ReplacePart[$PackageIndex,
-				{1,"Types",ent,property}->
-					Merge[{
-						$PackageIndex[ent,property],
-						If[property==="Entities",
-							KeySelect[
-								MatchQ[
-									Alternatives@@
-										Keys@$PackageIndex[ent,"Properties"]
+	Module[
+		{
+			types=a["EntityTypes"],
+			es,
+			u
+			},
+		CompoundExpression[
+			u=PackageIndexEntityStoreURL[p];
+			es=PackageIndexEntityStoreLoad[p];
+			es=
+				ReplacePart[es,
+					{1,"Types",ent,property}->
+						Merge[{
+							es[ent,property],
+							If[property==="Entities",
+								KeySelect[
+									MatchQ[
+										Alternatives@@
+											Keys@es[ent,"Properties"]
+										]
+									],
+								KeySelect[
+									MatchQ["Label"|"DefaultFunction"]
 									]
-								],
-							KeySelect[
-								MatchQ["Label"|"DefaultFunction"]
-								]
-							]/@data
-						},
-						Apply@Join
-						]
-				];
-		If[$PackageIndexLoaded,PackageIndexLoad[]];
-		$PackageIndex
-		);
+								]/@data
+							},
+							Apply@Join
+							]
+					];
+				$PackageIndexEntityStores[u]=
+					es;
+				If[PackageIndexLoaded[p], 
+					PackageIndexSetEntityStores[p, es]
+					];
+				es
+				]/;If[!MemberQ[types, ent], 
+					Message[PackageIndexData::badtype, p, ent];False, 
+					True
+					];
+		];
 PackageIndexEdit[
-	ent:"Package"|"PackageAuthor":"Package",
+	p:PackageIndex[a_]?validPackageIndex,
+	ent_String,
 	data:{__Association?(KeyMemberQ[#,"CanonicalName"]&)},
 	property:"Entities"|"Properties":"Entities"
 	]:=
-	PackageIndexEdit[ent,
+	PackageIndexEdit[
+		p,
+		ent,
 		Association[
 			#["CanonicalName"]->
 				KeyDrop[#,"CanonicalName"]
 			&/@data
 			],
-		property];
+		property
+		];
 PackageIndexEdit[
-	ent:"Package"|"PackageAuthor":"Package",
+	p:PackageIndex[a_]?validPackageIndex,
+	ent_String,
 	data:_Association?(KeyMemberQ[#,"CanonicalName"]&),
 	property:"Entities"|"Properties":"Entities"
 	]:=
-	PackageIndexEdit[ent,{data},property];
+	PackageIndexEdit[p, ent,{data},property];
 PackageIndexEdit[
-	ent:"Package":"Package",
+	p:PackageIndex[a_]?validPackageIndex,
+	ent_String,
 	data:{__Association?(KeyMemberQ[#,"Name"]&&KeyMemberQ[#,"Author"]&)},
 	Optional["Entities","Entities"]
 	]:=
-	With[{
-		ents=
-			Map[
-				With[{d=#},
-					Replace[
-						Select[
-							$PackageIndex[ent,"Entities"],
-							#["Name"]==d["Name"]&&
-								(
-									MissingQ@d["Author"]||
-										#["Author"]==d["Author"]
-									)&
-							],{
-							a_Association:>
-								First@Keys@a,
-							_->None	
-						}]
-					]->#&,
-				data
-				]
-		},
+	With[
+		{
+			types=a["EntityTypes"]
+			},
 		With[{
-			edits=
-				GroupBy[Normal@ents,
-					First@#===None&->(If[First@#===None,Last@#,#]&),
-					Map[Association]
+			ents=
+				Map[
+					With[{d=#},
+						Replace[
+							Select[
+								PackageIndexEntityStoreLoad[p][ent,"Entities"],
+								#["Name"]==d["Name"]&&
+									(
+										MissingQ@d["Author"]||
+											#["Author"]==d["Author"]
+										)&
+								],{
+								assoc_Association:>
+									First@Keys@assoc,
+								_->None	
+							}]
+						]->#&,
+					data
 					]
 			},
-			PackageIndexNew[ent,
-				edits[True]
-				];
-			PackageIndexEdit[ent,
-				Join@@
-					edits[False]
-				];
-			$PackageIndex
-			]
+			With[{
+				edits=
+					GroupBy[Normal@ents,
+						First@#===None&->(If[First@#===None,Last@#,#]&),
+						Map[Association]
+						]
+				},
+				PackageIndexNew[
+					p,
+					ent,
+					edits[True]
+					];
+				PackageIndexEdit[
+					p,
+					ent,
+					Join@@
+						edits[False]
+					];
+				PackageIndexEntityStoreLoad[p]
+				]
+			]/;If[!MemberQ[types, ent], 
+					Message[PackageIndexData::badtype, p, ent];False, 
+					True
+					];
 		];
 PackageIndexEdit[
-	ent:"Package":"Package",
+	p:PackageIndex[a_]?validPackageIndex,
+	ent_String,
 	data:_Association?(KeyMemberQ[#,"Name"]&&KeyMemberQ[#,"Author"]&),
 	Optional["Entities","Entities"]
 	]:=
@@ -408,7 +655,8 @@ PackageIndexEdit[
 
 
 PackageIndexEdit[
-	ent:Entity["Package"|"PackageAuthor",_],
+	p:PackageIndex[a_]?validPackageIndex,
+	ent:Entity[t_String,_],
 	data_Association
 	]:=
 	PackageIndexEdit[
@@ -420,23 +668,23 @@ PackageIndexEdit[
 		];
 
 
-PackageIndexEdit::nope=
+PackageIndexEdit::somany=
 	"Multiple entities found for name ``. Choose one of ``";
 PackageIndexEdit::nope=
 	"No entities found for name ``";
-PackageIndexEdit[
-	Optional["Package","Package"],
+(*PackageIndexEdit[
+	p:PackageIndex[a_]?validPackageIndex,
 	name_String,
 	data_Association
 	]:=
-	Replace[PackageIndexData[name],{
+	Replace[PackageIndexData[p, name],{
 		{e_}:>
-			PackageIndexEdit[e,data],
+			PackageIndexEdit[p, e,data],
 		e:{_,__}:>
-			(Message[PackageIndexEdit::ambig,name,e];$Failed),
+			(Message[PackageIndexEdit::ambig, name, e];$Failed),
 		{}:>
-			(Message[PackageIndexEdit::nope,name];$Failed)
-		}];
+			(Message[PackageIndexEdit::nope, name];$Failed)
+		}];*)
 
 
 (* ::Subsubsection::Closed:: *)
@@ -445,10 +693,12 @@ PackageIndexEdit[
 
 
 PackageIndexNew[
-	ent:"Package"|"PackageAuthor":"Package",
+	p:PackageIndex[a_]?validPackageIndex,
+	ent_String,
 	props:{__Association}
 	]:=
 	PackageIndexEdit[
+		p,
 		ent,
 		Association@
 			Map[
@@ -467,17 +717,21 @@ PackageIndexNew[
 	"Entities"
 	];
 PackageIndexNew[
-	ent:"Package"|"PackageAuthor":"Package",
+	p:PackageIndex[a_]?validPackageIndex,
+	ent_String,
 	name_String,
 	props___?OptionQ
 	]:=
-	PackageIndexNew[ent,{
-		Association@
-			Flatten@{
-				"Name"->name,
-				props
-				}
-		}]
+	PackageIndexNew[p,
+		ent,
+		{
+			Association@
+				Flatten@{
+					"Name"->name,
+					props
+					}
+			}
+		]
 
 
 (* ::Subsection:: *)
@@ -491,28 +745,107 @@ PackageIndexNew[
 
 
 Options[PackageIndexExport]=
-	Join[{
-		Permissions->"Public"
-		},
+	Join[
+		{
+			Permissions->"Public"
+			},
 		Options[CloudExport]
 		];
 PackageIndexExport[
+	p:PackageIndex[a_Association]?validPackageIndex,
 	file:(_String|_File)?(DirectoryQ@DirectoryName@#&)
 	]:=
 	Export[file,
-		$PackageIndex,
+		PackageIndexEntityStore[p],
 		"MX"
 		];
 PackageIndexExport[
-	uri:(_String|_URL|_CloudObject):PackageIndexURI["Root","EntityStore"],
+	p:PackageIndex[a_Association]?validPackageIndex,
+	uriBasic:(_String|_URL|_CloudObject|Automatic):Automatic,
 	ops:OptionsPattern[]
 	]:=
-	CloudExport[
-		$PackageIndex,
-		"MX",
-		uri,
-		ops,
-		Options[PackageIndexExport]
+	With[
+		{
+			uri=
+				Replace[uriBasic, 
+					Automatic:>PackageIndexURI[p, {"Root"}, "EntityStore"]
+					]
+			},
+		CloudExport[
+			PackageIndexEntityStore[p],
+			"MX",
+			uri,
+			ops,
+			Options[PackageIndexExport]
+			]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*PackageIndexEntityStoreMerge*)
+
+
+
+PackageIndexEntityStoreMerge[{e1_EntityStore, e2_EntityStore}]:=
+	EntityStore@
+		Merge[{ e1[[1]], e2[[1]]},
+			PackageIndexEntityStoreMerge
+			];
+PackageIndexEntityStoreMerge[{a_Association, b_Association}]:=
+	Merge[{a,b}, PackageIndexEntityStoreMerge];
+PackageIndexEntityStoreMerge[{___,e_}]:=e
+
+
+(* ::Subsubsection::Closed:: *)
+(*PackageIndexSync*)
+
+
+
+PackageIndexSync::usage="Sync is in progress. Try in a moment";
+
+
+Options[PackageIndexSync]=
+	Options[PackageIndexExport];
+PackageIndexSync[
+	p:PackageIndex[a_Association]?validPackageIndex,
+	file:(_String|_File)?(DirectoryQ@DirectoryName@#&)
+	]:=
+	If[!FileExistsQ[file<>".lock"],
+		If[FileExistsQ@file,
+			CheckAbort[
+				CreateFile[file<>".lock"];
+				With[{imp=Import[file]},
+					(DeleteFile[file<>".lock"];#)&@
+						Export[file,
+							PackageIndexEntityStore[p],
+							"MX"
+							]
+					],
+				DeleteFile[file<>".lock"]
+				],
+			PackageIndexExport[p, file]
+			],
+		$Failed
+		];
+PackageIndexExport[
+	p:PackageIndex[a_Association]?validPackageIndex,
+	uriBasic:(_String|_URL|_CloudObject|Automatic):Automatic,
+	ops:OptionsPattern[]
+	]:=
+	With[
+		{
+			uri=
+				Replace[uriBasic, 
+					Automatic:>PackageIndexURI[p, {"Root"}, "EntityStore"]
+					]
+			},
+		CloudExport[
+			PackageIndexEntityStore[p],
+			"MX",
+			uri,
+			ops,
+			Options[PackageIndexExport]
+			]
 		]
 
 
@@ -528,58 +861,67 @@ Options[PackageIndexAPI]=
 		Options[CloudDeploy]
 		];
 PackageIndexAPI[
-	uri:(_String|_URL|_CloudObject):PackageIndexURI["Root","API"],
-	index:(_String|_URL|_CloudObject):PackageIndexURI["Root","EntityStore"],
+	p:PackageIndex[a_Association]?validPackageIndex,
+	uriBase:(_String|_URL|_CloudObject|Automatic):Automatic,
+	indexBase:(_String|_URL|_CloudObject|Automatic):Automatic,
 	ops:OptionsPattern[]
 	]:=
-	With[{$PackageIndexObject=CloudObject[index]},
-		CloudDeploy[
-			APIFunction[{
-				"Action"->
-					Restricted["String",{{"Edit","View"}}]->
-						"View",
-				"Type"->
-					Restricted["String",{{"Package","PackageAuthor"}}]->
-						"Package",
-				"Data"->"Expression"-><||>
-				},
-				(
-					$PackageIndex=
-						CloudImport@$PackageIndexObject;
-					If[#Action=="Edit",
-						PackageIndexEdit[#Type,#Data];
-						PackageIndexExport[index,ops]
-						];
-					Switch[#Action,
-						"View",
-							ExportForm[
-								Flatten@{
-									"Credits left:",
-										$CloudCreditsAvailable,
-									Style["Packages:","Subsubsection"],
-									Map[
-										If[!MissingQ@#["HomePage"],
-											Hyperlink[#["Name"],#["HomePage"]],
-											#["Name"]
-											]&,
-										SortBy[
-											KeyMap[CanonicalName]/@
-												PackageIndexData["*",
-													"PropertyAssociation"],
-											#Name&
+	With[
+		{
+			uri=
+				PackageIndexURI[p, {"Root"},"API"],
+			index=
+				PackageIndexURI[p, {"Root"},"EntityStore"]
+			},
+		With[{$PackageIndexObject=CloudObject[index]},
+			CloudDeploy[
+				APIFunction[{
+					"Action"->
+						Restricted["String",{{"Edit","View"}}]->
+							"View",
+					"Type"->
+						Restricted["String",{{"Package","PackageAuthor"}}]->
+							"Package",
+					"Data"->"Expression"-><||>
+					},
+					(
+						$PackageIndex=
+							CloudImport@$PackageIndexObject;
+						If[#Action=="Edit",
+							PackageIndexEdit[#Type,#Data];
+							PackageIndexExport[index,ops]
+							];
+						Switch[#Action,
+							"View",
+								ExportForm[
+									Flatten@{
+										"Credits left:",
+											$CloudCreditsAvailable,
+										Style["Packages:","Subsubsection"],
+										Map[
+											If[!MissingQ@#["HomePage"],
+												Hyperlink[#["Name"],#["HomePage"]],
+												#["Name"]
+												]&,
+											SortBy[
+												KeyMap[CanonicalName]/@
+													PackageIndexData["*",
+														"PropertyAssociation"],
+												#Name&
+												]
 											]
-										]
-									}//Column,
-								"HTML"
-								],
-						"Edit",
-							Length@PackageIndexData["*"]
-						]
-					)&
-				],
-			uri,
-			ops,
-			Options[PackageSubmitAPI]
+										}//Column,
+									"HTML"
+									],
+							"Edit",
+								Length@PackageIndexData["*"]
+							]
+						)&
+					],
+				uri,
+				ops,
+				Options[PackageSubmitAPI]
+				]
 			]
 		];
 
@@ -671,11 +1013,25 @@ PackageSubmitForm[
 
 
 
-$PackageIndexLogFile:=
-	LocalObject[PackageIndexURI["Root","Log"]];
+PackageIndexLogFileLocalURI[u_String]:=
+	URLBuild@ReplacePart[URLParse[u], "Scheme"->"file"];
+PackageIndexLogFileLocalURI[p:PackageIndex[a_Association]]:=
+	PackageIndexLogFileLocalURI[
+		URLBuild@
+			{
+				PackageIndexURI[p, 
+					{"URLBase", "Root"}
+					],
+				a["Extensions", "Log"]
+				}
+		];
+PackageIndexLogFile[p_PackageIndex?validPackageIndex]:=
+	LocalObject[
+		PackageIndexLogFileLocalURI[p]
+		];
 
 
-PackageIndexLogGet[]:=
+PackageIndexLogGet[p_PackageIndex?validPackageIndex]:=
 	Replace[
 		Quiet[Get@$PackageIndexLogFile,LocalObject::nso],
 		$Failed->{}
@@ -683,6 +1039,7 @@ PackageIndexLogGet[]:=
 
 
 PackageIndexLogEvent[
+	p_PackageIndex?validPackageIndex,
 	eventType_,
 	args_,
 	dateStamp_:Automatic,
@@ -691,26 +1048,28 @@ PackageIndexLogEvent[
 	(
 		Put[
 			Append[
-				PackageIndexLogGet[],
+				PackageIndexLogGet[p],
 				{Replace[dateStamp,Automatic->Now],eventType,args}->result
 				],
-			$PackageIndexLogFile
+			PackageIndexLogFile[p]
 			];
 		result
 		);
 PackageIndexPurgeEvent[
+	p_PackageIndex?validPackageIndex,
 	timeStampPattern_:_,
 	eventType_,
 	args_
 	]:=
 	Put[
 		DeleteCases[
-			PackageIndexLogGet[],
+			PackageIndexLogGet[p],
 			{timeStampPattern,eventType,args}->_
 			],
-		$PackageIndexLogFile
+		PackageIndexLogFile[p]
 		];
 PackageIndexGetEvents[
+	p_PackageIndex?validPackageIndex,
 	eventType_,
 	args_,
 	timeStampPattern_:_
@@ -718,34 +1077,39 @@ PackageIndexGetEvents[
 	Reverse@
 		SortBy[
 			Select[
-				PackageIndexLogGet[],
+				PackageIndexLogFile[p],
 				MatchQ[First@#,{timeStampPattern,eventType,args}]&
 				],
 			#[[1,1]]&
 			];
 
 
-PackageIndexClearLog[]:=
-	Put[{},$PackageIndexLogFile];
+PackageIndexClearLog[p_PackageIndex?validPackageIndex]:=
+	Put[{}, PackageIndexLogFile[p]];
 
 
 (* ::Subsection:: *)
-(*PackageIndexUninstall*)
+(*PackageIndexUninstallPaclet*)
 
 
 
-Options[PackageIndexUninstall]=
+(* ::Subsubsection::Closed:: *)
+(*Primary*)
+
+
+
+Options[PackageIndexUninstallPaclet]=
 	{
 		"UninstallDependencies"->
 			False
 		};
-PackageIndexUninstall[
+PackageIndexUninstallPaclet[
 	loc:(_String|_File)?FileExistsQ
 	]:=
 	PacletManager`PacletUninstall@loc;
-PackageIndexUninstall::noinst=
+PackageIndexUninstallPaclet::noinst=
 	"Couldn't find installation for location ``";
-PackageIndexUninstall[
+PackageIndexUninstallPaclet[
 	loc:(_String?(URLParse[#,"Scheme"]=!=None&)|_URL)
 	]:=
 	Replace[
@@ -766,7 +1130,7 @@ PackageIndexUninstall[
 					];
 				],
 		{}:>
-			Message[PackageIndexUninstall::noinst,loc]
+			Message[PackageIndexUninstallPaclet::noinst,loc]
 		}];
 
 
@@ -775,10 +1139,10 @@ PackageIndexUninstall[
 
 
 
-PackageIndexUninstall[e:Entity["Package",_],
+PackageIndexUninstallPaclet[e:Entity["Package",_],
 	ops:OptionsPattern[]
 	]:=
-	PackageIndexUninstall[e["Location"]];
+	PackageIndexUninstallPaclet[e["Location"]];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -786,68 +1150,73 @@ PackageIndexUninstall[e:Entity["Package",_],
 
 
 
-PackageIndexUninstall::dunno=
-	"Multiple matches for name ``. Select one and uninstall with PackageIndexUninstall.";
-PackageIndexUninstall::noent=
+PackageIndexUninstallPaclet::dunno=
+	"Multiple matches for name ``. Select one and uninstall with PackageIndexUninstallPaclet.";
+PackageIndexUninstallPaclet::noent=
 	"No matches for name ``. Find one with PackageIndexData.";
-PackageIndexUninstall[
+PackageIndexUninstallPaclet[
 	name_String,
 	ops:OptionsPattern[]
 	]:=
 	Replace[PackageIndexData[name],{
 		{e:Entity["Package",_]}|e:Entity["Package",_]:>
-			PackageIndexUninstall@e,
+			PackageIndexUninstallPaclet@e,
 		e:{Entity["Package",_],___}:>(
-			Message[PackageIndexUninstall::dunno,name];
+			Message[PackageIndexUninstallPaclet::dunno,name];
 			e
 			),
 		{}:>
 			(
-				Message[PackageIndexUninstall::noent,name];
+				Message[PackageIndexUninstallPaclet::noent,name];
 				$Failed
 				)
 		}];
 
 
 (* ::Subsection:: *)
-(*PackageIndexInstall*)
+(*PackageIndexInstallPaclet*)
 
 
 
-PackageIndexInstall::hiauth=
+PackageIndexInstallPaclet::hiauth=
 	"Couldn't install package `` from ``. Try contacting `` for more info";
-PackageIndexInstall::noinst=
+PackageIndexInstallPaclet::noinst=
 	"Couldn't install package `` from ``";
 
 
-PackageIndexInstall[e:Entity["Package",_],
+PackageIndexInstallPaclet[
+	p_PackageIndex?validPackageIndex,
+	e:Entity[_,_],
 	ops:OptionsPattern[]
 	]:=
 	Replace[{
-		p:_PacletManager`Paclet|{_PacletManager`Paclet,($Failed|PacletManager`Paclet)...}:>
+		pac:_PacletManager`Paclet|{_PacletManager`Paclet,($Failed|PacletManager`Paclet)...}:>
 		If[OptionValue["Log"],
 			PackageIndexLogEvent[
+				p,
 				"Install",
 				e["Location"],
-				Flatten@{p}
+				Flatten@{pac}
 				];
-			First@Flatten@{p},
-			First@p
+			First@Flatten@{pac},
+			First@pac
 			]
 	}]@
 	Replace[
-		PacletInstallURL[e["Location"]],{
+		PacletInstallPaclet[e["Location"]],{
 		h:Except[
 			_PacletManager`Paclet|
 			{_PacletManager`Paclet,($Failed|PacletManager`Paclet)...}
 			]:>
 			If[MissingQ@e["Author"],
-				Message[PackageIndexInstall::noinst,
+				Message[
+					PackageIndexInstallPaclet::noinst,
 					e["Name"],
 					e["Location"]
 					];
 				$Failed,
-				Message[PackageIndexInstall::hiauth,
+				Message[
+					PackageIndexInstallPaclet::hiauth,
 					e["Name"],
 					e["Location"],
 					e["Author"]
@@ -857,25 +1226,27 @@ PackageIndexInstall[e:Entity["Package",_],
 		}];
 
 
-PackageIndexInstall::dunno=
-	"Multiple matches for name ``. Select one and install with PackageIndexInstall.";
+PackageIndexInstallPaclet::dunno=
+	"Multiple matches for name ``. Select one and install with PackageIndexInstallPaclet.";
 
 
-PackageIndexInstall::noent=
+PackageIndexInstallPaclet::noent=
 	"No matches for name ``. Find one with PackageIndexData.";
-PackageIndexInstall[name_String,
+PackageIndexInstallPaclet[
+	p_PackageIndex?validPackageIndex,
+	name_String,
 	ops:OptionsPattern[]
 	]:=
-	Replace[PackageIndexData[name],{
+	Replace[PackageIndexData[p, name],{
 		{e:Entity["Package",_]}|e:Entity["Package",_]:>
-			PackageIndexInstall@e,
+			PackageIndexInstallPaclet[p, e],
 		e:{Entity["Package",_],___}:>(
-			Message[PackageIndexInstall::dunno,name];
+			Message[PackageIndexInstallPaclet::dunno,name];
 			e
 			),
 		{}:>
 			(
-				Message[PackageIndexInstall::noent,name];
+				Message[PackageIndexInstallPaclet::noent,name];
 				$Failed
 				)
 		}];

@@ -99,7 +99,7 @@ $PackageFEHideEvalExpr=TrueQ[$PackageFEHideEvalExpr];
 PackageFEHiddenBlock[expr_,
 	hide:True|False|Automatic:Automatic,
 	eval:True|False|Automatic:Automatic
-	]:=
+	]/;TrueQ[$AllowPackageRecoloring]:=
 	If[!$PackageDeclared&&ListQ@$PackageFEHiddenSymbols,
 		With[{
 			s=
@@ -149,6 +149,11 @@ PackageFEHiddenBlock[expr_,
 			feBlockReturn
 			]
 		];
+PackageFEHiddenBlock[expr_,
+	hide:True|False|Automatic:Automatic,
+	eval:True|False|Automatic:Automatic
+	]/;Not@TrueQ[$AllowPackageRecoloring]:=
+	If[eval, expr];
 PackageFEHiddenBlock~SetAttributes~HoldFirst
 
 
@@ -159,7 +164,7 @@ PackageFEHiddenBlock~SetAttributes~HoldFirst
 PackageFEUnhideSymbols[syms__Symbol,
 	cpath:{__String}|Automatic:Automatic,
 	mode:"Update"|"Set":"Update"
-	]:=
+	]/;TrueQ[$AllowPackageRecoloring]:=
 	With[{stuff=
 		Map[
 			Function[Null,
@@ -181,7 +186,8 @@ PackageFEUnhideSymbols[syms__Symbol,
 			GroupBy[stuff,First->Last]
 			];
 		];
-PackageFEUnhideSymbols[names_String,mode:"Update"|"Set":"Update"]:=
+PackageFEUnhideSymbols[names_String,
+	mode:"Update"|"Set":"Update"]/;TrueQ[$AllowPackageRecoloring]:=
 	Replace[
 		Thread[ToExpression[Names@names,StandardForm,Hold],Hold],
 		Hold[{s__}]:>PackageFEUnhideSymbols[s,mode]
@@ -195,7 +201,7 @@ PackageFEUnhideSymbols~SetAttributes~HoldAllComplete;
 
 PackageFERehideSymbols[syms__Symbol,
 	cpath:{__String}|Automatic:Automatic,
-	mode:"Update"|"Set":"Update"]:=
+	mode:"Update"|"Set":"Update"]/;TrueQ[$AllowPackageRecoloring]:=
 	With[{stuff=
 		Map[
 			Function[Null,
@@ -219,7 +225,8 @@ PackageFERehideSymbols[syms__Symbol,
 			GroupBy[stuff,First->Last]
 			];
 		];
-PackageFERehideSymbols[names_String,mode:"Update"|"Set":"Update"]:=
+PackageFERehideSymbols[names_String,
+	mode:"Update"|"Set":"Update"]/;TrueQ[$AllowPackageRecoloring]:=
 	Replace[
 		Thread[ToExpression[Names@names,StandardForm,Hold],Hold],
 		Hold[{s__}]:>PackageFERehideSymbols[s,mode]
@@ -231,12 +238,15 @@ PackageFERehideSymbols~SetAttributes~HoldAllComplete;
 (*PackageFEUnhidePackage*)
 
 
-PackageFEUnhidePackage[package_String?FileExistsQ,a___]:=
+PackageFEUnhidePackage[
+	package_String?FileExistsQ,
+	a___
+	]/;TrueQ[$AllowPackageRecoloring]:=
 	Replace[Thread[Lookup[$DeclaredPackages,package,{}],HoldPattern],
 		Verbatim[HoldPattern][{syms__}]:>
 			PackageFEUnhideSymbols[syms,a]
 		];
-PackageFEUnhidePackage[spec:_String|_List,a___]:=
+PackageFEUnhidePackage[spec:_String|_List,a___]/;TrueQ[$AllowPackageRecoloring]:=
 	PackageFEUnhidePackage[PackageFilePath@Flatten@{"Packages",spec},a];
 
 
@@ -244,10 +254,13 @@ PackageFEUnhidePackage[spec:_String|_List,a___]:=
 (*PackageFERehidePackage*)
 
 
-PackageFERehidePackage[package_String?FileExistsQ,a___]:=
+PackageFERehidePackage[
+	package_String?FileExistsQ,
+	a___
+	]/;TrueQ[$AllowPackageRecoloring]:=
 	Replace[Thread[Lookup[$DeclaredPackages,package,{}],HoldPattern],
 		Verbatim[HoldPattern][{syms__}]:>
 			PackageFERehideSymbols[syms,a]
 		];
-PackageFERehidePackage[spec:_String|_List,a___]:=
+PackageFERehidePackage[spec:_String|_List,a___]/;TrueQ[$AllowPackageRecoloring]:=
 	PackageFERehidePackage[PackageFilePath@Flatten@{"Packages",spec},a];

@@ -165,6 +165,16 @@ indentingNewLineReplace[r:RowBox[data_]]:=
 						Max@{$indentationUnbalancedBrackets["("]-1,0},
 					")"
 					],
+			e:"<|"|"\[LeftAssociation]":>
+				CompoundExpression[
+					$indentationUnbalancedBrackets["\[LeftAssociation]"]++,
+					e
+					],
+			e:"|>"|"\[RightAssociation]":>
+				CompoundExpression[
+					Max@{$indentationUnbalancedBrackets["\[LeftAssociation]"]-1,0},
+					e
+					],
 			r2_RowBox:>
 				indentingNewLineReplace[r2],
 			$indentingNewLine:>
@@ -192,11 +202,11 @@ indentingNewLineReplace[r:RowBox[data_]]:=
 IndentingNewLineReplace[r:RowBox[data_]]:=
 	Block[{
 		$indentationUnbalancedBrackets=
-			<|"["->0,"{"->0,"("->0|>,
+			<|"\[LeftAssociation]"->0,"["->0,"{"->0,"("->0|>,
 		$intentationPreviousLevels=
-			<|"["->0,"{"->0,"("->0|>,
+			<|"\[LeftAssociation]"->0,"["->0,"{"->0,"("->0|>,
 		$indentationLevel=
-			<|"["->0,"{"->0,"("->0|>
+			<|"\[LeftAssociation]"->0,"["->0,"{"->0,"("->0|>
 		},
 		indentingNewLineReplace[r]
 		];
@@ -252,6 +262,11 @@ IndentationRestore[nb_:Automatic]:=
 				]
 			]
 		];
+
+
+(* ::Subsection:: *)
+(*Indentation Code*)
+
 
 
 IndentationSelection[inputNotebook_]:=

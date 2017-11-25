@@ -142,6 +142,11 @@ IButton::usage=
 Begin["`Private`"];
 
 
+(* ::Subsection:: *)
+(*Appearances*)
+
+
+
 Options[AppearanceReadyImage]=
 	Join[
 		{
@@ -713,6 +718,11 @@ ColorizationAdjust[color_,appearanceList_List]:=
 			}];
 
 
+(* ::Subsection:: *)
+(*UUID stuff*)
+
+
+
 Options[UUIDButton]=
 	Join[{
 		"UUID"->Automatic,
@@ -746,11 +756,21 @@ UUIDButton[lab_,cmd_,ops:OptionsPattern[]]:=
 									Automatic]
 							}),
 				1],{
-			"MouseClicked":>(UUIDActive[uuid]=True),
+			With[{nab=OptionValue[Enabled]},
+				"MouseClicked":>
+					If[TrueQ@Replace[nab, d_Dynamic:>First[d]],
+						UUIDActive[uuid]=True
+						]
+				],
 			PassEventsDown->True
 			}]
 		];
 UUIDButton~SetAttributes~HoldAll;
+
+
+(* ::Subsection:: *)
+(*GradientStuff*)
+
 
 
 Options[GradientPanelAppearance]=
@@ -1250,8 +1270,13 @@ GradientButtonDropDownRow[
 					{i-22,h},
 				{b_List,_}:>
 					b,
-				Except[_List]->
-					Automatic
+				Verbatim[Dynamic][d_, e___]:>
+					Dynamic[d-22, e],
+				{{Verbatim[Dynamic][d_, e___], h_},_}|
+					{Verbatim[Dynamic][d_, e___], h_}:>
+					{Dynamic[d-22, e], h},
+				e:Except[_List]:>
+					{e, Automatic}
 				}]
 		},
 		With[{uuid=
@@ -1331,9 +1356,9 @@ GradientButtonDropDownRow[
 								]
 							},
 							Flatten@{
-								Select[base,Not@*OptionQ],
+								Select[base, Not@*OptionQ],
 								FilterRules[
-									Select[base,OptionQ],
+									Select[base, OptionQ],
 									Except[ImagePadding]
 									],
 								ImagePadding->
@@ -1687,6 +1712,14 @@ GradientButtonBar[args:{_,__},ops:OptionsPattern[]]:=
 							],
 					ImageSize->
 						Replace[OptionValue@ImageSize,{
+							Verbatim[Dynamic][Scaled[s_],e___]:>
+								With[{l=Length@args},
+									Dynamic[Scaled[s/l],e]
+									],
+							Verbatim[Dynamic][s_,e___]:>
+								With[{l=Length@args},
+									Dynamic[s/l,e]
+									],
 							i_?NumericQ:>
 								i/Length@args,
 							Scaled[s_]:>
@@ -1798,6 +1831,14 @@ GradientSetterBar[v_,vals_,ops:OptionsPattern[]]:=
 								],
 						ImageSize->
 							Replace[OptionValue@ImageSize,{
+								Verbatim[Dynamic][Scaled[s_],e___]:>
+								With[{l=Length@vals},
+									Dynamic[Scaled[s/l],e]
+									],
+							Verbatim[Dynamic][s_,e___]:>
+								With[{l=Length@vals},
+									Dynamic[s/l,e]
+									],
 								i_?NumericQ:>
 									i/Length@vals,
 								Scaled[s_]:>

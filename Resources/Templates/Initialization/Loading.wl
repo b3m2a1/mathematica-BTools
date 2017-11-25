@@ -86,7 +86,7 @@ PackagePullDeclarationsAction[
 				_PackageFEHiddenBlock|_PackageScopeBlock,
 				___]
 			]
-	]:=
+	]/;TrueQ[$AllowPackageRecoloring]:=
 	(
 		ReleaseHold[p];
 		Sow[p];
@@ -141,7 +141,9 @@ PackageLoadPackage[heldSym_,context_,pkgFile_->syms_]:=
 		If[!MemberQ[$loadingChain,pkgFile],
 			With[{$$inLoad=$inLoad},
 				$inLoad=True;
-				Internal`SymbolList[False];
+				If[$AllowPackageRecoloring,
+					Internal`SymbolList[False]
+					];
 				Replace[Thread[syms,HoldPattern],
 					Verbatim[HoldPattern][{s__}]:>Clear[s]
 					];
@@ -154,7 +156,7 @@ PackageLoadPackage[heldSym_,context_,pkgFile_->syms_]:=
 				Unprotect[$LoadedPackages];
 				AppendTo[$LoadedPackages,pkgFile];
 				Protect[$LoadedPackages];
-				If[!$$inLoad,
+				If[!$$inLoad&&$AllowPackageRecoloring,
 					Internal`SymbolList[True]
 					];
 				ReleaseHold[heldSym]
@@ -285,7 +287,7 @@ PackageAppNeeds[pkg_String]:=
 
 
 $PackageScopeBlockEvalExpr=TrueQ[$PackageScopeBlockEvalExpr];
-PackageScopeBlock[e_,scope_String:"Hidden"]:=
+PackageScopeBlock[e_,scope_String:"Hidden"]/;TrueQ[$AllowPackageRescoping]:=
 	With[{newcont="$Name`Private`"<>StringTrim[scope,"`"]<>"`"},
 		If[!MemberQ[$PackageContexts,newcont],AppendTo[$PackageContexts,newcont]];
 		Replace[
@@ -330,6 +332,8 @@ PackageScopeBlock[e_,scope_String:"Hidden"]:=
 			];
 		If[$PackageScopeBlockEvalExpr,e]
 		];
+PackageScopeBlock[e_, scope_String:"Hidden"]/;Not@TrueQ[$AllowPackageRescoping]:=
+	If[$PackageScopeBlockEvalExpr,e];
 PackageScopeBlock~SetAttributes~HoldAllComplete;
 
 
@@ -340,7 +344,7 @@ PackageScopeBlock~SetAttributes~HoldAllComplete;
 PackageDecontext[
 	pkgFile_String?(KeyMemberQ[$DeclaredPackages,#]&),
 	scope_String:"Hidden"
-	]:=
+	]/;TrueQ[$AllowPackageRescoping]:=
 	With[{
 		names=$DeclaredPackages[pkgFile],
 		ctx="$Name`Private`"<>StringTrim[scope,"`"]<>"`"
@@ -357,7 +361,9 @@ PackageDecontext[
 (*PackageRecontext*)
 
 
-PackageRecontext[pkgFile_String?(KeyMemberQ[$DeclaredPackages,#]&)]:=
+PackageRecontext[
+	pkgFile_String?(KeyMemberQ[$DeclaredPackages,#]&)
+	]/;TrueQ[$AllowPackageRescoping]:=
 	With[{
 		names=$DeclaredPackages[pkgFile],
 		ctx=PackageFileContext[pkgFile]

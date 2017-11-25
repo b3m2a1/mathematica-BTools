@@ -246,6 +246,11 @@ $GitHubSSHConnected:=
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*GitRun*)
+
+
+
 gitDoInDir[dir_String?DirectoryQ,cmd_]:=
 	With[{d=ExpandFileName@dir},
 			SetDirectory@d;
@@ -261,7 +266,14 @@ ProcessRun;
 Git::err=ProcessRun::err;
 
 
-GitRun[dir:_String?DirectoryQ|None|Automatic:None,cmds__String]:=
+GitRun//Clear
+
+
+GitRun[
+	dir:_String?DirectoryQ|None|Automatic:None,
+	cmd1_String?(Not@*DirectoryQ),
+	cmd2___String
+	]:=
 	With[{d=Replace[dir,Automatic:>$GitRepo]},
 		Replace[
 			Git::err,
@@ -269,18 +281,25 @@ GitRun[dir:_String?DirectoryQ|None|Automatic:None,cmds__String]:=
 				(Git::err=ProcessRun::err)
 			];
 		If[MatchQ[d,_String],
-			ProcessRun[{"git",cmds},Git::err,ProcessDirectory->d],
-			ProcessRun[{"git",cmds},Git::err]
+			ProcessRun[{"git",cmd1, cmd2},
+				Git::err, 
+				ProcessDirectory->d
+				],
+			ProcessRun[{"git",cmd1, cmd2}, 
+				Git::err
+				]
 			]
 		];
-GitRun[dir:_String?DirectoryQ|None|Automatic:None,
-	cmds:_String|{__String}..
+GitRun[
+	dir:_String?DirectoryQ|None|Automatic:None,
+	cmd1:_String?(Not@*DirectoryQ)|{__String},
+	cmd2:_String|{__String}...
 	]:=
 	With[{
 		d=Replace[dir,Automatic:>$GitRepo],
 		cmdBits=
 			Flatten[
-				Riffle[Prepend["git"]@*Flatten@*List/@{cmds},"\n\n"],
+				Riffle[Prepend["git"]@*Flatten@*List/@{cmd1, cmd2},"\n\n"],
 				1
 				]
 		},
@@ -298,9 +317,19 @@ Git::nodir="`` is not a valid directory";
 Git::nrepo="`` not a git repository";
 
 
+(* ::Subsubsection::Closed:: *)
+(*GitRepoQ*)
+
+
+
 GitRepoQ[d:(_String|_File)?DirectoryQ]:=
 	DirectoryQ@FileNameJoin@{d,".git"};
 GitRepoQ[_]:=False
+
+
+(* ::Subsubsection::Closed:: *)
+(*GitInit*)
+
 
 
 GitCreate[dir_String]:=
@@ -314,9 +343,19 @@ GitInit[dir:_String?DirectoryQ|Automatic:Automatic]:=
 	GitRun[dir,"init"];
 
 
+(* ::Subsubsection::Closed:: *)
+(*GitClone*)
+
+
+
+GitClone//Clear
+
+
 GitClone[
 	repo:_String|_File|_URL,
-	dir:_String|_File|Automatic:Automatic]:=
+	dir:_String|_File|Automatic:Automatic,
+	overrwriteTarget:True|False:False
+	]:=
 	With[{
 		r=
 			Replace[repo,{
@@ -342,12 +381,19 @@ GitClone[
 						}
 				]
 			},
-		Quiet@
-			DeleteDirectory[d,DeleteContents->True];
+		If[overrwriteTarget,
+			Quiet@
+				DeleteDirectory[d,DeleteContents->True]
+			];
 		CreateDirectory@d;
-		GitRun["clone",r,d];
+		GitRun[d, "clone", r, d];
 		d
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GitIgnore*)
+
 
 
 GitIgnore[dir:_String?DirectoryQ|Automatic:Automatic,filePatterns:{___}]:=
@@ -366,16 +412,36 @@ GitIgnore[dir:_String?DirectoryQ|Automatic:Automatic,filePatterns:{___}]:=
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*GitAdd*)
+
+
+
 GitAdd[dir:_String?DirectoryQ|Automatic:Automatic,files___]:=
 	GitRun[dir,"add",files];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GitRemove*)
+
 
 
 GitRemove[dir:_String?DirectoryQ|Automatic:Automatic,files___]:=
 	GitRun[dir,"rm",files];
 
 
+(* ::Subsubsection::Closed:: *)
+(*GitRemoveRecursive*)
+
+
+
 GitRemoveRecursive[dir:_String?DirectoryQ|Automatic:Automatic,files___]:=
 	GitRun[dir,"rm","-r",files];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GitRemoveCached*)
+
 
 
 GitRemoveCached[dir:_String?DirectoryQ|Automatic:Automatic,files___]:=
@@ -384,12 +450,22 @@ GitRemoveCached[dir:_String?DirectoryQ|Automatic:Automatic,files___]:=
 		files];
 
 
+(* ::Subsubsection::Closed:: *)
+(*GitRemoveCachedRecursive*)
+
+
+
 GitRemoveCachedRecursive[dir:_String?DirectoryQ|Automatic:Automatic,files___]:=
 	GitRun[dir,"rm",
 		"-r",
 		"--cached",
 		files
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GitCommit*)
+
 
 
 Options[GitCommit]={Message->"Commited via Mathematica"};
@@ -405,6 +481,11 @@ GitCommit[dir:_String?DirectoryQ|Automatic:Automatic,
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Git status*)
+
+
+
 GitLog[dir:_String?DirectoryQ|Automatic:Automatic,
 		pFlag_:"-p",entries_:"-2",opts___]:=
 	GitRun[dir,"log",opts];
@@ -412,6 +493,11 @@ GitLog[dir:_String?DirectoryQ|Automatic:Automatic,
 
 GitStatus[dir:_String?DirectoryQ|Automatic:Automatic]:=
 	GitRun[dir,"status"];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Git config and help*)
+
 
 
 GitConfig[setting:_String:"--global",opts___String]:=
@@ -440,8 +526,18 @@ GitHelp[thing_String]:=
 	GitRun["help",thing];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Repository finding and stuff*)
+
+
+
 GitRepositories[dirs:{(_String?DirectoryQ)..}|_String?DirectoryQ,depth:_Integer|\[Infinity]:2]:=
 	ParentDirectory/@FileNames[".git",dirs,depth];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GitRepo*)
+
 
 
 (*Options declared later*)
@@ -471,8 +567,18 @@ GitRepoQ[r:(_String|_File)?DirectoryQ]:=
 	(GitRepo@r=!=None);
 
 
+(* ::Subsubsection::Closed:: *)
+(*ListRemotes*)
+
+
+
 GitListRemotes[dir:_String?DirectoryQ|Automatic:Automatic]:=
 	GitRun[dir,"remote","-v","show"]
+
+
+(* ::Subsubsection::Closed:: *)
+(*AddRemote*)
+
 
 
 GitAddRemote[
@@ -484,12 +590,22 @@ GitAddRemote[
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*RemoveRemote*)
+
+
+
 GitRemoveRemote[
 	dir:_String?DirectoryQ|Automatic:Automatic,
 	remote:_String|_URL]:=
 	GitRun[dir,
 		"remote","rm","origin"
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Push*)
+
 
 
 Options[GitPush]={
@@ -514,6 +630,11 @@ GitPush[
 		branch];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Fetch*)
+
+
+
 GitFetch[
 	dir:_String?DirectoryQ
 	]:=
@@ -521,6 +642,11 @@ GitFetch[
 		dir,
 		"fetch"
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Reset*)
+
 
 
 GitReset[
@@ -532,6 +658,11 @@ GitReset[
 		"reset",
 		src
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Checkout*)
+
 
 
 GitCheckout//Clear
@@ -547,6 +678,11 @@ GitCheckout[
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*GitCheckoutTracked*)
+
+
+
 GitCheckoutTracked[
 	dir:_String?DirectoryQ,
 	args__
@@ -557,6 +693,11 @@ GitCheckoutTracked[
 		"-t",
 		args
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Pull*)
+
 
 
 Options[GitPull]={
@@ -576,8 +717,18 @@ GitPull[
 		branch];
 
 
+(* ::Subsubsection::Closed:: *)
+(*PullOrigin*)
+
+
+
 GitPullOrigin[dir:_String?DirectoryQ|Automatic:Automatic]:=
 	GitPull[dir,"origin","master"]
+
+
+(* ::Subsubsection::Closed:: *)
+(*PushOrigin*)
+
 
 
 GitPushOrigin[dir:_String?DirectoryQ|Automatic:Automatic,
@@ -588,6 +739,11 @@ GitPushOrigin[dir:_String?DirectoryQ|Automatic:Automatic,
 		"origin",
 		"master"
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*ListTree*)
+
 
 
 Options[GitListTree]=
@@ -610,6 +766,11 @@ GitListTree[
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*ListTreeRecursive*)
+
+
+
 Options[GitListTreeRecursive]=
 	Options@GitListTree;
 GitListTreeRecursive[
@@ -628,6 +789,11 @@ GitListTreeRecursive[
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*RefLog*)
+
+
+
 GitRefLog[
 	dir:_String?DirectoryQ|Automatic:Automatic,
 	args___
@@ -635,11 +801,21 @@ GitRefLog[
 	GitRun[dir,"reflog"]
 
 
+(* ::Subsubsection::Closed:: *)
+(*RefLogExpire*)
+
+
+
 GitRefLogExpire[
 	dir:_String?DirectoryQ|Automatic:Automatic,
 	expireTime_:"--all"
 	]:=
 	GitRun[dir,"reflog","expire",expireTime]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Clean*)
+
 
 
 Options[GitClean]=
@@ -668,6 +844,11 @@ GitClean[
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*GitCleanEverything*)
+
+
+
 (*(* Taken from here: https://stackoverflow.com/a/14729486 *)
 GitCleanEverything[
 	dir:_String?DirectoryQ|Automatic:Automatic,
@@ -682,6 +863,11 @@ GitCleanEverything[
 			"pruneExpire"\[Rule]"now"
 			}
 		]*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*GitFilterBranch*)
+
 
 
 GitFilterBranch//Clear
@@ -701,6 +887,11 @@ GitFilterBranch[
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*GitFilterTree*)
+
+
+
 GitFilterTree//Clear
 
 
@@ -710,6 +901,11 @@ GitFilterTree[
 	args___
 	]:=
 	GitFilterBranch[dir, "--tree-filter",filterCMD, args];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Prune*)
+
 
 
 GitPrune[
@@ -726,10 +922,20 @@ GitPrune[
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*Branch*)
+
+
+
 GitBranch[dir:_String?DirectoryQ|Automatic:Automatic,
 	args___
 	]:=
 	GitRun[dir,"branch",args]
+
+
+(* ::Subsubsection::Closed:: *)
+(*WipeTheSlate*)
+
 
 
 GitWipeTheSlate//Clear
@@ -748,6 +954,11 @@ GitWipeTheSlate[
 		GitBranch[dir, "-D", "master"];
 		GitBranch[dir, "-m", "master"];
 		)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Git*)
+
 
 
 $GitActions=
@@ -854,6 +1065,11 @@ Git[
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*Run*)
+
+
+
 Options[SVNRun]=
 	Normal@Merge[{
 		Options@ProcessRun,
@@ -866,14 +1082,27 @@ SVNRun[cmd_,
 	repo_String,
 	others:(_Rule|_RuleDelayed|_String)...,
 	ops:OptionsPattern[]]:=
-	ProcessRun[{
-		"svn",cmd,
-		kwargs,
-		If[OptionValue@"TrustServer","--trust-server-cert",Nothing],
-		If[FileExistsQ@repo,ExpandFileName@repo,repo],
-		others
-		},
-		ops];
+	ProcessRun[
+		{
+			"svn",
+			cmd,
+			kwargs,
+			If[OptionValue@"TrustServer","--trust-server-cert",Nothing],
+			If[FileExistsQ@repo,ExpandFileName@repo,repo],
+			others
+			},
+		Evaluate[
+			Sequence@@
+			FilterRules[{ops},
+					Options@ProcessRun
+					]
+			]
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*FileNames*)
+
 
 
 Options[SVNFileNames]=
@@ -890,9 +1119,17 @@ SVNFileNames[repo_,ops:OptionsPattern[]]:=
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*CheckOut*)
+
+
+
 Options[SVNCheckOut]=
 	Options@SVNRun;
-SVNCheckOut[repo_,dir:_String|Automatic:Automatic,ops:OptionsPattern[]]:=
+SVNCheckOut[
+	repo_,
+	dir:_String|Automatic:Automatic,
+	ops:OptionsPattern[]]:=
 	With[{pulldir=
 		Replace[dir,{
 			s_String?(Not@*FileExistsQ):>
@@ -918,6 +1155,11 @@ SVNCheckOut[repo_,dir:_String|Automatic:Automatic,ops:OptionsPattern[]]:=
 	]
 
 
+(* ::Subsubsection::Closed:: *)
+(*Export*)
+
+
+
 Options[SVNExport]=
 	Normal@Merge[{
 		Options@SVNRun,
@@ -938,6 +1180,11 @@ SVNExport[repo_,file:_String|Automatic:Automatic,ops:OptionsPattern[]]:=
 			];
 		f
 		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*SVN*)
+
 
 
 $SVNActions=
@@ -1491,14 +1738,17 @@ GitHubClone[
 					URL@repo,
 					repo
 					],
-				dir],
+				dir
+				],
 			d:Except[_String?GitRepoQ]:>(
-				SVNCheckOut[repo,
+				SVNExport[
 					If[MatchQ[repo,_GitHubPath],
 						URL@repo,
 						repo
 						],
-				"TrustServer"->True]
+					dir,
+					"TrustServer"->True
+					]
 				)
 			],
 	GitRun::err
