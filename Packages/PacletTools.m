@@ -552,11 +552,14 @@ PacletExpression[ops:OptionsPattern[]]:=
 			];
 
 
-PacletExpression[dir]~~`Package`PackageAddUsage~~
-	"generates a Paclet expression from dir";
-PacletExpression[
+(*PacletExpression[dir]~~PackageAddUsage~~
+	"generates a Paclet expression from dir";*)
+Options[iPacletExpression]=
+	Options[PacletExpression];
+iPacletExpression[
 	dest_String?DirectoryQ,
-	ops:OptionsPattern[]]:=
+	ops:OptionsPattern[]
+	]:=
 	With[{pacletInfo=KeyDrop[PacletInfoAssociation[dest], "Location"]},
 		PacletExpression[
 			Sequence@@FilterRules[{ops},
@@ -621,6 +624,14 @@ PacletExpression[
 				Sequence@@Normal@pacletInfo
 			]
 		];
+PacletExpression[
+	dest_String?DirectoryQ,
+	ops:OptionsPattern[]
+	]:=
+	iPacletExpression[
+		dest,
+		FilterRules[{ops}, Options@PacletExpression]
+		]
 
 
 (* ::Subsubsection::Closed:: *)
