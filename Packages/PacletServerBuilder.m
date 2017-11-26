@@ -35,7 +35,7 @@ PackageScopeBlock[
 		"The configuration for the default paclet server";
 	PacletServerURL::usage=
 		"";
-	PacletServerDeployURL::usage=
+	PacletServerDeploymentURL::usage=
 		"";
 	PacletServerFile::usage=
 		"Finds a file on a paclet server";
@@ -210,16 +210,16 @@ $PacletServerURL:=
 
 
 (* ::Subsubsection::Closed:: *)
-(*PacletServerDeployURL*)
+(*PacletServerDeploymentURL*)
 
 
 
-PacletServerDeployURL[server_]:=
+PacletServerDeploymentURL[server_]:=
 	PacletSiteURL@
 		FilterRules[
 			Flatten@{
 				"ServerBase"->
-					If[DirectoryQ@PacletServerDirectory[server], 
+					If[URLParse[PacletServerURL[server], "Scheme"]==="file", 
 						CloudObject, 
 						Lookup[server, "ServerBase"]
 						],
@@ -1120,7 +1120,7 @@ PacletServerDelete[
 	]:=
 	(
 		If[OptionValue["DeleteLocal"],
-			With[{d=Echo@PacletServerDirectory[server]},
+			With[{d=PacletServerDirectory[server]},
 				If[DirectoryQ[d],
 					DeleteDirectory[PacletServerDirectory[server],
 						DeleteContents->True
@@ -1129,10 +1129,17 @@ PacletServerDelete[
 				]
 			];
 		If[OptionValue["DeleteCloud"],	
-			With[{d=Quiet@Check[CloudObject@PacletServerURL[server], $Failed]},
-				If[MatchQ[d, CloudObject],
-					DeleteFile/@
-						CloudObjects[d]
+			With[
+				{d=
+					Quiet@Check[
+						CloudObject@PacletServerDeploymentURL[server], 
+						$Failed
+						]},
+				If[MatchQ[d, _CloudObject],
+					Quiet[
+						DeleteFile/@
+							Replace[CloudObjects[d], Except[{__CloudObject}]->{}]
+						]
 					]
 				]
 			];
@@ -1527,7 +1534,7 @@ PacletServerBuild[
 										With[
 											{
 												cc=
-													PacletServerDeployURL[server]
+													PacletServerDeploymentURL[server]
 												},
 											cc
 											],

@@ -758,7 +758,7 @@ UUIDButton[lab_,cmd_,ops:OptionsPattern[]]:=
 				1],{
 			With[{nab=OptionValue[Enabled]},
 				"MouseClicked":>
-					If[TrueQ@Replace[nab, d_Dynamic:>First[d]],
+					If[TrueQ@Replace[Replace[nab, d_Dynamic:>First[d]], Automatic->True],
 						UUIDActive[uuid]=True
 						]
 				],
