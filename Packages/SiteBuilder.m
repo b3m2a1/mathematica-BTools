@@ -730,20 +730,26 @@ WebSiteTemplateExport[
 			],
 		{
 			(f_->html_String):>
-				Export[
-					Replace[f,{
-						Automatic:>fout,
-						s_String:>
-							FileNameJoin@
-								Append[
-									Most@FileNameSplit[fout],
-									FileBaseName@s<>".html"
-									]
-						}],
-					html,
-					"Text"],
+				With[
+					{
+						fil=
+							Replace[f,
+								{
+									Automatic:>fout,
+									s_String:>
+										FileNameJoin@
+											Append[
+												Most@FileNameSplit[fout],
+												FileBaseName@s<>".html"
+												]
+									}]
+							},
+					If[!FileExistsQ[fil]||(html=!=Import[fil, "Text"]),
+						Export[fil, html, "Text"]
+						]
+					],
 			e_:>
-				(Print[e];Message[WebSiteBuild::genfl,failinput];$Failed)
+				(Message[WebSiteBuild::genfl,failinput];$Failed)
 			}
 		];
 
@@ -821,11 +827,15 @@ WebSiteExtractFileData[content_,config_]:=
 		];
 
 
-WebSiteExtractPageData[rootDir_,files_,config_]:=
+Options[WebSiteExtractPageData]=
+	{
+		Monitor->True
+		};
+WebSiteExtractPageData[rootDir_,files_,config_, ops:OptionsPattern[]]:=
 	Block[{
 		extractfile
 		},
-		Monitor[
+		If[TrueQ@OptionValue[Monitor], Monitor, #&][
 			With[{
 				fname=
 					Replace[#,
@@ -895,7 +905,15 @@ $WebSiteGenerateAggregationPages=
 			]&,
 		$WebSiteAggregationTypes
 		];
-WebSiteGenerateAggregationPages[dir_,aggpages_:Automatic,outDir_,theme_,config_]:=
+
+
+Options[WebSiteGenerateAggregationPages]=
+	{
+		Monitor->True
+		}
+WebSiteGenerateAggregationPages[dir_,aggpages_:Automatic,outDir_,theme_,
+	config:Except[_?OptionQ], ops:OptionsPattern[]
+	]:=
 	With[
 		{
 			longDir=ExpandFileName@dir,
@@ -905,7 +923,7 @@ WebSiteGenerateAggregationPages[dir_,aggpages_:Automatic,outDir_,theme_,config_]
 			aggbit,
 			outfile
 			},
-			Monitor[
+			If[TrueQ@OptionValue[Monitor], Monitor, #&][
 				KeyValueMap[(*Map over aggregation types and templates*)
 					With[{
 						aggthing=#,
@@ -1058,13 +1076,17 @@ WebSiteGenerateAggregationPages[dir_,aggpages_:Automatic,outDir_,theme_,config_]
 WebSiteGenerateIndexPage//ClearAll
 
 
-WebSiteGenerateIndexPage[dir_,outDir_,theme_,config_]:=
+Options[WebSiteGenerateIndexPage]=
+	{
+		Monitor->True
+		};
+WebSiteGenerateIndexPage[dir_,outDir_,theme_,config_, ops:OptionsPattern[]]:=
 	With[
 		{
 			longDir=ExpandFileName@dir,
 			thm=WebSiteFindTheme[dir,theme]
 			},
-			Monitor[
+			If[TrueQ@OptionValue[Monitor], Monitor, #&][
 				WebSiteTemplateExport[
 					"index",
 					FileNameJoin@{outDir,"index.html"},
@@ -1090,7 +1112,11 @@ WebSiteGenerateContent//ClearAll
 WebSiteBuild::genfl="Failed to generate HTML for file ``";
 
 
-WebSiteGenerateContent[dir_,files_,outDir_,theme_,config_]:=
+Options[WebSiteGenerateContent]=
+	{
+		Monitor->True
+		};
+WebSiteGenerateContent[dir_,files_,outDir_,theme_,config_, ops:OptionsPattern[]]:=
 	With[{
 			longDir=ExpandFileName@dir,
 			thm=WebSiteFindTheme[dir,theme]
@@ -1100,7 +1126,7 @@ WebSiteGenerateContent[dir_,files_,outDir_,theme_,config_]:=
 				genfile,
 				outfile
 				},
-			Monitor[
+			If[TrueQ@OptionValue[Monitor], Monitor, #&][
 				With[
 					{
 						fname=
@@ -1205,7 +1231,16 @@ WebSiteFindTheme[dir_,theme_]:=
 		]
 
 
-WebSiteCopyTheme[dir_,outDir_,theme_]:=
+WebSiteCopyTheme//Clear
+
+
+Options[WebSiteCopyTheme]=
+	{
+		Monitor->True
+		};
+WebSiteCopyTheme[dir_,outDir_, theme_,
+	ops:OptionsPattern[]
+	]:=
 	With[{
 		thm=
 			FileNameJoin@{
@@ -1219,7 +1254,7 @@ WebSiteCopyTheme[dir_,outDir_,theme_]:=
 				copyfile,
 				newfile
 				},
-				Monitor[
+				If[TrueQ@OptionValue[Monitor], Monitor, #&][
 					With[{
 						newf=
 							FileNameJoin@{outDir,"theme",
@@ -1259,14 +1294,26 @@ WebSiteCopyTheme[dir_,outDir_,theme_]:=
 		]
 
 
-WebSiteCopyContent[dir_,outDir_,sel_:Automatic]:=
+WebSiteCopyContent//Clear
+
+
+Options[WebSiteCopyContent]=
+	{
+		Monitor->True
+		};
+WebSiteCopyContent[dir_,outDir_,
+	sel:Except[_?OptionQ]:Automatic,
+	ops:OptionsPattern[]
+	]:=
 	With[{
 		selPat=
 			Replace[sel,
 				Automatic:>Except["posts"|"pages"]
 				],
 		contDir=
-			FileNameJoin@{dir,"content"}
+			FileNameJoin@{dir,"content"},
+		monitor=
+			TrueQ@OptionValue[Monitor]
 		},
 		With[{
 			fils=
@@ -1280,7 +1327,7 @@ WebSiteCopyContent[dir_,outDir_,sel_:Automatic]:=
 				copyfile,
 				newfile
 				},
-				Monitor[
+				If[monitor, Monitor, #&][
 					With[{
 						newf=
 							FileNameJoin@{outDir,
@@ -1330,7 +1377,8 @@ Options[WebSiteBuild]=
 	"OutputDirectory"->Automatic,
 	"DefaultTheme"->"minimal",
 	"AutoDeploy"->Automatic,
-	"DeployOptions"->Automatic
+	"DeployOptions"->Automatic,
+	Monitor->True
 	};
 WebSiteBuild[
 	dir_String?DirectoryQ,
@@ -1370,26 +1418,32 @@ WebSiteBuild[
 							FileNameJoin@{dir,"SiteConfig.m"},
 							FileNameJoin@{dir,"SiteConfig.wl"}
 							]
-					],{
-					f_String?FileExistsQ:>
-						Replace[Import[f],{o_?OptionQ:>Association[o],_-><||>}],
-					o_?OptionQ:>Association[o],
-					_-><||>
-				}]
+					],
+				{
+						f_String?FileExistsQ:>
+							Replace[Import[f],{o_?OptionQ:>Association[o],_-><||>}],
+						o_?OptionQ:>Association[o],
+						_-><||>
+					}]
 			},
 		If[!DirectoryQ[outDir],
 			CreateDirectory@outDir
 			];
 		If[OptionValue["CopyTheme"],
 			WebSiteCopyTheme[dir,outDir,
-				Lookup[config,"Theme",OptionValue["DefaultTheme"]]
+				Lookup[config,"Theme",OptionValue["DefaultTheme"]],
+				Monitor->OptionValue[Monitor]
 				]
 			];
 		Replace[OptionValue["CopyContent"],{
 			True|Automatic:>
-				WebSiteCopyContent[dir,outDir,Automatic],
+				WebSiteCopyContent[dir,outDir,Automatic,
+					Monitor->OptionValue[Monitor]
+					],
 			p:Except[False|None]:>
-				WebSiteCopyContent[dir,outDir,p]
+				WebSiteCopyContent[dir,outDir,p,
+					Monitor->OptionValue[Monitor]
+					]
 			}];
 		Block[{
 			$ContentStack=<||>,
@@ -1412,7 +1466,9 @@ WebSiteBuild[
 				KeyDrop[config,{"GenerateContent","GenerateAggregations","GenerateIndex"}]
 			},
 			If[AnyTrue[{genCont,genAggs,genInd},TrueQ],
-				WebSiteExtractPageData[ExpandFileName@dir,fileNames,newconf]
+				WebSiteExtractPageData[ExpandFileName@dir,fileNames,newconf,
+					Monitor->OptionValue[Monitor]
+					]
 				];
 			If[genCont,
 				WebSiteGenerateContent[
@@ -1424,21 +1480,24 @@ WebSiteBuild[
 							"OutputDirectory"->outDir
 							|>,
 						newconf
-						]
+						],
+					Monitor->OptionValue[Monitor]
 					]
 				];
 			If[genAggs,
 				WebSiteGenerateAggregationPages[
 					dir,outDir,
 					Lookup[config,"Theme",OptionValue["DefaultTheme"]],
-					newconf
+					newconf,
+					Monitor->OptionValue[Monitor]
 					];
 				];
 			If[genInd,
 				WebSiteGenerateIndexPage[
 					dir,outDir,
 					Lookup[config,"Theme",OptionValue["DefaultTheme"]],
-					newconf
+					newconf,
+					Monitor->OptionValue[Monitor]
 					];
 				];
 			];

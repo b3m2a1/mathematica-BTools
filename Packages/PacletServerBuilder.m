@@ -1218,6 +1218,9 @@ pacletMarkdownNotebookExtensionSection[extensionData_]:=
 
 
 
+PacletMarkdownNotebook//Clear
+
+
 PacletMarkdownNotebook[
 	a_Association
 	]:=
@@ -1261,9 +1264,9 @@ PacletMarkdownNotebook[p_PacletManager`Paclet]:=
 	PacletMarkdownNotebook[
 		PacletInfoAssociation@p
 		];
-PacletMarkdownNotebook[f_String?FileExistsQ,a_]:=
-	PacletMarkdownNotebookUpdate[f,a];
-PacletMarkdownNotebook[f_String,a_]:=
+PacletMarkdownNotebook[f_String?FileExistsQ,a_,regen_:Automatic]:=
+	PacletMarkdownNotebookUpdate[f,a,regen];
+PacletMarkdownNotebook[f_String, a_, regen_:Automatic]:=
 	With[{nb=PacletMarkdownNotebook[a]},
 		Switch[nb,
 			_Notebook,
@@ -1272,7 +1275,12 @@ PacletMarkdownNotebook[f_String,a_]:=
 						CreateIntermediateDirectories->True
 						]
 					];
-				Export[f,nb],
+				If[FileExistsQ@f,
+					If[TrueQ[regen]||Import[f]=!=nb,
+						Export[f,nb]
+						],
+					Export[f,nb]
+					],
 			_,
 				$Failed
 			]
@@ -1282,6 +1290,9 @@ PacletMarkdownNotebook[f_String,a_]:=
 (* ::Subsubsection::Closed:: *)
 (*PacletMarkdownNotebookUpdate*)
 
+
+
+PacletMarkdownNotebookUpdate//Clear
 
 
 PacletMarkdownNotebookUpdate[notebook_Notebook,a_]:=
@@ -1366,13 +1377,17 @@ PacletMarkdownNotebookUpdate[notebook_Notebook,a_]:=
 				];
 		nb
 		];
-PacletMarkdownNotebookUpdate[f_String?FileExistsQ,a_]:=
+PacletMarkdownNotebookUpdate[f_String?FileExistsQ,a_,regen_:Automatic]:=
 	With[{nb=Import[f]},
 		Switch[nb,
 			_Notebook,
-				Export[
-					f,
-					PacletMarkdownNotebookUpdate[nb,a]
+				With[{new=PacletMarkdownNotebookUpdate[nb,a]},
+					If[TrueQ[regen]||new=!=nb,
+						Export[
+							f,
+							PacletMarkdownNotebookUpdate[nb,a]
+							]
+						]
 					],
 			_,
 				$Failed
@@ -1436,7 +1451,7 @@ Options[PacletServerBuild]=
 	Join[
 		Options[WebSiteBuild],
 		{
-			"RegenerateContent"->True,
+			"RegenerateContent"->Automatic,
 			"BuildSite"->True
 			}
 		];
@@ -1446,29 +1461,41 @@ PacletServerBuild[
 	]:=
 	With[{siteData=PacletServerExposedPaclets[server]},
 		PacletServerInitialize[server];
-		If[OptionValue["RegenerateContent"],
-			With[{nbout=PacletServerFile[server, {"content","posts",#Name<>".nb"}]},
-				PacletMarkdownNotebook[
-					nbout,
-					Join[
-						<|
-							"Title"->Lookup[#,"Name","Unnamed Paclet"],
-							"Categories"->"misc",
-							"Slug"->Automatic,
-							"Authors"->
-								StringTrim@
-									Map[
-										StringSplit[#,"@"][[1]]&,
-										StringSplit[Lookup[#,"Creator",""],","]
-										],
-							"Tags"->StringSplit[Lookup[#,"Keywords",""],","]
-							|>,
-						#
+		If[MatchQ[OptionValue["RegenerateContent"], True|Automatic],
+			If[OptionValue[Monitor],
+				Function[Null,
+					Monitor[#, 
+						Internal`LoadingPanel[TemplateApply["Generating ``", md]]
+						],
+					HoldAll
+					],
+				Identity
+				]@
+				Block[{md},
+					With[{nbout=PacletServerFile[server, {"content","posts",#Name<>".nb"}]},
+						md=nbout;
+						PacletMarkdownNotebook[
+							nbout,
+							Join[
+								<|
+									"Title"->Lookup[#,"Name","Unnamed Paclet"],
+									"Categories"->"misc",
+									"Slug"->Automatic,
+									"Authors"->
+										StringTrim@
+											Map[
+												StringSplit[#,"@"][[1]]&,
+												StringSplit[Lookup[#,"Creator",""],","]
+												],
+									"Tags"->StringSplit[Lookup[#,"Keywords",""],","]
+									|>,
+								#
+								]
+							];
+							Function[NotebookMarkdownSave[#];NotebookClose[#]]@
+								NotebookOpen[nbout,Visible->False];
+							]&/@Association/@siteData
 						]
-					];
-				Function[NotebookMarkdownSave[#];NotebookClose[#]]@
-					NotebookOpen[nbout,Visible->False];
-				]&/@Association/@siteData
 			];
 		With[{s=
 			If[TrueQ@OptionValue["BuildSite"],
@@ -1481,9 +1508,9 @@ PacletServerBuild[
 								conf=
 									Replace[
 										Quiet@Import@
-											If[FileExistsQ@PacletServeFile[server, "SiteConfig.m"],
-												PacletServeFile[server, "SiteConfig.m"],
-												PacletServeFile[server, "SiteConfig.wl"]
+											If[FileExistsQ@PacletServerFile[server, "SiteConfig.m"],
+												PacletServerFile[server, "SiteConfig.m"],
+												PacletServerFile[server, "SiteConfig.wl"]
 												],
 										{
 											o_?OptionQ:>
@@ -1502,12 +1529,14 @@ PacletServerBuild[
 												cc=
 													PacletServerDeployURL[server]
 												},
-											conf
+											cc
 											],
+									"Theme"->
+										"PacletServer",
 									CloudConnect->
 										server[CloudConnect],
 									Permissions->
-										server[Permissions]	
+										server[Permissions]
 									|>,
 								conf
 								]
@@ -1544,6 +1573,11 @@ PacletServerBuild[
 				]
 			]
 		];
+PacletServerBuild[
+	k_?(KeyMemberQ[$PacletServers, #]&),
+	ops:OptionsPattern[]
+	]:=
+	PacletServerBuild[$PacletServers[k], ops]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1599,6 +1633,8 @@ PacletServerDeploy[
 									Permissions->
 										Lookup[server, Permissions],
 									baseConfig,
+									"ServerTheme"->
+										"PacletServer",
 									"ExtraFileNameForms"->
 										{
 											"PacletSite.mz",
@@ -1624,6 +1660,11 @@ PacletServerDeploy[
 		Message[PacletServerDeploy::nobld];
 		$Failed
 		];
+PacletServerDeploy[
+	k_?(KeyMemberQ[$PacletServers, #]&),
+	ops:OptionsPattern[]
+	]:=
+	PacletServerDeploy[$PacletServers[k], ops]
 
 
 End[];

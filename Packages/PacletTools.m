@@ -180,8 +180,10 @@ If[!ValueQ@$pacletToolsExceptionTag,
 	$pacletToolsExceptionTag=None
 	];
 If[!ValueQ@$pacletToolsCallBack,
-	$pacletToolsCallBack=
-		#&
+	$pacletToolsCallBack=Automatic
+	];
+If[!ValueQ@$pacletToolsDefaultCallBack,
+	$pacletToolsDefaultCallBack=#&
 	];
 pacletToolsCatchBlock//Clear;
 pacletToolsCatchBlock[exc_, f_:Automatic]:=
@@ -195,7 +197,20 @@ pacletToolsCatchBlock[exc_, f_:Automatic]:=
 			},
 			Catch[#, 
 				exc, 
-				Replace[f, Automatic:>$pacletToolsCallBack]
+				Replace[f, 
+					Automatic:>
+						Replace[$pacletToolsCallBack,
+							Automatic:>
+								Replace[$pacletToolsTmpCallBack,
+									{
+										Automatic:>
+											$pacletToolsDefaultCallBack,
+										e_:>
+											($pacletToolsTmpCallBack=Automatic;e)
+										}
+									]
+							]
+					]
 				]
 			],
 		HoldAllComplete
@@ -876,14 +891,15 @@ pacletStandardServerName[serverName_]:=
 
 
 
-pacletStandardServerBase[serverBase_]:=
+pacletStandardServerBase[serverBase_,
+	cc_:Automatic,
+	kc_:Automatic
+	]:=
 	If[StringQ[#]&&DirectoryQ@#, ExpandFileName[#], #]&@
 		Replace[
 			Replace[
 				serverBase,
 				{
-					Automatic:>
-						CloudDirectory[],
 					Default:>
 						Lookup[$PacletServer,"ServerBase"]
 					}
@@ -891,7 +907,14 @@ pacletStandardServerBase[serverBase_]:=
 			e:Except[
 				_String|_CloudObject|_CloudDirectory|CloudObject|CloudDirectory|
 				_File|_URL
-				]:>(Nothing),
+				]:>
+					Replace[CloudDirectory[],
+						Except[_CloudObject]:>
+							(
+							pacletCloudConnect[serverBase, cc, kc];
+							CloudDirectory[]
+							)
+						],
 			f:(_String|_File)?DirectoryQ:>
 				ExpandFileName[f]
 			}]
@@ -954,41 +977,63 @@ $PacletUploadDomains=
 
 
 pacletCloudConnect[base_, cc_, useKeyChain_]:=
-	Replace[
-		Replace[
-			cc,
-			Automatic:>
-				Replace[base,
-					Verbatim[CloudObject][o_,___]:>
-						DeleteCases[URLParse[o, "Path"], ""][[2]]
-					]
-			],{
-		a:$KeyChainCloudAccounts?(
-			Replace[useKeyChain,
-				Automatic:>
-					$PacletUseKeyChain
-				]&):>
-			KeyChainConnect[a],
-		k_Key:>
-			KeyChainConnect[k],
-		s_String:>
-			If[$WolframID=!=s,
-				CloudConnect[s]
-				],
-		{s_String,p_String}:>
-			If[$WolframID=!=s,
-				CloudConnect[s,p]
-				],
-		{s_String,e___,CloudBase->b_,r___}:>
-			If[$CloudBase=!=b||$WolframID=!=s,
-				CloudConnect[s,e,CloudBase->b,r]
+	(
+		With[
+			{
+				kc=
+					Replace[useKeyChain,
+						Automatic:>
+							$PacletUseKeyChain
+						],
+				ccReal=
+					Replace[
+						cc,
+						Automatic:>
+							Replace[base,
+								Verbatim[CloudObject][o_,___]:>
+									DeleteCases[URLParse[o, "Path"], ""][[2]]
+								]
+						]
+				},
+			Replace[
+				ccReal,
+				{
+					a:$KeyChainCloudAccounts?(kc&):>
+						KeyChainConnect[a],
+					k_Key:>
+						KeyChainConnect[k],
+					s_String:>
+						If[$WolframID=!=s||
+							(StringQ[$WolframID]&&StringSplit[$WolframID, "@"][[1]]=!=s),
+							If[kc, 
+								KeyChainConnect,
+								CloudConnect
+								][If[!StringContainsQ[s, "@"], s<>"@gmail.com", s]]
+							],
+					{s_String,p_String}:>
+						If[$WolframID=!=s, 
+							If[kc, 
+								KeyChainConnect,
+								CloudConnect
+								][s,p]
+							],
+					{s_String,e___,CloudBase->b_,r___}:>
+						If[$CloudBase=!=b||$WolframID=!=s,
+							If[kc, 
+								KeyChainConnect,
+								CloudConnect
+								][s,e,CloudBase->b,r]
+							],
+					_:>
+						If[!StringQ[$WolframID], CloudConnect[]]
+					}
 				]
-		}];
-	If[!StringQ[$WolframUUID],CloudConnect[]];
-	If[!StringQ[$WolframUUID],
-		Message[PacletSiteURL::nowid];
-		pacletToolsThrow[]
-		];
+			];
+		If[!StringQ[$WolframID],
+			Message[PacletSiteURL::nowid];
+			pacletToolsThrow[]
+			]
+		);
 
 
 Options[PacletSiteURL]=
@@ -1014,12 +1059,17 @@ PacletSiteURL[ops:OptionsPattern[]]:=
 				ext=
 					pacletStandardServerExtension@OptionValue["ServerExtension"],
 				base=
-					pacletStandardServerBase@OptionValue["ServerBase"],
+					pacletStandardServerBase[
+						OptionValue["ServerBase"],
+						OptionValue@CloudConnect, 
+						OptionValue@"UseKeyChain"
+						],
 				name=
 					pacletStandardServerName@OptionValue["ServerName"]
 				},
 			Switch[base,
-				$CloudBase|"Cloud"|CloudObject|CloudDirectory|_CloudObject|_CloudDirectory,
+				$CloudBase|"Cloud"|CloudObject|CloudDirectory|
+					_CloudObject|_CloudDirectory,
 					pacletCloudConnect[
 						base, 
 						OptionValue@CloudConnect, 
@@ -2189,10 +2239,11 @@ builtPacletFileFind[
 	f:_PacletManager`Paclet|_String|_URL|_File,
 	ops:OptionsPattern[]
 	]:=
-	With[{
-		useCached=TrueQ@OptionValue["UseCachedPaclets"],
-		build=TrueQ@OptionValue@"BuildPaclets"
-		},
+	With[
+		{
+			useCached=TrueQ@OptionValue["UseCachedPaclets"],
+			build=TrueQ@OptionValue@"BuildPaclets"
+			},
 		Which[
 			MatchQ[f,_PacletManager`Paclet],
 				(* We're handed a Paclet expression so we confirm that a .paclet file exists for it or build it ourselves *)
@@ -2216,8 +2267,9 @@ builtPacletFileFind[
 							]
 						]
 					],
-			MatchQ[f,_File|_String]&&
-				DirectoryQ[f]&&!FileExistsQ[FileNameJoin@{f,"PacletInfo.m"}],
+			MatchQ[f, (_File|_String)?DirectoryQ]&&
+				!FileExistsQ[FileNameJoin@{f,"PacletInfo.m"}],
+				(* prep non-paclet directories for packing *)
 				If[build,
 					PacletExpressionBundle[Replace[f,File[s_]:>s]];
 					builtPacletFileFind[f,ops],
@@ -2226,32 +2278,36 @@ builtPacletFileFind[
 			MatchQ[f,(_String|_URL)?urlBasedPacletQ],
 				(* We're handed a URL so we just return that *)
 				First@Flatten[URL[f],1,URL],
-			MatchQ[f,_String?(Length@PacletManager`PacletFind[#]>0&)],
+			MatchQ[f, _String?(Length@PacletManager`PacletFind[#]>0&)],
+				(* found a paclet to pack by name *)
 				builtPacletFileFind[
 					First@PacletManager`PacletFind[f],
 					ops
 					],
-			True,
+			MatchQ[f, _File|_String|True|False],
 				Replace[{
 					File[fil_]:>fil
 					}]@
 					SelectFirst[
 						{
 							If[TrueQ@DirectoryQ@f,
+								(* handed a directory *)
 								If[TrueQ@FileExistsQ@FileNameJoin@{f,"PacletInfo.m"},
 									(* if f is a paclet directory *)
 									With[{a=PacletInfoAssociation[FileNameJoin@{f,"PacletInfo.m"}]},
 										(* check again for the paclet file by version*)
-										Replace[builtPacletFileFind[Lookup[a,{"Name","Version"}],ops],{
-											None:>
-												(* needs to be built *)
-												If[build,
-													PacletBundle[f],
-													True
-													],
-											Except[_String|_File]:>
-												Nothing
-											}]
+										Replace[builtPacletFileFind[Lookup[a,{"Name","Version"}],ops],
+											{
+												None:>
+													If[build,
+														(* needs to be built *)
+														PacletBundle[f],
+														True
+														],
+												Except[_String|_File]:>
+													Nothing
+												}
+											]
 										],
 									Nothing
 									],
@@ -2261,7 +2317,10 @@ builtPacletFileFind[
 									If[FileExistsQ@fname,
 										fname,
 										If[build,
-											PacletBundle[f],
+											If[FileExistsQ@f,
+												PacletBundle[f],
+												None
+												],
 											True
 											]
 										]
@@ -2277,9 +2336,12 @@ builtPacletFileFind[
 								Nothing
 								]
 						},
-						TrueQ[#]||FileExistsQ[#]&,
+						TrueQ[#]||
+							(MatchQ[#, _File|_String]&&FileExistsQ[#])&,
 						None
-						]
+						],
+		True,
+			None
 			]
 		];
 builtPacletFileFind[{f_String,v_String},ops:OptionsPattern[]]:=
@@ -2602,6 +2664,9 @@ pacletUpload[
 		];
 
 
+PacletUpload//Clear
+
+
 Options[PacletUpload]=
 	Options[pacletUpload];
 PacletUpload::nobby="Unkown site base ``"
@@ -2617,7 +2682,7 @@ PacletUpload[
 		bPFFOps=FilterRules[{ops},Options[builtPacletFileFind]],
 		files
 		},
-		files=builtPacletFileFind[#,bPFFOps]&/@Flatten@{pacletSpecs};
+		files=builtPacletFileFind[#,bPFFOps]&/@Flatten[{pacletSpecs}, 1];
 		If[!AllTrue[files,builtPacletFileQ],
 			Message[PacletUpload::nopac,
 				Pick[Flatten@{pacletSpecs},MatchQ[None|(_->None)]/@files]

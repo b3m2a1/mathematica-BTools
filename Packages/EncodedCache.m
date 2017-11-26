@@ -955,7 +955,10 @@ $KeyChainCloudAccounts=
 
 Options[KeyChainConnect]=
 	Options[CloudConnect];
-KeyChainConnect[acc:$KeyChainCloudAccounts,ops:OptionsPattern[]]:=
+KeyChainConnect[
+	acc:$KeyChainCloudAccounts,
+	ops:OptionsPattern[]
+	]:=
 	KeyChainConnect[Key[acc],ops];
 KeyChainConnect[
 	acct:_String|Key[_String]:Key["TestingAccount"],
@@ -969,6 +972,23 @@ KeyChainConnect[
 		If[$WolframID=!=user||$CloudBase=!=base,
 			CloudConnect[user,
 				KeyChainGet[{base,user},True],
+				ops
+				]
+			]
+		];
+KeyChainConnect[
+	acct:_String|Key[_String],
+	pass_String,
+	ops:OptionsPattern[]
+	]:=
+	With[{
+		user=
+			Replace[acct,Key[a_]:>KeyChainGet["WolframCloud"->{None,a},True]],
+		base=Replace[OptionValue[CloudBase],Automatic:>$CloudBase]
+		},
+		If[$WolframID=!=user||$CloudBase=!=base,
+			CloudConnect[user,
+				pass,
 				ops
 				]
 			]
