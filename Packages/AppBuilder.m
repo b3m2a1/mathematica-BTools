@@ -2333,7 +2333,7 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 				Association@{
 					If[TrueQ@pacletServerPush,
 						"ServerPaclet"->
-							PacletServerAdd[app],
+							PacletServerAdd[$PacletServer, app],
 						Nothing
 						],
 					If[TrueQ@OptionValue["PublishServer"]||
@@ -2350,7 +2350,7 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 											MinimalBy[
 												Select[
 													First/@
-														PacletServerBuild["AutoDeploy"->True],
+														PacletServerBuild[$PacletServer, "AutoDeploy"->True],
 													StringEndsQ["/index.html"]
 													],
 												Length@URLParse[#,"Path"]&
