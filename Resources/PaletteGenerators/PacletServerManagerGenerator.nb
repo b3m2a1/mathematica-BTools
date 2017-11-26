@@ -514,14 +514,21 @@ Cell[BoxData[
 5d417f430646"],
 
 Cell[BoxData[
+ RowBox[{"loadPacletInterface", "//", "Clear"}]], "CodeInput",
+ CellChangeTimes->{{3.720671591183267*^9, 
+  3.7206715918520107`*^9}},ExpressionUUID->"4f049308-314a-4778-a340-\
+2d276e97a7bb"],
+
+Cell[BoxData[
  RowBox[{
   RowBox[{"loadPacletInterface", "[", 
    RowBox[{"ds_", ",", " ", 
     RowBox[{"deployed", ":", 
      RowBox[{"True", "|", "False"}], ":", "False"}], ",", " ", 
     RowBox[{"curr", ":", 
-     RowBox[{"True", "|", 
-      RowBox[{"False", ":", "False"}]}]}]}], "]"}], ":=", "\n", "\t", 
+     RowBox[{"(", 
+      RowBox[{"True", "|", "False"}], ")"}], ":", "False"}]}], "]"}], ":=", 
+  "\n", "\t", 
   RowBox[{"Set", "[", 
    RowBox[{"currentInterface", ",", "\n", "\t\t", 
     RowBox[{"With", "[", 
@@ -571,13 +578,15 @@ Cell[BoxData[
           RowBox[{"Sequence", "@@", 
            RowBox[{"{", "}"}]}]}], "\n", "\t\t\t\t\t", "]"}], ",", "\n", 
         "\t\t\t\t", 
-        RowBox[{"WindowFloating", "\[Rule]", "True"}], ",", "\n", "\t\t\t\t", 
-        
-        RowBox[{"WindowTitle", "\[Rule]", "\"\<Paclet Server Interface\>\""}],
-         ",", "\n", "\t\t\t\t", 
-        RowBox[{"WindowClickSelect", "\[Rule]", "False"}]}], "\n", "\t\t\t\t",
-        "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}]], "CodeInput",
- 
+        RowBox[{"WindowFloating", "\[Rule]", "\n", "\t\t\t\t\t", "True"}], 
+        ",", "\n", "\t\t\t\t", 
+        RowBox[{
+        "WindowTitle", "\[Rule]", "\n", "\t\t\t\t\t", 
+         "\"\<Paclet Server Interface\>\""}], ",", "\n", "\t\t\t\t", 
+        RowBox[{
+        "WindowClickSelect", "\[Rule]", "\n", "\t\t\t\t\t", "False"}]}], "\n",
+        "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+   "]"}]}]], "CodeInput",
  CellChangeTimes->{{3.7205847737436447`*^9, 3.720584812575343*^9}, {
    3.720584869011338*^9, 3.72058491390059*^9}, {3.720584991422658*^9, 
    3.7205849982573433`*^9}, 3.72058587462783*^9, {3.72058593661553*^9, 
@@ -593,10 +602,12 @@ Cell[BoxData[
    3.7206236115027523`*^9}, {3.720636902993538*^9, 3.720636908537108*^9}, {
    3.720669278667712*^9, 3.720669347479295*^9}, {3.720669407321287*^9, 
    3.720669412356317*^9}, {3.720669459020239*^9, 3.720669473621017*^9}, {
-   3.7206696544829187`*^9, 
-   3.720669675992992*^9}},ExpressionUUID->"46d127a7-a43c-4b95-b7e2-\
+   3.7206696544829187`*^9, 3.720669675992992*^9}, {3.720670863831818*^9, 
+   3.7206708652294397`*^9}, {3.720671242890134*^9, 3.7206712730222893`*^9}, {
+   3.720671304428945*^9, 3.720671323406864*^9}, {3.720671654775116*^9, 
+   3.720671659843651*^9}},ExpressionUUID->"46d127a7-a43c-4b95-b7e2-\
 b27c9fe070d5"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -1255,16 +1266,22 @@ Cell[BoxData[
          RowBox[{
           RowBox[{"{", "\n", "\t\t\t\t\t", 
            RowBox[{"ds", "=", "\n", "\t\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{"whichPacF", "[", "\"\<PacletServerDataset\>\"", "]"}], 
-             "[", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t\t", 
              RowBox[{
-              RowBox[{"$serverList", "[", "currentPacletServer", "]"}], ",", 
-              "\n", "\t\t\t\t\t\t\t", 
-              RowBox[{"\"\<DeployedServer\>\"", "\[Rule]", 
-               RowBox[{"TrueQ", "@", "deployedFlag"}]}]}], "\n", 
-             "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "}"}], ",", "\n", 
-          "\t\t\t\t", 
+              RowBox[{
+               RowBox[{"whichPacF", "[", "\"\<PacletServerDataset\>\"", "]"}],
+                "[", "\n", "\t", "\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"$serverList", "[", "currentPacletServer", "]"}], ",",
+                 "\n", "\t", "\t\t\t\t\t\t\t", 
+                RowBox[{"\"\<DeployedServer\>\"", "\[Rule]", 
+                 RowBox[{"TrueQ", "@", "deployedFlag"}]}]}], "\n", 
+               "\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Except", "[", "_Dataset", "]"}], "\[Rule]", 
+               RowBox[{"Dataset", "[", 
+                RowBox[{"{", "}"}], "]"}]}]}], "\n", "\t\t\t\t\t\t\t", 
+             "]"}]}], "\n", "\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t", 
           RowBox[{
            RowBox[{"installEnabled", "=", 
             RowBox[{
@@ -1310,12 +1327,24 @@ Cell[BoxData[
                     RowBox[{"Set", "[", 
                     RowBox[{"currentPaclet", ",", " ", "#"}], "]"}], ",", 
                     "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"AbsoluteTime", "[", "]"}], "-", 
+                    "doubleClickTimer"}], "<", ".25"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"loadPacletInterface", "[", 
                     RowBox[{"ds", ",", " ", 
                     RowBox[{"TrueQ", "@", "deployedFlag"}], ",", " ", 
-                    "True"}], "]"}]}], "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
-                    "]"}]}], "\n", "\t\t\t\t\t\t\t\t\t\t", "]"}], "&"}]}], 
-                    "\n", "\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t", 
+                    "True"}], "]"}]}], "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    "]"}], ";", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"doubleClickTimer", "=", 
+                    RowBox[{"AbsoluteTime", "[", "]"}]}]}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", "]"}], "&"}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t", 
                     "\t\t\t\t\t\t\t", 
                     RowBox[{"If", "[", 
                     RowBox[{
@@ -1397,9 +1426,9 @@ Cell[BoxData[
                 RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
                  RowBox[{"cmd", ":>", "\n", "\t\t\t\t\t\t\t\t\t", 
                   RowBox[{"loadPacletInterface", "[", 
-                   RowBox[{"ds", ",", " ", "False"}], "]"}]}], "\n", 
-                 "\t\t\t\t\t\t\t\t", "}"}]}]}], "\n", "\t\t\t\t\t\t", "}"}], 
-             ",", "\n", "\t\t\t\t\t", 
+                   RowBox[{"ds", ",", " ", "False", ",", " ", "False"}], 
+                   "]"}]}], "\n", "\t\t\t\t\t\t\t\t", "}"}]}]}], "\n", 
+              "\t\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t", 
              RowBox[{"Spacings", "\[Rule]", "0"}]}], "\n", "\t\t\t\t\t", 
             "]"}]}]}], "\n", "\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t", 
        RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
@@ -1439,10 +1468,13 @@ Cell[BoxData[
    3.7206230941187468`*^9}, {3.72062315668484*^9, 3.720623201319268*^9}, {
    3.7206232720356073`*^9, 3.720623272376218*^9}, {3.7206235362278757`*^9, 
    3.720623541576828*^9}, {3.720623651284156*^9, 3.7206236516251173`*^9}, {
-   3.720623935912291*^9, 
-   3.720623974872765*^9}},ExpressionUUID->"cff63c3e-211f-4778-8838-\
+   3.720623935912291*^9, 3.720623974872765*^9}, {3.7206709826210003`*^9, 
+   3.720670983612533*^9}, {3.720671370933342*^9, 3.7206714257645082`*^9}, {
+   3.720671498287262*^9, 3.720671505691702*^9}, {3.720671542492065*^9, 
+   3.7206715465890102`*^9}, 3.7206715775812473`*^9, {3.720672230941409*^9, 
+   3.720672242448415*^9}},ExpressionUUID->"cff63c3e-211f-4778-8838-\
 095f228e2830"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1504,9 +1536,16 @@ Cell[BoxData[
              RowBox[{"f", ",", "\n", "\t\t\t\t\t\t", 
               RowBox[{"FilterRules", "[", "\n", "\t\t\t\t\t\t\t", 
                RowBox[{
-                RowBox[{"Normal", "@", 
-                 RowBox[{"$serverList", "[", "currentPacletServer", "]"}]}], 
-                ",", "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{"Flatten", "@", 
+                 RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"Normal", "@", 
+                    RowBox[{
+                    "$serverList", "[", "currentPacletServer", "]"}]}], ",", 
+                   "\n", "\t\t\t\t\t\t\t\t", 
+                   RowBox[{"\"\<UploadSiteFile\>\"", "\[Rule]", "True"}]}], 
+                  "\n", "\t\t\t\t\t\t\t\t", "}"}]}], ",", "\n", 
+                "\t\t\t\t\t\t\t", 
                 RowBox[{"Options", "@", 
                  RowBox[{"whichPacF", "[", "\"\<PacletUpload\>\"", "]"}]}]}], 
                "\n", "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t", "]"}]}],
@@ -1514,21 +1553,46 @@ Cell[BoxData[
           RowBox[{"refreshFlag", "=", 
            RowBox[{"RandomReal", "[", "]"}]}]}]}], "\n", "\t\t\t\t", "]"}]}], 
       "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
-     RowBox[{"Enabled", "\[RuleDelayed]", 
-      RowBox[{"Dynamic", "[", 
-       RowBox[{"DirectoryQ", "@", 
-        RowBox[{
-         RowBox[{"$serverList", "[", "currentPacletServer", "]"}], "[", 
-         "\"\<ServerBase\>\"", "]"}]}], "]"}]}]}], "\n", "\t\t", "]"}]}], 
-  ";"}]], "CodeInput",
+     RowBox[{"Enabled", "\[RuleDelayed]", "\n", "\t\t\t", 
+      RowBox[{"Dynamic", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"DirectoryQ", "@", 
+         RowBox[{
+          RowBox[{"$serverList", "[", "currentPacletServer", "]"}], "[", 
+          "\"\<ServerBase\>\"", "]"}]}], "||", "\n", "\t\t\t\t\t", 
+        RowBox[{"With", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"u", "=", 
+            RowBox[{"URLParse", "[", 
+             RowBox[{
+              RowBox[{"$serverList", "[", "currentPacletServer", "]"}], "[", 
+              "\"\<ServerBase\>\"", "]"}], "]"}]}], "}"}], ",", "\n", 
+          "\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"MatchQ", "[", 
+            RowBox[{
+             RowBox[{"u", "[", "\"\<Domain\>\"", "]"}], ",", " ", 
+             RowBox[{"Except", "[", 
+              RowBox[{
+              "\"\<drive.google.com\>\"", "|", "\"\<drobox.com\>\"", "|", 
+               "None"}], "]"}]}], "]"}], "&&", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"MatchQ", "[", 
+            RowBox[{
+             RowBox[{"u", "[", "\"\<Scheme\>\"", "]"}], ",", " ", 
+             RowBox[{"\"\<http\>\"", "|", "\"\<https\>\""}]}], "]"}]}]}], 
+         "\n", "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", 
+    "\t\t", "]"}]}], ";"}]], "CodeInput",
  CellChangeTimes->{{3.7204623885085382`*^9, 3.720462388512217*^9}, {
-  3.720462482721973*^9, 3.720462560802739*^9}, {3.720462655630333*^9, 
-  3.720462673764916*^9}, {3.720463138968156*^9, 3.720463393816389*^9}, {
-  3.720470550369145*^9, 3.720470571021*^9}, {3.720487904838086*^9, 
-  3.720487937788973*^9}, {3.7204990866590433`*^9, 3.720499088928178*^9}, {
-  3.720558712265477*^9, 3.7205587208415728`*^9}, {3.72055876581916*^9, 
-  3.720558881194059*^9}, {3.720594382322434*^9, 
-  3.720594384993112*^9}},ExpressionUUID->"3b4c0e2f-1302-4769-a7b7-\
+   3.720462482721973*^9, 3.720462560802739*^9}, {3.720462655630333*^9, 
+   3.720462673764916*^9}, {3.720463138968156*^9, 3.720463393816389*^9}, {
+   3.720470550369145*^9, 3.720470571021*^9}, {3.720487904838086*^9, 
+   3.720487937788973*^9}, {3.7204990866590433`*^9, 3.720499088928178*^9}, {
+   3.720558712265477*^9, 3.7205587208415728`*^9}, {3.72055876581916*^9, 
+   3.720558881194059*^9}, {3.720594382322434*^9, 3.720594384993112*^9}, {
+   3.720672316133635*^9, 3.7206723548625193`*^9}, {3.720672486751844*^9, 
+   3.72067253491678*^9}, 3.7206727600766287`*^9, {3.720673202190421*^9, 
+   3.720673227555563*^9}},ExpressionUUID->"3b4c0e2f-1302-4769-a7b7-\
 1464c10d26b6"]
 }, Closed]],
 
@@ -1704,6 +1768,12 @@ Cell[BoxData[
             RowBox[{"$serverList", "@", "currentPacletServer"}], "]"}], ",", 
            "\n", "\t\t\t\t\t", "\"\<main.html\>\""}], "\n", "\t\t\t\t\t", 
           "}"}]}]}]}], "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
+     RowBox[{"Enabled", "->", "\n", "\t\t\t", 
+      RowBox[{"Dynamic", "@", 
+       RowBox[{"DirectoryQ", "@", 
+        RowBox[{
+         RowBox[{"$serverList", "[", "currentPacletServer", "]"}], "[", 
+         "\"\<ServerBase\>\"", "]"}]}]}]}], ",", "\n", "\t\t", 
      RowBox[{"Method", "\[Rule]", "\"\<Queued\>\""}]}], "\n", "\t\t", "]"}]}],
    ";"}]], "CodeInput",
  CellChangeTimes->{{3.720496965728195*^9, 3.720496991197997*^9}, {
@@ -1720,8 +1790,9 @@ Cell[BoxData[
    3.7206587398722353`*^9}, {3.7206599770110493`*^9, 
    3.7206599913194103`*^9}, {3.720660057790168*^9, 3.7206600633221817`*^9}, {
    3.72066013322621*^9, 3.7206601380810738`*^9}, {3.7206603951143637`*^9, 
-   3.720660440437233*^9}, {3.720660523607335*^9, 
-   3.7206605344501657`*^9}},ExpressionUUID->"28e848a7-0df5-41ee-8c70-\
+   3.720660440437233*^9}, {3.720660523607335*^9, 3.7206605344501657`*^9}, {
+   3.7206734708026733`*^9, 
+   3.720673480545822*^9}},ExpressionUUID->"28e848a7-0df5-41ee-8c70-\
 c276b25f583b"]
 }, Closed]],
 
@@ -1739,23 +1810,36 @@ Cell[BoxData[
     RowBox[{"\"\<Open Site Config\>\"", ",", "\n", "\t\t", 
      RowBox[{"(", "\n", "\t\t\t", 
       RowBox[{
-       RowBox[{"PacletServerInitialize", "[", "currentPacletServer", "]"}], 
-       ";", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"whichPacF", "[", "\"\<PacletServerInitialize\>\"", "]"}], 
+        "[", 
+        RowBox[{"$serverList", "[", "currentPacletServer", "]"}], "]"}], ";", 
+       "\n", "\t\t\t", 
        RowBox[{"SystemOpen", "@", "\n", "\t\t\t\t", 
         RowBox[{
          RowBox[{"whichPacF", "[", "\"\<PacletServerFile\>\"", "]"}], "[", 
-         RowBox[{"currentPacletServer", ",", " ", "\"\<SiteConfig.wl\>\""}], 
-         "]"}]}]}], "\n", "\t\t\t", ")"}]}], "\n", "\t\t", "]"}]}], 
+         RowBox[{
+          RowBox[{"$serverList", "[", "currentPacletServer", "]"}], ",", " ", 
+          "\"\<SiteConfig.wl\>\""}], "]"}]}]}], "\n", "\t\t\t", ")"}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"Enabled", "->", "\n", "\t\t\t", 
+      RowBox[{"Dynamic", "@", 
+       RowBox[{"DirectoryQ", "@", 
+        RowBox[{
+         RowBox[{"$serverList", "[", "currentPacletServer", "]"}], "[", 
+         "\"\<ServerBase\>\"", "]"}]}]}]}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",
  CellChangeTimes->{{3.720496965728195*^9, 3.720496991197997*^9}, {
    3.7204984668397913`*^9, 3.7204984823428698`*^9}, {3.720498530859754*^9, 
    3.72049855679361*^9}, {3.720498603602355*^9, 3.7204987264496307`*^9}, 
    3.720498997090209*^9, {3.720499126318304*^9, 3.720499128679227*^9}, {
    3.720587501511766*^9, 3.720587506830978*^9}, {3.720590203498461*^9, 
-   3.720590206959317*^9}, {3.7205904239911423`*^9, 
-   3.72059043528498*^9}},ExpressionUUID->"8d3433ce-af67-4ede-bfd4-\
+   3.720590206959317*^9}, {3.7205904239911423`*^9, 3.72059043528498*^9}, {
+   3.720673494276003*^9, 3.7206735247558527`*^9}, {3.7206737838825483`*^9, 
+   3.720673788573758*^9}, {3.720674559289193*^9, 
+   3.720674573553171*^9}},ExpressionUUID->"8d3433ce-af67-4ede-bfd4-\
 3fbce36fd404"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 

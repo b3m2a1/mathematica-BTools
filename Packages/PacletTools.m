@@ -177,7 +177,7 @@ $pacletConfigLoaded=True
 
 
 If[!ValueQ@$pacletToolsExceptionTag,
-	$pacletToolsExceptionTag=None
+	$pacletToolsExceptionTag=Automatic
 	];
 If[!ValueQ@$pacletToolsCallBack,
 	$pacletToolsCallBack=Automatic
@@ -1114,11 +1114,12 @@ PacletSiteURL[ops:OptionsPattern[]]:=
 				_String?(KeyMemberQ[$PacletUploadDomains, URLParse[#, "Domain"]]&),
 					pacletToolsThrow["Non-cloud paclet support not yet complete"],
 				_String?(AllTrue[URLParse[#, {"Scheme", "Domain"}], #=!=None&]&),
-					URLBuild@Flatten@{
-						base,
-						ext,
-						name
-						},
+					URLBuild@
+						Flatten@{
+							base,
+							ext,
+							name
+							},
 				_String?(StringMatchQ[FileNameJoin@{$RootDirectory,"*"}]),
 					"file://"<>
 						URLBuild@Key["Path"]@URLParse@
@@ -2510,24 +2511,16 @@ pacletUpload[
 			DeleteCases[Nothing]@
 			With[{
 				base=
-					pacletStandardServerBase@OptionValue["ServerBase"],
+					If[StringQ[#]&&MatchQ[URLParse[#, "Scheme"], "http"|"https"],
+						Quiet@
+							Check[CloudObject@#, #],
+						#
+						]&@
+						pacletStandardServerBase@OptionValue["ServerBase"],
 				site=
 					PacletSiteURL[
 						FilterRules[{
 							ops
-							(*"ServerName"->
-								Replace[Flatten@{pacletSpecs},{
-									{p_PacletManager`Paclet\[Rule]_,___}:>
-										Lookup[List@@p,"Name"],
-									{s_String\[Rule]_,___}:>
-										First@StringSplit[URLParse[s,"Path"][[-1]],"-"],
-									{f_String?FileExistsQ,___}:>
-										First@StringSplit[FileBaseName@f,"-"],
-									{p_String,___}:>
-										First@StringSplit[URLParse[p,"Path"][[-1]],"-"],
-									{p_PacletManager`Paclet,___}:>
-										Lookup[List@@p,"Name"]
-									}]*)
 							},
 							Options@PacletSiteURL
 							]

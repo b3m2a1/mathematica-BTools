@@ -43,6 +43,7 @@ PackageScopeBlock[
 		"";
 	PacletServerDataset::usage=
 		"";
+	PacletServerInitialize::usage="";
 	PacletServerDelete::usage=
 		"Deletes a paclet server";
 	]
@@ -386,31 +387,53 @@ pacletServerInterfacePage[
 					Background->GrayLevel[.95]
 					],
 				Item[
-					If[Length[pacletFindData]===0,
-						Button["Install",
-							PacletInstall[name,
-								"Site"->site,
-								Enabled->StringQ[site]
+					Dynamic[
+						refreshFlag;
+						If[Length[PacletManager`PacletFind[name]]==0,
+							Button["Install",
+								PacletManager`PacletInstall[name,
+									"Site"->site
+									];
+								refreshFlag=RandomReal[],
+								Enabled->StringQ[site],
+								ImageSize->160,
+								Method->"Queued"
 								],
-							ImageSize->Automatic
+							Grid[
+								{
+									{
+										Button["Update",
+											PacletManager`PacletUpdate[name,
+												"Site"->site,
+												"UpdateSites"->False
+												];
+											refreshFlag=RandomReal[],
+											Enabled->
+												StringQ[site]&&
+												AllTrue[
+													ToExpression/@
+														StringSplit[Lookup[pacletFindData,"Version"],"."],
+													!OrderedQ[
+														ToExpression@StringSplit[coreAssoc["Version"],"."],
+														#
+														]&
+													],
+											ImageSize->80,
+											Appearance->"AbuttingRight"
+											],
+										Button["Uninstall",
+											PacletManager`PacletUninstall[name];
+											refreshFlag=RandomReal[],
+											ImageSize->80,
+											Appearance->"AbuttingLeft"
+											]
+										}
+									},
+								Spacings->{.1,0},
+								Dividers->{{2->GrayLevel[.8]}, {}}
+								]
 							],
-						Button["Update",
-							PacletUpdate[name,
-								"Site"->site,
-								"UpdateSites"->False
-								],
-							Enabled->
-								StringQ[site]&&
-								AllTrue[
-									ToExpression/@
-										StringSplit[Lookup[pacletFindData,"Version"],"."],
-									!OrderedQ[
-										ToExpression@StringSplit[coreAssoc["Version"],"."],
-										#
-										]&
-									],
-							ImageSize->Automatic
-							]
+						TrackedSymbols:>{refreshFlag}
 						],
 					Alignment->Right
 					]
@@ -468,26 +491,50 @@ pacletServerInterfaceEntry[
 			(* Creator *)
 			creator,
 			(* Update / Install *)
-			If[Length[pacletFindData]===0,
-				Button["Install",
-					PacletInstall[name,"Site"->site]
-					],
-				Button["Update",
-					PacletUpdate[name,
-						"Site"->site,
-						"UpdateSites"->False
+			Dynamic[
+				refreshFlag;
+				If[Length[PacletManager`PacletFind[name]]===0,
+					Button["Install",
+						PacletManager`PacletInstall[name,"Site"->site];
+						refreshFlag=RandomReal[],
+						ImageSize->160,
+						Method->"Queued"
 						],
-					Enabled->
-						StringQ[site]&&
-							AllTrue[
-								ToExpression/@
-									StringSplit[Lookup[pacletFindData,"Version"],"."],
-								!OrderedQ[
-									ToExpression@StringSplit[coreAssoc["Version"],"."],
-									#
-									]&
-								]
-					]
+					Grid[
+						{
+							{
+								Button["Update",
+									PacletManager`PacletUpdate[name,
+										"Site"->site,
+										"UpdateSites"->False
+										];
+									refreshFlag=RandomReal[],
+									ImageSize->80,
+									Enabled->
+										StringQ[site]&&
+											AllTrue[
+												ToExpression/@
+													StringSplit[Lookup[pacletFindData,"Version"],"."],
+												!OrderedQ[
+													ToExpression@StringSplit[coreAssoc["Version"],"."],
+													#
+													]&
+												],
+									Appearance->"AbuttingRight"
+									],
+								Button["Uninstall",
+									PacletManager`PacletUninstall[name];
+									refreshFlag=RandomReal[],
+									Appearance->"AbuttingLeft",
+									ImageSize->80
+									]
+								}
+							},
+						Spacings->{.1,0},
+						Dividers->{{2->GrayLevel[.8]}, {}}
+						]
+					],
+				TrackedSymbols:>{refreshFlag}
 				]
 			}
 		];
@@ -510,7 +557,7 @@ Options[PacletServerInterface]=
 PacletServerInterface[
 	siteBase:_String|_?OptionQ|None:None,
 	siteDS_Dataset,
-	displayStart_:Automatic,
+	displayStart:Except[_?OptionQ]:Automatic,
 	ops:OptionsPattern[]
 	]:=	
 	With[{
@@ -614,7 +661,7 @@ PacletServerInterface[
 		];
 PacletServerInterface[
 	site:_String|_?OptionQ|Automatic:Automatic, 
-	display_:Automatic,
+	display:Except[_?OptionQ]:Automatic,
 	ops:OptionsPattern[]
 	]:=
 	With[
@@ -1420,11 +1467,14 @@ $PacletServerInitialized:=
 	PacletServerInitialized@$PacletServer
 
 
-PacletServerInitialize[server:localPacletServer]:=
+PacletServerInitialize//Clear
+
+
+PacletServerInitialize[server:localPacletServerPat]:=
 	If[!PacletServerInitialized@server,
 		With[{d=PacletServerDirectory@server},
-			If[!DirectoryQ@DirectoryName[d],	
-				CreateDirectory@DirectoryName[d]
+			If[!DirectoryQ@d,	
+				CreateDirectory[d, CreateIntermediateDirectories->True]
 				];
 			With[{tempDir=PackageFilePath["Resources","Templates","PacletServer"]},
 				Map[
@@ -1439,7 +1489,7 @@ PacletServerInitialize[server:localPacletServer]:=
 								]
 							]
 						]&,
-					FileNames["*",tempDir]
+					FileNames["*", tempDir, \[Infinity]]
 					];
 				]
 			]

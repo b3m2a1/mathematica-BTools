@@ -1,3 +1,5 @@
+(* ::Package:: *)
+
 {
   <|
     "href"->"pages/about.html",
