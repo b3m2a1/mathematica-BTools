@@ -2357,33 +2357,37 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 						TrueQ[pacletServerPush]&&OptionValue["PublishServer"]===Automatic,
 						"ServerURL"->
 							With[{mf=TrueQ@OptionValue["MakeSite"]},
-								URLBuild@
-									ReplacePart[#,
-										"Path"->
-											Append[Most[#Path],"main.html"]
-										]&@
-									URLParse@
-										First@
-											MinimalBy[
-												Select[
-													Cases[
-														PacletServerBuild[$PacletServer, 
-															"AutoDeploy"->True,
-															"RegenerateContent"->mf,
-															"BuildSite"->mf,
-															"DeployOptions"->
-																{
-																	Monitor->False,
-																	"DeployPages"->mf
-																	}
-															],
-														CloudObject[c_,___]:>c
-														],
-													StringEndsQ["/index.html"]
+								Replace[
+									MinimalBy[
+										Select[
+											Cases[
+												PacletServerBuild[$PacletServer, 
+													"AutoDeploy"->True,
+													"RegenerateContent"->mf,
+													"BuildSite"->mf,
+													"DeployOptions"->
+														{
+															Monitor->False,
+															"DeployPages"->mf
+															}
 													],
-												Length@URLParse[#,"Path"]&
-												]
-									],
+												CloudObject[c_,___]:>c
+												],
+											StringEndsQ["/index.html"]
+											],
+										Length@URLParse[#,"Path"]&
+										],
+									{m_, ___}:>
+										Function[
+											URLBuild@
+												ReplacePart[#,
+													"Path"->
+														Append[Most[#Path],"main.html"]
+													]&@
+												URLParse[m]
+											]
+									]
+								],
 							Nothing
 							]
 						}
