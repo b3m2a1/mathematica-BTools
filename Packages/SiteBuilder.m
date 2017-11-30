@@ -1454,12 +1454,12 @@ WebSiteBuild[
 			genCont:=
 				Replace[OptionValue["GenerateContent"],
 					Automatic:>
-						Lookup[config,"GenerateContent",Automatic]
+						Lookup[config,"GenerateContent", Automatic]
 					],
 			genAggs:=
 				Replace[OptionValue["GenerateAggregations"],
 					Automatic:>
-						Lookup[config,"GenerateAggregations",genCont]
+						Lookup[config,"GenerateAggregations", genCont]
 					],
 			genInd:=
 				Replace[OptionValue["GenerateIndex"],

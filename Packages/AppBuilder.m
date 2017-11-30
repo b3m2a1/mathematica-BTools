@@ -1134,7 +1134,14 @@ Options[AppReconfigureSubapp]=
 	Join[
 		Options[AppConfigureSubapp],
 		{
-			"PreserveFiles"->{".git",".gitignore","README.md","README.nb"},
+			"PreserveFiles"->
+				{
+					".git", 
+					".gitignore",
+					"README.md",
+					"README.nb",
+					"project"
+					},
 			"PreservePacletInfo"->True
 			}
 		];

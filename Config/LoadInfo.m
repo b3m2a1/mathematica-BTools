@@ -10,13 +10,13 @@ Merge[
 					"ScrapeTools",
 					"TRTools",
 					"AuthDialogs"
-					}
-				],
+					},
 		"PackageScope"->{
 			"GoogleDrive"
 			},
-		If[TrueQ@FileExistsQ@PackageFilePath["Private", "Config", "LoadInfo.m"],
-			Import[PackageFilePath["Private", "Config", "LoadInfo.m"]]
+		If[TrueQ@FileExistsQ@
+			FileNameJoin@{$PackageDirectory, "Private", "Config", "LoadInfo.m"},
+			Import[FileNameJoin@{$PackageDirectory, "Private", "Config", "LoadInfo.m"}],
 			{}
 			]
 		},
