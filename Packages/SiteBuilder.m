@@ -1603,11 +1603,11 @@ webSiteDeployFile[f_, uri_, outDir_, trueDir_, stripDirs_, ops___?OptionQ]:=
 						Automatic:>
 							FileBaseName[trueDir]
 						],
-					Echo@
 					FileNameSplit@
 						FileNameDrop[
 							f,
 							FileNameDepth@
+								Echo[{
 								SelectFirst[
 									SortBy[
 										Minus@*FileNameDepth
@@ -1619,7 +1619,7 @@ webSiteDeployFile[f_, uri_, outDir_, trueDir_, stripDirs_, ops___?OptionQ]:=
 										},
 									StringStartsQ[f, #]&,
 									outDir
-									]
+									], f}][[1]]
 							]
 					}
 		},
