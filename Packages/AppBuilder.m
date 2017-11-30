@@ -2365,8 +2365,12 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 										First@
 											MinimalBy[
 												Select[
-													First/@
-														PacletServerBuild[$PacletServer, "AutoDeploy"->True],
+													Cases[
+														PacletServerBuild[$PacletServer, 
+															"AutoDeploy"->True
+															],
+														CloudObject[c_,___]:>c
+														],
 													StringEndsQ["/index.html"]
 													],
 												Length@URLParse[#,"Path"]&

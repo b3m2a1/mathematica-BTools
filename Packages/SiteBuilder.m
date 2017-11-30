@@ -1544,6 +1544,9 @@ WebSiteBuild[
 		];
 
 
+WebSiteDeploy::depfail="Failed to deploy `` to ``";
+
+
 webSiteDeploySelectFiles[
 	dir_,
 	last_,
@@ -1624,7 +1627,7 @@ webSiteDeployFile[f_, uri_, outDir_, trueDir_, stripDirs_, ops___?OptionQ]:=
 			CopyFile[
 					f,
 					CloudObject[
-						StringTrim[url,"/index.html"]<>"/main.html",
+						StringTrim[url, "/index.html"]<>"/main.html",
 						FilterRules[
 							Flatten@{ops,Options[WebSiteDeploy]},
 							Options[CloudObject]
@@ -1632,7 +1635,12 @@ webSiteDeployFile[f_, uri_, outDir_, trueDir_, stripDirs_, ops___?OptionQ]:=
 						]
 					]
 			];
-		Replace[CloudObject[c_, ___]:>CloudObject[c]]@
+		Replace[
+			{
+				CloudObject[c_, ___]:>CloudObject[c],
+				e_:>(Message[WebSiteDeploy::depfail, f, url];e)
+				}
+			]@
 			CopyFile[
 				f,
 				CloudObject[
