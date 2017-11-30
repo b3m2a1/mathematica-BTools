@@ -1603,6 +1603,7 @@ webSiteDeployFile[f_, uri_, outDir_, trueDir_, stripDirs_, ops___?OptionQ]:=
 						Automatic:>
 							FileBaseName[trueDir]
 						],
+					Echo@
 					FileNameSplit@
 						FileNameDrop[
 							f,
