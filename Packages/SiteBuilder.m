@@ -1607,7 +1607,6 @@ webSiteDeployFile[f_, uri_, outDir_, trueDir_, stripDirs_, ops___?OptionQ]:=
 						FileNameDrop[
 							f,
 							FileNameDepth@
-								Echo[{
 								SelectFirst[
 									SortBy[
 										Minus@*FileNameDepth
@@ -1619,7 +1618,7 @@ webSiteDeployFile[f_, uri_, outDir_, trueDir_, stripDirs_, ops___?OptionQ]:=
 										},
 									StringStartsQ[f, #]&,
 									outDir
-									], f}][[1]]
+									]
 							]
 					}
 		},
@@ -1696,9 +1695,8 @@ WebSiteDeploy[
 								}
 							]
 						},
-					If[
-						StringEndsQ[outDir, ext],
-						FileNameDrop[outDir, -FileNameDepth[ext]],
+					If[StringEndsQ[outDir, ext],
+						FileNameDrop[outDir, -(1+FileNameDepth[ext])],
 						outDir
 						]
 					],
