@@ -223,36 +223,24 @@ PackagePostProcessDecontextPackages[]/;TrueQ[$AllowPackageRecoloring]:=
 (*ContextPathReassign*)
 
 
-PackagePostProcessContextPathReassign[]/;TrueQ[$AllowPackageRecoloring]:=
-(
-	$ContextPath=
-		Join[
-			Replace[
-				Flatten@{$PackageExposedContexts},
-				Except[_String?(StringEndsQ["`"])]->Nothing,
-				1
-				]
-			(*DeleteCases[
-				Alternatives@@
-					Join[
-						Replace[
-							Flatten@{$PackageHiddenContexts},
-							Except[_String?(StringEndsQ["`"])]->Nothing,
-							1
-							],
-						$ContextPath
-						]
-					]@
-					Select[
-						$PackageContexts,
-						Not@*StringContainsQ["Private"]
-						]*),
-			$ContextPath
-			];
-	FrontEnd`Private`GetUpdatedSymbolContexts[];
-	)
-
-
+PackagePostProcessContextPathReassign[]:=
+	With[{cp=$ContextPath},
+		If[MemberQ[cp],
+			"$Name`",
+			$ContextPath=
+				Join[
+					Replace[
+						Flatten@{$PackageExposedContexts},
+						Except[_String?(StringEndsQ["`"])]->Nothing,
+						1
+						],
+					$ContextPath
+					];
+			If[TrueQ[$AllowPackageRecoloring], 
+				FrontEnd`Private`GetUpdatedSymbolContexts[]
+				];
+			]
+		]
 
 
 (* ::Subsection:: *)

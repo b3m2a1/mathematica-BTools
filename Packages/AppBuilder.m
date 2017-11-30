@@ -3196,15 +3196,25 @@ AppFunctionDependencies~SetAttributes~HoldAll
 
 
 
+(* ::Text:: *)
+(*Need better dependency loading*)
+
+
+
 AppPackageDependencies[app_:Automatic,pkg:_String|{__String}]:=
 	(
-		AppNeeds[app,#]&/@Flatten@{pkg};
+		AppNeeds[app, 
+			StringTrim[
+				FileNameDrop[#, FileNameDepth[AppDirectory[app]]],
+				"."<>FileExtension[#]
+				]
+			]&/@AppPackages[app];
 		AppFunctionDependencies[
 			app,
 			ToExpression[
 				With[{a=AppFromFile[app]},
 					StringJoin@{a,"`",#}&/@
-						Flatten@Apply[List,AppPackageFunctions[app,pkg]]
+						Flatten@Apply[List, AppPackageFunctions[app,pkg]]
 					],
 				StandardForm,
 				GeneralUtilities`HoldFunction[

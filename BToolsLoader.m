@@ -190,19 +190,20 @@ PackageFileContext[f_String?FileExistsQ]:=
 
 PackageExecute[expr_]:=
 	CompoundExpression[
-		BeginPackage["BTools`"];
-		$ContextPath=
-			DeleteDuplicates[
-				Join[$ContextPath,$PackageContexts]
-				];
-		CheckAbort[
-			With[{res=expr},
-				EndPackage[];
-				res
-				],
-			EndPackage[]
-			](*,
-		Print@$ContextPath*)
+		Block[{$ContextPath={"System`"}},
+			BeginPackage["BTools`"];
+			$ContextPath=
+				DeleteDuplicates[
+					Join[$ContextPath,$PackageContexts]
+					];
+			CheckAbort[
+				With[{res=expr},
+					EndPackage[];
+					res
+					],
+				EndPackage[]
+				]
+			]
 		];
 PackageExecute~SetAttributes~HoldFirst
 
@@ -277,7 +278,8 @@ PackageLoadPackage[heldSym_,context_,pkgFile_->syms_]:=
 	Block[{
 		$loadingChain=
 			If[ListQ@$loadingChain,$loadingChain,{}],
-		$inLoad=TrueQ[$inLoad]
+		$inLoad=TrueQ[$inLoad],
+		$ContextPath=$ContextPath
 		},
 		If[!MemberQ[$loadingChain,pkgFile],
 			With[{$$inLoad=$inLoad},
@@ -1381,36 +1383,24 @@ PackagePostProcessDecontextPackages[]/;TrueQ[$AllowPackageRecoloring]:=
 (*ContextPathReassign*)
 
 
-PackagePostProcessContextPathReassign[]/;TrueQ[$AllowPackageRecoloring]:=
-(
-	$ContextPath=
-		Join[
-			Replace[
-				Flatten@{$PackageExposedContexts},
-				Except[_String?(StringEndsQ["`"])]->Nothing,
-				1
-				]
-			(*DeleteCases[
-				Alternatives@@
-					Join[
-						Replace[
-							Flatten@{$PackageHiddenContexts},
-							Except[_String?(StringEndsQ["`"])]->Nothing,
-							1
-							],
-						$ContextPath
-						]
-					]@
-					Select[
-						$PackageContexts,
-						Not@*StringContainsQ["Private"]
-						]*),
-			$ContextPath
-			];
-	FrontEnd`Private`GetUpdatedSymbolContexts[];
-	)
-
-
+PackagePostProcessContextPathReassign[]:=
+	With[{cp=$ContextPath},
+		If[MemberQ[cp],
+			"BTools`",
+			$ContextPath=
+				Join[
+					Replace[
+						Flatten@{$PackageExposedContexts},
+						Except[_String?(StringEndsQ["`"])]->Nothing,
+						1
+						],
+					$ContextPath
+					];
+			If[TrueQ[$AllowPackageRecoloring], 
+				FrontEnd`Private`GetUpdatedSymbolContexts[]
+				];
+			]
+		]
 
 
 (* ::Subsection:: *)

@@ -49,19 +49,20 @@ PackageFileContext[f_String?FileExistsQ]:=
 
 PackageExecute[expr_]:=
 	CompoundExpression[
-		BeginPackage["$Name`"];
-		$ContextPath=
-			DeleteDuplicates[
-				Join[$ContextPath,$PackageContexts]
-				];
-		CheckAbort[
-			With[{res=expr},
-				EndPackage[];
-				res
-				],
-			EndPackage[]
-			](*,
-		Print@$ContextPath*)
+		Block[{$ContextPath={"System`"}},
+			BeginPackage["$Name`"];
+			$ContextPath=
+				DeleteDuplicates[
+					Join[$ContextPath,$PackageContexts]
+					];
+			CheckAbort[
+				With[{res=expr},
+					EndPackage[];
+					res
+					],
+				EndPackage[]
+				]
+			]
 		];
 PackageExecute~SetAttributes~HoldFirst
 
@@ -136,7 +137,8 @@ PackageLoadPackage[heldSym_,context_,pkgFile_->syms_]:=
 	Block[{
 		$loadingChain=
 			If[ListQ@$loadingChain,$loadingChain,{}],
-		$inLoad=TrueQ[$inLoad]
+		$inLoad=TrueQ[$inLoad],
+		$ContextPath=$ContextPath
 		},
 		If[!MemberQ[$loadingChain,pkgFile],
 			With[{$$inLoad=$inLoad},

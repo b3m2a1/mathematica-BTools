@@ -102,8 +102,8 @@ Cell[BoxData[{
    3.7044728622459373`*^9, 3.7044729951278877`*^9}, {3.704473035057168*^9, 
    3.704473152005465*^9}, {3.704473315397564*^9, 3.704473391183715*^9}, {
    3.7051873900566063`*^9, 3.705187390580605*^9}, 3.712928224954441*^9, {
-   3.720664249400764*^9, 
-   3.7206642749160213`*^9}},ExpressionUUID->"58be6747-1f37-4600-a04b-\
+   3.720664249400764*^9, 3.7206642749160213`*^9}, {3.721020275096757*^9, 
+   3.721020298881818*^9}},ExpressionUUID->"58be6747-1f37-4600-a04b-\
 4531d6f2c82b"],
 
 Cell[BoxData[
@@ -135,19 +135,28 @@ Cell[BoxData[
      RowBox[{"If", "[", 
       RowBox[{
        RowBox[{"Not", "@", 
-        RowBox[{"StringQ", "@", "currentApp"}]}], ",", "\n", "\t\t", 
+        RowBox[{"MemberQ", "[", 
+         RowBox[{
+          RowBox[{"FileBaseName", "/@", "appList"}], ",", " ", "currentApp"}],
+          "]"}]}], ",", "\n", "\t\t", 
        RowBox[{"currentApp", "=", "\n", "\t\t\t", 
         RowBox[{"If", "[", 
          RowBox[{
-          RowBox[{"MemberQ", "[", 
+          RowBox[{
+           RowBox[{"Length", "@", "appList"}], ">", "0"}], ",", "\n", 
+          "\t\t\t\t", 
+          RowBox[{"If", "[", 
            RowBox[{
-            RowBox[{"FileBaseName", "/@", "appList"}], ",", " ", 
-            "\"\<BTools\>\""}], "]"}], ",", "\n", "\t\t\t\t", 
-          "\"\<BTools\>\"", ",", "\n", "\t\t\t\t", 
-          RowBox[{"FileBaseName", "@", 
-           RowBox[{"First", "@", "appList"}]}]}], "\n", "\t\t\t\t", "]"}]}]}],
-       "\n", "\t\t", "]"}], ";", "\n", "\t", "appList"}], "\n", "\t", ")"}]}],
-   ";"}]], "CodeInput",
+            RowBox[{"MemberQ", "[", 
+             RowBox[{
+              RowBox[{"FileBaseName", "/@", "appList"}], ",", " ", 
+              "\"\<BTools\>\""}], "]"}], ",", "\n", "\t", "\t\t\t\t", 
+            "\"\<BTools\>\"", ",", "\n", "\t", "\t\t\t\t", 
+            RowBox[{"FileBaseName", "@", 
+             RowBox[{"First", "@", "appList"}]}]}], "\n", "\t\t\t\t\t", "]"}],
+           ",", "\n", "\t\t\t\t", "\"\<\>\""}], "\n", "\t\t\t\t", "]"}]}]}], 
+      "\t\t", "\n", "\t\t", "]"}], ";", "\n", "\t", "appList"}], "\n", "\t", 
+    ")"}]}], ";"}]], "CodeInput",
  CellChangeTimes->{{3.6866658565713*^9, 3.686666230090374*^9}, {
    3.6866662843270283`*^9, 3.686666708608439*^9}, {3.686666860366229*^9, 
    3.686666897362671*^9}, {3.6866669456422567`*^9, 3.686666976917091*^9}, {
@@ -174,7 +183,9 @@ Cell[BoxData[
    3.700943424618636*^9}, {3.700943526530075*^9, 3.70094356070691*^9}, {
    3.705186356550235*^9, 3.7051863570591583`*^9}, 3.720662404259922*^9, {
    3.720662663433537*^9, 3.720662676949319*^9}, {3.7206639361492777`*^9, 
-   3.7206640001784353`*^9}},ExpressionUUID->"56df3460-6e05-4bbe-9238-\
+   3.7206640001784353`*^9}, {3.721049069278714*^9, 3.721049110999413*^9}, {
+   3.721053572285303*^9, 3.721053576639737*^9}, 
+   3.721055837380896*^9},ExpressionUUID->"56df3460-6e05-4bbe-9238-\
 c934476c9115"],
 
 Cell[BoxData[{
@@ -242,12 +253,13 @@ Cell[BoxData[{
      RowBox[{"s", ",", " ", "h", ",", " ", "\"\<BTools\>\""}], "]"}], ",", 
     "\n", "\t\t", 
     RowBox[{
-     RowBox[{"Length", "@", 
-      RowBox[{"DownValues", "[", 
-       RowBox[{"ToExpression", "[", 
-        RowBox[{
-        "$appName", "<>", "\"\<`Private`Package`PackageFilePath\>\""}], "]"}],
-        "]"}]}], ">", "0"}], ",", "\n", "\t\t\t", 
+     RowBox[{"Length", "@", "\n", "\t\t\t", 
+      RowBox[{"DownValues", "[", "\n", "\t\t\t\t", 
+       RowBox[{"Evaluate", "@", 
+        RowBox[{"ToExpression", "[", 
+         RowBox[{
+         "$appName", "<>", "\"\<`Private`Package`PackageFilePath\>\""}], "]"}]
+         }], "\n", "\t\t\t\t", "]"}]}], ">", "0"}], ",", "\n", "\t\t\t", 
     RowBox[{"undefF", "[", 
      RowBox[{"s", ",", " ", "h", ",", " ", "$appName"}], "]"}], ",", "\n", 
     "\t\t", "True", ",", "\n", "\t\t\t", 
@@ -263,7 +275,8 @@ Cell[BoxData[{
    3.720471280508212*^9}, {3.7205757130076523`*^9, 3.720575807507565*^9}, {
    3.720661910538641*^9, 3.720661910800611*^9}, {3.720661998560575*^9, 
    3.720662003089591*^9}, {3.720662663438692*^9, 3.720662727635861*^9}, 
-   3.7206637710283318`*^9},ExpressionUUID->"76952f4d-59bd-4000-b7a9-\
+   3.7206637710283318`*^9, {3.721021156505336*^9, 
+   3.7210211711900377`*^9}},ExpressionUUID->"76952f4d-59bd-4000-b7a9-\
 45c9b8e97b34"],
 
 Cell[BoxData[{
@@ -290,7 +303,7 @@ Cell[BoxData[{
   3.705187446867701*^9, 3.7051874503635683`*^9}, {3.70518750619378*^9, 
   3.705187560944337*^9}},ExpressionUUID->"621bf0a9-bed4-43d3-8780-\
 6524201d4943"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -369,8 +382,15 @@ Cell[BoxData[{
            "\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t", "]"}], ",", "\n", 
         "\t\t\t", 
         RowBox[{
-         RowBox[{"Needs", "[", "\"\<BTools`\>\"", "]"}], ";", "\n", "\t\t\t", 
-         "cmd"}], ",", "\n", "\t\t\t", "ops", ",", "\n", "\t\t\t", 
+         RowBox[{"Block", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"$ContextPath", "=", 
+             RowBox[{"{", "\"\<System`\>\"", "}"}]}], "}"}], ",", " ", 
+           RowBox[{"Needs", "[", 
+            RowBox[{"$appName", "<>", "\"\<`\>\""}], "]"}]}], "]"}], ";", 
+         "\n", "\t\t\t", "cmd"}], ",", "\n", "\t\t\t", "ops", ",", "\n", 
+        "\t\t\t", 
         RowBox[{"Method", "\[Rule]", "\"\<Queued\>\""}], ",", "\n", "\t\t\t", 
         
         RowBox[{"\"\<UUID\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t\t\t", 
@@ -416,8 +436,9 @@ Cell[BoxData[{
    3.701569117599359*^9, 3.701569248946108*^9}, {3.7017958693716516`*^9, 
    3.701795880097451*^9}, {3.7017993333491583`*^9, 3.7017993391496058`*^9}, {
    3.7025968865816917`*^9, 3.7025968903911753`*^9}, {3.705193515047269*^9, 
-   3.7051935190376043`*^9}, {3.721002564815364*^9, 
-   3.7210025945151453`*^9}},ExpressionUUID->"a3c05dc1-824b-4bff-b566-\
+   3.7051935190376043`*^9}, {3.721002564815364*^9, 3.7210025945151453`*^9}, {
+   3.721053426069869*^9, 
+   3.72105345195756*^9}},ExpressionUUID->"a3c05dc1-824b-4bff-b566-\
 39e2fec58faa"],
 
 Cell[BoxData[{
@@ -508,11 +529,19 @@ Cell[BoxData[{
            RowBox[{"\"\<Label\>\"", "\[RuleDelayed]", "\"\<Result\>\""}], 
            "}"}]}], "]"}]}], ",", "\n", "\t\t", 
        RowBox[{"dynOps", "=", 
-        RowBox[{"FilterRules", "[", 
+        RowBox[{"Cases", "[", 
          RowBox[{
-          RowBox[{"{", "ops", "}"}], ",", 
-          RowBox[{"Options", "@", "Dynamic"}]}], "]"}]}]}], "\n", "\t\t", 
-      "}"}], ",", "\n", "\t\t", 
+          RowBox[{"Hold", "[", "ops", "]"}], ",", 
+          RowBox[{
+           RowBox[{"v", ":", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"Alternatives", "@@", 
+                RowBox[{"Keys", "@", 
+                 RowBox[{"Options", "@", "Dynamic"}]}]}], ")"}], "\[Rule]", 
+              "_"}], ")"}]}], "\[RuleDelayed]", "v"}]}], "]"}]}]}], "\n", 
+      "\t\t", "}"}], ",", "\n", "\t\t", 
      RowBox[{"Dynamic", "[", "\n", "\t\t\t", 
       RowBox[{
        RowBox[{"Insert", "[", "\n", "\t\t\t\t", 
@@ -557,9 +586,17 @@ Cell[BoxData[{
    3.700791550941656*^9, 3.7007915557759657`*^9}, {3.700791702144618*^9, 
    3.70079170244086*^9}, {3.70079181904253*^9, 3.700791872581911*^9}, {
    3.700791924603052*^9, 3.7007919251204557`*^9}, {3.700792081787094*^9, 
-   3.700792102648835*^9}, 
-   3.700795592462592*^9},ExpressionUUID->"e44234db-be3b-41f3-a669-\
-6b3e7a7a6d2b"],
+   3.700792102648835*^9}, 3.700795592462592*^9, {3.721049392580677*^9, 
+   3.721049416793082*^9}},ExpressionUUID->"e44234db-be3b-41f3-a669-\
+6b3e7a7a6d2b"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Functions", "CodeSubsubsection",
+ CellChangeTimes->{{3.72104920852287*^9, 
+  3.721049210329391*^9}},ExpressionUUID->"c41555b8-6c19-4eb1-ae60-\
+657527ee5382"],
 
 Cell[BoxData[
  RowBox[{
@@ -840,7 +877,7 @@ Cell[BoxData[
    3.7206623681852913`*^9, 3.7206624038827543`*^9}, {3.7206626634676228`*^9, 
    3.720662676989641*^9}},ExpressionUUID->"74884783-cfff-4652-870f-\
 135f1398b3e8"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -906,24 +943,23 @@ Cell[BoxData[
                 RowBox[{"\"\<*.m\>\"", "|", "\"\<*.wl\>\""}], ",", 
                 "\"\<Config\>\""}], "]"}]}], "\n", "\t\t\t\t\t\t\t\t", 
              "]"}]}]}], "\n", "\t\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t", 
-        "]"}], ",", "\n", "\t", "\t\t\t", 
-       RowBox[{"Enabled", "\[Rule]", "\n", "\t", "\t\t\t\t", 
-        RowBox[{"(", 
-         RowBox[{
-          RowBox[{"Length", "@", "\n", "\t\t\t\t\t\t", 
-           RowBox[{"Join", "[", "\n", "\t\t\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{"FileNames", "[", 
+        "]"}], ",", "\n", "\t\t\t\t", 
+       RowBox[{"Enabled", "\[Rule]", "\n", "\t\t\t\t\t", 
+        RowBox[{
+         RowBox[{"Length", "@", "\n", "\t\t\t\t\t\t", 
+          RowBox[{"Join", "[", "\n", "\t\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"FileNames", "[", 
+             RowBox[{
+              RowBox[{"\"\<*.m\>\"", "|", "\"\<*.wl\>\""}], ",", 
               RowBox[{
-               RowBox[{"\"\<*.m\>\"", "|", "\"\<*.wl\>\""}], ",", 
-               RowBox[{
-                RowBox[{"whichPacF", "[", "\"\<AppDirectory\>\"", "]"}], "[", 
-                "currentApp", "]"}]}], "]"}], ",", "\n", "\t\t\t\t\t\t\t", 
-             RowBox[{"gather", "[", 
-              RowBox[{
-               RowBox[{"\"\<*.m\>\"", "|", "\"\<*.wl\>\""}], ",", 
-               "\"\<Config\>\""}], "]"}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}], 
-          ">", "0"}], ")"}]}], ",", "\n", "\t", "\t\t", 
+               RowBox[{"whichPacF", "[", "\"\<AppDirectory\>\"", "]"}], "[", 
+               "currentApp", "]"}]}], "]"}], ",", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{"gather", "[", 
+             RowBox[{
+              RowBox[{"\"\<*.m\>\"", "|", "\"\<*.wl\>\""}], ",", 
+              "\"\<Config\>\""}], "]"}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}], 
+         ">", "0"}]}], ",", "\n", "\t\t\t", 
        RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
         RowBox[{"{", "currentApp", "}"}]}]}], "\n", "\t", "\t\t", "]"}]}], 
     "\n", "\t", "\t", "]"}]}], ";"}]], "CodeInput",
@@ -961,8 +997,8 @@ Cell[BoxData[
    3.701643900131143*^9, {3.701657268747056*^9, 3.7016572892809*^9}, {
    3.707047503062923*^9, 3.707047529417224*^9}, {3.712615244099208*^9, 
    3.712615289255546*^9}, {3.72066237972488*^9, 3.720662403899802*^9}, {
-   3.720662663473064*^9, 
-   3.720662677009638*^9}},ExpressionUUID->"910c1bd9-ef09-475b-af7a-\
+   3.720662663473064*^9, 3.720662677009638*^9}, {3.721049334007784*^9, 
+   3.721049356968214*^9}},ExpressionUUID->"910c1bd9-ef09-475b-af7a-\
 6106ea218c1b"]
 }, Closed]],
 
@@ -1296,7 +1332,7 @@ Cell[BoxData[
    3.720662403954892*^9, 3.720662403959741*^9}, {3.720662663541026*^9, 
    3.720662677077314*^9}},ExpressionUUID->"aa97503d-e643-4bd8-b186-\
 74c906483bfe"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1389,7 +1425,7 @@ Cell[BoxData[
   3.720662412604755*^9}, {3.720662663551384*^9, 
   3.720662677095245*^9}},ExpressionUUID->"24875b4c-119a-467b-b442-\
 552abe1e30a9"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1490,7 +1526,7 @@ Cell[BoxData[
    3.720662663569173*^9, 
    3.7206626771132298`*^9}},ExpressionUUID->"bbaad61d-0c7f-43bd-9554-\
 3687be8f2797"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1539,7 +1575,7 @@ Cell[BoxData[
    3.720662663588037*^9, 
    3.720662676556799*^9}},ExpressionUUID->"f53658f7-fcc8-45c7-823a-\
 4cdfe155b29f"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1684,7 +1720,7 @@ Cell[BoxData[
    3.721003068629978*^9, 
    3.721003101208274*^9}},ExpressionUUID->"44a852ca-74ee-49bd-848b-\
 1eae91d5487c"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1940,7 +1976,8 @@ Cell[BoxData[
                     "___", ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{
                     "Cell", "[", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"StyleData", "[", "\n", 
+                    RowBox[{
+                    "StyleData", "[", "\n", 
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"StyleDefinitions", "->", "\"\<Notepad.nb\>\""}], 
                     "]"}], "]"}], ",", "\n", 
@@ -2303,7 +2340,7 @@ Cell[BoxData[
    3.701568963707309*^9, 3.701569031763523*^9}, 
    3.701656345902313*^9},ExpressionUUID->"5d43e4b6-f1a4-4114-adfe-\
 edaea4024c53"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -2509,7 +2546,7 @@ Cell[BoxData[
    3.720662663206451*^9, 
    3.720662676707398*^9}},ExpressionUUID->"497d84e3-e194-4ecd-a2cf-\
 a86ebaeca124"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -2656,7 +2693,7 @@ Cell[BoxData[
   3.720662938410314*^9, 3.720662961080226*^9}, {3.720663668161644*^9, 
   3.720663668170787*^9}, {3.720663721689856*^9, 
   3.72066373554045*^9}},ExpressionUUID->"de71bd32-b1fe-40f4-97a7-5e4e168dd1e4"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -3246,7 +3283,7 @@ Cell[BoxData[{
    3.720662663228178*^9, 3.7206626767679*^9}, {3.720662938456357*^9, 
    3.720663023510408*^9}},ExpressionUUID->"a1f7527f-238e-4201-b009-\
 c0ac7695b403"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -3271,7 +3308,9 @@ Cell[BoxData[
              RowBox[{
               RowBox[{"{", 
                RowBox[{"docs", "=", "\n", "\t\t\t\t\t\t\t", 
-                RowBox[{"AppSymbolNotebook", "@", 
+                RowBox[{
+                 RowBox[{"whichPacF", "[", "\"\<AppSymbolNotebook\>\"", "]"}],
+                  "@", 
                  RowBox[{"(", "currentApp", ")"}]}]}], "\n", "\t\t\t\t\t\t\t",
                 "}"}], ",", "\n", "\t\t\t\t\t\t\t", 
               RowBox[{"CreateDocument", "@", "docs"}]}], "\n", "\t", "\t", 
@@ -3284,8 +3323,9 @@ Cell[BoxData[
          RowBox[{"{", 
           RowBox[{"pkgs", "=", 
            RowBox[{"FileBaseName", "/@", 
-            RowBox[{"AppPackages", "[", "currentApp", "]"}]}]}], "}"}], ",", 
-         "\n", "\t\t\t\t", 
+            RowBox[{
+             RowBox[{"whichPacF", "[", "\"\<AppPackages\>\"", "]"}], "[", 
+             "currentApp", "]"}]}]}], "}"}], ",", "\n", "\t\t\t\t", 
          RowBox[{"Map", "[", "\n", "\t\t\t\t\t", 
           RowBox[{
            RowBox[{
@@ -3295,7 +3335,10 @@ Cell[BoxData[
              RowBox[{"paletteDialog", "[", "\n", "\t\t\t\t\t\t\t", 
               RowBox[{
                RowBox[{"CreateDocument", "@", 
-                RowBox[{"AppPackageSymbolNotebook", "[", 
+                RowBox[{
+                 RowBox[{
+                 "whichPacF", "[", "\"\<AppPackageSymbolNotebook\>\"", "]"}], 
+                 "[", 
                  RowBox[{"currentApp", ",", "#"}], "]"}]}], ",", "\n", "\t", 
                "\t", "\t\t\t\t\t", "\"\<Creating doc template\>\""}], "\n", 
               "\t\t\t\t\t\t\t", "]"}]}], "&"}], ",", "\n", "\t\t\t\t\t", 
@@ -3311,8 +3354,10 @@ Cell[BoxData[
               RowBox[{"{", 
                RowBox[{"pkgs", "=", 
                 RowBox[{"FileBaseName", "/@", 
-                 RowBox[{"AppPackages", "[", "currentApp", "]"}]}]}], "}"}], 
-              ",", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"whichPacF", "[", "\"\<AppPackages\>\"", "]"}], "[",
+                   "currentApp", "]"}]}]}], "}"}], ",", "\n", 
+              "\t\t\t\t\t\t\t", 
               RowBox[{"Map", "[", "\n", "\t\t\t\t\t\t\t\t", 
                RowBox[{
                 RowBox[{
@@ -3323,7 +3368,10 @@ Cell[BoxData[
                     RowBox[{
                     "CreateDocument", "[", "\n", "\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{
-                    RowBox[{"AppPackageSymbolNotebook", "[", 
+                    RowBox[{
+                    RowBox[{
+                    "whichPacF", "[", "\"\<AppPackageSymbolNotebook\>\"", 
+                    "]"}], "[", 
                     RowBox[{"currentApp", ",", "#"}], "]"}], ",", "\n", "\t", 
                     "\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"Visible", "\[Rule]", "False"}]}], "\n", 
@@ -3355,8 +3403,9 @@ Cell[BoxData[
          RowBox[{"{", 
           RowBox[{"pkgs", "=", 
            RowBox[{"FileBaseName", "/@", 
-            RowBox[{"AppPackages", "[", "currentApp", "]"}]}]}], "}"}], ",", 
-         "\n", "\t\t\t\t", 
+            RowBox[{
+             RowBox[{"whichPacF", "[", "\"\<AppPackages\>\"", "]"}], "[", 
+             "currentApp", "]"}]}]}], "}"}], ",", "\n", "\t\t\t\t", 
          RowBox[{"Map", "[", "\n", "\t\t\t\t\t", 
           RowBox[{
            RowBox[{
@@ -3372,7 +3421,10 @@ Cell[BoxData[
                    RowBox[{
                    "CreateDocument", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
                     RowBox[{
-                    RowBox[{"AppPackageSymbolNotebook", "[", 
+                    RowBox[{
+                    RowBox[{
+                    "whichPacF", "[", "\"\<AppPackageSymbolNotebook\>\"", 
+                    "]"}], "[", 
                     RowBox[{"currentApp", ",", "#"}], "]"}], ",", "\n", 
                     "\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"Visible", "\[Rule]", "False"}]}], "\n", 
@@ -3399,8 +3451,9 @@ Cell[BoxData[
       RowBox[{"(", 
        RowBox[{
         RowBox[{"Length", "@", 
-         RowBox[{"AppPackages", "[", "currentApp", "]"}]}], ">", "0"}], 
-       ")"}]}], ",", "\n", "\t\t\t", 
+         RowBox[{
+          RowBox[{"whichPacF", "[", "\"\<AppPackages\>\"", "]"}], "[", 
+          "currentApp", "]"}]}], ">", "0"}], ")"}]}], ",", "\n", "\t\t\t", 
      RowBox[{"Method", "\[Rule]", "\"\<Queued\>\""}], ",", "\n", "\t", "\t\t", 
      RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
       RowBox[{"{", "currentApp", "}"}]}]}], "\n", "\t\t\t", "]"}]}], 
@@ -3455,8 +3508,9 @@ Cell[BoxData[
    3.709295275056799*^9, 3.709295372351543*^9}, {3.7092955782124023`*^9, 
    3.70929562914554*^9}, {3.709296578209486*^9, 3.709296582567011*^9}, {
    3.720662404174231*^9, 3.7206624041824083`*^9}, {3.720662663291676*^9, 
-   3.7206626767859983`*^9}, {3.720663017226076*^9, 
-   3.7206630172351*^9}},ExpressionUUID->"061d0602-a49f-42c8-9afa-\
+   3.7206626767859983`*^9}, {3.720663017226076*^9, 3.7206630172351*^9}, {
+   3.721053254652597*^9, 
+   3.721053298109509*^9}},ExpressionUUID->"061d0602-a49f-42c8-9afa-\
 2525f0b80fa7"],
 
 Cell[BoxData[
@@ -3480,7 +3534,9 @@ Cell[BoxData[
                   RowBox[{"Needs", "[", 
                    RowBox[{"currentApp", "<>", "\"\<`\>\""}], "]"}], ";", 
                   "\n", "\t\t\t\t\t\t\t", 
-                  RowBox[{"AppGuideNotebook", "@", 
+                  RowBox[{
+                   RowBox[{
+                   "whichPacF", "[", "\"\<AppGuideNotebook\>\"", "]"}], "@", 
                    RowBox[{"(", "currentApp", ")"}]}]}], "\n", "\t", "\t", 
                  "\t\t\t\t\t", ")"}]}], "}"}], ",", "\n", "\t", "\t", "\t", 
               "\t", "\t\t\t", 
@@ -3494,8 +3550,9 @@ Cell[BoxData[
          RowBox[{"{", 
           RowBox[{"pkgs", "=", 
            RowBox[{"FileBaseName", "/@", 
-            RowBox[{"AppPackages", "[", "currentApp", "]"}]}]}], "}"}], ",", 
-         "\n", "\t\t\t\t", 
+            RowBox[{
+             RowBox[{"whichPacF", "[", "\"\<AppPackages\>\"", "]"}], "[", 
+             "currentApp", "]"}]}]}], "}"}], ",", "\n", "\t\t\t\t", 
          RowBox[{"Map", "[", "\n", "\t\t\t\t\t", 
           RowBox[{
            RowBox[{
@@ -3505,7 +3562,9 @@ Cell[BoxData[
              RowBox[{"paletteDialog", "[", "\n", "\t\t\t\t\t\t\t", 
               RowBox[{
                RowBox[{"CreateDocument", "@", 
-                RowBox[{"AppPackageGuideNotebook", "[", 
+                RowBox[{
+                 RowBox[{"whichPacF", "[", "\"\<AppGuideNotebook\>\"", "]"}], 
+                 "[", 
                  RowBox[{"currentApp", ",", "#"}], "]"}]}], ",", "\n", 
                "\t\t\t\t\t\t\t", "\"\<Creating guide template\>\""}], "\n", 
               "\t\t\t\t\t\t\t", "]"}]}], "&"}], ",", "\n", "\t\t\t\t\t", 
@@ -3527,7 +3586,10 @@ Cell[BoxData[
                   "\n", "\t\t\t\t\t\t\t", 
                   RowBox[{"CreateDocument", "[", 
                    RowBox[{
-                    RowBox[{"AppGuideNotebook", "@", 
+                    RowBox[{
+                    RowBox[{
+                    "whichPacF", "[", "\"\<AppGuideNotebook\>\"", "]"}], "@", 
+                    
                     RowBox[{"(", "currentApp", ")"}]}], ",", 
                     RowBox[{"Visible", "\[Rule]", "False"}]}], "]"}]}], "\n", 
                  "\t\t\t\t\t\t\t", ")"}]}], "}"}], ",", "\n", 
@@ -3555,8 +3617,10 @@ Cell[BoxData[
               RowBox[{"{", 
                RowBox[{"pkgs", "=", 
                 RowBox[{"FileBaseName", "/@", 
-                 RowBox[{"AppPackages", "[", "currentApp", "]"}]}]}], "}"}], 
-              ",", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"whichPacF", "[", "\"\<AppPackages\>\"", "]"}], "[",
+                   "currentApp", "]"}]}]}], "}"}], ",", "\n", 
+              "\t\t\t\t\t\t\t", 
               RowBox[{"Map", "[", "\n", "\t\t\t\t\t\t\t\t", 
                RowBox[{
                 RowBox[{
@@ -3568,10 +3632,13 @@ Cell[BoxData[
                     RowBox[{
                     RowBox[{"Needs", "[", 
                     RowBox[{"currentApp", "<>", "\"\<`\>\""}], "]"}], ";", 
-                    "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
+                    "\n", "\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"CreateDocument", "[", 
                     RowBox[{
-                    RowBox[{"AppGuideNotebook", "@", 
+                    RowBox[{
+                    RowBox[{
+                    "whichPacF", "[", "\"\<AppGuideNotebook\>\"", "]"}], "@", 
+                    
                     RowBox[{"(", "currentApp", ")"}]}], ",", 
                     RowBox[{"Visible", "\[Rule]", "False"}]}], "]"}]}], "\n", 
                     "\t", "\t", "\t\t\t\t\t\t\t", ")"}]}], "}"}], ",", "\n", 
@@ -3581,7 +3648,10 @@ Cell[BoxData[
                     RowBox[{"whichPacF", "[", "\"\<SaveGuide\>\"", "]"}], "[",
                      "\n", "\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"nb", ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"AppPackageGuideNotebook", "[", 
+                    RowBox[{
+                    RowBox[{
+                    "whichPacF", "[", "\"\<AppPackageGuideNotebook\>\"", 
+                    "]"}], "[", 
                     RowBox[{"currentApp", ",", "#"}], "]"}], ",", "\n", "\t", 
                     "\t", "\t", "\t\t\t\t\t\t\t", "False"}], "\n", "\t", "\t",
                      "\t", "\t\t\t\t\t\t\t", "]"}], ";", "\n", "\t", "\t", 
@@ -3598,8 +3668,9 @@ Cell[BoxData[
          RowBox[{"{", 
           RowBox[{"pkgs", "=", 
            RowBox[{"FileBaseName", "/@", 
-            RowBox[{"AppPackages", "[", "currentApp", "]"}]}]}], "}"}], ",", 
-         "\n", "\t\t\t\t", 
+            RowBox[{
+             RowBox[{"whichPacF", "[", "\"\<AppPackages\>\"", "]"}], "[", 
+             "currentApp", "]"}]}]}], "}"}], ",", "\n", "\t\t\t\t", 
          RowBox[{"Map", "[", "\n", "\t\t\t\t\t", 
           RowBox[{
            RowBox[{
@@ -3628,9 +3699,12 @@ Cell[BoxData[
                     RowBox[{"whichPacF", "[", "\"\<GenerateGuide\>\"", "]"}], 
                     "@", "\n", "\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{
-                    "CreateDocument", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
+                    "CreateDocument", "[", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{
-                    RowBox[{"AppPackageGuideNotebook", "[", 
+                    RowBox[{
+                    RowBox[{
+                    "whichPacF", "[", "\"\<AppPackageGuideNotebook\>\"", 
+                    "]"}], "[", 
                     RowBox[{"currentApp", ",", "#"}], "]"}], ",", "\n", "\t", 
                     "\t", "\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"Visible", "\[Rule]", "False"}]}], "\n", 
@@ -3645,8 +3719,9 @@ Cell[BoxData[
       RowBox[{"(", 
        RowBox[{
         RowBox[{"Length", "@", 
-         RowBox[{"AppPackages", "[", "currentApp", "]"}]}], ">", "0"}], 
-       ")"}]}], ",", "\n", "\t\t\t", 
+         RowBox[{
+          RowBox[{"whichPacF", "[", "\"\<AppPackages\>\"", "]"}], "[", 
+          "currentApp", "]"}]}], ">", "0"}], ")"}]}], ",", "\n", "\t\t\t", 
      RowBox[{"Method", "\[Rule]", "\"\<Queued\>\""}], ",", "\n", "\t", "\t\t", 
      RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
       RowBox[{"{", "currentApp", "}"}]}]}], "\n", "\t\t\t", "]"}]}], 
@@ -3702,7 +3777,8 @@ Cell[BoxData[
    3.7092954653469*^9, 3.709295566967236*^9}, {3.709295686495797*^9, 
    3.709295697827544*^9}, 3.720662404196306*^9, {3.7206626633082333`*^9, 
    3.720662676800147*^9}, 3.720662944217844*^9, {3.7206630235251713`*^9, 
-   3.720663023535573*^9}},ExpressionUUID->"eb639ffe-6cc5-4d3d-875d-\
+   3.720663023535573*^9}, {3.721053301277125*^9, 
+   3.721053366055732*^9}},ExpressionUUID->"eb639ffe-6cc5-4d3d-875d-\
 c64f27eb918b"],
 
 Cell[BoxData[
@@ -3862,8 +3938,9 @@ Cell[BoxData[
       RowBox[{"(", 
        RowBox[{
         RowBox[{"Length", "@", 
-         RowBox[{"AppPackages", "[", "currentApp", "]"}]}], ">", "0"}], 
-       ")"}]}], ",", "\n", "\t\t\t", 
+         RowBox[{
+          RowBox[{"whichPacF", "[", "\"\<AppPackages\>\"", "]"}], "[", 
+          "currentApp", "]"}]}], ">", "0"}], ")"}]}], ",", "\n", "\t\t\t", 
      RowBox[{"Method", "\[Rule]", "\"\<Queued\>\""}], ",", "\n", "\t", "\t\t", 
      RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
       RowBox[{"{", "currentApp", "}"}]}]}], "\n", "\t\t\t", "]"}]}], 
@@ -3911,10 +3988,10 @@ Cell[BoxData[
    3.701443655896661*^9, 3.701443700329323*^9}, {3.701443751762101*^9, 
    3.701443762119301*^9}, {3.701443811401965*^9, 3.7014439279916697`*^9}, {
    3.701444046946554*^9, 3.701444157949356*^9}, {3.701481132248068*^9, 
-   3.701481139458919*^9}, {3.7206629948722687`*^9, 
-   3.7206630048154097`*^9}},ExpressionUUID->"6624e889-bf98-4299-af7a-\
+   3.701481139458919*^9}, {3.7206629948722687`*^9, 3.7206630048154097`*^9}, 
+   3.721053374548153*^9},ExpressionUUID->"6624e889-bf98-4299-af7a-\
 dfc12cae4711"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -3947,7 +4024,7 @@ Cell[BoxData[{
    3.701264402975295*^9}, 
    3.720663430417251*^9},ExpressionUUID->"4b10b95a-46ae-4b2f-ab61-\
 f4f1f81c583d"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -4272,7 +4349,7 @@ Cell[BoxData[{
    3.72066351003916*^9}, {3.7206636887136507`*^9, 
    3.720663716514112*^9}},ExpressionUUID->"ef2c9305-78c5-4be1-9141-\
 9ee38778aaeb"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -4376,7 +4453,7 @@ Cell[BoxData[{
    3.7206635383427563`*^9, 
    3.72066355944455*^9}},ExpressionUUID->"6bbc7b6f-2325-48c3-a0cf-\
 07c1051a0ac3"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -4424,7 +4501,7 @@ Cell[BoxData[{
    3.7206635651221247`*^9, 
    3.72066357850902*^9}},ExpressionUUID->"2667be53-2a20-4f35-88c4-\
 488403ac9c12"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -4553,7 +4630,7 @@ Cell[BoxData[{
   3.70709330367312*^9, 3.707093326472999*^9}, {3.720663446081047*^9, 
   3.720663446125762*^9}},ExpressionUUID->"61aa68f4-fb1b-4b5c-ba72-\
 196f42beb2a0"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -4616,7 +4693,7 @@ Cell[BoxData[
    3.712874879271484*^9}, 3.712875204754817*^9, {3.7206634370264273`*^9, 
    3.7206634559296923`*^9}},ExpressionUUID->"c3b5cf36-cd4e-4c6c-b3ab-\
 e43e754858de"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -4861,7 +4938,7 @@ Cell[BoxData[
    3.7121972514456167`*^9, 3.712197298278893*^9}, {3.720663601531389*^9, 
    3.720663614727021*^9}},ExpressionUUID->"7605e7e7-6315-433b-b619-\
 d83367761f3e"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -4902,7 +4979,7 @@ Cell[BoxData[
    3.712938896614746*^9}, {3.7206635170229483`*^9, 
    3.720663532034801*^9}},ExpressionUUID->"61cfeb64-eeb4-4695-9657-\
 e75b680c1152"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -4913,8 +4990,7 @@ a168720f1ad4"],
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{
-   RowBox[{"appwhichPacF", "[", "\"\<FileBrowser\>\"", "]"}], "=", "\n", "\t", 
+  RowBox[{"appFileBrowser", "=", "\n", "\t", 
    RowBox[{"With", "[", 
     RowBox[{
      RowBox[{"{", 
@@ -4993,10 +5069,10 @@ Cell[BoxData[
    3.701652180892325*^9, {3.703989850709588*^9, 3.7039898606585197`*^9}, {
    3.704473620704702*^9, 3.7044736423673773`*^9}, {3.720662404207416*^9, 
    3.720662404221528*^9}, {3.720662663393689*^9, 3.72066267691502*^9}, {
-   3.720663629385893*^9, 
-   3.720663629393743*^9}},ExpressionUUID->"40594666-9beb-4935-9044-\
+   3.720663629385893*^9, 3.720663629393743*^9}, {3.721049152796843*^9, 
+   3.721049155762947*^9}},ExpressionUUID->"40594666-9beb-4935-9044-\
 baf553d2031d"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -5264,7 +5340,7 @@ Cell[BoxData[
    3.720662663413416*^9, 
    3.720662676943338*^9}},ExpressionUUID->"f39628fd-f5a9-4476-adf4-\
 af0a1ab62fed"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -5434,7 +5510,7 @@ Cell[BoxData[
    3.700781049908457*^9}, {3.700930900033351*^9, 
    3.70093095333928*^9}},ExpressionUUID->"9710e1aa-fb5f-45ad-b68e-\
 ba5f493e89a7"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -5559,19 +5635,20 @@ Cell[BoxData[
                 "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
                RowBox[{"Pane", "[", "\n", "\t\t\t\t\t", 
                 RowBox[{
-                 RowBox[{"Column", "[", 
+                 RowBox[{"Column", "[", "\n", "\t\t\t\t\t\t", 
                   RowBox[{
-                   RowBox[{"{", "\n", "\t\t\t\t\t\t", 
-                    RowBox[{"paletteSpacer", ",", "\n", "\t\t\t\t\t\t", 
-                    RowBox[{"appwhichPacF", "[", "\"\<FileBrowser\>\"", "]"}],
-                     ",", "\n", "\t\t\t\t\t\t", 
+                   RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "paletteSpacer", ",", "\n", "\t\t\t\t\t\t\t", 
+                    "appFileBrowser", ",", "\n", "\t\t\t\t\t\t\t", 
                     RowBox[{"paletteButton", "[", 
                     RowBox[{
-                    "\"\<New App\>\"", ",", "\n", "\t", "\t", "\t\t\t\t\t", 
+                    "\"\<New App\>\"", ",", "\n", "\t", "\t", "\t", 
+                    "\t\t\t\t\t", 
                     RowBox[{
                     "AppManagerPalette`Private`newAppDialog", "[", "]"}]}], 
-                    "\n", "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t", 
-                    "}"}], ",", "\n", "\t\t\t\t\t\t", 
+                    "\n", "\t", "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t", 
+                    "\t\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t\t", 
                    RowBox[{"Spacings", "\[Rule]", 
                     RowBox[{"{", 
                     RowBox[{
@@ -5615,12 +5692,17 @@ Cell[BoxData[
            RowBox[{"If", "[", 
             RowBox[{
              RowBox[{"!", 
-              RowBox[{"StringQ", "@", "$appName"}]}], ",", 
+              RowBox[{"StringQ", "@", "$appName"}]}], ",", " ", 
              RowBox[{"getAppName", "[", "]"}]}], "]"}], ";", "\n", 
            "\t\t\t\t\t", 
-           RowBox[{"Needs", "[", 
-            RowBox[{"$appName", "<>", "\"\<`\>\""}], "]"}], ";", "\n", 
-           "\t\t\t\t\t", 
+           RowBox[{"Block", "[", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"$ContextPath", "=", 
+               RowBox[{"{", "}"}]}], "}"}], ",", " ", 
+             RowBox[{"Needs", "[", 
+              RowBox[{"$appName", "<>", "\"\<`\>\""}], "]"}]}], "]"}], ";", 
+           "\n", "\t\t\t\t\t", 
            RowBox[{"If", "[", 
             RowBox[{
              RowBox[{
@@ -5771,7 +5853,10 @@ Cell[BoxData[
    3.704473585922257*^9, {3.706032240814661*^9, 3.706032273716577*^9}, 
    3.720663629403285*^9, {3.720663804432054*^9, 3.72066392244207*^9}, {
    3.7210039922339573`*^9, 3.7210039927377977`*^9}, {3.72101345368388*^9, 
-   3.721013455321784*^9}},ExpressionUUID->"491fcd63-9085-40df-860f-\
+   3.721013455321784*^9}, {3.721020327881179*^9, 3.721020337055875*^9}, {
+   3.721020658796103*^9, 3.721020660743984*^9}, {3.721049182304411*^9, 
+   3.72104918411194*^9}, 3.7210492648713493`*^9, {3.721050353886867*^9, 
+   3.721050364689012*^9}},ExpressionUUID->"491fcd63-9085-40df-860f-\
 5b10d828e4b7"]
 }, Open  ]],
 
@@ -5915,7 +6000,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"62675c9c-ff56-4c92-9d30-\
 ee72bc7e91d8"]
 },
 WindowSize->{796, 833},
-WindowMargins->{{23, Automatic}, {-2, Automatic}},
+WindowMargins->{{Automatic, 267}, {9, Automatic}},
 FrontEndVersion->"11.2 for Mac OS X x86 (32-bit, 64-bit Kernel) (September \
 10, 2017)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodeNotebook.nb", 

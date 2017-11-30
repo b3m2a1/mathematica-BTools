@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    110093,       2396]
-NotebookOptionsPosition[    103489,       2284]
-NotebookOutlinePosition[    103884,       2301]
-CellTagsIndexPosition[    103841,       2298]
+NotebookDataLength[    113130,       2457]
+NotebookOptionsPosition[    106388,       2342]
+NotebookOutlinePosition[    106784,       2359]
+CellTagsIndexPosition[    106741,       2356]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -99,7 +99,8 @@ Cell[StyleData["Notebook"],
            DirectoryName[$CellContext`f$]]]}, 
        If[
        FrontEndResourceString["PackageHeader"] =!= $CellContext`header, 
-        Needs["BTools`"]; Replace[
+        Block[{$ContextPath = {"System`"}}, 
+          Needs["BTools`"]]; Replace[
           Names["FEAddResource"], {
             Pattern[$CellContext`s, 
              Blank[]], 
@@ -134,16 +135,16 @@ Cell[StyleData["Notebook"],
                 Hold[
                  Catch[
                   
-                  Block[{BTools`Private`FrontEnd`loadPackageFailures = {}}, 
-                   Check[
+                  Block[{BTools`Private`FrontEnd`loadPackageFailures = {}, \
+$ContextPath = {"System`"}}, Check[
                     Needs["BTools`"], 
                     Throw[$Failed]]; GeneralUtilities`WithMessageHandler[
                     Replace[
                     BTools`AppFromFile[
                     InputNotebook[]], {$Failed :> Null, 
-                    Pattern[$CellContext`a, 
+                    Pattern[BTools`Private`FrontEnd`a, 
                     Blank[]] :> (Get[
-                    StringJoin[$CellContext`a, "`"]]; 
+                    StringJoin[BTools`Private`FrontEnd`a, "`"]]; 
                     FrontEnd`Private`GetUpdatedSymbolContexts[])}], AppendTo[
                     BTools`Private`FrontEnd`loadPackageFailures, #]& ]; 
                    If[Length[BTools`Private`FrontEnd`loadPackageFailures] > 0, 
@@ -166,9 +167,9 @@ Cell[StyleData["Notebook"],
                     False, CellBracketOptions -> {
                     "OverlapContent" -> False}]]]]]], 
                BTools`Private`UUIDActive[
-                "Button-3bf9970c-b5ce-48a1-b1b4-8ac49d18c351"] = False]; 
+                "Button-2376399a-5f02-4fa4-a3fd-885cac08bdbf"] = False]; 
              BTools`Private`UUIDActive[
-               "Button-3bf9970c-b5ce-48a1-b1b4-8ac49d18c351"] = False), 
+               "Button-2376399a-5f02-4fa4-a3fd-885cac08bdbf"] = False), 
             Appearance -> {"Default" -> Image[CompressedData["
 1:eJzN1DELgkAYxvGjGoKW9qa+RWtjq9EHUDJpMdAg+ih+NFEUFUUUEUXn65Zn
 kIgnmnrhd3DHf7rh3Ro37TITQrhLdWj6Y+84+vO4VpeT7V4t2zwf7Ltpmc7O
@@ -195,15 +196,18 @@ xg2CGKb29u3bBDFM7Z07dwhiMtQyEKmWYbConTlz5n9CmEB5g1H+AACpMiOr
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-3bf9970c-b5ce-48a1-b1b4-8ac49d18c351"]], "Pressed", 
+                 "Button-2376399a-5f02-4fa4-a3fd-885cac08bdbf"]], "Pressed", 
                 Automatic]]}, ImageSize -> {150, 35}, FrameMargins -> 5, 
             ImageSize -> {150, 35}, Method -> "Queued", Evaluator -> 
             Automatic], 
-           
-           EventHandlerTag[{
-            "MouseClicked" :> (
-              BTools`Private`UUIDActive[
-               "Button-3bf9970c-b5ce-48a1-b1b4-8ac49d18c351"] = True), 
+           EventHandlerTag[{"MouseClicked" :> If[
+               TrueQ[
+                Replace[
+                 Replace[Automatic, Pattern[BTools`Private`Package`d, 
+                    Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
+                 Automatic -> True]], 
+               BTools`Private`UUIDActive[
+                "Button-2376399a-5f02-4fa4-a3fd-885cac08bdbf"] = True], 
              PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
              True}]], 
           TagBox[
@@ -212,30 +216,29 @@ xg2CGKb29u3bBDFM7Z07dwhiMtQyEKmWYbConTlz5n9CmEB5g1H+AACpMiOr
                 Hold[
                  Catch[
                   
-                  Block[{BTools`Private`FrontEnd`loadPackageFailures = {}}, 
-                   Check[
+                  Block[{BTools`Private`FrontEnd`loadPackageFailures = {}, \
+$ContextPath = {"System`"}}, Check[
                     Needs["BTools`"], 
                     Throw[$Failed]]; GeneralUtilities`WithMessageHandler[
                     Replace[
                     Replace[
                     Names["AppFromFile"], {
-                    Pattern[BTools`Private`FrontEnd`s, 
+                    Pattern[$CellContext`s, 
                     Blank[]], 
-                    BlankNullSequence[]} :> 
-                    ToExpression[BTools`Private`FrontEnd`s]][
+                    BlankNullSequence[]} :> ToExpression[$CellContext`s]][
                     InputNotebook[]], {Except[
                     Blank[String]] :> (Get[
                     StringReplace[
                     NotebookFileName[], ".nb" -> ".m"]]; 
                     FrontEnd`Private`GetUpdatedSymbolContexts[]; Null), 
-                    Pattern[$CellContext`a, 
+                    Pattern[BTools`Private`FrontEnd`a, 
                     Blank[]] :> (Needs[
-                    StringJoin[$CellContext`a, "`"]]; Replace[
+                    StringJoin[BTools`Private`FrontEnd`a, "`"]]; Replace[
                     Names["AppGet"], {
-                    Pattern[BTools`Private`FrontEnd`s, 
+                    Pattern[$CellContext`s, 
                     Blank[]], 
-                    BlankNullSequence[]} :> 
-                    ToExpression[BTools`Private`FrontEnd`s]][$CellContext`a, 
+                    BlankNullSequence[]} :> ToExpression[$CellContext`s]][
+                    BTools`Private`FrontEnd`a, 
                     FileBaseName[
                     NotebookFileName[]]]; 
                     FrontEnd`Private`GetUpdatedSymbolContexts[]; Null)}], 
@@ -261,9 +264,9 @@ xg2CGKb29u3bBDFM7Z07dwhiMtQyEKmWYbConTlz5n9CmEB5g1H+AACpMiOr
                     False, CellBracketOptions -> {
                     "OverlapContent" -> False}]]]]]], 
                BTools`Private`UUIDActive[
-                "Button-08b41440-52d4-439e-9986-e36a8e3cc0d0"] = False]; 
+                "Button-6c4ecd8c-771f-4842-b019-04796dfe99de"] = False]; 
              BTools`Private`UUIDActive[
-               "Button-08b41440-52d4-439e-9986-e36a8e3cc0d0"] = False), 
+               "Button-6c4ecd8c-771f-4842-b019-04796dfe99de"] = False), 
             Appearance -> {"Default" -> Image[CompressedData["
 1:eJzN1LEKglAYhuFDNTQ0tDd1F62NrUYXoGTRYqBBdClemiiKiiKKiKKznQbh
 c+mrpn54DpzDO53hX2tX5TQRQlhzeSjqfWua6mO/lJeDYV3Ohn7cGTf9rJsb
@@ -291,15 +294,18 @@ yOpv3LhBECOrv337NkGMrP7OnTsEMZnqGUhQzzBY1RODiSzbUMo4AAT5aWY=
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-08b41440-52d4-439e-9986-e36a8e3cc0d0"]], "Pressed", 
+                 "Button-6c4ecd8c-771f-4842-b019-04796dfe99de"]], "Pressed", 
                 Automatic]]}, ImageSize -> {150, 35}, FrameMargins -> 5, 
             ImageSize -> {150, 35}, Method -> "Queued", Evaluator -> 
             Automatic], 
-           
-           EventHandlerTag[{
-            "MouseClicked" :> (
-              BTools`Private`UUIDActive[
-               "Button-08b41440-52d4-439e-9986-e36a8e3cc0d0"] = True), 
+           EventHandlerTag[{"MouseClicked" :> If[
+               TrueQ[
+                Replace[
+                 Replace[Automatic, Pattern[BTools`Private`Package`d, 
+                    Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
+                 Automatic -> True]], 
+               BTools`Private`UUIDActive[
+                "Button-6c4ecd8c-771f-4842-b019-04796dfe99de"] = True], 
              PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
              True}]], 
           TagBox[
@@ -310,40 +316,39 @@ yOpv3LhBECOrv337NkGMrP7OnTsEMZnqGUhQzzBY1RODiSzbUMo4AAT5aWY=
                   Quiet[
                    NotebookFileName[]], {Pattern[BTools`Private`f$, 
                     Blank[String]] :> 
-                   With[{BTools`Private`FrontEnd`header = TemplateApply["", 
+                   With[{$CellContext`header = TemplateApply["", 
                     Association["AppName" -> Replace[
                     Names["AppFromFile"], {
-                    Pattern[BTools`Private`FrontEnd`s, 
+                    Pattern[$CellContext`s, 
                     Blank[]], 
-                    BlankNullSequence[]} :> 
-                    ToExpression[BTools`Private`FrontEnd`s]][
+                    BlankNullSequence[]} :> ToExpression[$CellContext`s]][
                     BTools`Private`f$], "SpacedAppName" -> StringJoin[" ", 
                     Replace[
                     Replace[
                     Names["AppFromFile"], {
-                    Pattern[BTools`Private`FrontEnd`s, 
+                    Pattern[$CellContext`s, 
                     Blank[]], 
-                    BlankNullSequence[]} :> 
-                    ToExpression[BTools`Private`FrontEnd`s]][
+                    BlankNullSequence[]} :> ToExpression[$CellContext`s]][
                     BTools`Private`f$], Except[
                     Blank[String]] -> ""], " "], "FileName" -> 
                     BTools`Private`f$, "FileBaseName" -> 
                     FileBaseName[BTools`Private`f$], "DirectoryName" -> 
                     DirectoryName[BTools`Private`f$]]]}, 
                     If[
-                    FrontEndResourceString["PackageHeader"] =!= 
-                    BTools`Private`FrontEnd`header, Needs["BTools`"]; 
-                    Replace[
+                    FrontEndResourceString[
+                    "PackageHeader"] =!= $CellContext`header, 
+                    Block[{$ContextPath = {"System`"}}, 
+                    Needs["BTools`"]]; Replace[
                     Names["FEAddResource"], {
-                    Pattern[BTools`Private`FrontEnd`s, 
+                    Pattern[$CellContext`s, 
                     Blank[]], 
                     BlankNullSequence[]} :> 
-                    ToExpression[BTools`Private`FrontEnd`s][
-                    "PackageHeader", BTools`Private`FrontEnd`header]]]]}]]], 
+                    ToExpression[$CellContext`s][
+                    "PackageHeader", $CellContext`header]]]]}]]], 
                BTools`Private`UUIDActive[
-                "Button-9ef5a296-f411-4224-a370-1b3c0e48c038"] = False]; 
+                "Button-4962d50f-f0ed-4788-ae7d-6a0b6dbb40a0"] = False]; 
              BTools`Private`UUIDActive[
-               "Button-9ef5a296-f411-4224-a370-1b3c0e48c038"] = False), 
+               "Button-4962d50f-f0ed-4788-ae7d-6a0b6dbb40a0"] = False), 
             Appearance -> {"Default" -> Image[CompressedData["
 1:eJzN1LEKglAYhuFDNTQ0tDd1F62NrUYXoGTRYqBBdClemiiKiiKKiKKznQbh
 c+mrpn54DpzDO53hX2tX5TQRQlhzeSjqfWua6mO/lJeDYV3Ohn7cGTf9rJsb
@@ -371,15 +376,18 @@ yOpv3LhBECOrv337NkGMrP7OnTsEMZnqGUhQzzBY1RODiSzbUMo4AAT5aWY=
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-9ef5a296-f411-4224-a370-1b3c0e48c038"]], "Pressed", 
+                 "Button-4962d50f-f0ed-4788-ae7d-6a0b6dbb40a0"]], "Pressed", 
                 Automatic]]}, ImageSize -> {150, 35}, FrameMargins -> 5, 
             ImageSize -> {150, 35}, Method -> "Queued", Evaluator -> 
             Automatic], 
-           
-           EventHandlerTag[{
-            "MouseClicked" :> (
-              BTools`Private`UUIDActive[
-               "Button-9ef5a296-f411-4224-a370-1b3c0e48c038"] = True), 
+           EventHandlerTag[{"MouseClicked" :> If[
+               TrueQ[
+                Replace[
+                 Replace[Automatic, Pattern[BTools`Private`Package`d, 
+                    Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
+                 Automatic -> True]], 
+               BTools`Private`UUIDActive[
+                "Button-4962d50f-f0ed-4788-ae7d-6a0b6dbb40a0"] = True], 
              PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
              True}]], 
           TagBox[
@@ -390,9 +398,9 @@ yOpv3LhBECOrv337NkGMrP7OnTsEMZnqGUhQzzBY1RODiSzbUMo4AAT5aWY=
                   StringReplace[
                    NotebookFileName[], ".nb" -> ".m"]]]], 
                BTools`Private`UUIDActive[
-                "Button-4444c9c6-0850-45b2-bb6a-cc70e263536b"] = False]; 
+                "Button-faa3d50c-8caf-4a77-9eca-8a3b6a93edeb"] = False]; 
              BTools`Private`UUIDActive[
-               "Button-4444c9c6-0850-45b2-bb6a-cc70e263536b"] = False), 
+               "Button-faa3d50c-8caf-4a77-9eca-8a3b6a93edeb"] = False), 
             Appearance -> {"Default" -> Image[CompressedData["
 1:eJzN1LEKglAYhuFDNTQ0tDd1F62NrUYXoGTRYqBBdClemiiKiiKKiKKznQbh
 c+mrpn54DpzDO53hX2tX5TQRQlhzeSjqfWua6mO/lJeDYV3Ohn7cGTf9rJsb
@@ -420,15 +428,18 @@ yOpv3LhBECOrv337NkGMrP7OnTsEMZnqGUhQzzBY1RODiSzbUMo4AAT5aWY=
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-4444c9c6-0850-45b2-bb6a-cc70e263536b"]], "Pressed", 
+                 "Button-faa3d50c-8caf-4a77-9eca-8a3b6a93edeb"]], "Pressed", 
                 Automatic]]}, ImageSize -> {150, 35}, FrameMargins -> 5, 
             ImageSize -> {150, 35}, Method -> "Queued", Evaluator -> 
             Automatic], 
-           
-           EventHandlerTag[{
-            "MouseClicked" :> (
-              BTools`Private`UUIDActive[
-               "Button-4444c9c6-0850-45b2-bb6a-cc70e263536b"] = True), 
+           EventHandlerTag[{"MouseClicked" :> If[
+               TrueQ[
+                Replace[
+                 Replace[Automatic, Pattern[BTools`Private`Package`d, 
+                    Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
+                 Automatic -> True]], 
+               BTools`Private`UUIDActive[
+                "Button-faa3d50c-8caf-4a77-9eca-8a3b6a93edeb"] = True], 
              PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
              True}]]}, "RowDefault"], 
         ButtonBox[
@@ -573,8 +584,13 @@ Cell[BoxData[
                   "FrontEndResourceString", "[", "\"\<PackageHeader\>\"", 
                    "]"}], "=!=", "header"}], ",", "\[IndentingNewLine]", 
                  RowBox[{
-                  RowBox[{"Needs", "[", "\"\<BTools`\>\"", "]"}], ";", 
-                  "\[IndentingNewLine]", 
+                  RowBox[{"Block", "[", 
+                   RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"$ContextPath", "=", 
+                    RowBox[{"{", "\"\<System`\>\"", "}"}]}], "}"}], ",", 
+                    RowBox[{"Needs", "[", "\"\<BTools`\>\"", "]"}]}], "]"}], 
+                  ";", "\[IndentingNewLine]", 
                   RowBox[{
                    RowBox[{"Replace", "[", "\[IndentingNewLine]", 
                     RowBox[{
@@ -598,10 +614,11 @@ Cell[BoxData[
    3.703746248750482*^9, 3.703746249459302*^9}, {3.703746282507964*^9, 
    3.703746284201675*^9}, 3.703747215279295*^9, 3.703890599203141*^9, 
    3.703890756317429*^9, {3.712927393061968*^9, 3.712927415525807*^9}, {
-   3.716915480475268*^9, 
-   3.716915481333493*^9}},ExpressionUUID->"b3aa9973-0857-4baa-88ce-\
+   3.716915480475268*^9, 3.716915481333493*^9}, {3.721051011112672*^9, 
+   3.72105102077669*^9}, {3.721054305995926*^9, 
+   3.721054307704629*^9}},ExpressionUUID->"b3aa9973-0857-4baa-88ce-\
 44896149a3af"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -618,6 +635,8 @@ Cell[BoxData[
   3.7101732472781057`*^9, 
   3.710173247515284*^9}},ExpressionUUID->"66fb33f2-d0e4-4fd9-8b09-\
 991e1774cf4a"],
+
+Cell[CellGroupData[{
 
 Cell[BoxData[{
  RowBox[{
@@ -651,10 +670,15 @@ Cell[BoxData[{
                     RowBox[{"Catch", "@", "\[IndentingNewLine]", 
                     RowBox[{"Block", "[", 
                     RowBox[{
-                    RowBox[{"{", 
+                    RowBox[{"{", "\[IndentingNewLine]", 
+                    RowBox[{
                     RowBox[{
                     "BTools`Private`FrontEnd`loadPackageFailures", "=", 
-                    RowBox[{"{", "}"}]}], "}"}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"{", "}"}]}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"$ContextPath", "=", 
+                    RowBox[{"{", "\"\<System`\>\"", "}"}]}]}], 
+                    "\[IndentingNewLine]", "}"}], ",", "\[IndentingNewLine]", 
+                    
                     RowBox[{
                     RowBox[{"Check", "[", "\[IndentingNewLine]", 
                     RowBox[{
@@ -773,10 +797,15 @@ Cell[BoxData[{
                     RowBox[{"Catch", "@", "\[IndentingNewLine]", 
                     RowBox[{"Block", "[", 
                     RowBox[{
-                    RowBox[{"{", 
+                    RowBox[{"{", "\[IndentingNewLine]", 
+                    RowBox[{
                     RowBox[{
                     "BTools`Private`FrontEnd`loadPackageFailures", "=", 
-                    RowBox[{"{", "}"}]}], "}"}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"{", "}"}]}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"$ContextPath", "=", 
+                    RowBox[{"{", "\"\<System`\>\"", "}"}]}]}], 
+                    "\[IndentingNewLine]", "}"}], ",", "\[IndentingNewLine]", 
+                    
                     RowBox[{
                     RowBox[{"Check", "[", "\[IndentingNewLine]", 
                     RowBox[{
@@ -840,8 +869,9 @@ Cell[BoxData[{
                     RowBox[{"FileBaseName", "@", 
                     RowBox[{"NotebookFileName", "[", "]"}]}]}], "]"}], ";", 
                     "\[IndentingNewLine]", 
-                    RowBox[{"FrontEnd`Private`GetUpdatedSymbolContexts", "[", 
-                    "]"}], ";"}], "\[IndentingNewLine]", ")"}]}]}], 
+                    RowBox[{
+                    "FrontEnd`Private`GetUpdatedSymbolContexts", "[", "]"}], 
+                    ";"}], "\[IndentingNewLine]", ")"}]}]}], 
                     "\[IndentingNewLine]", "}"}]}], "]"}], ",", 
                     "\[IndentingNewLine]", 
                     RowBox[{
@@ -886,9 +916,10 @@ Cell[BoxData[{
                     RowBox[{"Append", "[", "\[IndentingNewLine]", 
                     RowBox[{
                     RowBox[{"Take", "[", "\[IndentingNewLine]", 
-                    RowBox[{"BTools`Private`FrontEnd`loadPackageFailures", 
-                    ",", "\[IndentingNewLine]", "99"}], "\[IndentingNewLine]",
-                     "]"}], ",", "\[IndentingNewLine]", 
+                    RowBox[{
+                    "BTools`Private`FrontEnd`loadPackageFailures", ",", 
+                    "\[IndentingNewLine]", "99"}], "\[IndentingNewLine]", 
+                    "]"}], ",", "\[IndentingNewLine]", 
                     RowBox[{"Skeleton", "[", "\[IndentingNewLine]", 
                     RowBox[{
                     RowBox[{
@@ -994,8 +1025,15 @@ Cell[BoxData[{
                     "FrontEndResourceString", "[", "\"\<PackageHeader\>\"", 
                     "]"}], "=!=", "header"}], ",", "\[IndentingNewLine]", 
                     RowBox[{
-                    RowBox[{"Needs", "[", "\"\<BTools`\>\"", "]"}], ";", 
+                    RowBox[{"Block", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"$ContextPath", "=", 
+                    RowBox[{"{", "\"\<System`\>\"", "}"}]}], "}"}], ",", 
                     "\[IndentingNewLine]", 
+                    RowBox[{"Needs", "[", "\"\<BTools`\>\"", "]"}]}], 
+                    "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", 
+                    
                     RowBox[{"Replace", "[", "\[IndentingNewLine]", 
                     RowBox[{
                     RowBox[{"Names", "[", "\"\<FEAddResource\>\"", "]"}], ",",
@@ -1040,8 +1078,13 @@ Cell[BoxData[{
                  RowBox[{"\"\<UUID\>\"", "\[Rule]", "Automatic"}]}], 
                 "\[IndentingNewLine]", "]"}], ",", "\[IndentingNewLine]", 
                RowBox[{
-                RowBox[{"Needs", "[", "\"\<BTools`\>\"", "]"}], ";", 
-                "\[IndentingNewLine]", 
+                RowBox[{"Block", "[", 
+                 RowBox[{
+                  RowBox[{"{", 
+                   RowBox[{"$ContextPath", "=", 
+                    RowBox[{"{", "\"\<System`\>\"", "}"}]}], "}"}], ",", 
+                  RowBox[{"Needs", "[", "\"\<BTools`\>\"", "]"}]}], "]"}], 
+                ";", "\[IndentingNewLine]", 
                 RowBox[{"Replace", "[", "\[IndentingNewLine]", 
                  RowBox[{
                   RowBox[{"Names", "[", "\"\<GradientButton\>\"", "]"}], ",", 
@@ -1116,9 +1159,24 @@ Cell[BoxData[{
    3.710112981019966*^9, 3.710112994612699*^9}, 3.710173271643364*^9, {
    3.710249135098988*^9, 3.710249179346023*^9}, {3.712927058692286*^9, 
    3.712927367507615*^9}, {3.717868985590184*^9, 3.717868987266685*^9}, {
-   3.719594899705991*^9, 
-   3.7195949005241213`*^9}},ExpressionUUID->"25848e96-07bd-4a72-a68a-\
-eb538031c5c5"]
+   3.719594899705991*^9, 3.7195949005241213`*^9}, {3.721050980489236*^9, 
+   3.721050993358871*^9}, {3.721051040062414*^9, 3.721051083292997*^9}, {
+   3.72105431524149*^9, 3.7210543184714937`*^9}, {3.721054534923957*^9, 
+   3.721054538954318*^9}, {3.721056301960013*^9, 
+   3.721056303629983*^9}},ExpressionUUID->"25848e96-07bd-4a72-a68a-\
+eb538031c5c5"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "Options","optnf",
+   "\"\\!\\(\\*RowBox[{\\\"DockedCells\\\"}]\\) is not a known option for \\!\
+\\(\\*RowBox[{\\\"CellObject\\\"}]\\).\"",2,4,1,27840854215075549891,"Local"},
+  
+  "MessageTemplate"]], "Message", "MSG",
+ CellChangeTimes->{
+  3.721056336948752*^9},ExpressionUUID->"1ad4a1a0-44f3-4696-95db-\
+6b934d15e745"]
+}, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -2284,7 +2342,7 @@ Cell[StyleData["InputSection", StyleDefinitions -> StyleData["Input"]],
 },
 Saveable->True,
 WindowSize->{798, 781},
-WindowMargins->{{165, Automatic}, {Automatic, 0}},
+WindowMargins->{{Automatic, 183}, {-3, Automatic}},
 FrontEndVersion->"11.2 for Mac OS X x86 (32-bit, 64-bit Kernel) (September \
 10, 2017)",
 StyleDefinitions->"PrivateStylesheetFormatting.nb"
@@ -2305,96 +2363,99 @@ Cell[CellGroupData[{
 Cell[764, 26, 157, 3, 49, "Section",ExpressionUUID->"f5bdd7f4-c32f-4375-866c-a347d3a8c5cd"],
 Cell[CellGroupData[{
 Cell[946, 33, 158, 3, 45, "Subsection",ExpressionUUID->"12e5facd-3d52-4381-a19b-6712d90834c2"],
-Cell[1107, 38, 20683, 430, 36, 27, 0, "StyleData", "Notebook", "All",ExpressionUUID->"84f9e714-6bf1-41e1-aaae-3f34913cbef6"],
+Cell[1107, 38, 21498, 441, 36, 27, 0, "StyleData", "Notebook", "All",ExpressionUUID->"84f9e714-6bf1-41e1-aaae-3f34913cbef6"],
 Cell[CellGroupData[{
-Cell[21815, 472, 153, 2, 44, "Subsubsection",ExpressionUUID->"b2f31c29-ec5d-4bbc-93af-85d979fe9aa8"],
-Cell[21971, 476, 758, 14, 157, "Input",ExpressionUUID->"2101fde1-b465-4f8a-97be-dcbc9520323c"],
-Cell[22732, 492, 5442, 110, 871, "Input",ExpressionUUID->"b3aa9973-0857-4baa-88ce-44896149a3af"]
-}, Closed]],
-Cell[CellGroupData[{
-Cell[28211, 607, 164, 3, 28, "Subsubsection",ExpressionUUID->"2f4377c3-5249-4bbc-92bf-a0acb7d421a7"],
-Cell[28378, 612, 317, 7, 30, "Input",ExpressionUUID->"66fb33f2-d0e4-4fd9-8b09-991e1774cf4a"],
-Cell[28698, 621, 26076, 499, 4000, "Input",ExpressionUUID->"25848e96-07bd-4a72-a68a-eb538031c5c5"]
+Cell[22630, 483, 153, 2, 44, "Subsubsection",ExpressionUUID->"b2f31c29-ec5d-4bbc-93af-85d979fe9aa8"],
+Cell[22786, 487, 758, 14, 157, "Input",ExpressionUUID->"2101fde1-b465-4f8a-97be-dcbc9520323c"],
+Cell[23547, 503, 5775, 116, 871, "Input",ExpressionUUID->"b3aa9973-0857-4baa-88ce-44896149a3af"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[54811, 1125, 163, 3, 44, "Subsubsection",ExpressionUUID->"1050a369-2baf-4f51-973d-719e9a07995a"],
-Cell[54977, 1130, 4019, 80, 516, "Input",ExpressionUUID->"8cb393c6-cd15-4e6e-866c-ec6ed300dfb3"]
-}, Closed]],
+Cell[29359, 624, 164, 3, 44, "Subsubsection",ExpressionUUID->"2f4377c3-5249-4bbc-92bf-a0acb7d421a7"],
+Cell[29526, 629, 317, 7, 30, "Input",ExpressionUUID->"66fb33f2-d0e4-4fd9-8b09-991e1774cf4a"],
 Cell[CellGroupData[{
-Cell[59033, 1215, 157, 3, 28, "Subsubsection",ExpressionUUID->"5b932f2a-ff35-4c18-bf43-ca1da2187fb4"],
-Cell[CellGroupData[{
-Cell[59215, 1222, 5277, 114, 766, "Input",ExpressionUUID->"84e582f7-8ed4-4e9a-82a5-d49d892ef3d3"],
-Cell[64495, 1338, 757, 14, 24, "Message",ExpressionUUID->"48b98768-134a-4492-8147-9765e8cc743d"]
-}, Open  ]]
-}, Closed]],
-Cell[CellGroupData[{
-Cell[65301, 1358, 157, 3, 28, "Subsubsection",ExpressionUUID->"0f48b68c-4994-465f-bc9b-f9628e3c24af"],
-Cell[CellGroupData[{
-Cell[65483, 1365, 1009, 20, 199, "Input",ExpressionUUID->"b4a18d8b-448a-4523-8092-723ba18be48f"],
-Cell[66495, 1387, 463, 11, 24, "Message",ExpressionUUID->"5c26f5f4-af51-46bb-b505-adf727552e5c"]
-}, Open  ]]
+Cell[29868, 640, 27437, 526, 4168, "Input",ExpressionUUID->"25848e96-07bd-4a72-a68a-eb538031c5c5"],
+Cell[57308, 1168, 353, 9, 24, "Message",ExpressionUUID->"1ad4a1a0-44f3-4696-95db-6b934d15e745"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[67019, 1405, 158, 3, 45, "Subsection",ExpressionUUID->"4f0deb81-c151-48cd-b66e-5d73e8cb5b87"],
-Cell[67180, 1410, 200, 4, 32, "Input",ExpressionUUID->"0dda4f64-bd5a-4174-ac9f-5b80e569dae6"],
+Cell[57710, 1183, 163, 3, 44, "Subsubsection",ExpressionUUID->"1050a369-2baf-4f51-973d-719e9a07995a"],
+Cell[57876, 1188, 4019, 80, 516, "Input",ExpressionUUID->"8cb393c6-cd15-4e6e-866c-ec6ed300dfb3"]
+}, Closed]],
 Cell[CellGroupData[{
-Cell[67405, 1418, 163, 4, 26, 29, 0, "StyleData", "DockedCell", "All",ExpressionUUID->"c917417a-9be6-4709-a6b5-8ec3b317ed42"],
-Cell[67571, 1424, 707, 18, 117, "Input",ExpressionUUID->"09338fb0-6dde-4761-aadf-921da5af6ed7"]
+Cell[61932, 1273, 157, 3, 28, "Subsubsection",ExpressionUUID->"5b932f2a-ff35-4c18-bf43-ca1da2187fb4"],
+Cell[CellGroupData[{
+Cell[62114, 1280, 5277, 114, 766, "Input",ExpressionUUID->"84e582f7-8ed4-4e9a-82a5-d49d892ef3d3"],
+Cell[67394, 1396, 757, 14, 24, "Message",ExpressionUUID->"48b98768-134a-4492-8147-9765e8cc743d"]
+}, Open  ]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[68200, 1416, 157, 3, 28, "Subsubsection",ExpressionUUID->"0f48b68c-4994-465f-bc9b-f9628e3c24af"],
+Cell[CellGroupData[{
+Cell[68382, 1423, 1009, 20, 199, "Input",ExpressionUUID->"b4a18d8b-448a-4523-8092-723ba18be48f"],
+Cell[69394, 1445, 463, 11, 24, "Message",ExpressionUUID->"5c26f5f4-af51-46bb-b505-adf727552e5c"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[69918, 1463, 158, 3, 45, "Subsection",ExpressionUUID->"4f0deb81-c151-48cd-b66e-5d73e8cb5b87"],
+Cell[70079, 1468, 200, 4, 32, "Input",ExpressionUUID->"0dda4f64-bd5a-4174-ac9f-5b80e569dae6"],
+Cell[CellGroupData[{
+Cell[70304, 1476, 163, 4, 26, 29, 0, "StyleData", "DockedCell", "All",ExpressionUUID->"c917417a-9be6-4709-a6b5-8ec3b317ed42"],
+Cell[70470, 1482, 707, 18, 117, "Input",ExpressionUUID->"09338fb0-6dde-4761-aadf-921da5af6ed7"]
 }, Open  ]]
 }, Closed]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[68339, 1449, 154, 3, 49, "Section",ExpressionUUID->"9e2bc904-61b9-47d8-8cc4-bbd725298a64"],
-Cell[68496, 1454, 102, 1, 113, 24, 0, "StyleData", "Title", "All",ExpressionUUID->"1089f6d0-4ac5-472f-8344-7ad5494d9451",
+Cell[71238, 1507, 154, 3, 49, "Section",ExpressionUUID->"9e2bc904-61b9-47d8-8cc4-bbd725298a64"],
+Cell[71395, 1512, 102, 1, 113, 24, 0, "StyleData", "Title", "All",ExpressionUUID->"1089f6d0-4ac5-472f-8344-7ad5494d9451",
  MenuCommandKey->None],
-Cell[68601, 1457, 104, 1, 84, 26, 0, "StyleData", "Chapter", "All",ExpressionUUID->"7e1e1b26-edb2-487f-ba14-ab6ea39e883f",
+Cell[71500, 1515, 104, 1, 84, 26, 0, "StyleData", "Chapter", "All",ExpressionUUID->"7e1e1b26-edb2-487f-ba14-ab6ea39e883f",
  MenuCommandKey->None],
-Cell[68708, 1460, 107, 1, 63, 29, 0, "StyleData", "Subchapter", "All",ExpressionUUID->"996f8c91-cc89-40d2-951c-16a32f5b32aa",
+Cell[71607, 1518, 107, 1, 63, 29, 0, "StyleData", "Subchapter", "All",ExpressionUUID->"996f8c91-cc89-40d2-951c-16a32f5b32aa",
  MenuCommandKey->None],
 Cell[CellGroupData[{
-Cell[68840, 1465, 152, 3, 29, "Subsection",ExpressionUUID->"3fc6d099-96f2-43e4-b025-e699521cff38"],
-Cell[68995, 1470, 2855, 66, 84, 72, 0, "StyleData", "CodeChapter", "All",ExpressionUUID->"9e9a7ae6-a4a9-486a-a5ad-cf6ecac3a47c",
+Cell[71739, 1523, 152, 3, 29, "Subsection",ExpressionUUID->"3fc6d099-96f2-43e4-b025-e699521cff38"],
+Cell[71894, 1528, 2855, 66, 84, 72, 0, "StyleData", "CodeChapter", "All",ExpressionUUID->"9e9a7ae6-a4a9-486a-a5ad-cf6ecac3a47c",
  MenuSortingValue->1175,
  MenuCommandKey->None],
-Cell[71853, 1538, 3393, 85, 68, 72, 0, "StyleData", "CodeSection", "All",ExpressionUUID->"18eae9d3-38b8-4cb1-83d4-619335d2ef9c",
+Cell[74752, 1596, 3393, 85, 68, 72, 0, "StyleData", "CodeSection", "All",ExpressionUUID->"18eae9d3-38b8-4cb1-83d4-619335d2ef9c",
  MenuSortingValue->1255,
  MenuCommandKey->"4"],
-Cell[75249, 1625, 2845, 65, 53, 78, 0, "StyleData", "CodeSubsection", "All",ExpressionUUID->"0099bbb4-a799-4619-80c8-bc65cc030088",
+Cell[78148, 1683, 2845, 65, 53, 78, 0, "StyleData", "CodeSubsection", "All",ExpressionUUID->"0099bbb4-a799-4619-80c8-bc65cc030088",
  MenuSortingValue->1305,
  MenuCommandKey->"5"],
-Cell[78097, 1692, 2879, 67, 52, 86, 1, "StyleData", "CodeSubsubsection", "All",ExpressionUUID->"4dac8274-e8b1-44bb-8361-732a61e94f68",
+Cell[80996, 1750, 2879, 67, 52, 86, 1, "StyleData", "CodeSubsubsection", "All",ExpressionUUID->"4dac8274-e8b1-44bb-8361-732a61e94f68",
  MenuSortingValue->1105,
  MenuCommandKey->"6"],
-Cell[80979, 1761, 2814, 67, 41, 92, 1, "StyleData", "CodeSubsubsubsection", "All",ExpressionUUID->"0b54436f-4873-49cd-b34b-b841c64c1f8b",
+Cell[83878, 1819, 2814, 67, 41, 92, 1, "StyleData", "CodeSubsubsubsection", "All",ExpressionUUID->"0b54436f-4873-49cd-b34b-b841c64c1f8b",
  MenuSortingValue->1355],
-Cell[83796, 1830, 1192, 28, 38, 75, 0, "StyleData", "CodeInput", "All",ExpressionUUID->"adc61932-d0a8-4d56-ab2c-969b0a7778f9",
+Cell[86695, 1888, 1192, 28, 38, 75, 0, "StyleData", "CodeInput", "All",ExpressionUUID->"adc61932-d0a8-4d56-ab2c-969b0a7778f9",
  MenuSortingValue->1800],
-Cell[84991, 1860, 221, 5, 30, "Input",ExpressionUUID->"505ee7be-46d4-48c8-b641-20c3052bc2f0"],
-Cell[85215, 1867, 347, 8, 73, "Input",ExpressionUUID->"3b5fdce2-d08b-4be4-80b3-385202785a45"],
-Cell[85565, 1877, 12543, 254, 2194, "Input",ExpressionUUID->"c07fe1cd-fa1d-431e-ab43-02cc11dc5c64"]
+Cell[87890, 1918, 221, 5, 30, "Input",ExpressionUUID->"505ee7be-46d4-48c8-b641-20c3052bc2f0"],
+Cell[88114, 1925, 347, 8, 73, "Input",ExpressionUUID->"3b5fdce2-d08b-4be4-80b3-385202785a45"],
+Cell[88464, 1935, 12543, 254, 2194, "Input",ExpressionUUID->"c07fe1cd-fa1d-431e-ab43-02cc11dc5c64"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[98145, 2136, 151, 2, 45, "Subsection",ExpressionUUID->"bce24076-dd81-4b02-b6cb-ceb00cb0fd3a"],
-Cell[98299, 2140, 132, 2, 82, 26, 0, "StyleData", "Section", "All",ExpressionUUID->"a365b0a8-6701-4b30-8e93-2213c7766f65",
+Cell[101044, 2194, 151, 2, 45, "Subsection",ExpressionUUID->"bce24076-dd81-4b02-b6cb-ceb00cb0fd3a"],
+Cell[101198, 2198, 132, 2, 82, 26, 0, "StyleData", "Section", "All",ExpressionUUID->"a365b0a8-6701-4b30-8e93-2213c7766f65",
  MenuCommandKey->"1"],
-Cell[98434, 2144, 130, 2, 53, 29, 0, "StyleData", "Subsection", "All",ExpressionUUID->"ab8b1d5a-8bea-4ef0-9cee-80e1835484e6",
+Cell[101333, 2202, 130, 2, 53, 29, 0, "StyleData", "Subsection", "All",ExpressionUUID->"ab8b1d5a-8bea-4ef0-9cee-80e1835484e6",
  MenuCommandKey->"2"],
-Cell[98567, 2148, 153, 3, 52, 32, 0, "StyleData", "Subsubsection", "All",ExpressionUUID->"3b7301ac-ee34-4d39-a42e-08a27aa2ee39",
+Cell[101466, 2206, 153, 3, 52, 32, 0, "StyleData", "Subsubsection", "All",ExpressionUUID->"3b7301ac-ee34-4d39-a42e-08a27aa2ee39",
  MenuCommandKey->"3"],
-Cell[98723, 2153, 101, 1, 58, 23, 0, "StyleData", "Code", "All",ExpressionUUID->"8c2918dd-dcd9-4389-b82f-0fa6ff6bba6a",
+Cell[101622, 2211, 101, 1, 58, 23, 0, "StyleData", "Code", "All",ExpressionUUID->"8c2918dd-dcd9-4389-b82f-0fa6ff6bba6a",
  MenuCommandKey->None],
-Cell[98827, 2156, 493, 13, 32, 72, 0, "StyleData", "CodeSeparator", "All",ExpressionUUID->"89f0f5f2-5de9-4ef4-b365-901008cd6182"],
-Cell[99323, 2171, 2640, 63, 50, 23, 0, "StyleData", "Text", "All",ExpressionUUID->"9f442af2-60d7-4b47-8959-06f985d35690"],
-Cell[101966, 2236, 141, 3, 42, 24, 0, "StyleData", "Input", "All",ExpressionUUID->"fc9fc4f7-37e7-4927-be64-eecf66bdff41"]
+Cell[101726, 2214, 493, 13, 32, 72, 0, "StyleData", "CodeSeparator", "All",ExpressionUUID->"89f0f5f2-5de9-4ef4-b365-901008cd6182"],
+Cell[102222, 2229, 2640, 63, 50, 23, 0, "StyleData", "Text", "All",ExpressionUUID->"9f442af2-60d7-4b47-8959-06f985d35690"],
+Cell[104865, 2294, 141, 3, 42, 24, 0, "StyleData", "Input", "All",ExpressionUUID->"fc9fc4f7-37e7-4927-be64-eecf66bdff41"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[102144, 2244, 154, 3, 45, "Subsection",ExpressionUUID->"f8e27281-b2a7-4f27-a113-e22483e214be"],
-Cell[102301, 2249, 427, 11, 56, 55, 0, "StyleData", "SectionSeparator", "All",ExpressionUUID->"6d846264-367a-464a-ba31-06c778eefca0",
+Cell[105043, 2302, 154, 3, 45, "Subsection",ExpressionUUID->"f8e27281-b2a7-4f27-a113-e22483e214be"],
+Cell[105200, 2307, 427, 11, 56, 55, 0, "StyleData", "SectionSeparator", "All",ExpressionUUID->"6d846264-367a-464a-ba31-06c778eefca0",
  MenuCommandKey->"8"],
-Cell[102731, 2262, 364, 8, 72, 71, 0, "StyleData", "InputChapter", "All",ExpressionUUID->"e13087ed-9b09-49a6-8190-f2429b70ff07",
+Cell[105630, 2320, 364, 8, 72, 71, 0, "StyleData", "InputChapter", "All",ExpressionUUID->"e13087ed-9b09-49a6-8190-f2429b70ff07",
  MenuSortingValue->1575],
-Cell[103098, 2272, 363, 8, 59, 71, 0, "StyleData", "InputSection", "All",ExpressionUUID->"c69eab36-eec5-4946-8740-df0081cefe12",
+Cell[105997, 2330, 363, 8, 59, 71, 0, "StyleData", "InputSection", "All",ExpressionUUID->"c69eab36-eec5-4946-8740-df0081cefe12",
  MenuSortingValue->1590]
 }, Open  ]]
 }, Open  ]]

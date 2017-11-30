@@ -19,6 +19,14 @@
 
 
 
+PackageScopeBlock[
+	$EncodedCacheDefaultOptions::usage="";
+	EncodedCacheOption::usage="";
+	EncodedCachePassword::usage="";
+	$EncodedCachePasswords::usage="";
+	];
+
+
 EncodedCache::usage=
 	"An object representing an encoded Association";
 EncodedCacheLoad::usage=
@@ -64,6 +72,11 @@ $KeyChainCloudAccounts::usage=
 
 
 Begin["`Private`"];
+
+
+(* ::Subsection:: *)
+(*Options*)
+
 
 
 $EncodedCacheDefaultOptions=
@@ -202,6 +215,11 @@ EncodedCacheOptionsExport[spec_?StringQ]:=
 		)
 
 
+(* ::Subsection:: *)
+(*Password*)
+
+
+
 If[!AssociationQ@$EncodedCachePasswords,
 	$EncodedCachePasswords=
 		<|
@@ -329,6 +347,11 @@ EncodedCachePasswordExport[spec_?StringQ]:=
 		]
 
 
+(* ::Subsection:: *)
+(*Cache*)
+
+
+
 If[!AssociationQ@$EncodedCaches,
 	$EncodedCaches=
 		<|
@@ -391,9 +414,12 @@ EncodedCacheLoad[(spec_?StringQ)?(KeyMemberQ[$EncodedCacheOptions,#]&)]:=
 					Replace[
 						Nest[
 							If[!AssociationQ@#,
-								Check[
-									Get[file,EncodedCachePassword[spec]],
-									EncodedCachePassword[spec]=.,
+								Quiet[
+									Check[
+										Get[file, EncodedCachePassword[spec]],
+										EncodedCachePassword[spec]=.,
+										Get::enkey
+										],
 									Get::enkey
 									],
 								#
@@ -605,6 +631,11 @@ EncodedCache/:
 EncodedCache/:
 	DeleteFile[EncodedCache[spec_?StringQ]]:=
 		DeleteFile@EncodedCacheFile[spec];
+
+
+(* ::Subsection:: *)
+(*Default*)
+
 
 
 If[!ValueQ@$EncodedCacheDefaultKey,

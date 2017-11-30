@@ -571,7 +571,7 @@ PacletServerInterface[
 			SortBy[
 				{
 					Lookup[#,"Name"],
-					100000+-ToExpression@StringSplit[Lookup[#,"Version"],"."]
+					100000+-ToExpression@StringSplit[Lookup[#, "Version", "1.0.0"],"."]
 					}&
 				]@Normal@siteDS,
 		site=
