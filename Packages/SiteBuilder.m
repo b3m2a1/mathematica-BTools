@@ -1444,36 +1444,46 @@ WebSiteBuild[
 				Monitor->OptionValue[Monitor]
 				]
 			];
-		Replace[OptionValue["CopyContent"],{
-			True|Automatic:>
-				WebSiteCopyContent[dir,outDir,Automatic,
-					Monitor->OptionValue[Monitor]
-					],
-			p:Except[False|None]:>
-				WebSiteCopyContent[dir,outDir,p,
-					Monitor->OptionValue[Monitor]
-					]
-			}];
-		Block[{
-			$ContentStack=<||>,
-			genCont:=
-				Replace[OptionValue["GenerateContent"],
-					Automatic:>
-						Lookup[config,"GenerateContent", Automatic]
-					],
-			genAggs:=
-				Replace[OptionValue["GenerateAggregations"],
-					Automatic:>
-						Lookup[config,"GenerateAggregations", genCont]
-					],
-			genInd:=
-				Replace[OptionValue["GenerateIndex"],
-					Automatic:>
-						Lookup[config,"GenerateIndex",genCont]
-					],
-			newconf=
-				KeyDrop[config,{"GenerateContent","GenerateAggregations","GenerateIndex"}]
-			},
+		Replace[OptionValue["CopyContent"],
+			{
+				True|Automatic:>
+					WebSiteCopyContent[dir,outDir,Automatic,
+						Monitor->OptionValue[Monitor]
+						],
+				p:Except[False|None]:>
+					WebSiteCopyContent[dir,outDir,p,
+						Monitor->OptionValue[Monitor]
+						]
+				}
+			];
+		Block[
+			{
+				$ContentStack=
+					<||>,
+				genCont:=
+					Replace[OptionValue["GenerateContent"],
+						Automatic:>
+							Lookup[config,"GenerateContent", Automatic]
+						],
+				genAggs:=
+					Replace[OptionValue["GenerateAggregations"],
+						Automatic:>
+							Lookup[config,"GenerateAggregations", genCont]
+						],
+				genInd:=
+					Replace[OptionValue["GenerateIndex"],
+						Automatic:>
+							Lookup[config,"GenerateIndex",genCont]
+						],
+				newconf=
+					KeyDrop[config,
+						{
+							"GenerateContent",
+							"GenerateAggregations",
+							"GenerateIndex"
+							}
+						]
+				},
 			If[AnyTrue[{genCont,genAggs,genInd},TrueQ],
 				WebSiteExtractPageData[ExpandFileName@dir,fileNames,newconf,
 					Monitor->OptionValue[Monitor]
@@ -1609,7 +1619,7 @@ webSiteDeployFile[f_, uri_, outDir_, trueDir_, stripDirs_, ops___?OptionQ]:=
 							]
 					}
 		},
-		If[StringEndsQ[url,"/index.html"],
+		If[StringQ@url&&StringEndsQ[url,"/index.html"],
 			(* since /index.html isn't supported in the cloud *)
 			CopyFile[
 					f,
@@ -1622,7 +1632,7 @@ webSiteDeployFile[f_, uri_, outDir_, trueDir_, stripDirs_, ops___?OptionQ]:=
 						]
 					]
 			];
-		Take[#, 1]&@
+		Replace[CloudObject[c_, ___]:>CloudObject[c]]@
 			CopyFile[
 				f,
 				CloudObject[

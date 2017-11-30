@@ -1804,6 +1804,32 @@ PacletServerGitHubRepo[server_, password_:None]:=
 
 
 
+$PacletServerDefaultREADMEText="
+### Paclet Server 
+
+## About
+
+This is a Mathematica paclet server.
+
+It hosts paclets that can be installed directly into Mathematica.
+
+## Installation:
+
+To install a paclet, use the following:
+
+    PacletInstall[\"paclet_name\",
+     \"Site\"->\"http://raw.githubusercontent.com/<user_name>/<repo_name>\"
+     ]
+
+To update a paclet, use the following:
+
+    PacletUpdate[\"paclet_name\",
+     \"Site\"->\"http://raw.githubusercontent.com/<user_name>/<repo_name>\"
+     ]
+
+";
+
+
 $PacletServerREADMEText:=
 	$PacletServerREADMEText=
 		Replace[
@@ -1813,13 +1839,7 @@ $PacletServerREADMEText:=
 					"Text"
 					],
 			Except[_String]->
-				"
-### Paclet Server 
-
-This is a mathematica paclet server.
-It hosts paclets that can be installed directly into Mathematica.
-
-"
+				$PacletServerDefaultREADMEText
 			];
 
 
