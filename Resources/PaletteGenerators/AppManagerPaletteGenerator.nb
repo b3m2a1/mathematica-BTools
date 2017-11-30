@@ -318,31 +318,59 @@ Cell[BoxData[{
   RowBox[{
    RowBox[{"paletteButton", "[", 
     RowBox[{"lbl_", ",", "cmd_", ",", "ops___"}], "]"}], ":=", "\n", "\t", 
-   RowBox[{"With", "[", 
+   RowBox[{"With", "[", "\n", "\t\t", 
     RowBox[{
-     RowBox[{"{", 
-      RowBox[{"uuid", "=", 
-       RowBox[{"CreateUUID", "[", "]"}]}], "}"}], ",", "\n", "\t\t", 
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"uuid", "=", 
+        RowBox[{"CreateUUID", "[", "]"}]}], ",", "\n", "\t", "\t\t", 
+       RowBox[{"nab", "=", 
+        RowBox[{"Lookup", "[", 
+         RowBox[{
+          RowBox[{"{", "ops", "}"}], ",", " ", "Enabled", ",", " ", "True"}], 
+         "]"}]}]}], "\n", "\t", "\t\t", "}"}], ",", "\n", "\t\t", 
      RowBox[{
       RowBox[{"GradientButton", "[", "\n", "\t\t\t", 
        RowBox[{
-        RowBox[{"Style", "[", 
-         RowBox[{"lbl", ",", 
-          RowBox[{"GrayLevel", "[", ".2", "]"}]}], "]"}], ",", "\n", "\t\t\t", 
-        RowBox[{
-         RowBox[{
-          RowBox[{"paletteButtonRunning", "[", "uuid", "]"}], "=", "True"}], 
-         ";", "\n", "\t\t\t", 
-         RowBox[{"Needs", "[", "\"\<BTools`\>\"", "]"}], ";", "\n", "\t\t\t", 
-         
-         RowBox[{"CheckAbort", "[", 
-          RowBox[{"cmd", ",", 
+        RowBox[{"Replace", "[", 
+         RowBox[{"nab", ",", "\n", "\t\t\t\t", 
+          RowBox[{"{", "\n", "\t\t\t\t\t", 
            RowBox[{
-            RowBox[{"paletteButtonRunning", "[", "uuid", "]"}], "=", 
-            "False"}]}], "]"}], ";", "\n", "\t\t\t", 
-         RowBox[{
-          RowBox[{"paletteButtonRunning", "[", "uuid", "]"}], "=", 
-          "False"}]}], ",", "\n", "\t\t\t", "ops", ",", "\n", "\t\t\t", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"Verbatim", "[", "Dynamic", "]"}], "[", 
+              RowBox[{"d_", ",", "e___"}], "]"}], ":>", "\n", "\t\t\t\t\t\t", 
+             
+             RowBox[{"Dynamic", "[", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"If", "[", 
+                RowBox[{
+                 RowBox[{"d", "===", "False"}], ",", " ", "\n", 
+                 "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"Style", "[", 
+                  RowBox[{"lbl", ",", " ", 
+                   RowBox[{"GrayLevel", "[", ".5", "]"}]}], "]"}], ",", "\n", 
+                 "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"Style", "[", 
+                  RowBox[{"lbl", ",", " ", 
+                   RowBox[{"GrayLevel", "[", ".2", "]"}]}], "]"}]}], "\n", 
+                "\t\t\t\t\t\t\t\t", "]"}], ",", " ", "\n", "\t\t\t\t\t\t\t", 
+               "e"}], "\n", "\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"False", "->", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"Style", "[", 
+              RowBox[{"lbl", ",", " ", 
+               RowBox[{"GrayLevel", "[", ".5", "]"}]}], "]"}]}], ",", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"_", "->", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"Style", "[", 
+              RowBox[{"lbl", ",", " ", 
+               RowBox[{"GrayLevel", "[", ".2", "]"}]}], "]"}]}]}], "\n", 
+           "\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t", "]"}], ",", "\n", 
+        "\t\t\t", 
+        RowBox[{
+         RowBox[{"Needs", "[", "\"\<BTools`\>\"", "]"}], ";", "\n", "\t\t\t", 
+         "cmd"}], ",", "\n", "\t\t\t", "ops", ",", "\n", "\t\t\t", 
         RowBox[{"Method", "\[Rule]", "\"\<Queued\>\""}], ",", "\n", "\t\t\t", 
         
         RowBox[{"\"\<UUID\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t\t\t", 
@@ -388,7 +416,8 @@ Cell[BoxData[{
    3.701569117599359*^9, 3.701569248946108*^9}, {3.7017958693716516`*^9, 
    3.701795880097451*^9}, {3.7017993333491583`*^9, 3.7017993391496058`*^9}, {
    3.7025968865816917`*^9, 3.7025968903911753`*^9}, {3.705193515047269*^9, 
-   3.7051935190376043`*^9}},ExpressionUUID->"a3c05dc1-824b-4bff-b566-\
+   3.7051935190376043`*^9}, {3.721002564815364*^9, 
+   3.7210025945151453`*^9}},ExpressionUUID->"a3c05dc1-824b-4bff-b566-\
 39e2fec58faa"],
 
 Cell[BoxData[{
@@ -1072,7 +1101,6 @@ Cell[BoxData[
                  RowBox[{"Riffle", "[", 
                   RowBox[{
                    RowBox[{"FileNameSplit", "@", "#"}], ",", 
-                   
                    "\"\<\[VeryThinSpace]\[RightGuillemet]\[VeryThinSpace]\>\"\
 "}], "]"}]}], "&"}], "@", "\n", "\t", "\t\t\t\t\t\t", 
                RowBox[{"FileNameDrop", "[", "\n", "\t", "\t\t\t\t\t\t\t", 
@@ -1165,7 +1193,7 @@ Cell[BoxData[
    3.7206624039379387`*^9, 3.720662403949654*^9}, {3.7206626635212097`*^9, 
    3.720662677065818*^9}},ExpressionUUID->"19aa9214-1658-4fa1-b555-\
 0179cd9b7e3e"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -1268,7 +1296,7 @@ Cell[BoxData[
    3.720662403954892*^9, 3.720662403959741*^9}, {3.720662663541026*^9, 
    3.720662677077314*^9}},ExpressionUUID->"aa97503d-e643-4bd8-b186-\
 74c906483bfe"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -1361,7 +1389,7 @@ Cell[BoxData[
   3.720662412604755*^9}, {3.720662663551384*^9, 
   3.720662677095245*^9}},ExpressionUUID->"24875b4c-119a-467b-b442-\
 552abe1e30a9"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -1462,7 +1490,7 @@ Cell[BoxData[
    3.720662663569173*^9, 
    3.7206626771132298`*^9}},ExpressionUUID->"bbaad61d-0c7f-43bd-9554-\
 3687be8f2797"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -1511,7 +1539,7 @@ Cell[BoxData[
    3.720662663588037*^9, 
    3.720662676556799*^9}},ExpressionUUID->"f53658f7-fcc8-45c7-823a-\
 4cdfe155b29f"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -1551,36 +1579,28 @@ Cell[BoxData[
         RowBox[{"With", "[", 
          RowBox[{
           RowBox[{"{", 
-           RowBox[{"doc", "=", "\n", "\t\t\t\t", 
-            RowBox[{"CreateDocument", "[", "\n", "\t\t\t\t\t", 
-             RowBox[{
-              RowBox[{"Cell", "[", 
-               RowBox[{
-                RowBox[{"RowBox", "@", 
-                 RowBox[{"{", 
-                  RowBox[{
-                  "\"\<<|\>\"", ",", "\n", "\t", "\t", "\t\t\t\t", 
-                   "\"\<\\n\>\"", ",", "\"\<\\n\>\"", ",", "\n", "\t", "\t", 
-                   "\t\t\t\t", "\"\<\\t|>\>\""}], "}"}]}], ",", 
-                "\"\<Code\>\""}], "]"}], ",", "\n", "\t", "\t", "\t\t\t", 
-              RowBox[{"StyleDefinitions", "\[Rule]", "\"\<Package.nb\>\""}]}],
-              "]"}]}], "}"}], ",", "\n", "\t\t\t\t", 
+           RowBox[{"old", "=", 
+            RowBox[{"Notebooks", "[", "]"}]}], "}"}], ",", "\n", "\t\t\t\t", 
           RowBox[{
-           RowBox[{"whichPacF", "[", "\"\<MakeIndentable\>\"", "]"}], "[", 
-           RowBox[{"doc", ",", "\"\<Code\>\""}], "]"}]}], "\n", "\t\t\t\t", 
-         "]"}]}], ",", "\n", "\t\t", 
+           RowBox[{"FrontEndTokenExecute", "[", "\"\<NewPackage\>\"", "]"}], 
+           ";", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"whichPacF", "[", "\"\<MakeIndentable\>\"", "]"}], "[", 
+            "\n", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"First", "@", 
+              RowBox[{"DeleteCases", "[", 
+               RowBox[{
+                RowBox[{"Notebooks", "[", "]"}], ",", " ", 
+                RowBox[{"Alternatives", "@@", "old"}]}], "]"}]}], ",", "\n", 
+             "\t\t\t\t\t", "\"\<Code\>\""}], "\n", "\t\t\t\t\t", "]"}]}]}], 
+         "\n", "\t\t\t\t", "]"}]}], ",", "\n", "\t\t", 
        RowBox[{"\"\<Text\>\"", ":>", "\n", "\t\t\t", 
-        RowBox[{"CreateDocument", "[", 
-         RowBox[{
-          RowBox[{"{", "}"}], ",", "\n", "\t\t\t\t", 
-          RowBox[{"StyleDefinitions", "\[Rule]", "\"\<Notepad.nb\>\""}]}], 
-         "]"}]}], ",", "\n", "\t\t", 
+        RowBox[{"FrontEndTokenExecute", "[", "\"\<NewText\>\"", "]"}]}], ",", 
+       "\n", "\t\t", 
        RowBox[{"\"\<Script\>\"", ":>", "\n", "\t\t\t", 
-        RowBox[{"CreateDocument", "[", 
-         RowBox[{
-          RowBox[{"{", "}"}], ",", "\n", "\t\t\t\t", 
-          RowBox[{"StyleDefinitions", "\[Rule]", "\"\<Script.nb\>\""}]}], 
-         "]"}]}], ",", "\n", "\t\t", 
+        RowBox[{"FrontEndTokenExecute", "[", "\"\<NewScript\>\"", "]"}]}], 
+       ",", "\n", "\t\t", 
        RowBox[{"\"\<Palette\>\"", ":>", "\n", "\t\t\t", 
         RowBox[{
          RowBox[{"whichPacF", "[", "\"\<PaletteTemplateNotebook\>\"", "]"}], 
@@ -1589,30 +1609,60 @@ Cell[BoxData[
         RowBox[{
          RowBox[{"whichPacF", "[", "\"\<HTMLTemplateNotebook\>\"", "]"}], "[",
           "]"}]}], ",", "\n", "\t\t", 
-       RowBox[{"\"\<Service\>\"", "\[RuleDelayed]", 
-        RowBox[{"(", "\n", "\t\t\t", 
-         RowBox[{"System`CellFrameStyle", ";", "\n", "\t\t\t", 
-          RowBox[{"CreateDocument", "@", "\n", "\t\t\t\t", 
-           RowBox[{"Import", "@", "\n", "\t\t\t\t\t", 
+       RowBox[{"\"\<Service\>\"", "\[RuleDelayed]", "\n", "\t\t\t", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"FileExistsQ", "@", 
+           RowBox[{
+            RowBox[{"whichPacF", "[", "\"\<AppPath\>\"", "]"}], "[", 
             RowBox[{
-             RowBox[{"whichPacF", "[", "\"\<AppPath\>\"", "]"}], "[", 
+            "$appName", ",", " ", "\"\<Resources\>\"", ",", 
+             "\"\<Templates\>\"", ",", "\n", "\t\t\t\t\t\t", 
+             "\"\<ServiceConnectionTemplate.nb\>\""}], "]"}]}], ",", "\n", 
+          "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Off", "[", 
+            RowBox[{"General", "::", "shdw"}], "]"}], ";", "\n", "\t\t\t\t", 
+           "System`CellFrameStyle", ";", "\n", "\t\t\t\t", 
+           RowBox[{"On", "[", 
+            RowBox[{"General", "::", "shdw"}], "]"}], ";", "\n", "\t\t\t\t", 
+           RowBox[{"CreateDocument", "@", "\n", "\t\t\t\t\t", 
+            RowBox[{"Import", "@", "\n", "\t", "\t\t\t\t\t", 
              RowBox[{
-             "$appName", ",", " ", "\"\<Resources\>\"", ",", 
-              "\"\<Templates\>\"", ",", "\n", "\t\t\t\t\t\t", 
-              "\"\<ServiceConnectionTemplate.nb\>\""}], "]"}]}]}]}], "\n", 
-         "\t\t\t", ")"}]}], ",", "\n", "\t\t", 
-       RowBox[{"\"\<Curated Data\>\"", "\[RuleDelayed]", 
-        RowBox[{"(", "\n", "\t\t\t", 
-         RowBox[{"System`CellFrameStyle", ";", "\n", "\t\t\t", 
-          RowBox[{"CreateDocument", "@", "\n", "\t\t\t\t", 
-           RowBox[{"Import", "@", "\n", "\t\t\t\t\t", 
+              RowBox[{"whichPacF", "[", "\"\<AppPath\>\"", "]"}], "[", 
+              RowBox[{
+              "$appName", ",", " ", "\"\<Resources\>\"", ",", 
+               "\"\<Templates\>\"", ",", "\n", "\t", "\t\t\t\t\t\t", 
+               "\"\<ServiceConnectionTemplate.nb\>\""}], "\n", 
+              "\t\t\t\t\t\t\t", "]"}]}]}]}]}], "\n", "\t\t\t\t", "]"}]}], ",",
+        "\n", "\t\t", 
+       RowBox[{"\"\<Curated Data\>\"", "\[RuleDelayed]", "\n", "\t\t\t", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"FileExistsQ", "@", 
+           RowBox[{
+            RowBox[{"whichPacF", "[", "\"\<AppPath\>\"", "]"}], "[", 
             RowBox[{
-             RowBox[{"whichPacF", "[", "\"\<AppPath\>\"", "]"}], "[", 
+            "$appName", ",", " ", "\"\<Resources\>\"", ",", 
+             "\"\<Templates\>\"", ",", "\n", "\t\t\t\t\t\t", 
+             "\"\<CuratedDataTemplate.nb\>\""}], "]"}]}], ",", "\n", 
+          "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Off", "[", 
+            RowBox[{"General", "::", "shdw"}], "]"}], ";", "\n", "\t\t\t\t", 
+           "System`CellFrameStyle", ";", "\n", "\t\t\t\t", 
+           RowBox[{"On", "[", 
+            RowBox[{"General", "::", "shdw"}], "]"}], ";", "\n", "\t\t\t\t", 
+           RowBox[{"CreateDocument", "@", "\n", "\t\t\t\t\t", 
+            RowBox[{"Import", "@", "\n", "\t", "\t\t\t\t\t", 
              RowBox[{
-             "$appName", ",", "\"\<Resources\>\"", ",", "\"\<Templates\>\"", 
-              ",", "\n", "\t\t\t\t\t\t", "\"\<CuratedDataTemplate.nb\>\""}], 
-             "]"}]}]}]}], "\n", "\t\t\t", ")"}]}]}], "\n", "\t\t", "}"}]}], 
-    "]"}]}], ";"}]], "CodeInput",
+              RowBox[{"whichPacF", "[", "\"\<AppPath\>\"", "]"}], "[", 
+              RowBox[{
+              "$appName", ",", " ", "\"\<Resources\>\"", ",", 
+               "\"\<Templates\>\"", ",", "\n", "\t\t\t\t\t\t\t", 
+               "\"\<CuratedDataTemplate.nb\>\""}], "\n", "\t\t\t\t\t\t\t", 
+              "]"}]}]}]}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t", 
+      "}"}]}], "]"}]}], ";"}]], "CodeInput",
  CellChangeTimes->{{3.701191110928351*^9, 3.701191309893293*^9}, {
    3.701191444861547*^9, 3.7011914701197023`*^9}, {3.701191500486361*^9, 
    3.701191558340555*^9}, {3.701191824802704*^9, 3.7011918400675917`*^9}, {
@@ -1630,7 +1680,9 @@ Cell[BoxData[
    3.712967250631269*^9, 3.712967255642048*^9}, {3.720662412632225*^9, 
    3.7206624126397057`*^9}, {3.7206626282688627`*^9, 3.72066267659192*^9}, {
    3.720662776657565*^9, 3.7206627896286907`*^9}, {3.720663391651689*^9, 
-   3.7206634164637938`*^9}},ExpressionUUID->"44a852ca-74ee-49bd-848b-\
+   3.7206634164637938`*^9}, {3.7210028825334473`*^9, 3.721003010471178*^9}, {
+   3.721003068629978*^9, 
+   3.721003101208274*^9}},ExpressionUUID->"44a852ca-74ee-49bd-848b-\
 1eae91d5487c"]
 }, Open  ]],
 
@@ -1888,8 +1940,7 @@ Cell[BoxData[
                     "___", ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{
                     "Cell", "[", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "StyleData", "[", "\n", 
+                    RowBox[{"StyleData", "[", "\n", 
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"StyleDefinitions", "->", "\"\<Notepad.nb\>\""}], 
                     "]"}], "]"}], ",", "\n", 
@@ -2252,7 +2303,7 @@ Cell[BoxData[
    3.701568963707309*^9, 3.701569031763523*^9}, 
    3.701656345902313*^9},ExpressionUUID->"5d43e4b6-f1a4-4114-adfe-\
 edaea4024c53"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -5856,7 +5907,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"62675c9c-ff56-4c92-9d30-\
 ee72bc7e91d8"]
 },
 WindowSize->{796, 833},
-WindowMargins->{{216, Automatic}, {Automatic, 0}},
+WindowMargins->{{23, Automatic}, {-2, Automatic}},
 FrontEndVersion->"11.2 for Mac OS X x86 (32-bit, 64-bit Kernel) (September \
 10, 2017)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodeNotebook.nb", 

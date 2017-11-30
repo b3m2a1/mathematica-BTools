@@ -46,6 +46,11 @@ PackageScopeBlock[
 	PacletServerInitialize::usage="";
 	PacletServerDelete::usage=
 		"Deletes a paclet server";
+	PacletServerGitInitialize::usage=
+		"Initializes a git repo for a server";
+	PacletServerGitHubPush::usage=
+		"Pushes a Git repo server to GitHub";
+	PacletServerGitHubRepoExistsQ::usage="";
 	]
 
 
@@ -1558,7 +1563,7 @@ PacletServerBuild[
 			If[TrueQ@OptionValue["BuildSite"],
 				WebSiteBuild[
 					PacletServerDirectory[server],
-					"AutoDeploy"->False,
+					"AutoDeploy"->False,	
 					"Configuration"->
 						With[
 							{
@@ -1600,13 +1605,27 @@ PacletServerBuild[
 							],
 					Sequence@@
 						FilterRules[
-							FilterRules[{ops},
+							FilterRules[
+							{
+								ops,
+								"OutputDirectory"->
+									If[GitRepoQ@PacletServerDirectory[server],
+										"docs",
+										Automatic
+										]
+								},
 								Options@WebSiteBuild
 								],
 							Except["AutoDeploy"]
 							]
 					],
-				Quiet@CreateDirectory@PacletServerFile[server, "output"];
+				Quiet@CreateDirectory@
+					PacletServerFile[server,
+						If[GitRepoQ@PacletServerDirectory[server],
+							 "output",
+							 "docs"
+								]
+						];
 				PacletServerFile[server, "output"]
 				]
 			},
@@ -1661,8 +1680,16 @@ PacletServerDeploy[
 	ops:OptionsPattern[]
 	]:=
 	If[
-		DirectoryQ@PacletServerFile[server, "output"]||
-			DirectoryQ@PacletServerFile[server, "Paclets"],
+		DirectoryQ@PacletServerFile[server, "Paclets"]||
+			DirectoryQ@
+				Replace[OptionValue["OutputDirectory"],
+					{
+						Automatic:>
+							PacletServerFile[server, "output"],
+						s_String?(Not@*DirectoryQ):>
+							PacletServerFile[server, s]
+						}
+					],
 		With[
 			{
 				baseConfig=
@@ -1674,9 +1701,15 @@ PacletServerDeploy[
 						{}
 						]
 				},
-				If[!DirectoryQ@PacletServerFile[server, "output"],
-					CreateDirectory@PacletServerFile[server, "output"]
-					];
+				If[!DirectoryQ@#,
+					CreateDirectory@#
+					]&@
+					PacletServerFile[server,
+						If[GitRepoQ@PacletServerDirectory[server],
+							 "output",
+							 "docs"
+								]
+						];
 				WebSiteDeploy[
 					PacletServerFile[server, "output"],
 					Lookup[server, "ServerName"],
@@ -1701,7 +1734,12 @@ PacletServerDeploy[
 										{
 											PacletServerFile[server, "PacletSite.mz"],
 											PacletServerFile[server, "Paclets"]
-											}
+											},
+									"OutputDirectory"->
+										If[GitRepoQ@PacletServerDirectory[server],
+											"docs",
+											Automatic
+											]
 										},
 								Replace[
 									{
@@ -1722,6 +1760,106 @@ PacletServerDeploy[
 	ops:OptionsPattern[]
 	]:=
 	PacletServerDeploy[$PacletServers[k], ops]
+
+
+(* ::Subsection:: *)
+(*Git*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*PacletServerGitHubRepoExists*)
+
+
+
+PacletServerGitHubRepoExistsQ[server_]:=
+	With[{repo=PacletServerGitHubRepo[server]},
+		Between[URLRead[repo,"StatusCode"], {200,299}]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*PacletServerGitHubRepo*)
+
+
+
+PacletServerGitHubRepo[server_, password_:None]:=
+	Replace[
+		Replace[
+			Lookup[server, "GitHubRepo"],
+			Except[_String?(StringLength[#]>0&)]:>
+				Lookup[server, "ServerName"]
+			],
+		s_String:>
+			URL@
+				GitHubPath[
+					s,
+					"Password"->password
+					]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*PacletServerGitHubConfigure*)
+
+
+
+$PacletServerREADMEText:=
+	$PacletServerREADMEText=
+		Replace[
+			Quiet@
+				Import[
+					PackageFilePath["Resources", "Templates", "PacletServer-README.md"],
+					"Text"
+					],
+			Except[_String]->
+				"
+### Paclet Server 
+
+This is a mathematica paclet server.
+It hosts paclets that can be installed directly into Mathematica.
+
+"
+			];
+
+
+PacletServerGitHubConfigure[server_]:=
+	(
+		If[!FileExistsQ@PacletServerFile[server, "README.md"],
+			Export[PacletServerFile[server, "README.md"],
+				$PacletServerREADMEText,
+				"Text"
+				]
+			];
+		GitHub["Configure",
+			PacletServerDirectory[server],
+			PacletServerGitHubRepo[server],
+			{".DS_Store"},
+			{"content"}
+			]
+		)
+
+
+(* ::Subsubsection::Closed:: *)
+(*PacletServerGitHubPush*)
+
+
+
+PacletServerGitHubPush[server_]:=
+	With[{dir=PacletServerDirectory[server]},
+		Git["Add", dir, "-A"];
+		Git["Commit", dir, 
+			Message->
+				TemplateApply[
+					"Committed paclet server @ ``",
+					StringReplace[
+						DateString["ISODateTime"],
+						"T"->"_"
+						]
+					]
+			];
+		GitHubImport["Push", dir]
+		]
 
 
 End[];

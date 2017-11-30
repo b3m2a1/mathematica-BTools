@@ -724,10 +724,11 @@ ColorizationAdjust[color_,appearanceList_List]:=
 
 
 Options[UUIDButton]=
-	Join[{
-		"UUID"->Automatic,
-		ControlType->Button
-		},
+	Join[
+		{
+			"UUID"->Automatic,
+			ControlType->Button
+			},
 		Options[Button]
 		];
 UUIDButton[lab_,cmd_,ops:OptionsPattern[]]:=
@@ -1325,7 +1326,8 @@ GradientButtonDropDownRow[
 							],
 					"UUID"->uuid,
 					ops,
-					If[BooleanQ@enabled,
+					If[
+						BooleanQ@enabled,
 						Enabled->enabled,
 						Nothing
 						]

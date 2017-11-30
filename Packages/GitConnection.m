@@ -165,82 +165,6 @@ If[Not@MatchQ[$GitRepo,_String?DirectoryQ],
 	];
 
 
-If[Not@ValueQ@$GitHubUserName,
-	$GitHubUserName:=
-		Replace[
-			$KeyChain["$GitHubUserName"],
-			_Missing:>
-				Do[
-					With[{f=
-						FileNameJoin@{
-							$PackageDirectory,
-							"Private",
-							d}
-						},
-						If[FileExistsQ@f,
-							$GitHubUserName=Import@f;
-							Break[]
-							]
-						],
-					{d,
-						{
-							"GitHubUsername.m",
-							"GitHubUsername.wl"
-							}
-						}
-					]
-			]
-	];
-
-
-GitHubPassword[s_String]:=
-	KeyChainGet[{
-		"github.com",
-		s
-		},
-		True];
-GitHubPassword[Optional[Automatic,Automatic]]:=
-	GitHubPassword[$GitHubUserName];
-Clear@$GitHubPassword;
-$GitHubPassword:=
-	GitHubPassword[Automatic];
-
-
-(*If[ValueQ@$GitHubUserName&&!KeyMemberQ[$gitHubPassCache,$GitHubUserName],
-	$gitHubPassCache[$GitHubUserName]:=
-		Do[
-			With[{f=
-				FileNameJoin@{
-					$PackageDirectory,
-					"Private",
-					d}
-				},
-				If[FileExistsQ@f,
-					Replace[Import@f,
-						s_String:>
-							($gitHubPassCache[$GitHubUserName]=s);
-						];
-					Return[True]
-					]
-				],
-			{d,
-				{
-					"GitHubPassword.m",
-					"GitHubPassword.wl"
-					}
-				}
-			]
-	];*)
-
-
-$GitHubSSHConnected:=
-	($GitHubSSHConnected=
-		Quiet[ProcessRun[{"ssh","-T","git@github.com"}];
-			Length@$MessageList===0
-			]
-		);
-
-
 (* ::Subsection:: *)
 (*Git*)
 
@@ -281,9 +205,11 @@ GitRun[
 				(Git::err=ProcessRun::err)
 			];
 		If[MatchQ[d,_String],
-			ProcessRun[{"git",cmd1, cmd2},
+			ProcessRun[
+				{"git",cmd1, cmd2}//
+					Map[If[FileExistsQ@#, AbsoluteFileName@#, #]&],
 				Git::err, 
-				ProcessDirectory->d
+				ProcessDirectory->AbsoluteFileName@d
 				],
 			ProcessRun[{"git",cmd1, cmd2}, 
 				Git::err
@@ -301,7 +227,8 @@ GitRun[
 			Flatten[
 				Riffle[Prepend["git"]@*Flatten@*List/@{cmd1, cmd2},"\n\n"],
 				1
-				]
+				]//
+				Map[If[FileExistsQ@#, AbsoluteFileName@#, #]&]
 		},
 		Replace[
 			Git::err,
@@ -309,8 +236,15 @@ GitRun[
 				(Git::err=ProcessRun::err)
 			];
 		If[MatchQ[d,_String],
-			ProcessRun[cmdBits,Git::err,ProcessDirectory->d],
-			ProcessRun[cmdBits,Git::err]
+			ProcessRun[
+				cmdBits,
+				Git::err,
+				ProcessDirectory->AbsoluteFileName@d
+				],
+			ProcessRun[
+				cmdBits,
+				Git::err
+				]
 			]
 		];
 Git::nodir="`` is not a valid directory";
@@ -328,6 +262,58 @@ GitRepoQ[_]:=False
 
 
 (* ::Subsubsection::Closed:: *)
+(*GitAddGitIgnore*)
+
+
+
+GitAddGitIgnore[
+	dirB:_String?DirectoryQ|Automatic:Automatic,
+	patterns:_String|{__String}:
+		{
+			".DS_Store"
+			}
+	]:=
+	With[
+		{dir=Replace[dirB, Automatic:>Directory[]]},
+		If[GitRepoQ@dir,
+			With[{f=OpenWrite[FileNameJoin@{dir,".gitignore"}]},
+				WriteLine[f,
+					StringJoin@Riffle[Flatten@{patterns},"\n"]
+					];
+				Close@f
+				],
+			$Failed
+			]
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GitAddGitExclude*)
+
+
+
+GitAddGitExclude[
+	dirB:_String?DirectoryQ|Automatic:Automatic,
+	patterns:_String|{__String}:{"*.DS_Store"}
+	]:=
+	With[
+		{dir=Replace[dirB, Automatic:>Directory[]]},
+		If[GitRepoQ@dir,
+			If[Not@DirectoryQ@FileNameJoin@{dir,".git","info"},
+				CreateDirectory[FileNameJoin@{dir,".git","info"}]
+				];
+			With[{f=OpenWrite[FileNameJoin@{dir,".git","info","exclude"}]},
+				WriteLine[f,
+					StringJoin@Riffle[Flatten@{patterns},"\n"]
+					];
+				Close@f
+				],
+			$Failed
+			]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
 (*GitInit*)
 
 
@@ -339,8 +325,20 @@ GitCreate[dir_String]:=
 		];
 
 
-GitInit[dir:_String?DirectoryQ|Automatic:Automatic]:=
-	GitRun[dir,"init"];
+GitInit[
+	dir:_String?DirectoryQ|Automatic:Automatic,
+	ignorePats:{___String}|None:None,
+	excludePats:{___String}|None:None
+	]:=
+	With[{r=GitRun[dir,"init"]},
+		If[ignorePats=!=None, 
+			GitAddGitIgnore[dir, ignorePats]
+			];
+		If[excludePats=!=None,
+			GitAddGitExclude[dir, excludePats];
+			];
+		r
+		]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -581,11 +579,16 @@ GitListRemotes[dir:_String?DirectoryQ|Automatic:Automatic]:=
 
 
 
+GitAddRemote//Clear
+
+
 GitAddRemote[
 	dir:_String?DirectoryQ|Automatic:Automatic,
-	remote:_String|_URL]:=
+	remoteName:_String?(Not@*DirectoryQ):"origin",
+	remote:_String|_URL
+	]:=
 	GitRun[dir,
-		"remote","add","origin",
+		"remote","add",remoteName,
 		URLBuild@remote
 		];
 
@@ -601,6 +604,41 @@ GitRemoveRemote[
 	GitRun[dir,
 		"remote","rm","origin"
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GitSetRemote*)
+
+
+
+GitSetRemote[
+	dir:_String?DirectoryQ|Automatic:Automatic,
+	remoteName:_String?(Not@*DirectoryQ):"origin",
+	origin:(_String|_GitHubPath)?GitHubRepoQ
+	]:=
+	Quiet@
+		Check[
+			GitAddRemote[dir, origin],
+			GitRemoveRemote[dir, origin];
+			GitAddRemote[dir, origin]
+			];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GirRealignRemotes*)
+
+
+
+GitRealignRemotes[
+	dir:_String?DirectoryQ|Automatic:Automatic,
+	remoteName:_String?(Not@*DirectoryQ):"origin",
+	branchName:_String?(Not@*DirectoryQ):"master"
+	]:=
+	(
+		Git["Fetch", dir];
+		Git["Reset",dir,URLBuild@{remoteName, branchName}];
+		Git["Checkout",dir,URLBuild@{remoteName, branchName}];
+		)
 
 
 (* ::Subsubsection::Closed:: *)
@@ -739,6 +777,76 @@ GitPushOrigin[dir:_String?DirectoryQ|Automatic:Automatic,
 		"origin",
 		"master"
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GetPushURL*)
+
+
+
+GitGetPushURL[
+	dir:_String?DirectoryQ|Automatic:Automatic,
+	rem:_String?(Not@*DirectoryQ):"origin"
+	]:=
+	With[
+		{
+			rems=
+				#[[1]]->#[[2]]&/@
+					Cases[
+						Partition[
+							Append[""]@
+							StringSplit[
+								Replace[
+									Git["ListRemotes", dir],
+									Except[_String]->""
+									]
+								],
+							3
+							],
+						{_, _, _?(StringContainsQ["push"])}
+						]//Association
+			},
+		If[Length@rems>0,
+			rem->rems[rem],
+			URL@GitHubPath[FileBaseName@Replace[dir, Automatic:>rem]]
+			]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*GetFetchURL*)
+
+
+
+GetFetchURL//Clear
+
+
+GitGetFetchURL[
+	dir:_String?DirectoryQ|Automatic:Automatic,
+	rem:_String?(Not@*DirectoryQ):"origin"
+	]:=
+	With[
+		{
+			rems=
+				#[[1]]->#[[2]]&/@
+					Cases[
+						Partition[
+							Append[""]@
+							StringSplit[
+								Replace[Git["ListRemotes", dir],
+									Except[_String]->""
+									]
+								],
+							3
+							],
+						{_, _, _?(StringContainsQ["fetch"])}
+						]//Association
+			},
+		If[Length@rems>0,
+			rem->rems[rem],
+			URL@GitHubPath[FileBaseName@Replace[dir, Automatic:>rem]]
+			]
+		]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -969,6 +1077,10 @@ $GitActions=
 			GitClone,
 		"Ignore"->
 			GitIgnore,
+		"AddGitIgnore"->
+			GitAddGitIgnore,
+		"AddGitExclude"->
+			GitAddGitExclude,
 		"Add"->
 			GitAdd,
 		"Remove"->
@@ -1003,6 +1115,10 @@ $GitActions=
 			GitPush,
 		"PushOrigin"->
 			GitPushOrigin,
+		"GetPushURL"->
+			GitGetPushURL,
+		"GetFetchURL"->
+			GitGetFetchURL,
 		"Repositories"->
 			GitRepositories,
 		"Log"->
@@ -1232,11 +1348,144 @@ SVN[
 
 
 (* ::Subsubsection::Closed:: *)
+(*$GitHubConfig*)
+
+
+
+If[Not@ValueQ@$GitHubConfig,
+	$GitHubConfig:=
+		Replace[
+			Do[
+				With[{f=PackageFilePath["Private", d]},
+					If[FileExistsQ@f,
+						$GitHubConfig=
+							Replace[Import@f,
+								{ 
+									o_?OptionQ:>Association@o,
+									_-><||>
+									}
+								];
+						Break[]
+						]
+					],
+				{d,
+					{
+						"GitHubConfig.m",
+						"GitHubConfig.wl"
+						}
+					}
+				],
+			Null-><||>
+			]
+	]
+
+
+(* ::Subsubsection::Closed:: *)
+(*$GitHubUserName*)
+
+
+
+If[Not@ValueQ@$GitHubUserName,
+	$GitHubUserName:=
+		Replace[
+			$KeyChain["$GitHubUserName"],
+			_Missing:>
+				$GitHubConfig["Username"]
+			]
+	];
+
+
+(* ::Subsubsection::Closed:: *)
+(*$GitHubPassword*)
+
+
+
+$GitHubStorePassword:=
+	Lookup[$GitHubConfig, "StorePassword", False]
+
+
+GitHubPassword[s_String]:=
+	With[
+		{
+			base=
+				Replace[gitHubPasswordCache[s],
+					Except[_String]:>KeyChainGet[{"github.com",	s}, False]
+					]
+			},
+		If[StringQ@base,
+			base,
+			If[$GitHubStorePassword,
+				KeyChainGet[{"github.com",	s}, True],
+				AuthenticationDialog[
+					Dynamic@$ghauth,
+					"",
+					None,
+					{{"github.com",Automatic},s}
+					];
+				If[AssociationQ[$ghauth]&&StringQ@$ghauth["github.com"][[2]],
+					gitHubPasswordCache[s]=
+						$ghauth["github.com"][[2]],
+					gitHubPasswordCache[s]=None
+					];
+				Clear@$ghauth;
+				gitHubPasswordCache[s]
+				]
+			]
+		];
+GitHubPassword[Optional[Automatic,Automatic]]:=
+	GitHubPassword[$GitHubUserName];
+Clear@$GitHubPassword;
+$GitHubPassword:=
+	GitHubPassword[Automatic];
+
+
+(*If[ValueQ@$GitHubUserName&&!KeyMemberQ[$gitHubPassCache,$GitHubUserName],
+	$gitHubPassCache[$GitHubUserName]:=
+		Do[
+			With[{f=
+				FileNameJoin@{
+					$PackageDirectory,
+					"Private",
+					d}
+				},
+				If[FileExistsQ@f,
+					Replace[Import@f,
+						s_String:>
+							($gitHubPassCache[$GitHubUserName]=s);
+						];
+					Return[True]
+					]
+				],
+			{d,
+				{
+					"GitHubPassword.m",
+					"GitHubPassword.wl"
+					}
+				}
+			]
+	];*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*$GitHubSSHConnected*)
+
+
+
+$GitHubSSHConnected:=
+	($GitHubSSHConnected=
+		Quiet[ProcessRun[{"ssh","-T","git@github.com"}];
+			Length@$MessageList===0
+			]
+		);
+
+
+(* ::Subsubsection::Closed:: *)
 (*GitHubPath*)
 
 
 
-$GitHubEncodePassword=False;
+$GitHubEncodePassword:=
+	TrueQ@$GitHubConfig["EncodePassword"];
 
 
 Options[GitHubPath]={
@@ -1254,13 +1503,15 @@ FormatGitHubPath[path__String,ops:OptionsPattern[]]:=
 		If[$GitHubEncodePassword||
 			MatchQ[OptionValue@"Password",_String|Automatic],
 			"Username"->
-				Replace[OptionValue["Username"],{
-					Automatic:>
-						Replace[OptionValue@"Password",
-							Automatic|_String:>$GitHubUserName
-							],
-					Except[_String]->None
-					}],
+				Replace[OptionValue["Username"],
+					{
+						Automatic:>
+							Replace[OptionValue@"Password",
+								Automatic|_String:>$GitHubUserName
+								],
+						Except[_String]->None
+						}
+					],
 			Nothing
 			],
 		If[$GitHubEncodePassword||
@@ -1795,12 +2046,82 @@ GitHubClone[
 
 
 (* ::Subsubsection::Closed:: *)
+(*GitHubConfigure*)
+
+
+
+GitHubConfigure[
+	dirBase:_String?DirectoryQ|Automatic,
+	repo:_String?GitHubRepoQ|_GitHubPath,
+	ignorePats:{___String}|None:None,
+	excludePats:{___String}|None:None
+	]:=
+	Module[{repoExistsQ, dir=Replace[dirBase, Automatic:>Directory[]]},
+		If[!GitRepoQ@dir,
+			GitInit[dir, ignorePats, excludePats];
+			GitSetRemote[dir, repo];
+			repoExistsQ=Between[URLRead[repo,"StatusCode"],{200,299}];
+			If[repoExistsQ, GitRealignRemotes[dir]]
+			];
+		If[GitRepoQ@dir,
+			If[!ValueQ[repoExistsQ],
+				repoExistsQ=Between[URLRead[repo,"StatusCode"],{200,299}]
+				];
+			If[!repoExistsQ,
+				GitHubImport["Create",
+					URLParse[repo, "Path"][[-1]]
+					];
+				GitSetRemote[dir, repo]
+				]
+			]
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GitHubPush*)
+
+
+
+GitHubPush[
+	dir:_String?GitRepoQ,
+	repo:_String|_GitHubPath|Automatic:Automatic
+	]:=
+	Replace[repo,{
+		Automatic:>
+			Replace[GitGetPushURL[dir],
+				{
+					s_String:>
+						Git["Push", dir, s],
+					(r_->s_):>
+						Quiet@
+							Check[
+								Git["Push", dir, r, "master"],
+								Git["Push", s]
+								]
+					}
+				],
+		s_String?(URLParse[#, "Scheme"]===None&):>
+			Quiet@
+				Check[
+					Git["Push", dir, s, "master"],
+					Git["Push", dir, URL@GitHubPath[s]]
+					],
+		s_String:>
+			Git["Push", dir, s]
+		}]
+
+
+(* ::Subsubsection::Closed:: *)
 (*GitHub*)
 
 
 
 $GitHubActions=
 	<|
+		"Push"->
+			GitHubPush,
+		"Configure"->
+			GitHubConfigure,
 		"Repositories"->
 			GitHubRepositories,
 		"Clone"->

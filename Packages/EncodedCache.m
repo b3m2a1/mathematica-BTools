@@ -229,11 +229,12 @@ EncodedCachePassword[spec_?StringQ]:=
 							None
 							],
 						Except[_String?(StringLength@#>0&)]:>
-							Replace[EncodedCachePasswordDialog[spec],{
-								s_String?(StringLength@#>0&):>
-									(EncodedCachePassword[spec]=s),
-								_->None
-								}]
+							Replace[EncodedCachePasswordDialog[spec],
+								{
+									s_String?(StringLength@#>0&):>
+										(EncodedCachePassword[spec]=s),
+									_->None
+									}]
 						],
 					None
 					]
@@ -375,7 +376,7 @@ EncodedCacheExport[(spec_?StringQ)?(KeyMemberQ[$EncodedCaches,#]&)]:=
 				file,
 				EncodedCachePassword[spec]
 				],
-			Encode[temp,file]
+			Encode[temp, file]
 			];
 		DeleteFile@temp;
 		file
@@ -386,7 +387,7 @@ EncodedCacheLoad[(spec_?StringQ)?(KeyMemberQ[$EncodedCacheOptions,#]&)]:=
 	With[{a=
 		With[{file=EncodedCacheFile[spec]},
 			If[FileExistsQ@file,
-				If[EncodedCacheOption[spec,"UsePassword"]//TrueQ,
+				If[EncodedCacheOption[spec, "UsePassword"]//TrueQ,
 					Replace[
 						Nest[
 							If[!AssociationQ@#,
@@ -937,7 +938,6 @@ KeyChainGet[
 		e:$keyChainFailureForms:>
 			If[lookup,KeyChainAdd[site->{None,key}],e]
 		]
-	
 
 
 $KeyChainCloudAccounts=
@@ -964,11 +964,13 @@ KeyChainConnect[
 	acct:_String|Key[_String]:Key["TestingAccount"],
 	ops:OptionsPattern[]
 	]:=
-	With[{
-		user=
-			Replace[acct,Key[a_]:>KeyChainGet["WolframCloud"->{None,a},True]],
-		base=Replace[OptionValue[CloudBase],Automatic:>$CloudBase]
-		},
+	With[
+		{
+			user=
+				Replace[acct,Key[a_]:>KeyChainGet["WolframCloud"->{None,a},True]],
+			base=
+				Replace[OptionValue[CloudBase],Automatic:>$CloudBase]
+			},
 		If[$WolframID=!=user||$CloudBase=!=base,
 			CloudConnect[user,
 				KeyChainGet[{base,user},True],

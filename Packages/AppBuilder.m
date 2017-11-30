@@ -309,32 +309,40 @@ If[!ValueQ[$AppDirectoryRoot],
 
 
 
-AppPath[app_,e___]:=
-	With[{base=AppDirectory[app,e]},
+AppPath//Clear
+
+
+AppPath[format:True|False:False, app:_String|Automatic, e___]:=
+	With[{base=AppDirectory[app, e]},
 		If[!FileExistsQ@base,
-			Replace[PacletManager`PacletFind[app],{
-				{p_,___}:>
-					FileNameJoin@{p["Location"],e},
-				_->base
-				}],
+			Replace[
+				PacletManager`PacletFind[app],
+				{
+					{p_,___}:>
+						FileNameJoin@Flatten@{p["Location"], AppPathFormat@{e}},
+					_->base
+					}
+				],
 			base
 			]
 		];
 
 
 AppPathFormat[pspec_]:=
-	Replace[Flatten@{pspec},{
-		"Palettes"->{"FrontEnd","Palettes"},
-		"StyleSheets"->{"FrontEnd","StyleSheets"},
-		"TextResources"->{"FrontEnd","TextResources"},
-		"SystemResources"->{"FrontEnd","SystemResources"},
-		"Guides"->{"Documentation","English","Guides"},
-		"ReferencePages"->{"Documentation","English","ReferencePages"},
-		"Symbols"->{"Documentation","English","ReferencePages","Symbols"},
-		"Tutorials"->{"Documentation","English","Tutorials"},
-		"Objects"->{"Objects"},
-		"Private"->{"Private"}
-		},
+	Replace[
+		Flatten[{pspec}, 1],
+		{
+			"Palettes"->{"FrontEnd","Palettes"},
+			"StyleSheets"->{"FrontEnd","StyleSheets"},
+			"TextResources"->{"FrontEnd","TextResources"},
+			"SystemResources"->{"FrontEnd","SystemResources"},
+			"Guides"->{"Documentation","English","Guides"},
+			"ReferencePages"->{"Documentation","English","ReferencePages"},
+			"Symbols"->{"Documentation","English","ReferencePages","Symbols"},
+			"Tutorials"->{"Documentation","English","Tutorials"},
+			"Objects"->{"Objects"},
+			"Private"->{"Private"}
+			},
 		1]
 
 
@@ -346,7 +354,8 @@ AppPathFormat[pspec_]:=
 AppDirectory[app_,extensions___]:=
 	FileNameJoin@
 		Flatten@{
-			$AppDirectoryRoot,$AppDirectoryName,app,
+			$AppDirectoryRoot,$AppDirectoryName,
+			app,
 			AppPathFormat@{extensions}
 			};
 
@@ -908,17 +917,17 @@ appConfigureSubResource[app_,new_,resType_,resList_]:=
 	Map[
 		SelectFirst[
 			{
-				AppPath[app,resType,#],
+				AppPath[app,resType, #],
 				AppPath[app,resType,
 					StringTrim[#,".nb"]<>".nb"],
-				AppPath[app,resType,app,#],
+				AppPath[app,resType,app, #],
 				AppPath[app,resType,app,
 					StringTrim[#,".nb"]<>".nb"]
 				},
 			FileExistsQ,
 			Nothing
 			]&,
-		Flatten[{resList},1]
+		Flatten[{resList}, 1]
 		]
 
 

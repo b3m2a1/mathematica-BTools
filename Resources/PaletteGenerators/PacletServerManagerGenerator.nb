@@ -650,17 +650,53 @@ Cell[BoxData[{
   RowBox[{
    RowBox[{"paletteButton", "[", 
     RowBox[{"lbl_", ",", "cmd_", ",", "ops___"}], "]"}], ":=", "\n", "\t", 
-   RowBox[{"With", "[", 
+   RowBox[{"With", "[", "\n", "\t\t", 
     RowBox[{
-     RowBox[{"{", 
-      RowBox[{"uuid", "=", 
-       RowBox[{"CreateUUID", "[", "]"}]}], "}"}], ",", "\n", "\t\t", 
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"uuid", "=", 
+        RowBox[{"CreateUUID", "[", "]"}]}], ",", " ", "\n", "\t", "\t\t", 
+       RowBox[{"nab", "=", 
+        RowBox[{"Lookup", "[", 
+         RowBox[{
+          RowBox[{"{", "ops", "}"}], ",", " ", "Enabled", ",", " ", "True"}], 
+         "]"}]}]}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
      RowBox[{"GradientButton", "[", "\n", "\t\t\t", 
       RowBox[{
-       RowBox[{"Style", "[", 
-        RowBox[{"lbl", ",", 
-         RowBox[{"GrayLevel", "[", ".2", "]"}]}], "]"}], ",", "\n", "\t\t\t", 
-       "cmd", ",", "\n", "\t\t\t", "ops", ",", "\n", "\t\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{"nab", ",", "\n", "\t\t\t\t", 
+         RowBox[{"{", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{
+             RowBox[{"Verbatim", "[", "Dynamic", "]"}], "[", 
+             RowBox[{"d_", ",", "e___"}], "]"}], ":>", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"Dynamic", "[", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"If", "[", 
+               RowBox[{
+                RowBox[{"d", "===", "False"}], ",", " ", "\n", 
+                "\t\t\t\t\t\t\t\t", 
+                RowBox[{"Style", "[", 
+                 RowBox[{"lbl", ",", " ", 
+                  RowBox[{"GrayLevel", "[", ".5", "]"}]}], "]"}], ",", "\n", 
+                "\t\t\t\t\t\t\t\t", 
+                RowBox[{"Style", "[", 
+                 RowBox[{"lbl", ",", " ", 
+                  RowBox[{"GrayLevel", "[", ".2", "]"}]}], "]"}]}], "\n", 
+               "\t\t\t\t\t\t\t\t", "]"}], ",", " ", "\n", "\t\t\t\t\t\t\t", 
+              "e"}], "\n", "\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{"False", "->", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"Style", "[", 
+             RowBox[{"lbl", ",", " ", 
+              RowBox[{"GrayLevel", "[", ".5", "]"}]}], "]"}]}], ",", "\n", 
+           "\t\t\t\t\t", 
+           RowBox[{"_", "->", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"Style", "[", 
+             RowBox[{"lbl", ",", " ", 
+              RowBox[{"GrayLevel", "[", ".2", "]"}]}], "]"}]}]}], "\n", 
+          "\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t\t",
+        "cmd", ",", "\n", "\t\t\t", "ops", ",", "\n", "\t\t\t", 
        RowBox[{"Method", "\[Rule]", "\"\<Queued\>\""}], ",", "\n", "\t\t\t", 
        RowBox[{"\"\<UUID\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t\t\t", 
        
@@ -689,8 +725,10 @@ Cell[BoxData[{
    3.7204048798250513`*^9, 3.720404879836851*^9}, {3.720658638488978*^9, 
    3.720658662049747*^9}, {3.72065923038955*^9, 3.7206592309585876`*^9}, {
    3.720659326094338*^9, 3.72065936407865*^9}, {3.720659563040328*^9, 
-   3.720659566109213*^9}, {3.7206597676729717`*^9, 
-   3.720659781062769*^9}},ExpressionUUID->"a3c05dc1-824b-4bff-b566-\
+   3.720659566109213*^9}, {3.7206597676729717`*^9, 3.720659781062769*^9}, {
+   3.7209823366044416`*^9, 3.7209824514313793`*^9}, {3.720982482105023*^9, 
+   3.72098250484661*^9}, {3.720991693148595*^9, 
+   3.720991731659924*^9}},ExpressionUUID->"a3c05dc1-824b-4bff-b566-\
 39e2fec58faa"],
 
 Cell[BoxData[{
@@ -1474,7 +1512,7 @@ Cell[BoxData[
    3.7206715465890102`*^9}, 3.7206715775812473`*^9, {3.720672230941409*^9, 
    3.720672242448415*^9}},ExpressionUUID->"cff63c3e-211f-4778-8838-\
 095f228e2830"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -1739,6 +1777,32 @@ Cell[BoxData[
             "\t\t\t\t\t", 
             RowBox[{"\"\<AutoDeploy\>\"", "\[Rule]", "True"}], ",", "\n", 
             "\t\t\t\t\t", 
+            RowBox[{"\"\<OutputDirectory\>\"", "->", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"If", "[", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"DirectoryQ", "@", "\n", "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"PacletServerFile", "[", 
+                  RowBox[{
+                   RowBox[{"$serverList", "@", "currentPacletServer"}], ",", 
+                   " ", "\"\<gh-pages\>\""}], "]"}]}], "||", "\n", 
+                "\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"StringQ", "@", 
+                  RowBox[{"Lookup", "[", 
+                   RowBox[{
+                    RowBox[{"$serverList", "@", "currentPacletServer"}], ",", 
+                    " ", "\"\<GitHubRepo\>\""}], "]"}]}], "&&", "\n", "\t", 
+                 "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"StringLength", "[", 
+                   RowBox[{"Lookup", "[", 
+                    RowBox[{
+                    RowBox[{"$serverList", "@", "currentPacletServer"}], ",", 
+                    " ", "\"\<GitHubRepo\>\""}], "]"}], "]"}], ">", "0"}]}]}],
+                ",", "\n", "\t\t\t\t\t\t\t", "\"\<gh-pages\>\"", ",", "\n", 
+               "\t\t\t\t\t\t\t", "Automatic"}], "\n", "\t\t\t\t\t\t\t", 
+              "]"}]}], ",", "\n", "\t\t\t\t\t", 
             RowBox[{"\"\<RegenerateContent\>\"", "->", 
              RowBox[{"TrueQ", "@", "makeSiteFlag"}]}], ",", "\n", "\t", "\t", 
             "\t\t\t", 
@@ -1791,9 +1855,159 @@ Cell[BoxData[
    3.7206599913194103`*^9}, {3.720660057790168*^9, 3.7206600633221817`*^9}, {
    3.72066013322621*^9, 3.7206601380810738`*^9}, {3.7206603951143637`*^9, 
    3.720660440437233*^9}, {3.720660523607335*^9, 3.7206605344501657`*^9}, {
-   3.7206734708026733`*^9, 
-   3.720673480545822*^9}},ExpressionUUID->"28e848a7-0df5-41ee-8c70-\
+   3.7206734708026733`*^9, 3.720673480545822*^9}, {3.720975284719963*^9, 
+   3.7209754273194847`*^9}, {3.720975472190072*^9, 3.7209755538344173`*^9}, {
+   3.720975627248948*^9, 
+   3.720975704380883*^9}},ExpressionUUID->"28e848a7-0df5-41ee-8c70-\
 c276b25f583b"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["gitHubConfigureButton", "CodeSubsubsection",
+ CellChangeTimes->{
+  3.720496964637446*^9, {3.7209754400769997`*^9, 3.720975442347475*^9}, {
+   3.720991800036584*^9, 
+   3.720991801600924*^9}},ExpressionUUID->"6e80ca3b-ef74-4484-b004-\
+12a019e66316"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"gitHubConfigureButton", "=", "\n", "\t", 
+   RowBox[{"paletteButton", "[", "\n", "\t\t", 
+    RowBox[{"\"\<Configure GitHub Repo\>\"", ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"whichPacF", "[", "\"\<PacletServerGitHubConfigure\>\"", "]"}], 
+      "[", 
+      RowBox[{"$serverList", "[", "currentPacletServer", "]"}], "]"}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"Enabled", "->", "\n", "\t\t\t", 
+      RowBox[{"Dynamic", "[", "\n", "\t\t\t\t", 
+       RowBox[{"DirectoryQ", "@", 
+        RowBox[{
+         RowBox[{"$serverList", "[", "currentPacletServer", "]"}], "[", 
+         "\"\<ServerBase\>\"", "]"}]}], "\n", "\t\t\t\t", "]"}]}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"Method", "\[Rule]", "\"\<Queued\>\""}]}], "\n", "\t\t", "]"}]}],
+   ";"}]], "CodeInput",
+ CellChangeTimes->{{3.720496965728195*^9, 3.720496991197997*^9}, {
+   3.7204984668397913`*^9, 3.7204984823428698`*^9}, {3.720498530859754*^9, 
+   3.72049855679361*^9}, {3.720498603602355*^9, 3.7204987264496307`*^9}, 
+   3.720498997090209*^9, {3.720499126318304*^9, 3.720499128679227*^9}, 
+   3.720587501511766*^9, {3.720587590505432*^9, 3.72058759169496*^9}, {
+   3.720587819067984*^9, 3.720587821142292*^9}, {3.7205887539619102`*^9, 
+   3.720588762263328*^9}, {3.7205889309276876`*^9, 3.720588937383623*^9}, {
+   3.720592504252967*^9, 3.7205925299562597`*^9}, {3.720633376977811*^9, 
+   3.720633378592112*^9}, 3.720634044196122*^9, {3.720634650387198*^9, 
+   3.720634652742347*^9}, {3.720649379672159*^9, 3.7206493801859713`*^9}, {
+   3.720658367135305*^9, 3.720658491580641*^9}, {3.720658733227668*^9, 
+   3.7206587398722353`*^9}, {3.7206599770110493`*^9, 
+   3.7206599913194103`*^9}, {3.720660057790168*^9, 3.7206600633221817`*^9}, {
+   3.72066013322621*^9, 3.7206601380810738`*^9}, {3.7206603951143637`*^9, 
+   3.720660440437233*^9}, {3.720660523607335*^9, 3.7206605344501657`*^9}, {
+   3.7206734708026733`*^9, 3.720673480545822*^9}, {3.720975284719963*^9, 
+   3.720975453412238*^9}, {3.720975713311285*^9, 3.7209757261795473`*^9}, {
+   3.720976152843954*^9, 3.7209761584653254`*^9}, {3.7209806189208727`*^9, 
+   3.720980663219981*^9}, {3.720980908233099*^9, 3.720980909413272*^9}, {
+   3.720991759472328*^9, 3.720991784152831*^9}, {3.720991815924635*^9, 
+   3.7209918438560877`*^9}, {3.7209918943340807`*^9, 3.720991963920535*^9}, {
+   3.720992274790544*^9, 3.720992282503735*^9}, {3.720997359659514*^9, 
+   3.720997360097917*^9}},ExpressionUUID->"2f887706-5daf-4539-8770-\
+0930f21d5204"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["gitHubPublishButton", "CodeSubsubsection",
+ CellChangeTimes->{
+  3.720496964637446*^9, {3.7209754400769997`*^9, 
+   3.720975442347475*^9}},ExpressionUUID->"7dce65c9-632e-4486-9d18-\
+b665a3eaf07a"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"gitHubPublishButton", "=", "\n", "\t", 
+   RowBox[{"paletteButton", "[", "\n", "\t\t", 
+    RowBox[{"\"\<Publish GitHub Server\>\"", ",", "\n", "\t\t", 
+     RowBox[{"With", "[", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"f", "=", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"whichPacF", "[", "\"\<PacletServerBuild\>\"", "]"}], "[", 
+          "\n", "\t", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"$serverList", "@", "currentPacletServer"}], ",", "\n", 
+           "\t", "\t\t\t\t\t", 
+           RowBox[{"\"\<AutoDeploy\>\"", "\[Rule]", "False"}], ",", "\n", 
+           "\t\t\t\t\t\t", 
+           RowBox[{"\"\<RegenerateContent\>\"", "->", 
+            RowBox[{"TrueQ", "@", "makeSiteFlag"}]}], ",", "\n", "\t", "\t", 
+           "\t", "\t\t\t", 
+           RowBox[{"\"\<BuildSite\>\"", "\[Rule]", 
+            RowBox[{"TrueQ", "@", "makeSiteFlag"}]}], ",", "\n", "\t", "\t", 
+           "\t", "\t\t\t", 
+           RowBox[{"Monitor", "\[Rule]", "False"}], ",", "\n", "\t", "\t", 
+           "\t", "\t\t\t", 
+           RowBox[{
+           "\"\<DeployOptions\>\"", "\[Rule]", "\n", "\t", "\t", "\t", 
+            "\t\t\t\t", 
+            RowBox[{"{", "\n", "\t", "\t", "\t", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Monitor", "\[Rule]", "False"}], ",", "\n", "\t", "\t", 
+              "\t", "\t\t\t\t\t", 
+              RowBox[{"\"\<DeployPages\>\"", "\[Rule]", 
+               RowBox[{"TrueQ", "@", "makeSiteFlag"}]}]}], "\n", "\t", "\t", 
+             "\t\t\t\t\t\t", "}"}]}]}], "\n", "\t", "\t", "\t\t\t\t", "]"}]}],
+         "\n", "\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"whichPacF", "[", "\"\<PacletServerGitHubPush\>\"", "]"}], 
+        "[", 
+        RowBox[{"$serverList", "@", "currentPacletServer"}], "]"}]}], "\n", 
+      "\t\t\t", "]"}], ",", "\n", "\t\t", 
+     RowBox[{"Enabled", "->", "\n", "\t\t\t", 
+      RowBox[{"Dynamic", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"DirectoryQ", "@", 
+         RowBox[{
+          RowBox[{"$serverList", "[", "currentPacletServer", "]"}], "[", 
+          "\"\<ServerBase\>\"", "]"}]}], "&&", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"whichPacF", "[", "\"\<GitRepoQ\>\"", "]"}], "[", "\n", 
+         "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"whichPacF", "[", "\"\<PacletServerDirectory\>\"", "]"}], 
+          "@", "\n", "\t\t\t\t\t\t", 
+          RowBox[{"$serverList", "[", "currentPacletServer", "]"}]}], "\n", 
+         "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "]"}]}], ",", "\n", "\t\t", 
+     
+     RowBox[{"Method", "\[Rule]", "\"\<Queued\>\""}]}], "\n", "\t\t", "]"}]}],
+   ";"}]], "CodeInput",
+ CellChangeTimes->{{3.720496965728195*^9, 3.720496991197997*^9}, {
+   3.7204984668397913`*^9, 3.7204984823428698`*^9}, {3.720498530859754*^9, 
+   3.72049855679361*^9}, {3.720498603602355*^9, 3.7204987264496307`*^9}, 
+   3.720498997090209*^9, {3.720499126318304*^9, 3.720499128679227*^9}, 
+   3.720587501511766*^9, {3.720587590505432*^9, 3.72058759169496*^9}, {
+   3.720587819067984*^9, 3.720587821142292*^9}, {3.7205887539619102`*^9, 
+   3.720588762263328*^9}, {3.7205889309276876`*^9, 3.720588937383623*^9}, {
+   3.720592504252967*^9, 3.7205925299562597`*^9}, {3.720633376977811*^9, 
+   3.720633378592112*^9}, 3.720634044196122*^9, {3.720634650387198*^9, 
+   3.720634652742347*^9}, {3.720649379672159*^9, 3.7206493801859713`*^9}, {
+   3.720658367135305*^9, 3.720658491580641*^9}, {3.720658733227668*^9, 
+   3.7206587398722353`*^9}, {3.7206599770110493`*^9, 
+   3.7206599913194103`*^9}, {3.720660057790168*^9, 3.7206600633221817`*^9}, {
+   3.72066013322621*^9, 3.7206601380810738`*^9}, {3.7206603951143637`*^9, 
+   3.720660440437233*^9}, {3.720660523607335*^9, 3.7206605344501657`*^9}, {
+   3.7206734708026733`*^9, 3.720673480545822*^9}, {3.720975284719963*^9, 
+   3.720975453412238*^9}, {3.720975713311285*^9, 3.7209757261795473`*^9}, {
+   3.720976152843954*^9, 3.7209761584653254`*^9}, {3.7209806189208727`*^9, 
+   3.720980663219981*^9}, {3.720980908233099*^9, 3.720980909413272*^9}, {
+   3.720991788005001*^9, 3.7209917884853697`*^9}, {3.720991851662952*^9, 
+   3.7209918780886097`*^9}, {3.720992253948456*^9, 3.7209922672432737`*^9}, {
+   3.7209964280750237`*^9, 3.720996442929153*^9}, {3.720996562424612*^9, 
+   3.720996578230707*^9}, {3.720997347509644*^9, 3.720997354219326*^9}, 
+   3.721000288060533*^9},ExpressionUUID->"d0da4093-c964-451e-ab24-\
+153caa119469"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -1839,7 +2053,7 @@ Cell[BoxData[
    3.720673788573758*^9}, {3.720674559289193*^9, 
    3.720674573553171*^9}},ExpressionUUID->"8d3433ce-af67-4ede-bfd4-\
 3fbce36fd404"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -2030,8 +2244,8 @@ Cell[BoxData[
                    RowBox[{"\"\<\>\"", "\[Rule]", "Nothing"}]}], "]"}]}], 
                 "\n", "\t", "\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t", 
               "\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t", "\t\t\t\t\t\t", 
-             "String"}], "\n", "\t", "\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t",
-           "\t\t\t\t", 
+             "String"}], "\n", "\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+          "\t\t\t\t\t", 
           RowBox[{"\"\<Cloud Account\>\"", "->", "\n", "\t", "\t\t\t\t\t", 
            RowBox[{"paletteInputField", "[", "\n", "\t", "\t\t\t\t\t\t", 
             RowBox[{
@@ -2057,8 +2271,8 @@ Cell[BoxData[
                    RowBox[{"\"\<\>\"", "\[Rule]", "None"}]}], "]"}]}], "\n", 
                 "\t", "\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t", 
               "\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t", "\t\t\t\t\t\t", 
-             "String"}], "\n", "\t", "\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t",
-           "\t\t\t\t", 
+             "String"}], "\n", "\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+          "\t\t\t\t\t", 
           RowBox[{"\"\<Permissions\>\"", "->", "\n", "\t", "\t\t\t\t\t", 
            RowBox[{"paletteInputField", "[", "\n", "\t", "\t\t\t\t\t\t", 
             RowBox[{"Dynamic", "[", "\n", "\t", "\t", "\t\t\t\t\t\t", 
@@ -2071,10 +2285,40 @@ Cell[BoxData[
                RowBox[{
                 RowBox[{"pacletServersEdit", "[", 
                  RowBox[{"currentPacletServer", ",", " ", "Permissions"}], 
-                 "]"}], "[", "#", "]"}], "&"}]}], "\n", "\t", 
-             "\t\t\t\t\t\t\t", "]"}], "\n", "\t", "\t\t\t\t\t\t", "]"}]}]}], 
-         "\n", "\t\t\t\t\t", "|>"}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", 
-    "\t\t", "]"}]}], ";"}]], "CodeInput",
+                 "]"}], "[", "#", "]"}], "&"}]}], "\n", "\t\t\t\t\t\t\t\t", 
+             "]"}], "\n", "\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t\t", 
+          
+          RowBox[{"\"\<GitHub Repository\>\"", "->", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"paletteInputField", "[", "\n", "\t", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Dynamic", "[", "\n", "\t", "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"whichPacF", "[", "\"\<$PacletServers\>\"", "]"}], 
+                  "[", 
+                  RowBox[{
+                  "currentPacletServer", ",", " ", "\"\<GitHubRepo\>\""}], 
+                  "]"}], ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"Except", "[", "_String", "]"}], "\[Rule]", 
+                  "\"\<\>\""}]}], "\n", "\t\t\t\t\t\t\t\t\t", "]"}], ",", 
+               "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{"Function", "[", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"pacletServersEdit", "[", 
+                  RowBox[{
+                  "currentPacletServer", ",", " ", "\"\<GitHubRepo\>\""}], 
+                  "]"}], "@", "\n", "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{"Replace", "[", 
+                  RowBox[{"#", ",", " ", 
+                   RowBox[{"\"\<\>\"", "\[Rule]", "None"}]}], "]"}]}], "\n", 
+                "\t", "\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t", 
+              "\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t", 
+             "String"}], "\n", "\t\t\t\t\t\t\t", "]"}]}]}], "\n", 
+         "\t\t\t\t\t", "|>"}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t", 
+    "]"}]}], ";"}]], "CodeInput",
  CellChangeTimes->{{3.6866658565713*^9, 3.686666230090374*^9}, {
    3.6866662843270283`*^9, 3.686666708608439*^9}, {3.686666860366229*^9, 
    3.686666897362671*^9}, {3.6866669456422567`*^9, 3.686666976917091*^9}, {
@@ -2124,7 +2368,8 @@ Cell[BoxData[
    3.720505666337305*^9}, 3.720505739744074*^9, {3.720505852935355*^9, 
    3.72050585407629*^9}, {3.7205058949898987`*^9, 3.720505914321705*^9}, {
    3.720575875254146*^9, 3.720575963322155*^9}, {3.7205760064826803`*^9, 
-   3.720576011603408*^9}},ExpressionUUID->"910c1bd9-ef09-475b-af7a-\
+   3.720576011603408*^9}, {3.720934152948653*^9, 3.720934197779853*^9}, 
+   3.720975264064039*^9},ExpressionUUID->"910c1bd9-ef09-475b-af7a-\
 6106ea218c1b"]
 }, Closed]],
 
@@ -2170,8 +2415,10 @@ Cell[BoxData[
             "\n", "\t", "\t\t\t\t", 
             RowBox[{"Permissions", "\[Rule]", "\"\<Public\>\""}], ",", "\n", 
             "\t", "\t\t\t\t", 
-            RowBox[{"CloudConnect", "\[Rule]", "None"}]}], "\n", "\t", 
-           "\t\t\t\t", "|>"}]}], ",", "\n", "\t", "\t\t", 
+            RowBox[{"CloudConnect", "\[Rule]", "None"}], ",", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"\"\<GitHubRepo\>\"", "\[Rule]", "None"}]}], "\n", 
+           "\t\t\t\t\t", "|>"}]}], ",", "\n", "\t\t\t", 
          RowBox[{"frameColors", "=", "\n", "\t", "\t\t\t", 
           RowBox[{"<|", "\n", "\t", "\t\t\t\t", 
            RowBox[{
@@ -2185,33 +2432,24 @@ Cell[BoxData[
             "\t", "\t\t\t\t", 
             RowBox[{"\"\<Permissions\>\"", "\[Rule]", "None"}], ",", "\n", 
             "\t", "\t\t\t\t", 
-            RowBox[{"\"\<Cloud Account\>\"", "\[Rule]", "None"}]}], "\n", 
-           "\t", "\t\t\t\t", "|>"}]}], ",", "\n", "\t", "\t\t", "serverInfo", 
-         ",", "\n", "\t", "\t\t", "validateSubmit"}], "\n", "\t", "\t\t", 
-        "}"}], ",", "\n", "\t", "\t\t", 
+            RowBox[{"\"\<Cloud Account\>\"", "\[Rule]", "None"}], ",", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"\"\<GitHub Repository\>\"", "\[Rule]", "None"}]}], "\n", 
+           "\t\t\t\t\t", "|>"}]}], ",", "\n", "\t\t\t", "serverInfo", ",", 
+         "\n", "\t\t\t", "validateSubmit"}], "\n", "\t", "\t\t", "}"}], ",", 
+       "\n", "\t", "\t\t", 
        RowBox[{
-        RowBox[{"serverInfo", "=", "\n", "\t", "\t\t\t", "serverInfoBasic"}], 
-        ";", "\n", "\t", "\t\t", 
+        RowBox[{"serverInfo", "=", "\n", "\t\t\t\t", "serverInfoBasic"}], ";",
+         "\n", "\t\t\t", 
         RowBox[{
          RowBox[{
-          RowBox[{"Column", "[", "\n", "\t", "\t\t\t", 
-           RowBox[{
-            RowBox[{"Append", "[", 
-             RowBox[{"#", ",", " ", "\n", "\t\t\t\t\t", 
-              RowBox[{"butt", "/.", 
-               RowBox[{"cmd", "\[RuleDelayed]", 
-                RowBox[{"validateSubmit", "[", "]"}]}]}]}], "\n", 
-             "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
-            RowBox[{"Dividers", "\[Rule]", 
-             RowBox[{"{", "\n", "\t\t\t\t\t", 
-              RowBox[{
-               RowBox[{"2", "\[Rule]", 
-                RowBox[{"GrayLevel", "[", ".9", "]"}]}], ",", "\n", "\t", 
-               "\t\t\t\t", 
-               RowBox[{
-                RowBox[{"-", "2"}], "->", 
-                RowBox[{"GrayLevel", "[", ".5", "]"}]}]}], "\n", "\t\t\t\t\t",
-               "}"}]}]}], "]"}], "&"}], "@", "\n", "\t", "\t\t\t", 
+          RowBox[{"Column", "[", "\n", "\t\t\t\t", 
+           RowBox[{"Append", "[", 
+            RowBox[{"#", ",", " ", "\n", "\t", "\t\t\t\t", 
+             RowBox[{"butt", "/.", 
+              RowBox[{"cmd", "\[RuleDelayed]", 
+               RowBox[{"validateSubmit", "[", "]"}]}]}]}], "\n", "\t\t\t\t\t",
+             "]"}], "\n", "\t\t\t\t", "]"}], "&"}], "@", "\n", "\t\t\t\t", 
          RowBox[{"KeyValueMap", "[", "\n", "\t", "\t\t\t\t", 
           RowBox[{
            RowBox[{
@@ -2353,6 +2591,37 @@ Cell[BoxData[
                  RowBox[{"serverInfo", "[", "Permissions", "]"}], "\n", 
                  "\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
                 RowBox[{"\"\<UUID\>\"", "\[Rule]", "\"\<Permissions\>\""}]}], 
+               "\n", "\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t\t\t", 
+             RowBox[{
+             "\"\<GitHub Repository\>\"", "->", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"InputField", "[", "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"Dynamic", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"Replace", "[", 
+                   RowBox[{
+                    RowBox[{"serverInfo", "[", "\"\<GitHubRepo\>\"", "]"}], 
+                    ",", " ", 
+                    RowBox[{
+                    RowBox[{"Except", "[", "_String", "]"}], "\[Rule]", 
+                    "\"\<\>\""}]}], "]"}], ",", "\n", "\t", 
+                  "\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"Set", "[", 
+                    RowBox[{
+                    RowBox[{"serverInfo", "[", "\"\<GitHubRepo\>\"", "]"}], 
+                    ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Replace", "[", 
+                    RowBox[{"#", ",", " ", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Except", "[", "_String", "]"}], "|", 
+                    "\"\<\>\""}], "\[Rule]", "None"}]}], "]"}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", "]"}], "&"}]}], "\n", 
+                 "\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                "String", ",", "\n", "\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                "\"\<UUID\>\"", "\[Rule]", "\"\<GitHub Repository\>\""}]}], 
                "\n", "\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t", 
             "|>"}]}], "\n", "\t\t\t\t\t", "]"}]}]}], ",", "\n", "\t\t\t", 
        RowBox[{"Initialization", "\[RuleDelayed]", "\n", "\t", "\t\t\t", 
@@ -2521,9 +2790,12 @@ Cell[BoxData[
    3.7205049323313303`*^9, 3.720505032021377*^9}, {3.720505258866617*^9, 
    3.720505332275106*^9}, {3.720505481983555*^9, 3.720505484124894*^9}, {
    3.7205059785778427`*^9, 3.720505980980523*^9}, {3.72057595352046*^9, 
-   3.720575953660224*^9}},ExpressionUUID->"f39628fd-f5a9-4476-adf4-\
+   3.720575953660224*^9}, {3.7209342048083057`*^9, 3.720934262559716*^9}, {
+   3.720975233483967*^9, 3.720975253740521*^9}, {3.721001128346261*^9, 
+   3.721001176954862*^9}, {3.7210012223607063`*^9, 
+   3.7210012462209187`*^9}},ExpressionUUID->"f39628fd-f5a9-4476-adf4-\
 af0a1ab62fed"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -2803,17 +3075,19 @@ Cell[BoxData[
        RowBox[{
        "pacletListing", ",", "\n", "\t\t\t\t", "contentSpacer", ",", "\n", 
         "\t\t\t\t", "addPacletButton", ",", "\n", "\t\t\t\t", 
-        "removePacletButton", ",", "\n", "\t\t\t\t", "addFileCheck", ",", 
-        "\n", "\t\t\t\t", "contentSpacer", ",", "\n", "\t\t\t\t", 
-        "publishButton", ",", "\n", "\t\t\t\t", "copyURLButton", ",", "\n", 
-        "\t\t\t\t", "openSiteButton", ",", "\n", "\t\t\t\t", 
-        "makeSiteCheck"}], "\n", "\t\t\t\t", "}"}]}], ",", "\n", "\t\t", 
-     RowBox[{"\"\<Edit\>\"", "\[Rule]", "\n", "\t\t\t", 
+        "removePacletButton", ",", "\n", "\t\t\t\t", "addFileCheck"}], "\n", 
+       "\t\t\t\t", "}"}]}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<Site\>\"", "\[Rule]", "\n", "\t\t\t", 
       RowBox[{"{", "\n", "\t\t\t\t", 
        RowBox[{
        "serverConfigurer", ",", "\n", "\t\t\t\t", "contentSpacer", ",", "\n", 
-        "\t\t\t\t", "deletePacletServerDialogButton"}], "\n", "\t\t\t\t", 
-       "}"}]}], ",", "\n", "\t\t", 
+        "\t\t\t\t", "deletePacletServerDialogButton", ",", "\n", "\t\t\t\t", 
+        "contentSpacer", ",", "\n", "\t\t\t\t", "publishButton", ",", "\n", 
+        "\t\t\t\t", "copyURLButton", ",", "\n", "\t\t\t\t", "contentSpacer", 
+        ",", "\n", "\t\t\t\t", "gitHubConfigureButton", ",", "\n", "\t\t\t\t",
+         "gitHubPublishButton", ",", "\n", "\t\t\t\t", "contentSpacer", ",", 
+        "\n", "\t\t\t\t", "openSiteButton", ",", "\n", "\t\t\t\t", 
+        "makeSiteCheck"}], "\n", "\t\t\t\t", "}"}]}], ",", "\n", "\t\t", 
      RowBox[{"\"\<New\>\"", "->", "\n", "\t\t\t", 
       RowBox[{
       "{", "\n", "\t\t\t\t", "newPacletServerPane", "\n", "\t\t\t\t", 
@@ -2867,8 +3141,9 @@ Cell[BoxData[
    3.720558892451316*^9, 3.720558896305685*^9}, {3.720559714692113*^9, 
    3.720559715244298*^9}, {3.72058019125633*^9, 3.72058021338888*^9}, {
    3.720580557494462*^9, 3.720580567478462*^9}, {3.7205876171826067`*^9, 
-   3.7205876178223867`*^9}, {3.720591003554412*^9, 
-   3.720591007453144*^9}},ExpressionUUID->"a04d0f3e-93c1-4591-b269-\
+   3.7205876178223867`*^9}, {3.720591003554412*^9, 3.720591007453144*^9}, {
+   3.7209340576568127`*^9, 3.7209340661970863`*^9}, {3.72099651065582*^9, 
+   3.7209965530583763`*^9}},ExpressionUUID->"a04d0f3e-93c1-4591-b269-\
 f541ff62fa75"],
 
 Cell[BoxData[
@@ -2900,7 +3175,7 @@ Cell[BoxData[
    3.720404852406546*^9, 
    3.720404879810733*^9}},ExpressionUUID->"9710e1aa-fb5f-45ad-b68e-\
 ba5f493e89a7"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -2961,34 +3236,34 @@ Cell[BoxData[
       "\t\t", "}"}], ",", "\n", 
     RowBox[{
      RowBox[{"PacletServerManagerPalette", "[", "]"}], ":=", "\n", "\t", 
-     RowBox[{"With", "[", 
+     RowBox[{"With", "[", "\n", "\t\t", 
       RowBox[{
-       RowBox[{"{", "\n", "\t\t", 
+       RowBox[{"{", "\n", "\t\t\t", 
         RowBox[{
-         RowBox[{"refreshPacletServerDVs", "=", 
+         RowBox[{"refreshPacletServersDVs", "=", 
           RowBox[{"DownValues", "@", "refreshPacletServers"}]}], ",", "\n", 
-         "\t\t", 
+         "\t", "\t\t", 
          RowBox[{"undefDVs", "=", 
-          RowBox[{"DownValues", "@", "undefF"}]}], ",", "\n", "\t\t", 
+          RowBox[{"DownValues", "@", "undefF"}]}], ",", "\n", "\t", "\t\t", 
          RowBox[{"whichPacFDVs", "=", 
-          RowBox[{"DownValues", "@", "whichPacF"}]}], ",", "\n", "\t\t", 
+          RowBox[{"DownValues", "@", "whichPacF"}]}], ",", "\n", "\t", "\t\t", 
          RowBox[{"$paletteContentWidth", "=", "$paletteContentWidth"}], ",", 
-         "\n", "\t\t", 
+         "\n", "\t", "\t\t", 
          RowBox[{"pacletServersExportDVs", "=", 
           RowBox[{"DownValues", "@", "pacletServersExport"}]}], ",", "\n", 
-         "\t\t", 
+         "\t", "\t\t", 
          RowBox[{"pacletServersEditDVs", "=", 
-          RowBox[{"DownValues", "@", "pacletServersEdit"}]}], ",", "\n", 
-         "\t\t", 
+          RowBox[{"DownValues", "@", "pacletServersEdit"}]}], ",", "\n", "\t",
+          "\t\t", 
          RowBox[{"pacletServersAddDVs", "=", 
-          RowBox[{"DownValues", "@", "pacletServersAdd"}]}], ",", "\n", 
+          RowBox[{"DownValues", "@", "pacletServersAdd"}]}], ",", "\n", "\t", 
          "\t\t", 
          RowBox[{"pacletServersRemoveDVs", "=", 
           RowBox[{"DownValues", "[", "pacletServersRemove", "]"}]}], ",", 
-         "\n", "\t\t", 
+         "\n", "\t", "\t\t", 
          RowBox[{"getAppNameDVs", "=", 
-          RowBox[{"DownValues", "@", "getAppName"}]}]}], "\n", "\t\t", "}"}], 
-       ",", "\n", "\t\t", 
+          RowBox[{"DownValues", "@", "getAppName"}]}]}], "\n", "\t\t\t", 
+        "}"}], ",", "\n", "\t\t", 
        RowBox[{"DynamicWrapper", "[", "\n", "\t\t\t", 
         RowBox[{
          RowBox[{"Panel", "[", "\n", "\t\t\t\t", 
@@ -3079,8 +3354,8 @@ Cell[BoxData[
            RowBox[{"If", "[", 
             RowBox[{
              RowBox[{"!", 
-              RowBox[{"ValueQ", "@", 
-               RowBox[{"First", "@", "$paletteTab"}]}]}], ",", "\n", 
+              RowBox[{"StringQ", "@", 
+               RowBox[{"ReleaseHold", "@", "$paletteTab"}]}]}], ",", "\n", 
              "\t\t\t\t\t\t", 
              RowBox[{"$paletteTab", "=", "\"\<Main\>\""}]}], "\n", 
             "\t\t\t\t\t\t", "]"}], ";", "\n", "\t\t\t\t\t", 
@@ -3109,8 +3384,8 @@ Cell[BoxData[
               "maxContentHeight"}]}], "\n", "\t\t\t\t\t\t", "]"}], ";", "\n", 
            "\t\t\t\t\t", 
            RowBox[{
-            RowBox[{"DownValues", "[", "refreshPacletServer", "]"}], "=", 
-            "refreshPacletServerDVs"}], ";", "\n", "\t\t\t\t\t", 
+            RowBox[{"DownValues", "[", "refreshPacletServers", "]"}], "=", 
+            "refreshPacletServersDVs"}], ";", "\n", "\t\t\t\t\t", 
            RowBox[{
             RowBox[{"DownValues", "[", "undefF", "]"}], "=", "undefDVs"}], 
            ";", "\n", "\t\t\t\t\t", 
@@ -3236,10 +3511,12 @@ Cell[BoxData[
    3.720581233820855*^9}, {3.720591853274274*^9, 3.720591864722858*^9}, {
    3.720591902331224*^9, 3.720591908075543*^9}, {3.720637297579935*^9, 
    3.720637300582399*^9}, {3.720638129391088*^9, 3.720638137838525*^9}, {
-   3.720664167745987*^9, 
-   3.720664191236071*^9}},ExpressionUUID->"491fcd63-9085-40df-860f-\
+   3.720664167745987*^9, 3.720664191236071*^9}, {3.720927785383513*^9, 
+   3.7209277949756403`*^9}, {3.720927826627449*^9, 3.720927844530306*^9}, {
+   3.7209279277151623`*^9, 3.720927929506905*^9}, 
+   3.720991988333559*^9},ExpressionUUID->"491fcd63-9085-40df-860f-\
 5b10d828e4b7"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 

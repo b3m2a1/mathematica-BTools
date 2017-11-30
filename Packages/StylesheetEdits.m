@@ -139,25 +139,11 @@ $SSCellTextStyleOptions=
 		};
 
 
-If[!TrueQ@$systemStylesSet,
-	$systemStylesSet=True;
-	With[{cv=
-		CurrentValue[$FrontEndSession,
-			{MessageOptions,"KernelMessageAction"}]
-		},
-		CheckAbort[
-			CurrentValue[$FrontEndSession,
-				{MessageOptions,"KernelMessageAction"}]=None;
-			System`CellFrameStyle;
-			System`GroupOpenerColor;
-			System`GroupOpenerInsideFrame;
-			CurrentValue[$FrontEndSession,
-				{MessageOptions,"KernelMessageAction"}]=cv,
-			CurrentValue[$FrontEndSession,
-					{MessageOptions,"KernelMessageAction"}]=cv;
-			]
-		]
-	]
+Off[General::shdw];
+System`CellFrameStyle;
+System`GroupOpenerColor;
+System`GroupOpenerInsideFrame;
+On[General::shdw];
 
 
 $SSCellFrameStyleOptions=

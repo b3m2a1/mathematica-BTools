@@ -1390,8 +1390,12 @@ WebSiteBuild[
 	With[{
 		outDir=
 			Replace[OptionValue["OutputDirectory"],
-				Automatic:>
-					FileNameJoin@{dir,"output"}
+				{
+					Automatic:>
+						FileNameJoin@{dir,"output"},
+					p_String?(Not@*DirectoryQ):>
+						FileNameJoin@{dir,p}
+					}
 				],
 		fileNames=
 			Replace[files,{
@@ -1640,6 +1644,7 @@ Options[WebSiteDeploy]=
 			CloudConnect->False,
 			"LastDeployment"->Automatic,
 			"AlwaysDeployForms"->"",
+			"OutputDirectory"->Automatic,
 			"IncludeFiles"->{},
 			"StripDirectories"->{},
 			Permissions->"Public",
@@ -1655,10 +1660,21 @@ WebSiteDeploy[
 	Module[
 		{
 			trueDir=
-				If[
-					FileBaseName[outDir]==="output",
-					DirectoryName[outDir],
-					outDir
+				With[{
+					ext=
+						Replace[OptionValue["OutputDirectory"],
+							{
+								Automatic:>
+									"output",
+								_String?DirectoryQ|Except[_String]->""
+								}
+							]
+						},
+					If[
+						StringEndsQ[outDir, ext],
+						FileNameDrop[outDir, -FileNameDepth[ext]],
+						outDir
+						]
 					],
 			info,
 			select,
