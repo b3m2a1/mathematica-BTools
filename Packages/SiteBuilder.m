@@ -911,8 +911,13 @@ Options[WebSiteGenerateAggregationPages]=
 	{
 		Monitor->True
 		}
-WebSiteGenerateAggregationPages[dir_,aggpages_:Automatic,outDir_,theme_,
-	config:Except[_?OptionQ], ops:OptionsPattern[]
+WebSiteGenerateAggregationPages[
+	dir_,
+	aggpages_,
+	outDir_,
+	theme_,
+	config_,
+	ops:OptionsPattern[]
 	]:=
 	With[
 		{
@@ -1490,7 +1495,9 @@ WebSiteBuild[
 				];
 			If[genAggs,
 				WebSiteGenerateAggregationPages[
-					dir,outDir,
+					dir,
+					Automatic,
+					outDir,
 					Lookup[config,"Theme",OptionValue["DefaultTheme"]],
 					newconf,
 					Monitor->OptionValue[Monitor]
