@@ -1679,81 +1679,80 @@ PacletServerDeploy[
 	server:localPacletServerPat,
 	ops:OptionsPattern[]
 	]:=
-	If[
-		DirectoryQ@PacletServerFile[server, "Paclets"]||
-			DirectoryQ@
+	With[
+		{
+			outDir=
 				Replace[OptionValue["OutputDirectory"],
-					{
-						Automatic:>
-							PacletServerFile[server, "output"],
-						s_String?(Not@*DirectoryQ):>
-							PacletServerFile[server, s]
-						}
-					],
-		With[
-			{
-				baseConfig=
-					Lookup[
-						Replace[Quiet@Import[PacletServerFile[server, "SiteConfig.wl"]],
-							Except[_?OptionQ]:>{}
-							],
-						"DeployOptions",
-						{}
+						{
+							Automatic:>
+								PacletServerFile[server, "output"],
+							s_String?(Not@*DirectoryQ):>
+								PacletServerFile[server, s]
+							}
 						]
-				},
-				If[!DirectoryQ@#,
-					CreateDirectory@#
-					]&@
-					PacletServerFile[server,
-						If[GitRepoQ@PacletServerDirectory[server],
-							 "output",
-							 "docs"
-								]
-						];
-				WebSiteDeploy[
-					PacletServerFile[server, "output"],
-					Lookup[server, "ServerName"],
-					FilterRules[
-						Normal@
-							Merge[
-								{
-									ops,
-									CloudConnect->
-										Lookup[server, CloudConnect],
-									Permissions->
-										Lookup[server, Permissions],
-									baseConfig,
-									"ServerTheme"->
-										"PacletServer",
-									"ExtraFileNameForms"->
-										{
-											"PacletSite.mz",
-											"*.paclet"
-											},
-									"IncludeFiles"->
-										{
-											PacletServerFile[server, "PacletSite.mz"],
-											PacletServerFile[server, "Paclets"]
-											},
-									"OutputDirectory"->
-										If[GitRepoQ@PacletServerDirectory[server],
-											"docs",
-											Automatic
-											]
-										},
-								Replace[
-									{
-										{s:_String|_?OptionQ,___}:>s,
-										e_:>Flatten@e
-										}
-									]
+			},
+		If[
+			DirectoryQ@PacletServerFile[server, "Paclets"]||
+				DirectoryQ@outDir,
+			With[
+				{
+					baseConfig=
+						Lookup[
+							Replace[Quiet@Import[PacletServerFile[server, "SiteConfig.wl"]],
+								Except[_?OptionQ]:>{}
 								],
-						Options@WebSiteDeploy
+							"DeployOptions",
+							{}
+							]
+					},
+					If[!DirectoryQ@#,
+						CreateDirectory@#
+						]&@outDir;
+					WebSiteDeploy[
+						outDir,
+						Lookup[server, "ServerName"],
+						FilterRules[
+							Normal@
+								Merge[
+									{
+										ops,
+										CloudConnect->
+											Lookup[server, CloudConnect],
+										Permissions->
+											Lookup[server, Permissions],
+										baseConfig,
+										"ServerTheme"->
+											"PacletServer",
+										"ExtraFileNameForms"->
+											{
+												"PacletSite.mz",
+												"*.paclet"
+												},
+										"IncludeFiles"->
+											{
+												PacletServerFile[server, "PacletSite.mz"],
+												PacletServerFile[server, "Paclets"]
+												},
+										"OutputDirectory"->
+											If[GitRepoQ@PacletServerDirectory[server],
+												"docs",
+												Automatic
+												]
+											},
+									Replace[
+										{
+											{s:_String|_?OptionQ,___}:>s,
+											e_:>Flatten@e
+											}
+										]
+									],
+							Options@WebSiteDeploy
+							]
 						]
-					]
-			],
-		Message[PacletServerDeploy::nobld];
-		$Failed
+				],
+			Message[PacletServerDeploy::nobld];
+			$Failed
+			]
 		];
 PacletServerDeploy[
 	k_?(KeyMemberQ[$PacletServers, #]&),

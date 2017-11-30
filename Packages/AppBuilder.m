@@ -2295,6 +2295,7 @@ Options[AppPublish]=
 		"PushToCloud"->True,
 		"PushToServer"->True,
 		"PublishServer"->Automatic,
+		"MakeSite"->True,
 		Verbose->True
 		};
 AppPublish[app_,ops:OptionsPattern[]]:=
@@ -2355,7 +2356,7 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 					If[TrueQ@OptionValue["PublishServer"]||
 						TrueQ[pacletServerPush]&&OptionValue["PublishServer"]===Automatic,
 						"ServerURL"->
-							(
+							With[{mf=TrueQ@OptionValue["MakeSite"]},
 								URLBuild@
 									ReplacePart[#,
 										"Path"->
@@ -2367,7 +2368,14 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 												Select[
 													Cases[
 														PacletServerBuild[$PacletServer, 
-															"AutoDeploy"->True
+															"AutoDeploy"->True,
+															"RegenerateContent"->mf,
+															"BuildSite"->mf,
+															"DeployOptions"->
+																{
+																	Monitor->False,
+																	"DeployPages"->mf
+																	}
 															],
 														CloudObject[c_,___]:>c
 														],
@@ -2375,7 +2383,7 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 													],
 												Length@URLParse[#,"Path"]&
 												]
-									),
+									],
 							Nothing
 							]
 						}
