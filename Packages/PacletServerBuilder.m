@@ -1099,12 +1099,13 @@ PacletServerAdd[
 		"UploadSiteFile"->True
 		];
 PacletServerAdd[
+	k_?(KeyMemberQ[$PacletServers, #]&),
 	pacletSpecs:$PacletUploadPatterns,
 	ops:OptionsPattern[]
 	]:=
 	With[{s=
 		PacletServerAdd[
-			$PacletServer,
+			$PacletServers[k],
 			pacletSpecs,
 			ops
 			]
@@ -1141,13 +1142,14 @@ PacletServerRemove[
 				]
 		];
 PacletServerRemove[
+	k_?(KeyMemberQ[$PacletServers, #]&),
 	pacletSpecs:$PacletRemovePatterns,
 	ops:OptionsPattern[]
 	]:=
 	With[{
 		s=
 		PacletServerRemove[
-			$PacletServer,
+			$PacletServers[k],
 			pacletSpecs,
 			ops
 			]
@@ -1196,6 +1198,11 @@ PacletServerDelete[
 				]
 			];
 		)
+PacletServerDelete[
+	k_?(KeyMemberQ[$PacletServers, #]&),
+	ops:OptionsPattern[]
+	]:=
+	PacletServerDelete[$PacletServers[k], ops]
 
 
 (* ::Subsection:: *)

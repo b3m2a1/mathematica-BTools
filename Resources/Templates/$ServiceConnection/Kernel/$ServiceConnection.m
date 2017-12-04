@@ -28,7 +28,7 @@ Begin["$ServiceConnectionAPI`"]
 Begin["`Private`"]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Template Info*)
 
 
@@ -515,6 +515,10 @@ $serviceconnectioncookeddata["RequestData",id_, query_String]:=
 (*Cooked Data Functions*)
 
 
+(* ::Text:: *)
+(*This is the heart of the paclet. Take the template parameters and turn them into request functions.*)
+
+
 $$serviceconnectioncookingfunctions=$ServiceConnectionCookingFunctions;
 KeyValueMap[
 	With[{
@@ -524,6 +528,11 @@ KeyValueMap[
 			Association@Flatten@List@Lookup[#2,"Default",{}],
 		reqParams=Lookup[#2,"Required",{}],
 		paramList=Lookup[#2,"Parameters",{}],
+		prePreFunction=
+			If[AssociationQ@#2,
+				Lookup[#2,"CleanArguments",Identity],
+				#2
+				],
 		preFunction=
 			If[AssociationQ@#2,
 				Lookup[#2,"Pre",#3&],
@@ -557,6 +566,7 @@ KeyValueMap[
 						}
 			},
 		If[!MissingQ@baseCall,
+			(* insert parameter data for later lookup *)
 			$serviceconnectionpsuedodata[id_,callName]:=
 				Merge[
 					{
@@ -571,7 +581,7 @@ KeyValueMap[
 			$serviceconnectioncookeddata[callName, id_,args_] :=
 				postFunction@
 	   	 	Block[{
-	   	 		params = (*preFunction@*)Join[defaultPars,Association[args]],
+	   	 		params = prePreFunction@Join[defaultPars,Association[args]],
 	   	 		$$serviceconnectionlastrequest
 	   	 		},
 	   	 		ServiceConnections`Private`urlfetchFun[id]=

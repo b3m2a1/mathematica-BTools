@@ -1020,16 +1020,19 @@ NotebookMarkdownSave[
 						MarkdownSiteBase@
 							MarkdownNotebookDirectory[nb]
 					},
-					If[!FileExistsQ@
-							FileNameJoin@Flatten@{root,MarkdownContentExtension@root,First[#]},
-						Export[
-							FileNameJoin@Flatten@{root,MarkdownContentExtension@root,First[#]},
-							ReleaseHold@Last[#],
-							Switch[FileExtension[Last@Flatten@First[#]],
-								"gif",
-									"AnimationRepetitions"->Infinity,
-								_,
-									Sequence@@{}
+					With[{f=FileNameJoin@Flatten@{root,MarkdownContentExtension@root,First[#]}},
+						If[!FileExistsQ@f,
+							If[!DirectoryQ@DirectoryName[f],
+								CreateDirectory[DirectoryName[f], CreateIntermediateDirectories->True]
+								];
+							Export[f,
+								ReleaseHold@Last[#],
+								Switch[FileExtension[f],
+									"gif",
+										"AnimationRepetitions"->Infinity,
+									_,
+										Sequence@@{}
+									]
 								]
 							]
 						]&/@Flatten@Last[md];

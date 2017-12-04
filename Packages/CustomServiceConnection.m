@@ -103,6 +103,7 @@ CustomServiceConnection::pfkey="Process function `` missing keys ``";
 Options[customServiceConnectionProcessFunction]={
 	"Call"->None,
 	"Method"->None,
+	"CleanArguments"->None,
 	"Pre"->None,
 	"Import"->None,
 	"Post"->None,
