@@ -72,24 +72,24 @@ MakeIndentable[
 	Replace[
 		Replace[Flatten@List@cell,
 			Except[{__CellObject}]:>
-				SSCells[SSEditNotebook@nb,cell,"MakeCell"->True]
+				StyleSheetCells[StyleSheetEditNotebook@nb,cell,"MakeCell"->True]
 			],{
 		s:{__CellObject}:>
 			CompoundExpression[
-				SSEdit[s,{
+				StyleSheetEdit[s,{
 					AutoIndent->True,
 					LineIndent->1,
 					TabSpacings->1.5
 					}];
 				Replace[OptionValue["IndentCharacter"],
 					t_String:>
-						SSEditTaggingRules[s,
+						StyleSheetEditTaggingRules[s,
 							{
 								"IndentCharacter"->t
 								}
 							]
 					];
-				SSEditEvents[s,{
+				StyleSheetEditEvents[s,{
 					{"MenuCommand","SelectionCloseAllGroups"}:>
 						Quiet@Check[
 							Needs[pkg];

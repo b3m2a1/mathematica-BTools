@@ -22,20 +22,20 @@
 $SyntaxHighlightingStyles::usage="List of styles that can be used";
 
 
-$SHPunctuation::usage="List of punctuation to color";
-$SHFormattingHeads::usage="List of formatting heads to color";
-$SHConstants::usage="List of constants to color";
-$SHTypes::usage="List of types to color";
-$SHCommands::usage="List of commands to color";
-$SHFunctions::usage="List of functions to color";
-$SHContextStyling::usage="List of contexts and styles to apply";
+$SyntaxHiglightingPunctuation::usage="List of punctuation to color";
+$SyntaxHiglightingFormattingHeads::usage="List of formatting heads to color";
+$SyntaxHiglightingConstants::usage="List of constants to color";
+$SyntaxHiglightingTypes::usage="List of types to color";
+$SyntaxHiglightingCommands::usage="List of commands to color";
+$SyntaxHiglightingFunctions::usage="List of functions to color";
+$SyntaxHiglightingContextStyling::usage="List of contexts and styles to apply";
 
 
-SHApplyStyling::usage=
+SyntaxHiglightingApplyStyling::usage=
 	"Applies syntax coloring to a cell or cell style";
-SHClearStyling::usage=
+SyntaxHiglightingClearStyling::usage=
 	"Removes syntax coloring from a cell or cell style";
-SHStylesheet::usage=
+SyntaxHiglightingStylesheet::usage=
 	"Uses SSTemplate to make a template for stylesheet editing";
 
 
@@ -58,7 +58,7 @@ $SyntaxHighlightingStyles={
 	};
 
 
-SHStylesheet[notebookArg:None|_Notebook:None]:=
+SyntaxHiglightingStylesheet[notebookArg:None|_Notebook:None]:=
 	SSTemplate[notebookArg,
 		DefaultStyle[
 			FrontEnd`FileName[Evaluate@{`Package`$PackageName},
@@ -70,20 +70,20 @@ SHStylesheet[notebookArg:None|_Notebook:None]:=
 
 
 Clear/@{
-"$SHPunctuation",
-"$SHFormattingHeads",
-"$SHConstants",
-"$SHTypes",
-"$SHCommands",
-"$SHFunctions",
-"$SHContextStyling"};
+"$SyntaxHiglightingPunctuation",
+"$SyntaxHiglightingFormattingHeads",
+"$SyntaxHiglightingConstants",
+"$SyntaxHiglightingTypes",
+"$SyntaxHiglightingCommands",
+"$SyntaxHiglightingFunctions",
+"$SyntaxHiglightingContextStyling"};
 
 
-$SHStringSepDefault={"\""};
-$SHStringSep=$SHStringSepDefault;
+$SyntaxHiglightingStringSepDefault={"\""};
+$SyntaxHiglightingStringSep=$SyntaxHiglightingStringSepDefault;
 
 
-$SHPunctuationDefault={
+$SyntaxHiglightingPunctuationDefault={
 "@","//","~",";",
 ",","-","+",
 "/","*","(",")",
@@ -97,36 +97,36 @@ $SHPunctuationDefault={
 "|",":=","^:=",
 "/:","/;"
 };
-$SHPunctuation=$SHPunctuationDefault;
+$SyntaxHiglightingPunctuation=$SyntaxHiglightingPunctuationDefault;
 
 
-$SHFormattingHeadsDefault={
+$SyntaxHiglightingFormattingHeadsDefault={
 "Graphics","Graphics3D",
 "Point","Line",
 "Disk","Sphere",
 "Tube","Arrow"
 };
-$SHFormattingHeads=$SHFormattingHeadsDefault;
+$SyntaxHiglightingFormattingHeads=$SyntaxHiglightingFormattingHeadsDefault;
 
 
-$SHConstantsDefault={
+$SyntaxHiglightingConstantsDefault={
 "$Failed","False","True","$Canceled",
 "All"
 };
-$SHConstants=$SHConstantsDefault;
+$SyntaxHiglightingConstants=$SyntaxHiglightingConstantsDefault;
 
 
-$SHTypesDefault={
+$SyntaxHiglightingTypesDefault={
 	"Entity","Quantity",
 	"ChannelObject","CloudObject",
 	"CloudExpression","CellObject",
 	"Notebook","Cell",
 	"ResourceObject","LocalObject",
 	"FormObject"};
-$SHTypes=$SHTypesDefault;
+$SyntaxHiglightingTypes=$SyntaxHiglightingTypesDefault;
 
 
-$SHCommandsDefault={
+$SyntaxHiglightingCommandsDefault={
 "Return","Break","DialogReturn",
 "Goto","Throw","Catch",
 "Message","Print",
@@ -134,10 +134,10 @@ $SHCommandsDefault={
 "Begin","BeginPackage",
 "End","EndPackage"
 };
-$SHCommands=$SHCommandsDefault;
+$SyntaxHiglightingCommands=$SyntaxHiglightingCommandsDefault;
 
 
-$SHFunctionsDefault={
+$SyntaxHiglightingFunctionsDefault={
 	"With","Module","Block",
 	"If","Switch","Which",
 	"Do","Table",
@@ -146,36 +146,36 @@ $SHFunctionsDefault={
 	"ReplaceRepeated","ReplacePart",
 	"Map","MapIndexed","MapThread"
 	};
-$SHFunctions=$SHFunctionsDefault;
+$SyntaxHiglightingFunctions=$SyntaxHiglightingFunctionsDefault;
 
 
-$SHContextStylingDefault={
+$SyntaxHiglightingContextStylingDefault={
 	"System`"->"SystemStyle",
 	"Global`"->"GlobalStyle",
 	Automatic->"UndefinedStyle"
 	};
-$SHContextStyling=$SHContextStylingDefault;
+$SyntaxHiglightingContextStyling=$SyntaxHiglightingContextStylingDefault;
 
 
 Map[
 	Replace[#,{
 		Hold[s_]:>
-			(s/:HoldPattern[(h:Set|SetDelayed)[s,v_]]/;!TrueQ@$SHApplyingSyntaxStyling:=
-				Block[{$SHApplyingSyntaxStyling=True},
+			(s/:HoldPattern[(h:Set|SetDelayed)[s,v_]]/;!TrueQ@$SyntaxHiglightingApplyingSyntaxStyling:=
+				Block[{$SyntaxHiglightingApplyingSyntaxStyling=True},
 					h[s,v];
-					Block[{$SHForceCells=False},SHApplyStyling[]];
+					Block[{$SyntaxHiglightingForceCells=False},SyntaxHiglightingApplyStyling[]];
 					If[h==Set,v];
 					])
 		}]&,
 	Thread@Hold@{
-		$SHPunctuation,
-		$SHFormattingHeads,
-		$SHContextStyling,
-		$SHTypes,
-		$SHFunctions,
-		$SHConstants,
-		$SHCommands,
-		$SHContextStyling
+		$SyntaxHiglightingPunctuation,
+		$SyntaxHiglightingFormattingHeads,
+		$SyntaxHiglightingContextStyling,
+		$SyntaxHiglightingTypes,
+		$SyntaxHiglightingFunctions,
+		$SyntaxHiglightingConstants,
+		$SyntaxHiglightingCommands,
+		$SyntaxHiglightingContextStyling
 		}
 	];
 
@@ -183,36 +183,36 @@ Map[
 MapThread[
 	Replace[#,{
 		Hold[s_]:>
-			(s/:HoldPattern[Unset[s]]:=Block[{$SHForceCells=False},s=#2])
+			(s/:HoldPattern[Unset[s]]:=Block[{$SyntaxHiglightingForceCells=False},s=#2])
 		}]&,{
 		Thread@Hold@{
-			$SHPunctuation,
-			$SHFormattingHeads,
-			$SHContextStyling,
-			$SHTypes,
-			$SHFunctions,
-			$SHConstants,
-			$SHCommands,
-			$SHContextStyling
+			$SyntaxHiglightingPunctuation,
+			$SyntaxHiglightingFormattingHeads,
+			$SyntaxHiglightingContextStyling,
+			$SyntaxHiglightingTypes,
+			$SyntaxHiglightingFunctions,
+			$SyntaxHiglightingConstants,
+			$SyntaxHiglightingCommands,
+			$SyntaxHiglightingContextStyling
 			},
 		{
-			$SHPunctuationDefault,
-			$SHFormattingHeadsDefault,
-			$SHContextStylingDefault,
-			$SHTypesDefault,
-			$SHFunctionsDefault,
-			$SHConstantsDefault,
-			$SHCommandsDefault,
-			$SHContextStylingDefault
+			$SyntaxHiglightingPunctuationDefault,
+			$SyntaxHiglightingFormattingHeadsDefault,
+			$SyntaxHiglightingContextStylingDefault,
+			$SyntaxHiglightingTypesDefault,
+			$SyntaxHiglightingFunctionsDefault,
+			$SyntaxHiglightingConstantsDefault,
+			$SyntaxHiglightingCommandsDefault,
+			$SyntaxHiglightingContextStylingDefault
 			}
 		}]
 
 
-$SHForceCells=True;
+$SyntaxHiglightingForceCells=True;
 
 
-SHSetHighlightingStyle[nb_,override:True|False:True]:=
-	Block[{$SHForceCells=False},
+SyntaxHiglightingSetHighlightingStyle[nb_,override:True|False:True]:=
+	Block[{$SyntaxHiglightingForceCells=False},
 		NotebookDelete@
 			SSCells[nb,
 				DefaultStyle[
@@ -233,7 +233,7 @@ SHSetHighlightingStyle[nb_,override:True|False:True]:=
 		];
 
 
-Options[SHConfigureSyntaxColoring]={
+Options[SyntaxHiglightingConfigureSyntaxColoring]={
 	"Punctuation"->Automatic,
 	"Commands"->Automatic,
 	"Functions"->Automatic,
@@ -241,7 +241,7 @@ Options[SHConfigureSyntaxColoring]={
 	"Constants"->Automatic,
 	"Contexts"->Automatic
 	};
-SHConfigureSyntaxColoring[
+SyntaxHiglightingConfigureSyntaxColoring[
 	objs:Except[_?OptionQ]..,
 	ops:OptionsPattern[]
 	]:=
@@ -251,32 +251,32 @@ SHConfigureSyntaxColoring[
 				Thread[
 					Replace[
 						OptionValue["Punctuation"],
-							Except[_List]:>$SHPunctuation
+							Except[_List]:>$SyntaxHiglightingPunctuation
 						]->"OperatorStyle"
 						],
-				Thread[$SHStringSep->"StringStyle"],
+				Thread[$SyntaxHiglightingStringSep->"StringStyle"],
 				Thread[
 					Replace[
 						OptionValue["Commands"],
-							Except[_List]:>$SHCommands
+							Except[_List]:>$SyntaxHiglightingCommands
 						]->"CommandStyle"
 						],
 				Thread[
 					Replace[
 						OptionValue["Functions"],
-							Except[_List]:>$SHFunctions
+							Except[_List]:>$SyntaxHiglightingFunctions
 						]->"FunctionStyle"
 					],
 				Thread[
 					Replace[
 						OptionValue["Types"],
-							Except[_List]:>$SHTypes
+							Except[_List]:>$SyntaxHiglightingTypes
 						]->"TypeStyle"
 					],
 				Thread[
 					Replace[
 						OptionValue["Constants"],
-							Except[_List]:>$SHConstants
+							Except[_List]:>$SyntaxHiglightingConstants
 						]->"ConstantStyle"
 					]
 				],
@@ -289,7 +289,7 @@ SHConfigureSyntaxColoring[
 				"StringStyle",
 			"SymbolContextStyles"->
 				Replace[OptionValue@"Contexts",
-					Except[_List]->$SHContextStyling
+					Except[_List]->$SyntaxHiglightingContextStyling
 					],
 			"EmphasizedSyntaxErrorStyle"->
 				"EmphasizedSyntaxErrorStyle",
@@ -335,7 +335,7 @@ SHConfigureSyntaxColoring[
 			}];
 
 
-SHRemoveSyntaxColoring[objs_]:=
+SyntaxHiglightingRemoveSyntaxColoring[objs_]:=
 	SSEdit[objs,
 		AutoStyleWords->
 			Inherited,
@@ -369,41 +369,41 @@ SHRemoveSyntaxColoring[objs_]:=
 		];
 
 
-Clear@SHApplyStyling;
-Options[SHApplyStyling]=
-	Options@SHConfigureSyntaxColoring;
-SHApplyStyling[cell:_CellObject|{__CellObject},ops:OptionsPattern[]]:=
-	SHConfigureSyntaxColoring[cell,ops];
-SHApplyStyling[
+Clear@SyntaxHiglightingApplyStyling;
+Options[SyntaxHiglightingApplyStyling]=
+	Options@SyntaxHiglightingConfigureSyntaxColoring;
+SyntaxHiglightingApplyStyling[cell:_CellObject|{__CellObject},ops:OptionsPattern[]]:=
+	SyntaxHiglightingConfigureSyntaxColoring[cell,ops];
+SyntaxHiglightingApplyStyling[
 	nb:_NotebookObject|Automatic:Automatic,
 	style_:All,
 	ops:OptionsPattern[]
 	]:=
 	(
-		SHSetHighlightingStyle[nb,$SHForceCells];
+		SyntaxHiglightingSetHighlightingStyle[nb,$SyntaxHiglightingForceCells];
 		With[{s=
-			Replace[SSCells[nb,style,$SHForceCells],{
+			Replace[SSCells[nb,style,$SyntaxHiglightingForceCells],{
 				{}:>
-					If[TrueQ@$SHForceCells,
-						SSCells[nb,style,$SHForceCells],
+					If[TrueQ@$SyntaxHiglightingForceCells,
+						SSCells[nb,style,$SyntaxHiglightingForceCells],
 						{}
 						]
 				}]
 			},
-			SHConfigureSyntaxColoring[s,ops]
+			SyntaxHiglightingConfigureSyntaxColoring[s,ops]
 			]
 		);
 
 
-SHClearStyling[cell:_CellObject|{__CellObject}]:=
-	SHRemoveSyntaxColoring[cell];
-SHClearStyling[
+SyntaxHiglightingClearStyling[cell:_CellObject|{__CellObject}]:=
+	SyntaxHiglightingRemoveSyntaxColoring[cell];
+SyntaxHiglightingClearStyling[
 	nb:_NotebookObject|Automatic:Automatic,
 	style_:All
 	]:=
 	With[{s=SSCells[nb,style]},
 		If[Length@s>0,
-			SHClearStyling[s]
+			SyntaxHiglightingClearStyling[s]
 			]
 		]
 

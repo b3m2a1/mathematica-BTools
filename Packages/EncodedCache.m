@@ -97,7 +97,7 @@ $EncodedCacheDefaultOptions=
 			True,
 		"SyncBase"->
 			FileName[{
-				$UserBaseDirectory,
+				$HomeDirectory,
 				"Dropbox"
 				}],
 		"PersistenceBase"->
@@ -378,6 +378,15 @@ EncodedCacheFile[spec_?StringQ]:=
 				},
 			FileName[d_]:>d,
 			1];
+EncodedCacheFiles[pat_:"*"]:=
+	FileNames[
+		pat,
+		{
+			EncodedCacheOption["Default", "PersistenceBase"],
+			EncodedCacheOption["Default", "TemporaryBase"],
+			EncodedCacheOption["Default", "SyncBase"]
+			}
+		]
 
 
 EncodedCacheExport[(spec_?StringQ)?(KeyMemberQ[$EncodedCaches,#]&)]:=
