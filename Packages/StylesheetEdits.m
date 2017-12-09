@@ -170,7 +170,7 @@ $StyleSheetCellDisplayStyleOptions:=
 		];
 
 
-FindStyleSheetNotebook[parts___String,name_String]:=
+FindStyleSheetNotebook[parts___String, name_String]:=
 	Replace[
 		FileNameJoin@Flatten@{
 			$InstallationDirectory,
@@ -191,7 +191,14 @@ FindStyleSheetNotebook["Default"]
 
 
 ssFileNameJoin[args__]:=
-	FileNameJoin@Flatten@{$FrontEndDirectory,"StyleSheets",args}
+	FileNameJoin@
+		Flatten@{
+			$InstallationDirectory,
+			"SystemFiles",
+			"FrontEnd",
+			"StyleSheets",
+			args
+			};
 
 
 ssFileName@FrontEnd`FileName[baseComponents_List,base_,___]:=
@@ -218,6 +225,16 @@ ssFileName[base:_String?(Not@*FileExistsQ)|{__String}]:=
 		];
 
 
+ssNotebookInformationNotebook[nb_]:=
+	Replace[
+		Lookup[
+			Replace[NotebookInformation[nb], Except[_?OptionQ]->{}],
+			"StyleDefinitons"
+			],
+		{n_NotebookObject,___}:>n
+		]
+
+
 StyleSheetNotebookFileName[nb_NotebookObject]:=
 	Replace[CurrentValue[nb,StyleDefinitions],{
 		f:_String|_FrontEnd`FileName:>
@@ -231,23 +248,35 @@ If[!AssociationQ@$ssNbObjCache,
 	$ssNbObjCache=<||>
 	];
 StyleSheetNotebookObject[nb_NotebookObject]:=
-	Replace[Lookup[$ssNbObjCache,nb],{
-		_Missing|_NotebookObject?(NotebookInformation@#===$Failed&):>
-			Set[$ssNbObjCache[nb],
-				Replace[StyleSheetNotebookFileName[nb],{
-					f_String:>
-						Replace[FENotebooks[f],{
-							{}:>Missing["NotFound"],
-							{n_,___}:>n
-							}],
-					_Missing:>
-						With[{n=CurrentValue[nb,StyleDefinitions]},
-							SelectFirst[FENotebooks[],
-								NotebookGet@#===n&]
-							]
-					}]
-				]
-		}];
+	Replace[
+		Replace[ssNotebookInformationNotebook[nb],
+			Except[_NotebookObject?(NotebookInformation@#===$Failed&)]:>
+			Lookup[$ssNbObjCache,nb]
+			],
+		{
+			_Missing|_NotebookObject?(NotebookInformation@#===$Failed&):>
+				Set[$ssNbObjCache[nb],
+					First@Lookup[
+						Replace[NotebookInformation[nb], Except[_?OptionQ]->{}],
+						"StyleDefinitons",
+						{
+							Replace[StyleSheetNotebookFileName[nb],{
+								f_String:>
+									Replace[FENotebooks[f],{
+										{}:>Missing["NotFound"],
+										{n_,___}:>n
+										}],
+								_Missing:>
+									With[{n=CurrentValue[nb,StyleDefinitions]},
+										SelectFirst[FENotebooks[],
+											NotebookGet@#===n&]
+										]
+								}]
+							}
+						]
+					]
+			}
+		];
 
 
 StyleSheetNotebookObject/:

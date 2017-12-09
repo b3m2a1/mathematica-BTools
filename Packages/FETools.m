@@ -166,50 +166,53 @@ FEPackets[pat_:""]:=
 
 
 FEPacketBrowser[pat:_String:"",ops___]:=
-	DynamicModule[{packetArgs=RowBox@{"EvaluationNotebook","[","]"}},
-		Column@{
-			PaneColumn[
-				Button[
-					Mouseover[
-							Style[#,"Input",FontWeight->Plain],
-								Style[#,Purple,"Input",FontWeight->"DemiBold"]
-							],
-					Replace[
-						FrontEndExecute@
-							Block[{$Context="FrontEnd`"},
-								ToExpression[#][
-									Sequence@@Flatten[ToExpression@RowBox@{"{",packetArgs,"}"},1]
-									]
+	Interpretation[
+		DynamicModule[{packetArgs=RowBox@{"EvaluationNotebook","[","]"}},
+			Column@{
+				PaneColumn[
+					Button[
+						Mouseover[
+								Style[#,"Input",FontWeight->Plain],
+									Style[#,Purple,"Input",FontWeight->"DemiBold"]
 								],
-						r:Except[Null]:>(
-							If[CurrentValue[NextCell@EvaluationCell[],GeneratedCell],
-								NotebookDelete@NextCell@EvaluationCell[]
-								];
-								Print[r]
-								)
-						];
-					Method->"Queued",
-					Appearance->"Frameless",
-					ImageSize->250,
-					Alignment->Left]&/@FEPackets[pat],
-				ops
-				],
-			Style[
-				EventHandler[
-					InputField[Dynamic[packetArgs],Boxes,
-						ImageSize->250],
-					{
-						"ReturnKeyDown":>
-							NotebookWrite[EvaluationNotebook[],"\\"<>"[IndentingNewLine]"],
-						{"MenuCommand","HandleShiftReturn"}:>
-							Flatten[ToExpression@RowBox@{"{",cellBoxes,"}"},1]
-						}
+						Replace[
+							FrontEndExecute@
+								Block[{$Context="FrontEnd`"},
+									ToExpression[#][
+										Sequence@@Flatten[ToExpression@RowBox@{"{",packetArgs,"}"},1]
+										]
+									],
+							r:Except[Null]:>(
+								If[CurrentValue[NextCell@EvaluationCell[],GeneratedCell],
+									NotebookDelete@NextCell@EvaluationCell[]
+									];
+									Print[r]
+									)
+							];
+						Method->"Queued",
+						Appearance->"Frameless",
+						ImageSize->250,
+						Alignment->Left]&/@FEPackets[pat],
+					ops
 					],
-				"Input"
-				]
-			}//Deploy
+				Style[
+					EventHandler[
+						InputField[Dynamic[packetArgs],Boxes,
+							ImageSize->250],
+						{
+							"ReturnKeyDown":>
+								NotebookWrite[EvaluationNotebook[],"\\"<>"[IndentingNewLine]"],
+							{"MenuCommand","HandleShiftReturn"}:>
+								Flatten[ToExpression@RowBox@{"{",cellBoxes,"}"},1]
+							}
+						],
+					"Input"
+					]
+				}//Deploy
+		],
+	FEPacketSymbol[FEPackets[pat]]
 	];
-FEPacketSymbol[p_String]:=
+FEPacketSymbol[p:_String|{__String}]:=
 	Block[{$Context="FrontEnd`"},ToExpression@p];
 FEPacketExecute[
 	packet:_Symbol|_String,
