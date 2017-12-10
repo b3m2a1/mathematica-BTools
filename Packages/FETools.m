@@ -1547,7 +1547,7 @@ FEAttachCell[
 							If[MatchQ[parent,_NotebookObject],
 								Replace[anchor,{
 									Automatic->
-										{Center,Top}
+										{Center,Top},
 									tb:(Top|Bottom):>
 										{Center,tb},
 									lr:(Left|Right):>
@@ -1561,7 +1561,7 @@ FEAttachCell[
 						If[MatchQ[parent,_NotebookObject],
 							Replace[alignment,{
 								Automatic->
-									{Center,Top}
+									{Center,Top},
 								tb:(Top|Bottom):>
 									{Center,tb},
 								lr:(Left|Right):>

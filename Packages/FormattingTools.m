@@ -19,6 +19,10 @@
 
 
 
+NinePatchCreate::usage=
+	"Creates a NinePatch image for use in Appearance";
+
+
 AppearanceReadyImage::usage=
 	"Converts an image into a background appearance for (say) a button";
 GradientAppearance::usage=
@@ -145,6 +149,161 @@ Begin["`Private`"];
 (* ::Subsection:: *)
 (*Appearances*)
 
+
+
+ninePatchMarkerPatternSingle=
+	_Integer|Scaled[i_?NumericQ]|
+	Offset[
+		Scaled[i_?NumericQ]|_Integer,
+		Scaled[i_?NumericQ]|_Integer
+		];
+ninePatchMarkerPattern=
+	ninePatchMarkerPatternSingle|{ninePatchMarkerPatternSingle..};
+ninePatchParamClean[p_,ind_,dim_,doNeg_:True]:=
+	ReplaceRepeated[p,
+		{
+			Scaled[i_]:>
+			i*dim[[Mod[ind,2,1]]],
+			i_Integer?(Negative[#]&&doNeg&):>
+			i+dim[[Mod[ind,2,1]]],
+			i:Except[_Integer,_?NumericQ]:>
+			Floor[i]
+			}
+		];
+ninePatchStretchZones[stretch_,contents_,dim_]:=
+	Module[
+		{
+			stretchesX,stretchesY,
+			contentsX,contentsY,
+			stretchOffsetsX,stretchOffsetsY,
+			contentOffsetsX,contentOffsetsY
+			},
+		{stretchesX,stretchesY}=
+		Flatten@*List/@
+		Replace[stretch,Automatic->{Scaled[.5],Scaled[.25]}];
+		{contentsX,contentsY}=
+		Flatten@*List/@
+		Replace[contents,
+			Automatic->{stretchesX,stretchesY}
+			];
+		stretchOffsetsX=
+		ConstantArray[0,Length@stretchesX];
+		stretchOffsetsY=
+		ConstantArray[0,Length@stretchesY];
+		contentOffsetsX=
+		ConstantArray[0,Length@contentsX];
+		contentOffsetsY=
+		ConstantArray[0,Length@contentsY];
+		{stretchesX,stretchesY,contentsX,contentsY}=
+		MapIndexed[
+			With[{ind=#2[[1]]},
+				MapIndexed[
+					Replace[
+						#,
+						{
+							Offset[w_,s_]:>
+							With[{
+									v=
+									ninePatchParamClean[s,ind,dim,False]
+									},
+								Switch[ind,
+									1,stretchOffsetsX[[#2[[1]]]]=v,
+									2,stretchOffsetsY[[#2[[1]]]]=v,
+									3,contentOffsetsX[[#2[[1]]]]=v,
+									4,contentOffsetsY[[#2[[1]]]]=v
+									];
+								ninePatchParamClean[w,ind,dim]
+								],
+							e_:>
+							ninePatchParamClean[e,ind,dim]
+							}
+						]&,
+					#
+					]
+				]&,
+			{stretchesX,stretchesY,contentsX,contentsY}
+			];
+		If[AnyTrue[Flatten@{
+				stretchesX,stretchesY,
+				contentsX,contentsY,
+				stretchOffsetsX,stretchOffsetsY,
+				contentOffsetsX,contentOffsetsY
+				},Not@*IntegerQ],
+		Throw[$Failed],
+		{
+			stretchesX,stretchesY,
+			contentsX,contentsY,
+			stretchOffsetsX,stretchOffsetsY,
+			contentOffsetsX,contentOffsetsY
+			}
+		]
+	];
+ninePatchImagePad[img_,
+	{
+		stretchesX_,stretchesY_,
+		contentsX_,contentsY_,
+		stretchOffsetsX_,stretchOffsetsY_,
+		contentOffsetsX_,contentOffsetsY_
+		}]:=
+	With[{dim=ImageDimensions[img]+2},
+		ReplacePixelValue[
+			ImagePad[img, 1, White],
+			Flatten[
+				Map[
+					With[{vals=#[[1]],offsets=#[[2]],f=#[[3]]},
+						MapThread[
+							With[{v=#,o=#2},
+								Array[f[#,v,o]&,v]
+								]&,
+							{vals,offsets}
+							]
+						]&,
+					{
+						{
+							stretchesY,stretchOffsetsY,
+							{1,Floor[(dim[[2]]-#2)/2]+#+#3}&
+							},
+						{
+							stretchesX,stretchOffsetsX,
+							{Floor[(dim[[1]]-#2)/2]+#+#3,dim[[2]]}&
+							},
+						{
+							contentsY,contentOffsetsY,
+							{dim[[1]],Floor[(dim[[2]]-#2)/2]+#+#3}&
+							},
+						{
+							contentsX,contentOffsetsX,
+							{Floor[(dim[[1]]-#2)/2]+#+#3,1}&
+							}
+						}
+					],
+				2
+				]->Black
+			]
+		];
+
+
+NinePatchCreate[
+	img_?ImageQ,
+	stretch:{ninePatchMarkerPattern, ninePatchMarkerPattern}|Automatic:Automatic,
+	content:{ninePatchMarkerPattern, ninePatchMarkerPattern}|Automatic:Automatic
+	]:=
+	Catch@
+		Image[
+			ColorConvert[
+				ninePatchImagePad[img,
+					ninePatchStretchZones[stretch,content,ImageDimensions[img]]
+					],
+				RGBColor
+				],
+			"Byte",
+			Interleaving->True
+			];
+NinePatchCreate[e_,
+	stretch:{ninePatchMarkerPattern, ninePatchMarkerPattern}|Automatic:Automatic,
+	content:{ninePatchMarkerPattern, ninePatchMarkerPattern}|Automatic:Automatic
+	]:=
+	ninePatchCreate[Rasterize[e],stretch,content]
 
 
 Options[AppearanceReadyImage]=
