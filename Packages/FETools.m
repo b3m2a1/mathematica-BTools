@@ -1493,9 +1493,9 @@ FEAttachCell[
 		Center|Left|Right|Bottom|Top|
 		Automatic:Automatic,
 	closingActions:{
-		("ParentChanged"|"EvauatorQuit"|
+		("ParentChanged"|"EvaluatorQuit"|
 			"OutsideMouseClick"|"SelectionDeparture"|"MouseExit")...}:
-		{"ParentChanged","EvauatorQuit"}
+		{"ParentChanged","EvaluatorQuit"}
 		]:=
 		FrontEndExecute@
 			FrontEnd`AttachCell[

@@ -25,6 +25,8 @@ PillGradientImage::usage="";
 
 NinePatchCreate::usage=
 	"Creates a NinePatch image for use in Appearance";
+NinePatchNameTag::usage=
+	"";
 
 
 AppearanceReadyImage::usage=
@@ -215,7 +217,7 @@ PillImageApproximating[img_,ops:OptionsPattern[]]:=
 					];
 		If[Length@reps>0,
 			ReplacePixelValue[pill,
-				reps->White
+				reps->GrayLevel[1,0]
 				],
 			pill
 			]
@@ -336,8 +338,16 @@ PillGradientImage[
 	PillImage[
 		ImageResize[
 			LinearGradientImage[
-				Replace[gradientSpec,
-					Automatic->({Bottom,Top}->{GrayLevel[.4],GrayLevel[.95]})]
+				Replace[
+					gradientSpec,
+					{
+						Automatic->
+							({Bottom,Top}->{GrayLevel[.4],GrayLevel[.95]}),
+						c_?ColorQ:>
+							({Bottom,Top}->{White,c}),
+						c:{_?ColorQ,_?ColorQ}:>
+							({Bottom,Top}->Reverse@c)
+						}]
 				],
 			Replace[OptionValue[ImageSize],
 				Automatic->{25,50}
@@ -345,6 +355,110 @@ PillGradientImage[
 			],
 		ops
 		]
+
+
+(* ::Subsection:: *)
+(*NinePatch*)
+
+
+
+NinePatchNameTag[
+	head:_?OptionQ,
+	main:_?OptionQ|None:None,
+	footer:_?OptionQ|None :None
+	]:=
+Module[
+	{
+		col,
+		headStyle=
+		Flatten@{
+			head,
+			FrameStyle->Gray,
+			Background->GrayLevel[.9]
+			},
+		mainStyle,footStyle,
+		topSize,mainSize,footSize,
+		nums
+		},
+	topSize=
+	Replace[
+		Last@Flatten@List@OptionValue[Framed,headStyle, ImageSize],
+		Automatic->35
+		];
+	mainStyle=
+	Replace[main, 
+		Except[None]:>
+		Flatten@{
+			main,
+			FrameStyle->Gray,
+			Background->GrayLevel[1]
+			}
+		];
+	footStyle=
+	Replace[footer, 
+		Except[None]:>
+		Flatten@{
+			footer,
+			FrameStyle->Gray,
+			Background->GrayLevel[.8]
+			}
+		];
+	col=
+	Column[
+		{
+			Framed["",
+				Prepend[headStyle,
+					ImageSize->{2,
+						If[main=!=None, 1/2,0]*CurrentValue[FontSize]+topSize
+						}
+					]
+				],
+			If[main=!=None,
+				mainSize=
+				Replace[
+					Last@Flatten@List@OptionValue[Framed,mainStyle, ImageSize],
+					Automatic->5
+					];
+				Framed["",
+					Prepend[
+						mainStyle,
+						ImageSize->
+						{2,If[footer=!=None, 5/4, 1/2]*CurrentValue[FontSize]+mainSize}
+						]
+					],
+				Nothing
+				],
+			If[footer=!=None,
+				footSize=
+				Replace[
+					Last@Flatten@List@OptionValue[Framed,footStyle, ImageSize],
+					Automatic->15
+					];
+				Framed["",
+					Prepend[
+						footStyle,
+						ImageSize->
+						{2,CurrentValue[FontSize]/2+footSize}
+						]
+					],
+				Nothing
+				]
+			},
+		Spacings->-1
+		];
+	nums=
+	Select[NumericQ]@{mainSize, footSize, topSize};
+	NinePatchCreate[
+		col,
+		{1,
+			If[main=!=None,
+				Offset[1,
+					Floor[(Total[nums]/2)-topSize-mainSize/2]
+					],
+				1
+				]}
+		]
+	]
 
 
 (* ::Subsection:: *)
