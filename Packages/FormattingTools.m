@@ -19,6 +19,10 @@
 
 
 
+PillImage::usage="";
+PillGradientImage::usage="";
+
+
 NinePatchCreate::usage=
 	"Creates a NinePatch image for use in Appearance";
 
@@ -147,6 +151,58 @@ Begin["`Private`"];
 
 
 (* ::Subsection:: *)
+(*Images*)
+
+
+
+Options[PillImage]=
+	Options[Framed];
+PillImage[img_,ops:OptionsPattern[]]:=
+	Module[{
+			pill=
+			Rasterize[
+				Framed[
+					Replace[img, _?ColorQ->Pane["", {25, 50}]],
+					ops,
+					FrameMargins->-1,
+					RoundingRadius->5,
+					FrameStyle->Gray,
+					If[ColorQ@img, 
+						Background->img,
+						Sequence@@{}
+						]
+					]
+				],
+			dims
+			},
+		dims=ImageDimensions[pill];
+		ReplacePixelValue[pill,
+			DeleteCases[
+				Tuples[{{1,2,dims[[1]],dims[[1]]-1},{1,2,dims[[2]],dims[[2]]-1}}],
+				Alternatives@@
+				Tuples[{{2,dims[[1]]-1},{2,dims[[2]]-1}}]
+				]->White
+			]
+		];
+PillGradientImage[
+	gradientSpec_:Automatic,
+	ops:OptionsPattern[PillImage]
+	]:=
+	PillImage[
+		ImageResize[
+			LinearGradientImage[
+				Replace[gradientSpec,
+					Automatic->({Bottom,Top}->{GrayLevel[.4],GrayLevel[.95]})]
+				],
+			Replace[OptionValue[ImageSize],
+				Automatic->{25,50}
+				]
+			],
+		ops
+		]
+
+
+(* ::Subsection:: *)
 (*Appearances*)
 
 
@@ -180,7 +236,7 @@ ninePatchStretchZones[stretch_,contents_,dim_]:=
 			},
 		{stretchesX,stretchesY}=
 		Flatten@*List/@
-		Replace[stretch,Automatic->{Scaled[.5],Scaled[.25]}];
+		Replace[stretch,Automatic->{1,1}];
 		{contentsX,contentsY}=
 		Flatten@*List/@
 		Replace[contents,
