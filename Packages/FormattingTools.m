@@ -155,35 +155,180 @@ Begin["`Private`"];
 
 
 
+Options[PillImageApproximating]=
+	Options[Framed];
+PillImageApproximating[img_,ops:OptionsPattern[]]:=
+	Module[{
+		pill,
+		rad,
+		reps,
+		dims,
+		effRad
+		},
+		pill=
+			Rasterize[
+				Framed[img, 
+					FrameStyle->
+						Replace[OptionValue[FrameStyle], 
+							{
+								Automatic->Gray,
+								None->None,
+								c:Except[_?ColorQ]:>
+									Flatten[Directive[Gray, c], 2, Directive]
+								}
+							],
+					ops,
+					FrameMargins->-1
+					]
+				];
+		dims=
+			ImageDimensions[pill];
+		rad=
+			Min@{
+				Floor[
+					Replace[OptionValue[RoundingRadius],
+						{
+							Automatic->5,
+							Except[_?NumericQ]->0
+							}
+						]
+					],
+				Max@dims/2
+				};
+		reps=
+			Flatten[#, 2]&@
+				Table[
+					If[
+						Power[rad-i+1, 2]+
+						Power[rad-j+1, 2]>
+							rad^2,
+						Tuples[
+							{
+								{i, dims[[1]]-i+1},
+								{j, dims[[2]]+1-j}
+								}
+							],
+						Nothing
+						],
+					{i, rad-1},
+					{j, rad-1}
+					];
+		If[Length@reps>0,
+			ReplacePixelValue[pill,
+				reps->White
+				],
+			pill
+			]
+	];
+
+
+Options[PillImageMasking]=
+	Options[Framed];
+PillImageMasking[img_,ops:OptionsPattern[]]:=
+	Module[{
+		pill=
+			If[!ImageQ[img], Rasterize[img], img],
+		dim,
+		frame,
+		mask,
+		frameStyle
+		},
+		dim=
+			ImageDimensions[pill];
+		mask=
+			ImagePad[#, 1, White]&@
+				Rasterize[
+					Framed[Pane["", dim-1], 
+						Background->Black,
+						FrameStyle->
+							With[{fs=OptionValue[FrameStyle]},
+								fs/.c_?ColorQ->White
+								],
+						ops,
+						FrameMargins->0,
+						RoundingRadius->5
+						],
+					RasterSize->dim-1
+					];
+		frame=
+			Rasterize[
+				Framed[Pane["", dim], 
+					Background->
+						Replace[OptionValue[FrameStyle], 
+							{
+								Directive[___, c_?ColorQ, ___]:>
+									c,
+								Except[_?ColorQ|None]->
+									Gray
+								}
+							],
+					FrameStyle->
+						Replace[OptionValue[FrameStyle], 
+							{
+								Automatic->Gray,
+								None->None,
+								c:Except[_?ColorQ]:>
+									Flatten[Directive[Gray, c], 2, Directive]
+								}
+							],
+					ops,
+					FrameMargins->0,
+					RoundingRadius->5
+					],
+				FilterRules[
+					{
+						RasterSize->dim,
+						ops
+						},
+					Options@Rasterize
+					]
+				];
+		mask=
+			Image@
+				Map[
+					If[#>0, 1, 0]&,
+					MorphologicalComponents[mask],
+					{2}
+					];
+		mask=
+			PixelValuePositions[mask, Black];
+		pill=
+			ImageResize[pill, ImageDimensions[frame]];
+		pill=
+			ReplacePixelValue[frame, 
+				Thread[mask->PixelValue[pill, mask]]
+				];
+		pill
+	];
+
+
 Options[PillImage]=
 	Options[Framed];
-PillImage[img_,ops:OptionsPattern[]]:=
-	Module[{
-			pill=
-			Rasterize[
-				Framed[
-					Replace[img, _?ColorQ->Pane["", {25, 50}]],
-					ops,
-					FrameMargins->-1,
-					RoundingRadius->5,
-					FrameStyle->Gray,
-					If[ColorQ@img, 
-						Background->img,
-						Sequence@@{}
-						]
-					]
+PillImage[img_, ops:OptionsPattern[]]:=
+	PillImageApproximating[img, 
+		ops,
+		RoundingRadius->5
+		]
+
+
+(*	Switch[OptionValue[RoundingRadius],
+		Automatic|_Integer?(LessEqualThan[10]),
+			PillImageExplicit[img, 
+				ops,
+				RoundingRadius\[Rule]5
 				],
-			dims
-			},
-		dims=ImageDimensions[pill];
-		ReplacePixelValue[pill,
-			DeleteCases[
-				Tuples[{{1,2,dims[[1]],dims[[1]]-1},{1,2,dims[[2]],dims[[2]]-1}}],
-				Alternatives@@
-				Tuples[{{2,dims[[1]]-1},{2,dims[[2]]-1}}]
-				]->White
-			]
-		];
+		_,
+			PillImageMasking[img, ops,
+				RoundingRadius\[Rule]5
+				]
+		]*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*PillGradientImage*)
+
+
+
 PillGradientImage[
 	gradientSpec_:Automatic,
 	ops:OptionsPattern[PillImage]
