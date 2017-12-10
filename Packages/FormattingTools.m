@@ -504,7 +504,7 @@ NinePatchCreate[e_,
 	stretch:{ninePatchMarkerPattern, ninePatchMarkerPattern}|Automatic:Automatic,
 	content:{ninePatchMarkerPattern, ninePatchMarkerPattern}|Automatic:Automatic
 	]:=
-	ninePatchCreate[Rasterize[e],stretch,content]
+	NinePatchCreate[Rasterize[e],stretch,content]
 
 
 Options[AppearanceReadyImage]=
