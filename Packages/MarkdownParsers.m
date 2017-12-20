@@ -463,6 +463,17 @@ markdownToXMLFormat[t_,text_String]:=
 
 
 (* ::Subsubsection::Closed:: *)
+(*markdownToXMLValidateXMLBlock*)
+
+
+
+markdownToXMLValidateXMLBlock[s_]:=
+	Quiet[
+		Length@ImportString[s, {"HTML", "XMLObject"}][[2, 3, 1, 3]]===1
+		]
+
+
+(* ::Subsubsection::Closed:: *)
 (*$markdownToXMLRules*)
 
 
@@ -690,7 +701,8 @@ $markdownToXMLXMLBlock=
 		)/;t==t2&&
 			StringCount[cont,
 				"<"~~(Whitespace|"")~~(Whitespace|"")~~t]==
-				StringCount[cont,"<"~~(Whitespace|"")~~"/"~~(Whitespace|"")~~t]:>
+				StringCount[cont,"<"~~(Whitespace|"")~~"/"~~(Whitespace|"")~~t]&&
+					markdownToXMLValidateXMLBlock[cont]:>
 		("XMLBlock"->cont);
 
 
@@ -703,10 +715,15 @@ $markdownToXMLRawXMLBlock=
 	cont:(
 		StartOfLine~~"<"~~t:WordCharacter..~~__~~
 			"<"~~(Whitespace|"")~~"/"~~t2:WordCharacter..~~(Whitespace|"")~~">"
-		)/;t==t2&&
+		)/;t==t2&&(*
+			StringCount[cont, "<"]>2&&
+			StringCount[cont, ">"]>2&&*)
 			StringCount[cont,
-				"<"~~(Whitespace|"")~~(Whitespace|"")~~t]==
-				StringCount[cont,"<"~~(Whitespace|"")~~"/"~~(Whitespace|"")~~t]:>
+				"<"~~(Whitespace|"")~~t
+				]==
+				StringCount[cont,
+					"<"~~(Whitespace|"")~~"/"~~(Whitespace|"")~~t
+					]&&markdownToXMLValidateXMLBlock[cont]:>
 		("XMLBlock"->cont)
 
 
@@ -716,7 +733,7 @@ $markdownToXMLRawXMLBlock=
 
 
 $markdownToXMLItalBold=
-	o:(Longest[a:("*"|"_")..]~~Shortest[t__]~~a_):>
+	o:(Longest[a:("*"|"_")..]~~Shortest[t:Except["\n"]..]~~a_):>
 		"ItalBold"->o
 
 
