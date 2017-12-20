@@ -29,6 +29,11 @@ Begin["`Private`"];
 markdownToXMLFormat//ClearAll
 
 
+(* ::Subsubsection::Closed:: *)
+(*Meta*)
+
+
+
 markdownToXMLFormat["Meta",text_]:=
 	XMLElement["meta",
 		Normal@AssociationThread[
@@ -38,6 +43,11 @@ markdownToXMLFormat["Meta",text_]:=
 			],
 		{}
 		]&/@StringSplit[text,"\n"];
+
+
+(* ::Subsubsection::Closed:: *)
+(*FenceBlock*)
+
 
 
 markdownToXMLFormat[
@@ -75,6 +85,11 @@ markdownToXMLFormat[
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*CodeBlock*)
+
+
+
 markdownToXMLFormat[
 	"CodeBlock",
 	text_
@@ -108,6 +123,11 @@ markdownToXMLFormat[
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*QuoteBlock*)
+
+
+
 markdownToXMLFormat[
 	"QuoteBlock",
 	text_
@@ -126,6 +146,11 @@ markdownToXMLFormat[
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*Header*)
+
+
+
 markdownToXMLFormat[
 	"Header",
 	text_
@@ -139,6 +164,11 @@ markdownToXMLFormat[
 			markdownToXML[StringTrim[t,StartOfString~~"#"..],$markdownToXMLElementRules]
 			]
 		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Item*)
+
 
 
 markdownToXMLItemRecursiveFormat[l_]:=
@@ -221,11 +251,62 @@ markdownToXMLFormat["Item",text_String]:=
 	]
 
 
+(* ::Subsubsection::Closed:: *)
+(*ItalBold*)
+
+
+
+markdownToXMLFormat[
+	"ItalBold",
+	t_
+	]:=
+	With[
+		{
+			new=
+				StringTrim[t, Repeated["*"|"_"]]
+			},
+		Which[
+			StringLength[t]-StringLength[new]<4,
+				XMLElement["em", {}, 
+					markdownToXML[new,
+						$markdownToXMLElementRules
+						]
+					],
+			StringLength[t]-StringLength[new]<6,
+				XMLElement["strong", {}, 
+					markdownToXML[new,
+						$markdownToXMLElementRules
+						]
+					],
+			True,
+				XMLElement["em", {},
+					{
+						XMLElement["strong", {}, 
+							markdownToXML[new,
+								$markdownToXMLElementRules
+								]
+							]
+						}
+					]
+			]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Delimiter*)
+
+
+
 markdownToXMLFormat[
 	"Delimiter",
 	_
 	]:=
 	XMLElement["hr",{},{}]
+
+
+(* ::Subsubsection::Closed:: *)
+(*CodeLine*)
+
 
 
 markdownToXMLFormat[
@@ -246,16 +327,26 @@ markdownToXMLFormat[
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*XMLLine*)
+
+
+
 markdownToXMLFormat[
 	"XMLBlock"|"XMLLine",
 	text_
 	]:=
 	FirstCase[
 		ImportString[text,{"HTML","XMLObject"}],
-		XMLElement["body",_,b_]:>b,
+		XMLElement["body"|"head",_,b_]:>b,
 		"",
 		\[Infinity]
 		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Hyperlink*)
+
 
 
 markdownToXMLFormat[
@@ -283,6 +374,11 @@ markdownToXMLFormat[
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*Img*)
+
+
+
 markdownToXMLFormat[
 	"Image",
 	text_
@@ -307,8 +403,73 @@ markdownToXMLFormat[
 		]
 
 
+markdownToXMLFormat[
+	"ImageRef",
+	text_
+	]:=
+	With[{
+		bits=
+			StringSplit[
+				text,
+				"][",
+				2
+				]
+		},
+		XMLElement["img",
+			{
+				"src"->
+					"ImageRefLink"@StringTrim[Last[bits],"]"],
+				"alt"->
+					StringTrim[First[bits],"!["]
+				},
+			{}
+			]
+		]
+
+
+markdownToXMLFormat[
+	"ImageRefLink",
+	text_
+	]:=
+	With[{
+		bits=
+			StringSplit[
+				text,
+				"]:",
+				2
+				]
+		},
+		Sow[{"ImageRefLink", 
+			StringTrim[First@bits, (Whitespace|"")~~"["]}->Last@bits];
+			Nothing
+		];
+markdownToXMLFormat[
+	"ImageRefLinkBlock",
+	text_
+	]:=
+	markdownToXMLFormat["ImageRefLink", #]&/@
+		Select[StringSplit[text, "\n"],
+			Not@*StringMatchQ[Whitespace]
+			]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Fallback*)
+
+
+
 markdownToXMLFormat[t_,text_String]:=
 	XMLElement[t,{},{text}]
+
+
+(* ::Subsubsection::Closed:: *)
+(*$markdownToXMLRules*)
+
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLMeta*)
+
 
 
 $markdownToXMLMeta=
@@ -322,6 +483,11 @@ $markdownToXMLMeta=
 			{
 				"Meta"->meta
 				}
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLFenceBlock*)
+
 
 
 $markdownToXMLFenceBlock=
@@ -340,6 +506,11 @@ $markdownToXMLFenceBlock=
 			};
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLCodeBlock*)
+
+
+
 $markdownToXMLCodeBlock=
 	code:
 		Longest[
@@ -347,6 +518,11 @@ $markdownToXMLCodeBlock=
 				(((StartOfLine|(StartOfLine~~"    "~~Except["\n"]..))~~("\n"|EndOfString))...)
 			]:>
 		"CodeBlock"->code;
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLDelimiter*)
+
 
 
 $markdownToXMLDelimiter=
@@ -359,9 +535,19 @@ $markdownToXMLDelimiter=
 		"Delimiter"->t
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLHeader*)
+
+
+
 $markdownToXMLHeader=
 	t:(StartOfLine~~(Whitespace|"")~~Longest["#"..]~~Except["\n"]..):>
 		"Header"->t
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLQuoteBlock*)
+
 
 
 $markdownToXMLQuoteBlock=
@@ -371,6 +557,11 @@ $markdownToXMLQuoteBlock=
 				)..
 			):>
 		"QuoteBlock"->q
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLItemBlock*)
+
 
 
 $markdownToXMLLineIdentifier=
@@ -400,6 +591,11 @@ $markdownToXMLItemBlock=
 		"Item"->t
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLLink*)
+
+
+
 $markdownToXMLLink=
 	o:(Except["!"]|StartOfLine|StartOfString)~~
 		link:("["~~Except["]"]..~~"]("~~Except[")"]..~~")"):>
@@ -409,9 +605,52 @@ $markdownToXMLLink=
 			}
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLImage*)
+
+
+
 $markdownToXMLImage=
 	img:("!["~~Except["]"]..~~"]("~~Except[")"]..~~")"):>
 		"Image"->img
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLImageRef*)
+
+
+
+$markdownToXMLImageRef=
+	img:("!["~~Except["]"]..~~"]["~~Except["]"]..~~"]"):>
+		"ImageRef"->img
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLImageRefLinkBlock*)
+
+
+
+$markdownToXMLImageRefLinkBlock=
+	img:Repeated[(
+		(Whitespace|"")~~"["~~Except["]"]..~~"]:"~~(Whitespace|"")~~
+			Except[WhitespaceCharacter]..)]:>
+		"ImageRefLinkBlock"->img
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLImageRefLink*)
+
+
+
+$markdownToXMLImageRefLink=
+	img:((Whitespace|"")~~"["~~Except["]"]..~~"]:"~~(Whitespace|"")~~
+		Except[WhitespaceCharacter]..~~(Whitespace|"")):>
+		"ImageRefLink"->img
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLCodeLine*)
+
 
 
 $markdownToXMLCodeLine=
@@ -429,21 +668,67 @@ $markdownToXMLCodeLine=
 			}
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLXMLLine*)
+
+
+
 $markdownToXMLXMLLine=
-	xml:("<"~~Except["<"]..~~"/>"):>
+	xml:("<"~~Except["<"]..~~"/>")|("<link"~~Except["<"]..~~">"):>
 		("XMLLine"->xml)
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLXMLBlock*)
+
 
 
 $markdownToXMLXMLBlock=
 	cont:(
 		"<"~~t:WordCharacter..~~__~~
-			"</"~~t2:WordCharacter..~~">"
-		)/;t==t2&&StringCount[cont,"<"<>t]==StringCount[cont,"</"<>t]:>
+			"<"~~(Whitespace|"")~~"/"~~t2:WordCharacter..~~(Whitespace|"")~~">"
+		)/;t==t2&&
+			StringCount[cont,
+				"<"~~(Whitespace|"")~~(Whitespace|"")~~t]==
+				StringCount[cont,"<"~~(Whitespace|"")~~"/"~~(Whitespace|"")~~t]:>
+		("XMLBlock"->cont);
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLRawXMLBlock*)
+
+
+
+$markdownToXMLRawXMLBlock=
+	cont:(
+		StartOfLine~~"<"~~t:WordCharacter..~~__~~
+			"<"~~(Whitespace|"")~~"/"~~t2:WordCharacter..~~(Whitespace|"")~~">"
+		)/;t==t2&&
+			StringCount[cont,
+				"<"~~(Whitespace|"")~~(Whitespace|"")~~t]==
+				StringCount[cont,"<"~~(Whitespace|"")~~"/"~~(Whitespace|"")~~t]:>
 		("XMLBlock"->cont)
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLItalBold*)
+
+
+
+$markdownToXMLItalBold=
+	o:(Longest[a:("*"|"_")..]~~Shortest[t__]~~a_):>
+		"ItalBold"->o
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLBlockRules*)
+
+
+
 $markdownToXMLBlockRules={
+	$markdownToXMLRawXMLBlock,
 	$markdownToXMLFenceBlock,
+	$markdownToXMLImageRefLinkBlock,
 	$markdownToXMLCodeBlock,
 	$markdownToXMLDelimiter,
 	$markdownToXMLHeader,
@@ -452,8 +737,16 @@ $markdownToXMLBlockRules={
 	};
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLElementRules*)
+
+
+
 $markdownToXMLElementRules={
+	$markdownToXMLItalBold,
 	$markdownToXMLLink,
+	$markdownToXMLImageRef,
+	$markdownToXMLImageRefLink,
 	$markdownToXMLImage,
 	$markdownToXMLCodeLine,
 	$markdownToXMLXMLBlock,
@@ -461,10 +754,20 @@ $markdownToXMLElementRules={
 	};
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLNewLineElements*)
+
+
+
 $markdownToXMLNewLineElements=
 	{
 		"img"
 		};
+
+
+(* ::Subsubsection::Closed:: *)
+(*markdownToXMLPrep*)
+
 
 
 markdownToXMLPrep[text_String,rules:_List|Automatic:Automatic]:=
@@ -508,6 +811,24 @@ markdownToXMLPrep[text_String,rules:_List|Automatic:Automatic]:=
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*markdownToXMLReinsertRefs*)
+
+
+
+markdownToXMLReinsertRefs[{expr_, ops_}]:=
+	With[{oppp=Association@Cases[Flatten@ops, _Rule|_RuleDelayed]},
+	expr/.
+		"ImageRefLink"[x_]:>
+			Lookup[oppp, Key@{"ImageRefLink", x}, x]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*markdownToXML*)
+
+
+
 markdownToXML//Clear
 
 
@@ -549,6 +870,11 @@ markdownToXML[
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*markdownToXMLPostProcess1*)
+
+
+
 markdownToXMLPostProcess1[s_]:=
 	SplitBy[
 		Replace[
@@ -577,6 +903,11 @@ markdownToXMLPostProcess1[s_]:=
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*markdownToXMLPreProcess*)
+
+
+
 markdownToXMLPreProcess[t_String]:=
 	StringReplace[t,{
 		("\n"~~Whitespace?(StringFreeQ["\n"])~~EndOfLine)->"\n",
@@ -589,7 +920,7 @@ markdownToXMLPreProcess[t_String]:=
 Options[MarkdownToXML]=
 	{
 		"StripMetaInformation"->True,
-		"HeaderElements"->{"meta","style"},
+		"HeaderElements"->{"meta", "style", "link", "title"},
 		"BlockRules"->{},
 		"ElementRules"->{}
 		};
@@ -605,6 +936,8 @@ MarkdownToXML[
 		},
 		Replace[
 			GatherBy[
+				markdownToXMLReinsertRefs@
+				Reap@
 				markdownToXML[
 					markdownToXMLPreProcess[s],
 					Automatic,
@@ -619,15 +952,15 @@ MarkdownToXML[
 						],
 					er
 					],
-				MatchQ[First[#],he]&
+				StringMatchQ[Alternatives@@he]@*First
 				],
 		{
 			{h_,b_}:>
 				XMLElement["html",
 					{},
 					{
-						XMLElement["head",{},h],
-						XMLElement["body",{},b]
+						XMLElement["head",{}, h],
+						XMLElement["body",{}, b]
 						}
 					],
 			{b_}:>

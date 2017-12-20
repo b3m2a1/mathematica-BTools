@@ -2335,7 +2335,8 @@ $iNotebookToMarkdownOutputStringForms=
 
 $iNotebookToMarkdownIgnoredIOBaseForms=
 	OutputFormData[_, _]|
-		_SuperscriptBox|_SubscriptBox|_SubsuperscriptBox|_FractionBox;
+		_SuperscriptBox|_SubscriptBox|_SubsuperscriptBox|_FractionBox|
+		TemplateBox[__, "EmbeddedHTML", ___];
 $iNotebookToMarkdownIgnoredIOForms=
 	$iNotebookToMarkdownIgnoredIOBaseForms|
 		BoxData[$iNotebookToMarkdownIgnoredIOBaseForms]|
@@ -2781,7 +2782,8 @@ iNotebookToMarkdown[pathInfo_,
 		];
 iNotebookToMarkdown[pathInfo_,
 	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "Output",___]]:=
-	markdownCodeCellIOReformat[pathInfo, e,
+	markdownCodeCellIOReformat[pathInfo, 
+		e,
 		{"InputText", "Output"},
 		StringReplace["(*Out:*)\n\n"<>#,{
 			StartOfLine->"\t"
