@@ -5,14 +5,15 @@ Merge[
 		"PreLoad"-> None,
 		"FEHidden" ->
 				{
-					"FormattingTools",
-					"FETools",
-					"ScrapeTools",
-					"TRTools",
-					"AuthDialogs"
 					},
 		"PackageScope"->{
-			"GoogleDrive"
+			"AppBuilder",
+			"GoogleDrive",
+			"FormattingTools",
+			"FETools",
+			"ScrapeTools",
+			"TRTools",
+			"AuthDialogs"
 			},
 		If[TrueQ@FileExistsQ@
 			FileNameJoin@{$PackageDirectory, "Private", "Config", "LoadInfo.m"},

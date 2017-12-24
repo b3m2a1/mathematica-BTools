@@ -29,22 +29,22 @@
 
 
 
-PackageFEHiddenBlock[
+(*PackageFEHiddenBlock[*)
 	$AppDirectoryRoot::usage="The directory root for finding apps";
 	$AppDirectoryName::usage="The basic extension to a directory for locating apps";
-	];
+(*	];*)
 $AppDirectory::usage="Joins the root and name";
 AppPath::usage=
 	"A path parser for a given app name";
 AppDirectory::usage=
 	"Used by AppPath find appropriate directories";
-PackageScopeBlock[
+(*PackageScopeBlock[*)
 	AppNames::usage="Finds the names of apps matching a pattern";
 	AppPackage::usage="A function to find a package by name";
 	AppPackages::usage=
 		"Finds the packages in a given app";
 	AppStylesheet::usage="A function to find a stylesheet by name";
-	]
+(*	]*)
 
 
 (* ::Subsubsection::Closed:: *)
@@ -60,7 +60,7 @@ AppReconfigureSubapp::usage=
 	"Reconfigures a subapp, preserving files, etc.";
 
 
-PackageScopeBlock[
+(*PackageScopeBlock[*)
 	AppAddContent::usage="Adds a file to the app";
 	AppAddPackage::usage="Adds a package";
 	AppAddPalette::usage="Adds a palette to the app";
@@ -68,7 +68,7 @@ PackageScopeBlock[
 	AppAddDocPage::usage="Adds a doc page for a symbol to the app";
 	AppAddGuidePage::usage="Adds a guide to the app";
 	AppAddTutorialPage::usage="Adds a tutorial page to the app";
-	]
+(*	]*)
 
 
 AppRegenerateDirectories::usage=
@@ -92,20 +92,20 @@ AppFromFile::usage=
 	"Gets an app from the current file";
 
 
-PackageScopeBlock[
+(*PackageScopeBlock[*)
 	AppGenerateTestingNotebook::usage=
 		"Generates a standard testing notebook for an app";
-	]
+(*	]*)
 
 
-PackageScopeBlock[
+(*PackageScopeBlock[*)
 	AppPackageFunctions::usage=
 		"Gets the function names declared in a package or set of packages";
 	AppFunctionDependencies::usage=
 		"Gets the package dependency chain for a function";
 	AppPackageDependencies::usage=
 		"Gets the dependency structure for a full app package";
-	]
+(*	]*)
 
 
 (* ::Subsubsection::Closed:: *)
@@ -113,7 +113,7 @@ PackageScopeBlock[
 
 
 
-PackageScopeBlock[
+(*PackageScopeBlock[*)
 	AppRegenerateDocInfo::usage=
 		"Regenerates the DocInfo.m file";
 	AppIndexDocs::usage=
@@ -130,10 +130,10 @@ PackageScopeBlock[
 		"Generates a tutorial overview for the app";
 	AppDocumentationTemplate::usage=
 		"Creates a total documentation template for an app";
-	]
+(*	]*)
 
 
-PackageScopeBlock[
+(*PackageScopeBlock[*)
 	AppSaveSymbolPages::usage=
 		"Saves auto-generated symbol pages";
 	AppPackageSaveSymbolPages::usage=
@@ -142,7 +142,7 @@ PackageScopeBlock[
 		"Saves an auto-generated guide for an app";
 	AppPackageSaveGuide::usage=
 		"Saves auto-generated guide for a package";
-	]
+(*	]*)
 
 
 AppGenerateDocumentation::usage=
@@ -164,13 +164,13 @@ AppPublish::usage=
 	"Publishes the app to GitHub and PacletServer";
 
 
-PackageFEHiddenBlock[
+(*PackageFEHiddenBlock[*)
 	AppRegenerateBundleInfo::usage=
 		"Regenerates the BundleInfo file";
 	AppRegenerateLoadInfo::usage=
 		"Regenerates the LoadInfo file";
-	];
-PackageScopeBlock[
+(*	];
+PackageScopeBlock[*)
 	AppBundle::usage="Creates a sync bunde for an app";
 	AppUpload::usage="Uploads an application zip to the cloud";
 	AppDownload::usage="Downloads an app into a directory";
@@ -178,8 +178,8 @@ PackageScopeBlock[
 	AppBackup::usage="Backs up the app";
 	AppBackups::usage="Gets all the backed-up versions of the app";
 	AppRestore::usage="Restores the most recent version of the app";
-	$AppCloudExtension::usage="The cloud extension for applications";
-	]
+	$AppCloudExtension::usage="The cloud extension for applications";(*
+	]*)
 
 
 (* ::Subsubsection::Closed:: *)
@@ -187,7 +187,7 @@ PackageScopeBlock[
 
 
 
-PackageScopeBlock[
+(*PackageScopeBlock[*)
 	AppDeployReadme::usage=
 		"Deploys the app README.md file";
 	AppDeployHTML::usage=
@@ -196,7 +196,7 @@ PackageScopeBlock[
 		"Deploys the app img files";
 	AppDeployCSS::usage=
 		"Deploys the app css files";
-	]
+(*	]*)
 
 
 (* ::Subsubsection::Closed:: *)
@@ -204,7 +204,7 @@ PackageScopeBlock[
 
 
 
-PackageScopeBlock[
+(*PackageScopeBlock[*)
 	AppGitInit::usage=
 		"Configures a Git repository for the app";
 	AppGitClone::usage=
@@ -233,7 +233,7 @@ PackageScopeBlock[
 		"Removes a repo from github";
 	AppRegenerateReadme::usage=
 		"Generates a GitHub README.md file for the app";
-	];
+(*	];*)
 
 
 (* ::Subsubsection::Closed:: *)
@@ -241,7 +241,7 @@ PackageScopeBlock[
 
 
 
-PackageScopeBlock[
+(*PackageScopeBlock[*)
 	AppRegenerateUploadInfo::usage=
 		"Regenerates the UploadInfo.m file";
 	AppPacletBundle::usage=
@@ -268,7 +268,7 @@ PackageScopeBlock[
 		"Gets the URL to the auto-configure uninstaller";
 	AppPacletServerPage::usage=
 		"Uploads a paclet access page to a server";
-	];
+(*	];*)
 
 
 AppPacletUpload::usage=
@@ -2679,9 +2679,12 @@ AppGitRealignRemotes[appName_]:=
 	With[{
 		app=AppFromFile[appName]
 		},
-		Git["Fetch",AppDirectory[app]];
-		Git["Reset",AppDirectory[app],"origin/master"];
-		Git["Checkout",AppDirectory[app],"origin/master"];
+		If[Git["ListRemotes", AppDirectory[app]]===Null,
+			AppGitHubSetRemote[AppDirectory[app]]
+			];
+		Git["Fetch", AppDirectory[app]];
+		Git["Reset", AppDirectory[app], "origin/master"];
+		Git["Checkout", AppDirectory[app], "origin/master"];
 		];
 
 

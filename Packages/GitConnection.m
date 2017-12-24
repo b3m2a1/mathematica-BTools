@@ -462,6 +462,15 @@ GitRemoveCachedRecursive[dir:_String?DirectoryQ|Automatic:Automatic,files___]:=
 
 
 (* ::Subsubsection::Closed:: *)
+(*GitBranch*)
+
+
+
+GitBranch[dir:_String?DirectoryQ, spec__]:=
+	GitRun[dir,"branch", spec];
+
+
+(* ::Subsubsection::Closed:: *)
 (*GitCommit*)
 
 
@@ -625,7 +634,7 @@ GitSetRemote[
 
 
 (* ::Subsubsection::Closed:: *)
-(*GirRealignRemotes*)
+(*GitRealignRemotes*)
 
 
 
@@ -636,9 +645,26 @@ GitRealignRemotes[
 	]:=
 	(
 		Git["Fetch", dir];
-		Git["Reset",dir,URLBuild@{remoteName, branchName}];
-		Git["Checkout",dir,URLBuild@{remoteName, branchName}];
+		Git["Reset", dir, URLBuild@{remoteName, branchName}];
+		Git["Checkout", dir, URLBuild@{remoteName, branchName}];
 		)
+
+
+(* ::Subsubsection::Closed:: *)
+(*ReattachHead*)
+
+
+
+GitReattachHead[
+	dir:_String?DirectoryQ|Automatic:Automatic
+	]:=
+	With[{uuid=CreateUUID[]},
+		Git["Branch", dir, uuid];
+		Git["Checkout", dir, uuid];
+		Git["Branch", dir, "-f", "master", uuid];
+		Git["Checkout", dir, "master"];
+		Git["Branch", dir, "-d", uuid];
+		]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1093,12 +1119,18 @@ $GitActions=
 			GitRemoveCachedRecursive,
 		"Commit"->
 			GitCommit,
+		"Branch"->
+			GitBranch,
 		"ListRemotes"->
 			GitListRemotes,
 		"AddRemote"->
 			GitAddRemote,
 		"RemoveRemote"->
 			GitRemoveRemote,
+		"RealignRemotes"->
+			GitRealignRemotes,
+		"ReattachHead"->
+			GitReattachHead,
 		"Fetch"->
 			GitFetch,
 		"Reset"->
