@@ -1929,8 +1929,10 @@ WebSiteDeploy[
 								}
 							]
 						},
-					If[StringEndsQ[outDir, ext],
-						FileNameDrop[outDir, -(1+FileNameDepth[ext])],
+					If[StringEndsQ[outDir, ext]&&FileNameDepth[ext]>0,
+						FileNameDrop[outDir, 
+							-FileNameDepth[ext]
+							],
 						outDir
 						]
 					],
@@ -1939,7 +1941,8 @@ WebSiteDeploy[
 			last
 			},
 		info=
-			If[FileExistsQ[FileNameJoin@{trueDir,"DeploymentInfo.m"}],
+			If[
+				FileExistsQ[FileNameJoin@{trueDir,"DeploymentInfo.m"}],
 				Import[FileNameJoin@{trueDir,"DeploymentInfo.m"}],
 				{}
 				];
@@ -1959,6 +1962,26 @@ WebSiteDeploy[
 			Replace[OptionValue["LastDeployment"],
 				Automatic:>Lookup[info,"LastDeployment",None]
 				];
+		webSiteDeploy[uri, outDir, trueDir, 
+			last, select,
+			Flatten@{ops, 
+				Lookup[
+					Replace[Quiet@Import[trueDir, "SiteConfig.wl"],
+						Except[_?OptionQ]:>{}
+						],
+					"DeployOptions",
+					{}
+					]
+				}
+			]
+		];
+
+
+webSiteDeploy[
+	uri_, outDir_, trueDir_, 
+	last_, select_,
+	ops:OptionsPattern[WebSiteDeploy]]:= 
+	(
 		KeyChainConnect[OptionValue[CloudConnect]];
 		Block[{file},
 			If[TrueQ@OptionValue[Monitor],
@@ -1996,7 +2019,7 @@ WebSiteDeploy[
 						]
 					]
 			]
-		];
+		)
 
 
 End[];
