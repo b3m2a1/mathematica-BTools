@@ -2,8 +2,10 @@ With[{
   tempArgs=
     $$templateLib["getTemplateArguments"][#]
   },
-  !MatchQ[
+  MatchQ[
     $$templateLib["templateArgumentLookup"][tempArgs,"var"],
-    _Missing|False|None|_String?(StringMatchQ[Whitespace])
+    Except[
+      _Missing|False|None|_String?(StringMatchQ[Whitespace])|""
+      ]
     ]
   ]&

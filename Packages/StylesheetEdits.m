@@ -1046,7 +1046,8 @@ Options[StyleSheetValue]=
 		];
 StyleSheetValue[
 	cellOb:_CellObject|{__CellObject},
-	ops:$StyleSheetCellOptionPatterns,
+	ops:$StyleSheetCellOptionPatterns,(*
+	part:_Integer|{Repeated[__Integer,2]}|_Span|All:All,*)
 	OptionsPattern[]
 	]:=
 	With[{
@@ -1060,10 +1061,11 @@ StyleSheetValue[
 			If[Length@cellOb>1,
 				Transpose,
 				Flatten[#,1]&
-				],
+				](*[[part]]*),
 			Identity
 			]@
-			Map[mode[cellOb,#]&,
+			Map[
+				mode[cellOb,#]&,
 				Flatten@{ops}
 				]
 		];

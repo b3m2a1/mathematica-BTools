@@ -1,0 +1,18 @@
+<wolfram:comment>
+
+  This defines block that applies to a given page via $$templateLib["getPageData"]
+
+</wolfram:comment>
+
+<wolfram:with
+  PageData='#ContentData[TemplateSlot["page"][[1]]]'
+  block='#block'
+  >
+  <wolfram:expr>
+    If[Length@#PageData>0,
+      StringJoin@
+        $$templateLib["reslotMissing"][#, #block, "PageData"],
+      Sequence@@{}
+      ]
+  </wolfram:expr>
+</wolfram:with>

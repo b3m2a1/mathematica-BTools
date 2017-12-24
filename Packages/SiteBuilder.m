@@ -19,12 +19,24 @@
 
 
 
+WebSites::usage=
+	"Lists websites";
 WebSiteInitialize::usage="Makes a new website in a directory";
 WebSiteOptions::usage="Gets configuration options for a website";
 WebSiteSetOptions::usage="Sets configuration options for a website";
-WebSiteNew::usage="Makes a new post notebook";
+WebSiteNewContent::usage="Makes a new post notebook";
+WebSiteThemes::usage="";
+WebSiteFindTheme::usage="Finds the theme for a website";
 WebSiteBuild::usage="Builds a website";
 WebSiteDeploy::usage="Deploys a directory to the web";
+
+
+$WebSiteDirectory::usage=
+	"The base directory for websites";
+$WebSitePath::usage=
+	"The path for finding websites";
+$WebSiteThemePath::usage=
+	"The path for website themes";
 
 
 Begin["`Private`"];
@@ -35,10 +47,49 @@ $WebSiteDirectory=
 		$UserBaseDirectory,
 		"ApplicationData",
 		"WebSites"
-		}
+		};
+$WebSitePath=
+	{
+		$WebSiteDirectory
+		};
+$WebSiteThemePath=
+	{
+		PackageFilePath["Resources","Themes"],
+		FileNameJoin@{$WebSiteDirectory, "Themes"}
+		};
 
 
-WebSiteInitialize[dir_String?(DirectoryQ@*DirectoryName),
+(* ::Subsubsection::Closed:: *)
+(*WebSiteFind*)
+
+
+
+WebSites//Clear
+
+
+WebSites[site_:"*"]:=
+	Select[FileExistsQ@FileNameJoin@{#, "SiteConfig.wl"}&]@
+		FileNames[site, $WebSitePath];
+WebSiteFind[siteName_]:=
+	SelectFirst[
+		FileNames[siteName, $WebSitePath],
+		FileExistsQ@FileNameJoin@{#, "SiteConfig.wl"}&,
+		If[StringQ@siteName,
+			FileNameJoin@{$WebSiteDirectory, siteName},
+			$Failed
+			]
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Initialize*)
+
+
+
+WebSiteInitialize[
+	dir_String?(
+		FileNameDepth[#]>1&&DirectoryQ@DirectoryName[#]&
+		),
 	ops:OptionsPattern[]
 	]:=
 	(
@@ -46,15 +97,24 @@ WebSiteInitialize[dir_String?(DirectoryQ@*DirectoryName),
 			PackageFilePath["Resources","Templates","WebSite"],
 			dir
 			];
-		Export[FileNameJoin@{dir,"SiteConfig.wl"},{ops}];
+		Export[FileNameJoin@{dir,"SiteConfig.wl"},
+			DeleteDuplicatesBy[First]@
+				Join[
+					{ops},
+					PackageFilePath["Resources","Templates","WebSite","SiteConfig.wl"]
+					]
+			];
 		dir
 		);
 
 
-(*WebSiteInitialize[s_String?(Not@FileExistsQ[#]&&StringFreeQ[#,$PathnameSeparator]&)]:=
+WebSiteInitialize[
+	s_String?(
+		FileNameDepth[#]==1||
+			(Not@FileExistsQ[#]&&StringFreeQ[#,$PathnameSeparator])&)]:=
 	(
 		If[!DirectoryQ@$WebSiteDirectory,
-			CreateDirectory[$WebSiteDirectory,CreateIntermediateDirectories\[Rule]True]
+			CreateDirectory[$WebSiteDirectory,CreateIntermediateDirectories->True]
 			];
 		With[{r=
 			WebSiteInitialize@
@@ -63,9 +123,14 @@ WebSiteInitialize[dir_String?(DirectoryQ@*DirectoryName),
 					s
 					}
 			},
-			r/;DirectoryQ[r]
+			r
 			]
-	)*)
+	)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Options*)
+
 
 
 WebSiteOptions[dir_String?(DirectoryQ@*DirectoryName)]:=
@@ -73,6 +138,11 @@ WebSiteOptions[dir_String?(DirectoryQ@*DirectoryName)]:=
 		Except[_?OptionQ]->
 			{}
 		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*SetOptions*)
+
 
 
 WebSiteSetOptions[dir_String?(DirectoryQ@*DirectoryName),
@@ -89,7 +159,25 @@ WebSiteSetOptions[dir_String?(DirectoryQ@*DirectoryName),
 		];
 
 
-WebSiteNew[
+(* ::Subsubsection::Closed:: *)
+(*NewContent*)
+
+
+
+webSiteNewContentAutoname[dir_, place_]:=
+	ToUpperCase[StringTake[place, 1]]<>
+		StringDrop[StringTrim[place, "s"], 1]<>
+		" #"<>
+		ToString@
+		(
+			1+Length@
+				DeleteDuplicatesBy[FileBaseName]@
+					FileNames["*.nb"|"*.md"|"*.html",
+						FileNameJoin@{dir, "content",place}]
+			)
+
+
+WebSiteNewContent[
 	dir_String?DirectoryQ,
 	place_String,
 	name:_String|Automatic:Automatic,
@@ -98,12 +186,7 @@ WebSiteNew[
 	With[{
 		autoname=
 			StringTrim[#,"."<>FileExtension[#]]<>".nb"&@
-				Replace[name,
-					Automatic:>
-						"Post #"<>ToString@Length@
-						DeleteDuplicatesBy[FileBaseName]@
-							FileNames["*.nb"|"*.md",FileNameJoin@{dir,"content",place}]
-					]
+				Replace[name, Automatic:>webSiteNewContentAutoname[dir, place]]
 		},
 		If[!FileExistsQ@FileNameJoin@{dir,"content",place,autoname},
 			SystemOpen@
@@ -140,7 +223,11 @@ WebSiteNew[
 						"Metadata"
 						],
 					Cell[
-						"Supports: Section, Subsection, Subsubsection, Text, Code, Item, Quote, and NonWLCode styles",
+						"Check the style list for the entire set of supported styles",
+						"Text"
+						],
+					Cell[
+						"Input style cells will be dropped",
 						"Text"
 						],
 					Switch[place,
@@ -169,7 +256,7 @@ WebSiteNew[
 		]
 
 
-(*WebSiteNew[
+(*WebSiteNewContent[
 	dir_String?(Not@FileExistsQ[#]&&StringFreeQ[#,$PathnameSeparator]&),
 	place_String,
 	name:_String|Automatic:Automatic,
@@ -182,7 +269,7 @@ WebSiteNew[
 					$WebSiteDirectory,
 					dir
 					},
-				WebSiteNew[
+				WebSiteNewContent[
 					FileNameJoin@{
 						$WebSiteDirectory,
 						dir
@@ -195,6 +282,80 @@ WebSiteNew[
 	},
 	d/;(d===$Failed||FileExistsQ[d])
 	]*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*FindTheme*)
+
+
+
+WebSiteThemes[themePat_]:=
+	Select[
+		DirectoryQ@FileNameJoin@{#, "templates"}&
+		]@
+		FileNames[themePat, $WebSiteThemePath]
+
+
+WebSiteFindTheme[dir_String?DirectoryQ, theme_String]:=
+	SelectFirst[
+		Join[
+			{
+				theme,
+				FileNameJoin@{dir, "themes", theme}
+				},
+			Map[
+				FileNameJoin@{#, theme}&,
+				$WebSiteThemePath
+				]
+			],
+		DirectoryQ,
+		$Failed
+		];
+WebSiteFindTheme[dir_String?DirectoryQ]:=
+	Module[
+		{
+			ops=WebSiteOptions[dir],
+			theme
+			},
+		Replace[
+			Lookup[ops, "Theme"],
+			{
+				s_String:>
+					WebSiteFindTheme[dir, s],
+				_:>
+					If[DirectoryQ@FileNameJoin@{dir, "theme"},
+						FileNameJoin@{dir, "theme"},
+						Replace[WebSiteFindTheme[dir, "minimal"],
+							$Failed:>
+								SelectFirst[
+									FileNames["*", $WebSiteThemePath],
+									Directory@FileNameJoin@{#, "templates"}&
+									]
+							]
+						]
+				}
+			]
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*WebSiteOpenTheme*)
+
+
+
+WebSiteOpenTheme[dir_, theme:_String|Automatic:Automatic]:=
+	Replace[
+		If[theme===Automatic,
+			WebSiteFindTheme[dir],
+			WebSiteFindTheme[dir, theme]
+			],
+		d_String:>SystemOpen[d]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*XMLTemplateApply*)
+
 
 
 $TemplateLibDirectory=
@@ -253,6 +414,11 @@ WebSiteXMLTemplateApply[
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*Utils*)
+
+
+
 WebSiteBuildSlug[fname_]:=
 	StringReplace[StringTrim[fname],WhitespaceCharacter->"-"]
 
@@ -295,7 +461,7 @@ WebSiteBuildGetTemplates[content_,dir_]:=
 	Replace[
 		Fold[
 			Lookup[#,#2,<||>]&,
-			{$ContentStack,"Attributes","Templates"}
+			{$WebSiteBuildContentStack,"Attributes","Templates"}
 			],
 		{
 			s_String:>
@@ -325,6 +491,11 @@ WebSiteBuildFilePath[fname_,dir_]:=
 				FileNameDrop[fname,FileNameDepth@dir],
 		FileNameTake[fname]
 		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*TemplatePreProcess*)
+
 
 
 WebSiteTemplatePreProcess[fileContent_,args_]:=
@@ -403,6 +574,11 @@ WebSiteTemplatePreProcess[fileContent_,args_]:=
 				\[Infinity]
 				]
 		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*TemplateGatherArgs*)
+
 
 
 $WebSiteSummaryBaseUnits=
@@ -590,7 +766,19 @@ WebSiteTemplateGatherArgs[fileContent_,args_]:=
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*TemplateApply*)
+
+
+
 WebSiteTemplateApply//ClearAll
+
+
+(* ::Text:: *)
+(*
+	Iteratively apply templates to the provided content, unwrapping from or reexporting to XML as necessary. Generally only one template will be used and imports will be handled within the template.
+*)
+
 
 
 WebSiteBuild::nocnt=
@@ -601,7 +789,13 @@ WebSiteTemplateApply[
 	templates:{__String}|_String,
 	info:_Association:<||>
 	]:=
-	If[AssociationQ@$ContentStack,
+	If[AssociationQ@$WebSiteBuildContentStack,
+		$WebSiteBuildContentDataStack=
+			Association@
+				Map[
+					#["Attributes", "URL"]->#&,
+					Values@$WebSiteBuildContentStack
+					];
 		With[{
 			fils=
 				Select[
@@ -632,7 +826,7 @@ WebSiteTemplateApply[
 								With[{type=ToLowerCase[#]<>".html"},
 									Select[
 										Values@
-											$ContentStack[[All,"Attributes"]],
+											$WebSiteBuildContentStack[[All,"Attributes"]],
 										MemberQ[#["Templates"],type]&
 										]
 									]
@@ -641,23 +835,23 @@ WebSiteTemplateApply[
 						"ContentData"->
 							Function[
 								Fold[
-									Lookup[#,#2,<||>]&,
-									$ContentStack,
-									{#,"Attributes"}
+									Lookup[#, #2, <||>]&,
+									$WebSiteBuildContentDataStack,
+									{#, "Attributes"}
 									]
 								],
 						(* The pages *)
 						"Pages":>
 							Select[
 								Values@
-									$ContentStack[[All,"Attributes"]],
+									$WebSiteBuildContentStack[[All,"Attributes"]],
 								MemberQ[#["Templates"],"page.html"]&
 								],
 						(* The articles *)
 						"Articles":>
 							Select[
 								Values@
-									$ContentStack[[All,"Attributes"]],
+									$WebSiteBuildContentStack[[All,"Attributes"]],
 								MemberQ[#["Templates"],"article.html"]&
 								],
 						(* The archives *)
@@ -665,13 +859,13 @@ WebSiteTemplateApply[
 							Reverse@
 								GatherBy[
 									Values@
-										$ContentStack[[All,"Attributes"]],
+										$WebSiteBuildContentStack[[All,"Attributes"]],
 									#["Date"]&
 									],
 						info,
 						(* Include extracted attributes *)
 						Lookup[
-							Lookup[$ContentStack,content,<||>],
+							Lookup[$WebSiteBuildContentStack,content,<||>],
 							"Attributes",
 							{}
 							]
@@ -683,7 +877,7 @@ WebSiteTemplateApply[
 				Lookup[
 					Fold[
 						Lookup[#,#2,<||>]&,
-						$ContentStack,
+						$WebSiteBuildContentStack,
 						{content,"Attributes"}
 						],
 					"Slug",
@@ -696,13 +890,13 @@ WebSiteTemplateApply[
 							WebSiteTemplateGatherArgs[
 								#,
 								If[#=!=None,
-									$ContentStack[content,"Attributes"],
+									$WebSiteBuildContentStack[content,"Attributes"],
 									args
 									]
 								]
 							]&,
 						If[content=!=None,
-							$ContentStack[content,"Content"],
+							$WebSiteBuildContentStack[content,"Content"],
 							None
 							],
 						fils
@@ -711,6 +905,11 @@ WebSiteTemplateApply[
 		Message[WebSiteBuild::nost];
 		$Failed
 		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*TemplateExport*)
+
 
 
 WebSiteTemplateExport[
@@ -754,6 +953,11 @@ WebSiteTemplateExport[
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*ImportMeta*)
+
+
+
 WebSiteImportMeta[xml:(XMLObject[___][___]|XMLElement["html",___])]:=
 	WebSiteImportMeta/@
 		Cases[xml,
@@ -780,9 +984,14 @@ WebSiteImportMeta[
 		}];
 
 
-WebSiteBuild::nost="$ContentStack not initialzed";
+(* ::Subsubsection::Closed:: *)
+(*ExtractPageData*)
+
+
+
+WebSiteBuild::nost="$WebSiteBuildContentStack not initialzed";
 WebSiteExtractFileData[content_,config_]:=
-	If[AssociationQ@$ContentStack,
+	If[AssociationQ@$WebSiteBuildContentStack,
 		With[{
 			fileContent=
 				Replace[content,{
@@ -810,14 +1019,14 @@ WebSiteExtractFileData[content_,config_]:=
 						]
 				},
 				If[content=!=None,
-					$ContentStack[content]=
+					$WebSiteBuildContentStack[content]=
 						<|
 							"Attributes"->
 								WebSiteTemplateGatherArgs[fileContent,args]
 							|>;
-					$ContentStack[content,"Content"]=
+					$WebSiteBuildContentStack[content,"Content"]=
 						WebSiteTemplatePreProcess[fileContent,
-							$ContentStack[content,"Attributes"]
+							$WebSiteBuildContentStack[content,"Attributes"]
 							];
 					];
 				]
@@ -871,6 +1080,11 @@ WebSiteExtractPageData[rootDir_,files_,config_, ops:OptionsPattern[]]:=
 					]
 			]
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GenerateAggregationPages*)
+
 
 
 WebSiteGenerateAggregationPages//ClearAll;
@@ -956,7 +1170,7 @@ WebSiteGenerateAggregationPages[
 															Lookup[#,"Attributes",<||>],
 															aggthing,
 															{}
-															]&/@$ContentStack,
+															]&/@$WebSiteBuildContentStack,
 														{}
 														]
 											]
@@ -1007,7 +1221,7 @@ WebSiteGenerateAggregationPages[
 												aggsingular->#,
 												"Articles":>
 													Lookup[
-														Lookup[$ContentStack,#2,<||>],
+														Lookup[$WebSiteBuildContentStack,#2,<||>],
 														"Attributes",
 														<||>
 														],
@@ -1078,6 +1292,11 @@ WebSiteGenerateAggregationPages[
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*GenerateIndexPage*)
+
+
+
 WebSiteGenerateIndexPage//ClearAll
 
 
@@ -1109,6 +1328,11 @@ WebSiteGenerateIndexPage[dir_,outDir_,theme_,config_, ops:OptionsPattern[]]:=
 				Internal`LoadingPanel@"Generating index page"
 				];
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GenerateContent*)
+
 
 
 WebSiteGenerateContent//ClearAll
@@ -1159,7 +1383,7 @@ WebSiteGenerateContent[dir_,files_,outDir_,theme_,config_, ops:OptionsPattern[]]
 								Replace[
 									Fold[
 										Lookup[#,#2,<||>]&,
-										$ContentStack,
+										$WebSiteBuildContentStack,
 										{fname,"Attributes","URL"}
 										],{
 										u_String:>
@@ -1181,7 +1405,7 @@ WebSiteGenerateContent[dir_,files_,outDir_,theme_,config_, ops:OptionsPattern[]]
 													WebSiteBuildSlug@
 														Lookup[
 															Lookup[
-																Lookup[$ContentStack,fname,<||>],
+																Lookup[$WebSiteBuildContentStack,fname,<||>],
 																"Attributes",
 																<||>
 																],
@@ -1226,14 +1450,9 @@ WebSiteGenerateContent[dir_,files_,outDir_,theme_,config_, ops:OptionsPattern[]]
 		];
 
 
-WebSiteFindTheme[dir_,theme_]:=
-	SelectFirst[
-		{theme,
-			FileNameJoin@{dir,"themes",theme},
-			PackageFilePath["Resources","Themes",theme]
-			},
-		DirectoryQ
-		]
+(* ::Subsubsection::Closed:: *)
+(*CopyTheme*)
+
 
 
 WebSiteCopyTheme//Clear
@@ -1297,6 +1516,11 @@ WebSiteCopyTheme[dir_,outDir_, theme_,
 			];
 		FileNameJoin@{outDir,"theme"}
 		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*CopyContent*)
+
 
 
 WebSiteCopyContent//Clear
@@ -1366,6 +1590,11 @@ WebSiteCopyContent[dir_,outDir_,
 			];
 		outDir
 		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Build*)
+
 
 
 WebSiteBuild::ndcnt="Can't generate `` without generating content first";
@@ -1458,7 +1687,7 @@ WebSiteBuild[
 			];
 		Block[
 			{
-				$ContentStack=
+				$WebSiteBuildContentStack=
 					<||>,
 				genCont:=
 					Replace[OptionValue["GenerateContent"],
@@ -1542,6 +1771,11 @@ WebSiteBuild[
 			outDir
 			]
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Deploy*)
+
 
 
 WebSiteDeploy::depfail="Failed to deploy `` to ``";

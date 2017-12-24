@@ -187,17 +187,49 @@ MarkdownNotebookContentPath[nb_]:=
 		MarkdownNotebookFileName[nb];
 
 
-$NotebookToMarkdownStyles=
+$NotebookToMarkdownCellStyles=
+	<|
+		
+		|>;
+
+
+$NotebookToMarkdownCellStyles["Section"]=
 	{
-		"Section","Subsection","Subsubsection",
-		"Code","Output","Text",
-		"Quote","PageBreak",
-		"Item","Subitem",
-		"ItemNumbered","SubitemNumbered",
-		"FencedCode","Message","FormattedOutput",
-		"RawMarkdown","RawHTML","RawPre","Program",
-		"Echo", "Print"
+		"Title", "Chapter", "Subchapter",
+		"Section","Subsection","Subsubsection"
 		};
+$NotebookToMarkdownCellStyles["InputOutput"]=
+	{
+		"Code","Output",
+		"FormattedOutput","FencedCode"
+		};
+$NotebookToMarkdownCellStyles["Text"]=
+	{
+		"Text",
+		"RawMarkdown","RawHTML",
+		"RawPre","Program"
+		};
+$NotebookToMarkdownCellStyles["Print"]=
+	{
+		"Message","Echo","Print"
+		};
+$NotebookToMarkdownCellStyles["Item"]=
+	{
+		"Item","Subitem","Subsubitem",
+		"ItemNumbered","SubitemNumbered","SubsubitemNumbered"
+		};
+$NotebookToMarkdownCellStyles["Quote"]=
+	{
+		"Quote"
+		};
+$NotebookToMarkdownCellStyles["Break"]=
+	{
+		"PageBreak"
+		};
+
+
+$NotebookToMarkdownStyles:=
+	Flatten@Values@$NotebookToMarkdownCellStyles;
 
 
 $NotebookToMarkdownHTMLCharReplacements=<|
@@ -2722,6 +2754,20 @@ notebookToMarkdownHTMLToExpressionExport[
 
 
 (* ::Subsubsubsection::Closed:: *)
+(*notebookToMarkdownPlainTextExport*)
+
+
+
+notebookToMarkdownPlainTextExport[t_,ops:OptionsPattern[]]:=
+	FrontEndExecute[
+		FrontEnd`ExportPacket[
+			Cell[t],
+			"PlainText"
+			]
+		][[1]]
+
+
+(* ::Subsubsubsection::Closed:: *)
 (*Hooks*)
 
 
@@ -2824,6 +2870,65 @@ iNotebookToMarkdown[pathInfo_,
 
 
 
+(* ::Text:: *)
+(*
+	Not currently used for anything, but it could be used to dynamically change whether the Title is the h1 or the section is
+*)
+
+
+
+$iNotebookToMarkdownSectionStyleRanking=
+	<|
+		"Title"->1,
+		"Chapter"->2,
+		"Subchapter"->3,
+		"Section"->3,
+		"Subsection"->4,
+		"Subsubsection"->5,
+		"Subsubsubsection"->6,
+		"Subsubsubsection"->7,
+		"Subsubsubsubsection"->8
+		|>;
+
+
+iNotebookToMarkdown[pathInfo_,Cell[t_, "Title", ___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
+		s:Except[""]:>
+			Replace[
+				FrontEndExecute@
+					ExportPacket[Cell[t],"PlainText"],{
+				{id_String,___}:>
+					markdownIDHook[id]<>"\n\n",
+				_->""
+				}]<>
+			"# **"<>s<>"**"
+		];
+iNotebookToMarkdown[pathInfo_,Cell[t_, "Chapter", ___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
+		s:Except[""]:>
+			Replace[
+				FrontEndExecute@
+					ExportPacket[Cell[t],"PlainText"],{
+				{id_String,___}:>
+					markdownIDHook[id]<>"\n\n",
+				_->""
+				}]<>
+			"# ***"<>s<>"***"
+		];
+iNotebookToMarkdown[pathInfo_,Cell[t_, "Subchapter", ___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
+		s:Except[""]:>
+			Replace[
+				FrontEndExecute@
+					ExportPacket[Cell[t],"PlainText"],{
+				{id_String,___}:>
+					markdownIDHook[id]<>"\n\n",
+				_->""
+				}]<>
+			"# *"<>s<>"*"
+		];
+
+
 iNotebookToMarkdown[pathInfo_,Cell[t_,"Section",___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>
@@ -2871,17 +2976,27 @@ iNotebookToMarkdown[pathInfo_,Cell[t_,"Subsububsubsubsection",___]]:=
 
 
 (* ::Subsubsubsection::Closed:: *)
-(*Misc Cells*)
+(*Page Break*)
 
 
 
-notebookToMarkdownPlainTextExport[t_,ops:OptionsPattern[]]:=
-	FrontEndExecute[
-		FrontEnd`ExportPacket[
-			Cell[t],
-			"PlainText"
-			]
-		][[1]]
+iNotebookToMarkdown[pathInfo_,Cell[t_,"PageBreak",___]]:=
+	"---"
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Text Styles*)
+
+
+
+iNotebookToMarkdown[pathInfo_,Cell[t_,"Text",___]]:=
+	iNotebookToMarkdown[pathInfo,t];
+
+
+iNotebookToMarkdown[pathInfo_,Cell[t_,"Quote",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
+		s:Except[""]:>StringReplace[s,StartOfString->"> "]
+		];
 
 
 iNotebookToMarkdown[pathInfo_,Cell[t_,"Program",___]]:=
@@ -2893,72 +3008,8 @@ iNotebookToMarkdown[pathInfo_,Cell[t_,"Program",___]]:=
 		];
 
 
-iNotebookToMarkdown[pathInfo_,Cell[t_,"PageBreak",___]]:=
-	"---"
-
-
-iNotebookToMarkdown[pathInfo_,Cell[t_,"Text",___]]:=
-	iNotebookToMarkdown[pathInfo,t];
-
-
-iNotebookToMarkdown[pathInfo_,Cell[t_,"Print",___]]:=
-	"<p style='font-size:10; color:rgb(128, 128, 128);'>
-	``
-</p>"~TemplateApply~iNotebookToMarkdown[pathInfo,t];
-iNotebookToMarkdown[pathInfo_,Cell[t_,"Echo",___]]:=
-	"<p style='font-size:10; color:rgb(128, 128, 128);'>
-	<span style='color:orange'> >> </span>``
-</p>"~TemplateApply~iNotebookToMarkdown[pathInfo,t];
-
-
-iNotebookToMarkdown[pathInfo_,Cell[t_,"Item",___]]:=
-	Replace[iNotebookToMarkdown[pathInfo,t],
-		s:Except[""]:>"* "<>s
-		];
-iNotebookToMarkdown[pathInfo_,Cell[t_,"ItemParagraph",___]]:=
-	Replace[iNotebookToMarkdown[pathInfo,t],
-		s:Except[""]:>StringReplace[s,StartOfLine->"  "]
-		];
-iNotebookToMarkdown[pathInfo_,Cell[t_,"Subitem",___]]:=
-	Replace[iNotebookToMarkdown[pathInfo,t],
-		s:Except[""]:>"  * "<>s
-		];
-iNotebookToMarkdown[pathInfo_,Cell[t_,"Subsubitem",___]]:=
-	Replace[iNotebookToMarkdown[pathInfo,t],
-		s:Except[""]:>"    * "<>s
-		];
-iNotebookToMarkdown[pathInfo_,Cell[t_,"SubitemParagraph",___]]:=
-	Replace[iNotebookToMarkdown[pathInfo,t],
-		s:Except[""]:>StringReplace[s,StartOfLine->"   "]
-		];
-
-
-iNotebookToMarkdown[pathInfo_,Cell[t_,"ItemNumbered",___]]:=
-	Replace[iNotebookToMarkdown[pathInfo,t],
-		s:Except[""]:>"1. "<>s
-		];
-iNotebookToMarkdown[pathInfo_,Cell[t_,"SubitemNumbered",___]]:=
-	Replace[iNotebookToMarkdown[pathInfo,t],
-		s:Except[""]:>"  1. "<>s
-		];
-iNotebookToMarkdown[pathInfo_,Cell[t_,"SubsubitemNumbered",___]]:=
-	Replace[iNotebookToMarkdown[pathInfo,t],
-		s:Except[""]:>"    1. "<>s
-		];
-
-
-iNotebookToMarkdown[pathInfo_,Cell[t_,"Quote",___]]:=
-	Replace[iNotebookToMarkdown[pathInfo,t],
-		s:Except[""]:>StringReplace[s,StartOfString->"> "]
-		];
-
-
-iNotebookToMarkdown[pathInfo_,Cell[e_,___]]:=
-	iNotebookToMarkdown[pathInfo,e]
-
-
 (* ::Subsubsubsection::Closed:: *)
-(*Messages*)
+(*Print Styles*)
 
 
 
@@ -2976,6 +3027,47 @@ iNotebookToMarkdown[pathInfo_,
 		"name"->msgName,
 		"body"->ToString@ToExpression@text
 		|>;
+iNotebookToMarkdown[pathInfo_,Cell[t_,"Print",___]]:=
+	"<p style='font-size:10; color:rgb(128, 128, 128);'>
+	``
+</p>"~TemplateApply~iNotebookToMarkdown[pathInfo,t];
+iNotebookToMarkdown[pathInfo_,Cell[t_,"Echo",___]]:=
+	"<p style='font-size:10; color:rgb(128, 128, 128);'>
+	<span style='color:orange'> >> </span>``
+</p>"~TemplateApply~iNotebookToMarkdown[pathInfo,t];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Items*)
+
+
+
+iNotebookToMarkdown[pathInfo_,Cell[t_,"Item",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
+		s:Except[""]:>"* "<>s
+		];
+iNotebookToMarkdown[pathInfo_,Cell[t_,"Subitem",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
+		s:Except[""]:>"  * "<>s
+		];
+iNotebookToMarkdown[pathInfo_,Cell[t_,"Subsubitem",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
+		s:Except[""]:>"    * "<>s
+		];
+
+
+iNotebookToMarkdown[pathInfo_,Cell[t_,"ItemNumbered",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
+		s:Except[""]:>"1. "<>s
+		];
+iNotebookToMarkdown[pathInfo_,Cell[t_,"SubitemNumbered",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
+		s:Except[""]:>"  1. "<>s
+		];
+iNotebookToMarkdown[pathInfo_,Cell[t_,"SubsubitemNumbered",___]]:=
+	Replace[iNotebookToMarkdown[pathInfo,t],
+		s:Except[""]:>"    1. "<>s
+		];
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -2985,7 +3077,7 @@ iNotebookToMarkdown[pathInfo_,
 
 iNotebookToMarkdown[pathInfo_,Cell[t_,"RawMarkdown",___]]:=
 	notebookToMarkdownPlainTextExport[t];
-iNotebookToMarkdown[pathInfo_,Cell[t_,"RawHTML",___]]:=
+iNotebookToMarkdown[pathInfo_,Cell[t_,"TaggedHTML",___]]:=
 	With[{md=notebookToMarkdownPlainTextExport[t]},
 		With[{block=StringSplit[md,"\n",2]},
 			"<"<>block[[1]]<>">\n"<>
@@ -3477,6 +3569,8 @@ iNotebookToMarkdown[pathInfo_,
 	(TagBox|InterpretationBox)[e_,___]
 	]:=
 	iNotebookToMarkdown[pathInfo, e];
+iNotebookToMarkdown[pathInfo_,Cell[e_,___]]:=
+	iNotebookToMarkdown[pathInfo,e]
 iNotebookToMarkdown[pathInfo_,e_]:=
 	"";
 

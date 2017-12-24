@@ -191,7 +191,7 @@ markdownToXMLItemRecursiveFormat[l_]:=
 				{
 					mainlist:
 						{
-								{_,number}->_,
+								{_, number}->_,
 								___
 								}:>
 							Last/@mainlist,
@@ -216,7 +216,7 @@ markdownToXMLFormat["Item",text_String]:=
 							ws<>thing
 						],
 					2
-					]//StringTrim
+					]
 		},
 		markdownToXMLItemRecursiveFormat/@
 			SplitBy[
@@ -224,7 +224,7 @@ markdownToXMLFormat["Item",text_String]:=
 					subtype=
 						Floor[
 							(StringLength[#]
-								-StringLength@StringTrim[#,StartOfString~~Whitespace])/2
+								-StringLength@StringTrim[#, StartOfString~~Whitespace])/2
 							],
 					thingtype=
 						Replace[
@@ -355,10 +355,9 @@ markdownToXMLFormat[
 	]:=
 	With[{
 		bits=
-			StringSplit[
+			{StringRiffle[#[[;;-2]], "]("], #[[-1]]}&@StringSplit[
 				text,
-				"](",
-				2
+				"]("
 				]
 		},
 		XMLElement["a",
@@ -385,10 +384,9 @@ markdownToXMLFormat[
 	]:=
 	With[{
 		bits=
-			StringSplit[
+			{StringJoin@#[[;;-2]], #[[-1]]}&@StringSplit[
 				text,
-				"](",
-				2
+				"]("
 				]
 		},
 		XMLElement["img",
@@ -579,6 +577,13 @@ $markdownToXMLLineIdentifier=
 	("* "|"- "|((DigitCharacter..)~~". "))
 
 
+$markdownToXMLBlankSpaces=	
+	Repeated[
+		("\n"~~(Except["\n"]..)~~EndOfLine),
+		{0, 1}
+		]~~("\n\n"|"")
+
+
 $markdownToXMLItemLine=
 	(
 		(StartOfLine|StartOfString)~~
@@ -590,15 +595,29 @@ $markdownToXMLItemLine=
 
 $markdownToXMLItemSingle=
 	$markdownToXMLItemLine~~
-		(
-			(("\n"~~(Except["\n"]..)~~EndOfLine))...
-			);
+		$markdownToXMLBlankSpaces;
 $markdownToXMLItemBlock=
 	t:
 		Repeated[
-			$markdownToXMLItemSingle~~
-				("\n\n"|"")
+			$markdownToXMLItemSingle
 			]:>
+		"Item"->t
+
+
+$markdownToXMLTwoWhitespaceItemLine=
+	$markdownToXMLItemSingle/.
+		Verbatim[(Whitespace?(StringFreeQ["\n"])|"")]:>
+			Repeated[Except["\n", WhitespaceCharacter], {0,2}];
+
+
+$markdownToXMLMultiItemBlock=
+	t:(
+		$markdownToXMLTwoWhitespaceItemLine~~
+			Repeated[
+				$markdownToXMLItemSingle~~
+					("\n\n"|"")
+				]
+			):>
 		"Item"->t
 
 
@@ -607,9 +626,15 @@ $markdownToXMLItemBlock=
 
 
 
+markdownToXMLValidateLink[o_]:=
+	StringCount[o, "["]==
+		StringCount[o, "]"]
+
+
 $markdownToXMLLink=
 	o:(Except["!"]|StartOfLine|StartOfString)~~
-		link:("["~~Except["]"]..~~"]("~~Except[")"]..~~")"):>
+		link:("["~~Except["\n"]..~~"]("~~Except[WhitespaceCharacter]..~~")")/;
+			markdownToXMLValidateLink[o]:>
 		{
 			"Orphan"->o,
 			"Link"->link
@@ -622,7 +647,8 @@ $markdownToXMLLink=
 
 
 $markdownToXMLImage=
-	img:("!["~~Except["]"]..~~"]("~~Except[")"]..~~")"):>
+	img:("!["~~Except["\n"]..~~"]("~~Except[WhitespaceCharacter]..~~")")/;
+		markdownToXMLValidateLink[img]:>
 		"Image"->img
 
 
@@ -746,6 +772,7 @@ $markdownToXMLBlockRules={
 	$markdownToXMLRawXMLBlock,
 	$markdownToXMLFenceBlock,
 	$markdownToXMLImageRefLinkBlock,
+	$markdownToXMLMultiItemBlock,
 	$markdownToXMLCodeBlock,
 	$markdownToXMLDelimiter,
 	$markdownToXMLHeader,
@@ -932,6 +959,11 @@ markdownToXMLPreProcess[t_String]:=
 		"\t"->"    ",
 		"\[SpanFromLeft]"->"\[Ellipsis]"
 		}]
+
+
+(* ::Subsubsection::Closed:: *)
+(*MarkdownToXML*)
+
 
 
 Options[MarkdownToXML]=

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<!--
+  This theme comes from the a W3 template
+  You can find the templates here: https://www.w3schools.com/w3css/w3css_templates.asp
+-->
+
+<html lang="<wolfram:slot id='Language'/>">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>
+      <wolfram:slot id="PageTitle">
+        <wolfram:get path="include/lib/varDefinedBlock.html">
+          <wolfram:slot id="var">Title</wolfram:slot>
+          <wolfram:slot id="Title"><wolfram:slot id="Title"/></wolfram:slot>
+          <wolfram:slot id="if">
+            <wolfram:slot id="Title"/>
+          </wolfram:slot>
+          <wolfram:slot id="else">
+            <wolfram:expr>$$templateLib["getSiteName"][#]</wolfram:expr>
+          </wolfram:slot>
+        </wolfram:get>
+      </wolfram:slot>
+    </title>
+
+    <wolfram:expr>
+      $$templateLib["makeSiteIcons"][
+        Replace[#Icons,
+          Except[_List]:>
+            Import[FileNameJoin@{"include","config","icons.m"}]
+          ],
+        #
+        ]
+    </wolfram:expr>
+
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+    <wolfram:get path="include/lib/varNotFalseBlock.html">
+      <wolfram:slot id="var">StyleSheets</wolfram:slot>
+      <wolfram:slot id="if">
+        <wolfram:expr>
+          $$templateLib["makeSiteStylesheet"][
+            Replace[#StyleSheets,{
+              None->{},
+              Except[_List]:>
+                Prepend[
+                  Import[FileNameJoin@{"include","config","stylesheets.m"}],
+                  URLBuild@{
+                    "pygments",
+                    Replace[#PygmentsStyle,
+                      Except[_String]:>"default"
+                      ]<>".min.css"
+                    }
+                  ]
+              }],
+            #
+            ]
+        </wolfram:expr>
+      </wolfram:slot>
+    </wolfram:get>
+
+    <wolfram:slot id="head"></wolfram:slot>
+
+  </head>
+
+<body onload="<wolfram:slot id='OnLoad' />">
+
+  <header class="header">
+
+    <!-- Navbar (sit on top) -->
+    <div class="w3-top">
+      <div class="w3-bar w3-white w3-wide w3-padding w3-card">
+
+        <!-- Title button -->
+        <!-- <div class="site-title"> -->
+          <h1 class="w3-bar-item w3-wide title">
+            <wolfram:expr>
+              $$templateLib["makeSiteHyperlink"][
+                {
+                  <|
+                    "href"->
+                      Replace[#SiteExtension,
+                        Except[_String]:>
+                          Replace[#SiteURL,{
+                            s_String?(URLParse[#,"Domain"]=="www.wolframcloud.com"&):>
+                              "main.html",
+                            _->Nothing
+                            }]
+                        ],
+                    "body"->
+                      $$templateLib["getSiteName"][#]
+                    |>
+                  },
+                #
+                ]
+            </wolfram:expr>
+          </h1>
+        <!-- </div> -->
+
+        <!-- Site Links. Float links to the right. Hide them on small screens -->
+        <div class="w3-right w3-hide-small">
+
+          <div class="w3-bar-item site-links">
+            <wolfram:expr>
+              $$templateLib["makeSiteLinkList"][
+                Replace[#PageLinks,{
+                  Except[_List]:>
+                    Import[FileNameJoin@{"include","config","page_links.m"}]
+                  }],
+                #
+                ]
+            </wolfram:expr>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <div class="main" id="main-content">
+
+    <div class="main-content">
+      <div class="container centered">
+
+        <!-- Page Header -->
+        <div class="w3-display-container w3-content w3-wide" id="header">
+          <wolfram:get path="include/lib/varDefinedBlock.html">
+            <wolfram:slot id="var">PageHeader</wolfram:slot>
+            <wolfram:slot id="PageHeader"><wolfram:slot id="PageHeader"/></wolfram:slot>
+            <wolfram:slot id="if">
+              <h3 class="page-header">
+                <wolfram:slot id="PageHeader"/>
+              </h3>
+            </wolfram:slot>
+          </wolfram:get>
+        </div>
+
+        <!-- Main Body -->
+        <wolfram:slot id="PrimaryContent">
+          <wolfram:get path="include/lib/varDefinedBlock.html">
+            <wolfram:slot id="var">Content</wolfram:slot>
+            <wolfram:slot id="Content">
+              <wolfram:slot id="Content"/>
+            </wolfram:slot>
+            <wolfram:slot id="if">
+              <wolfram:slot id="Content"/>
+            </wolfram:slot>
+          </wolfram:get>
+        </wolfram:slot>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="w3-center w3-black w3-padding-16">
+    <wolfram:get path="include/lib/varDefinedBlock.html">
+      <wolfram:slot id="var">Footer</wolfram:slot>
+      <wolfram:slot id="Footer">
+        <wolfram:slot id="Footer"/>
+      </wolfram:slot>
+      <wolfram:slot id="if">
+        <wolfram:slot id="Footer"/>
+      </wolfram:slot>
+      <wolfram:slot id="else">
+        <p>Powered by
+            <a
+              href="https://www.w3schools.com/w3css/default.asp"
+              title="W3.CSS"
+              target="_blank"
+              class="w3-text-white w3-hover-text-green"
+              >w3.css</a>
+        </p>
+      </wolfram:slot>
+    </wolfram:get>
+
+  </div>
+
+</body>
+
+</html>

@@ -36,7 +36,7 @@ SyntaxHiglightingApplyStyling::usage=
 SyntaxHiglightingClearStyling::usage=
 	"Removes syntax coloring from a cell or cell style";
 SyntaxHiglightingStylesheet::usage=
-	"Uses SSTemplate to make a template for stylesheet editing";
+	"Uses StyleSheetTemplate to make a template for stylesheet editing";
 
 
 Begin["`Private`"];
@@ -59,7 +59,7 @@ $SyntaxHighlightingStyles={
 
 
 SyntaxHiglightingStylesheet[notebookArg:None|_Notebook:None]:=
-	SSTemplate[notebookArg,
+	StyleSheetTemplate[notebookArg,
 		DefaultStyle[
 			FrontEnd`FileName[Evaluate@{`Package`$PackageName},
 				"SyntaxHighlighting.nb"]
@@ -214,7 +214,7 @@ $SyntaxHiglightingForceCells=True;
 SyntaxHiglightingSetHighlightingStyle[nb_,override:True|False:True]:=
 	Block[{$SyntaxHiglightingForceCells=False},
 		NotebookDelete@
-			SSCells[nb,
+			StyleSheetCells[nb,
 				DefaultStyle[
 					Except@
 						FrontEnd`FileName[
@@ -223,7 +223,7 @@ SyntaxHiglightingSetHighlightingStyle[nb_,override:True|False:True]:=
 							]
 					]
 				];
-		SSCells[
+		StyleSheetCells[
 			DefaultStyle[
 				FrontEnd`FileName[Evaluate@{`Package`$PackageName},
 				"SyntaxHighlighting.nb"]
@@ -245,7 +245,7 @@ SyntaxHiglightingConfigureSyntaxColoring[
 	objs:Except[_?OptionQ]..,
 	ops:OptionsPattern[]
 	]:=
-	SSEdit[objs,{
+	StyleSheetEdit[objs,{
 		AutoStyleWords->
 			Join[
 				Thread[
@@ -336,7 +336,7 @@ SyntaxHiglightingConfigureSyntaxColoring[
 
 
 SyntaxHiglightingRemoveSyntaxColoring[objs_]:=
-	SSEdit[objs,
+	StyleSheetEdit[objs,
 		AutoStyleWords->
 			Inherited,
 		AutoStyleOptions->
@@ -382,10 +382,10 @@ SyntaxHiglightingApplyStyling[
 	(
 		SyntaxHiglightingSetHighlightingStyle[nb,$SyntaxHiglightingForceCells];
 		With[{s=
-			Replace[SSCells[nb,style,$SyntaxHiglightingForceCells],{
+			Replace[StyleSheetCells[nb,style,$SyntaxHiglightingForceCells],{
 				{}:>
 					If[TrueQ@$SyntaxHiglightingForceCells,
-						SSCells[nb,style,$SyntaxHiglightingForceCells],
+						StyleSheetCells[nb,style,$SyntaxHiglightingForceCells],
 						{}
 						]
 				}]
@@ -401,7 +401,7 @@ SyntaxHiglightingClearStyling[
 	nb:_NotebookObject|Automatic:Automatic,
 	style_:All
 	]:=
-	With[{s=SSCells[nb,style]},
+	With[{s=StyleSheetCells[nb,style]},
 		If[Length@s>0,
 			SyntaxHiglightingClearStyling[s]
 			]
