@@ -502,9 +502,11 @@ $markdownToXMLMeta=
 $markdownToXMLFenceBlock=
 	Shortest[
 		fence:(
-			StartOfLine~~(r:Repeated["`",{3,\[Infinity]}])~~
-				Except["`"]~~s__~~Except["`"]~~
-				StartOfLine~~(b:Repeated["`",{3,\[Infinity]}])
+			StartOfLine~~
+				(r:Repeated["`",{3,\[Infinity]}])~~Except["`"]~~
+					l:Except["`"]..~~EndOfLine~~s__~~
+			StartOfLine~~
+				(b:Repeated["`",{3,\[Infinity]}])
 			)/;(
 				StringLength[r]==StringLength[b]&&
 					Length[StringSplit[fence,"\n"]]>2
@@ -626,15 +628,18 @@ $markdownToXMLMultiItemBlock=
 
 
 
+markdownToXMLLinkPairedBrackets[o_]:=
+	StringCount[o, "["]>0&&
+		StringCount[o, "["]==StringCount[o, "]"]
 markdownToXMLValidateLink[o_]:=
-	StringCount[o, "["]==
-		StringCount[o, "]"]
+	markdownToXMLLinkPairedBrackets[o]&&
+		!markdownToXMLLinkPairedBrackets[StringSplit[o, "]", 2][[2]]]
 
 
 $markdownToXMLLink=
-	o:(Except["!"]|StartOfLine|StartOfString)~~
+	l:(o:Except["!"]|StartOfLine|StartOfString)~~
 		link:("["~~Except["\n"]..~~"]("~~Except[WhitespaceCharacter]..~~")")/;
-			markdownToXMLValidateLink[o]:>
+			markdownToXMLValidateLink[link]:>
 		{
 			"Orphan"->o,
 			"Link"->link
@@ -695,9 +700,9 @@ $markdownToXMLCodeLine=
 		o:(Except["`"]|StartOfLine|StartOfString)~~
 			code:(
 				(r:"`"..)~~
-					Except["`"]~~__~~Except["`"]~~
+					Except["`"]~~mid___~~(Except["`"]|"")~~
 					(b:"`"..)
-				)/;StringLength[r]==StringLength[b]
+				)/;StringLength[r]==StringLength[b]&&StringCount[mid, "`"]<StringLength[r]
 		]:>
 		{
 			"Orphan"->o,
@@ -739,15 +744,17 @@ $markdownToXMLXMLBlock=
 
 $markdownToXMLRawXMLBlock=
 	cont:(
-		StartOfLine~~"<"~~t:WordCharacter..~~__~~
-			"<"~~(Whitespace|"")~~"/"~~t2:WordCharacter..~~(Whitespace|"")~~">"
-		)/;t==t2&&(*
+		(StartOfLine|StartOfString)~~"<"~~t:WordCharacter..~~__~~
+			"<"~~(Whitespace|"")~~"/"~~t__~~(Whitespace|"")~~">"
+		)/;(*
 			StringCount[cont, "<"]>2&&
 			StringCount[cont, ">"]>2&&*)
-			StringCount[cont,
+			StringCount[
+				cont,
 				"<"~~(Whitespace|"")~~t
 				]==
-				StringCount[cont,
+				StringCount[
+					cont,
 					"<"~~(Whitespace|"")~~"/"~~(Whitespace|"")~~t
 					]&&markdownToXMLValidateXMLBlock[cont]:>
 		("XMLBlock"->cont)
@@ -928,12 +935,9 @@ markdownToXMLPostProcess1[s_]:=
 			{
 				{e_XMLElement}:>e,
 				e:Except[{_XMLElement}]:>
-					XMLElement["p",{},
-						Replace[Flatten@{e},
-							str_String:>
-								StringTrim[str],
-							1
-							]
+					XMLElement["p",
+						{},
+						Flatten@{e}
 						]
 				}
 			]&/@
@@ -1023,7 +1027,7 @@ MarkdownToXML[
 		];
 MarkdownToXML[f:(_File|_String?FileExistsQ)]:=
 	MarkdownToXML@
-		Import[f,"Text"]
+		Import[f, "Text"]
 
 
 End[];

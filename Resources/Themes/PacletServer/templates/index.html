@@ -18,9 +18,11 @@ This generates the index.html page
 
 <wolfram:slot id="head">
   <wolfram:slot id="Description">
-    <wolfram:get path="include/lib/varDefinedBlock.html">
+    <wolfram:get path="include/lib/templates/varDefinedBlock.html">
       <wolfram:slot id="var">"Description"</wolfram:slot>
-      <wolfram:slot id="Description"><wolfram:slot id="Description"/></wolfram:slot>
+      <wolfram:slot id="Description">
+        <wolfram:slot id="Description"/>
+      </wolfram:slot>
       <wolfram:slot id="if">
         <meta name="description" content="<wolfram:slot id='Description'/>">
       </wolfram:slot>
@@ -29,7 +31,7 @@ This generates the index.html page
 </wolfram:slot>
 
 <wolfram:slot id="PageTitle">
-  <wolfram:get path="include/lib/varDefinedBlock.html">
+  <wolfram:get path="include/lib/templates/varDefinedBlock.html">
     <wolfram:slot id="var">"SiteSubtitle"</wolfram:slot>
     <wolfram:slot id="SiteSubtitle"><wolfram:slot id="SiteSubtitle"/></wolfram:slot>
     <wolfram:slot id="SiteName"><wolfram:slot id="SiteName"/></wolfram:slot>
@@ -49,7 +51,7 @@ This generates the index.html page
 <wolfram:slot id="PrimaryContent">
 
   <wolfram:sequence
-    values="Replace[#IndexListing,Except[_List]:>#Articles]"
+    values="Replace[#IndexListing, Except[_List]:>#Articles]"
     slot="IndexItem" delimiters="<hr>"
     >
 
@@ -76,12 +78,15 @@ This generates the index.html page
           </h4>
           <div class="content paclet-summary">
             <wolfram:which>
-              <wolfram:if test='MatchQ[#IndexItem["Description"],Except[_Missing|False|""]]'>
+
+              <wolfram:if test='MatchQ[#IndexItem["Description"], Except[_Missing|False|""]]'>
                 <wolfram:expr>#IndexItem["Description"]</wolfram:expr>
               </wolfram:if>
+
               <wolfram:else>
                 <wolfram:expr>#IndexItem["Summary"]</wolfram:expr>
               </wolfram:else>
+
             </wolfram:which>
           </div>
       </article>
@@ -89,10 +94,9 @@ This generates the index.html page
 
   </wolfram:sequence>
 
-  <wolfram:comment>
-    <wolfram:get path='include/pagination.html'>
-  </wolfram:comment>
+  <wolfram:get path='include/lib/templates/pagination.html' >
+  </wolfram:get>
 
-</wolfram:slot>
+  </wolfram:slot>
 
 </wolfram:get>

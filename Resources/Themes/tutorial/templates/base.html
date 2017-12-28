@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+
+<title>
+  <wolfram:slot id="PageTitle">
+    <wolfram:get path="include/lib/templates/varDefinedBlock.html">
+      <wolfram:slot id="var">Title</wolfram:slot>
+      <wolfram:slot id="Title"><wolfram:slot id="Title"/></wolfram:slot>
+      <wolfram:slot id="if">
+        <wolfram:slot id="Title"/>
+      </wolfram:slot>
+      <wolfram:slot id="else">
+        <wolfram:expr>$$templateLib["getSiteName"][#]</wolfram:expr>
+      </wolfram:slot>
+    </wolfram:get>
+  </wolfram:slot>
+</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<wolfram:expr>
+  $$templateLib["makeSiteIcons"][
+    Replace[#Icons,
+      Except[_List]:>
+        Import[FileNameJoin@{"include","config","icons.m"}]
+      ],
+    #
+    ]
+</wolfram:expr>
+
+<wolfram:get path="include/lib/templates/varNotFalseBlock.html">
+  <wolfram:slot id="var">StyleSheets</wolfram:slot>
+  <wolfram:slot id="if">
+    <wolfram:expr>
+      $$templateLib["makeSiteStylesheet"][
+        Replace[#StyleSheets,{
+          None->{},
+          s_String?(StringStartsQ["http"]):>
+            s,
+          Except[_List]:>
+            Prepend[
+              Import[FileNameJoin@{"include","config","stylesheets.m"}],
+              URLBuild@{
+                "pygments",
+                Replace[#PygmentsStyle,
+                  Except[_String]:>"default"
+                  ]<>".min.css"
+                }
+              ]
+          }],
+        #
+        ]
+    </wolfram:expr>
+  </wolfram:slot>
+</wolfram:get>
+
+<wolfram:slot id="Head"/>
+
+<style>
+.w3-sidebar a {font-family: "Roboto", sans-serif}
+body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
+</style>
+
+<body class="w3-content" style="max-width:1200px">
+
+<!-- Sidebar/menu -->
+<nav
+  class="w3-sidebar w3-bar-block w3-white w3-collapse w3-top sidebar"
+  style="z-index:3;width:250px"
+  id="mySidebar"
+  >
+
+  <div class="w3-container w3-display-container w3-padding-16">
+    <div
+      onclick="w3_close()"
+      class="fa fa-remove w3-hide-large w3-button w3-display-topright"
+      id="menu-thumb"
+      >
+    </div>
+  </div>
+
+  <h3 class="w3-wide w3-bar-item">
+    <wolfram:expr>
+      $$templateLib["makeSiteHyperlink"][
+        {
+          <|
+            "href"->
+              Replace[#SiteExtension,
+                Except[_String]:>
+                  Replace[#SiteURL,{
+                    s_String?(URLParse[#,"Domain"]=="www.wolframcloud.com"&):>
+                      "main.html",
+                    _->Nothing
+                    }]
+                ],
+            "body"->
+              "Home"
+            |>
+          },
+        #
+        ]
+    </wolfram:expr>
+  </h3>
+
+  <div class="w3-large w3-text-grey">
+
+    <div class="w3-bar-block">
+      <wolfram:expr>
+        $$templateLib["makeSiteLinkList"][
+          Replace[#PageLinks,
+            {
+              Except[_List]:>
+                Import[FileNameJoin@{"include","config","page_links.m"}]
+              }
+            ],
+          Append[
+            #,
+            "class"->"w3-bar-item w3-medium w3-button"
+            ]
+          ]
+      </wolfram:expr>
+    </div>
+
+  </div>
+
+  <hr>
+
+  <wolfram:if test='#URL=!="index.html"'>
+  <div class="w3-padding-64 w3-large w3-text-grey" style="font-weight:bold">
+    <ul>
+    <wolfram:sequence
+      values='
+        SortBy[ToExpression@StringSplit[#["ID"], "."]&]@
+        Select[AssociationQ[#]&&KeyMemberQ[#, "ID"]&]@
+          #Articles
+          '
+      slot="IndexItem"
+      >
+      <wolfram:if
+        test='StringMatchQ[#IndexItem["ID"], NumberString~~".1.1"]'
+        >
+        <h4 class="w3-bar-item index-section">
+          <wolfram:expr>
+              URLParse[#IndexItem["Path"], "Path"][[1]]
+          </wolfram:expr>
+        </h4>
+      </wolfram:if>
+      <wolfram:if
+        test='StringMatchQ[#IndexItem["ID"], NumberString~~"."~~NumberString~~".1"]'
+        >
+        <h5 class="w3-bar-item w3-padding-medium index-subsection">
+          <wolfram:expr>
+              URLParse[#IndexItem["Path"], "Path"][[2]]
+          </wolfram:expr>
+        </h5>
+      </wolfram:if>
+      <a
+        href='<wolfram:slot id="SiteURL"/>/<wolfram:expr>#IndexItem["URL"]</wolfram:expr>'
+        class=
+          'w3-bar-item w3-bar-block w3-padding-large w3-medium w3-button
+            <wolfram:if test="#URL=!=#IndexItem[\"URL\"]"> w3-lightgray </wolfram:if>'
+         >
+        <wolfram:expr>
+            #IndexItem["Title"]
+        </wolfram:expr>
+      </a>
+    </wolfram:sequence>
+    </ul>
+  </div>
+  </wolfram:if>
+
+</nav>
+
+<!-- Top menu on small screens -->
+<header class="w3-bar w3-top w3-hide-large w3-black w3-xlarge">
+  <div class="w3-bar-item w3-padding-24 w3-wide">
+    <wolfram:expr>
+      $$templateLib["makeSiteHyperlink"][
+        {
+          <|
+            "href"->
+              Replace[#SiteExtension,
+                Except[_String]:>
+                  Replace[#SiteURL,{
+                    s_String?(URLParse[#,"Domain"]=="www.wolframcloud.com"&):>
+                      "main.html",
+                    _->Nothing
+                    }]
+                ],
+            "body"->
+              "Home",
+            "class"->
+              "w3-text-white"
+            |>
+          },
+        #
+        ]
+    </wolfram:expr>
+  </div>
+  <a href="javascript:void(0)" class="w3-bar-item w3-button w3-padding-24 w3-right" onclick="w3_open()"><i class="fa fa-bars"></i></a>
+</header>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:250px">
+
+  <!-- Push down content on small screens -->
+  <div class="w3-hide-large" style="margin-top:83px"></div>
+    <div class="main" id="main-content">
+    <div class="main-content">
+      <div class="centered">
+
+        <!-- Page Header -->
+        <div class="w3-display-container w3-content w3-wide" id="header">
+          <wolfram:get path="include/lib/templates/varDefinedBlock.html">
+            <wolfram:slot id="var">PageHeader</wolfram:slot>
+            <wolfram:slot id="PageHeader"><wolfram:slot id="PageHeader"/></wolfram:slot>
+            <wolfram:slot id="if">
+              <h3 class="page-header">
+                <wolfram:slot id="PageHeader"/>
+              </h3>
+            </wolfram:slot>
+          </wolfram:get>
+        </div>
+
+        <!-- Main Body -->
+        <wolfram:slot id="PrimaryContent">
+          <wolfram:get path="include/lib/templates/varDefinedBlock.html">
+            <wolfram:slot id="var">Content</wolfram:slot>
+            <wolfram:slot id="Content">
+              <wolfram:slot id="Content"/>
+            </wolfram:slot>
+            <wolfram:slot id="if">
+              <wolfram:slot id="Content"/>
+            </wolfram:slot>
+          </wolfram:get>
+        </wolfram:slot>
+      </div>
+      </div>
+    </div>
+
+  <!-- Footer -->
+  <div class="w3-center w3-black w3-padding-16">
+    <wolfram:get path="include/lib/templates/varDefinedBlock.html">
+      <wolfram:slot id="var">Footer</wolfram:slot>
+      <wolfram:slot id="Footer">
+        <wolfram:slot id="Footer"/>
+      </wolfram:slot>
+      <wolfram:slot id="if">
+        <wolfram:slot id="Footer"/>
+      </wolfram:slot>
+      <wolfram:slot id="else">
+        <div class="w3-black w3-center w3-padding-24">
+            Powered by
+            <a href="https://www.w3schools.com/w3css/default.asp" title="W3.CSS" target="_blank" class="w3-hover-opacity">
+              w3.css
+            </a>
+        </div>
+      </wolfram:slot>
+    </wolfram:get>
+
+  </div>
+
+
+
+  <!-- End page content -->
+</div>
+
+<script>
+// Accordion
+function myAccFunc() {
+    var x = document.getElementById("demoAcc");
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else {
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+
+// Script to open and close sidebar
+function w3_open() {
+    document.getElementById("mySidebar").style.display = "block";
+    document.getElementById("myOverlay").style.display = "block";
+}
+
+function w3_close() {
+    document.getElementById("mySidebar").style.display = "none";
+    document.getElementById("myOverlay").style.display = "none";
+}
+</script>
+
+</body>
+</html>

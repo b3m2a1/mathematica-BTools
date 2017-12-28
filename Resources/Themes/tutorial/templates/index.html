@@ -1,0 +1,123 @@
+<wolfram:comment>
+
+This generates the index.html page
+
+</wolfram:comment>
+
+<wolfram:comment>
+
+  <wolfram:expr>
+    (*This is debug code*)
+    Echo@#Articles
+
+  </wolfram:expr>
+
+</wolfram:comment>
+
+<wolfram:get path="base.html">
+
+<wolfram:slot id="head">
+  <wolfram:slot id="Description">
+    <wolfram:get path="include/lib/templates/varDefinedBlock.html">
+      <wolfram:slot id="var">"Description"</wolfram:slot>
+      <wolfram:slot id="Description"><wolfram:slot id="Description"/></wolfram:slot>
+      <wolfram:slot id="if">
+        <meta name="description" content="<wolfram:slot id='Description'/>">
+      </wolfram:slot>
+    </wolfram:get>
+  </wolfram:slot>
+</wolfram:slot>
+
+<wolfram:slot id="Title">
+  <wolfram:get path="include/lib/templates/varDefinedBlock.html">
+    <wolfram:slot id="var">"SiteSubtitle"</wolfram:slot>
+    <wolfram:slot id="SiteSubtitle"><wolfram:slot id="SiteSubtitle"/></wolfram:slot>
+    <wolfram:slot id="SiteName"><wolfram:slot id="SiteName"/></wolfram:slot>
+    <wolfram:slot id="if">
+      <wolfram:expr>
+        $$templateLib["getSiteName"][#]
+      </wolfram:expr> | <wolfram:slot id="SiteSubtitle"/>
+    </wolfram:slot>
+    <wolfram:slot id="else">
+      <wolfram:expr>
+        $$templateLib["getSiteName"][#]
+      </wolfram:expr>
+    </wolfram:slot>
+  </wolfram:get>
+</wolfram:slot>
+
+<wolfram:slot id="PrimaryContent">
+
+  <!-- Page content -->
+  <div class="w3-content w3-padding">
+
+  <!-- About Section -->
+  <wolfram:get path="include/lib/templates/pageLocalizedBlock.html">
+    <wolfram:slot id="page">pages/about.html</wolfram:slot>
+    <wolfram:slot id="block">
+      <article class="teaser">
+        <div class="col-sm-8 about-block w3-container w3-padding-32" id="about">
+          <div class="about-blub">
+            <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">
+              <h4 class="title">
+                  <a href=
+                    '<wolfram:expr>#SiteURL</wolfram:expr>/<wolfram:expr>#PageData["URL"]</wolfram:expr>'
+                    >
+                    <wolfram:expr>#PageData["Title"]</wolfram:expr>
+                  </a>
+              </h4>
+              <div class="content">
+                <wolfram:expr>#PageData["Summary"]</wolfram:expr>
+              </div>
+            </h3>
+          </div>
+        </div>
+      <article>
+    </wolfram:slot>
+  </wolfram:get>
+
+  <div class="w3-padding-64 w3-small w3-text-grey small-width" style="font-weight:bold">
+    <ul>
+    <wolfram:sequence
+      values='
+        SortBy[ToExpression@StringSplit[#["ID"], "."]&]@
+        Select[AssociationQ[#]&&KeyMemberQ[#, "ID"]&]@
+          #Articles
+          '
+      slot="IndexItem"
+      >
+      <wolfram:if
+        test='StringMatchQ[#IndexItem["ID"], NumberString~~".1.1"]'
+        >
+        <h4 class="w3-bar-item index-section">
+          <wolfram:expr>
+              URLParse[#IndexItem["Path"], "Path"][[1]]
+          </wolfram:expr>
+        </h4>
+      </wolfram:if>
+      <wolfram:if
+        test='StringMatchQ[#IndexItem["ID"], NumberString~~"."~~NumberString~~".1"]'
+        >
+        <h5 class="w3-bar-item w3-padding-medium index-subsection">
+          <wolfram:expr>
+              URLParse[#IndexItem["Path"], "Path"][[2]]
+          </wolfram:expr>
+        </h5>
+      </wolfram:if>
+      <a
+        href='<wolfram:slot id="SiteURL"/>/<wolfram:expr>#IndexItem["URL"]</wolfram:expr>'
+        class="w3-bar-item w3-padding-large w3-medium w3-button"
+         >
+        <wolfram:expr>
+            #IndexItem["Title"]
+        </wolfram:expr>
+      </a>
+    </wolfram:sequence>
+    </ul>
+  </div>
+
+  </div>
+
+</wolfram:slot>
+
+</wolfram:get>

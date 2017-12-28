@@ -1,0 +1,11 @@
+{
+  "bootstrap.css",
+  "font-awesome.css",
+  "https://www.w3schools.com/w3css/4/w3.css",
+  "https://fonts.googleapis.com/css?family=Robot",
+  "https://fonts.googleapis.com/css?family=Montserrat",
+  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css",
+  "https://fonts.googleapis.com/css?family=Source+Code+Pro",
+  "http://reference.wolfram.com/language-assets/css/special-styles.css",
+  "style.css"
+  }

@@ -1,0 +1,72 @@
+<wolfram:comment>
+
+This generates a subindex page
+
+</wolfram:comment>
+
+<wolfram:comment>
+
+  <wolfram:expr>
+    (*This is debug code*)
+    Echo@#Articles
+
+  </wolfram:expr>
+
+</wolfram:comment>
+
+<wolfram:get path="base.html">
+
+<wolfram:slot id="Title">
+  <wolfram:get path="include/lib/templates/varDefinedBlock.html">
+    <wolfram:slot id="var">"SiteSubtitle"</wolfram:slot>
+    <wolfram:slot id="SiteSubtitle"><wolfram:slot id="SiteSubtitle"/></wolfram:slot>
+    <wolfram:slot id="SiteName"><wolfram:slot id="SiteName"/></wolfram:slot>
+    <wolfram:slot id="if">
+      <wolfram:expr>
+        $$templateLib["getSiteName"][#]
+      </wolfram:expr> | <wolfram:slot id="SiteSubtitle"/>
+    </wolfram:slot>
+    <wolfram:slot id="else">
+      <wolfram:expr>
+        $$templateLib["getSiteName"][#]
+      </wolfram:expr>
+    </wolfram:slot>
+  </wolfram:get>
+</wolfram:slot>
+
+<wolfram:slot id="PrimaryContent">
+
+  <!-- Page content -->
+  <div class="w3-content w3-padding">
+
+  <div class="w3-padding-64 w3-small w3-text-grey small-width" style="font-weight:bold">
+    <ul>
+    <wolfram:sequence
+      values='
+        SortBy[ToExpression@StringSplit[#ID, "."]&]@
+          Replace[#IndexListing, Except[_List]:>#Articles]'
+      slot="IndexItem"
+      >
+      <a
+        href='<wolfram:slot id="SiteURL"/>/<wolfram:expr>#IndexItem["URL"]</wolfram:expr>'
+        class="w3-bar-item w3-padding-large w3-medium w3-button"
+         >
+        <wolfram:expr>
+          StringRiffle[
+            Append[
+              URLParse[#IndexItem["Path"], "Path"][[;;2]],
+              #IndexItem["Title"]
+              ],
+            " &raquo; "
+            ]
+        </wolfram:expr>
+      </a>
+    </wolfram:sequence>
+    </ul>
+  </div>
+
+  </div>
+
+</wolfram:slot>
+
+</wolfram:get>

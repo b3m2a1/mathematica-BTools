@@ -1197,6 +1197,11 @@ ColorizationAdjust[color_,appearanceList_List]:=
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*UUIDButton*)
+
+
+
 Options[UUIDButton]=
 	Join[
 		{
@@ -1213,7 +1218,7 @@ UUIDButton[lab_,cmd_,ops:OptionsPattern[]]:=
 		EventHandler[
 			Replace[
 				but[lab,
-					CheckAbort[cmd,UUIDActive[uuid]=False];
+					CheckAll[cmd, UUIDActive[uuid]=False];
 					UUIDActive[uuid]=False,
 					Evaluate[
 						Sequence@@FilterRules[{ops},
@@ -1228,7 +1233,8 @@ UUIDButton[lab_,cmd_,ops:OptionsPattern[]]:=
 							Dynamic@
 								If[TrueQ@UUIDActive[uuid],
 									"Pressed",
-									Automatic]
+									Automatic
+									]
 							}),
 				1],{
 			With[{nab=OptionValue[Enabled]},

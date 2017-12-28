@@ -1,0 +1,135 @@
+<wolfram:comment>
+
+  This defines a thing of type
+    < `type` `rel=...` `src=...` `href=...` etc.>
+
+  where `src` and `href` have the site base prepend to them
+
+  Only attributes that are actually passed are included, of course
+
+</wolfram:comment>
+
+<<wolfram:slot id="type"/>
+
+  <wolfram:comment>
+    class=...
+  </wolfram:comment>
+  <wolfram:get path="include/lib/templates/varDefinedBlock.html">
+    <wolfram:slot id="var">class</wolfram:slot>
+    <wolfram:slot id="alt"><wolfram:slot id='class'/></wolfram:slot>
+    <wolfram:slot id="if">
+      <wolfram:expr>
+        "class='"<>TemplateSlot["class"]<>"'"
+      </wolfram:expr>
+    </wolfram:slot>
+  </wolfram:get>
+
+  <wolfram:comment>
+    rel=...
+  </wolfram:comment>
+  <wolfram:get path="include/lib/templates/varDefinedBlock.html">
+    <wolfram:slot id="var">rel</wolfram:slot>
+    <wolfram:slot id="rel"><wolfram:slot id='rel'/></wolfram:slot>
+    <wolfram:slot id="if">
+      <wolfram:expr>
+        "rel='"<>TemplateSlot["rel"]<>"'"
+      </wolfram:expr>
+    </wolfram:slot>
+  </wolfram:get>
+
+  <wolfram:comment>
+    src=...
+  </wolfram:comment>
+  <wolfram:get path="include/lib/templates/varDefinedBlock.html">
+    <wolfram:slot id="var">src</wolfram:slot>
+    <wolfram:slot id="src"><wolfram:slot id='src'/></wolfram:slot>
+    <wolfram:slot id="if">
+      <wolfram:expr>
+        "src='"<>
+          StringTrim@TemplateApply[
+            XMLTemplate@
+              File@FileNameJoin@{"include","lib","templates","siteNameJoin.html"},
+            <|
+              "file"->
+                Replace[
+                  TemplateSlot["src"],
+                  _Missing->""
+                  ]
+              |>
+            ]<>"'"
+      </wolfram:expr>
+    </wolfram:slot>
+  </wolfram:get>
+
+  <wolfram:comment>
+    href=...
+  </wolfram:comment>
+  <wolfram:get path="include/lib/templates/varDefinedBlock.html">
+    <wolfram:slot id="var">href</wolfram:slot>
+    <wolfram:slot id="href"><wolfram:slot id='href'/></wolfram:slot>
+    <wolfram:slot id="if">
+      <wolfram:expr>
+        "href='"<>
+          StringTrim@TemplateApply[
+            XMLTemplate@
+              File@FileNameJoin@{"include","lib","templates","siteNameJoin.html"},
+            <|
+              "file"->
+                Replace[
+                  TemplateSlot["href"],
+                  _Missing->""
+                  ]
+              |>
+            ]<>"'"
+      </wolfram:expr>
+    </wolfram:slot>
+  </wolfram:get>
+
+  <wolfram:comment>
+    sizes=...
+  </wolfram:comment>
+  <wolfram:get path="include/lib/templates/varDefinedBlock.html">
+    <wolfram:slot id="var">sizes</wolfram:slot>
+    <wolfram:slot id="sizes"><wolfram:slot id='sizes'/></wolfram:slot>
+    <wolfram:slot id="if">
+      <wolfram:expr>
+        "sizes='"<>TemplateSlot["sizes"]<>"'"
+      </wolfram:expr>
+    </wolfram:slot>
+  </wolfram:get>
+
+  <wolfram:comment>
+    alt=...
+  </wolfram:comment>
+  <wolfram:get path="include/lib/templates/varDefinedBlock.html">
+    <wolfram:slot id="var">alt</wolfram:slot>
+    <wolfram:slot id="alt"><wolfram:slot id='alt'/></wolfram:slot>
+    <wolfram:slot id="if">
+      <wolfram:expr>
+        "alt='"<>TemplateSlot["alt"]<>"'"
+      </wolfram:expr>
+    </wolfram:slot>
+  </wolfram:get>
+
+  <wolfram:comment>
+    target=...
+  </wolfram:comment>
+  <wolfram:get path="include/lib/templates/varDefinedBlock.html">
+    <wolfram:slot id="var">target</wolfram:slot>
+    <wolfram:slot id="alt"><wolfram:slot id='target'/></wolfram:slot>
+    <wolfram:slot id="if">
+      <wolfram:expr>
+        "target='"<>TemplateSlot["target"]<>"'"
+      </wolfram:expr>
+    </wolfram:slot>
+  </wolfram:get>
+
+  > <wolfram:get path="include/lib/templates/varDefinedBlock.html">
+    <wolfram:slot id="var">body</wolfram:slot>
+    <wolfram:slot id="body"><wolfram:slot id='body'/></wolfram:slot>
+    <wolfram:slot id="if">
+      <wolfram:expr>
+        TemplateSlot["body"]<>"</"<>TemplateSlot["type"]<>">"
+      </wolfram:expr>
+    </wolfram:slot>
+  </wolfram:get>

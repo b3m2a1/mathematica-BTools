@@ -1,9 +1,12 @@
 $$templateLib["makeSiteElements"][
   Merge[{
     "rel"->"stylesheet",
-    ReplacePart[#,
-      "href"->
-        URLBuild[{"theme","css",#["href"]}]
+    If[!StringStartsQ[#["href"], "http"],
+      ReplacePart[#,
+        "href"->
+          URLBuild[{"theme","css", #["href"]}]
+        ],
+      #
       ],
     "type"->"link"
     },

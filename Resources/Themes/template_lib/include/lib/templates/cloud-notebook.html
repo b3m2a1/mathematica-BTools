@@ -1,0 +1,75 @@
+<div
+  style=
+    'width:
+      <wolfram:expr>
+        Replace[#Width,
+          {
+            n_Integer:>ToString[n]<>"px",
+            Scaled[i_]:>ToString[100*i]<>"\%",
+            _->"100%"
+            }
+          ]
+      </wolfram:expr>;
+    height:
+      <wolfram:expr>
+        Replace[#Height,
+          {
+            n_Integer:>ToString[n]<>"px",
+            Scaled[i_]:>ToString[100*i]<>"\%",
+            _->"200px"
+            }
+          ]
+      </wolfram:expr>;
+    <wolfram:expr>
+      Replace[#Style,
+        {
+          Bottom:> "position: -webkit-sticky; position: sticky;  bottom: 0;",
+          Top:> "position: -webkit-sticky; position: sticky;  top: 0;",
+          s_String:>s,
+          _->"position: relative;"
+          }
+        ]
+    </wolfram:expr>;
+    overflow: hidden;
+    '
+    >
+    <iframe
+        src="https://sandbox.open.wolframcloud.com/app/view/newNotebook"
+        style='
+          position: absolute;
+          left:-2px;
+          top:
+          <wolfram:expr>
+            Replace[#Top,
+              {
+                n_Integer:>ToString[-n]<>"px",
+                Scaled[i_]:>ToString[-100*i]<>"\%",
+                _->"-85px"
+                }
+              ]
+          </wolfram:expr>;
+          '
+        width=
+          '<wolfram:expr>
+            Replace[#Width,
+              {
+                n_Integer:>ToString[n]<>"px",
+                Scaled[i_]:>ToString[100*i]<>"\%",
+                _->"100%"
+                }
+              ]
+          </wolfram:expr>'
+        height=
+          '<wolfram:expr>
+            Replace[{#Top, #Height},
+              {
+                { n_Integer,  m_Integer  }:>ToString[n+m]<>"px",
+                { Scaled[i_], Scaled[j_] }:>ToString[100*(i+j)]<>"\%",
+                { _Missing,   m_Integer  }:>ToString[m+85]<>"px",
+                _->"285px"
+                }
+              ]
+          </wolfram:expr>'
+        >
+    </iframe>
+</div>

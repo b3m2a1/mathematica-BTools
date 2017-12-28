@@ -150,7 +150,7 @@ Cell[BoxData[{
   3.705187560944337*^9}, {3.7051879694515533`*^9, 
   3.705188016540567*^9}},ExpressionUUID->"00f60c4d-a6d8-4d25-821d-\
 f0d53a85dab1"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -821,10 +821,11 @@ Cell[BoxData[
         RowBox[{
         "$CurrentProject", ",", "\n", "\t", "\t\t\t", "\"\<content\>\"", ",", 
          "\n", "\t", "\t", "\t\t", "\"\<posts\>\""}], "\n", "\t\t\t\t", 
-        "}"}]}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
-   ")"}]}]], "CodeInput",
- CellChangeTimes->{{3.7100050565216084`*^9, 
-  3.710005100514185*^9}},ExpressionUUID->"6f7d612b-963d-41f3-a318-\
+        "}"}]}], ",", "\n", "\t\t\t", "\[Infinity]"}], "\n", "\t\t\t", 
+     "]"}]}], "\n", "\t\t", ")"}]}]], "CodeInput",
+ CellChangeTimes->{{3.7100050565216084`*^9, 3.710005100514185*^9}, {
+  3.72325114249786*^9, 
+  3.72325114512464*^9}},ExpressionUUID->"6f7d612b-963d-41f3-a318-\
 2f060a854ccb"],
 
 Cell[BoxData[
@@ -837,10 +838,19 @@ Cell[BoxData[
        RowBox[{"With", "[", 
         RowBox[{
          RowBox[{"{", 
-          RowBox[{"n", "=", "n"}], "}"}], ",", 
+          RowBox[{"n", "=", "n"}], "}"}], ",", "\n", "\t\t\t\t", 
          RowBox[{
-          RowBox[{"FileBaseName", "@", "n"}], "\[RuleDelayed]", 
-          RowBox[{"SystemOpen", "@", "n"}]}]}], "]"}], ",", "\n", "\t\t\t", 
+          RowBox[{"StringTrim", "[", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"FileNameDrop", "[", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"n", ",", "\n", "\t", "\t\t\t\t\t", 
+              RowBox[{"FileNameDepth", "[", "$CurrentProject", "]"}]}], "\n", 
+             "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"\"\<.\>\"", "<>", 
+             RowBox[{"FileExtension", "[", "n", "]"}]}]}], "\n", "\t\t\t\t\t",
+            "]"}], "\[RuleDelayed]", "\n", "\t\t\t\t\t", 
+          RowBox[{"SystemOpen", "@", "n"}]}]}], "\n", "\t\t\t\t", "]"}], ",", 
+       "\n", "\t\t\t", 
        RowBox[{"{", 
         RowBox[{"n", ",", "$PostList"}], "}"}]}], "\n", "\t\t\t", "]"}], ",", 
      "\n", "\t\t", 
@@ -854,8 +864,9 @@ Cell[BoxData[
   ";"}]], "CodeInput",
  CellChangeTimes->{{3.705345211937351*^9, 3.705345232414481*^9}, {
   3.705345601970396*^9, 3.705345601978347*^9}, {3.705345981345797*^9, 
-  3.705345982143663*^9}, {3.710005104788834*^9, 
-  3.710005121586171*^9}},ExpressionUUID->"19f0d5e9-d2bc-4667-9ced-\
+  3.705345982143663*^9}, {3.710005104788834*^9, 3.710005121586171*^9}, {
+  3.723251156946878*^9, 
+  3.7232511966121683`*^9}},ExpressionUUID->"19f0d5e9-d2bc-4667-9ced-\
 7f98850766e6"]
 }, Closed]],
 
@@ -992,12 +1003,17 @@ Cell[BoxData[
        RowBox[{
         RowBox[{"NotebookFileName", "[", 
          RowBox[{"InputNotebook", "[", "]"}], "]"}], ",", "\n", "\t\t\t\t", 
-        RowBox[{
-         RowBox[{"\"\<.nb\>\"", "~~", "EndOfString"}], "\[Rule]", 
-         "\"\<.md\>\""}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t", 
-    "]"}]}], ";"}]], "CodeInput",
+        RowBox[{"{", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"\"\<.nb\>\"", "~~", "EndOfString"}], "\[Rule]", 
+           "\"\<.md\>\""}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"\"\<*\>\"", "\[Rule]", "\"\<_\>\""}]}], "\n", "\t\t\t\t\t",
+          "}"}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",
  CellChangeTimes->{{3.710003360296369*^9, 3.710003384941534*^9}, 
-   3.710004722276351*^9},ExpressionUUID->"e4bbed00-b7ea-4c8d-8f37-\
+   3.710004722276351*^9, {3.7234186498458357`*^9, 
+   3.723418657361779*^9}},ExpressionUUID->"e4bbed00-b7ea-4c8d-8f37-\
 19191556e3f9"]
 }, Closed]],
 
@@ -1051,13 +1067,49 @@ Cell[BoxData[
        RowBox[{"whichPacF", "[", "\"\<WebSiteBuild\>\"", "]"}], "[", "\n", 
        "\t\t\t", 
        RowBox[{"$CurrentProject", ",", "\n", "\t\t\t", 
-        RowBox[{"Monitor", "\[Rule]", "False"}]}], "\n", "\t\t\t", "]"}], ";",
-       "\n", "\t\t", 
+        RowBox[{"Monitor", "\[Rule]", 
+         RowBox[{"TrueQ", "@", 
+          RowBox[{"Not", "@", "$buildSilentFlag"}]}]}], ",", "\n", "\t\t\t", 
+        RowBox[{"\"\<GenerateAggregations\>\"", "\[Rule]", "\n", "\t\t\t\t", 
+         RowBox[{"$generateAggregationsFlag", "=!=", "False"}]}], ",", "\n", 
+        "\t\t\t", 
+        RowBox[{"\"\<GenerateIndex\>\"", "\[Rule]", "\n", "\t\t\t\t", 
+         RowBox[{"$generatIndexFlag", "=!=", "False"}]}], ",", "\n", "\t\t\t", 
+        RowBox[{"\"\<GenerateContent\>\"", "->", "\n", "\t\t\t\t", 
+         RowBox[{"$generatContentFlag", "=!=", "False"}]}], ",", "\n", 
+        "\t\t\t", 
+        RowBox[{"\"\<CopyTheme\>\"", "->", "\n", "\t\t\t\t", 
+         RowBox[{"$copyThemeFlag", "=!=", "False"}]}], ",", "\n", "\t\t\t", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"TrueQ", "@", "$rebuildAllFlag"}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"\"\<LastBuild\>\"", "\[Rule]", "None"}], ",", "\n", 
+          "\t\t\t\t", 
+          RowBox[{"Sequence", "@@", 
+           RowBox[{"{", "}"}]}]}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", 
+       "]"}], ";", "\n", "\t\t", 
       RowBox[{"If", "[", 
-       RowBox[{"$openOnGenerateFlag", ",", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"$openOnGenerateFlag", "=!=", "False"}], ",", "\n", "\t\t\t", 
+        
         RowBox[{
-         RowBox[{"whichPacF", "[", "\"\<PySimpleServerOpen\>\"", "]"}], "[", 
-         "\n", "\t\t\t\t", 
+         RowBox[{"If", "[", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Length", "@", 
+             RowBox[{"Join", "[", "\n", "\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"DownValues", "[", "BTools`PySimpleServerOpen", "]"}], 
+               ",", " ", "\n", "\t\t\t\t\t", 
+               RowBox[{"OwnValues", "[", "BTools`PySimpleServerOpen", "]"}]}],
+               "\n", "\t\t\t\t\t", "]"}]}], ">", "0"}], ",", "\n", "\t\t\t\t",
+            "BTools`PySimpleServerOpen", ",", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"RunProcess", "[", 
+             RowBox[{
+             "\"\<open `` -a \\\"Google Chrome\\\"\>\"", "~", "TemplateApply",
+               "~", "#"}], "]"}], "&"}]}], "\n", "\t\t\t\t", "]"}], "[", "\n",
+          "\t\t\t\t", 
          RowBox[{"FileNameJoin", "@", 
           RowBox[{"{", "\n", "\t\t\t\t\t", 
            RowBox[{
@@ -1075,7 +1127,12 @@ Cell[BoxData[
    3.723004803090088*^9, 3.7230048763251*^9}, {3.723049266207243*^9, 
    3.723049268871707*^9}, {3.723049410431403*^9, 3.723049421131713*^9}, {
    3.723049740620283*^9, 3.723049743827807*^9}, {3.723049790663176*^9, 
-   3.723049795494404*^9}},ExpressionUUID->"dc9aee78-dd7c-4b0f-8c3d-\
+   3.723049795494404*^9}, {3.723230235216198*^9, 3.7232302371088877`*^9}, {
+   3.723230495703164*^9, 3.7232305166706667`*^9}, {3.723230554073063*^9, 
+   3.723230555670495*^9}, {3.7232507760261383`*^9, 3.7232507792485123`*^9}, {
+   3.72325533068746*^9, 3.723255399960644*^9}, {3.723260234941413*^9, 
+   3.723260327771847*^9}, {3.72326065778444*^9, 
+   3.723260675929326*^9}},ExpressionUUID->"dc9aee78-dd7c-4b0f-8c3d-\
 363cc763db7d"]
 }, Closed]],
 
@@ -1208,7 +1265,9 @@ Cell[BoxData[
           RowBox[{
            RowBox[{
             RowBox[{"Length", "[", "#", "]"}], ">", "0"}], "&&", 
-           "$openOnGenerateFlag"}], ",", "\n", "\t\t\t\t", 
+           RowBox[{"(", 
+            RowBox[{"$openOnGenerateFlag", "=!=", "False"}], ")"}]}], ",", 
+          "\n", "\t\t\t\t", 
           RowBox[{"SystemOpen", "@", "\n", "\t\t\t\t\t", 
            RowBox[{"StringReplace", "[", "\n", "\t\t\t\t\t\t", 
             RowBox[{
@@ -1255,9 +1314,11 @@ Cell[BoxData[
               "$CurrentProject", ",", " ", "\n", "\t\t\t\t\t\t\t", 
                "\"\<output\>\""}], "\n", "\t\t\t\t\t\t\t", "}"}]}], ",", "\n",
              "\t\t\t\t\t\t", 
-            RowBox[{"Monitor", "\[Rule]", "False"}]}], "\n", "\t\t\t\t\t\t", 
-           "]"}]}]}], "\n", "\t\t\t\t", "]"}]}], ";"}]}], "\n", "\t", "]"}]}],
-   ";"}]], "CodeInput",
+            RowBox[{"Monitor", "\[Rule]", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{"TrueQ", "@", 
+              RowBox[{"Not", "@", "$buildSilentFlag"}]}]}]}], "\n", 
+           "\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", "]"}]}], ";"}]}], 
+    "\n", "\t", "]"}]}], ";"}]], "CodeInput",
  CellChangeTimes->{{3.7020539432403183`*^9, 3.7020540843746634`*^9}, {
    3.702054124609791*^9, 3.702054129974124*^9}, {3.702054172274789*^9, 
    3.702054343843446*^9}, 3.702054383026792*^9, {3.7020544283948793`*^9, 
@@ -1311,8 +1372,9 @@ Cell[BoxData[
    3.7230498064050407`*^9, 3.723049806861086*^9}, {3.7230872040181227`*^9, 
    3.72308721635286*^9}, {3.723087332757195*^9, 3.7230873824204493`*^9}, {
    3.7230875631767797`*^9, 3.723087571520072*^9}, {3.723087669520652*^9, 
-   3.7230876749331083`*^9}, 
-   3.7230880007655687`*^9},ExpressionUUID->"e709c126-c9a7-4ca3-a5b0-\
+   3.7230876749331083`*^9}, 3.7230880007655687`*^9, {3.7234255237275877`*^9, 
+   3.723425539255149*^9}, {3.723425572409441*^9, 
+   3.723425575557371*^9}},ExpressionUUID->"e709c126-c9a7-4ca3-a5b0-\
 e5c986552a44"]
 }, Open  ]],
 
@@ -1329,19 +1391,15 @@ Cell[BoxData[
   RowBox[{"openLocal", "=", "\n", "\t", 
    RowBox[{"paletteButton", "[", "\n", "\t\t", 
     RowBox[{"\"\<Open Local Site\>\"", ",", "\n", "\t\t", 
-     RowBox[{"BTools`PelicanBuild", ";", "\n", "\t\t", 
-      RowBox[{"BTools`PySimpleServerOpen", "[", "\n", "\t\t\t", 
-       RowBox[{"FileNameJoin", "@", 
-        RowBox[{"{", "\n", "\t\t\t\t", 
-         RowBox[{
-          RowBox[{"BTools`Private`PelicanSiteBase", "[", "\n", "\t\t\t\t\t", 
-           RowBox[{"NotebookDirectory", "[", 
-            RowBox[{"InputNotebook", "[", "]"}], "]"}], "\n", "\t\t\t\t\t", 
-           "]"}], ",", "\n", "\t\t\t\t", "\"\<output\>\""}], "\n", "\t\t\t\t",
-          "}"}]}], "\n", "\t\t\t", "]"}]}]}], "\n", "\t\t", "]"}]}], 
-  ";"}]], "CodeInput",
- CellChangeTimes->{{3.7100040221737623`*^9, 
-  3.710004103676919*^9}},ExpressionUUID->"869f928e-cf6f-4a75-a834-\
+     RowBox[{"BTools`PySimpleServerOpen", "[", "\n", "\t\t\t", 
+      RowBox[{"FileNameJoin", "@", 
+       RowBox[{"{", "\n", "\t\t\t\t", 
+        RowBox[{"$CurrentProject", ",", "\n", "\t\t\t\t", "\"\<output\>\""}], 
+        "\n", "\t\t\t\t", "}"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+    "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7100040221737623`*^9, 3.710004103676919*^9}, {
+  3.723249180735334*^9, 
+  3.7232491945651493`*^9}},ExpressionUUID->"869f928e-cf6f-4a75-a834-\
 b461049fc535"]
 }, Closed]],
 
@@ -1368,7 +1426,7 @@ Cell[BoxData[
   3.72308819607935*^9, 
   3.723088220067328*^9}},ExpressionUUID->"62b178d5-65b3-4371-96f2-\
 8a81598722ae"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -1400,16 +1458,323 @@ Cell[BoxData[
            "]"}], "&"}]}], "\n", "\t\t\t\t", "]"}], "\n", "\t\t\t", "]"}], 
       ",", "\n", "\t\t", 
       RowBox[{"Style", "[", 
-       RowBox[{"\"\<Open on Build\>\"", ",", "12", ",", "\"\<Gray\>\""}], 
+       RowBox[{"\"\<Auto Open\>\"", ",", "12", ",", "\"\<Gray\>\""}], "]"}]}],
+      "\n", "\t\t", "}"}]}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.705195413441461*^9, 3.705195476641151*^9}, 
+   3.7051958379928303`*^9, {3.705195869507564*^9, 3.705195874658287*^9}, {
+   3.705196094042309*^9, 3.705196094696756*^9}, {3.705196813659109*^9, 
+   3.705196842049288*^9}, {3.710003757405924*^9, 3.710003758137748*^9}, {
+   3.7100084998071117`*^9, 3.7100085093475924`*^9}, {3.710897431321961*^9, 
+   3.7108974417110662`*^9}, {3.723260503967835*^9, 
+   3.7232605090601587`*^9}},ExpressionUUID->"693d4100-e6bd-4a9f-9185-\
+4f76e80d2c13"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["buildSilentCheckbox", "CodeSubsubsection",
+ CellChangeTimes->{{3.705195412744574*^9, 3.7051954307047043`*^9}, {
+  3.723230128953868*^9, 
+  3.723230130968217*^9}},ExpressionUUID->"e7055994-81c4-4301-920c-\
+3f9a0caa924b"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"buildSilentCheckbox", "=", "\n", "\t", 
+   RowBox[{"Row", "@", 
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Checkbox", "[", "\n", "\t\t\t", 
+       RowBox[{"Dynamic", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"$buildSilentFlag", "=!=", "False"}], ",", "\n", "\t\t\t\t", 
+         
+         RowBox[{
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{"!", 
+             RowBox[{"BooleanQ", "@", "$buildSilentFlag"}]}], ",", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"$buildSilentFlag", "=", "False"}], ",", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"$buildSilentFlag", "=", "#"}]}], "\n", "\t\t\t\t\t", 
+           "]"}], "&"}]}], "\n", "\t\t\t\t", "]"}], "\n", "\t\t\t", "]"}], 
+      ",", "\n", "\t\t", 
+      RowBox[{"Style", "[", 
+       RowBox[{"\"\<Silent\>\"", ",", "12", ",", "\"\<Gray\>\""}], "]"}]}], 
+     "\n", "\t\t", "}"}]}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.705195413441461*^9, 3.705195476641151*^9}, 
+   3.7051958379928303`*^9, {3.705195869507564*^9, 3.705195874658287*^9}, {
+   3.705196094042309*^9, 3.705196094696756*^9}, {3.705196813659109*^9, 
+   3.705196842049288*^9}, {3.710003757405924*^9, 3.710003758137748*^9}, {
+   3.7100084998071117`*^9, 3.7100085093475924`*^9}, {3.710897431321961*^9, 
+   3.7108974417110662`*^9}, {3.7232301384305983`*^9, 3.72323015241068*^9}, {
+   3.723230204219738*^9, 3.7232302145967093`*^9}, {3.7232305229488707`*^9, 
+   3.723230525232931*^9}, {3.7232604975333767`*^9, 
+   3.723260498900901*^9}},ExpressionUUID->"2555a10a-1f8d-4a69-b596-\
+fe46316f4930"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["generateAggsCheckbox", "CodeSubsubsection",
+ CellChangeTimes->{{3.705195412744574*^9, 3.7051954307047043`*^9}, {
+   3.723230128953868*^9, 3.723230130968217*^9}, 
+   3.723260365554636*^9},ExpressionUUID->"da333d2a-53d5-4c7d-a88e-\
+e78337204132"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"generateAggsCheckbox", "=", "\n", "\t", 
+   RowBox[{"Row", "@", 
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Checkbox", "[", "\n", "\t\t\t", 
+       RowBox[{"Dynamic", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"$generateAggregationsFlag", "=!=", "False"}], ",", "\n", 
+         "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{"!", 
+             RowBox[{"BooleanQ", "@", "$generateAggregationsFlag"}]}], ",", 
+            "\n", "\t\t\t\t\t", 
+            RowBox[{"$generateAggregationsFlag", "=", "False"}], ",", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"$generateAggregationsFlag", "=", "#"}]}], "\n", 
+           "\t\t\t\t\t", "]"}], "&"}]}], "\n", "\t\t\t\t", "]"}], "\n", 
+       "\t\t\t", "]"}], ",", "\n", "\t\t", 
+      RowBox[{"Style", "[", 
+       RowBox[{"\"\<Aggregations\>\"", ",", "12", ",", "\"\<Gray\>\""}], 
        "]"}]}], "\n", "\t\t", "}"}]}]}], ";"}]], "CodeInput",
  CellChangeTimes->{{3.705195413441461*^9, 3.705195476641151*^9}, 
    3.7051958379928303`*^9, {3.705195869507564*^9, 3.705195874658287*^9}, {
    3.705196094042309*^9, 3.705196094696756*^9}, {3.705196813659109*^9, 
    3.705196842049288*^9}, {3.710003757405924*^9, 3.710003758137748*^9}, {
    3.7100084998071117`*^9, 3.7100085093475924`*^9}, {3.710897431321961*^9, 
-   3.7108974417110662`*^9}},ExpressionUUID->"693d4100-e6bd-4a9f-9185-\
-4f76e80d2c13"]
+   3.7108974417110662`*^9}, {3.7232301384305983`*^9, 3.72323015241068*^9}, {
+   3.723230204219738*^9, 3.7232302145967093`*^9}, {3.7232305229488707`*^9, 
+   3.723230525232931*^9}, {3.72326034464835*^9, 3.723260357795403*^9}, 
+   3.7232604847886953`*^9},ExpressionUUID->"371d4551-2f7a-4753-bad4-\
+33e7075b0f1f"]
 }, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["generateIndCheckbox", "CodeSubsubsection",
+ CellChangeTimes->{{3.705195412744574*^9, 3.7051954307047043`*^9}, {
+   3.723230128953868*^9, 3.723230130968217*^9}, 
+   3.723260372712336*^9},ExpressionUUID->"39fb004b-c633-4f04-9491-\
+26e5d0516c61"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"generateIndCheckbox", "=", "\n", "\t", 
+   RowBox[{"Row", "@", 
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Checkbox", "[", "\n", "\t\t\t", 
+       RowBox[{"Dynamic", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"$generatIndexFlag", "=!=", "False"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{"!", 
+             RowBox[{"BooleanQ", "@", "$generatIndexFlag"}]}], ",", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"$generatIndexFlag", "=", "False"}], ",", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"$generatIndexFlag", "=", "#"}]}], "\n", "\t\t\t\t\t", 
+           "]"}], "&"}]}], "\n", "\t\t\t\t", "]"}], "\n", "\t\t\t", "]"}], 
+      ",", "\n", "\t\t", 
+      RowBox[{"Style", "[", 
+       RowBox[{"\"\<Index\>\"", ",", "12", ",", "\"\<Gray\>\""}], "]"}]}], 
+     "\n", "\t\t", "}"}]}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.705195413441461*^9, 3.705195476641151*^9}, 
+   3.7051958379928303`*^9, {3.705195869507564*^9, 3.705195874658287*^9}, {
+   3.705196094042309*^9, 3.705196094696756*^9}, {3.705196813659109*^9, 
+   3.705196842049288*^9}, {3.710003757405924*^9, 3.710003758137748*^9}, {
+   3.7100084998071117`*^9, 3.7100085093475924`*^9}, {3.710897431321961*^9, 
+   3.7108974417110662`*^9}, {3.7232301384305983`*^9, 3.72323015241068*^9}, {
+   3.723230204219738*^9, 3.7232302145967093`*^9}, {3.7232305229488707`*^9, 
+   3.723230525232931*^9}, {3.72326034464835*^9, 3.7232603811306467`*^9}, 
+   3.723260488268447*^9},ExpressionUUID->"1200a840-b816-4295-b336-\
+a9dc549c967e"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["generateContCheckbox", "CodeSubsubsection",
+ CellChangeTimes->{{3.705195412744574*^9, 3.7051954307047043`*^9}, {
+  3.723230128953868*^9, 3.723230130968217*^9}, {3.723260372712336*^9, 
+  3.7232603938325*^9}},ExpressionUUID->"ac18dfec-6914-4ccb-8906-e4c7d1cd6671"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"generateContCheckbox", "=", "\n", "\t", 
+   RowBox[{"Row", "@", 
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Checkbox", "[", "\n", "\t\t\t", 
+       RowBox[{"Dynamic", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"$generatContentFlag", "=!=", "False"}], ",", "\n", 
+         "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{"!", 
+             RowBox[{"BooleanQ", "@", "$generatContentFlag"}]}], ",", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"$generatContentFlag", "=", "False"}], ",", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"$generatContentFlag", "=", "#"}]}], "\n", "\t\t\t\t\t", 
+           "]"}], "&"}]}], "\n", "\t\t\t\t", "]"}], "\n", "\t\t\t", "]"}], 
+      ",", "\n", "\t\t", 
+      RowBox[{"Style", "[", 
+       RowBox[{"\"\<Content\>\"", ",", "12", ",", "\"\<Gray\>\""}], "]"}]}], 
+     "\n", "\t\t", "}"}]}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.705195413441461*^9, 3.705195476641151*^9}, 
+   3.7051958379928303`*^9, {3.705195869507564*^9, 3.705195874658287*^9}, {
+   3.705196094042309*^9, 3.705196094696756*^9}, {3.705196813659109*^9, 
+   3.705196842049288*^9}, {3.710003757405924*^9, 3.710003758137748*^9}, {
+   3.7100084998071117`*^9, 3.7100085093475924`*^9}, {3.710897431321961*^9, 
+   3.7108974417110662`*^9}, {3.7232301384305983`*^9, 3.72323015241068*^9}, {
+   3.723230204219738*^9, 3.7232302145967093`*^9}, {3.7232305229488707`*^9, 
+   3.723230525232931*^9}, {3.72326034464835*^9, 3.7232603971386003`*^9}, 
+   3.723260492124362*^9},ExpressionUUID->"3cd328cf-aeea-4a59-b84a-\
+bebb2f1de3c8"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["copyThemeCheckbox", "CodeSubsubsection",
+ CellChangeTimes->{{3.705195412744574*^9, 3.7051954307047043`*^9}, {
+   3.723230128953868*^9, 3.723230130968217*^9}, {3.723260372712336*^9, 
+   3.7232603938325*^9}, 
+   3.7232604312476273`*^9},ExpressionUUID->"42597374-5ca8-48c1-be94-\
+885a0e816561"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"copyThemeCheckbox", "=", "\n", "\t", 
+   RowBox[{"Row", "@", 
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Checkbox", "[", "\n", "\t\t\t", 
+       RowBox[{"Dynamic", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"$copyThemeFlag", "=!=", "False"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{"!", 
+             RowBox[{"BooleanQ", "@", "$copyThemeFlag"}]}], ",", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"$copyThemeFlag", "=", "False"}], ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"$copyThemeFlag", "=", "#"}]}], "\n", "\t\t\t\t\t", "]"}],
+           "&"}]}], "\n", "\t\t\t\t", "]"}], "\n", "\t\t\t", "]"}], ",", "\n",
+       "\t\t", 
+      RowBox[{"Style", "[", 
+       RowBox[{"\"\<Copy Theme\>\"", ",", "12", ",", "\"\<Gray\>\""}], 
+       "]"}]}], "\n", "\t\t", "}"}]}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.705195413441461*^9, 3.705195476641151*^9}, 
+   3.7051958379928303`*^9, {3.705195869507564*^9, 3.705195874658287*^9}, {
+   3.705196094042309*^9, 3.705196094696756*^9}, {3.705196813659109*^9, 
+   3.705196842049288*^9}, {3.710003757405924*^9, 3.710003758137748*^9}, {
+   3.7100084998071117`*^9, 3.7100085093475924`*^9}, {3.710897431321961*^9, 
+   3.7108974417110662`*^9}, {3.7232301384305983`*^9, 3.72323015241068*^9}, {
+   3.723230204219738*^9, 3.7232302145967093`*^9}, {3.7232305229488707`*^9, 
+   3.723230525232931*^9}, {3.72326034464835*^9, 
+   3.723260428737661*^9}},ExpressionUUID->"8056478e-5786-4c9f-a298-\
+91011967e880"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["rebuildAllCheckbox", "CodeSubsubsection",
+ CellChangeTimes->{{3.705195412744574*^9, 3.7051954307047043`*^9}, {
+   3.723230128953868*^9, 3.723230130968217*^9}, {3.723260372712336*^9, 
+   3.7232603938325*^9}, 3.7232604312476273`*^9, 
+   3.723260692232122*^9},ExpressionUUID->"0cfdacab-0f42-41a7-91b4-\
+62adc58eb9e4"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"rebuildAllCheckbox", "=", "\n", "\t", 
+   RowBox[{"Row", "@", 
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Checkbox", "[", "\n", "\t\t\t", 
+       RowBox[{"Dynamic", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"TrueQ", "@", "$rebuildAllFlag"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{"!", 
+             RowBox[{"BooleanQ", "@", "$rebuildAllFlag"}]}], ",", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"$rebuildAllFlag", "=", "True"}], ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"$rebuildAllFlag", "=", "#"}]}], "\n", "\t\t\t\t\t", 
+           "]"}], "&"}]}], "\n", "\t\t\t\t", "]"}], "\n", "\t\t\t", "]"}], 
+      ",", "\n", "\t\t", 
+      RowBox[{"Style", "[", 
+       RowBox[{"\"\<Rebuild All\>\"", ",", "12", ",", "\"\<Gray\>\""}], 
+       "]"}]}], "\n", "\t\t", "}"}]}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.705195413441461*^9, 3.705195476641151*^9}, 
+   3.7051958379928303`*^9, {3.705195869507564*^9, 3.705195874658287*^9}, {
+   3.705196094042309*^9, 3.705196094696756*^9}, {3.705196813659109*^9, 
+   3.705196842049288*^9}, {3.710003757405924*^9, 3.710003758137748*^9}, {
+   3.7100084998071117`*^9, 3.7100085093475924`*^9}, {3.710897431321961*^9, 
+   3.7108974417110662`*^9}, {3.7232301384305983`*^9, 3.72323015241068*^9}, {
+   3.723230204219738*^9, 3.7232302145967093`*^9}, {3.7232305229488707`*^9, 
+   3.723230525232931*^9}, {3.72326034464835*^9, 3.723260428737661*^9}, {
+   3.723260601603372*^9, 3.723260639481813*^9}, 
+   3.723260690395317*^9},ExpressionUUID->"5050dce0-3937-4429-b4f4-\
+32a8fc022336"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["settingsGrid", "CodeSubsubsection",
+ CellChangeTimes->{{3.72323015810603*^9, 
+  3.723230161368806*^9}},ExpressionUUID->"d52c8d3d-3518-40cd-9d59-\
+826763c9f709"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"settingsGrid", "=", "\n", "\t", 
+   RowBox[{"Grid", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"{", "\n", "\t\t\t", 
+        RowBox[{
+        "openOnCheckbox", ",", " ", "\n", "\t\t\t", "buildSilentCheckbox"}], 
+        "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+       RowBox[{"{", "\n", "\t\t\t", 
+        RowBox[{
+        "generateAggsCheckbox", ",", "\n", "\t\t\t", "generateIndCheckbox"}], 
+        "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+       RowBox[{"{", "\n", "\t\t\t", 
+        RowBox[{
+        "generateContCheckbox", ",", " ", "\n", "\t\t\t", 
+         "copyThemeCheckbox"}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+       RowBox[{
+       "{", "\n", "\t\t\t", "rebuildAllCheckbox", "\n", "\t\t\t", "}"}]}], 
+      "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{"Alignment", "\[Rule]", "Left"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.723230164627458*^9, 3.7232302020095243`*^9}, {
+   3.723230253135103*^9, 3.723230254537877*^9}, 3.7232304874270372`*^9, {
+   3.723260418034973*^9, 3.7232604761619043`*^9}, {3.7232605243068857`*^9, 
+   3.723260553294965*^9}, {3.72326068571612*^9, 
+   3.7232606945394087`*^9}},ExpressionUUID->"d703ab39-3404-4657-a410-\
+9fe96cddcfd6"]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1434,8 +1799,10 @@ Cell[BoxData[
            "\"\<Provide a name for the site:\>\"", ",", "\n", "\t\t\t\t\t", 
             RowBox[{"InputField", "[", 
              RowBox[{
-              RowBox[{"Dynamic", "[", "name", "]"}], ",", " ", "String"}], 
-             "]"}], ",", "\n", "\t\t\t\t\t", 
+              RowBox[{"Dynamic", "[", "name", "]"}], ",", " ", "String", ",", 
+              "\n", "\t\t\t\t\t\t", 
+              RowBox[{"BoxID", "\[Rule]", "\"\<site-name\>\""}]}], "\n", 
+             "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t", 
             RowBox[{"Row", "@", 
              RowBox[{"{", "\n", "\t\t\t\t\t\t", 
               RowBox[{
@@ -1444,8 +1811,18 @@ Cell[BoxData[
                  RowBox[{"DialogReturn", "[", "name", "]"}]}], "]"}], ",", 
                "\n", "\t\t\t\t\t\t", 
                RowBox[{"CancelButton", "[", "]"}]}], "\n", "\t\t\t\t\t\t", 
-              "}"}]}]}], "\n", "\t\t\t\t\t", "}"}]}]}], "\n", "\t\t\t\t", 
-        "]"}], ",", "\n", "\t\t\t", 
+              "}"}]}]}], "\n", "\t\t\t\t\t", "}"}]}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"NotebookDynamicExpression", ":>", "\n", "\t\t\t\t\t", 
+          RowBox[{"Refresh", "[", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{
+            "FrontEnd`MoveCursorToInputField", "[", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"EvaluationNotebook", "[", "]"}], ",", " ", "\n", 
+              "\t\t\t\t\t\t\t", "\"\<site-name\>\""}], "\n", "\t\t\t\t\t\t\t",
+              "]"}], ",", "\n", "\t\t\t\t\t\t", "None"}], "\n", 
+           "\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", "]"}], ",", "\n", 
+       "\t\t\t", 
        RowBox[{
         RowBox[{"s_String", "?", 
          RowBox[{"(", 
@@ -1464,10 +1841,10 @@ Cell[BoxData[
   ";"}]], "CodeInput",
  CellChangeTimes->{{3.710003392649131*^9, 3.7100033935707617`*^9}, {
   3.7100041790617857`*^9, 3.710004204955179*^9}, {3.722962549957666*^9, 
-  3.722962756900666*^9}, {3.7229709761014633`*^9, 
-  3.7229709937878237`*^9}},ExpressionUUID->"7cd861db-d0de-465d-84a4-\
-dc0aa39192ee"]
-}, Open  ]],
+  3.722962756900666*^9}, {3.7229709761014633`*^9, 3.7229709937878237`*^9}, {
+  3.7231999424509897`*^9, 3.723199979757753*^9}, {3.72320023754018*^9, 
+  3.72320026933031*^9}},ExpressionUUID->"7cd861db-d0de-465d-84a4-dc0aa39192ee"]
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -1717,7 +2094,7 @@ Cell[BoxData[
       "$ContentSpacer", ",", "\n", "\t\t\t", "newPage", ",", "\n", "\t\t\t", 
       "newPost", ",", "\n", "\t\t\t", "$ContentSpacer", ",", "\n", "\t\t\t", 
       "buildPages", ",", "\n", "\t\t\t", "openMarkdown", ",", "\n", "\t\t\t", 
-      "openOnCheckbox", ",", "\n", "\t\t\t", "$ContentSpacer", ",", 
+      "settingsGrid", ",", "\n", "\t\t\t", "$ContentSpacer", ",", 
       RowBox[{"(*", "\n", "\t\t\t", 
        RowBox[{"deployPage", ","}], "*)"}], "\n", "\t\t\t", "deploySite", ",",
        "\n", "\t\t\t", "openLocal"}], 
@@ -1769,7 +2146,8 @@ Cell[BoxData[
    3.7100054799014606`*^9}, {3.710008159821171*^9, 3.71000816089738*^9}, {
    3.710008390059993*^9, 3.710008454885076*^9}, 3.723004999207501*^9, 
    3.723005559463619*^9, {3.723006208636446*^9, 3.723006214309532*^9}, 
-   3.723088230784519*^9},ExpressionUUID->"dfdf86d1-31f8-4172-ba06-\
+   3.723088230784519*^9, 
+   3.723230262519855*^9},ExpressionUUID->"dfdf86d1-31f8-4172-ba06-\
 155e221a08ee"],
 
 Cell[BoxData[
@@ -1997,7 +2375,7 @@ Cell[BoxData[
            RowBox[{"If", "[", 
             RowBox[{
              RowBox[{"!", 
-              RowBox[{"StringQ", "@", "$AppName"}]}], ",", 
+              RowBox[{"StringQ", "@", "$AppName"}]}], ",", " ", 
              RowBox[{"GetAppName", "[", "]"}]}], "]"}], ";", "\n", 
            "\t\t\t\t\t", 
            RowBox[{"Needs", "[", 
@@ -2136,7 +2514,8 @@ Cell[BoxData[
    3.723006101972313*^9}, {3.723006190737399*^9, 3.723006199214979*^9}, {
    3.723006429618126*^9, 3.7230064657935143`*^9}, {3.723037059954784*^9, 
    3.7230370646782417`*^9}, 3.7230497691333303`*^9, {3.723051624216675*^9, 
-   3.723051647124542*^9}},ExpressionUUID->"43f66058-923b-419b-a21e-\
+   3.723051647124542*^9}, 
+   3.723411668665042*^9},ExpressionUUID->"43f66058-923b-419b-a21e-\
 7672fcf03f37"]
 }, Open  ]],
 

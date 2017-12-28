@@ -218,10 +218,14 @@ IndentationReplace[nb_:Automatic]:=
 	With[{inputNotebook=Replace[nb,Automatic:>InputNotebook[]]},
 		With[{selection=IndentationSelection@inputNotebook},
 			With[{write=IndentingNewLineReplace@selection},
-				NotebookWrite[inputNotebook,write,
+				NotebookWrite[
+					inputNotebook,
+					write,
 					If[MatchQ[write,_String?(StringMatchQ[Whitespace])],
 						After,
-						All]]
+						All],
+					AutoScroll->False
+					]
 				]
 			]
 		];
@@ -254,10 +258,14 @@ IndentationRestore[nb_:Automatic]:=
 	With[{inputNotebook=Replace[nb,Automatic:>InputNotebook[]]},
 		With[{selection=IndentationSelection@inputNotebook},
 			With[{write=IndentingNewLineRestore@selection},
-				NotebookWrite[inputNotebook,write,
+				NotebookWrite[
+					inputNotebook,
+					write,
 					If[MatchQ[write,_String?(StringMatchQ[Whitespace])],
 						After,
-						All]
+						All
+						],
+					AutoScroll->False
 					]
 				]
 			]
@@ -309,10 +317,14 @@ indentationAddTabs[sel_]:=
 IndentationIncrease[nb_:Automatic]:=
 With[{inputNotebook=Replace[nb,Automatic:>InputNotebook[]]},
 With[{write=indentationAddTabs@IndentationSelection@inputNotebook},
-NotebookWrite[inputNotebook,write,
+NotebookWrite[
+			inputNotebook,
+			write,
 If[MatchQ[write,_String?(StringMatchQ[Whitespace])],
 After,
-All]]
+All],
+			AutoScroll->False
+			]
 ]
 ];
 
@@ -365,10 +377,13 @@ indentationDelTabs[sel_]:=
 IndentationDecrease[nb_:Automatic]:=
 	With[{inputNotebook=Replace[nb,Automatic:>InputNotebook[]]},
 		With[{write=indentationDelTabs@IndentationSelection@inputNotebook},
-			NotebookWrite[inputNotebook,write,
+			NotebookWrite[
+				inputNotebook,write,
 				If[MatchQ[write,_String?(StringMatchQ[Whitespace])],
 					After,
-					All]
+					All
+					],
+				AutoScroll->False
 				]
 			]
 		];
