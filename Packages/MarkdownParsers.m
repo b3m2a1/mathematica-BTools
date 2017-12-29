@@ -523,11 +523,32 @@ $markdownToXMLFenceBlock=
 
 
 $markdownToXMLCodeBlock=
-	code:
+	code:(
 		Longest[
-			((StartOfString|"\n")~~"    "~~Except["\n"]..~~"\n")~~
-				(((StartOfLine|(StartOfLine~~"    "~~Except["\n"]..))~~("\n"|EndOfString))...)
-			]:>
+			(
+				(StartOfString|"\n")~~
+					("\t"|"    ")~~
+					Except["\n"]..~~
+					"\n"
+					)~~
+				(
+					(
+						(StartOfLine|(StartOfLine~~("\t"|"    ")~~
+							Except["\n"]..))~~
+							("\n"|EndOfString)
+							)...
+					)
+			]
+		):>
+		"CodeBlock"->code;
+
+
+$markdownToXMLEndOfStringCodeBlock=
+	code:(
+		(StartOfString|"\n")~~
+			("\t"|"    ")~~
+			Except["\n"]..~~EndOfString
+		):>
 		"CodeBlock"->code;
 
 
@@ -675,7 +696,7 @@ $markdownToXMLImageRef=
 $markdownToXMLImageRefLinkBlock=
 	img:Repeated[(
 		(Whitespace|"")~~"["~~Except["]"]..~~"]:"~~(Whitespace|"")~~
-			Except[WhitespaceCharacter]..)]:>
+			WordCharacter~~Except[WhitespaceCharacter]..)]:>
 		"ImageRefLinkBlock"->img
 
 
@@ -781,6 +802,7 @@ $markdownToXMLBlockRules={
 	$markdownToXMLImageRefLinkBlock,
 	$markdownToXMLMultiItemBlock,
 	$markdownToXMLCodeBlock,
+	$markdownToXMLEndOfStringCodeBlock,
 	$markdownToXMLDelimiter,
 	$markdownToXMLHeader,
 	$markdownToXMLItemBlock,
@@ -794,12 +816,12 @@ $markdownToXMLBlockRules={
 
 
 $markdownToXMLElementRules={
-	$markdownToXMLItalBold,
 	$markdownToXMLLink,
 	$markdownToXMLImageRef,
 	$markdownToXMLImageRefLink,
 	$markdownToXMLImage,
 	$markdownToXMLCodeLine,
+	$markdownToXMLItalBold,
 	$markdownToXMLXMLBlock,
 	$markdownToXMLXMLLine
 	};

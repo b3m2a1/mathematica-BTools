@@ -1,5 +1,5 @@
 (* Created with the Wolfram Language : www.wolfram.com *)
-Paclet[Name -> "BTools", Version -> "1.0.69", Creator -> "b3m2a1@gmail.com", 
+Paclet[Name -> "BTools", Version -> "1.0.70", Creator -> "b3m2a1@gmail.com", 
  Description -> "A general purpose package that implements useful \
 functionality for application   development including distribution, \
 documentation generation, formatting,    front-end manipulation, application \

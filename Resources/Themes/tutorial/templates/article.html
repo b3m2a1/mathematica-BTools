@@ -28,9 +28,6 @@
   <script src="<wolfram:slot id='SiteURL'/>/theme/prettify/src/lang-mma.min.js"></script>
 
   <script>
-    function moveWindow (){
-      window.location.hash="main-content";
-      }
 
     function accordionOpen() {
       var thumb = document.getElementById("accordion-thumb");
@@ -38,8 +35,8 @@
       thumb.onclick= accordionClose;
       nb.classList.add("accordion-visible");
       nb.classList.remove("accordion-hidden");
-      // thumb.classList.add("nav-thumb-open");
-      // thumb.classList.remove("nav-thumb-closed");
+      thumb.classList.add("accordion-thumb-visible");
+      thumb.classList.remove("accordion-thumb-hidden");
       }
 
     function accordionClose() {
@@ -48,20 +45,40 @@
       thumb.onclick= accordionOpen;
       nb.classList.remove("accordion-visible");
       nb.classList.add("accordion-hidden");
-      // thumb.classList.remove("nav-thumb-open");
-      // thumb.classList.add("nav-thumb-closed")
+      thumb.classList.remove("accordion-thumb-visible");
+      thumb.classList.add("accordion-thumb-hidden")
       }
   </script>
 
 </wolfram:slot>
 
 <wolfram:slot id="OnLoad">
-  PR.prettyPrint(); moveWindow()
+  PR.prettyPrint();
 </wolfram:slot>
 
 <wolfram:slot id="PrimaryContent">
 
   <article class="article">
+
+    <wolfram:get path="include/lib/templates/varDefinedBlock.html">
+      <wolfram:slot id="var">Path</wolfram:slot>
+      <wolfram:slot id="if">
+        <h2>
+          <wolfram:expr>
+            StringRiffle[
+              URLParse[
+                Replace[#Path,
+                  Except[_String]->"$Failed/$Failed"
+                  ],
+                "Path"
+                ][[;;2]],
+              " &raquo; "
+              ]
+          </wolfram:expr>
+        </h2>
+      </wolfram:slot>
+    </wolfram:get>
+
     <div class="article content">
       <wolfram:slot id="Content"/>
     </div>
@@ -85,11 +102,11 @@
   </wolfram:expr>
 
   <br>
-  
+
   <div class="embedded-notebook">
     <button
-      class="accordion-thumb"
-      onclick="accordionOpen()",
+      class="accordion-thumb accordion-thumb-hidden"
+      onclick="accordionOpen()"
       id="accordion-thumb"
       >
     </button>

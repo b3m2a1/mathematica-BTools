@@ -255,1338 +255,676 @@ $NotebookToMarkdownStyles:=
 
 
 
-$NotebookToMarkdownHTMLCharReplacements=<|
-	"\[LeftGuillemet]"->"&laquo;",
-	"\[DiscretionaryHyphen]"->"&shy;",
-	"\[RightGuillemet]"->"&raquo;",
-	"\[CapitalAGrave]"->"&Agrave;",
-	"\[CapitalAAcute]"->"&Aacute;",
-	"\[CapitalAHat]"->"&Acirc;",
-	"\[CapitalATilde]"->"&Atilde;",
-	"\[CapitalADoubleDot]"->"&Auml;",
-	"\[CapitalARing]"->"&Aring;",
-	"\[CapitalAE]"->"&AElig;",
-	"\[CapitalCCedilla]"->"&Ccedil;",
-	"\[CapitalEGrave]"->"&Egrave;",
-	"\[CapitalEAcute]"->"&Eacute;",
-	"\[CapitalEHat]"->"&Ecirc;",
-	"\[CapitalEDoubleDot]"->"&Euml;",
-	"\[CapitalIGrave]"->"&Igrave;",
-	"\[CapitalIAcute]"->"&Iacute;",
-	"\[CapitalIHat]"->"&Icirc;",
-	"\[CapitalIDoubleDot]"->"&Iuml;",
-	"\[CapitalEth]"->"&ETH;",
-	"\[CapitalNTilde]"->"&Ntilde;",
-	"\[CapitalOGrave]"->"&Ograve;",
-	"\[CapitalOAcute]"->"&Oacute;",
-	"\[CapitalOE]"->"&OElig;",
-	"\[CapitalOHat]"->"&Ocirc;",
-	"\[CapitalOTilde]"->"&Otilde;",
-	"\[CapitalODoubleDot]"->"&Ouml;",
-	"\[CapitalOSlash]"->"&Oslash;",
-	"\[CapitalUGrave]"->"&Ugrave;",
-	"\[CapitalUAcute]"->"&Uacute;",
-	"\[CapitalUHat]"->"&Ucirc;",
-	"\[CapitalUDoubleDot]"->"&Uuml;",
-	"\[CapitalYAcute]"->"&Yacute;",
-	"\[CapitalThorn]"->"&THORN;",
-	"\[SZ]"->"&szlig;",
-	"\[AGrave]"->"&agrave;",
-	"\[AAcute]"->"&aacute;",
-	"\[AHat]"->"&acirc;",
-	"\[ATilde]"->"&atilde;",
-	"\[ADoubleDot]"->"&auml;",
-	"\[ARing]"->"&aring;",
-	"\[AE]"->"&aelig;",
-	"\[CCedilla]"->"&ccedil;",
-	"\[EGrave]"->"&egrave;",
-	"\[EAcute]"->"&eacute;",
-	"\[EHat]"->"&ecirc;",
-	"\[EDoubleDot]"->"&euml;",
-	"\[IGrave]"->"&igrave;",
-	"\[IAcute]"->"&iacute;",
-	"\[IHat]"->"&icirc;",
-	"\[IDoubleDot]"->"&iuml;",
-	"\[Eth]"->"&eth;",
-	"\[NTilde]"->"&ntilde;",
-	"\[OGrave]"->"&ograve;",
-	"\[OAcute]"->"&oacute;",
-	"\[OE]"->"&oelig;",
-	"\[OHat]"->"&ocirc;",
-	"\[OTilde]"->"&otilde;",
-	"\[ODoubleDot]"->"&ouml;",
-	"\[OSlash]"->"&oslash;",
-	"\[UGrave]"->"&ugrave;",
-	"\[UAcute]"->"&uacute;",
-	"\[UHat]"->"&ucirc;",
-	"\[UDoubleDot]"->"&uuml;",
-	"\[YAcute]"->"&yacute;",
-	"\[Thorn]"->"&thorn;",
-	"\[YDoubleDot]"->"&yuml;",
-	"\[ABar]"->"&amacr;",
-	"\[CapitalABar]"->"&Amacr;",
-	"\[ACup]"->"&abreve;",
-	"\[CapitalACup]"->"&Abreve;",
-	"\[CAcute]"->"&cacute;",
-	"\[CapitalCAcute]"->"&Cacute;",
-	"\[CHacek]"->"&ccaron;",
-	"\[CapitalCHacek]"->"&Ccaron;",
-	"\[DHacek]"->"&dcaron;",
-	"\[CapitalDHacek]"->"&Dcaron;",
-	"\[EHacek]"->"&ecaron;",
-	"\[CapitalEHacek]"->"&Ecaron;",
-	"\[NHacek]"->"&ncaron;",
-	"\[CapitalNHacek]"->"&Ncaron;",
-	"\[RHacek]"->"&rcaron;",
-	"\[CapitalRHacek]"->"&Rcaron;",
-	"\[THacek]"->"&tcaron;",
-	"\[CapitalTHacek]"->"&Tcaron;",
-	"\[URing]"->"&uring;",
-	"\[CapitalURing]"->"&Uring;",
-	"\[ZHacek]"->"&zcaron;",
-	"\[CapitalZHacek]"->"&Zcaron;",
-	"\[EBar]"->"&emacr;",
-	"\[CapitalEBar]"->"&Emacr;",
-	"\[LSlash]"->"&lstrok;",
-	"\[CapitalLSlash]"->"&Lstrok;",
-	"\[ODoubleAcute]"->"&odblac;",
-	"\[CapitalODoubleAcute]"->"&Odblac;",
-	"\[SHacek]"->"&scaron;",
-	"\[CapitalSHacek]"->"&Scaron;",
-	"\[UDoubleAcute]"->"&udblac;",
-	"\[CapitalUDoubleAcute]"->"&Udblac;",
-	"\[Florin]"->"&fnof;",
-	"\[Breve]"->"&Breve;",
-	"\[DoubleDot]"->"&DoubleDot;",
-	"\[TripleDot]"->"&TripleDot;",
-	"\[Hacek]"->"&Hacek;",
-	"\[DownBreve]"->"&DownBreve;",
-	"\[Cedilla]"->"&Cedilla;",
-	"\[CapitalAlpha]"->"&Alpha;",
-	"\[CapitalBeta]"->"&Beta;",
-	"\[CapitalGamma]"->"&Gamma;",
-	"\[CapitalDelta]"->"&Delta;",
-	"\[CapitalEpsilon]"->"&Epsilon;",
-	"\[CapitalZeta]"->"&Zeta;",
-	"\[CapitalEta]"->"&Eta;",
-	"\[CapitalTheta]"->"&Theta;",
-	"\[CapitalIota]"->"&Iota;",
-	"\[CapitalKappa]"->"&Kappa;",
-	"\[CapitalLambda]"->"&Lambda;",
-	"\[CapitalMu]"->"&Mu;",
-	"\[CapitalNu]"->"&Nu;",
-	"\[CapitalXi]"->"&Xi;",
-	"\[CapitalOmicron]"->"&Omicron;",
-	"\[CapitalPi]"->"&Pi;",
-	"\[CapitalRho]"->"&Rho;",
-	"\[CapitalSigma]"->"&Sigma;",
-	"\[CapitalTau]"->"&Tau;",
-	"\[CapitalUpsilon]"->"&Upsilon;",
-	"\[CurlyCapitalUpsilon]"->"&Upsi;",
-	"\[CapitalPhi]"->"&Phi;",
-	"\[CapitalChi]"->"&Chi;",
-	"\[CapitalPsi]"->"&Psi;",
-	"\[CapitalOmega]"->"&Omega;",
-	"\[CapitalDigamma]"->"&digamma;",
-	"\[Alpha]"->"&alpha;",
-	"\[Beta]"->"&beta;",
-	"\[Gamma]"->"&gamma;",
-	"\[Delta]"->"&delta;",
-	"\[Epsilon]"->"&varepsilon;",
-	"\[CurlyEpsilon]"->"&epsiv;",
-	"\[Zeta]"->"&zeta;",
-	"\[Eta]"->"&eta;",
-	"\[Theta]"->"&theta;",
-	"\[CurlyTheta]"->"&vartheta;",
-	"\[Iota]"->"&iota;",
-	"\[Kappa]"->"&kappa;",
-	"\[CurlyKappa]"->"&varkappa;",
-	"\[Lambda]"->"&lambda;",
-	"\[Mu]"->"&mu;",
-	"\[Nu]"->"&nu;",
-	"\[Xi]"->"&xi;",
-	"\[Omicron]"->"&omicron;",
-	"\[Pi]"->"&pi;",
-	"\[CurlyPi]"->"&varpi;",
-	"\[Rho]"->"&rho;",
-	"\[CurlyRho]"->"&varrho;",
-	"\[Sigma]"->"&sigma;",
-	"\[FinalSigma]"->"&varsigma;",
-	"\[Tau]"->"&tau;",
-	"\[Upsilon]"->"&upsilon;",
-	"\[Phi]"->"&straightphi;",
-	"\[CurlyPhi]"->"&varphi;",
-	"\[Chi]"->"&chi;",
-	"\[Psi]"->"&psi;",
-	"\[Omega]"->"&omega;",
-	"\[Infinity]"->"&infin;",
-	"\[ExponentialE]"->"&ee;",
-	"\[ImaginaryI]"->"&ii;",
-	"\[ScriptA]"->"&ascr;",
-	"\[ScriptB]"->"&bscr;",
-	"\[ScriptC]"->"&cscr;",
-	"\[ScriptD]"->"&dscr;",
-	"\[ScriptE]"->"&escr;",
-	"\[ScriptF]"->"&fscr;",
-	"\[ScriptG]"->"&gscr;",
-	"\[ScriptH]"->"&hscr;",
-	"\[ScriptI]"->"&iscr;",
-	"\[ScriptJ]"->"&jscr;",
-	"\[ScriptK]"->"&kscr;",
-	"\[ScriptL]"->"&lscr;",
-	"\[ScriptM]"->"&mscr;",
-	"\[ScriptN]"->"&nscr;",
-	"\[ScriptO]"->"&oscr;",
-	"\[ScriptP]"->"&pscr;",
-	"\[ScriptQ]"->"&qscr;",
-	"\[ScriptR]"->"&rscr;",
-	"\[ScriptS]"->"&sscr;",
-	"\[ScriptT]"->"&tscr;",
-	"\[ScriptU]"->"&uscr;",
-	"\[ScriptV]"->"&vscr;",
-	"\[ScriptW]"->"&wscr;",
-	"\[ScriptX]"->"&xscr;",
-	"\[ScriptY]"->"&yscr;",
-	"\[ScriptZ]"->"&zscr;",
-	"\[ScriptCapitalA]"->"&Ascr;",
-	"\[ScriptCapitalB]"->"&Bscr;",
-	"\[ScriptCapitalC]"->"&Cscr;",
-	"\[ScriptCapitalD]"->"&Dscr;",
-	"\[ScriptCapitalE]"->"&Escr;",
-	"\[ScriptCapitalF]"->"&Fscr;",
-	"\[ScriptCapitalG]"->"&Gscr;",
-	"\[ScriptCapitalH]"->"&Hscr;",
-	"\[ScriptCapitalI]"->"&Iscr;",
-	"\[ScriptCapitalJ]"->"&Jscr;",
-	"\[ScriptCapitalK]"->"&Kscr;",
-	"\[ScriptCapitalL]"->"&Lscr;",
-	"\[ScriptCapitalM]"->"&Mscr;",
-	"\[ScriptCapitalN]"->"&Nscr;",
-	"\[ScriptCapitalO]"->"&Oscr;",
-	"\[ScriptCapitalP]"->"&Pscr;",
-	"\[ScriptCapitalQ]"->"&Qscr;",
-	"\[ScriptCapitalR]"->"&Rscr;",
-	"\[ScriptCapitalS]"->"&Sscr;",
-	"\[ScriptCapitalT]"->"&Tscr;",
-	"\[ScriptCapitalU]"->"&Uscr;",
-	"\[ScriptCapitalV]"->"&Vscr;",
-	"\[ScriptCapitalW]"->"&Wscr;",
-	"\[ScriptCapitalX]"->"&Xscr;",
-	"\[ScriptCapitalY]"->"&Yscr;",
-	"\[ScriptCapitalZ]"->"&Zscr;",
-	"\[GothicA]"->"&afr;",
-	"\[GothicB]"->"&bfr;",
-	"\[GothicC]"->"&cfr;",
-	"\[GothicD]"->"&dfr;",
-	"\[GothicE]"->"&efr;",
-	"\[GothicF]"->"&ffr;",
-	"\[GothicG]"->"&gfr;",
-	"\[GothicH]"->"&hfr;",
-	"\[GothicI]"->"&ifr;",
-	"\[GothicJ]"->"&jfr;",
-	"\[GothicK]"->"&kfr;",
-	"\[GothicL]"->"&lfr;",
-	"\[GothicM]"->"&mfr;",
-	"\[GothicN]"->"&nfr;",
-	"\[GothicO]"->"&ofr;",
-	"\[GothicP]"->"&pfr;",
-	"\[GothicQ]"->"&qfr;",
-	"\[GothicR]"->"&rfr;",
-	"\[GothicS]"->"&sfr;",
-	"\[GothicT]"->"&tfr;",
-	"\[GothicU]"->"&ufr;",
-	"\[GothicV]"->"&vfr;",
-	"\[GothicW]"->"&wfr;",
-	"\[GothicX]"->"&xfr;",
-	"\[GothicY]"->"&yfr;",
-	"\[GothicZ]"->"&zfr;",
-	"\[GothicCapitalA]"->"&Afr;",
-	"\[GothicCapitalB]"->"&Bfr;",
-	"\[GothicCapitalC]"->"&Cfr;",
-	"\[GothicCapitalD]"->"&Dfr;",
-	"\[GothicCapitalE]"->"&Efr;",
-	"\[GothicCapitalF]"->"&Ffr;",
-	"\[GothicCapitalG]"->"&Gfr;",
-	"\[GothicCapitalH]"->"&Hfr;",
-	"\[GothicCapitalI]"->"&Ifr;",
-	"\[GothicCapitalJ]"->"&Jfr;",
-	"\[GothicCapitalK]"->"&Kfr;",
-	"\[GothicCapitalL]"->"&Lfr;",
-	"\[GothicCapitalM]"->"&Mfr;",
-	"\[GothicCapitalN]"->"&Nfr;",
-	"\[GothicCapitalO]"->"&Ofr;",
-	"\[GothicCapitalP]"->"&Pfr;",
-	"\[GothicCapitalQ]"->"&Qfr;",
-	"\[GothicCapitalR]"->"&Rfr;",
-	"\[GothicCapitalS]"->"&Sfr;",
-	"\[GothicCapitalT]"->"&Tfr;",
-	"\[GothicCapitalU]"->"&Ufr;",
-	"\[GothicCapitalV]"->"&Vfr;",
-	"\[GothicCapitalW]"->"&Wfr;",
-	"\[GothicCapitalX]"->"&Xfr;",
-	"\[GothicCapitalY]"->"&Yfr;",
-	"\[GothicCapitalZ]"->"&Zfr;",
-	"\[DoubleStruckA]"->"&aopf;",
-	"\[DoubleStruckB]"->"&bopf;",
-	"\[DoubleStruckC]"->"&copf;",
-	"\[DoubleStruckD]"->"&dopf;",
-	"\[DoubleStruckE]"->"&eopf;",
-	"\[DoubleStruckF]"->"&fopf;",
-	"\[DoubleStruckG]"->"&gopf;",
-	"\[DoubleStruckH]"->"&hopf;",
-	"\[DoubleStruckI]"->"&iopf;",
-	"\[DoubleStruckJ]"->"&jopf;",
-	"\[DoubleStruckK]"->"&kopf;",
-	"\[DoubleStruckL]"->"&lopf;",
-	"\[DoubleStruckM]"->"&mopf;",
-	"\[DoubleStruckN]"->"&nopf;",
-	"\[DoubleStruckO]"->"&oopf;",
-	"\[DoubleStruckP]"->"&popf;",
-	"\[DoubleStruckQ]"->"&qopf;",
-	"\[DoubleStruckR]"->"&ropf;",
-	"\[DoubleStruckS]"->"&sopf;",
-	"\[DoubleStruckT]"->"&topf;",
-	"\[DoubleStruckU]"->"&uopf;",
-	"\[DoubleStruckV]"->"&vopf;",
-	"\[DoubleStruckW]"->"&wopf;",
-	"\[DoubleStruckX]"->"&xopf;",
-	"\[DoubleStruckY]"->"&yopf;",
-	"\[DoubleStruckZ]"->"&zopf;",
-	"\[DoubleStruckCapitalA]"->"&Aopf;",
-	"\[DoubleStruckCapitalB]"->"&Bopf;",
-	"\[DoubleStruckCapitalC]"->"&Copf;",
-	"\[DoubleStruckCapitalD]"->"&Dopf;",
-	"\[DoubleStruckCapitalE]"->"&Eopf;",
-	"\[DoubleStruckCapitalF]"->"&Fopf;",
-	"\[DoubleStruckCapitalG]"->"&Gopf;",
-	"\[DoubleStruckCapitalH]"->"&Hopf;",
-	"\[DoubleStruckCapitalI]"->"&Iopf;",
-	"\[DoubleStruckCapitalJ]"->"&Jopf;",
-	"\[DoubleStruckCapitalK]"->"&Kopf;",
-	"\[DoubleStruckCapitalL]"->"&imped;",
-	"\[DoubleStruckCapitalM]"->"&Mopf;",
-	"\[DoubleStruckCapitalN]"->"&Nopf;",
-	"\[DoubleStruckCapitalO]"->"&Oopf;",
-	"\[DoubleStruckCapitalP]"->"&Popf;",
-	"\[DoubleStruckCapitalQ]"->"&Qopf;",
-	"\[DoubleStruckCapitalR]"->"&Ropf;",
-	"\[DoubleStruckCapitalS]"->"&Sopf;",
-	"\[DoubleStruckCapitalT]"->"&Topf;",
-	"\[DoubleStruckCapitalU]"->"&Uopf;",
-	"\[DoubleStruckCapitalV]"->"&Vopf;",
-	"\[DoubleStruckCapitalW]"->"&Wopf;",
-	"\[DoubleStruckCapitalX]"->"&Xopf;",
-	"\[DoubleStruckCapitalY]"->"&Yopf;",
-	"\[DoubleStruckCapitalZ]"->"&Zopf;",
-	"\[WeierstrassP]"->"&wp;",
-	"\[Aleph]"->"&aleph;",
-	"\[Bet]"->"&beth;",
-	"\[Gimel]"->"&gimel;",
-	"\[Dalet]"->"&daleth;",
-	"\[DownExclamation]"->"&iexcl;",
-	"\[Cent]"->"&cent;",
-	"\[Sterling]"->"&pound;",
-	"\[Currency]"->"&curren;",
-	"\[Yen]"->"&yen;",
-	"\[Section]"->"&sect;",
-	"\[Copyright]"->"&copy;",
-	"\[RegisteredTrademark]"->"&reg;",
-	"\[Trademark]"->"&trade;",
-	"\[Degree]"->"&deg;",
-	"\[Micro]"->"&micro;",
-	"\[Paragraph]"->"&para;",
-	"\[DownQuestion]"->"&iquest;",
-	"\[HBar]"->"&hslash;",
-	"\[Mho]"->"&mho;",
-	"\[Angstrom]"->"&angst;",
-	"\[EmptySet]"->"&varnothing;",
-	"\[Dash]"->"&ndash;",
-	"\[LongDash]"->"&mdash;",
-	"\[Dagger]"->"&dagger;",
-	"\[DoubleDagger]"->"&ddagger;",
-	"\[Bullet]"->"&bullet;",
-	"\[DotlessI]"->"&imath;",
-	"\[FiLigature]"->"&filig;",
-	"\[FlLigature]"->"&fllig;",
-	"\[Angle]"->"&angle;",
-	"\[RightAngle]"->"&angrt;",
-	"\[MeasuredAngle]"->"&measuredangle;",
-	"\[SphericalAngle]"->"&angsph;",
-	"\[Ellipsis]"->"&hellip;",
-	"\[VerticalEllipsis]"->"&vellip;",
-	"\[CenterEllipsis]"->"&ctdot;",
-	"\[AscendingEllipsis]"->"&utdot;",
-	"\[DescendingEllipsis]"->"&dtdot;",
-	"\[Prime]"->"&prime;",
-	"\[DoublePrime]"->"&Prime;",
-	"\[ReversePrime]"->"&backprime;",
-	"\[ForAll]"->"&ForAll;",
-	"\[Exists]"->"&Exists;",
-	"\[NotExists]"->"&NotExists;",
-	"\[Element]"->"&Element;",
-	"\[NotElement]"->"&NotElement;",
-	"\[ReverseElement]"->"&ReverseElement;",
-	"\[NotReverseElement]"->"&NotReverseElement;",
-	"\[Because]"->"&Because;",
-	"\[SuchThat]"->"&SuchThat;",
-	"\[VerticalSeparator]"->"&VerticalSeparator;",
-	"\[Therefore]"->"&Therefore;",
-	"\[Implies]"->"&Implies;",
-	"\[RoundImplies]"->"&RoundImplies;",
-	"\[Tilde]"->"&Tilde;",
-	"\[NotTilde]"->"&NotTilde;",
-	"\[EqualTilde]"->"&EqualTilde;",
-	"\[TildeEqual]"->"&TildeEqual;",
-	"\[NotTildeEqual]"->"&NotTildeEqual;",
-	"\[TildeFullEqual]"->"&TildeFullEqual;",
-	"\[TildeTilde]"->"&TildeTilde;",
-	"\[NotTildeTilde]"->"&NotTildeTilde;",
-	"\[NotEqualTilde]"->"&NotEqualTilde;",
-	"\[NotTildeFullEqual]"->"&NotTildeFullEqual;",
-	"\[LessTilde]"->"&LessTilde;",
-	"\[GreaterTilde]"->"&GreaterTilde;",
-	"\[NotLessTilde]"->"&NotLessTilde;",
-	"\[NotGreaterTilde]"->"&NotGreaterTilde;",
-	"\[LeftTriangle]"->"&LeftTriangle;",
-	"\[RightTriangle]"->"&RightTriangle;",
-	"\[LeftTriangleEqual]"->"&LeftTriangleEqual;",
-	"\[RightTriangleEqual]"->"&RightTriangleEqual;",
-	"\[LeftTriangleBar]"->"&LeftTriangleBar;",
-	"\[RightTriangleBar]"->"&RightTriangleBar;",
-	"\[NotLeftTriangleBar]"->"&NotLeftTriangleBar;",
-	"\[NotRightTriangleBar]"->"&NotRightTriangleBar;",
-	"\[NotLeftTriangle]"->"&NotLeftTriangle;",
-	"\[NotLeftTriangleEqual]"->"&NotLeftTriangleEqual;",
-	"\[NotRightTriangle]"->"&NotRightTriangle;",
-	"\[NotRightTriangleEqual]"->"&NotRightTriangleEqual;",
-	"\[NotEqual]"->"&NotEqual;",
-	"\[NotLess]"->"&NotLess;",
-	"\[NotGreater]"->"&NotGreater;",
-	"\[LessEqual]"->"&leq;",
-	"\[LessLess]"->"&LessLess;",
-	"\[GreaterGreater]"->"&GreaterGreater;",
-	"\[NotLessEqual]"->"&NotLessEqual;",
-	"\[GreaterEqual]"->"&GreaterEqual;",
-	"\[NotGreaterEqual]"->"&NotGreaterEqual;",
-	"\[LessSlantEqual]"->"&LessSlantEqual;",
-	"\[LessFullEqual]"->"&LessFullEqual;",
-	"\[NotLessLess]"->"&NotLessLess;",
-	"\[NotNestedLessLess]"->"&NotNestedLessLess;",
-	"\[NotLessSlantEqual]"->"&NotLessSlantEqual;",
-	"\[NotLessFullEqual]"->"&NotLessFullEqual;",
-	"\[NestedLessLess]"->"&NestedLessLess;",
-	"\[NestedGreaterGreater]"->"&NestedGreaterGreater;",
-	"\[GreaterSlantEqual]"->"&GreaterSlantEqual;",
-	"\[GreaterFullEqual]"->"&GreaterFullEqual;",
-	"\[NotGreaterGreater]"->"&NotGreaterGreater;",
-	"\[NotNestedGreaterGreater]"->"&NotNestedGreaterGreater;",
-	"\[NotGreaterSlantEqual]"->"&NotGreaterSlantEqual;",
-	"\[NotGreaterFullEqual]"->"&NotGreaterFullEqual;",
-	"\[LessGreater]"->"&LessGreater;",
-	"\[GreaterLess]"->"&GreaterLess;",
-	"\[NotLessGreater]"->"&NotLessGreater;",
-	"\[NotGreaterLess]"->"&NotGreaterLess;",
-	"\[LessEqualGreater]"->"&LessEqualGreater;",
-	"\[GreaterEqualLess]"->"&GreaterEqualLess;",
-	"\[Subset]"->"&subset;",
-	"\[Superset]"->"&Superset;",
-	"\[NotSubset]"->"&NotSubset;",
-	"\[NotSuperset]"->"&NotSuperset;",
-	"\[SubsetEqual]"->"&SubsetEqual;",
-	"\[SupersetEqual]"->"&SupersetEqual;",
-	"\[NotSubsetEqual]"->"&NotSubsetEqual;",
-	"\[NotSupersetEqual]"->"&NotSupersetEqual;",
-	"\[SquareSubset]"->"&SquareSubset;",
-	"\[SquareSuperset]"->"&SquareSuperset;",
-	"\[SquareSubsetEqual]"->"&SquareSubsetEqual;",
-	"\[SquareSupersetEqual]"->"&SquareSupersetEqual;",
-	"\[NotSquareSubset]"->"&NotSquareSubset;",
-	"\[NotSquareSuperset]"->"&NotSquareSuperset;",
-	"\[NotSquareSubsetEqual]"->"&NotSquareSubsetEqual;",
-	"\[NotSquareSupersetEqual]"->"&NotSquareSupersetEqual;",
-	"\[Precedes]"->"&Precedes;",
-	"\[Succeeds]"->"&Succeeds;",
-	"\[PrecedesEqual]"->"&PrecedesEqual;",
-	"\[SucceedsEqual]"->"&SucceedsEqual;",
-	"\[PrecedesTilde]"->"&PrecedesTilde;",
-	"\[SucceedsTilde]"->"&SucceedsTilde;",
-	"\[NotPrecedes]"->"&NotPrecedes;",
-	"\[NotSucceeds]"->"&NotSucceeds;",
-	"\[PrecedesSlantEqual]"->"&PrecedesSlantEqual;",
-	"\[NotPrecedesEqual]"->"&NotPrecedesEqual;",
-	"\[NotPrecedesSlantEqual]"->"&NotPrecedesSlantEqual;",
-	"\[NotPrecedesTilde]"->"&NotPrecedesTilde;",
-	"\[SucceedsSlantEqual]"->"&SucceedsSlantEqual;",
-	"\[NotSucceedsEqual]"->"&NotSucceedsEqual;",
-	"\[NotSucceedsSlantEqual]"->"&NotSucceedsSlantEqual;",
-	"\[NotSucceedsTilde]"->"&NotSucceedsTilde;",
-	"\[UpTee]"->"&UpTee;",
-	"\[Proportional]"->"&Proportional;",
-	"\[Proportion]"->"&Proportion;",
-	"\[Congruent]"->"&Congruent;",
-	"\[NotCongruent]"->"&NotCongruent;",
-	"\[CupCap]"->"&CupCap;",
-	"\[NotCupCap]"->"&NotCupCap;",
-	"\[Equilibrium]"->"&Equilibrium;",
-	"\[ReverseEquilibrium]"->"&ReverseEquilibrium;",
-	"\[UpEquilibrium]"->"&UpEquilibrium;",
-	"\[ReverseUpEquilibrium]"->"&ReverseUpEquilibrium;",
-	"\[RightTee]"->"&RightTee;",
-	"\[LeftTee]"->"&LeftTee;",
-	"\[DownTee]"->"&DownTee;",
-	"\[DoubleRightTee]"->"&DoubleRightTee;",
-	"\[DoubleLeftTee]"->"&DoubleLeftTee;",
-	"\[HumpEqual]"->"&HumpEqual;",
-	"\[NotHumpEqual]"->"&NotHumpEqual;",
-	"\[HumpDownHump]"->"&HumpDownHump;",
-	"\[NotHumpDownHump]"->"&NotHumpDownHump;",
-	"\[DotEqual]"->"&DotEqual;",
-	"\[Colon]"->"&colon;",
-	"\[Equal]"->"&Equal;",
-	"\[Sqrt]"->"&Sqrt;",
-	"\[Divides]"->"&Divides;",
-	"\[DoubleVerticalBar]"->"&DoubleVerticalBar;",
-	"\[NotDoubleVerticalBar]"->"&NotDoubleVerticalBar;",
-	"\[Not]"->"&not;",
-	"\[VerticalTilde]"->"&VerticalTilde;",
-	"\[Times]"->"&times;",
-	"\[PlusMinus]"->"&PlusMinus;",
-	"\[MinusPlus]"->"&MinusPlus;",
-	"\[Minus]"->"&minus;",
-	"\[Divide]"->"&div;",
-	"\[CenterDot]"->"&CenterDot;",
-	"\[SmallCircle]"->"&SmallCircle;",
-	"\[Cross]"->"&Cross;",
-	"\[CirclePlus]"->"&CirclePlus;",
-	"\[CircleMinus]"->"&CircleMinus;",
-	"\[CircleTimes]"->"&CircleTimes;",
-	"\[CircleDot]"->"&CircleDot;",
-	"\[Star]"->"&Star;",
-	"\[Square]"->"&Square;",
-	"\[Diamond]"->"&Diamond;",
-	"\[Del]"->"&Del;",
-	"\[Backslash]"->"&Backslash;",
-	"\[Cap]"->"&frown;",
-	"\[Cup]"->"&smile;",
-	"\[Coproduct]"->"&Coproduct;",
-	"\[Integral]"->"&Integral;",
-	"\[ContourIntegral]"->"&ContourIntegral;",
-	"\[DoubleContourIntegral]"->"&DoubleContourIntegral;",
-	"\[CounterClockwiseContourIntegral]"->"&CounterClockwiseContourIntegral;",
-	"\[ClockwiseContourIntegral]"->"&ClockwiseContourIntegral;",
-	"\[Sum]"->"&Sum;",
-	"\[Product]"->"&Product;",
-	"\[Intersection]"->"&Intersection;",
-	"\[Union]"->"&Union;",
-	"\[UnionPlus]"->"&UnionPlus;",
-	"\[SquareIntersection]"->"&SquareIntersection;",
-	"\[SquareUnion]"->"&SquareUnion;",
-	"\[Wedge]"->"&Wedge;",
-	"\[And]"->"&&$   $&and;",
-	"\[Nand]"->"&&$   $&barwed;",
-	"\[Vee]"->"&Vee;",
-	"\[Or]"->"&or;",
-	"\[Nor]"->"&barvee;",
-	"\[Xor]"->"&veebar;",
-	"\[PartialD]"->"&PartialD;",
-	"\[DifferentialD]"->"&dd;",
-	"\[CapitalDifferentialD]"->"&CapitalDifferentialD;",
-	"\[RightArrow]"->"&RightArrow;",
-	"\[LeftArrow]"->"&LeftArrow;",
-	"\[UpArrow]"->"&UpArrow;",
-	"\[DownArrow]"->"&DownArrow;",
-	"\[LeftRightArrow]"->"&LeftRightArrow;",
-	"\[UpDownArrow]"->"&UpDownArrow;",
-	"\[ShortRightArrow]"->"&ShortRightArrow;",
-	"\[ShortLeftArrow]"->"&ShortLeftArrow;",
-	"\[ShortUpArrow]"->"&ShortUpArrow;",
-	"\[ShortDownArrow]"->"&ShortDownArrow;",
-	"\[RuleDelayed]"->"&RuleDelayed;",
-	"\[DoubleRightArrow]"->"&DoubleRightArrow;",
-	"\[DoubleLeftArrow]"->"&DoubleLeftArrow;",
-	"\[DoubleUpArrow]"->"&DoubleUpArrow;",
-	"\[DoubleDownArrow]"->"&DoubleDownArrow;",
-	"\[DoubleLeftRightArrow]"->"&DoubleLeftRightArrow;",
-	"\[DoubleUpDownArrow]"->"&DoubleUpDownArrow;",
-	"\[RightArrowBar]"->"&RightArrowBar;",
-	"\[LeftArrowBar]"->"&LeftArrowBar;",
-	"\[UpArrowBar]"->"&UpArrowBar;",
-	"\[DownArrowBar]"->"&DownArrowBar;",
-	"\[RightTeeArrow]"->"&RightTeeArrow;",
-	"\[LeftTeeArrow]"->"&LeftTeeArrow;",
-	"\[UpTeeArrow]"->"&UpTeeArrow;",
-	"\[DownTeeArrow]"->"&DownTeeArrow;",
-	"\[UpperLeftArrow]"->"&UpperLeftArrow;",
-	"\[UpperRightArrow]"->"&UpperRightArrow;",
-	"\[LowerRightArrow]"->"&LowerRightArrow;",
-	"\[LowerLeftArrow]"->"&LowerLeftArrow;",
-	"\[LongRightArrow]"->"&LongRightArrow;",
-	"\[LongLeftArrow]"->"&LongLeftArrow;",
-	"\[DoubleLongLeftArrow]"->"&DoubleLongLeftArrow;",
-	"\[DoubleLongRightArrow]"->"&DoubleLongRightArrow;",
-	"\[LongLeftRightArrow]"->"&LongLeftRightArrow;",
-	"\[DoubleLongLeftRightArrow]"->"&DoubleLongLeftRightArrow;",
-	"\[RightArrowLeftArrow]"->"&RightArrowLeftArrow;",
-	"\[LeftArrowRightArrow]"->"&LeftArrowRightArrow;",
-	"\[UpArrowDownArrow]"->"&UpArrowDownArrow;",
-	"\[DownArrowUpArrow]"->"&DownArrowUpArrow;",
-	"\[RightVector]"->"&RightVector;",
-	"\[DownRightVector]"->"&DownRightVector;",
-	"\[LeftVector]"->"&LeftVector;",
-	"\[DownLeftVector]"->"&DownLeftVector;",
-	"\[RightUpVector]"->"&RightUpVector;",
-	"\[LeftUpVector]"->"&LeftUpVector;",
-	"\[RightDownVector]"->"&RightDownVector;",
-	"\[LeftDownVector]"->"&LeftDownVector;",
-	"\[LeftRightVector]"->"&LeftRightVector;",
-	"\[DownLeftRightVector]"->"&DownLeftRightVector;",
-	"\[RightUpDownVector]"->"&RightUpDownVector;",
-	"\[LeftUpDownVector]"->"&LeftUpDownVector;",
-	"\[RightVectorBar]"->"&RightVectorBar;",
-	"\[DownRightVectorBar]"->"&DownRightVectorBar;",
-	"\[LeftVectorBar]"->"&LeftVectorBar;",
-	"\[DownLeftVectorBar]"->"&DownLeftVectorBar;",
-	"\[RightUpVectorBar]"->"&RightUpVectorBar;",
-	"\[LeftUpVectorBar]"->"&LeftUpVectorBar;",
-	"\[RightDownVectorBar]"->"&RightDownVectorBar;",
-	"\[LeftDownVectorBar]"->"&LeftDownVectorBar;",
-	"\[RightTeeVector]"->"&RightTeeVector;",
-	"\[DownRightTeeVector]"->"&DownRightTeeVector;",
-	"\[LeftTeeVector]"->"&LeftTeeVector;",
-	"\[DownLeftTeeVector]"->"&DownLeftTeeVector;",
-	"\[RightUpTeeVector]"->"&RightUpTeeVector;",
-	"\[LeftUpTeeVector]"->"&LeftUpTeeVector;",
-	"\[RightDownTeeVector]"->"&RightDownTeeVector;",
-	"\[LeftDownTeeVector]"->"&LeftDownTeeVector;",
-	"\[LeftDoubleBracket]"->"&LeftDoubleBracket;",
-	"\[RightDoubleBracket]"->"&RightDoubleBracket;",
-	"\[LeftAngleBracket]"->"&LeftAngleBracket;",
-	"\[RightAngleBracket]"->"&RightAngleBracket;",
-	"\[LeftFloor]"->"&LeftFloor;",
-	"\[RightFloor]"->"&RightFloor;",
-	"\[LeftCeiling]"->"&LeftCeiling;",
-	"\[RightCeiling]"->"&RightCeiling;",
-	"\[LeftBracketingBar]"->"&LeftBracketingBar;",
-	"\[RightBracketingBar]"->"&RightBracketingBar;",
-	"\[LeftDoubleBracketingBar]"->"&LeftDoubleBracketingBar;",
-	"\[RightDoubleBracketingBar]"->"&RightDoubleBracketingBar;",
-	"\[EmptyCircle]"->"&bigcirc;",
-	"\[FilledRectangle]"->"&marker;",
-	"\[EmptySquare]"->"&squ;",
-	"\[EmptyVerySmallSquare]"->"&EmptyVerySmallSquare;",
-	"\[FilledSmallSquare]"->"&squarf;",
-	"\[FilledVerySmallSquare]"->"&FilledVerySmallSquare;",
-	"\[EmptyUpTriangle]"->"&bigtriangleup;",
-	"\[EmptyDownTriangle]"->"&bigtriangledown;",
-	"\[FivePointedStar]"->"&bigstar;",
-	"\[SixPointedStar]"->"&sext;",
-	"\[SpadeSuit]"->"&spadesuit;",
-	"\[HeartSuit]"->"&heartsuit;",
-	"\[DiamondSuit]"->"&diamondsuit;",
-	"\[ClubSuit]"->"&clubsuit;",
-	"\[Flat]"->"&flat;",
-	"\[Natural]"->"&natural;",
-	"\[Sharp]"->"&sharp;",
-	"\[NumberSign]"->"&num;",
-	"\[InvisibleSpace]"->"&ZeroWidthSpace;",
-	"\[VeryThinSpace]"->"&VeryThinSpace;",
-	"\[ThinSpace]"->"&ThinSpace;",
-	"\[ThickSpace]"->"&ThickSpace;",
-	"\[NegativeVeryThinSpace]"->"&NegativeVeryThinSpace;",
-	"\[NegativeThinSpace]"->"&NegativeThinSpace;",
-	"\[NegativeMediumSpace]"->"&NegativeMediumSpace;",
-	"\[NegativeThickSpace]"->"&NegativeThickSpace;",
-	"\[OpenCurlyQuote]"->"&OpenCurlyQuote;",
-	"\[CloseCurlyQuote]"->"&CloseCurlyQuote;",
-	"\[OpenCurlyDoubleQuote]"->"&OpenCurlyDoubleQuote;",
-	"\[CloseCurlyDoubleQuote]"->"&CloseCurlyDoubleQuote;",
-	"\[OverParenthesis]"->"&OverParenthesis;",
-	"\[UnderParenthesis]"->"&UnderParenthesis;",
-	"\[OverBrace]"->"&OverBrace;",
-	"\[UnderBrace]"->"&UnderBrace;",
-	"\[OverBracket]"->"&OverBracket;",
-	"\[UnderBracket]"->"&UnderBracket;",
-	"\[IndentingNewLine]"->"&IndentingNewLine;",
-	"\[NoBreak]"->"&NoBreak;",
-	"\[NonBreakingSpace]"->"&nbsp;",
-	"\[SpaceIndicator]"->"&blank;",
-	"\[InvisibleApplication]"->"&af;",
-	"\[ReturnIndicator]"->"&crarr;",
-	"\[HorizontalLine]"->"&HorizontalLine;",
-	"\[VerticalLine]"->"&VerticalLine;",
-	"\[InvisibleComma]"->"&ic;",
-	"\[SkeletonIndicator]"->"&hybull;",
-	"\[LeftSkeleton]"->"&LeftSkeleton;",
-	"\[RightSkeleton]"->"&RightSkeleton;",
-	"\[Piecewise]"->"&piecewise;",
-	"\[VerticalBar]"->"&VerticalBar;",
-	"\[NotVerticalBar]"->"&NotVerticalBar;",
-	"\\[LeftGuillemet]"->"&laquo;",
-	"\\[DiscretionaryHyphen]"->"&shy;",
-	"\\[RightGuillemet]"->"&raquo;",
-	"\\[CapitalAGrave]"->"&Agrave;",
-	"\\[CapitalAAcute]"->"&Aacute;",
-	"\\[CapitalAHat]"->"&Acirc;",
-	"\\[CapitalATilde]"->"&Atilde;",
-	"\\[CapitalADoubleDot]"->"&Auml;",
-	"\\[CapitalARing]"->"&Aring;",
-	"\\[CapitalAE]"->"&AElig;",
-	"\\[CapitalCCedilla]"->"&Ccedil;",
-	"\\[CapitalEGrave]"->"&Egrave;",
-	"\\[CapitalEAcute]"->"&Eacute;",
-	"\\[CapitalEHat]"->"&Ecirc;",
-	"\\[CapitalEDoubleDot]"->"&Euml;",
-	"\\[CapitalIGrave]"->"&Igrave;",
-	"\\[CapitalIAcute]"->"&Iacute;",
-	"\\[CapitalIHat]"->"&Icirc;",
-	"\\[CapitalIDoubleDot]"->"&Iuml;",
-	"\\[CapitalEth]"->"&ETH;",
-	"\\[CapitalNTilde]"->"&Ntilde;",
-	"\\[CapitalOGrave]"->"&Ograve;",
-	"\\[CapitalOAcute]"->"&Oacute;",
-	"\\[CapitalOE]"->"&OElig;",
-	"\\[CapitalOHat]"->"&Ocirc;",
-	"\\[CapitalOTilde]"->"&Otilde;",
-	"\\[CapitalODoubleDot]"->"&Ouml;",
-	"\\[CapitalOSlash]"->"&Oslash;",
-	"\\[CapitalUGrave]"->"&Ugrave;",
-	"\\[CapitalUAcute]"->"&Uacute;",
-	"\\[CapitalUHat]"->"&Ucirc;",
-	"\\[CapitalUDoubleDot]"->"&Uuml;",
-	"\\[CapitalYAcute]"->"&Yacute;",
-	"\\[CapitalThorn]"->"&THORN;",
-	"\\[SZ]"->"&szlig;",
-	"\\[AGrave]"->"&agrave;",
-	"\\[AAcute]"->"&aacute;",
-	"\\[AHat]"->"&acirc;",
-	"\\[ATilde]"->"&atilde;",
-	"\\[ADoubleDot]"->"&auml;",
-	"\\[ARing]"->"&aring;",
-	"\\[AE]"->"&aelig;",
-	"\\[CCedilla]"->"&ccedil;",
-	"\\[EGrave]"->"&egrave;",
-	"\\[EAcute]"->"&eacute;",
-	"\\[EHat]"->"&ecirc;",
-	"\\[EDoubleDot]"->"&euml;",
-	"\\[IGrave]"->"&igrave;",
-	"\\[IAcute]"->"&iacute;",
-	"\\[IHat]"->"&icirc;",
-	"\\[IDoubleDot]"->"&iuml;",
-	"\\[Eth]"->"&eth;",
-	"\\[NTilde]"->"&ntilde;",
-	"\\[OGrave]"->"&ograve;",
-	"\\[OAcute]"->"&oacute;",
-	"\\[OE]"->"&oelig;",
-	"\\[OHat]"->"&ocirc;",
-	"\\[OTilde]"->"&otilde;",
-	"\\[ODoubleDot]"->"&ouml;",
-	"\\[OSlash]"->"&oslash;",
-	"\\[UGrave]"->"&ugrave;",
-	"\\[UAcute]"->"&uacute;",
-	"\\[UHat]"->"&ucirc;",
-	"\\[UDoubleDot]"->"&uuml;",
-	"\\[YAcute]"->"&yacute;",
-	"\\[Thorn]"->"&thorn;",
-	"\\[YDoubleDot]"->"&yuml;",
-	"\\[ABar]"->"&amacr;",
-	"\\[CapitalABar]"->"&Amacr;",
-	"\\[ACup]"->"&abreve;",
-	"\\[CapitalACup]"->"&Abreve;",
-	"\\[CAcute]"->"&cacute;",
-	"\\[CapitalCAcute]"->"&Cacute;",
-	"\\[CHacek]"->"&ccaron;",
-	"\\[CapitalCHacek]"->"&Ccaron;",
-	"\\[DHacek]"->"&dcaron;",
-	"\\[CapitalDHacek]"->"&Dcaron;",
-	"\\[EHacek]"->"&ecaron;",
-	"\\[CapitalEHacek]"->"&Ecaron;",
-	"\\[NHacek]"->"&ncaron;",
-	"\\[CapitalNHacek]"->"&Ncaron;",
-	"\\[RHacek]"->"&rcaron;",
-	"\\[CapitalRHacek]"->"&Rcaron;",
-	"\\[THacek]"->"&tcaron;",
-	"\\[CapitalTHacek]"->"&Tcaron;",
-	"\\[URing]"->"&uring;",
-	"\\[CapitalURing]"->"&Uring;",
-	"\\[ZHacek]"->"&zcaron;",
-	"\\[CapitalZHacek]"->"&Zcaron;",
-	"\\[EBar]"->"&emacr;",
-	"\\[CapitalEBar]"->"&Emacr;",
-	"\\[LSlash]"->"&lstrok;",
-	"\\[CapitalLSlash]"->"&Lstrok;",
-	"\\[ODoubleAcute]"->"&odblac;",
-	"\\[CapitalODoubleAcute]"->"&Odblac;",
-	"\\[SHacek]"->"&scaron;",
-	"\\[CapitalSHacek]"->"&Scaron;",
-	"\\[UDoubleAcute]"->"&udblac;",
-	"\\[CapitalUDoubleAcute]"->"&Udblac;",
-	"\\[Florin]"->"&fnof;",
-	"\\[Breve]"->"&Breve;",
-	"\\[DoubleDot]"->"&DoubleDot;",
-	"\\[TripleDot]"->"&TripleDot;",
-	"\\[Hacek]"->"&Hacek;",
-	"\\[DownBreve]"->"&DownBreve;",
-	"\\[Cedilla]"->"&Cedilla;",
-	"\\[CapitalAlpha]"->"&Alpha;",
-	"\\[CapitalBeta]"->"&Beta;",
-	"\\[CapitalGamma]"->"&Gamma;",
-	"\\[CapitalDelta]"->"&Delta;",
-	"\\[CapitalEpsilon]"->"&Epsilon;",
-	"\\[CapitalZeta]"->"&Zeta;",
-	"\\[CapitalEta]"->"&Eta;",
-	"\\[CapitalTheta]"->"&Theta;",
-	"\\[CapitalIota]"->"&Iota;",
-	"\\[CapitalKappa]"->"&Kappa;",
-	"\\[CapitalLambda]"->"&Lambda;",
-	"\\[CapitalMu]"->"&Mu;",
-	"\\[CapitalNu]"->"&Nu;",
-	"\\[CapitalXi]"->"&Xi;",
-	"\\[CapitalOmicron]"->"&Omicron;",
-	"\\[CapitalPi]"->"&Pi;",
-	"\\[CapitalRho]"->"&Rho;",
-	"\\[CapitalSigma]"->"&Sigma;",
-	"\\[CapitalTau]"->"&Tau;",
-	"\\[CapitalUpsilon]"->"&Upsilon;",
-	"\\[CurlyCapitalUpsilon]"->"&Upsi;",
-	"\\[CapitalPhi]"->"&Phi;",
-	"\\[CapitalChi]"->"&Chi;",
-	"\\[CapitalPsi]"->"&Psi;",
-	"\\[CapitalOmega]"->"&Omega;",
-	"\\[CapitalDigamma]"->"&digamma;",
-	"\\[Alpha]"->"&alpha;",
-	"\\[Beta]"->"&beta;",
-	"\\[Gamma]"->"&gamma;",
-	"\\[Delta]"->"&delta;",
-	"\\[Epsilon]"->"&varepsilon;",
-	"\\[CurlyEpsilon]"->"&epsiv;",
-	"\\[Zeta]"->"&zeta;",
-	"\\[Eta]"->"&eta;",
-	"\\[Theta]"->"&theta;",
-	"\\[CurlyTheta]"->"&vartheta;",
-	"\\[Iota]"->"&iota;",
-	"\\[Kappa]"->"&kappa;",
-	"\\[CurlyKappa]"->"&varkappa;",
-	"\\[Lambda]"->"&lambda;",
-	"\\[Mu]"->"&mu;",
-	"\\[Nu]"->"&nu;",
-	"\\[Xi]"->"&xi;",
-	"\\[Omicron]"->"&omicron;",
-	"\\[Pi]"->"&pi;",
-	"\\[CurlyPi]"->"&varpi;",
-	"\\[Rho]"->"&rho;",
-	"\\[CurlyRho]"->"&varrho;",
-	"\\[Sigma]"->"&sigma;",
-	"\\[FinalSigma]"->"&varsigma;",
-	"\\[Tau]"->"&tau;",
-	"\\[Upsilon]"->"&upsilon;",
-	"\\[Phi]"->"&straightphi;",
-	"\\[CurlyPhi]"->"&varphi;",
-	"\\[Chi]"->"&chi;",
-	"\\[Psi]"->"&psi;",
-	"\\[Omega]"->"&omega;",
-	"\\[Infinity]"->"&infin;",
-	"\\[ExponentialE]"->"&ee;",
-	"\\[ImaginaryI]"->"&ii;",
-	"\\[ScriptA]"->"&ascr;",
-	"\\[ScriptB]"->"&bscr;",
-	"\\[ScriptC]"->"&cscr;",
-	"\\[ScriptD]"->"&dscr;",
-	"\\[ScriptE]"->"&escr;",
-	"\\[ScriptF]"->"&fscr;",
-	"\\[ScriptG]"->"&gscr;",
-	"\\[ScriptH]"->"&hscr;",
-	"\\[ScriptI]"->"&iscr;",
-	"\\[ScriptJ]"->"&jscr;",
-	"\\[ScriptK]"->"&kscr;",
-	"\\[ScriptL]"->"&lscr;",
-	"\\[ScriptM]"->"&mscr;",
-	"\\[ScriptN]"->"&nscr;",
-	"\\[ScriptO]"->"&oscr;",
-	"\\[ScriptP]"->"&pscr;",
-	"\\[ScriptQ]"->"&qscr;",
-	"\\[ScriptR]"->"&rscr;",
-	"\\[ScriptS]"->"&sscr;",
-	"\\[ScriptT]"->"&tscr;",
-	"\\[ScriptU]"->"&uscr;",
-	"\\[ScriptV]"->"&vscr;",
-	"\\[ScriptW]"->"&wscr;",
-	"\\[ScriptX]"->"&xscr;",
-	"\\[ScriptY]"->"&yscr;",
-	"\\[ScriptZ]"->"&zscr;",
-	"\\[ScriptCapitalA]"->"&Ascr;",
-	"\\[ScriptCapitalB]"->"&Bscr;",
-	"\\[ScriptCapitalC]"->"&Cscr;",
-	"\\[ScriptCapitalD]"->"&Dscr;",
-	"\\[ScriptCapitalE]"->"&Escr;",
-	"\\[ScriptCapitalF]"->"&Fscr;",
-	"\\[ScriptCapitalG]"->"&Gscr;",
-	"\\[ScriptCapitalH]"->"&Hscr;",
-	"\\[ScriptCapitalI]"->"&Iscr;",
-	"\\[ScriptCapitalJ]"->"&Jscr;",
-	"\\[ScriptCapitalK]"->"&Kscr;",
-	"\\[ScriptCapitalL]"->"&Lscr;",
-	"\\[ScriptCapitalM]"->"&Mscr;",
-	"\\[ScriptCapitalN]"->"&Nscr;",
-	"\\[ScriptCapitalO]"->"&Oscr;",
-	"\\[ScriptCapitalP]"->"&Pscr;",
-	"\\[ScriptCapitalQ]"->"&Qscr;",
-	"\\[ScriptCapitalR]"->"&Rscr;",
-	"\\[ScriptCapitalS]"->"&Sscr;",
-	"\\[ScriptCapitalT]"->"&Tscr;",
-	"\\[ScriptCapitalU]"->"&Uscr;",
-	"\\[ScriptCapitalV]"->"&Vscr;",
-	"\\[ScriptCapitalW]"->"&Wscr;",
-	"\\[ScriptCapitalX]"->"&Xscr;",
-	"\\[ScriptCapitalY]"->"&Yscr;",
-	"\\[ScriptCapitalZ]"->"&Zscr;",
-	"\\[GothicA]"->"&afr;",
-	"\\[GothicB]"->"&bfr;",
-	"\\[GothicC]"->"&cfr;",
-	"\\[GothicD]"->"&dfr;",
-	"\\[GothicE]"->"&efr;",
-	"\\[GothicF]"->"&ffr;",
-	"\\[GothicG]"->"&gfr;",
-	"\\[GothicH]"->"&hfr;",
-	"\\[GothicI]"->"&ifr;",
-	"\\[GothicJ]"->"&jfr;",
-	"\\[GothicK]"->"&kfr;",
-	"\\[GothicL]"->"&lfr;",
-	"\\[GothicM]"->"&mfr;",
-	"\\[GothicN]"->"&nfr;",
-	"\\[GothicO]"->"&ofr;",
-	"\\[GothicP]"->"&pfr;",
-	"\\[GothicQ]"->"&qfr;",
-	"\\[GothicR]"->"&rfr;",
-	"\\[GothicS]"->"&sfr;",
-	"\\[GothicT]"->"&tfr;",
-	"\\[GothicU]"->"&ufr;",
-	"\\[GothicV]"->"&vfr;",
-	"\\[GothicW]"->"&wfr;",
-	"\\[GothicX]"->"&xfr;",
-	"\\[GothicY]"->"&yfr;",
-	"\\[GothicZ]"->"&zfr;",
-	"\\[GothicCapitalA]"->"&Afr;",
-	"\\[GothicCapitalB]"->"&Bfr;",
-	"\\[GothicCapitalC]"->"&Cfr;",
-	"\\[GothicCapitalD]"->"&Dfr;",
-	"\\[GothicCapitalE]"->"&Efr;",
-	"\\[GothicCapitalF]"->"&Ffr;",
-	"\\[GothicCapitalG]"->"&Gfr;",
-	"\\[GothicCapitalH]"->"&Hfr;",
-	"\\[GothicCapitalI]"->"&Ifr;",
-	"\\[GothicCapitalJ]"->"&Jfr;",
-	"\\[GothicCapitalK]"->"&Kfr;",
-	"\\[GothicCapitalL]"->"&Lfr;",
-	"\\[GothicCapitalM]"->"&Mfr;",
-	"\\[GothicCapitalN]"->"&Nfr;",
-	"\\[GothicCapitalO]"->"&Ofr;",
-	"\\[GothicCapitalP]"->"&Pfr;",
-	"\\[GothicCapitalQ]"->"&Qfr;",
-	"\\[GothicCapitalR]"->"&Rfr;",
-	"\\[GothicCapitalS]"->"&Sfr;",
-	"\\[GothicCapitalT]"->"&Tfr;",
-	"\\[GothicCapitalU]"->"&Ufr;",
-	"\\[GothicCapitalV]"->"&Vfr;",
-	"\\[GothicCapitalW]"->"&Wfr;",
-	"\\[GothicCapitalX]"->"&Xfr;",
-	"\\[GothicCapitalY]"->"&Yfr;",
-	"\\[GothicCapitalZ]"->"&Zfr;",
-	"\\[DoubleStruckA]"->"&aopf;",
-	"\\[DoubleStruckB]"->"&bopf;",
-	"\\[DoubleStruckC]"->"&copf;",
-	"\\[DoubleStruckD]"->"&dopf;",
-	"\\[DoubleStruckE]"->"&eopf;",
-	"\\[DoubleStruckF]"->"&fopf;",
-	"\\[DoubleStruckG]"->"&gopf;",
-	"\\[DoubleStruckH]"->"&hopf;",
-	"\\[DoubleStruckI]"->"&iopf;",
-	"\\[DoubleStruckJ]"->"&jopf;",
-	"\\[DoubleStruckK]"->"&kopf;",
-	"\\[DoubleStruckL]"->"&lopf;",
-	"\\[DoubleStruckM]"->"&mopf;",
-	"\\[DoubleStruckN]"->"&nopf;",
-	"\\[DoubleStruckO]"->"&oopf;",
-	"\\[DoubleStruckP]"->"&popf;",
-	"\\[DoubleStruckQ]"->"&qopf;",
-	"\\[DoubleStruckR]"->"&ropf;",
-	"\\[DoubleStruckS]"->"&sopf;",
-	"\\[DoubleStruckT]"->"&topf;",
-	"\\[DoubleStruckU]"->"&uopf;",
-	"\\[DoubleStruckV]"->"&vopf;",
-	"\\[DoubleStruckW]"->"&wopf;",
-	"\\[DoubleStruckX]"->"&xopf;",
-	"\\[DoubleStruckY]"->"&yopf;",
-	"\\[DoubleStruckZ]"->"&zopf;",
-	"\\[DoubleStruckCapitalA]"->"&Aopf;",
-	"\\[DoubleStruckCapitalB]"->"&Bopf;",
-	"\\[DoubleStruckCapitalC]"->"&Copf;",
-	"\\[DoubleStruckCapitalD]"->"&Dopf;",
-	"\\[DoubleStruckCapitalE]"->"&Eopf;",
-	"\\[DoubleStruckCapitalF]"->"&Fopf;",
-	"\\[DoubleStruckCapitalG]"->"&Gopf;",
-	"\\[DoubleStruckCapitalH]"->"&Hopf;",
-	"\\[DoubleStruckCapitalI]"->"&Iopf;",
-	"\\[DoubleStruckCapitalJ]"->"&Jopf;",
-	"\\[DoubleStruckCapitalK]"->"&Kopf;",
-	"\\[DoubleStruckCapitalL]"->"&imped;",
-	"\\[DoubleStruckCapitalM]"->"&Mopf;",
-	"\\[DoubleStruckCapitalN]"->"&Nopf;",
-	"\\[DoubleStruckCapitalO]"->"&Oopf;",
-	"\\[DoubleStruckCapitalP]"->"&Popf;",
-	"\\[DoubleStruckCapitalQ]"->"&Qopf;",
-	"\\[DoubleStruckCapitalR]"->"&Ropf;",
-	"\\[DoubleStruckCapitalS]"->"&Sopf;",
-	"\\[DoubleStruckCapitalT]"->"&Topf;",
-	"\\[DoubleStruckCapitalU]"->"&Uopf;",
-	"\\[DoubleStruckCapitalV]"->"&Vopf;",
-	"\\[DoubleStruckCapitalW]"->"&Wopf;",
-	"\\[DoubleStruckCapitalX]"->"&Xopf;",
-	"\\[DoubleStruckCapitalY]"->"&Yopf;",
-	"\\[DoubleStruckCapitalZ]"->"&Zopf;",
-	"\\[WeierstrassP]"->"&wp;",
-	"\\[Aleph]"->"&aleph;",
-	"\\[Bet]"->"&beth;",
-	"\\[Gimel]"->"&gimel;",
-	"\\[Dalet]"->"&daleth;",
-	"\\[DownExclamation]"->"&iexcl;",
-	"\\[Cent]"->"&cent;",
-	"\\[Sterling]"->"&pound;",
-	"\\[Currency]"->"&curren;",
-	"\\[Yen]"->"&yen;",
-	"\\[Section]"->"&sect;",
-	"\\[Copyright]"->"&copy;",
-	"\\[RegisteredTrademark]"->"&reg;",
-	"\\[Trademark]"->"&trade;",
-	"\\[Degree]"->"&deg;",
-	"\\[Micro]"->"&micro;",
-	"\\[Paragraph]"->"&para;",
-	"\\[DownQuestion]"->"&iquest;",
-	"\\[HBar]"->"&hslash;",
-	"\\[Mho]"->"&mho;",
-	"\\[Angstrom]"->"&angst;",
-	"\\[EmptySet]"->"&varnothing;",
-	"\\[Dash]"->"&ndash;",
-	"\\[LongDash]"->"&mdash;",
-	"\\[Dagger]"->"&dagger;",
-	"\\[DoubleDagger]"->"&ddagger;",
-	"\\[Bullet]"->"&bullet;",
-	"\\[DotlessI]"->"&imath;",
-	"\\[FiLigature]"->"&filig;",
-	"\\[FlLigature]"->"&fllig;",
-	"\\[Angle]"->"&angle;",
-	"\\[RightAngle]"->"&angrt;",
-	"\\[MeasuredAngle]"->"&measuredangle;",
-	"\\[SphericalAngle]"->"&angsph;",
-	"\\[Ellipsis]"->"&hellip;",
-	"\\[VerticalEllipsis]"->"&vellip;",
-	"\\[CenterEllipsis]"->"&ctdot;",
-	"\\[AscendingEllipsis]"->"&utdot;",
-	"\\[DescendingEllipsis]"->"&dtdot;",
-	"\\[Prime]"->"&prime;",
-	"\\[DoublePrime]"->"&Prime;",
-	"\\[ReversePrime]"->"&backprime;",
-	"\\[ForAll]"->"&ForAll;",
-	"\\[Exists]"->"&Exists;",
-	"\\[NotExists]"->"&NotExists;",
-	"\\[Element]"->"&Element;",
-	"\\[NotElement]"->"&NotElement;",
-	"\\[ReverseElement]"->"&ReverseElement;",
-	"\\[NotReverseElement]"->"&NotReverseElement;",
-	"\\[Because]"->"&Because;",
-	"\\[SuchThat]"->"&SuchThat;",
-	"\\[VerticalSeparator]"->"&VerticalSeparator;",
-	"\\[Therefore]"->"&Therefore;",
-	"\\[Implies]"->"&Implies;",
-	"\\[RoundImplies]"->"&RoundImplies;",
-	"\\[Tilde]"->"&Tilde;",
-	"\\[NotTilde]"->"&NotTilde;",
-	"\\[EqualTilde]"->"&EqualTilde;",
-	"\\[TildeEqual]"->"&TildeEqual;",
-	"\\[NotTildeEqual]"->"&NotTildeEqual;",
-	"\\[TildeFullEqual]"->"&TildeFullEqual;",
-	"\\[TildeTilde]"->"&TildeTilde;",
-	"\\[NotTildeTilde]"->"&NotTildeTilde;",
-	"\\[NotEqualTilde]"->"&NotEqualTilde;",
-	"\\[NotTildeFullEqual]"->"&NotTildeFullEqual;",
-	"\\[LessTilde]"->"&LessTilde;",
-	"\\[GreaterTilde]"->"&GreaterTilde;",
-	"\\[NotLessTilde]"->"&NotLessTilde;",
-	"\\[NotGreaterTilde]"->"&NotGreaterTilde;",
-	"\\[LeftTriangle]"->"&LeftTriangle;",
-	"\\[RightTriangle]"->"&RightTriangle;",
-	"\\[LeftTriangleEqual]"->"&LeftTriangleEqual;",
-	"\\[RightTriangleEqual]"->"&RightTriangleEqual;",
-	"\\[LeftTriangleBar]"->"&LeftTriangleBar;",
-	"\\[RightTriangleBar]"->"&RightTriangleBar;",
-	"\\[NotLeftTriangleBar]"->"&NotLeftTriangleBar;",
-	"\\[NotRightTriangleBar]"->"&NotRightTriangleBar;",
-	"\\[NotLeftTriangle]"->"&NotLeftTriangle;",
-	"\\[NotLeftTriangleEqual]"->"&NotLeftTriangleEqual;",
-	"\\[NotRightTriangle]"->"&NotRightTriangle;",
-	"\\[NotRightTriangleEqual]"->"&NotRightTriangleEqual;",
-	"\\[NotEqual]"->"&NotEqual;",
-	"\\[NotLess]"->"&NotLess;",
-	"\\[NotGreater]"->"&NotGreater;",
-	"\\[LessEqual]"->"&leq;",
-	"\\[LessLess]"->"&LessLess;",
-	"\\[GreaterGreater]"->"&GreaterGreater;",
-	"\\[NotLessEqual]"->"&NotLessEqual;",
-	"\\[GreaterEqual]"->"&GreaterEqual;",
-	"\\[NotGreaterEqual]"->"&NotGreaterEqual;",
-	"\\[LessSlantEqual]"->"&LessSlantEqual;",
-	"\\[LessFullEqual]"->"&LessFullEqual;",
-	"\\[NotLessLess]"->"&NotLessLess;",
-	"\\[NotNestedLessLess]"->"&NotNestedLessLess;",
-	"\\[NotLessSlantEqual]"->"&NotLessSlantEqual;",
-	"\\[NotLessFullEqual]"->"&NotLessFullEqual;",
-	"\\[NestedLessLess]"->"&NestedLessLess;",
-	"\\[NestedGreaterGreater]"->"&NestedGreaterGreater;",
-	"\\[GreaterSlantEqual]"->"&GreaterSlantEqual;",
-	"\\[GreaterFullEqual]"->"&GreaterFullEqual;",
-	"\\[NotGreaterGreater]"->"&NotGreaterGreater;",
-	"\\[NotNestedGreaterGreater]"->"&NotNestedGreaterGreater;",
-	"\\[NotGreaterSlantEqual]"->"&NotGreaterSlantEqual;",
-	"\\[NotGreaterFullEqual]"->"&NotGreaterFullEqual;",
-	"\\[LessGreater]"->"&LessGreater;",
-	"\\[GreaterLess]"->"&GreaterLess;",
-	"\\[NotLessGreater]"->"&NotLessGreater;",
-	"\\[NotGreaterLess]"->"&NotGreaterLess;",
-	"\\[LessEqualGreater]"->"&LessEqualGreater;",
-	"\\[GreaterEqualLess]"->"&GreaterEqualLess;",
-	"\\[Subset]"->"&subset;",
-	"\\[Superset]"->"&Superset;",
-	"\\[NotSubset]"->"&NotSubset;",
-	"\\[NotSuperset]"->"&NotSuperset;",
-	"\\[SubsetEqual]"->"&SubsetEqual;",
-	"\\[SupersetEqual]"->"&SupersetEqual;",
-	"\\[NotSubsetEqual]"->"&NotSubsetEqual;",
-	"\\[NotSupersetEqual]"->"&NotSupersetEqual;",
-	"\\[SquareSubset]"->"&SquareSubset;",
-	"\\[SquareSuperset]"->"&SquareSuperset;",
-	"\\[SquareSubsetEqual]"->"&SquareSubsetEqual;",
-	"\\[SquareSupersetEqual]"->"&SquareSupersetEqual;",
-	"\\[NotSquareSubset]"->"&NotSquareSubset;",
-	"\\[NotSquareSuperset]"->"&NotSquareSuperset;",
-	"\\[NotSquareSubsetEqual]"->"&NotSquareSubsetEqual;",
-	"\\[NotSquareSupersetEqual]"->"&NotSquareSupersetEqual;",
-	"\\[Precedes]"->"&Precedes;",
-	"\\[Succeeds]"->"&Succeeds;",
-	"\\[PrecedesEqual]"->"&PrecedesEqual;",
-	"\\[SucceedsEqual]"->"&SucceedsEqual;",
-	"\\[PrecedesTilde]"->"&PrecedesTilde;",
-	"\\[SucceedsTilde]"->"&SucceedsTilde;",
-	"\\[NotPrecedes]"->"&NotPrecedes;",
-	"\\[NotSucceeds]"->"&NotSucceeds;",
-	"\\[PrecedesSlantEqual]"->"&PrecedesSlantEqual;",
-	"\\[NotPrecedesEqual]"->"&NotPrecedesEqual;",
-	"\\[NotPrecedesSlantEqual]"->"&NotPrecedesSlantEqual;",
-	"\\[NotPrecedesTilde]"->"&NotPrecedesTilde;",
-	"\\[SucceedsSlantEqual]"->"&SucceedsSlantEqual;",
-	"\\[NotSucceedsEqual]"->"&NotSucceedsEqual;",
-	"\\[NotSucceedsSlantEqual]"->"&NotSucceedsSlantEqual;",
-	"\\[NotSucceedsTilde]"->"&NotSucceedsTilde;",
-	"\\[UpTee]"->"&UpTee;",
-	"\\[Proportional]"->"&Proportional;",
-	"\\[Proportion]"->"&Proportion;",
-	"\\[Congruent]"->"&Congruent;",
-	"\\[NotCongruent]"->"&NotCongruent;",
-	"\\[CupCap]"->"&CupCap;",
-	"\\[NotCupCap]"->"&NotCupCap;",
-	"\\[Equilibrium]"->"&Equilibrium;",
-	"\\[ReverseEquilibrium]"->"&ReverseEquilibrium;",
-	"\\[UpEquilibrium]"->"&UpEquilibrium;",
-	"\\[ReverseUpEquilibrium]"->"&ReverseUpEquilibrium;",
-	"\\[RightTee]"->"&RightTee;",
-	"\\[LeftTee]"->"&LeftTee;",
-	"\\[DownTee]"->"&DownTee;",
-	"\\[DoubleRightTee]"->"&DoubleRightTee;",
-	"\\[DoubleLeftTee]"->"&DoubleLeftTee;",
-	"\\[HumpEqual]"->"&HumpEqual;",
-	"\\[NotHumpEqual]"->"&NotHumpEqual;",
-	"\\[HumpDownHump]"->"&HumpDownHump;",
-	"\\[NotHumpDownHump]"->"&NotHumpDownHump;",
-	"\\[DotEqual]"->"&DotEqual;",
-	"\\[Colon]"->"&colon;",
-	"\\[Equal]"->"&Equal;",
-	"\\[Sqrt]"->"&Sqrt;",
-	"\\[Divides]"->"&Divides;",
-	"\\[DoubleVerticalBar]"->"&DoubleVerticalBar;",
-	"\\[NotDoubleVerticalBar]"->"&NotDoubleVerticalBar;",
-	"\\[Not]"->"&not;",
-	"\\[VerticalTilde]"->"&VerticalTilde;",
-	"\\[Times]"->"&times;",
-	"\\[PlusMinus]"->"&PlusMinus;",
-	"\\[MinusPlus]"->"&MinusPlus;",
-	"\\[Minus]"->"&minus;",
-	"\\[Divide]"->"&div;",
-	"\\[CenterDot]"->"&CenterDot;",
-	"\\[SmallCircle]"->"&SmallCircle;",
-	"\\[Cross]"->"&Cross;",
-	"\\[CirclePlus]"->"&CirclePlus;",
-	"\\[CircleMinus]"->"&CircleMinus;",
-	"\\[CircleTimes]"->"&CircleTimes;",
-	"\\[CircleDot]"->"&CircleDot;",
-	"\\[Star]"->"&Star;",
-	"\\[Square]"->"&Square;",
-	"\\[Diamond]"->"&Diamond;",
-	"\\[Del]"->"&Del;",
-	"\\[Backslash]"->"&Backslash;",
-	"\\[Cap]"->"&frown;",
-	"\\[Cup]"->"&smile;",
-	"\\[Coproduct]"->"&Coproduct;",
-	"\\[Integral]"->"&Integral;",
-	"\\[ContourIntegral]"->"&ContourIntegral;",
-	"\\[DoubleContourIntegral]"->"&DoubleContourIntegral;",
-	"\\[CounterClockwiseContourIntegral]"->"&CounterClockwiseContourIntegral;",
-	"\\[ClockwiseContourIntegral]"->"&ClockwiseContourIntegral;",
-	"\\[Sum]"->"&Sum;",
-	"\\[Product]"->"&Product;",
-	"\\[Intersection]"->"&Intersection;",
-	"\\[Union]"->"&Union;",
-	"\\[UnionPlus]"->"&UnionPlus;",
-	"\\[SquareIntersection]"->"&SquareIntersection;",
-	"\\[SquareUnion]"->"&SquareUnion;",
-	"\\[Wedge]"->"&Wedge;",
-	"\\[And]"->"&&$   $&and;",
-	"\\[Nand]"->"&&$   $&barwed;",
-	"\\[Vee]"->"&Vee;",
-	"\\[Or]"->"&or;",
-	"\\[Nor]"->"&barvee;",
-	"\\[Xor]"->"&veebar;",
-	"\\[PartialD]"->"&PartialD;",
-	"\\[DifferentialD]"->"&dd;",
-	"\\[CapitalDifferentialD]"->"&CapitalDifferentialD;",
-	"\\[RightArrow]"->"&RightArrow;",
-	"\\[LeftArrow]"->"&LeftArrow;",
-	"\\[UpArrow]"->"&UpArrow;",
-	"\\[DownArrow]"->"&DownArrow;",
-	"\\[LeftRightArrow]"->"&LeftRightArrow;",
-	"\\[UpDownArrow]"->"&UpDownArrow;",
-	"\\[ShortRightArrow]"->"&ShortRightArrow;",
-	"\\[ShortLeftArrow]"->"&ShortLeftArrow;",
-	"\\[ShortUpArrow]"->"&ShortUpArrow;",
-	"\\[ShortDownArrow]"->"&ShortDownArrow;",
-	"\\[RuleDelayed]"->"&RuleDelayed;",
-	"\\[DoubleRightArrow]"->"&DoubleRightArrow;",
-	"\\[DoubleLeftArrow]"->"&DoubleLeftArrow;",
-	"\\[DoubleUpArrow]"->"&DoubleUpArrow;",
-	"\\[DoubleDownArrow]"->"&DoubleDownArrow;",
-	"\\[DoubleLeftRightArrow]"->"&DoubleLeftRightArrow;",
-	"\\[DoubleUpDownArrow]"->"&DoubleUpDownArrow;",
-	"\\[RightArrowBar]"->"&RightArrowBar;",
-	"\\[LeftArrowBar]"->"&LeftArrowBar;",
-	"\\[UpArrowBar]"->"&UpArrowBar;",
-	"\\[DownArrowBar]"->"&DownArrowBar;",
-	"\\[RightTeeArrow]"->"&RightTeeArrow;",
-	"\\[LeftTeeArrow]"->"&LeftTeeArrow;",
-	"\\[UpTeeArrow]"->"&UpTeeArrow;",
-	"\\[DownTeeArrow]"->"&DownTeeArrow;",
-	"\\[UpperLeftArrow]"->"&UpperLeftArrow;",
-	"\\[UpperRightArrow]"->"&UpperRightArrow;",
-	"\\[LowerRightArrow]"->"&LowerRightArrow;",
-	"\\[LowerLeftArrow]"->"&LowerLeftArrow;",
-	"\\[LongRightArrow]"->"&LongRightArrow;",
-	"\\[LongLeftArrow]"->"&LongLeftArrow;",
-	"\\[DoubleLongLeftArrow]"->"&DoubleLongLeftArrow;",
-	"\\[DoubleLongRightArrow]"->"&DoubleLongRightArrow;",
-	"\\[LongLeftRightArrow]"->"&LongLeftRightArrow;",
-	"\\[DoubleLongLeftRightArrow]"->"&DoubleLongLeftRightArrow;",
-	"\\[RightArrowLeftArrow]"->"&RightArrowLeftArrow;",
-	"\\[LeftArrowRightArrow]"->"&LeftArrowRightArrow;",
-	"\\[UpArrowDownArrow]"->"&UpArrowDownArrow;",
-	"\\[DownArrowUpArrow]"->"&DownArrowUpArrow;",
-	"\\[RightVector]"->"&RightVector;",
-	"\\[DownRightVector]"->"&DownRightVector;",
-	"\\[LeftVector]"->"&LeftVector;",
-	"\\[DownLeftVector]"->"&DownLeftVector;",
-	"\\[RightUpVector]"->"&RightUpVector;",
-	"\\[LeftUpVector]"->"&LeftUpVector;",
-	"\\[RightDownVector]"->"&RightDownVector;",
-	"\\[LeftDownVector]"->"&LeftDownVector;",
-	"\\[LeftRightVector]"->"&LeftRightVector;",
-	"\\[DownLeftRightVector]"->"&DownLeftRightVector;",
-	"\\[RightUpDownVector]"->"&RightUpDownVector;",
-	"\\[LeftUpDownVector]"->"&LeftUpDownVector;",
-	"\\[RightVectorBar]"->"&RightVectorBar;",
-	"\\[DownRightVectorBar]"->"&DownRightVectorBar;",
-	"\\[LeftVectorBar]"->"&LeftVectorBar;",
-	"\\[DownLeftVectorBar]"->"&DownLeftVectorBar;",
-	"\\[RightUpVectorBar]"->"&RightUpVectorBar;",
-	"\\[LeftUpVectorBar]"->"&LeftUpVectorBar;",
-	"\\[RightDownVectorBar]"->"&RightDownVectorBar;",
-	"\\[LeftDownVectorBar]"->"&LeftDownVectorBar;",
-	"\\[RightTeeVector]"->"&RightTeeVector;",
-	"\\[DownRightTeeVector]"->"&DownRightTeeVector;",
-	"\\[LeftTeeVector]"->"&LeftTeeVector;",
-	"\\[DownLeftTeeVector]"->"&DownLeftTeeVector;",
-	"\\[RightUpTeeVector]"->"&RightUpTeeVector;",
-	"\\[LeftUpTeeVector]"->"&LeftUpTeeVector;",
-	"\\[RightDownTeeVector]"->"&RightDownTeeVector;",
-	"\\[LeftDownTeeVector]"->"&LeftDownTeeVector;",
-	"\\[LeftDoubleBracket]"->"&LeftDoubleBracket;",
-	"\\[RightDoubleBracket]"->"&RightDoubleBracket;",
-	"\\[LeftAngleBracket]"->"&LeftAngleBracket;",
-	"\\[RightAngleBracket]"->"&RightAngleBracket;",
-	"\\[LeftFloor]"->"&LeftFloor;",
-	"\\[RightFloor]"->"&RightFloor;",
-	"\\[LeftCeiling]"->"&LeftCeiling;",
-	"\\[RightCeiling]"->"&RightCeiling;",
-	"\\[LeftBracketingBar]"->"&LeftBracketingBar;",
-	"\\[RightBracketingBar]"->"&RightBracketingBar;",
-	"\\[LeftDoubleBracketingBar]"->"&LeftDoubleBracketingBar;",
-	"\\[RightDoubleBracketingBar]"->"&RightDoubleBracketingBar;",
-	"\\[EmptyCircle]"->"&bigcirc;",
-	"\\[FilledRectangle]"->"&marker;",
-	"\\[EmptySquare]"->"&squ;",
-	"\\[EmptyVerySmallSquare]"->"&EmptyVerySmallSquare;",
-	"\\[FilledSmallSquare]"->"&squarf;",
-	"\\[FilledVerySmallSquare]"->"&FilledVerySmallSquare;",
-	"\\[EmptyUpTriangle]"->"&bigtriangleup;",
-	"\\[EmptyDownTriangle]"->"&bigtriangledown;",
-	"\\[FivePointedStar]"->"&bigstar;",
-	"\\[SixPointedStar]"->"&sext;",
-	"\\[SpadeSuit]"->"&spadesuit;",
-	"\\[HeartSuit]"->"&heartsuit;",
-	"\\[DiamondSuit]"->"&diamondsuit;",
-	"\\[ClubSuit]"->"&clubsuit;",
-	"\\[Flat]"->"&flat;",
-	"\\[Natural]"->"&natural;",
-	"\\[Sharp]"->"&sharp;",
-	"\\[NumberSign]"->"&num;",
-	"\\[InvisibleSpace]"->"&ZeroWidthSpace;",
-	"\\[VeryThinSpace]"->"&VeryThinSpace;",
-	"\\[ThinSpace]"->"&ThinSpace;",
-	"\\[ThickSpace]"->"&ThickSpace;",
-	"\\[NegativeVeryThinSpace]"->"&NegativeVeryThinSpace;",
-	"\\[NegativeThinSpace]"->"&NegativeThinSpace;",
-	"\\[NegativeMediumSpace]"->"&NegativeMediumSpace;",
-	"\\[NegativeThickSpace]"->"&NegativeThickSpace;",
-	"\\[OpenCurlyQuote]"->"&OpenCurlyQuote;",
-	"\\[CloseCurlyQuote]"->"&CloseCurlyQuote;",
-	"\\[OpenCurlyDoubleQuote]"->"&OpenCurlyDoubleQuote;",
-	"\\[CloseCurlyDoubleQuote]"->"&CloseCurlyDoubleQuote;",
-	"\\[OverParenthesis]"->"&OverParenthesis;",
-	"\\[UnderParenthesis]"->"&UnderParenthesis;",
-	"\\[OverBrace]"->"&OverBrace;",
-	"\\[UnderBrace]"->"&UnderBrace;",
-	"\\[OverBracket]"->"&OverBracket;",
-	"\\[UnderBracket]"->"&UnderBracket;",
-	"\\[IndentingNewLine]"->"&IndentingNewLine;",
-	"\\[NoBreak]"->"&NoBreak;",
-	"\\[NonBreakingSpace]"->"&nbsp;",
-	"\\[SpaceIndicator]"->"&blank;",
-	"\\[InvisibleApplication]"->"&af;",
-	"\\[ReturnIndicator]"->"&crarr;",
-	"\\[HorizontalLine]"->"&HorizontalLine;",
-	"\\[VerticalLine]"->"&VerticalLine;",
-	"\\[InvisibleComma]"->"&ic;",
-	"\\[SkeletonIndicator]"->"&hybull;",
-	"\\[LeftSkeleton]"->"&LeftSkeleton;",
-	"\\[RightSkeleton]"->"&RightSkeleton;",
-	"\\[Piecewise]"->"&piecewise;",
-	"\\[VerticalBar]"->"&VerticalBar;",
-	"\\[NotVerticalBar]"->"&NotVerticalBar;"
-	|>;
+$NotebookToMarkdownHTMLCharReplacements=
+	{
+		"\[Rule]"->"->",
+		"\[RuleDelayed]"->":>",
+		"\[LeftGuillemet]"->"&laquo;",
+		"\[DiscretionaryHyphen]"->"&shy;",
+		"\[RightGuillemet]"->"&raquo;",
+		"\[CapitalAGrave]"->"&Agrave;",
+		"\[CapitalAAcute]"->"&Aacute;",
+		"\[CapitalAHat]"->"&Acirc;",
+		"\[CapitalATilde]"->"&Atilde;",
+		"\[CapitalADoubleDot]"->"&Auml;",
+		"\[CapitalARing]"->"&Aring;",
+		"\[CapitalAE]"->"&AElig;",
+		"\[CapitalCCedilla]"->"&Ccedil;",
+		"\[CapitalEGrave]"->"&Egrave;",
+		"\[CapitalEAcute]"->"&Eacute;",
+		"\[CapitalEHat]"->"&Ecirc;",
+		"\[CapitalEDoubleDot]"->"&Euml;",
+		"\[CapitalIGrave]"->"&Igrave;",
+		"\[CapitalIAcute]"->"&Iacute;",
+		"\[CapitalIHat]"->"&Icirc;",
+		"\[CapitalIDoubleDot]"->"&Iuml;",
+		"\[CapitalEth]"->"&ETH;",
+		"\[CapitalNTilde]"->"&Ntilde;",
+		"\[CapitalOGrave]"->"&Ograve;",
+		"\[CapitalOAcute]"->"&Oacute;",
+		"\[CapitalOE]"->"&OElig;",
+		"\[CapitalOHat]"->"&Ocirc;",
+		"\[CapitalOTilde]"->"&Otilde;",
+		"\[CapitalODoubleDot]"->"&Ouml;",
+		"\[CapitalOSlash]"->"&Oslash;",
+		"\[CapitalUGrave]"->"&Ugrave;",
+		"\[CapitalUAcute]"->"&Uacute;",
+		"\[CapitalUHat]"->"&Ucirc;",
+		"\[CapitalUDoubleDot]"->"&Uuml;",
+		"\[CapitalYAcute]"->"&Yacute;",
+		"\[CapitalThorn]"->"&THORN;",
+		"\[SZ]"->"&szlig;",
+		"\[AGrave]"->"&agrave;",
+		"\[AAcute]"->"&aacute;",
+		"\[AHat]"->"&acirc;",
+		"\[ATilde]"->"&atilde;",
+		"\[ADoubleDot]"->"&auml;",
+		"\[ARing]"->"&aring;",
+		"\[AE]"->"&aelig;",
+		"\[CCedilla]"->"&ccedil;",
+		"\[EGrave]"->"&egrave;",
+		"\[EAcute]"->"&eacute;",
+		"\[EHat]"->"&ecirc;",
+		"\[EDoubleDot]"->"&euml;",
+		"\[IGrave]"->"&igrave;",
+		"\[IAcute]"->"&iacute;",
+		"\[IHat]"->"&icirc;",
+		"\[IDoubleDot]"->"&iuml;",
+		"\[Eth]"->"&eth;",
+		"\[NTilde]"->"&ntilde;",
+		"\[OGrave]"->"&ograve;",
+		"\[OAcute]"->"&oacute;",
+		"\[OE]"->"&oelig;",
+		"\[OHat]"->"&ocirc;",
+		"\[OTilde]"->"&otilde;",
+		"\[ODoubleDot]"->"&ouml;",
+		"\[OSlash]"->"&oslash;",
+		"\[UGrave]"->"&ugrave;",
+		"\[UAcute]"->"&uacute;",
+		"\[UHat]"->"&ucirc;",
+		"\[UDoubleDot]"->"&uuml;",
+		"\[YAcute]"->"&yacute;",
+		"\[Thorn]"->"&thorn;",
+		"\[YDoubleDot]"->"&yuml;",
+		"\[ABar]"->"&amacr;",
+		"\[CapitalABar]"->"&Amacr;",
+		"\[ACup]"->"&abreve;",
+		"\[CapitalACup]"->"&Abreve;",
+		"\[CAcute]"->"&cacute;",
+		"\[CapitalCAcute]"->"&Cacute;",
+		"\[CHacek]"->"&ccaron;",
+		"\[CapitalCHacek]"->"&Ccaron;",
+		"\[DHacek]"->"&dcaron;",
+		"\[CapitalDHacek]"->"&Dcaron;",
+		"\[EHacek]"->"&ecaron;",
+		"\[CapitalEHacek]"->"&Ecaron;",
+		"\[NHacek]"->"&ncaron;",
+		"\[CapitalNHacek]"->"&Ncaron;",
+		"\[RHacek]"->"&rcaron;",
+		"\[CapitalRHacek]"->"&Rcaron;",
+		"\[THacek]"->"&tcaron;",
+		"\[CapitalTHacek]"->"&Tcaron;",
+		"\[URing]"->"&uring;",
+		"\[CapitalURing]"->"&Uring;",
+		"\[ZHacek]"->"&zcaron;",
+		"\[CapitalZHacek]"->"&Zcaron;",
+		"\[EBar]"->"&emacr;",
+		"\[CapitalEBar]"->"&Emacr;",
+		"\[LSlash]"->"&lstrok;",
+		"\[CapitalLSlash]"->"&Lstrok;",
+		"\[ODoubleAcute]"->"&odblac;",
+		"\[CapitalODoubleAcute]"->"&Odblac;",
+		"\[SHacek]"->"&scaron;",
+		"\[CapitalSHacek]"->"&Scaron;",
+		"\[UDoubleAcute]"->"&udblac;",
+		"\[CapitalUDoubleAcute]"->"&Udblac;",
+		"\[Florin]"->"&fnof;",
+		"\[Breve]"->"&Breve;",
+		"\[DoubleDot]"->"&DoubleDot;",
+		"\[TripleDot]"->"&TripleDot;",
+		"\[Hacek]"->"&Hacek;",
+		"\[DownBreve]"->"&DownBreve;",
+		"\[Cedilla]"->"&Cedilla;",
+		"\[CapitalAlpha]"->"&Alpha;",
+		"\[CapitalBeta]"->"&Beta;",
+		"\[CapitalGamma]"->"&Gamma;",
+		"\[CapitalDelta]"->"&Delta;",
+		"\[CapitalEpsilon]"->"&Epsilon;",
+		"\[CapitalZeta]"->"&Zeta;",
+		"\[CapitalEta]"->"&Eta;",
+		"\[CapitalTheta]"->"&Theta;",
+		"\[CapitalIota]"->"&Iota;",
+		"\[CapitalKappa]"->"&Kappa;",
+		"\[CapitalLambda]"->"&Lambda;",
+		"\[CapitalMu]"->"&Mu;",
+		"\[CapitalNu]"->"&Nu;",
+		"\[CapitalXi]"->"&Xi;",
+		"\[CapitalOmicron]"->"&Omicron;",
+		"\[CapitalPi]"->"&Pi;",
+		"\[CapitalRho]"->"&Rho;",
+		"\[CapitalSigma]"->"&Sigma;",
+		"\[CapitalTau]"->"&Tau;",
+		"\[CapitalUpsilon]"->"&Upsilon;",
+		"\[CurlyCapitalUpsilon]"->"&Upsi;",
+		"\[CapitalPhi]"->"&Phi;",
+		"\[CapitalChi]"->"&Chi;",
+		"\[CapitalPsi]"->"&Psi;",
+		"\[CapitalOmega]"->"&Omega;",
+		"\[CapitalDigamma]"->"&digamma;",
+		"\[Alpha]"->"&alpha;",
+		"\[Beta]"->"&beta;",
+		"\[Gamma]"->"&gamma;",
+		"\[Delta]"->"&delta;",
+		"\[Epsilon]"->"&varepsilon;",
+		"\[CurlyEpsilon]"->"&epsiv;",
+		"\[Zeta]"->"&zeta;",
+		"\[Eta]"->"&eta;",
+		"\[Theta]"->"&theta;",
+		"\[CurlyTheta]"->"&vartheta;",
+		"\[Iota]"->"&iota;",
+		"\[Kappa]"->"&kappa;",
+		"\[CurlyKappa]"->"&varkappa;",
+		"\[Lambda]"->"&lambda;",
+		"\[Mu]"->"&mu;",
+		"\[Nu]"->"&nu;",
+		"\[Xi]"->"&xi;",
+		"\[Omicron]"->"&omicron;",
+		"\[Pi]"->"&pi;",
+		"\[CurlyPi]"->"&varpi;",
+		"\[Rho]"->"&rho;",
+		"\[CurlyRho]"->"&varrho;",
+		"\[Sigma]"->"&sigma;",
+		"\[FinalSigma]"->"&varsigma;",
+		"\[Tau]"->"&tau;",
+		"\[Upsilon]"->"&upsilon;",
+		"\[Phi]"->"&straightphi;",
+		"\[CurlyPhi]"->"&varphi;",
+		"\[Chi]"->"&chi;",
+		"\[Psi]"->"&psi;",
+		"\[Omega]"->"&omega;",
+		"\[Infinity]"->"&infin;",
+		"\[ExponentialE]"->"&ee;",
+		"\[ImaginaryI]"->"&ii;",
+		"\[ScriptA]"->"&ascr;",
+		"\[ScriptB]"->"&bscr;",
+		"\[ScriptC]"->"&cscr;",
+		"\[ScriptD]"->"&dscr;",
+		"\[ScriptE]"->"&escr;",
+		"\[ScriptF]"->"&fscr;",
+		"\[ScriptG]"->"&gscr;",
+		"\[ScriptH]"->"&hscr;",
+		"\[ScriptI]"->"&iscr;",
+		"\[ScriptJ]"->"&jscr;",
+		"\[ScriptK]"->"&kscr;",
+		"\[ScriptL]"->"&lscr;",
+		"\[ScriptM]"->"&mscr;",
+		"\[ScriptN]"->"&nscr;",
+		"\[ScriptO]"->"&oscr;",
+		"\[ScriptP]"->"&pscr;",
+		"\[ScriptQ]"->"&qscr;",
+		"\[ScriptR]"->"&rscr;",
+		"\[ScriptS]"->"&sscr;",
+		"\[ScriptT]"->"&tscr;",
+		"\[ScriptU]"->"&uscr;",
+		"\[ScriptV]"->"&vscr;",
+		"\[ScriptW]"->"&wscr;",
+		"\[ScriptX]"->"&xscr;",
+		"\[ScriptY]"->"&yscr;",
+		"\[ScriptZ]"->"&zscr;",
+		"\[ScriptCapitalA]"->"&Ascr;",
+		"\[ScriptCapitalB]"->"&Bscr;",
+		"\[ScriptCapitalC]"->"&Cscr;",
+		"\[ScriptCapitalD]"->"&Dscr;",
+		"\[ScriptCapitalE]"->"&Escr;",
+		"\[ScriptCapitalF]"->"&Fscr;",
+		"\[ScriptCapitalG]"->"&Gscr;",
+		"\[ScriptCapitalH]"->"&Hscr;",
+		"\[ScriptCapitalI]"->"&Iscr;",
+		"\[ScriptCapitalJ]"->"&Jscr;",
+		"\[ScriptCapitalK]"->"&Kscr;",
+		"\[ScriptCapitalL]"->"&Lscr;",
+		"\[ScriptCapitalM]"->"&Mscr;",
+		"\[ScriptCapitalN]"->"&Nscr;",
+		"\[ScriptCapitalO]"->"&Oscr;",
+		"\[ScriptCapitalP]"->"&Pscr;",
+		"\[ScriptCapitalQ]"->"&Qscr;",
+		"\[ScriptCapitalR]"->"&Rscr;",
+		"\[ScriptCapitalS]"->"&Sscr;",
+		"\[ScriptCapitalT]"->"&Tscr;",
+		"\[ScriptCapitalU]"->"&Uscr;",
+		"\[ScriptCapitalV]"->"&Vscr;",
+		"\[ScriptCapitalW]"->"&Wscr;",
+		"\[ScriptCapitalX]"->"&Xscr;",
+		"\[ScriptCapitalY]"->"&Yscr;",
+		"\[ScriptCapitalZ]"->"&Zscr;",
+		"\[GothicA]"->"&afr;",
+		"\[GothicB]"->"&bfr;",
+		"\[GothicC]"->"&cfr;",
+		"\[GothicD]"->"&dfr;",
+		"\[GothicE]"->"&efr;",
+		"\[GothicF]"->"&ffr;",
+		"\[GothicG]"->"&gfr;",
+		"\[GothicH]"->"&hfr;",
+		"\[GothicI]"->"&ifr;",
+		"\[GothicJ]"->"&jfr;",
+		"\[GothicK]"->"&kfr;",
+		"\[GothicL]"->"&lfr;",
+		"\[GothicM]"->"&mfr;",
+		"\[GothicN]"->"&nfr;",
+		"\[GothicO]"->"&ofr;",
+		"\[GothicP]"->"&pfr;",
+		"\[GothicQ]"->"&qfr;",
+		"\[GothicR]"->"&rfr;",
+		"\[GothicS]"->"&sfr;",
+		"\[GothicT]"->"&tfr;",
+		"\[GothicU]"->"&ufr;",
+		"\[GothicV]"->"&vfr;",
+		"\[GothicW]"->"&wfr;",
+		"\[GothicX]"->"&xfr;",
+		"\[GothicY]"->"&yfr;",
+		"\[GothicZ]"->"&zfr;",
+		"\[GothicCapitalA]"->"&Afr;",
+		"\[GothicCapitalB]"->"&Bfr;",
+		"\[GothicCapitalC]"->"&Cfr;",
+		"\[GothicCapitalD]"->"&Dfr;",
+		"\[GothicCapitalE]"->"&Efr;",
+		"\[GothicCapitalF]"->"&Ffr;",
+		"\[GothicCapitalG]"->"&Gfr;",
+		"\[GothicCapitalH]"->"&Hfr;",
+		"\[GothicCapitalI]"->"&Ifr;",
+		"\[GothicCapitalJ]"->"&Jfr;",
+		"\[GothicCapitalK]"->"&Kfr;",
+		"\[GothicCapitalL]"->"&Lfr;",
+		"\[GothicCapitalM]"->"&Mfr;",
+		"\[GothicCapitalN]"->"&Nfr;",
+		"\[GothicCapitalO]"->"&Ofr;",
+		"\[GothicCapitalP]"->"&Pfr;",
+		"\[GothicCapitalQ]"->"&Qfr;",
+		"\[GothicCapitalR]"->"&Rfr;",
+		"\[GothicCapitalS]"->"&Sfr;",
+		"\[GothicCapitalT]"->"&Tfr;",
+		"\[GothicCapitalU]"->"&Ufr;",
+		"\[GothicCapitalV]"->"&Vfr;",
+		"\[GothicCapitalW]"->"&Wfr;",
+		"\[GothicCapitalX]"->"&Xfr;",
+		"\[GothicCapitalY]"->"&Yfr;",
+		"\[GothicCapitalZ]"->"&Zfr;",
+		"\[DoubleStruckA]"->"&aopf;",
+		"\[DoubleStruckB]"->"&bopf;",
+		"\[DoubleStruckC]"->"&copf;",
+		"\[DoubleStruckD]"->"&dopf;",
+		"\[DoubleStruckE]"->"&eopf;",
+		"\[DoubleStruckF]"->"&fopf;",
+		"\[DoubleStruckG]"->"&gopf;",
+		"\[DoubleStruckH]"->"&hopf;",
+		"\[DoubleStruckI]"->"&iopf;",
+		"\[DoubleStruckJ]"->"&jopf;",
+		"\[DoubleStruckK]"->"&kopf;",
+		"\[DoubleStruckL]"->"&lopf;",
+		"\[DoubleStruckM]"->"&mopf;",
+		"\[DoubleStruckN]"->"&nopf;",
+		"\[DoubleStruckO]"->"&oopf;",
+		"\[DoubleStruckP]"->"&popf;",
+		"\[DoubleStruckQ]"->"&qopf;",
+		"\[DoubleStruckR]"->"&ropf;",
+		"\[DoubleStruckS]"->"&sopf;",
+		"\[DoubleStruckT]"->"&topf;",
+		"\[DoubleStruckU]"->"&uopf;",
+		"\[DoubleStruckV]"->"&vopf;",
+		"\[DoubleStruckW]"->"&wopf;",
+		"\[DoubleStruckX]"->"&xopf;",
+		"\[DoubleStruckY]"->"&yopf;",
+		"\[DoubleStruckZ]"->"&zopf;",
+		"\[DoubleStruckCapitalA]"->"&Aopf;",
+		"\[DoubleStruckCapitalB]"->"&Bopf;",
+		"\[DoubleStruckCapitalC]"->"&Copf;",
+		"\[DoubleStruckCapitalD]"->"&Dopf;",
+		"\[DoubleStruckCapitalE]"->"&Eopf;",
+		"\[DoubleStruckCapitalF]"->"&Fopf;",
+		"\[DoubleStruckCapitalG]"->"&Gopf;",
+		"\[DoubleStruckCapitalH]"->"&Hopf;",
+		"\[DoubleStruckCapitalI]"->"&Iopf;",
+		"\[DoubleStruckCapitalJ]"->"&Jopf;",
+		"\[DoubleStruckCapitalK]"->"&Kopf;",
+		"\[DoubleStruckCapitalL]"->"&imped;",
+		"\[DoubleStruckCapitalM]"->"&Mopf;",
+		"\[DoubleStruckCapitalN]"->"&Nopf;",
+		"\[DoubleStruckCapitalO]"->"&Oopf;",
+		"\[DoubleStruckCapitalP]"->"&Popf;",
+		"\[DoubleStruckCapitalQ]"->"&Qopf;",
+		"\[DoubleStruckCapitalR]"->"&Ropf;",
+		"\[DoubleStruckCapitalS]"->"&Sopf;",
+		"\[DoubleStruckCapitalT]"->"&Topf;",
+		"\[DoubleStruckCapitalU]"->"&Uopf;",
+		"\[DoubleStruckCapitalV]"->"&Vopf;",
+		"\[DoubleStruckCapitalW]"->"&Wopf;",
+		"\[DoubleStruckCapitalX]"->"&Xopf;",
+		"\[DoubleStruckCapitalY]"->"&Yopf;",
+		"\[DoubleStruckCapitalZ]"->"&Zopf;",
+		"\[WeierstrassP]"->"&wp;",
+		"\[Aleph]"->"&aleph;",
+		"\[Bet]"->"&beth;",
+		"\[Gimel]"->"&gimel;",
+		"\[Dalet]"->"&daleth;",
+		"\[DownExclamation]"->"&iexcl;",
+		"\[Cent]"->"&cent;",
+		"\[Sterling]"->"&pound;",
+		"\[Currency]"->"&curren;",
+		"\[Yen]"->"&yen;",
+		"\[Section]"->"&sect;",
+		"\[Copyright]"->"&copy;",
+		"\[RegisteredTrademark]"->"&reg;",
+		"\[Trademark]"->"&trade;",
+		"\[Degree]"->"&deg;",
+		"\[Micro]"->"&micro;",
+		"\[Paragraph]"->"&para;",
+		"\[DownQuestion]"->"&iquest;",
+		"\[HBar]"->"&hslash;",
+		"\[Mho]"->"&mho;",
+		"\[Angstrom]"->"&angst;",
+		"\[EmptySet]"->"&varnothing;",
+		"\[Dash]"->"&ndash;",
+		"\[LongDash]"->"&mdash;",
+		"\[Dagger]"->"&dagger;",
+		"\[DoubleDagger]"->"&ddagger;",
+		"\[Bullet]"->"&bullet;",
+		"\[DotlessI]"->"&imath;",
+		"\[FiLigature]"->"&filig;",
+		"\[FlLigature]"->"&fllig;",
+		"\[Angle]"->"&angle;",
+		"\[RightAngle]"->"&angrt;",
+		"\[MeasuredAngle]"->"&measuredangle;",
+		"\[SphericalAngle]"->"&angsph;",
+		"\[Ellipsis]"->"&hellip;",
+		"\[VerticalEllipsis]"->"&vellip;",
+		"\[CenterEllipsis]"->"&ctdot;",
+		"\[AscendingEllipsis]"->"&utdot;",
+		"\[DescendingEllipsis]"->"&dtdot;",
+		"\[Prime]"->"&prime;",
+		"\[DoublePrime]"->"&Prime;",
+		"\[ReversePrime]"->"&backprime;",
+		"\[ForAll]"->"&ForAll;",
+		"\[Exists]"->"&Exists;",
+		"\[NotExists]"->"&NotExists;",
+		"\[Element]"->"&Element;",
+		"\[NotElement]"->"&NotElement;",
+		"\[ReverseElement]"->"&ReverseElement;",
+		"\[NotReverseElement]"->"&NotReverseElement;",
+		"\[Because]"->"&Because;",
+		"\[SuchThat]"->"&SuchThat;",
+		"\[VerticalSeparator]"->"&VerticalSeparator;",
+		"\[Therefore]"->"&Therefore;",
+		"\[Implies]"->"&Implies;",
+		"\[RoundImplies]"->"&RoundImplies;",
+		"\[Tilde]"->"&Tilde;",
+		"\[NotTilde]"->"&NotTilde;",
+		"\[EqualTilde]"->"&EqualTilde;",
+		"\[TildeEqual]"->"&TildeEqual;",
+		"\[NotTildeEqual]"->"&NotTildeEqual;",
+		"\[TildeFullEqual]"->"&TildeFullEqual;",
+		"\[TildeTilde]"->"&TildeTilde;",
+		"\[NotTildeTilde]"->"&NotTildeTilde;",
+		"\[NotEqualTilde]"->"&NotEqualTilde;",
+		"\[NotTildeFullEqual]"->"&NotTildeFullEqual;",
+		"\[LessTilde]"->"&LessTilde;",
+		"\[GreaterTilde]"->"&GreaterTilde;",
+		"\[NotLessTilde]"->"&NotLessTilde;",
+		"\[NotGreaterTilde]"->"&NotGreaterTilde;",
+		"\[LeftTriangle]"->"&LeftTriangle;",
+		"\[RightTriangle]"->"&RightTriangle;",
+		"\[LeftTriangleEqual]"->"&LeftTriangleEqual;",
+		"\[RightTriangleEqual]"->"&RightTriangleEqual;",
+		"\[LeftTriangleBar]"->"&LeftTriangleBar;",
+		"\[RightTriangleBar]"->"&RightTriangleBar;",
+		"\[NotLeftTriangleBar]"->"&NotLeftTriangleBar;",
+		"\[NotRightTriangleBar]"->"&NotRightTriangleBar;",
+		"\[NotLeftTriangle]"->"&NotLeftTriangle;",
+		"\[NotLeftTriangleEqual]"->"&NotLeftTriangleEqual;",
+		"\[NotRightTriangle]"->"&NotRightTriangle;",
+		"\[NotRightTriangleEqual]"->"&NotRightTriangleEqual;",
+		"\[NotEqual]"->"&NotEqual;",
+		"\[NotLess]"->"&NotLess;",
+		"\[NotGreater]"->"&NotGreater;",
+		"\[LessEqual]"->"&leq;",
+		"\[LessLess]"->"&LessLess;",
+		"\[GreaterGreater]"->"&GreaterGreater;",
+		"\[NotLessEqual]"->"&NotLessEqual;",
+		"\[GreaterEqual]"->"&GreaterEqual;",
+		"\[NotGreaterEqual]"->"&NotGreaterEqual;",
+		"\[LessSlantEqual]"->"&LessSlantEqual;",
+		"\[LessFullEqual]"->"&LessFullEqual;",
+		"\[NotLessLess]"->"&NotLessLess;",
+		"\[NotNestedLessLess]"->"&NotNestedLessLess;",
+		"\[NotLessSlantEqual]"->"&NotLessSlantEqual;",
+		"\[NotLessFullEqual]"->"&NotLessFullEqual;",
+		"\[NestedLessLess]"->"&NestedLessLess;",
+		"\[NestedGreaterGreater]"->"&NestedGreaterGreater;",
+		"\[GreaterSlantEqual]"->"&GreaterSlantEqual;",
+		"\[GreaterFullEqual]"->"&GreaterFullEqual;",
+		"\[NotGreaterGreater]"->"&NotGreaterGreater;",
+		"\[NotNestedGreaterGreater]"->"&NotNestedGreaterGreater;",
+		"\[NotGreaterSlantEqual]"->"&NotGreaterSlantEqual;",
+		"\[NotGreaterFullEqual]"->"&NotGreaterFullEqual;",
+		"\[LessGreater]"->"&LessGreater;",
+		"\[GreaterLess]"->"&GreaterLess;",
+		"\[NotLessGreater]"->"&NotLessGreater;",
+		"\[NotGreaterLess]"->"&NotGreaterLess;",
+		"\[LessEqualGreater]"->"&LessEqualGreater;",
+		"\[GreaterEqualLess]"->"&GreaterEqualLess;",
+		"\[Subset]"->"&subset;",
+		"\[Superset]"->"&Superset;",
+		"\[NotSubset]"->"&NotSubset;",
+		"\[NotSuperset]"->"&NotSuperset;",
+		"\[SubsetEqual]"->"&SubsetEqual;",
+		"\[SupersetEqual]"->"&SupersetEqual;",
+		"\[NotSubsetEqual]"->"&NotSubsetEqual;",
+		"\[NotSupersetEqual]"->"&NotSupersetEqual;",
+		"\[SquareSubset]"->"&SquareSubset;",
+		"\[SquareSuperset]"->"&SquareSuperset;",
+		"\[SquareSubsetEqual]"->"&SquareSubsetEqual;",
+		"\[SquareSupersetEqual]"->"&SquareSupersetEqual;",
+		"\[NotSquareSubset]"->"&NotSquareSubset;",
+		"\[NotSquareSuperset]"->"&NotSquareSuperset;",
+		"\[NotSquareSubsetEqual]"->"&NotSquareSubsetEqual;",
+		"\[NotSquareSupersetEqual]"->"&NotSquareSupersetEqual;",
+		"\[Precedes]"->"&Precedes;",
+		"\[Succeeds]"->"&Succeeds;",
+		"\[PrecedesEqual]"->"&PrecedesEqual;",
+		"\[SucceedsEqual]"->"&SucceedsEqual;",
+		"\[PrecedesTilde]"->"&PrecedesTilde;",
+		"\[SucceedsTilde]"->"&SucceedsTilde;",
+		"\[NotPrecedes]"->"&NotPrecedes;",
+		"\[NotSucceeds]"->"&NotSucceeds;",
+		"\[PrecedesSlantEqual]"->"&PrecedesSlantEqual;",
+		"\[NotPrecedesEqual]"->"&NotPrecedesEqual;",
+		"\[NotPrecedesSlantEqual]"->"&NotPrecedesSlantEqual;",
+		"\[NotPrecedesTilde]"->"&NotPrecedesTilde;",
+		"\[SucceedsSlantEqual]"->"&SucceedsSlantEqual;",
+		"\[NotSucceedsEqual]"->"&NotSucceedsEqual;",
+		"\[NotSucceedsSlantEqual]"->"&NotSucceedsSlantEqual;",
+		"\[NotSucceedsTilde]"->"&NotSucceedsTilde;",
+		"\[UpTee]"->"&UpTee;",
+		"\[Proportional]"->"&Proportional;",
+		"\[Proportion]"->"&Proportion;",
+		"\[Congruent]"->"&Congruent;",
+		"\[NotCongruent]"->"&NotCongruent;",
+		"\[CupCap]"->"&CupCap;",
+		"\[NotCupCap]"->"&NotCupCap;",
+		"\[Equilibrium]"->"&Equilibrium;",
+		"\[ReverseEquilibrium]"->"&ReverseEquilibrium;",
+		"\[UpEquilibrium]"->"&UpEquilibrium;",
+		"\[ReverseUpEquilibrium]"->"&ReverseUpEquilibrium;",
+		"\[RightTee]"->"&RightTee;",
+		"\[LeftTee]"->"&LeftTee;",
+		"\[DownTee]"->"&DownTee;",
+		"\[DoubleRightTee]"->"&DoubleRightTee;",
+		"\[DoubleLeftTee]"->"&DoubleLeftTee;",
+		"\[HumpEqual]"->"&HumpEqual;",
+		"\[NotHumpEqual]"->"&NotHumpEqual;",
+		"\[HumpDownHump]"->"&HumpDownHump;",
+		"\[NotHumpDownHump]"->"&NotHumpDownHump;",
+		"\[DotEqual]"->"&DotEqual;",
+		"\[Colon]"->"&colon;",
+		"\[Equal]"->"&Equal;",
+		"\[Sqrt]"->"&Sqrt;",
+		"\[Divides]"->"&Divides;",
+		"\[DoubleVerticalBar]"->"&DoubleVerticalBar;",
+		"\[NotDoubleVerticalBar]"->"&NotDoubleVerticalBar;",
+		"\[Not]"->"&not;",
+		"\[VerticalTilde]"->"&VerticalTilde;",
+		"\[Times]"->"&times;",
+		"\[PlusMinus]"->"&PlusMinus;",
+		"\[MinusPlus]"->"&MinusPlus;",
+		"\[Minus]"->"&minus;",
+		"\[Divide]"->"&div;",
+		"\[CenterDot]"->"&CenterDot;",
+		"\[SmallCircle]"->"&SmallCircle;",
+		"\[Cross]"->"&Cross;",
+		"\[CirclePlus]"->"&CirclePlus;",
+		"\[CircleMinus]"->"&CircleMinus;",
+		"\[CircleTimes]"->"&CircleTimes;",
+		"\[CircleDot]"->"&CircleDot;",
+		"\[Star]"->"&Star;",
+		"\[Square]"->"&Square;",
+		"\[Diamond]"->"&Diamond;",
+		"\[Del]"->"&Del;",
+		"\[Backslash]"->"&Backslash;",
+		"\[Cap]"->"&frown;",
+		"\[Cup]"->"&smile;",
+		"\[Coproduct]"->"&Coproduct;",
+		"\[Integral]"->"&Integral;",
+		"\[ContourIntegral]"->"&ContourIntegral;",
+		"\[DoubleContourIntegral]"->"&DoubleContourIntegral;",
+		"\[CounterClockwiseContourIntegral]"->"&CounterClockwiseContourIntegral;",
+		"\[ClockwiseContourIntegral]"->"&ClockwiseContourIntegral;",
+		"\[Sum]"->"&Sum;",
+		"\[Product]"->"&Product;",
+		"\[Intersection]"->"&Intersection;",
+		"\[Union]"->"&Union;",
+		"\[UnionPlus]"->"&UnionPlus;",
+		"\[SquareIntersection]"->"&SquareIntersection;",
+		"\[SquareUnion]"->"&SquareUnion;",
+		"\[Wedge]"->"&Wedge;",
+		"\[And]"->"&&$   $&and;",
+		"\[Nand]"->"&&$   $&barwed;",
+		"\[Vee]"->"&Vee;",
+		"\[Or]"->"&or;",
+		"\[Nor]"->"&barvee;",
+		"\[Xor]"->"&veebar;",
+		"\[PartialD]"->"&PartialD;",
+		"\[DifferentialD]"->"&dd;",
+		"\[CapitalDifferentialD]"->"&CapitalDifferentialD;",
+		"\[RightArrow]"->"&RightArrow;",
+		"\[LeftArrow]"->"&LeftArrow;",
+		"\[UpArrow]"->"&UpArrow;",
+		"\[DownArrow]"->"&DownArrow;",
+		"\[LeftRightArrow]"->"&LeftRightArrow;",
+		"\[UpDownArrow]"->"&UpDownArrow;",
+		"\[ShortRightArrow]"->"&ShortRightArrow;",
+		"\[ShortLeftArrow]"->"&ShortLeftArrow;",
+		"\[ShortUpArrow]"->"&ShortUpArrow;",
+		"\[ShortDownArrow]"->"&ShortDownArrow;",
+		"\[RuleDelayed]"->"&RuleDelayed;",
+		"\[DoubleRightArrow]"->"&DoubleRightArrow;",
+		"\[DoubleLeftArrow]"->"&DoubleLeftArrow;",
+		"\[DoubleUpArrow]"->"&DoubleUpArrow;",
+		"\[DoubleDownArrow]"->"&DoubleDownArrow;",
+		"\[DoubleLeftRightArrow]"->"&DoubleLeftRightArrow;",
+		"\[DoubleUpDownArrow]"->"&DoubleUpDownArrow;",
+		"\[RightArrowBar]"->"&RightArrowBar;",
+		"\[LeftArrowBar]"->"&LeftArrowBar;",
+		"\[UpArrowBar]"->"&UpArrowBar;",
+		"\[DownArrowBar]"->"&DownArrowBar;",
+		"\[RightTeeArrow]"->"&RightTeeArrow;",
+		"\[LeftTeeArrow]"->"&LeftTeeArrow;",
+		"\[UpTeeArrow]"->"&UpTeeArrow;",
+		"\[DownTeeArrow]"->"&DownTeeArrow;",
+		"\[UpperLeftArrow]"->"&UpperLeftArrow;",
+		"\[UpperRightArrow]"->"&UpperRightArrow;",
+		"\[LowerRightArrow]"->"&LowerRightArrow;",
+		"\[LowerLeftArrow]"->"&LowerLeftArrow;",
+		"\[LongRightArrow]"->"&LongRightArrow;",
+		"\[LongLeftArrow]"->"&LongLeftArrow;",
+		"\[DoubleLongLeftArrow]"->"&DoubleLongLeftArrow;",
+		"\[DoubleLongRightArrow]"->"&DoubleLongRightArrow;",
+		"\[LongLeftRightArrow]"->"&LongLeftRightArrow;",
+		"\[DoubleLongLeftRightArrow]"->"&DoubleLongLeftRightArrow;",
+		"\[RightArrowLeftArrow]"->"&RightArrowLeftArrow;",
+		"\[LeftArrowRightArrow]"->"&LeftArrowRightArrow;",
+		"\[UpArrowDownArrow]"->"&UpArrowDownArrow;",
+		"\[DownArrowUpArrow]"->"&DownArrowUpArrow;",
+		"\[RightVector]"->"&RightVector;",
+		"\[DownRightVector]"->"&DownRightVector;",
+		"\[LeftVector]"->"&LeftVector;",
+		"\[DownLeftVector]"->"&DownLeftVector;",
+		"\[RightUpVector]"->"&RightUpVector;",
+		"\[LeftUpVector]"->"&LeftUpVector;",
+		"\[RightDownVector]"->"&RightDownVector;",
+		"\[LeftDownVector]"->"&LeftDownVector;",
+		"\[LeftRightVector]"->"&LeftRightVector;",
+		"\[DownLeftRightVector]"->"&DownLeftRightVector;",
+		"\[RightUpDownVector]"->"&RightUpDownVector;",
+		"\[LeftUpDownVector]"->"&LeftUpDownVector;",
+		"\[RightVectorBar]"->"&RightVectorBar;",
+		"\[DownRightVectorBar]"->"&DownRightVectorBar;",
+		"\[LeftVectorBar]"->"&LeftVectorBar;",
+		"\[DownLeftVectorBar]"->"&DownLeftVectorBar;",
+		"\[RightUpVectorBar]"->"&RightUpVectorBar;",
+		"\[LeftUpVectorBar]"->"&LeftUpVectorBar;",
+		"\[RightDownVectorBar]"->"&RightDownVectorBar;",
+		"\[LeftDownVectorBar]"->"&LeftDownVectorBar;",
+		"\[RightTeeVector]"->"&RightTeeVector;",
+		"\[DownRightTeeVector]"->"&DownRightTeeVector;",
+		"\[LeftTeeVector]"->"&LeftTeeVector;",
+		"\[DownLeftTeeVector]"->"&DownLeftTeeVector;",
+		"\[RightUpTeeVector]"->"&RightUpTeeVector;",
+		"\[LeftUpTeeVector]"->"&LeftUpTeeVector;",
+		"\[RightDownTeeVector]"->"&RightDownTeeVector;",
+		"\[LeftDownTeeVector]"->"&LeftDownTeeVector;",
+		"\[LeftDoubleBracket]"->"&LeftDoubleBracket;",
+		"\[RightDoubleBracket]"->"&RightDoubleBracket;",
+		"\[LeftAngleBracket]"->"&LeftAngleBracket;",
+		"\[RightAngleBracket]"->"&RightAngleBracket;",
+		"\[LeftFloor]"->"&LeftFloor;",
+		"\[RightFloor]"->"&RightFloor;",
+		"\[LeftCeiling]"->"&LeftCeiling;",
+		"\[RightCeiling]"->"&RightCeiling;",
+		"\[LeftBracketingBar]"->"&LeftBracketingBar;",
+		"\[RightBracketingBar]"->"&RightBracketingBar;",
+		"\[LeftDoubleBracketingBar]"->"&LeftDoubleBracketingBar;",
+		"\[RightDoubleBracketingBar]"->"&RightDoubleBracketingBar;",
+		"\[EmptyCircle]"->"&bigcirc;",
+		"\[FilledRectangle]"->"&marker;",
+		"\[EmptySquare]"->"&squ;",
+		"\[EmptyVerySmallSquare]"->"&EmptyVerySmallSquare;",
+		"\[FilledSmallSquare]"->"&squarf;",
+		"\[FilledVerySmallSquare]"->"&FilledVerySmallSquare;",
+		"\[EmptyUpTriangle]"->"&bigtriangleup;",
+		"\[EmptyDownTriangle]"->"&bigtriangledown;",
+		"\[FivePointedStar]"->"&bigstar;",
+		"\[SixPointedStar]"->"&sext;",
+		"\[SpadeSuit]"->"&spadesuit;",
+		"\[HeartSuit]"->"&heartsuit;",
+		"\[DiamondSuit]"->"&diamondsuit;",
+		"\[ClubSuit]"->"&clubsuit;",
+		"\[Flat]"->"&flat;",
+		"\[Natural]"->"&natural;",
+		"\[Sharp]"->"&sharp;",
+		"\[NumberSign]"->"&num;",
+		"\[InvisibleSpace]"->"&ZeroWidthSpace;",
+		"\[VeryThinSpace]"->"&VeryThinSpace;",
+		"\[ThinSpace]"->"&ThinSpace;",
+		"\[ThickSpace]"->"&ThickSpace;",
+		"\[NegativeVeryThinSpace]"->"&NegativeVeryThinSpace;",
+		"\[NegativeThinSpace]"->"&NegativeThinSpace;",
+		"\[NegativeMediumSpace]"->"&NegativeMediumSpace;",
+		"\[NegativeThickSpace]"->"&NegativeThickSpace;",
+		"\[OpenCurlyQuote]"->"&OpenCurlyQuote;",
+		"\[CloseCurlyQuote]"->"&CloseCurlyQuote;",
+		"\[OpenCurlyDoubleQuote]"->"&OpenCurlyDoubleQuote;",
+		"\[CloseCurlyDoubleQuote]"->"&CloseCurlyDoubleQuote;",
+		"\[OverParenthesis]"->"&OverParenthesis;",
+		"\[UnderParenthesis]"->"&UnderParenthesis;",
+		"\[OverBrace]"->"&OverBrace;",
+		"\[UnderBrace]"->"&UnderBrace;",
+		"\[OverBracket]"->"&OverBracket;",
+		"\[UnderBracket]"->"&UnderBracket;",
+		"\[IndentingNewLine]"->"&IndentingNewLine;",
+		"\[NoBreak]"->"&NoBreak;",
+		"\[NonBreakingSpace]"->"&nbsp;",
+		"\[SpaceIndicator]"->"&blank;",
+		"\[InvisibleApplication]"->"&af;",
+		"\[ReturnIndicator]"->"&crarr;",
+		"\[HorizontalLine]"->"&HorizontalLine;",
+		"\[VerticalLine]"->"&VerticalLine;",
+		"\[InvisibleComma]"->"&ic;",
+		"\[SkeletonIndicator]"->"&hybull;",
+		"\[LeftSkeleton]"->"&LeftSkeleton;",
+		"\[RightSkeleton]"->"&RightSkeleton;",
+		"\[Piecewise]"->"&piecewise;",
+		"\[VerticalBar]"->"&VerticalBar;",
+		"\[NotVerticalBar]"->"&NotVerticalBar;"
+		};
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -2265,166 +1603,6 @@ $NotebookToMarkdownLongToUnicodeReplacements=
 
 
 (* ::Subsubsubsection::Closed:: *)
-(*HTML Reps*)
-
-
-
-$NotebookToMarkdownDumbSpecialCharListLong=
-	{
-		"AliasDelimiter","AliasIndicator","Alpha","AltKey","And","AquariusSign",
-		"AriesSign","AutoPlaceholder","Backslash","BeamedEighthNote","BeamedSixteenthNote","Beta",
-		"BlackBishop","BlackKing","BlackKnight","BlackPawn","BlackQueen","BlackRook",
-		"CancerSign","Cap","CapitalDifferentialD","CapitalDigamma","CapitalKoppa","CapitalSampi",
-		"CapitalStigma","CapricornSign","Cent","CenterDot","CenterEllipsis","Checkmark",
-		"Chi","CircleDot","CircleMinus","CirclePlus","CircleTimes","ClockwiseContourIntegral",
-		"CommandKey","Conditioned","Conjugate","ConjugateTranspose","ConstantC","Continuation",
-		"ContourIntegral","ControlKey","CounterClockwiseContourIntegral","Cross","Cup","CurlyCapitalUpsilon",
-		"CurlyEpsilon","CurlyKappa","CurlyPhi","CurlyPi","CurlyRho","CurlyTheta",
-		"DeleteKey","DifferenceDelta","DifferentialD","Digamma","DirectedEdge","DiscreteRatio",
-		"DiscreteShift","DiscretionaryPageBreakAbove","DiscretionaryPageBreakBelow","Distributed","Divide","DotEqual",
-		"DotlessJ","DottedSquare","DoubleDagger","DoubledGamma","DoubledPi","DoubleDownArrow",
-		"DoubledPi","DoubleLeftArrow","DoubleLeftRightArrow","DoubleLeftTee","DoubleLongLeftArrow","DoubleLongLeftRightArrow",
-		"DoubleLongRightArrow","DoubleRightArrow","DoubleStruckA","DoubleStruckB","DoubleStruckC","DoubleStruckA",
-		"DoubleStruckB","DoubleStruckC","DoubleStruckCapitalA","DoubleStruckCapitalB","DoubleStruckCapitalC","DoubleStruckCapitalD",
-		"DoubleStruckCapitalE","DoubleStruckCapitalF","DoubleStruckCapitalG","DoubleStruckCapitalH","DoubleStruckCapitalI","DoubleStruckCapitalJ",
-		"DoubleStruckCapitalK","DoubleStruckCapitalL","DoubleStruckCapitalM","DoubleStruckCapitalN","DoubleStruckCapitalO","DoubleStruckCapitalP",
-		"DoubleStruckCapitalQ","DoubleStruckCapitalR","DoubleStruckCapitalS","DoubleStruckCapitalT","DoubleStruckCapitalU","DoubleStruckCapitalV",
-		"DoubleStruckCapitalW","DoubleStruckCapitalX","DoubleStruckCapitalY","DoubleStruckCapitalZ","DoubleStruckD","DoubleStruckE",
-		"DoubleStruckEight","DoubleStruckF","DoubleStruckFive","DoubleStruckFour","DoubleStruckG","DoubleStruckH",
-		"DoubleStruckI","DoubleStruckJ","DoubleStruckK","DoubleStruckL","DoubleStruckM","DoubleStruckN",
-		"DoubleStruckNine","DoubleStruckO","DoubleStruckOne","DoubleStruckP","DoubleStruckQ","DoubleStruckR",
-		"DoubleStruckS","DoubleStruckSeven","DoubleStruckSix","DoubleStruckT","DoubleStruckThree","DoubleStruckTwo",
-		"DoubleStruckU","DoubleStruckV","DoubleStruckW","DoubleStruckX","DoubleStruckY","DoubleStruckZ",
-		"DoubleStruckZero","DoubleUpArrow","DoubleUpDownArrow","DownArrowBar","DownArrow","DownBreve",
-		"DownLeftRightVector","DownLeftTeeVector","DownLeftVector","DownLeftVectorBar","DownPointer","DownRightTeeVector",
-		"DownRightVector","DownRightVectorBar","DownTeeArrow","Earth","EighthNote","Element",
-		"Ellipsis","EmptyRectangle","EmptySet","EnterKey","EntityEnd","EntityStart",
-		"Epsilon","Equal","Equilibrium","Equivalent","ErrorIndicator","EscapeKey",
-		"Eta","Euro","ExponentialE","FilledSmallCircle","FinalSigma","FirstPage",
-		"FormalA","FormalAlpha","FormalB","FormalBeta","FormalC","FormalCapitalA",
-		"FormalCapitalAlpha","FormalCapitalB","FormalCapitalBeta","FormalCapitalC","FormalCapitalChi","FormalCapitalD",
-		"FormalCapitalDelta","FormalCapitalDigamma","FormalCapitalE","FormalCapitalEpsilon","FormalCapitalEta","FormalCapitalF",
-		"FormalCapitalG","FormalCapitalGamma","FormalCapitalH","FormalCapitalI","FormalCapitalIota","FormalCapitalJ",
-		"FormalCapitalK","FormalCapitalKappa","FormalCapitalKoppa","FormalCapitalL","FormalCapitalLambda","FormalCapitalM",
-		"FormalCapitalMu","FormalCapitalN","FormalCapitalNu","FormalCapitalO","FormalCapitalOmega","FormalCapitalOmicron",
-		"FormalCapitalP","FormalCapitalPhi","FormalCapitalPi","FormalCapitalPsi","FormalCapitalQ","FormalCapitalR",
-		"FormalCapitalRho","FormalCapitalS","FormalCapitalSampi","FormalCapitalSigma","FormalCapitalStigma","FormalCapitalT",
-		"FormalCapitalTau","FormalCapitalTheta","FormalCapitalU","FormalCapitalUpsilon","FormalCapitalV","FormalCapitalW",
-		"FormalCapitalX","FormalCapitalXi","FormalCapitalY","FormalCapitalZ","FormalCapitalZeta","FormalChi",
-		"FormalCurlyCapitalUpsilon","FormalCurlyEpsilon","FormalCurlyKappa","FormalCurlyPhi","FormalCurlyPi","FormalCurlyRho",
-		"FormalCurlyTheta","FormalD","FormalDelta","FormalDigamma","FormalE","FormalEpsilon",
-		"FormalEta","FormalF","FormalFinalSigma","FormalG","FormalGamma","FormalH",
-		"FormalI","FormalIota","FormalJ","FormalK","FormalKappa","FormalKoppa",
-		"FormalL","FormalLambda","FormalM","FormalMu","FormalN","FormalNu",
-		"FormalO","FormalOmega","FormalOmicron","FormalP","FormalPhi","FormalPi",
-		"FormalPsi","FormalQ","FormalR","FormalRho","FormalS","FormalSampi",
-		"FormalSigma","FormalStigma","FormalT","FormalTau","FormalTheta","FormalU",
-		"FormalUpsilon","FormalV","FormalW","FormalX","FormalXi","FormalY",
-		"FormalZ","FormalZeta","FreakedSmiley","Function","GeminiSign","GothicA",
-		"GothicB","GothicC","GothicCapitalA","GothicCapitalB","GothicCapitalC","GothicCapitalD",
-		"GothicCapitalE","GothicCapitalF","GothicCapitalG","GothicCapitalH","GothicCapitalI","GothicCapitalJ",
-		"GothicCapitalK","GothicCapitalL","GothicCapitalM","GothicCapitalN","GothicCapitalO","GothicCapitalP",
-		"GothicCapitalQ","GothicCapitalR","GothicCapitalS","GothicCapitalT","GothicCapitalU","GothicCapitalV",
-		"GothicCapitalW","GothicCapitalX","GothicCapitalY","GothicCapitalZ","GothicD","GothicE",
-		"GothicEight","GothicF","GothicFive","GothicFour","GothicG","GothicH",
-		"GothicI","GothicJ","GothicK","GothicL","GothicM","GothicN",
-		"GothicNine","GothicO","GothicOne","GothicP","GothicQ","GothicR",
-		"GothicS","GothicSeven","GothicSix","GothicT","GothicThree","GothicTwo",
-		"GothicU","GothicV","GothicW","GothicX","GothicY","GothicZ",
-		"GothicZero","GrayCircle","GraySquare","Hacek","HermitianConjugate","ImaginaryI",
-		"ImaginaryJ","Implies","IndentingNewLine","Iota","Kappa","KernelIcon",
-		"Koppa","Lambda","LastPage","LeftArrow","LeftArrowRightArrow","LeftAssociation",
-		"LeftBracketingBar","LeftDoubleBracket","LeftDoubleBracketingBar","LeftDownTeeVector","LeftDownVectorBar","LeftModified",
-		"LeftRightArrow","LeftRightVector","LeftSkeleton","LeftTeeArrow","LeftTeeVector","LeftTriangleBar",
-		"LeftTriangleEqual","LeftUpDownVector","LeftUpTeeVector","LeftUpVectorBar","LeftVector","LeftVectorBar",
-		"LeoSign","LightBulb","Limit","LineSeparator","LibraSign","LongDash",
-		"LongEqual","LongLeftArrow","LongLeftRightArrow","LongRightArrow","LowerLeftArrow","LowerRightArrow",
-		"Mars","MathematicaIcon","MaxLimit","MinLimit","Mu","Natural",
-		"Neptune","NestedGreaterGreater","NestedLessLess","NeutralSmiley","NotElement",
-		"NotEqual","NotEqualTilde","NotGreaterGreater","NotGreaterSlantEqual","NotHumpDownHump","NotHumpEqual",
-		"NotLeftTriangleBar","NotLessEqual","NotLessLess","NotLessSlantEqual","NotNestedGreaterGreater","NotNestedLessLess",
-		"NotPrecedesEqual","NotPrecedesTilde","NotRightTriangleBar","NotSquareSubset","NotSquareSuperset","NotSucceedsEqual",
-		"NotSucceedsTilde","NotVerticalBar","NumberSign","Omega","Omicron","OptionKey",
-		"OverBracket","ParagraphSeparator","PermutationProduct","Phi","Pi","Piecewise",
-		"PiscesSign","Placeholder","Proportional","Psi",
-		"ReturnKey","ReverseElement","ReverseEquilibrium","ReverseUpEquilibrium","Rho","RightAngle",
-		"RightArrow","RightArrowBar","RightArrowLeftArrow","RightAssociation","RightBracketingBar","RightCeiling",
-		"RightDoubleBracket","RightDoubleBracketingBar","RightDownTeeVector","RightDownVector","RightDownVectorBar","RightModified",
-		"RightSkeleton","RightTeeArrow","RightTeeVector","RightTriangleBar","RightUpDownVector","RightUpTeeVector",
-		"RightUpVector","RightUpVectorBar","RightVector","RightVectorBar","RoundImplies","RoundSpaceIndicator",
-		"Rule","RuleDelayed","SagittariusSign","Sampi","ScorpioSign","ScriptA",
-		"ScriptB","ScriptC","ScriptCapitalA","ScriptCapitalB","ScriptCapitalC","ScriptCapitalD",
-		"ScriptCapitalE","ScriptCapitalF","ScriptCapitalG","ScriptCapitalH","ScriptCapitalI","ScriptCapitalJ",
-		"ScriptCapitalK","ScriptCapitalL","ScriptCapitalM","ScriptCapitalN","ScriptCapitalO","ScriptCapitalP",
-		"ScriptCapitalQ","ScriptCapitalR","ScriptCapitalS","ScriptCapitalT","ScriptCapitalU","ScriptCapitalV",
-		"ScriptCapitalW","ScriptCapitalX","ScriptCapitalY","ScriptCapitalZ","ScriptD","ScriptDotlessI",
-		"ScriptDotlessJ","ScriptE","ScriptEight","ScriptF","ScriptFive","ScriptFour",
-		"ScriptG","ScriptH","ScriptI","ScriptJ","ScriptK","ScriptL",
-		"ScriptM","ScriptN","ScriptNine","ScriptO","ScriptOne","ScriptP",
-		"ScriptQ","ScriptR","ScriptS","ScriptSeven","ScriptSix","ScriptT",
-		"ScriptThree","ScriptTwo","ScriptU","ScriptV","ScriptW","ScriptX",
-		"ScriptY","ScriptZ","ScriptZero","SelectionPlaceholder","ShortLeftArrow","ShortRightArrow",
-		"Sigma","SpaceKey","SpanFromAbove","SpanFromBoth","SpanFromLeft","SphericalAngle",
-		"Sqrt","Square","Sterling","Stigma","SuchThat","Sum",
-		"SystemEnterKey","SystemsModelDelay","SZ","TabKey","Tau","TaurusSign",
-		"TensorProduct","TensorWedge","Theta","Thorn","Transpose","TripleDot",
-		"TwoWayRule","UnderBracket","UndirectedEdge","UnionPlus","UpArrowBar","UpArrowDownArrow",
-		"UpEquilibrium","UpperLeftArrow","UpperRightArrow","UpPointer","Upsilon","UpTeeArrow",
-		"Uranus","VerticalBar","VerticalSeparator","VirgoSign","WarningSign","WatchIcon",
-		"WhiteBishop","WhiteKing","WhiteKnight","WhitePawn","WhiteQueen","WhiteRook",
-		"Wolf","WolframLanguageLogo","WolframLanguageLogoCircle","Xi","Xnor","Yen",
-		"Zeta"
-		};
-$NotebookToMarkdownDumbSpecialCharListConv=
-	ToExpression@
-		Map[
-			"\"\\["<>#<>"]\""&,
-			$NotebookToMarkdownDumbSpecialCharListLong
-			];
-
-
-$NotebookToMarkdownDumbSpecialCharListLong=
-	Alternatives@@$NotebookToMarkdownDumbSpecialCharListLong;
-$NotebookToMarkdownDumbSpecialCharListConv=
-	Alternatives@@$NotebookToMarkdownDumbSpecialCharListConv;
-
-
-$NotebookToMarkdownLongToSpecialRep=
-	{
-		"\\[AltKey]"|"\[AltKey]"->"<kbd>ALT</kbd>",
-		"\\[CommandKey]"|"\[CommandKey]"->"<kbd>CMD</kbd>",
-		"\\[ControlKey]"|"\[ControlKey]"->"<kbd>CTRL</kbd>",
-		"\\[DeleteKey]"|"\[DeleteKey]"->"<kbd>DEL</kbd>",
-		"\\[EnterKey]"|"\[EnterKey]"->"<kbd>ENTER</kbd>",
-		"\\[EscapeKey]"|"\[EscapeKey]"->"<kbd>ESC</kbd>",
-		"\\[OptionKey]"|"\[OptionKey]"->"<kbd>OPTION</kbd>",
-		"\\[ReturnKey]"|"\[ReturnKey]"->"<kbd>RET</kbd>",
-		"\\[SpaceKey]"|"\[SpaceKey]"->"<kbd>SPACE</kbd>",
-		"\\[SystemEnterKey]"|"\[SystemEnterKey]"->"<kbd>RET</kbd>",
-		"\\[TabKey]"|"\[TabKey]"->"<kbd>Tab</kbd>",
-		"\\["~~s:($NotebookToMarkdownDumbSpecialCharListLong)~~"]":>
-			TemplateApply[
-				"<span class=\"special-character ``\" >``</span>",
-				{
-					s,
-					ToExpression["\"\\["<>s<>"]\""]
-					}
-				],
-		char:$NotebookToMarkdownDumbSpecialCharListConv:>
-			TemplateApply[
-				"<span class=\"special-character ``\" >``</span>",
-				{
-					CharacterName[char],
-					char
-					}
-				]
-		};
-
-
-
-
-
-(* ::Subsubsubsection::Closed:: *)
 (*Main*)
 
 
@@ -2494,11 +1672,24 @@ NotebookToMarkdown[nb_Notebook]:=
 		]
 
 
-iNotebookToMarkdown//Clear
+iNotebookToMarkdown//Clear;
+iNotebookToMarkdownValid//Clear;
+iNotebookToMarkdownRegister//Clear;
 
 
 iNotebookToMarkdown[pathInfo_][e___]:=
 	iNotebookToMarkdown[pathInfo, e]
+
+
+iNotebookToMarkdownRegister/:
+	HoldPattern[iNotebookToMarkdownRegister[pathInfo_, p__]~SetDelayed~d_]:=
+		(
+			iNotebookToMarkdown[pathInfo, p]:=d;
+			iNotebookToMarkdownValid[pathInfo, p]:=True;
+			)
+
+
+iNotebookToMarkdownValid[e__]:=False
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -2506,7 +1697,7 @@ iNotebookToMarkdown[pathInfo_][e___]:=
 
 
 
-$iNotebookToMarkdownRasterizeBoxHeads=
+$iNotebookToMarkdownBasicBoxHeads=
 	Alternatives[
 		_RowBox,_GridBox,_SuperscriptBox,
 		_SubscriptBox,_SubsuperscriptBox,_OverscriptBox,
@@ -2590,12 +1781,16 @@ $iNotebookToMarkdownRasterizeBaseForms=
 		__
 		]|
 	_DynamicBox|_DynamicModuleBox|
-	_SliderBox|_SetterBarBox|
+	_CheckboxBox|_DynamicBox|
+	_InputFieldBox|_OpenerBox|
+	_PopupMenuBox|_RadioButtonBox|_SliderBox|
+	_ButtonBox?(FreeQ[BaseStyle->"Link"|"Hyperlink"])|
+	_PanelBox|_PaneSelectorBox|_PaneBox|_TogglerBox|
 	$iNotebookToMarkdownRasterizeBoxHeads?(Not@*FreeQ[_DynamicBox])|
 	TagBox[__, _InterpretTemplate, ___];
 $iNotebookToMarkdownRasterizeForms=
 	$iNotebookToMarkdownRasterizeBaseForms|
-		_?(
+		$iNotebookToMarkdownBasicBoxHeads?(
 			Not@*FreeQ[
 				$iNotebookToMarkdownRasterizeBaseForms|
 					$iNotebookToMarkdownOutputStringBaseForms
@@ -2870,30 +2065,35 @@ markdownCodeCellIOReformatBaseExport[
 	Hold[stack_],
 	ops:OptionsPattern[]
 	]:=
-	notebookToMarkdownFEExport[
-		pathInfo,
-		ReplaceAll[
-			{
-				r:RawBoxes[s_]:>
-					(stack["Raw", ToString@Hash[r]]=s;ToString@Hash[r]),
-				p:ExportPacket[s_, t_]:>
-					(
-						If[!KeyMemberQ[stack, t], stack[t]=<||>];
-						stack[t, ToString@Hash[p]]=s;ToString@Hash[p]
-						)
-				}
-			]@
-		markdownCodeCellIOReformatPreClean[
+	Replace[iNotebookToMarkdown[##],
+		Except[_String]:>
+			notebookToMarkdownFEExport[
+				##,
+				First@Flatten@{style},
+				{
+					ops,
+					PageWidth->700
+					}
+				]
+		]&[
 			pathInfo,
-			e,
-			style
-			],
-		First@Flatten@{style},
-		{
-			ops,
-			PageWidth->700
-			}
-		];
+			ReplaceAll[
+				{
+					r:RawBoxes[s_]:>
+						(stack["Raw", ToString@Hash[r]]=s;ToString@Hash[r]),
+					p:ExportPacket[s_, t_]:>
+						(
+							If[!KeyMemberQ[stack, t], stack[t]=<||>];
+							stack[t, ToString@Hash[p]]=s;ToString@Hash[p]
+							)
+					}
+				]@
+			markdownCodeCellIOReformatPreClean[
+				pathInfo,
+				e,
+				style
+				]
+			];
 
 
 (* ::Text:: *)
@@ -3054,7 +2254,7 @@ markdownIDHook[id_]:=
 
 
 
-iNotebookToMarkdown[pathInfo_, 
+iNotebookToMarkdownRegister[pathInfo_, 
 	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "FencedCode",___]]:=
 	markdownCodeCellIOReformat[
 		pathInfo,
@@ -3083,14 +2283,14 @@ iNotebookToMarkdown[pathInfo_,
 		];
 
 
-iNotebookToMarkdown[pathInfo_,
+iNotebookToMarkdownRegister[pathInfo_,
 	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "Code"|"Input",___]]:=
 	markdownCodeCellIOReformat[pathInfo,
 		e,
 		"InputText",
 		StringReplace[#,StartOfLine->"\t"]&
 		];
-iNotebookToMarkdown[pathInfo_,
+iNotebookToMarkdownRegister[pathInfo_,
 	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms],"InlineInput",___]]:=
 	markdownCodeCellIOReformat[pathInfo,
 		Replace[e,
@@ -3099,7 +2299,7 @@ iNotebookToMarkdown[pathInfo_,
 		"InputText",
 		"```"<>#<>If[StringEndsQ[#,"`"]," ",""]<>"```"&
 		];
-iNotebookToMarkdown[pathInfo_,
+iNotebookToMarkdownRegister[pathInfo_,
 	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "Output",___]]:=
 	markdownCodeCellIOReformat[pathInfo, 
 		e,
@@ -3111,7 +2311,7 @@ iNotebookToMarkdown[pathInfo_,
 			]&
 		];
 
-iNotebookToMarkdown[pathInfo_,
+iNotebookToMarkdownRegister[pathInfo_,
 	Cell[
 		(e:Except[$iNotebookToMarkdownIgnoredIOForms])|
 			OutputFormData[_, e_],
@@ -3165,7 +2365,7 @@ $iNotebookToMarkdownSectionStyleRanking=
 		|>;
 
 
-iNotebookToMarkdown[pathInfo_,Cell[t_, "Title", ___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_, "Title", ___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>
 			Replace[
@@ -3177,7 +2377,7 @@ iNotebookToMarkdown[pathInfo_,Cell[t_, "Title", ___]]:=
 				}]<>
 			"# **"<>s<>"**"
 		];
-iNotebookToMarkdown[pathInfo_,Cell[t_, "Chapter", ___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_, "Chapter", ___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>
 			Replace[
@@ -3189,7 +2389,7 @@ iNotebookToMarkdown[pathInfo_,Cell[t_, "Chapter", ___]]:=
 				}]<>
 			"# ***"<>s<>"***"
 		];
-iNotebookToMarkdown[pathInfo_,Cell[t_, "Subchapter", ___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_, "Subchapter", ___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>
 			Replace[
@@ -3203,7 +2403,7 @@ iNotebookToMarkdown[pathInfo_,Cell[t_, "Subchapter", ___]]:=
 		];
 
 
-iNotebookToMarkdown[pathInfo_,Cell[t_,"Section",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Section",___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>
 			Replace[
@@ -3215,7 +2415,7 @@ iNotebookToMarkdown[pathInfo_,Cell[t_,"Section",___]]:=
 				}]<>
 			"# "<>s
 		];
-iNotebookToMarkdown[pathInfo_,Cell[t_,"Subsection",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Subsection",___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>
 			Replace[
@@ -3227,22 +2427,22 @@ iNotebookToMarkdown[pathInfo_,Cell[t_,"Subsection",___]]:=
 				}]<>
 			"## "<>s
 		];
-iNotebookToMarkdown[pathInfo_,Cell[t_,"Subsubsection",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Subsubsection",___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>
 			"### "<>s
 		];
-iNotebookToMarkdown[pathInfo_,Cell[t_,"Subsububsection",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Subsububsection",___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>
 			"#### "<>s
 		];
-iNotebookToMarkdown[pathInfo_,Cell[t_,"Subsububsubsection",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Subsububsubsection",___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>
 			"##### "<>s
 		];
-iNotebookToMarkdown[pathInfo_,Cell[t_,"Subsububsubsubsection",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Subsububsubsubsection",___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>
 			"###### "<>s
@@ -3254,7 +2454,7 @@ iNotebookToMarkdown[pathInfo_,Cell[t_,"Subsububsubsubsection",___]]:=
 
 
 
-iNotebookToMarkdown[pathInfo_,Cell[t_,"PageBreak",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"PageBreak",___]]:=
 	"---"
 
 
@@ -3263,17 +2463,17 @@ iNotebookToMarkdown[pathInfo_,Cell[t_,"PageBreak",___]]:=
 
 
 
-iNotebookToMarkdown[pathInfo_,Cell[t_,"Text",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Text",___]]:=
 	iNotebookToMarkdown[pathInfo,t];
 
 
-iNotebookToMarkdown[pathInfo_,Cell[t_,"Quote",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Quote",___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>StringReplace[s,StartOfString->"> "]
 		];
 
 
-iNotebookToMarkdown[pathInfo_,Cell[t_,"Program",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Program",___]]:=
 	With[{md=notebookToMarkdownPlainTextExport[t]},
 		ExportString[
 			XMLElement["pre",{"class"->"program"},{XMLElement["code",{},{"\n"<>md<>"\n"}]}],
@@ -3290,11 +2490,13 @@ iNotebookToMarkdown[pathInfo_,Cell[t_,"Program",___]]:=
 notebookToMarkdownCleanPrintStyle//Clear
 
 
-notebookToMarkdownCleanPrintStyle[StyleBox[s_String, ___]]:=
-	If[StringStartsQ[s, "\"\\!"|"\"\!"],
+notebookToMarkdownCleanPrintStyle[s_String]:=
+	If[StringStartsQ[s, "\""]&&StringContainsQ[s, "\!\("|"\\!\\("],
 		ToExpression@s,
 		s
 		];
+notebookToMarkdownCleanPrintStyle[_[s_String, ___]]:=
+	notebookToMarkdownCleanPrintStyle[s];
 notebookToMarkdownCleanPrintStyle[BoxData[a_]]:=
 	notebookToMarkdownCleanPrintStyle[a]
 notebookToMarkdownCleanPrintStyle[e_]:=e
@@ -3304,7 +2506,7 @@ notebookToMarkdownBasicXMLExport[e_]:=
 	StringTrim[
 		ExportString[
 			ReplaceRepeated[
-				MarkdownToXML@e, 
+				MarkdownToXML@StringReplace[e, $NotebookToMarkdownHTMLCharReplacements],
 				XMLElement["p", _, {a___}]:>a
 				],
 			"HTMLFragment"
@@ -3313,7 +2515,7 @@ notebookToMarkdownBasicXMLExport[e_]:=
 		]
 
 
-iNotebookToMarkdown[pathInfo_,
+iNotebookToMarkdownRegister[pathInfo_,
 	TemplateBox[{msgHead_,msgName_,text_,___},"MessageTemplate",___]
 	]:=
 	"
@@ -3332,7 +2534,7 @@ iNotebookToMarkdown[pathInfo_,
 					Replace[text, RowBox[{a_, ___, _ButtonBox}]:>a, {1}]
 				]
 		|>;
-iNotebookToMarkdown[pathInfo_, Cell[t_, "Print", "PrintUsage", ___]]:=
+iNotebookToMarkdownRegister[pathInfo_, Cell[t_, "Print", "PrintUsage", ___]]:=
 	"<div class='mma-print-usage'>
 	``
 </div>"~TemplateApply~
@@ -3341,7 +2543,7 @@ iNotebookToMarkdown[pathInfo_, Cell[t_, "Print", "PrintUsage", ___]]:=
 		notebookToMarkdownCleanPrintStyle@
 			Replace[t, RowBox[{a_, ___, _ButtonBox}]:>a, {1}]
 		];
-iNotebookToMarkdown[pathInfo_, 
+iNotebookToMarkdownRegister[pathInfo_, 
 	Cell[t_,"Print",___]
 	]:=
 	"<div class='mma-print'>
@@ -3352,7 +2554,7 @@ iNotebookToMarkdown[pathInfo_,
 		notebookToMarkdownCleanPrintStyle@
 			Replace[t, RowBox[{a_, ___, _ButtonBox}]:>a, {1}]
 		];
-iNotebookToMarkdown[pathInfo_,Cell[t_,"Echo",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Echo",___]]:=
 	"<div style='font-size:10; color:rgb(128, 128, 128);'>
 	<span style='color:orange'> >> </span>``
 </div>"~TemplateApply~
@@ -3368,29 +2570,29 @@ iNotebookToMarkdown[pathInfo_,Cell[t_,"Echo",___]]:=
 
 
 
-iNotebookToMarkdown[pathInfo_,Cell[t_,"Item",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Item",___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>"* "<>s
 		];
-iNotebookToMarkdown[pathInfo_,Cell[t_,"Subitem",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Subitem",___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>"  * "<>s
 		];
-iNotebookToMarkdown[pathInfo_,Cell[t_,"Subsubitem",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Subsubitem",___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>"    * "<>s
 		];
 
 
-iNotebookToMarkdown[pathInfo_,Cell[t_,"ItemNumbered",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"ItemNumbered",___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>"1. "<>s
 		];
-iNotebookToMarkdown[pathInfo_,Cell[t_,"SubitemNumbered",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"SubitemNumbered",___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>"  1. "<>s
 		];
-iNotebookToMarkdown[pathInfo_,Cell[t_,"SubsubitemNumbered",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"SubsubitemNumbered",___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>"    1. "<>s
 		];
@@ -3401,9 +2603,9 @@ iNotebookToMarkdown[pathInfo_,Cell[t_,"SubsubitemNumbered",___]]:=
 
 
 
-iNotebookToMarkdown[pathInfo_,Cell[t_,"RawMarkdown",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"RawMarkdown",___]]:=
 	notebookToMarkdownPlainTextExport[t];
-iNotebookToMarkdown[pathInfo_,Cell[t_,"TaggedHTML",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"TaggedHTML",___]]:=
 	With[{md=notebookToMarkdownPlainTextExport[t]},
 		With[{block=StringSplit[md,"\n",2]},
 			"<"<>block[[1]]<>">\n"<>
@@ -3411,13 +2613,13 @@ iNotebookToMarkdown[pathInfo_,Cell[t_,"TaggedHTML",___]]:=
 				"\n</"<>StringSplit[block[[1]]][[1]]<>">"
 			]
 		];
-iNotebookToMarkdown[pathInfo_,Cell[t_,"RawPre",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"RawPre",___]]:=
 	With[{md=notebookToMarkdownPlainTextExport[t]},
 		ExportString[XMLElement["pre",{},{md}],"XML"]
 		];
 
 
-iNotebookToMarkdown[pathInfo_,
+iNotebookToMarkdownRegister[pathInfo_,
 	TemplateBox[
 		{
 			InterpretationBox[_, EmbeddedHTML[s_]], 
@@ -3435,28 +2637,28 @@ iNotebookToMarkdown[pathInfo_,
 
 
 
-iNotebookToMarkdown[pathInfo_,
+iNotebookToMarkdownRegister[pathInfo_,
 	StyleBox[a__,FontSlant->"Italic",b___]]:=
 	Replace[
 		iNotebookToMarkdown[pathInfo,StyleBox[a,b]],
 		s:Except[""]:>
 			"*"<>s<>"*"
 		];
-iNotebookToMarkdown[pathInfo_,
+iNotebookToMarkdownRegister[pathInfo_,
 	StyleBox[a___,FontWeight->"Bold"|Bold,b___]]:=
 	Replace[
 		iNotebookToMarkdown[pathInfo,StyleBox[a,b]],
 		s:Except[""]:>
 			"**"<>s<>"**"
 		];
-iNotebookToMarkdown[pathInfo_,
+iNotebookToMarkdownRegister[pathInfo_,
 	StyleBox[a_, style_String, ___]]:=
 	iNotebookToMarkdown[pathInfo, 
 		StyleBox[a, 
 			Sequence@@CurrentValue[{StyleDefinitions, style}]
 			]
 		];
-iNotebookToMarkdown[
+iNotebookToMarkdownRegister[
 	pathInfo_,
 	StyleBox[a_, ___]
 	]:=
@@ -3467,22 +2669,19 @@ iNotebookToMarkdown[
 		];
 
 
-
-
-
-iNotebookToMarkdown[pathInfo_,Cell[a___,CellTags->t_,b___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[a___,CellTags->t_,b___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,Cell[a,b]],
 		s:Except[""]:>
 			markdownIDHook[
 				ToLowerCase@StringJoin@Flatten@{t}
 				]<>"\n\n"<>s
 		];
-iNotebookToMarkdown[pathInfo_,Cell[a___, FontSlant->"Italic"|Italic,b___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[a___, FontSlant->"Italic"|Italic,b___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,Cell[a,b]],
 		s:Except[""]:>
 			"*"<>s<>"*"
 		];
-iNotebookToMarkdown[pathInfo_,Cell[a___,FontWeight->"Bold"|Bold,b___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[a___,FontWeight->"Bold"|Bold,b___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,Cell[a,b]],
 		s:Except[""]:>
 			"**"<>s<>"**"
@@ -3494,7 +2693,7 @@ iNotebookToMarkdown[pathInfo_,Cell[a___,FontWeight->"Bold"|Bold,b___]]:=
 
 
 
-iNotebookToMarkdown[
+iNotebookToMarkdownRegister[
 	pathInfo_, 
 	TagBox[g_, FullForm|InputForm]
 	]:=
@@ -3504,7 +2703,7 @@ iNotebookToMarkdown[
 		];
 
 
-iNotebookToMarkdown[
+iNotebookToMarkdownRegister[
 	pathInfo_, 
 	TagBox[StyleBox[g_, ___],__]
 	]:=
@@ -3514,7 +2713,7 @@ iNotebookToMarkdown[
 		];
 
 
-iNotebookToMarkdown[
+iNotebookToMarkdownRegister[
 	pathInfo_, 
 	TagBox[g_, __]
 	]:=
@@ -3529,7 +2728,7 @@ iNotebookToMarkdown[
 
 
 
-iNotebookToMarkdown[pathInfo_, 
+iNotebookToMarkdownRegister[pathInfo_, 
 	SuperscriptBox[a_, b_]
 	]:=
 	TemplateApply[
@@ -3539,14 +2738,14 @@ iNotebookToMarkdown[pathInfo_,
 			b
 			}
 		];
-iNotebookToMarkdown[pathInfo_, 
+iNotebookToMarkdownRegister[pathInfo_, 
 	SubscriptBox[a_, b_]
 	]:=
 	TemplateApply[
 		"``<sub>``</sub>",
 		iNotebookToMarkdown[pathInfo]/@{a,b}
 		];
-iNotebookToMarkdown[pathInfo_, 
+iNotebookToMarkdownRegister[pathInfo_, 
 	SubsuperscriptBox[a_, b_, c_]
 	]:=
 	TemplateApply[
@@ -3560,7 +2759,10 @@ iNotebookToMarkdown[pathInfo_,
 
 
 
-iNotebookToMarkdown[pathInfo_, g:TagBox[_GridBox, "Grid"]]:=
+iNotebookToMarkdownRegister[
+	pathInfo_, 
+	g:TagBox[_GridBox, "Grid"]
+	]:=
 	notebookToMarkdownHTMLToExpressionExport[
 		pathInfo,
 		g,
@@ -3568,7 +2770,11 @@ iNotebookToMarkdown[pathInfo_, g:TagBox[_GridBox, "Grid"]]:=
 		repExpr_,
 		{2}
 		];
-iNotebookToMarkdown[pathInfo_, g:TagBox[_GridBox, "Column"]]:=
+iNotebookToMarkdownRegister[
+	pathInfo_,
+	g:TagBox[_GridBox, "Column"]
+	]:=
+	ReplaceAll[s_String:>StringDelete[s, "\n"~~"ItemSize->{Automatic,Automatic}"]]@
 	notebookToMarkdownHTMLToExpressionExport[
 		pathInfo,
 		g,
@@ -3576,7 +2782,10 @@ iNotebookToMarkdown[pathInfo_, g:TagBox[_GridBox, "Column"]]:=
 		repExpr_,
 		{1}
 		];
-iNotebookToMarkdown[pathInfo_, TemplateBox[g_, "RowDefault"]]:=
+iNotebookToMarkdownRegister[
+	pathInfo_, 
+	TemplateBox[g_, "RowDefault"]
+	]:=
 	iNotebookToMarkdown[
 		pathInfo,
 		TagBox[GridBox[{g}], "Grid"]
@@ -3588,7 +2797,7 @@ iNotebookToMarkdown[pathInfo_, TemplateBox[g_, "RowDefault"]]:=
 
 
 
-iNotebookToMarkdown[pathInfo_, RowBox[g_, ___]]:=
+iNotebookToMarkdownRegister[pathInfo_, RowBox[g_, ___]]:=
 	StringJoin[
 		iNotebookToMarkdown[
 			pathInfo,
@@ -3602,7 +2811,7 @@ iNotebookToMarkdown[pathInfo_, RowBox[g_, ___]]:=
 
 
 
-iNotebookToMarkdown[
+iNotebookToMarkdownRegister[
 	pathInfo_,
 	ButtonBox[d_,
 		o___,
@@ -3648,7 +2857,7 @@ iNotebookToMarkdown[
 
 
 
-iNotebookToMarkdown[
+iNotebookToMarkdownRegister[
 	pathInfo_,
 	ButtonBox[d_,
 		o___,
@@ -3778,7 +2987,7 @@ markdownNotebookHashExport[
 
 
 
-iNotebookToMarkdown[
+iNotebookToMarkdownRegister[
 	pathInfo_,
 	InterpretationBox[
 		g_?(MatchQ[$iNotebookToMarkdownOutputStringForms]),
@@ -3791,7 +3000,7 @@ iNotebookToMarkdown[
 		pathInfo,
 		g
 		];
-iNotebookToMarkdown[pathInfo_,
+iNotebookToMarkdownRegister[pathInfo_,
 	InterpretationBox[e_,___]
 	]:=
 	iNotebookToMarkdown[pathInfo, e];
@@ -3802,7 +3011,7 @@ iNotebookToMarkdown[pathInfo_,
 
 
 
-iNotebookToMarkdown[
+iNotebookToMarkdownRegister[
 	pathInfo_,
 	TooltipBox[
 		g:$iNotebookToMarkdownOutputStringForms,
@@ -3826,7 +3035,7 @@ iNotebookToMarkdown[
 
 
 
-iNotebookToMarkdown[
+iNotebookToMarkdownRegister[
 	pathInfo_,
 	g:$iNotebookToMarkdownRasterizeForms,
 	style_:"Output"
@@ -3850,7 +3059,7 @@ iNotebookToMarkdown[
 
 
 
-iNotebookToMarkdown[
+iNotebookToMarkdownRegister[
 	pathInfo_,
 	g:TagBox[__,_Manipulate`InterpretManipulate],
 	fbase_:Automatic,
@@ -3906,9 +3115,16 @@ iNotebookToMarkdown[
 
 
 
-iNotebookToMarkdown[
+$iNotebookToMarkdownBaseGraphicsBoxes=
+	_GraphicsBox|_Graphics3DBox|TemplateBox[_,"Legended",___];
+$iNotebookToMarkdownGraphicsBoxes=
+	$iNotebookToMarkdownBaseGraphicsBoxes|
+		TagBox[$iNotebookToMarkdownBaseGraphicsBoxes,___]
+
+
+iNotebookToMarkdownRegister[
 	pathInfo_,
-	g:_GraphicsBox|_Graphics3DBox|TemplateBox[_,"Legended",___],
+	g:$iNotebookToMarkdownBaseGraphicsBoxes,
 	fbase_:Automatic,
 	alt_:Automatic
 	]:=
@@ -3927,11 +3143,11 @@ iNotebookToMarkdown[
 
 
 
-iNotebookToMarkdown[pathInfo_,f_FrontEnd`FileName]:=
+iNotebookToMarkdownRegister[pathInfo_,f_FrontEnd`FileName]:=
 	StringRiffle[FileNameSplit[ToFileName[f]],"/"];
-iNotebookToMarkdown[pathInfo_,u:_URL]:=
+iNotebookToMarkdownRegister[pathInfo_,u:_URL]:=
 	First@u;
-iNotebookToMarkdown[pathInfo_,f_File]:=
+iNotebookToMarkdownRegister[pathInfo_,f_File]:=
 	StringRiffle[FileNameSplit[First[f]],"/"];
 
 
@@ -3940,21 +3156,28 @@ iNotebookToMarkdown[pathInfo_,f_File]:=
 
 
 
-iNotebookToMarkdown[pathInfo_,
+iNotebookToMarkdownRegister[pathInfo_,
 	s_String?(StringStartsQ["\!\("|"\\!\\("])
 	]:=
 	iNotebookToMarkdown[
 		pathInfo,
 		Cell@BoxData@
 		NestWhile[
-			FrontEndExecute[
-				FrontEnd`UndocumentedTestFEParserPacket[#, False]
-				][[1,1]]&,
+			Replace[
+				FrontEndExecute[
+					FrontEnd`UndocumentedTestFEParserPacket[#, False]
+					],
+				{
+					l_List:>l[[1,1]],
+					_:>#
+					}
+				]&,
 			s,
-			StringQ[#]&
+			StringQ[#]&&#=!=#2&,
+			2
 			]
 		];
-iNotebookToMarkdown[
+iNotebookToMarkdownRegister[
 	pathInfo_,
 	s_String?(StringContainsQ["\\!\\("~~__])
 	]:=
@@ -3966,7 +3189,7 @@ iNotebookToMarkdown[
 			interp
 			]
 		];
-iNotebookToMarkdown[
+iNotebookToMarkdownRegister[
 	pathInfo_,
 	s_String?(StringContainsQ["\!\("~~__])
 	]:=
@@ -3985,25 +3208,26 @@ iNotebookToMarkdown[
 
 
 
-iNotebookToMarkdown[pathInfo_, Cell[e_,___]]:=
+iNotebookToMarkdownRegister[pathInfo_, Cell[e_,___]]:=
 	iNotebookToMarkdown[pathInfo, e]
-iNotebookToMarkdown[pathInfo_, s_String]:=
+iNotebookToMarkdownRegister[pathInfo_, s_String]:=
 	s;
-iNotebookToMarkdown[pathInfo_, s_TextData]:=
+iNotebookToMarkdownRegister[pathInfo_, s_TextData]:=
 	StringRiffle[
-		Map[iNotebookToMarkdown[pathInfo, #]&,List@@s//Flatten]
+		Map[iNotebookToMarkdown[pathInfo, #]&, List@@s//Flatten]
 		];
-iNotebookToMarkdown[pathInfo_, b_BoxData]:=
+iNotebookToMarkdownRegister[pathInfo_, b_BoxData]:=
 	Replace[
 		iNotebookToMarkdown[pathInfo, First@b],
 		"":>
 			notebookToMarkdownFEExport[
 				pathInfo,
 				b,
-				"PlainText"
+				"PlainText",
+				"Text"
 				]
 		];
-iNotebookToMarkdown[pathInfo_,e_]:=
+iNotebookToMarkdownRegister[pathInfo_, e__]:=
 	"";
 
 

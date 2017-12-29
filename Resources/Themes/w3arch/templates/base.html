@@ -39,8 +39,6 @@
         ]
     </wolfram:expr>
 
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-
     <wolfram:get path="include/lib/templates/varNotFalseBlock.html">
       <wolfram:slot id="var">StyleSheets</wolfram:slot>
       <wolfram:slot id="if">
@@ -49,15 +47,7 @@
             Replace[#StyleSheets,{
               None->{},
               Except[_List]:>
-                Prepend[
-                  Import[FileNameJoin@{"include","config","stylesheets.m"}],
-                  URLBuild@{
-                    "pygments",
-                    Replace[#PygmentsStyle,
-                      Except[_String]:>"default"
-                      ]<>".min.css"
-                    }
-                  ]
+                Import[FileNameJoin@{"include","config","stylesheets.m"}]
               }],
             #
             ]

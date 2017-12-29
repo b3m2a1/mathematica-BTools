@@ -498,6 +498,189 @@ WebSiteBuildFilePath[fname_,dir_]:=
 
 
 (* ::Subsubsection::Closed:: *)
+(*TemplateProcessFonts*)
+
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*HTML Reps*)
+
+
+
+$XMLFontPatchDumbSpecialCharListLong=
+	{
+		"AliasDelimiter","AliasIndicator","Alpha","AltKey","And","AquariusSign",
+		"AriesSign","AutoPlaceholder","Backslash","BeamedEighthNote","BeamedSixteenthNote","Beta",
+		"BlackBishop","BlackKing","BlackKnight","BlackPawn","BlackQueen","BlackRook",
+		"CancerSign","Cap","CapitalDifferentialD","CapitalDigamma","CapitalKoppa","CapitalSampi",
+		"CapitalStigma","CapricornSign","Cent","CenterDot","CenterEllipsis","Checkmark",
+		"Chi","CircleDot","CircleMinus","CirclePlus","CircleTimes","ClockwiseContourIntegral",
+		"CommandKey","Conditioned","Conjugate","ConjugateTranspose","ConstantC","Continuation",
+		"ContourIntegral","ControlKey","CounterClockwiseContourIntegral","Cross","Cup","CurlyCapitalUpsilon",
+		"CurlyEpsilon","CurlyKappa","CurlyPhi","CurlyPi","CurlyRho","CurlyTheta",
+		"DeleteKey","DifferenceDelta","DifferentialD","Digamma","DirectedEdge","DiscreteRatio",
+		"DiscreteShift","DiscretionaryPageBreakAbove","DiscretionaryPageBreakBelow","Distributed","Divide","DotEqual",
+		"DotlessJ","DottedSquare","DoubleDagger","DoubledGamma","DoubledPi","DoubleDownArrow",
+		"DoubledPi","DoubleLeftArrow","DoubleLeftRightArrow","DoubleLeftTee","DoubleLongLeftArrow","DoubleLongLeftRightArrow",
+		"DoubleLongRightArrow","DoubleRightArrow","DoubleStruckA","DoubleStruckB","DoubleStruckC","DoubleStruckA",
+		"DoubleStruckB","DoubleStruckC","DoubleStruckCapitalA","DoubleStruckCapitalB","DoubleStruckCapitalC","DoubleStruckCapitalD",
+		"DoubleStruckCapitalE","DoubleStruckCapitalF","DoubleStruckCapitalG","DoubleStruckCapitalH","DoubleStruckCapitalI","DoubleStruckCapitalJ",
+		"DoubleStruckCapitalK","DoubleStruckCapitalL","DoubleStruckCapitalM","DoubleStruckCapitalN","DoubleStruckCapitalO","DoubleStruckCapitalP",
+		"DoubleStruckCapitalQ","DoubleStruckCapitalR","DoubleStruckCapitalS","DoubleStruckCapitalT","DoubleStruckCapitalU","DoubleStruckCapitalV",
+		"DoubleStruckCapitalW","DoubleStruckCapitalX","DoubleStruckCapitalY","DoubleStruckCapitalZ","DoubleStruckD","DoubleStruckE",
+		"DoubleStruckEight","DoubleStruckF","DoubleStruckFive","DoubleStruckFour","DoubleStruckG","DoubleStruckH",
+		"DoubleStruckI","DoubleStruckJ","DoubleStruckK","DoubleStruckL","DoubleStruckM","DoubleStruckN",
+		"DoubleStruckNine","DoubleStruckO","DoubleStruckOne","DoubleStruckP","DoubleStruckQ","DoubleStruckR",
+		"DoubleStruckS","DoubleStruckSeven","DoubleStruckSix","DoubleStruckT","DoubleStruckThree","DoubleStruckTwo",
+		"DoubleStruckU","DoubleStruckV","DoubleStruckW","DoubleStruckX","DoubleStruckY","DoubleStruckZ",
+		"DoubleStruckZero","DoubleUpArrow","DoubleUpDownArrow","DownArrowBar","DownArrow","DownBreve",
+		"DownLeftRightVector","DownLeftTeeVector","DownLeftVector","DownLeftVectorBar","DownPointer","DownRightTeeVector",
+		"DownRightVector","DownRightVectorBar","DownTeeArrow","Earth","EighthNote","Element",
+		"Ellipsis","EmptyRectangle","EmptySet","EnterKey","EntityEnd","EntityStart",
+		"Epsilon","Equal","Equilibrium","Equivalent","ErrorIndicator","EscapeKey",
+		"Eta","Euro","ExponentialE","FilledSmallCircle","FinalSigma","FirstPage",
+		"FormalA","FormalAlpha","FormalB","FormalBeta","FormalC","FormalCapitalA",
+		"FormalCapitalAlpha","FormalCapitalB","FormalCapitalBeta","FormalCapitalC","FormalCapitalChi","FormalCapitalD",
+		"FormalCapitalDelta","FormalCapitalDigamma","FormalCapitalE","FormalCapitalEpsilon","FormalCapitalEta","FormalCapitalF",
+		"FormalCapitalG","FormalCapitalGamma","FormalCapitalH","FormalCapitalI","FormalCapitalIota","FormalCapitalJ",
+		"FormalCapitalK","FormalCapitalKappa","FormalCapitalKoppa","FormalCapitalL","FormalCapitalLambda","FormalCapitalM",
+		"FormalCapitalMu","FormalCapitalN","FormalCapitalNu","FormalCapitalO","FormalCapitalOmega","FormalCapitalOmicron",
+		"FormalCapitalP","FormalCapitalPhi","FormalCapitalPi","FormalCapitalPsi","FormalCapitalQ","FormalCapitalR",
+		"FormalCapitalRho","FormalCapitalS","FormalCapitalSampi","FormalCapitalSigma","FormalCapitalStigma","FormalCapitalT",
+		"FormalCapitalTau","FormalCapitalTheta","FormalCapitalU","FormalCapitalUpsilon","FormalCapitalV","FormalCapitalW",
+		"FormalCapitalX","FormalCapitalXi","FormalCapitalY","FormalCapitalZ","FormalCapitalZeta","FormalChi",
+		"FormalCurlyCapitalUpsilon","FormalCurlyEpsilon","FormalCurlyKappa","FormalCurlyPhi","FormalCurlyPi","FormalCurlyRho",
+		"FormalCurlyTheta","FormalD","FormalDelta","FormalDigamma","FormalE","FormalEpsilon",
+		"FormalEta","FormalF","FormalFinalSigma","FormalG","FormalGamma","FormalH",
+		"FormalI","FormalIota","FormalJ","FormalK","FormalKappa","FormalKoppa",
+		"FormalL","FormalLambda","FormalM","FormalMu","FormalN","FormalNu",
+		"FormalO","FormalOmega","FormalOmicron","FormalP","FormalPhi","FormalPi",
+		"FormalPsi","FormalQ","FormalR","FormalRho","FormalS","FormalSampi",
+		"FormalSigma","FormalStigma","FormalT","FormalTau","FormalTheta","FormalU",
+		"FormalUpsilon","FormalV","FormalW","FormalX","FormalXi","FormalY",
+		"FormalZ","FormalZeta","FreakedSmiley","Function","GeminiSign","GothicA",
+		"GothicB","GothicC","GothicCapitalA","GothicCapitalB","GothicCapitalC","GothicCapitalD",
+		"GothicCapitalE","GothicCapitalF","GothicCapitalG","GothicCapitalH","GothicCapitalI","GothicCapitalJ",
+		"GothicCapitalK","GothicCapitalL","GothicCapitalM","GothicCapitalN","GothicCapitalO","GothicCapitalP",
+		"GothicCapitalQ","GothicCapitalR","GothicCapitalS","GothicCapitalT","GothicCapitalU","GothicCapitalV",
+		"GothicCapitalW","GothicCapitalX","GothicCapitalY","GothicCapitalZ","GothicD","GothicE",
+		"GothicEight","GothicF","GothicFive","GothicFour","GothicG","GothicH",
+		"GothicI","GothicJ","GothicK","GothicL","GothicM","GothicN",
+		"GothicNine","GothicO","GothicOne","GothicP","GothicQ","GothicR",
+		"GothicS","GothicSeven","GothicSix","GothicT","GothicThree","GothicTwo",
+		"GothicU","GothicV","GothicW","GothicX","GothicY","GothicZ",
+		"GothicZero","GrayCircle","GraySquare","Hacek","HermitianConjugate","ImaginaryI",
+		"ImaginaryJ","Implies","IndentingNewLine","Iota","Kappa","KernelIcon",
+		"Koppa","Lambda","LastPage","LeftArrow","LeftArrowRightArrow","LeftAssociation",
+		"LeftBracketingBar","LeftDoubleBracket","LeftDoubleBracketingBar","LeftDownTeeVector","LeftDownVectorBar","LeftModified",
+		"LeftRightArrow","LeftRightVector","LeftSkeleton","LeftTeeArrow","LeftTeeVector","LeftTriangleBar",
+		"LeftTriangleEqual","LeftUpDownVector","LeftUpTeeVector","LeftUpVectorBar","LeftVector","LeftVectorBar",
+		"LeoSign","LightBulb","Limit","LineSeparator","LibraSign","LongDash",
+		"LongEqual","LongLeftArrow","LongLeftRightArrow","LongRightArrow","LowerLeftArrow","LowerRightArrow",
+		"Mars","MathematicaIcon","MaxLimit","MinLimit","Mu","Natural",
+		"Neptune","NestedGreaterGreater","NestedLessLess","NeutralSmiley","NotElement",
+		"NotEqual","NotEqualTilde","NotGreaterGreater","NotGreaterSlantEqual","NotHumpDownHump","NotHumpEqual",
+		"NotLeftTriangleBar","NotLessEqual","NotLessLess","NotLessSlantEqual","NotNestedGreaterGreater","NotNestedLessLess",
+		"NotPrecedesEqual","NotPrecedesTilde","NotRightTriangleBar","NotSquareSubset","NotSquareSuperset","NotSucceedsEqual",
+		"NotSucceedsTilde","NotVerticalBar","NumberSign","Omega","Omicron","OptionKey",
+		"OverBracket","ParagraphSeparator","PermutationProduct","Phi","Pi","Piecewise",
+		"PiscesSign","Placeholder","Proportional","Psi",
+		"ReturnKey","ReverseElement","ReverseEquilibrium","ReverseUpEquilibrium","Rho","RightAngle",
+		"RightArrow","RightArrowBar","RightArrowLeftArrow","RightAssociation","RightBracketingBar","RightCeiling",
+		"RightDoubleBracket","RightDoubleBracketingBar","RightDownTeeVector","RightDownVector","RightDownVectorBar","RightModified",
+		"RightSkeleton","RightTeeArrow","RightTeeVector","RightTriangleBar","RightUpDownVector","RightUpTeeVector",
+		"RightUpVector","RightUpVectorBar","RightVector","RightVectorBar","RoundImplies","RoundSpaceIndicator",
+		"Rule","RuleDelayed","SagittariusSign","Sampi","ScorpioSign","ScriptA",
+		"ScriptB","ScriptC","ScriptCapitalA","ScriptCapitalB","ScriptCapitalC","ScriptCapitalD",
+		"ScriptCapitalE","ScriptCapitalF","ScriptCapitalG","ScriptCapitalH","ScriptCapitalI","ScriptCapitalJ",
+		"ScriptCapitalK","ScriptCapitalL","ScriptCapitalM","ScriptCapitalN","ScriptCapitalO","ScriptCapitalP",
+		"ScriptCapitalQ","ScriptCapitalR","ScriptCapitalS","ScriptCapitalT","ScriptCapitalU","ScriptCapitalV",
+		"ScriptCapitalW","ScriptCapitalX","ScriptCapitalY","ScriptCapitalZ","ScriptD","ScriptDotlessI",
+		"ScriptDotlessJ","ScriptE","ScriptEight","ScriptF","ScriptFive","ScriptFour",
+		"ScriptG","ScriptH","ScriptI","ScriptJ","ScriptK","ScriptL",
+		"ScriptM","ScriptN","ScriptNine","ScriptO","ScriptOne","ScriptP",
+		"ScriptQ","ScriptR","ScriptS","ScriptSeven","ScriptSix","ScriptT",
+		"ScriptThree","ScriptTwo","ScriptU","ScriptV","ScriptW","ScriptX",
+		"ScriptY","ScriptZ","ScriptZero","SelectionPlaceholder","ShortLeftArrow","ShortRightArrow",
+		"Sigma","SpaceKey","SpanFromAbove","SpanFromBoth","SpanFromLeft","SphericalAngle",
+		"Sqrt","Square","Sterling","Stigma","SuchThat","Sum",
+		"SystemEnterKey","SystemsModelDelay","SZ","TabKey","Tau","TaurusSign",
+		"TensorProduct","TensorWedge","Theta","Thorn","Transpose","TripleDot",
+		"TwoWayRule","UnderBracket","UndirectedEdge","UnionPlus","UpArrowBar","UpArrowDownArrow",
+		"UpEquilibrium","UpperLeftArrow","UpperRightArrow","UpPointer","Upsilon","UpTeeArrow",
+		"Uranus","VerticalBar","VerticalSeparator","VirgoSign","WarningSign","WatchIcon",
+		"WhiteBishop","WhiteKing","WhiteKnight","WhitePawn","WhiteQueen","WhiteRook",
+		"Wolf","WolframLanguageLogo","WolframLanguageLogoCircle","Xi","Xnor","Yen",
+		"Zeta"
+		};
+$XMLFontPatchDumbSpecialCharListConv=
+	ToExpression@
+		Map[
+			"\"\\["<>#<>"]\""&,
+			$XMLFontPatchDumbSpecialCharListLong
+			];
+
+
+$XMLFontPatchFlag=
+	"-fake-attr-fonts-patched"->"true";
+
+
+$XMLFontPatchDumbSpecialCharListLong=
+	Alternatives@@$XMLFontPatchDumbSpecialCharListLong;
+$XMLFontPatchDumbSpecialCharListConv=
+	Alternatives@@$XMLFontPatchDumbSpecialCharListConv;
+
+
+$XMLFontPatchStringToXMLElementRules=
+	{
+		"\\[AltKey]"|"\[AltKey]"->
+			XMLElement["kbd",{$XMLFontPatchFlag},{"ALT"}],
+		"\\[CommandKey]"|"\[CommandKey]"->
+			XMLElement["kbd",{$XMLFontPatchFlag},{"CMD"}],
+		"\\[ControlKey]"|"\[ControlKey]"->
+			XMLElement["kbd",{$XMLFontPatchFlag},{"CTRL"}],
+		"\\[DeleteKey]"|"\[DeleteKey]"->
+			XMLElement["kbd",{$XMLFontPatchFlag},{"DEL"}],
+		"\\[EnterKey]"|"\[EnterKey]"->
+			XMLElement["kbd",{$XMLFontPatchFlag},{"ENTER"}],
+		"\\[EscapeKey]"|"\[EscapeKey]"->
+			XMLElement["kbd",{$XMLFontPatchFlag},{"ESC"}],
+		"\\[OptionKey]"|"\[OptionKey]"->
+			XMLElement["kbd",{$XMLFontPatchFlag},{"OPTION"}],
+		"\\[ReturnKey]"|"\[ReturnKey]"->
+			XMLElement["kbd",{$XMLFontPatchFlag},{"RET"}],
+		"\\[ShiftKey]"|"\[ShiftKey]"->
+			XMLElement["kbd",{$XMLFontPatchFlag},{"SHIFT"}],
+		"\\[SpaceKey]"|"\[SpaceKey]"->
+			XMLElement["kbd",{$XMLFontPatchFlag},{"SPACE"}],
+		"\\[SystemEnterKey]"|"\[SystemEnterKey]"->
+			XMLElement["kbd",{$XMLFontPatchFlag},{"RET"}],
+		"\\[TabKey]"|"\[TabKey]"->
+			XMLElement["kbd",{$XMLFontPatchFlag},{"TAB"}],
+		"\\["~~s:($XMLFontPatchDumbSpecialCharListLong)~~"]":>
+			XMLElement["span",
+				{
+					"class"->"special-character "<>s,
+					$XMLFontPatchFlag
+					},
+				{
+					ToExpression["\"\\["<>s<>"]\""]
+					}
+				],
+		char:$XMLFontPatchDumbSpecialCharListConv:>
+			XMLElement["span",
+				{
+					"class"->"special-character "<>CharacterName[char], 
+					$XMLFontPatchFlag
+					},
+				{
+					char
+					}
+				]
+		};
+
+
+(* ::Subsubsection::Closed:: *)
 (*TemplatePreProcess*)
 
 
@@ -505,11 +688,13 @@ WebSiteBuildFilePath[fname_,dir_]:=
 WebSiteTemplatePreProcess[fileContent_,args_]:=
 	With[{
 		lang=
-			Lookup[args,"CodeLanguage"],
+			Lookup[args, "CodeLanguage"],
 		prettyprint=
-			Lookup[args,"PrettyPrint"],
+			Lookup[args, "PrettyPrint"],
+		patchfonts=
+			Lookup[args, "PatchFonts"],
 		srcbase=
-			Lookup[args,"SiteURL"]
+			Lookup[args, "SiteURL"]
 		},
 		If[StringQ[srcbase],
 			ReplaceAll[
@@ -519,13 +704,36 @@ WebSiteTemplatePreProcess[fileContent_,args_]:=
 				]&,
 			Identity
 			]@
+		If[TrueQ[patchfonts],
+			ReplaceRepeated[
+				ReplaceRepeated[
+					#,
+					XMLElement[a_, b_?(FreeQ[$XMLFontPatchFlag]), d_]:>
+						XMLElement[a,
+							Append[b, $XMLFontPatchFlag],
+							Replace[d,
+								s_String:>
+									Replace[StringExpression[expr___]:>expr]@
+									StringReplace[
+										s,
+										$XMLFontPatchStringToXMLElementRules
+										],
+								{1}
+								]
+							]
+					],
+				XMLElement[a_, b_?(MemberQ[$XMLFontPatchFlag]), c_]:>
+					XMLElement[a, Most[b], c]
+				]&,
+			Identity
+			]@
 		If[TrueQ[prettyprint],
 			ReplaceRepeated[
 				#,
 				XMLElement["pre",
 					c_?(
 							(TrueQ[prettyprint]&&
-								StringFreeQ[Lookup[#,"class",""],"prettyprint"]
+								StringFreeQ[Lookup[#,"class",""], "prettyprint"]
 								)
 							&),
 					e:{XMLElement["code",___]}

@@ -6,6 +6,7 @@
   "https://fonts.googleapis.com/css?family=Montserrat",
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css",
   "https://fonts.googleapis.com/css?family=Source+Code+Pro",
-  "http://reference.wolfram.com/language-assets/css/special-styles.css",
+  "https://reference.wolfram.com/language-assets/css/special-styles.css",
+  "common.css",
   "style.css"
   }
