@@ -25,6 +25,7 @@ WebSiteInitialize::usage="Makes a new website in a directory";
 WebSiteOptions::usage="Gets configuration options for a website";
 WebSiteSetOptions::usage="Sets configuration options for a website";
 WebSiteNewContent::usage="Makes a new post notebook";
+WebSiteNewTableOfContents::usage="Makes a new Table of Contents";
 WebSiteThemes::usage="";
 WebSiteFindTheme::usage="Finds the theme for a website";
 WebSiteBuild::usage="Builds a website";
@@ -185,17 +186,18 @@ WebSiteNewContent[
 	dir_String?DirectoryQ,
 	place_String,
 	name:_String|Automatic:Automatic,
+	content:_List|_Cell|Automatic:Automatic,
 	ops:OptionsPattern[]
 	]/;DirectoryQ@FileNameJoin@{dir,"content",place}:=
 	With[{
 		autoname=
-			StringTrim[#,"."<>FileExtension[#]]<>".nb"&@
+			StringTrim[#, "."<>FileExtension[#]]<>".nb"&@
 				Replace[name, Automatic:>webSiteNewContentAutoname[dir, place]]
 		},
 		If[!FileExistsQ@FileNameJoin@{dir,"content",place,autoname},
 			SystemOpen@
 			Export[FileNameJoin@{dir,"content",place,autoname},
-				Notebook[{
+				Notebook[Flatten@{
 					Cell[
 						BoxData@ToBoxes@
 							Merge[{
@@ -234,19 +236,24 @@ WebSiteNewContent[
 						"Input style cells will be dropped",
 						"Text"
 						],
-					Switch[place,
-						"posts",
-							Cell[
-								"This is a post, so article.html is the theme template for it.",
-								"Text"
-								],
-						"pages",
-							Cell[
-								"This is a page, so page.html is the theme template for it.",
-								"Text"
-								],
-						_,
-							Nothing
+					Replace[content,
+						{
+							Automatic:>
+								Switch[place,
+									"posts",
+										Cell[
+											"This is a post, so article.html is the theme template for it.",
+											"Text"
+											],
+									"pages",
+										Cell[
+											"This is a page, so page.html is the theme template for it.",
+											"Text"
+											],
+									_,
+										Nothing
+									]
+							}
 						]
 					},
 					StyleDefinitions->
@@ -260,32 +267,107 @@ WebSiteNewContent[
 		]
 
 
-(*WebSiteNewContent[
-	dir_String?(Not@FileExistsQ[#]&&StringFreeQ[#,$PathnameSeparator]&),
-	place_String,
-	name:_String|Automatic:Automatic,
-	ops:OptionsPattern[]
-	]:=
-	With[{
-		d=
-			If[DirectoryQ@
-				FileNameJoin@{
-					$WebSiteDirectory,
-					dir
-					},
-				WebSiteNewContent[
-					FileNameJoin@{
-						$WebSiteDirectory,
-						dir
-						},
-					place,
-					name,
-					ops
-					]
-				]
-	},
-	d/;(d===$Failed||FileExistsQ[d])
-	]*)
+(* ::Subsubsection::Closed:: *)
+(*TableOfContents*)
+
+
+
+WebSiteNewTableOfContents[dir_String?DirectoryQ]:=
+	Module[
+		{
+			outdir,
+			metas,
+			data,
+			cells
+			},
+		outdir=
+			FileNameJoin@{dir, "posts"};
+		metas=
+			SortBy[
+				AssociationMap[
+					Association@
+					Map[
+						Rule@@StringTrim@StringSplit[#, ":",2]&,
+						StringSplit[
+							StringSplit[Import[#,"Text"],"\n\n",2][[1]],
+							"\n"
+							]
+						]&,
+					Select[
+						FileNames["*.md",outdir,\[Infinity]],
+						!StringMatchQ[FileBaseName[#], "toc"]&
+						]
+					],
+				If[KeyMemberQ[#, "ID"],
+					ToExpression[
+						StringSplit[#ID,"."]
+						],
+					{1000,1000,1000}
+					]&
+				];
+		data=
+			GroupBy[First->Last]/@
+				GroupBy[#[[1,1]]&->(#[[1,2]]->#[[2]]&)]@
+					KeyValueMap[
+						URLParse[#2["Path"],"Path"][[;;2]]->
+						<|
+							"Path"->
+								URLBuild[
+									Flatten@{
+										"..",
+										Most@FileNameSplit@StringTrim[#,outdir],
+										#2["Slug"]<>".html"
+										}
+									],
+							"Title"->#2["Title"]
+							|>&,metas
+							];
+		cells=
+			KeyValueMap[
+				Cell[
+					CellGroupData[Flatten@{
+							Cell[#, "Section"],
+							KeyValueMap[
+								Cell[
+									CellGroupData[
+										Flatten@{
+											Cell[#,"Subsection"],
+											Map[
+												Cell[
+													TextData[
+														ButtonBox[#Title,
+															 BaseStyle->"Hyperlink",
+															ButtonData->
+															{
+																FrontEnd`FileName[Evaluate@URLParse[#Path, "Path"]], 
+																None
+																}
+															]
+														],
+													"Item"
+													]&,
+												#2
+												 ]
+											}
+										]
+									]&,
+								#2
+								]
+							}
+						]
+					]&,
+				data
+				];
+	WebSiteNewContent[dir,
+		"pages",
+		"toc",
+		cells,
+		{
+			"Title"->"Table of Contents",
+			"Slug"->"toc"
+			}
+		]
+	]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2441,7 +2523,8 @@ WebSiteDeploy[
 			trueDir=
 				With[{
 					ext=
-						Replace[OptionValue["OutputDirectory"],
+						Replace[
+							OptionValue["OutputDirectory"],
 							{
 								Automatic:>
 									"output",
@@ -2466,7 +2549,8 @@ WebSiteDeploy[
 				Import[FileNameJoin@{trueDir,"DeploymentInfo.m"}],
 				{}
 				];
-		Export[FileNameJoin@{trueDir,"DeploymentInfo.m"},
+		Export[
+			FileNameJoin@{trueDir,"DeploymentInfo.m"},
 			KeyDrop[
 				Association@
 					Flatten@{
@@ -2478,7 +2562,7 @@ WebSiteDeploy[
 				]
 			];
 		select=OptionValue[Select];
-		last=
+		last=First@Flatten@List@
 			Replace[OptionValue["LastDeployment"],
 				Automatic:>Lookup[info,"LastDeployment",None]
 				];

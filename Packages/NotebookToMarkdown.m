@@ -1785,7 +1785,7 @@ $iNotebookToMarkdownRasterizeBaseForms=
 	_InputFieldBox|_OpenerBox|
 	_PopupMenuBox|_RadioButtonBox|_SliderBox|
 	_ButtonBox?(FreeQ[BaseStyle->"Link"|"Hyperlink"])|
-	_PanelBox|_PaneSelectorBox|_PaneBox|_TogglerBox|
+	_PanelBox|_PaneBox|_TogglerBox|
 	$iNotebookToMarkdownRasterizeBoxHeads?(Not@*FreeQ[_DynamicBox])|
 	TagBox[__, _InterpretTemplate, ___];
 $iNotebookToMarkdownRasterizeForms=
@@ -2823,7 +2823,7 @@ iNotebookToMarkdownRegister[
 			FirstCase[
 				Flatten@List@
 					Replace[
-						Lookup[{o,r},ButtonData,t],
+						Lookup[Select[OptionQ]@{o,r},ButtonData,t],
 						s_String?(StringFreeQ["/"]):>"#"<>s
 						],
 				_String|_FrontEnd`FileName|_URL|_File,
@@ -3201,6 +3201,43 @@ iNotebookToMarkdownRegister[
 			interp
 			]
 		];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*PaneSelectorBox*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_, 
+	PaneSelectorBox[a_, setting_, ___]
+	]:=
+	iNotebookToMarkdown[pathInfo,
+		Replace[
+			setting/.a,
+			setting->a[[1,2]]
+			]
+		]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*TemplateBox*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_, 
+	TemplateBox[a_, ___, DisplayFunction->f_, ___]
+	]:=
+	iNotebookToMarkdown[pathInfo,
+		f@@a
+		];
+iNotebookToMarkdownRegister[pathInfo_, 
+	TemplateBox[a_, s_, ___]
+	]:=
+	iNotebookToMarkdown[pathInfo,
+		CurrentValue[pathInfo["Notebook"], 
+			{StyleDefinitions, s, "TemplateBoxOptionsDisplayFunction"}
+			]@@a
+		]
 
 
 (* ::Subsubsubsection::Closed:: *)

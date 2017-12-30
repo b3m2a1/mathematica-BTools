@@ -1101,8 +1101,6 @@ $GitActions=
 			GitInit,
 		"Clone"->
 			GitClone,
-		"Ignore"->
-			GitIgnore,
 		"AddGitIgnore"->
 			GitAddGitIgnore,
 		"AddGitExclude"->

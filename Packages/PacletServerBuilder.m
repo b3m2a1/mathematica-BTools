@@ -1748,7 +1748,7 @@ PacletServerDeploy[
 											},
 									Replace[
 										{
-											{s:_String|_?OptionQ,___}:>s,
+											{s:_String|_?OptionQ|_?AtomQ,___}:>s,
 											e_:>Flatten@e
 											}
 										]
