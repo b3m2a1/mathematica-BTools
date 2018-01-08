@@ -315,7 +315,7 @@ tutorialPostProcessJumpLinks[nb_]:=
 		];
 
 
-iGenerateTutorial[guideName_,guideLink_,abstract_,sections_,
+iDocGenGenerateTutorial[guideName_,guideLink_,abstract_,sections_,
 	functions_,relatedGuides_,relatedTutorials_,relatedLinks_]:=
 	tutorialPostProcessJumpLinks@Block[{cid=1},
 		Notebook[{
@@ -386,7 +386,7 @@ TutorialNotebook[ops:OptionsPattern[]]:=
 		l=Replace[OptionValue@"RelatedLinks",Except[_List]:>{}]
 		},
 		docGenBlock@
-			iGenerateTutorial[
+			iDocGenGenerateTutorial[
 				Replace[t,{(n_->_):>n}],
 				Replace[t,{
 					s_String:>
@@ -406,12 +406,12 @@ TutorialNotebook[ops:OptionsPattern[]]:=
 		];
 
 
-Options[GenerateTutorial]=
+Options[DocGenGenerateTutorial]=
 	Join[
 		Options[TutorialNotebook],
 		Options[CreateDocument]
 		];
-GenerateTutorial[ops:OptionsPattern[]]:=
+DocGenGenerateTutorial[ops:OptionsPattern[]]:=
 	CreateDocument[
 		TutorialNotebook[FilterRules[{ops},Options@TutorialNotebook]],
 		FilterRules[{ops},Options@CreateDocument],
@@ -425,15 +425,15 @@ GenerateTutorial[ops:OptionsPattern[]]:=
 		];
 
 
-GenerateTutorial[nb_NotebookObject]:=
+DocGenGenerateTutorial[nb_NotebookObject]:=
 	Block[{$DocGenLine=0},
-		GenerateTutorial@#
+		DocGenGenerateTutorial@#
 		]&/@scrapeTutorialTemplate@nb
 
 
-Options[SaveTutorial]=
-	Options[GenerateTutorial];
-SaveTutorial[
+Options[DocGenSaveTutorial]=
+	Options[DocGenGenerateTutorial];
+DocGenSaveTutorial[
 	guide:_String|None|{__String}|
 		_NotebookObject|_EvaluationNotebook|_InputNotebook:None,
 	dir_String?DirectoryQ,
@@ -442,8 +442,8 @@ SaveTutorial[
 	]:=
 	Replace[
 		If[guide===None,
-			GenerateTutorial[Visible->False,ops],
-			GenerateTutorial[guide,Visible->False,ops]
+			DocGenGenerateTutorial[Visible->False,ops],
+			DocGenGenerateTutorial[guide,Visible->False,ops]
 			],{
 		nb:_NotebookObject|{__NotebookObject}:>(
 			Quiet@CreateDirectory[

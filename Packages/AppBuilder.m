@@ -1508,7 +1508,7 @@ AppRegenerateDocInfo[app_String,ops:OptionsPattern[]]:=
 
 
 AppIndexDocs[app_,lang:_String:"English"]:=
-	IndexDocumentation[
+	DocGenIndexDocumentation[
 		AppPath[app,"Documentation",lang]
 		];
 
@@ -1926,7 +1926,7 @@ AppDocumentationTemplate[app_]:=
 Options[AppSaveSymbolPages]=
 	Join[
 		Options[AppPackageSymbolNotebook],
-		Options[SaveSymbolPages]
+		Options[DocGenSaveSymbolPages]
 		];
 AppSaveSymbolPages[
 	appName_,
@@ -1961,12 +1961,12 @@ AppSaveSymbolPages[
 						]
 					},
 					Function[NotebookClose[nb]; #]@
-						SaveSymbolPages[
+						DocGenSaveSymbolPages[
 							nb,
 							Replace[dir,Automatic:>AppDirectory[app,"Symbols"]],
 							extension,
 							FilterRules[{ops},
-								Options[SaveSymbolPages]
+								Options[DocGenSaveSymbolPages]
 								]
 							]
 					]&,
@@ -1984,7 +1984,7 @@ AppSaveSymbolPages[
 Options[AppPackageSaveSymbolPages]=
 	Join[
 		Options[AppPackageSymbolNotebook],
-		Options[SaveSymbolPages]
+		Options[DocGenSaveSymbolPages]
 		];
 AppPackageSaveSymbolPages[
 	appName_,
@@ -2016,12 +2016,12 @@ AppPackageSaveSymbolPages[
 				]
 			},
 			Function[NotebookClose[nb]; #]@
-				SaveSymbolPages[
+				DocGenSaveSymbolPages[
 					nb,
 					Replace[dir,Automatic:>AppDirectory[app,"Symbols"]],
 					extension,
 					FilterRules[{ops},
-						Options[SaveSymbolPages]
+						Options[DocGenSaveSymbolPages]
 						]
 					]
 			]
@@ -2036,7 +2036,7 @@ AppPackageSaveSymbolPages[
 Options[AppSaveGuide]=
 	Join[
 		Options[AppGuideNotebook],
-		Options[SaveGuide]
+		Options[DocGenSaveGuide]
 		];
 AppSaveGuide[
 	appName_, 
@@ -2066,12 +2066,12 @@ AppSaveGuide[
 				Visible -> False]
 			},
 			Function[NotebookClose[nb]; #]@
-				SaveGuide[
+				DocGenSaveGuide[
 					nb,
 					Replace[dir,Automatic:>AppDirectory[app, "Guides"]],
 					extension,
 					FilterRules[{ops},
-						Options[SaveGuide]
+						Options[DocGenSaveGuide]
 						]
 					]
 			]
@@ -2086,7 +2086,7 @@ AppSaveGuide[
 Options[AppPackageSaveGuide]=
 	Join[
 		Options[AppPackageGuideNotebook],
-		Options[SaveGuide]
+		Options[DocGenSaveGuide]
 		];
 AppPackageSaveGuide[
 	appName_,
@@ -2122,12 +2122,12 @@ AppPackageSaveGuide[
 				]
 			},
 			Function[NotebookClose[nb];#]@
-				SaveGuide[
+				DocGenSaveGuide[
 					nb,
 					Replace[dir,Automatic:>AppDirectory[app,"Guides"]],
 					extension,
 					FilterRules[{ops},
-						Options[SaveGuide]
+						Options[DocGenSaveGuide]
 						]
 					]
 			]
@@ -2245,7 +2245,7 @@ AppGenerateHTMLDocumentation[
 					\[Infinity]
 					]
 		},
-		GenerateHTMLDocumentation[
+		DocGenGenerateHTMLDocumentation[
 			Automatic,
 			fils,
 			ops
@@ -2272,7 +2272,7 @@ AppPackageGenerateHTMLDocumentation[
 					AppPath[app,#,pkg<>".nb"]&/@{"Guides","Tutorials"}
 					]
 		},
-		GenerateHTMLDocumentation[
+		DocGenGenerateHTMLDocumentation[
 			Automatic,
 			fils,
 			ops

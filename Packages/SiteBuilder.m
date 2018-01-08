@@ -278,7 +278,8 @@ WebSiteNewTableOfContents[dir_String?DirectoryQ]:=
 			outdir,
 			metas,
 			data,
-			cells
+			cells,
+			postCounter=1
 			},
 		outdir=
 			FileNameJoin@{dir, "posts"};
@@ -300,7 +301,7 @@ WebSiteNewTableOfContents[dir_String?DirectoryQ]:=
 					],
 				If[KeyMemberQ[#, "ID"],
 					ToExpression[
-						StringSplit[#ID,"."]
+						StringSplit[#ID, "."]
 						],
 					{1000,1000,1000}
 					]&
@@ -309,19 +310,27 @@ WebSiteNewTableOfContents[dir_String?DirectoryQ]:=
 			GroupBy[First->Last]/@
 				GroupBy[#[[1,1]]&->(#[[1,2]]->#[[2]]&)]@
 					KeyValueMap[
-						URLParse[#2["Path"],"Path"][[;;2]]->
-						<|
-							"Path"->
-								URLBuild[
-									Flatten@{
-										"..",
-										Most@FileNameSplit@StringTrim[#,outdir],
-										#2["Slug"]<>".html"
-										}
-									],
-							"Title"->#2["Title"]
-							|>&,metas
-							];
+							If[KeyMemberQ[#2, "Path"], 
+								Take[URLParse[#2["Path"], "Path"], UpTo[2]],
+								{}
+								]->
+							<|
+								"Path"->
+									URLBuild[
+										Flatten@{
+											"..",
+											Most@FileNameSplit@StringTrim[#, outdir],
+											#2["Slug"]<>".html"
+											}
+										],
+								"Title"->
+									If[KeyMemberQ[#2, "Title"], 
+										#2["Title"],
+										"Post #"<>ToString[postCounter++]
+										]
+								|>&,
+						metas
+						];
 		cells=
 			KeyValueMap[
 				Cell[
@@ -347,7 +356,7 @@ WebSiteNewTableOfContents[dir_String?DirectoryQ]:=
 													"Item"
 													]&,
 												#2
-												 ]
+												]
 											}
 										]
 									]&,

@@ -335,7 +335,7 @@ iGuideMetadata[guideName_,guideLink_,abstract_,ops___]:=
 		} 
 
 
-iGenerateGuide[guideName_,guideLink_,abstract_,functions_,subsections_,
+iDocGenGenerateGuide[guideName_,guideLink_,abstract_,functions_,subsections_,
 	related_,tuts_,links_]:=
 	Block[{cid=1},
 		Notebook[{
@@ -404,7 +404,7 @@ GuideNotebook[ops:OptionsPattern[]]:=
 		l=Replace[OptionValue@"RelatedLinks",Except[_List]:>{}]
 		},
 		docGenBlock@
-			iGenerateGuide[
+			iDocGenGenerateGuide[
 				Replace[t,{(n_->_):>n}],
 				Replace[t,{
 					s_String:>
@@ -427,15 +427,15 @@ GuideNotebook[ops:OptionsPattern[]]:=
 
 
 (* ::Subsubsection::Closed:: *)
-(*GenerateGuide*)
+(*DocGenGenerateGuide*)
 
 
 
-GenerateGuide::gfail=
+DocGenGenerateGuide::gfail=
 	"Failed to generate guide for ``";
 
 
-Options[GenerateGuide]=
+Options[DocGenGenerateGuide]=
 	Join[
 		Options[GuideNotebook],
 		Options[CreateDocument],{
@@ -443,7 +443,7 @@ Options[GenerateGuide]=
 			Monitor->False
 			}
 		];
-GenerateGuide[ops:OptionsPattern[]]:=
+DocGenGenerateGuide[ops:OptionsPattern[]]:=
 	Replace[OptionValue["PostFunction"],None->Identity]@
 		CreateDocument[
 			GuideNotebook[FilterRules[Flatten@{ops},Options@GuideNotebook]],
@@ -456,17 +456,17 @@ GenerateGuide[ops:OptionsPattern[]]:=
 			System`ClosingSaveDialog->False,
 			Saveable->False
 			];
-GenerateGuide[namePattern_String,ops:OptionsPattern[]]:=
+DocGenGenerateGuide[namePattern_String,ops:OptionsPattern[]]:=
 	Block[{
-		$DocActive=
+		$DocGenActive=
 			If[StringMatchQ[namePattern,"*`"],
 				StringTrim[namePattern,"`"],
-				$DocActive
+				$DocGenActive
 				]
 		},
 		With[{names=contextNames[namePattern<>"*"]},
 			With[{types=GroupBy[Keys@#,#]&@SymbolDetermineType[names]},
-				GenerateGuide[
+				DocGenGenerateGuide[
 					"Title"->
 						StringTrim[namePattern,"`"]<>" Symbols"->
 							StringReplace[namePattern,Except["$"|WordCharacter]->""],
@@ -487,7 +487,7 @@ GenerateGuide[namePattern_String,ops:OptionsPattern[]]:=
 		];
 
 
-GenerateGuide[nb_NotebookObject,ops:OptionsPattern[]]:=
+DocGenGenerateGuide[nb_NotebookObject,ops:OptionsPattern[]]:=
 	Block[{
 		monit=TrueQ@OptionValue[Monitor],
 		title
@@ -515,14 +515,14 @@ GenerateGuide[nb_NotebookObject,ops:OptionsPattern[]]:=
 				]@
 				Block[{$DocGenLine=0},
 					title=Lookup[#,"Title"];
-					GenerateGuide[#,ops]
+					DocGenGenerateGuide[#,ops]
 					]&/@scrape
 			]
 		]
 
 
 (* ::Subsubsection::Closed:: *)
-(*SaveGuide*)
+(*DocGenSaveGuide*)
 
 
 
@@ -583,9 +583,9 @@ saveGuidePages[
 			)
 
 
-Options[SaveGuide]=
-	Options[GenerateGuide];
-SaveGuide[
+Options[DocGenSaveGuide]=
+	Options[DocGenGenerateGuide];
+DocGenSaveGuide[
 	guide:_String|None|{__String}|
 		_NotebookObject|_EvaluationNotebook|_InputNotebook:None,
 	dir_String?DirectoryQ,
@@ -594,8 +594,8 @@ SaveGuide[
 	]:=
 	Replace[
 		If[guide===None,
-			GenerateGuide[Visible->False,ops],
-			GenerateGuide[guide,Visible->False,ops]
+			DocGenGenerateGuide[Visible->False,ops],
+			DocGenGenerateGuide[guide,Visible->False,ops]
 			],{
 		nb:_NotebookObject|{__NotebookObject}:>(
 			Quiet@CreateDirectory[
@@ -632,12 +632,17 @@ SaveGuide[
 				Flatten@{nb}
 			]),
 		_:>
-			(Message[GenerateGuide::gfail,If[guide=!=None,guide,{ops}]];$Failed)
+			(Message[DocGenGenerateGuide::gfail,If[guide=!=None,guide,{ops}]];$Failed)
 		}];
 
 
 (* ::Subsection:: *)
 (*Helpers*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*GuideGenButton*)
 
 
 
@@ -654,6 +659,11 @@ GuideGenButton=
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*GuideTemplate*)
+
+
+
 Options[GuideTemplate]=
 	{
 		"Title"->Automatic,
@@ -665,7 +675,7 @@ Options[GuideTemplate]=
 		"RelatedTutorials"->Automatic,
 		"RelatedLinks"->Automatic
 		};
-GuideTemplate[s_String,ops:OptionsPattern[]]:=
+GuideTemplate[s_String, ops:OptionsPattern[]]:=
 	Notebook[{
 		Cell[CellGroupData[
 			Flatten@{
@@ -819,10 +829,27 @@ GuideTemplate[s:{__String},ops:OptionsPattern[]]:=
 		];
 
 
-GuideContextTemplate[pat_]:=
+(* ::Subsubsection::Closed:: *)
+(*GuideContextTemplate*)
+
+
+
+GuideContextTemplate//Clear
+
+
+Options[GuideContextTemplate]=
+	Options@GuideTemplate;
+GuideContextTemplate[pat_String, ops:OptionsPattern[]]:=
 	GuideTemplate[pat,
+		ops,
 		"Title"->pat<>" Context Overview",
 		"Functions"->contextNames[pat<>"*"]
+		]
+GuideContextTemplate[s:{__String}, ops:OptionsPattern[]]:=
+	With[{pages=GuideContextTemplate[#, ops]&/@s},
+		Notebook[Flatten@pages[[All, 1]],
+			pages[[1, 2;;]]
+			]
 		]
 
 
@@ -1135,7 +1162,7 @@ DocumentationMultiPackageOverviewNotebook[
 	ops:OptionsPattern[]
 	]:=
 	Block[{
-		$DocActive="System",
+		$DocGenActive="System",
 		$GuideAnchorTitle="Documentation Overview",
 		data=formatPackageOverview@*extractPackageOverviewSections/@pkgs,
 		relguides

@@ -133,7 +133,7 @@ iGenerateTitleCell~SetAttributes~HoldFirst;
 generateUsageCell[symbol_String,(def:Except[_Rule])|(None->def_)]:=
 	Cell[
 		TextData[{
-			DocPageRefLink[symbol],
+			DocGenRefLink[symbol],
 			"\[LineSeparator]",
 			Replace[def,{
 				RawBoxes[b_]:>b,
@@ -151,7 +151,7 @@ generateUsageCell[symbol_String,pattern_->def_]:=
 					ReplaceAll[
 						holdPatternStrippedBoxes[pattern],{
 						s_String?makeRefTest:>
-							DocPageRefLink[s,False],
+							DocGenRefLink[s,False],
 						s_String?docSymStringPat:>(
 							StyleBox[Last@StringSplit[s,"`"],"TI"]
 							),
@@ -528,7 +528,7 @@ iGenerateExamples~SetAttributes~HoldAll;
 
 
 
-If[!ValueQ@$DocFooter,$DocFooter=Automatic];
+If[!ValueQ@$DocGenFooter,$DocGenFooter=Automatic];
 
 
 generateSeeAlsoSection[seeAlso:{__}]:=
@@ -646,7 +646,7 @@ iGenerateMetadata[sym_,ops___]:=
 		docMetadata@
 			DeleteDuplicatesBy[First]@{
 				ops,
-				"Context"->DocLinkBase@s,
+				"Context"->DocGenLinkBase@s,
 				"Keywords"->s,
 				"Label"->docSymType@sym,
 				"Summary"->
@@ -664,11 +664,11 @@ iGenerateMetadata~SetAttributes~HoldFirst
 
 
 (* ::Subsubsection::Closed:: *)
-(*iGenerateSymbolPages*)
+(*iDocGenGenerateSymbolPages*)
 
 
 
-iGenerateSymbolPages[symbol_,usages_,details_,examples_,
+iDocGenGenerateSymbolPages[symbol_,usages_,details_,examples_,
 	seeAlso_,relatedGuides_,relatedTutorials_,relatedLinks_,
 	footer_]:=
 	Block[{cid=1},
@@ -767,7 +767,7 @@ iGenerateSymbolPages[symbol_,usages_,details_,examples_,
 						]
 					]
 		];
-iGenerateSymbolPages~SetAttributes~HoldAll;
+iDocGenGenerateSymbolPages~SetAttributes~HoldAll;
 
 
 (* ::Subsubsection::Closed:: *)
@@ -784,7 +784,7 @@ Options[SymbolPageNotebook]={
 	"RelatedTutorials"->{},
 	"RelatedLinks"->{},
 	"Footer":>
-		Replace[$DocFooter,
+		Replace[$DocGenFooter,
 			Except[_String|_TextData]:>
 				"Auto-Generated Documentation"
 			]
@@ -818,7 +818,7 @@ SymbolPageNotebook[s_Symbol,ops:OptionsPattern[]]:=
 				],
 		footer=OptionValue@"Footer"
 		},
-		iGenerateSymbolPages[s,usage,details,examples,
+		iDocGenGenerateSymbolPages[s,usage,details,examples,
 			seeAlso,guides,tutorials,links,footer]
 		];
 SymbolPageNotebook[s_String,ops:OptionsPattern[]]:=
@@ -1307,7 +1307,7 @@ SymbolPageGenButton=
 		With[{c=$Context},
 			SelectionMove[EvaluationCell[],All,CellGroup,
 				AutoScroll->False];
-			GenerateSymbolPages@InputNotebook[];
+			DocGenGenerateSymbolPages@InputNotebook[];
 			If[$Context=!=c,End[]];
 			SelectionMove[EvaluationCell[],After,Cell];
 			],
@@ -1527,14 +1527,15 @@ symPageTemplate[s_String,OptionsPattern[]]:=
 		];
 SymbolPageTemplate[s:{__String},ops:OptionsPattern[]]:=
 	Notebook[
-		Flatten@{
-			OptionValue@"Headers",
-			symPageTemplate[#,ops]&/@s,
-			OptionValue@"Footers"
-			},
+		Flatten@
+			{
+				OptionValue@"Headers",
+				symPageTemplate[#,ops]&/@s,
+				OptionValue@"Footers"
+				},
 		StyleDefinitions->
 			With[{p=`Package`$PackageName},
-				FrontEnd`FileName[{p},"DocGen.nb"]
+				FrontEnd`FileName[{p}, "DocGen.nb"]
 				]
 		];
 SymbolPageTemplate[s_String,ops:OptionsPattern[]]:=
@@ -1553,15 +1554,22 @@ SymbolPageTemplate[s_Symbol,ops:OptionsPattern[]]:=
 
 Options[SymbolPageContextTemplate]=
 	Options@SymbolPageTemplate
-SymbolPageContextTemplate[s_String,ops:OptionsPattern[]]:=
+SymbolPageContextTemplate[s_String, ops:OptionsPattern[]]:=
 	SymbolPageTemplate[Names[s<>"*"],
-		FilterRules[{
-			ops,
-			"Headers"->{Cell[s,"ContextSection"]}
-			},
+		FilterRules[
+			{
+				ops,
+				"Headers"->{Cell[s, "ContextSection"]}
+				},
 			Options@SymbolPageTemplate
 			]
 		];
+SymbolPageContextTemplate[s:{__String}, ops:OptionsPattern[]]:=
+	With[{pages=SymbolPageContextTemplate[#, ops]&/@s},
+		Notebook[Flatten@pages[[All, 1]],
+			pages[[1, 2;;]]
+			]
+		]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1781,7 +1789,7 @@ scrapeSymbolPageChunk[c:{__Cell}]:=
 						},
 						1],
 				"Footer"->
-					Replace[$DocFooter,
+					Replace[$DocGenFooter,
 						Except[_String|_TextData]:>
 							("Generated on  "<>DateString[])
 						],
@@ -1814,11 +1822,11 @@ scrapeSymbolPageTemplate[nb_NotebookObject]:=
 
 
 (* ::Subsubsection::Closed:: *)
-(*GenerateSymbolPages*)
+(*DocGenGenerateSymbolPages*)
 
 
 
-Options[GenerateSymbolPages]=
+Options[DocGenGenerateSymbolPages]=
 	Join[
 		Options[SymbolPageNotebook],
 		Options[CreateDocument],{
@@ -1826,7 +1834,7 @@ Options[GenerateSymbolPages]=
 			Monitor->False
 		}
 		];
-GenerateSymbolPages[s_Symbol,ops:OptionsPattern[]]:=
+DocGenGenerateSymbolPages[s_Symbol,ops:OptionsPattern[]]:=
 	Block[{
 		$Context=$docGen,
 		$ContextPath=
@@ -1867,12 +1875,12 @@ GenerateSymbolPages[s_Symbol,ops:OptionsPattern[]]:=
 			If[$Context==$docGen,End[]]
 			]
 		];
-GenerateSymbolPages[namePattern_String,ops:OptionsPattern[]]:=
+DocGenGenerateSymbolPages[namePattern_String,ops:OptionsPattern[]]:=
 	Block[{
-		$DocActive=
+		$DocGenActive=
 			If[StringMatchQ[namePattern,"*`"],
 				StringTrim[namePattern,"`"],
-				$DocActive
+				$DocGenActive
 				],
 		makeRefOverrides=
 			contextNames[namePattern]
@@ -1885,7 +1893,7 @@ GenerateSymbolPages[namePattern_String,ops:OptionsPattern[]]:=
 						StandardForm,
 						GeneralUtilities`HoldFunction[
 							docGenCounter++;
-							GenerateSymbolPages[#,ops]
+							DocGenGenerateSymbolPages[#,ops]
 							]
 						],
 					Internal`LoadingPanel@
@@ -1898,16 +1906,16 @@ GenerateSymbolPages[namePattern_String,ops:OptionsPattern[]]:=
 					nms,
 					StandardForm,
 					GeneralUtilities`HoldFunction[
-						GenerateSymbolPages[#,ops]
+						DocGenGenerateSymbolPages[#,ops]
 						]
 					]
 				]
 			]
 		];
-GenerateSymbolPages~SetAttributes~HoldFirst;
+DocGenGenerateSymbolPages~SetAttributes~HoldFirst;
 
 
-GenerateSymbolPages[nb_NotebookObject,
+DocGenGenerateSymbolPages[nb_NotebookObject,
 	ops:OptionsPattern[]
 	]:=
 	Block[{
@@ -1945,7 +1953,7 @@ GenerateSymbolPages[nb_NotebookObject,
 						ToExpression[sym,StandardForm,
 							Function[Null,
 								Block[{$DocGenLine=0},
-									GenerateSymbolPages[#,
+									DocGenGenerateSymbolPages[#,
 										DeleteCases[scrape,"Symbol"->_],
 										ops
 										]
@@ -1959,23 +1967,23 @@ GenerateSymbolPages[nb_NotebookObject,
 				]
 			]
 		];
-GenerateSymbolPages[
+DocGenGenerateSymbolPages[
 	nb:
 		_EvaluationNotebook|_InputNotebook|_CreateDocument:
 		EvaluationNotebook[],
 	ops:OptionsPattern[]
 	]:=
-	GenerateSymbolPages[Evaluate@nb,ops];
+	DocGenGenerateSymbolPages[Evaluate@nb,ops];
 
 
 (* ::Subsubsection::Closed:: *)
-(*SaveSymbolPages*)
+(*DocGenSaveSymbolPages*)
 
 
 
-Options[SaveSymbolPages]=
-	Options[GenerateSymbolPages];
-SaveSymbolPages[
+Options[DocGenSaveSymbolPages]=
+	Options[DocGenGenerateSymbolPages];
+DocGenSaveSymbolPages[
 	doc:_String|_Symbol|{__String}|
 		_NotebookObject|{__NotebookObject}|
 		_EvaluationNotebook|_InputNotebook|_ButtonNotebook,
@@ -1983,7 +1991,7 @@ SaveSymbolPages[
 	extension:True|False:True,
 	ops:OptionsPattern[]
 	]:=
-	GenerateSymbolPages[doc,
+	DocGenGenerateSymbolPages[doc,
 		FilterRules[{
 			Visible->False,
 			ops,
@@ -1995,7 +2003,7 @@ SaveSymbolPages[
 						)&
 					)
 			},
-			Options@GenerateSymbolPages
+			Options@DocGenGenerateSymbolPages
 			]
 		];
 saveSymbolPages[
@@ -2046,14 +2054,14 @@ saveSymbolPages[
 			Flatten@{nb}
 		]
 		);
-SaveSymbolPages[
+DocGenSaveSymbolPages[
 	doc_?(MatchQ[#,String|_Symbol|{__String}]&),
 	dir_String?DirectoryQ,
 	extension:True|False:True,
 	ops:OptionsPattern[]
 	]:=
-	SaveSymbolPages[Evaluate@doc,dir,extension,ops];
-SaveSymbolPages~SetAttributes~HoldFirst
+	DocGenSaveSymbolPages[Evaluate@doc,dir,extension,ops];
+DocGenSaveSymbolPages~SetAttributes~HoldFirst
 
 
 

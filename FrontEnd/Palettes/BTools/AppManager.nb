@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    446367,       8468]
-NotebookOptionsPosition[    445900,       8448]
-NotebookOutlinePosition[    446352,       8468]
-CellTagsIndexPosition[    446309,       8465]
+NotebookDataLength[    446519,       8467]
+NotebookOptionsPosition[    446052,       8447]
+NotebookOutlinePosition[    446504,       8467]
+CellTagsIndexPosition[    446461,       8464]
 WindowTitle->App Manager
 WindowFrame->Palette*)
 
@@ -2018,15 +2018,17 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     Blank[String]] :> If[
                     StringEndsQ[AppManagerPalette`Private`s, "`"], 
                     AppManagerPalette`Private`whichPacF[
-                    "GenerateSymbolPages"][AppManagerPalette`Private`s], 
+                    "DocGenGenerateSymbolPages"][AppManagerPalette`Private`s], 
                     ToExpression[AppManagerPalette`Private`s, StandardForm, 
                     AppManagerPalette`Private`whichPacF[
-                    "GenerateSymbolPages"]]]}], "Guide Page" :> Replace[
+                    "DocGenGenerateSymbolPages"]]]}], "Guide Page" :> 
+                  Replace[
                     NotebookRead[
                     InputNotebook[]], Pattern[AppManagerPalette`Private`s, 
                     Blank[String]] :> 
-                    AppManagerPalette`Private`whichPacF["GenerateGuide"][
-                    AppManagerPalette`Private`s]], "Docs Paclet" :> Replace[
+                    AppManagerPalette`Private`whichPacF[
+                    "DocGenGenerateGuide"][AppManagerPalette`Private`s]], 
+                  "Docs Paclet" :> Replace[
                     NotebookRead[
                     InputNotebook[]], Pattern[AppManagerPalette`Private`s, 
                     Blank[String]] :> 
@@ -2039,12 +2041,12 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     With[{AppManagerPalette`Private`pages = If[
                     StringEndsQ[AppManagerPalette`Private`s, "`"], 
                     AppManagerPalette`Private`whichPacF[
-                    "GenerateSymbolPages"][
+                    "DocGenGenerateSymbolPages"][
                     AppManagerPalette`Private`s, Visible -> False], 
                     ToExpression[AppManagerPalette`Private`s, StandardForm, 
                     Function[Null, 
                     AppManagerPalette`Private`whichPacF[
-                    "GenerateSymbolPages"][#, Visible -> False], 
+                    "DocGenGenerateSymbolPages"][#, Visible -> False], 
                     HoldFirst]]]}, 
                     SystemOpen[
                     First[
@@ -2233,33 +2235,33 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     Blank[String], StringMatchQ[#, 
                     Alternatives["$", "`", 
                     Repeated[WordCharacter]]]& ]], 
-                    
-                    Block[{BTools`$DocActive = 
-                    AppManagerPalette`Private`currentApp}, 
+                    Block[{
+                    BTools`$DocActive = AppManagerPalette`Private`currentApp}, 
                     ToExpression[AppManagerPalette`Private`s, StandardForm, 
                     AppManagerPalette`Private`whichPacF[
-                    "GenerateSymbolPages"]]], 
+                    "DocGenGenerateSymbolPages"]]], 
                     
                     Block[{BTools`$DocActive = 
                     AppManagerPalette`Private`currentApp}, 
                     AppManagerPalette`Private`whichPacF[
-                    "GenerateSymbolPages"][AppManagerPalette`Private`nb]]]], 
+                    "DocGenGenerateSymbolPages"][
+                    AppManagerPalette`Private`nb]]]], 
                     "Generating symbol pages"]], "Guide Pages" :> 
                   With[{AppManagerPalette`Private`nb = InputNotebook[]}, 
                     AppManagerPalette`Private`paletteDialog[
                     
                     Block[{BTools`$DocActive = 
                     AppManagerPalette`Private`currentApp}, 
-                    AppManagerPalette`Private`whichPacF["GenerateGuide"][
-                    AppManagerPalette`Private`nb]], 
+                    AppManagerPalette`Private`whichPacF[
+                    "DocGenGenerateGuide"][AppManagerPalette`Private`nb]], 
                     "Generating guide pages"]], "Tutorial Pages" :> 
                   With[{AppManagerPalette`Private`nb = InputNotebook[]}, 
                     AppManagerPalette`Private`paletteDialog[
                     
                     Block[{BTools`$DocActive = 
                     AppManagerPalette`Private`currentApp}, 
-                    AppManagerPalette`Private`whichPacF["GenerateTutorial"][
-                    AppManagerPalette`Private`nb]], 
+                    AppManagerPalette`Private`whichPacF[
+                    "DocGenGenerateTutorial"][AppManagerPalette`Private`nb]], 
                     "Generating tutorial pages"]]}, Appearance -> None, {
                  Method -> "Queued"}]}, {}], 
               Row[{
@@ -2330,8 +2332,8 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     AppManagerPalette`Private`whichPacF["AppDirectory"][
                     AppManagerPalette`Private`currentApp, "Symbols"], 
                     CreateIntermediateDirectories -> True]]; 
-                    AppManagerPalette`Private`whichPacF["SaveSymbolPages"][
-                    AppManagerPalette`Private`nb, 
+                    AppManagerPalette`Private`whichPacF[
+                    "DocGenSaveSymbolPages"][AppManagerPalette`Private`nb, 
                     AppManagerPalette`Private`whichPacF["AppDirectory"][
                     AppManagerPalette`Private`currentApp, "Symbols"], False]],
                      "Generating symbol pages"]], "Guide Pages" :> 
@@ -2344,7 +2346,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     AppManagerPalette`Private`whichPacF["AppDirectory"][
                     AppManagerPalette`Private`currentApp, "Guides"], 
                     CreateIntermediateDirectories -> True]]; 
-                    AppManagerPalette`Private`whichPacF["SaveGuide"][
+                    AppManagerPalette`Private`whichPacF["DocGenSaveGuide"][
                     AppManagerPalette`Private`nb, 
                     AppManagerPalette`Private`whichPacF["AppDirectory"][
                     AppManagerPalette`Private`currentApp, "Guides"], False]], 
@@ -2354,8 +2356,8 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     
                     Block[{BTools`$DocActive = 
                     AppManagerPalette`Private`currentApp}, 
-                    AppManagerPalette`Private`whichPacF["GenerateTutorial"][
-                    AppManagerPalette`Private`nb, 
+                    AppManagerPalette`Private`whichPacF[
+                    "DocGenGenerateTutorial"][AppManagerPalette`Private`nb, 
                     AppManagerPalette`Private`whichPacF["AppDirectory"][
                     AppManagerPalette`Private`currentApp, "Tutorials"], 
                     False]], "Generating tutorial pages"]], Delimiter, 
@@ -2380,7 +2382,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     ToExpression[
                     AppManagerPalette`Private`s, StandardForm, 
                     AppManagerPalette`Private`whichPacF[
-                    "GenerateSymbolPages"][#, Visible -> False, 
+                    "DocGenGenerateSymbolPages"][#, Visible -> False, 
                     "PostFunction" -> Function[AppManagerPalette`Private`page, 
                     ((NotebookClose[AppManagerPalette`Private`page]; #)& )[
                     AppManagerPalette`Private`whichPacF[
@@ -2391,7 +2393,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     Block[{BTools`$DocActive = 
                     AppManagerPalette`Private`currentApp}, 
                     AppManagerPalette`Private`whichPacF[
-                    "GenerateSymbolPages"][
+                    "DocGenGenerateSymbolPages"][
                     AppManagerPalette`Private`nb, Visible -> False, 
                     "PostFunction" -> Function[AppManagerPalette`Private`page, 
                     ((NotebookClose[AppManagerPalette`Private`page]; #)& )[
@@ -2408,7 +2410,8 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     AppManagerPalette`Private`notebooks}, SystemOpen[
                     First[
                     Flatten[{
-                    AppManagerPalette`Private`whichPacF["GenerateGuide"][
+                    AppManagerPalette`Private`whichPacF[
+                    "DocGenGenerateGuide"][
                     AppManagerPalette`Private`nb, Visible -> False, 
                     "PostFunction" -> Function[AppManagerPalette`Private`page, 
                     ((NotebookClose[AppManagerPalette`Private`page]; #)& )[
@@ -2424,8 +2427,8 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     AppManagerPalette`Private`currentApp, 
                     AppManagerPalette`Private`notebooks}, 
                     AppManagerPalette`Private`notebooks = 
-                    AppManagerPalette`Private`whichPacF["GenerateTutorial"][
-                    AppManagerPalette`Private`nb, 
+                    AppManagerPalette`Private`whichPacF[
+                    "DocGenGenerateTutorial"][AppManagerPalette`Private`nb, 
                     AppManagerPalette`Private`whichPacF["AppDirectory"][
                     AppManagerPalette`Private`currentApp, "Tutorials"], False,
                      Visible -> False]; ((Map[NotebookClose, 
@@ -2450,17 +2453,16 @@ UVdVBS7LErWUErUQAlwUBWrO+aIZY7MJpRT+Mmdfqc/QmA==
               EventHandler[
                Button[
                 Style["Regenerate DocInfo", 
-                 GrayLevel[0.2]], 
-                CheckAbort[Block[{$ContextPath = {"System`"}}, 
+                 GrayLevel[0.2]], CheckAll[Block[{$ContextPath = {"System`"}}, 
                     Needs[
                     StringJoin[AppManagerPalette`Private`$appName, "`"]]]; 
                   SystemOpen[
-                    BTools`Private`Hidden`AppRegenerateDocInfo[
+                    BTools`AppRegenerateDocInfo[
                     AppManagerPalette`Private`currentApp]], 
                   BTools`Private`UUIDActive[
-                   "Button-fd9bd20e-8f34-445a-bd34-93abb3570f20"] = False]; 
+                   "Button-8eb5c21f-0631-43d1-9c4a-904faf988404"] = False]; 
                 BTools`Private`UUIDActive[
-                  "Button-fd9bd20e-8f34-445a-bd34-93abb3570f20"] = False, 
+                  "Button-8eb5c21f-0631-43d1-9c4a-904faf988404"] = False, 
                 Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -2489,7 +2491,7 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-fd9bd20e-8f34-445a-bd34-93abb3570f20"]], 
+                    "Button-8eb5c21f-0631-43d1-9c4a-904faf988404"]], 
                     "Pressed", Automatic]]}, Method -> "Queued", 
                 FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
                 Appearance -> {"Palette", 
@@ -2497,7 +2499,7 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-fd9bd20e-8f34-445a-bd34-93abb3570f20"]], 
+                    "Button-8eb5c21f-0631-43d1-9c4a-904faf988404"]], 
                     "Pressed", Automatic]]}], {"MouseClicked" :> If[
                   TrueQ[
                    Replace[
@@ -2505,13 +2507,12 @@ mEXTyg==
                     Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
                     Automatic -> True]], 
                   BTools`Private`UUIDActive[
-                   "Button-fd9bd20e-8f34-445a-bd34-93abb3570f20"] = True], 
+                   "Button-8eb5c21f-0631-43d1-9c4a-904faf988404"] = True], 
                 PassEventsDown -> True}], 
               EventHandler[
                Button[
                 Style["Index Documentation", 
-                 GrayLevel[0.2]], 
-                CheckAbort[Block[{$ContextPath = {"System`"}}, 
+                 GrayLevel[0.2]], CheckAll[Block[{$ContextPath = {"System`"}}, 
                     Needs[
                     StringJoin[AppManagerPalette`Private`$appName, "`"]]]; 
                   AppManagerPalette`Private`paletteDialog[
@@ -2519,9 +2520,9 @@ mEXTyg==
                     AppManagerPalette`Private`currentApp], 
                     "Indexing documentation"], 
                   BTools`Private`UUIDActive[
-                   "Button-75454423-c84a-4f33-b653-a3b4f6e03893"] = False]; 
+                   "Button-a9ff2d68-730e-470e-a029-4d22321088ce"] = False]; 
                 BTools`Private`UUIDActive[
-                  "Button-75454423-c84a-4f33-b653-a3b4f6e03893"] = False, 
+                  "Button-a9ff2d68-730e-470e-a029-4d22321088ce"] = False, 
                 Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -2550,7 +2551,7 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-75454423-c84a-4f33-b653-a3b4f6e03893"]], 
+                    "Button-a9ff2d68-730e-470e-a029-4d22321088ce"]], 
                     "Pressed", Automatic]]}, Method -> "Queued", 
                 FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
                 Appearance -> {"Palette", 
@@ -2558,7 +2559,7 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-75454423-c84a-4f33-b653-a3b4f6e03893"]], 
+                    "Button-a9ff2d68-730e-470e-a029-4d22321088ce"]], 
                     "Pressed", Automatic]]}], {"MouseClicked" :> If[
                   TrueQ[
                    Replace[
@@ -2566,7 +2567,7 @@ mEXTyg==
                     Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
                     Automatic -> True]], 
                   BTools`Private`UUIDActive[
-                   "Button-75454423-c84a-4f33-b653-a3b4f6e03893"] = True], 
+                   "Button-a9ff2d68-730e-470e-a029-4d22321088ce"] = True], 
                 PassEventsDown -> True}], 
               Panel[
               "", ImageSize -> {190, 1}, ImageMargins -> 5, Appearance -> 
@@ -2646,8 +2647,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     "Queued", 
                     TrackedSymbols :> {AppManagerPalette`Private`currentApp}}, 
                    Options[ActionMenu]], {1, 2, -1}], {"Label" :> "Result"} -> 
-                 Join[{
-                   "Symbol Page Template" :> 
+                 Join[{"Symbol Page Template" :> 
                     AppManagerPalette`Private`paletteDialog[
                     
                     With[{AppManagerPalette`Private`docs = 
@@ -2677,8 +2677,8 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     "AppPackageSymbolNotebook"][
                     AppManagerPalette`Private`currentApp, #], Visible -> 
                     False]}, 
-                    AppManagerPalette`Private`whichPacF["SaveSymbolPages"][
-                    AppManagerPalette`Private`nb, 
+                    AppManagerPalette`Private`whichPacF[
+                    "DocGenSaveSymbolPages"][AppManagerPalette`Private`nb, 
                     AppManagerPalette`Private`whichPacF["AppDirectory"][
                     AppManagerPalette`Private`currentApp, "Symbols"], False]; 
                     NotebookClose[AppManagerPalette`Private`nb]]& , 
@@ -2695,8 +2695,8 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     "AppPackageSymbolNotebook"][
                     AppManagerPalette`Private`currentApp, #], Visible -> 
                     False]}, 
-                    AppManagerPalette`Private`whichPacF["SaveSymbolPages"][
-                    AppManagerPalette`Private`nb, 
+                    AppManagerPalette`Private`whichPacF[
+                    "DocGenSaveSymbolPages"][AppManagerPalette`Private`nb, 
                     AppManagerPalette`Private`whichPacF["AppDirectory"][
                     AppManagerPalette`Private`currentApp, "Symbols"], False]; 
                     NotebookClose[AppManagerPalette`Private`nb]], 
@@ -2804,7 +2804,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     AppManagerPalette`Private`whichPacF["AppGuideNotebook"][
                     AppManagerPalette`Private`currentApp], Visible -> 
                     False])}, 
-                    AppManagerPalette`Private`whichPacF["SaveGuide"][
+                    AppManagerPalette`Private`whichPacF["DocGenSaveGuide"][
                     AppManagerPalette`Private`nb, 
                     AppManagerPalette`Private`whichPacF["AppDirectory"][
                     AppManagerPalette`Private`currentApp, "Guides"], False]; 
@@ -2820,7 +2820,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     AppManagerPalette`Private`whichPacF["AppGuideNotebook"][
                     AppManagerPalette`Private`currentApp], Visible -> 
                     False])}, 
-                    AppManagerPalette`Private`whichPacF["SaveGuide"][
+                    AppManagerPalette`Private`whichPacF["DocGenSaveGuide"][
                     AppManagerPalette`Private`nb, 
                     AppManagerPalette`Private`whichPacF[
                     "AppPackageGuideNotebook"][
@@ -2840,7 +2840,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     
                     Block[{BTools`$DocActive = 
                     AppManagerPalette`Private`currentApp}, 
-                    AppManagerPalette`Private`whichPacF["GenerateGuide"][
+                    AppManagerPalette`Private`whichPacF["DocGenGenerateGuide"][
                     CreateDocument[
                     AppManagerPalette`Private`whichPacF[
                     "AppPackageGuideNotebook"][
@@ -2922,8 +2922,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     "Queued", 
                     TrackedSymbols :> {AppManagerPalette`Private`currentApp}}, 
                    Options[ActionMenu]], {1, 2, -1}], {"Label" :> "Result"} -> 
-                 Join[{
-                   "Tutorial Template" :> 
+                 Join[{"Tutorial Template" :> 
                     AppManagerPalette`Private`paletteDialog[
                     With[{AppManagerPalette`Private`docs = (Needs[
                     StringJoin[AppManagerPalette`Private`currentApp, "`"]]; 
@@ -2945,7 +2944,8 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     
                     Block[{BTools`$DocActive = 
                     AppManagerPalette`Private`currentApp}, 
-                    AppManagerPalette`Private`whichPacF["GenerateTutorial"][
+                    AppManagerPalette`Private`whichPacF[
+                    "DocGenGenerateTutorial"][
                     CreateDocument[
                     AppManagerPalette`Private`docs, Visible -> False]]]]], 
                     "Creating tutorial page"]}]], 
@@ -2972,8 +2972,7 @@ UVdVBS7LErWUErUQAlwUBWrO+aIZY7MJpRT+Mmdfqc/QmA==
               EventHandler[
                Button[
                 Style["Publish", 
-                 GrayLevel[0.2]], 
-                CheckAbort[Block[{$ContextPath = {"System`"}}, 
+                 GrayLevel[0.2]], CheckAll[Block[{$ContextPath = {"System`"}}, 
                     Needs[
                     StringJoin[AppManagerPalette`Private`$appName, "`"]]]; 
                   AppManagerPalette`Private`paletteDialog[
@@ -2990,9 +2989,9 @@ UVdVBS7LErWUErUQAlwUBWrO+aIZY7MJpRT+Mmdfqc/QmA==
                     Lookup[AppManagerPalette`Private`r, "ServerURL"]]]], 
                     "Publishing"], 
                   BTools`Private`UUIDActive[
-                   "Button-30378d71-3274-4dbb-9926-d777e86fff0f"] = False]; 
+                   "Button-6461c461-e463-4510-88f8-d32e24afdfa1"] = False]; 
                 BTools`Private`UUIDActive[
-                  "Button-30378d71-3274-4dbb-9926-d777e86fff0f"] = False, 
+                  "Button-6461c461-e463-4510-88f8-d32e24afdfa1"] = False, 
                 Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -3021,7 +3020,7 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-30378d71-3274-4dbb-9926-d777e86fff0f"]], 
+                    "Button-6461c461-e463-4510-88f8-d32e24afdfa1"]], 
                     "Pressed", Automatic]]}, Method -> "Queued", 
                 FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
                 Appearance -> {"Palette", 
@@ -3029,7 +3028,7 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-30378d71-3274-4dbb-9926-d777e86fff0f"]], 
+                    "Button-6461c461-e463-4510-88f8-d32e24afdfa1"]], 
                     "Pressed", Automatic]]}], {"MouseClicked" :> If[
                   TrueQ[
                    Replace[
@@ -3037,7 +3036,7 @@ mEXTyg==
                     Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
                     Automatic -> True]], 
                   BTools`Private`UUIDActive[
-                   "Button-30378d71-3274-4dbb-9926-d777e86fff0f"] = True], 
+                   "Button-6461c461-e463-4510-88f8-d32e24afdfa1"] = True], 
                 PassEventsDown -> True}], 
               Row[{
                 Grid[{{
@@ -3600,16 +3599,15 @@ UVdVBS7LErWUErUQAlwUBWrO+aIZY7MJpRT+Mmdfqc/QmA==
               EventHandler[
                Button[
                 Style["Git Commit", 
-                 GrayLevel[0.2]], 
-                CheckAbort[Block[{$ContextPath = {"System`"}}, 
+                 GrayLevel[0.2]], CheckAll[Block[{$ContextPath = {"System`"}}, 
                     Needs[
                     StringJoin[AppManagerPalette`Private`$appName, "`"]]]; 
                   AppManagerPalette`Private`whichPacF["AppGitCommit"][
                    AppManagerPalette`Private`currentApp], 
                   BTools`Private`UUIDActive[
-                   "Button-df59e305-018c-4020-8e19-4b95846e867d"] = False]; 
+                   "Button-39fd407b-4a2d-40ba-812b-f73f48764971"] = False]; 
                 BTools`Private`UUIDActive[
-                  "Button-df59e305-018c-4020-8e19-4b95846e867d"] = False, 
+                  "Button-39fd407b-4a2d-40ba-812b-f73f48764971"] = False, 
                 Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -3638,7 +3636,7 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-df59e305-018c-4020-8e19-4b95846e867d"]], 
+                    "Button-39fd407b-4a2d-40ba-812b-f73f48764971"]], 
                     "Pressed", Automatic]]}, Method -> "Queued", 
                 FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
                 Appearance -> {"Palette", 
@@ -3646,7 +3644,7 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-df59e305-018c-4020-8e19-4b95846e867d"]], 
+                    "Button-39fd407b-4a2d-40ba-812b-f73f48764971"]], 
                     "Pressed", Automatic]]}], {"MouseClicked" :> If[
                   TrueQ[
                    Replace[
@@ -3654,7 +3652,7 @@ mEXTyg==
                     Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
                     Automatic -> True]], 
                   BTools`Private`UUIDActive[
-                   "Button-df59e305-018c-4020-8e19-4b95846e867d"] = True], 
+                   "Button-39fd407b-4a2d-40ba-812b-f73f48764971"] = True], 
                 PassEventsDown -> True}], 
               Row[{
                 Button[
@@ -3752,8 +3750,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
               EventHandler[
                Button[
                 Style["Push to GitHub", 
-                 GrayLevel[0.2]], 
-                CheckAbort[Block[{$ContextPath = {"System`"}}, 
+                 GrayLevel[0.2]], CheckAll[Block[{$ContextPath = {"System`"}}, 
                     Needs[
                     StringJoin[AppManagerPalette`Private`$appName, "`"]]]; (
                    Quiet[
@@ -3762,9 +3759,9 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     AppManagerPalette`Private`whichPacF["AppGitHubRepo"][
                     AppManagerPalette`Private`currentApp, None]]), 
                   BTools`Private`UUIDActive[
-                   "Button-d5684560-92d4-4c72-98ef-9a1db4f07060"] = False]; 
+                   "Button-52d0e509-e25a-449a-a67e-e282b21a273a"] = False]; 
                 BTools`Private`UUIDActive[
-                  "Button-d5684560-92d4-4c72-98ef-9a1db4f07060"] = False, 
+                  "Button-52d0e509-e25a-449a-a67e-e282b21a273a"] = False, 
                 Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -3793,7 +3790,7 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-d5684560-92d4-4c72-98ef-9a1db4f07060"]], 
+                    "Button-52d0e509-e25a-449a-a67e-e282b21a273a"]], 
                     "Pressed", Automatic]]}, Method -> "Queued", 
                 FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
                 Appearance -> {"Palette", 
@@ -3801,7 +3798,7 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-d5684560-92d4-4c72-98ef-9a1db4f07060"]], 
+                    "Button-52d0e509-e25a-449a-a67e-e282b21a273a"]], 
                     "Pressed", Automatic]]}], {"MouseClicked" :> If[
                   TrueQ[
                    Replace[
@@ -3809,22 +3806,21 @@ mEXTyg==
                     Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
                     Automatic -> True]], 
                   BTools`Private`UUIDActive[
-                   "Button-d5684560-92d4-4c72-98ef-9a1db4f07060"] = True], 
+                   "Button-52d0e509-e25a-449a-a67e-e282b21a273a"] = True], 
                 PassEventsDown -> True}], 
               EventHandler[
                Button[
                 Style["Create GitHub Repo", 
-                 GrayLevel[0.2]], 
-                CheckAbort[Block[{$ContextPath = {"System`"}}, 
+                 GrayLevel[0.2]], CheckAll[Block[{$ContextPath = {"System`"}}, 
                     Needs[
                     StringJoin[AppManagerPalette`Private`$appName, "`"]]]; 
                   Quiet[
                     AppManagerPalette`Private`whichPacF["AppGitHubConfigure"][
                     AppManagerPalette`Private`currentApp]], 
                   BTools`Private`UUIDActive[
-                   "Button-b6021900-227c-4f57-9d4c-87694a7dbcb3"] = False]; 
+                   "Button-e51e0d78-50fb-4c97-816a-1a809a787356"] = False]; 
                 BTools`Private`UUIDActive[
-                  "Button-b6021900-227c-4f57-9d4c-87694a7dbcb3"] = False, 
+                  "Button-e51e0d78-50fb-4c97-816a-1a809a787356"] = False, 
                 Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -3853,7 +3849,7 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-b6021900-227c-4f57-9d4c-87694a7dbcb3"]], 
+                    "Button-e51e0d78-50fb-4c97-816a-1a809a787356"]], 
                     "Pressed", Automatic]]}, Method -> "Queued", 
                 FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
                 Appearance -> {"Palette", 
@@ -3861,7 +3857,7 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-b6021900-227c-4f57-9d4c-87694a7dbcb3"]], 
+                    "Button-e51e0d78-50fb-4c97-816a-1a809a787356"]], 
                     "Pressed", Automatic]]}], {"MouseClicked" :> If[
                   TrueQ[
                    Replace[
@@ -3869,22 +3865,21 @@ mEXTyg==
                     Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
                     Automatic -> True]], 
                   BTools`Private`UUIDActive[
-                   "Button-b6021900-227c-4f57-9d4c-87694a7dbcb3"] = True], 
+                   "Button-e51e0d78-50fb-4c97-816a-1a809a787356"] = True], 
                 PassEventsDown -> True}], 
               EventHandler[
                Button[
                 Style["Delete GitHub Repo", 
-                 GrayLevel[0.2]], 
-                CheckAbort[Block[{$ContextPath = {"System`"}}, 
+                 GrayLevel[0.2]], CheckAll[Block[{$ContextPath = {"System`"}}, 
                     Needs[
                     StringJoin[AppManagerPalette`Private`$appName, "`"]]]; 
                   Quiet[
                     AppManagerPalette`Private`whichPacF["AppGitHubDelete"][
                     AppManagerPalette`Private`currentApp]], 
                   BTools`Private`UUIDActive[
-                   "Button-506d772a-4e2a-443d-aeda-8d1472e3bb48"] = False]; 
+                   "Button-3877900e-f250-41df-8dc7-6d7a68fbf72c"] = False]; 
                 BTools`Private`UUIDActive[
-                  "Button-506d772a-4e2a-443d-aeda-8d1472e3bb48"] = False, 
+                  "Button-3877900e-f250-41df-8dc7-6d7a68fbf72c"] = False, 
                 Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -3913,7 +3908,7 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-506d772a-4e2a-443d-aeda-8d1472e3bb48"]], 
+                    "Button-3877900e-f250-41df-8dc7-6d7a68fbf72c"]], 
                     "Pressed", Automatic]]}, Method -> "Queued", 
                 FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
                 Appearance -> {"Palette", 
@@ -3921,7 +3916,7 @@ mEXTyg==
                    If[
                     TrueQ[
                     BTools`Private`UUIDActive[
-                    "Button-506d772a-4e2a-443d-aeda-8d1472e3bb48"]], 
+                    "Button-3877900e-f250-41df-8dc7-6d7a68fbf72c"]], 
                     "Pressed", Automatic]]}], {"MouseClicked" :> If[
                   TrueQ[
                    Replace[
@@ -3929,7 +3924,7 @@ mEXTyg==
                     Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
                     Automatic -> True]], 
                   BTools`Private`UUIDActive[
-                   "Button-506d772a-4e2a-443d-aeda-8d1472e3bb48"] = True], 
+                   "Button-3877900e-f250-41df-8dc7-6d7a68fbf72c"] = True], 
                 PassEventsDown -> True}], 
               Panel[
               "", ImageSize -> {190, 1}, ImageMargins -> 5, Appearance -> 
@@ -4028,7 +4023,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     "imgs"]]] > 0, 
                     SystemOpen[
                     First[
-                    BTools`Private`Hidden`AppDeployImages[
+                    BTools`AppDeployImages[
                     AppManagerPalette`Private`currentApp]]]], "CSS" :> 
                   If[Length[
                     FileNames["*", 
@@ -4037,7 +4032,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     0, 
                     SystemOpen[
                     First[
-                    BTools`Private`Hidden`AppDeployCSS[
+                    BTools`AppDeployCSS[
                     AppManagerPalette`Private`currentApp]]]], "HTML" :> 
                   If[Length[
                     FileNames["*", 
@@ -4249,18 +4244,16 @@ mEXTyg==
                  If[
                   TrueQ[
                    BTools`Private`UUIDActive[
-                   "Button-b35aba07-36a9-40af-a8bc-1f4d49ee4e10"]], "Pressed",
+                   "Button-714addff-4f76-4fd8-a9f3-f97249c52471"]], "Pressed",
                    Automatic]]},
-              
-              ButtonFunction:>(
-               CheckAbort[Block[{$ContextPath = {"System`"}}, 
+              ButtonFunction:>(CheckAll[Block[{$ContextPath = {"System`"}}, 
                    Needs[
                     StringJoin[AppManagerPalette`Private`$appName, "`"]]]; 
                  AppManagerPalette`Private`newAppDialog[], 
                  BTools`Private`UUIDActive[
-                  "Button-b35aba07-36a9-40af-a8bc-1f4d49ee4e10"] = False]; 
+                  "Button-714addff-4f76-4fd8-a9f3-f97249c52471"] = False]; 
                BTools`Private`UUIDActive[
-                 "Button-b35aba07-36a9-40af-a8bc-1f4d49ee4e10"] = False),
+                 "Button-714addff-4f76-4fd8-a9f3-f97249c52471"] = False),
               Evaluator->Automatic,
               FrameMargins->{{5, 5}, {2, 0}},
               ImageSize->200,
@@ -4272,7 +4265,7 @@ mEXTyg==
                     Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
                    Automatic -> True]], 
                  BTools`Private`UUIDActive[
-                  "Button-b35aba07-36a9-40af-a8bc-1f4d49ee4e10"] = True], 
+                  "Button-714addff-4f76-4fd8-a9f3-f97249c52471"] = True], 
                PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
                True}]]}
           },
@@ -6341,15 +6334,17 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                  InputNotebook[]], {Pattern[AppManagerPalette`Private`s, 
                    Blank[String]] :> If[
                    StringEndsQ[AppManagerPalette`Private`s, "`"], 
-                   AppManagerPalette`Private`whichPacF["GenerateSymbolPages"][
-                   AppManagerPalette`Private`s], 
+                   AppManagerPalette`Private`whichPacF[
+                   "DocGenGenerateSymbolPages"][AppManagerPalette`Private`s], 
+                   
                    ToExpression[AppManagerPalette`Private`s, StandardForm, 
                     AppManagerPalette`Private`whichPacF[
-                    "GenerateSymbolPages"]]]}], "Guide Page" :> Replace[
+                    "DocGenGenerateSymbolPages"]]]}], "Guide Page" :> 
+              Replace[
                 NotebookRead[
                  InputNotebook[]], Pattern[AppManagerPalette`Private`s, 
                   Blank[String]] :> 
-                AppManagerPalette`Private`whichPacF["GenerateGuide"][
+                AppManagerPalette`Private`whichPacF["DocGenGenerateGuide"][
                  AppManagerPalette`Private`s]], "Docs Paclet" :> Replace[
                 NotebookRead[
                  InputNotebook[]], Pattern[AppManagerPalette`Private`s, 
@@ -6362,12 +6357,12 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                   Blank[String]] :> With[{AppManagerPalette`Private`pages = If[
                     StringEndsQ[AppManagerPalette`Private`s, "`"], 
                     AppManagerPalette`Private`whichPacF[
-                    "GenerateSymbolPages"][
+                    "DocGenGenerateSymbolPages"][
                     AppManagerPalette`Private`s, Visible -> False], 
                     ToExpression[AppManagerPalette`Private`s, StandardForm, 
                     Function[Null, 
                     AppManagerPalette`Private`whichPacF[
-                    "GenerateSymbolPages"][#, Visible -> False], 
+                    "DocGenGenerateSymbolPages"][#, Visible -> False], 
                     HoldFirst]]]}, 
                   SystemOpen[
                    First[
@@ -6551,23 +6546,25 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     Blank[String], StringMatchQ[#, 
                     Alternatives["$", "`", 
                     Repeated[WordCharacter]]]& ]], 
-                   Block[{
-                    BTools`$DocActive = AppManagerPalette`Private`currentApp}, 
+                   
+                   Block[{BTools`$DocActive = 
+                    AppManagerPalette`Private`currentApp}, 
                     ToExpression[AppManagerPalette`Private`s, StandardForm, 
                     AppManagerPalette`Private`whichPacF[
-                    "GenerateSymbolPages"]]], 
+                    "DocGenGenerateSymbolPages"]]], 
                    
                    Block[{BTools`$DocActive = 
                     AppManagerPalette`Private`currentApp}, 
                     AppManagerPalette`Private`whichPacF[
-                    "GenerateSymbolPages"][AppManagerPalette`Private`nb]]]], 
+                    "DocGenGenerateSymbolPages"][
+                    AppManagerPalette`Private`nb]]]], 
                  "Generating symbol pages"]], "Guide Pages" :> 
               With[{AppManagerPalette`Private`nb = InputNotebook[]}, 
                 AppManagerPalette`Private`paletteDialog[
                  
                  Block[{BTools`$DocActive = 
                    AppManagerPalette`Private`currentApp}, 
-                  AppManagerPalette`Private`whichPacF["GenerateGuide"][
+                  AppManagerPalette`Private`whichPacF["DocGenGenerateGuide"][
                   AppManagerPalette`Private`nb]], "Generating guide pages"]], 
               "Tutorial Pages" :> 
               With[{AppManagerPalette`Private`nb = InputNotebook[]}, 
@@ -6575,8 +6572,8 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                  
                  Block[{BTools`$DocActive = 
                    AppManagerPalette`Private`currentApp}, 
-                  AppManagerPalette`Private`whichPacF["GenerateTutorial"][
-                  AppManagerPalette`Private`nb]], 
+                  AppManagerPalette`Private`whichPacF[
+                  "DocGenGenerateTutorial"][AppManagerPalette`Private`nb]], 
                  "Generating tutorial pages"]]}, Appearance -> None, {
              Method -> "Queued"}]}, {}], 
           Row[{
@@ -6645,8 +6642,8 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     AppManagerPalette`Private`whichPacF["AppDirectory"][
                     AppManagerPalette`Private`currentApp, "Symbols"], 
                     CreateIntermediateDirectories -> True]]; 
-                  AppManagerPalette`Private`whichPacF["SaveSymbolPages"][
-                   AppManagerPalette`Private`nb, 
+                  AppManagerPalette`Private`whichPacF[
+                   "DocGenSaveSymbolPages"][AppManagerPalette`Private`nb, 
                     AppManagerPalette`Private`whichPacF["AppDirectory"][
                     AppManagerPalette`Private`currentApp, "Symbols"], False]],
                   "Generating symbol pages"]], "Guide Pages" :> 
@@ -6659,7 +6656,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     AppManagerPalette`Private`whichPacF["AppDirectory"][
                     AppManagerPalette`Private`currentApp, "Guides"], 
                     CreateIntermediateDirectories -> True]]; 
-                  AppManagerPalette`Private`whichPacF["SaveGuide"][
+                  AppManagerPalette`Private`whichPacF["DocGenSaveGuide"][
                    AppManagerPalette`Private`nb, 
                     AppManagerPalette`Private`whichPacF["AppDirectory"][
                     AppManagerPalette`Private`currentApp, "Guides"], False]], 
@@ -6669,8 +6666,8 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                  
                  Block[{BTools`$DocActive = 
                    AppManagerPalette`Private`currentApp}, 
-                  AppManagerPalette`Private`whichPacF["GenerateTutorial"][
-                  AppManagerPalette`Private`nb, 
+                  AppManagerPalette`Private`whichPacF[
+                  "DocGenGenerateTutorial"][AppManagerPalette`Private`nb, 
                    AppManagerPalette`Private`whichPacF["AppDirectory"][
                    AppManagerPalette`Private`currentApp, "Tutorials"], 
                    False]], "Generating tutorial pages"]], Delimiter, 
@@ -6695,7 +6692,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     ToExpression[
                     AppManagerPalette`Private`s, StandardForm, 
                     AppManagerPalette`Private`whichPacF[
-                    "GenerateSymbolPages"][#, Visible -> False, 
+                    "DocGenGenerateSymbolPages"][#, Visible -> False, 
                     "PostFunction" -> Function[AppManagerPalette`Private`page, 
                     ((NotebookClose[AppManagerPalette`Private`page]; #)& )[
                     AppManagerPalette`Private`whichPacF[
@@ -6706,7 +6703,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     Block[{BTools`$DocActive = 
                     AppManagerPalette`Private`currentApp}, 
                     AppManagerPalette`Private`whichPacF[
-                    "GenerateSymbolPages"][
+                    "DocGenGenerateSymbolPages"][
                     AppManagerPalette`Private`nb, Visible -> False, 
                     "PostFunction" -> Function[AppManagerPalette`Private`page, 
                     ((NotebookClose[AppManagerPalette`Private`page]; #)& )[
@@ -6723,7 +6720,8 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                    AppManagerPalette`Private`notebooks}, SystemOpen[
                     First[
                     Flatten[{
-                    AppManagerPalette`Private`whichPacF["GenerateGuide"][
+                    AppManagerPalette`Private`whichPacF[
+                    "DocGenGenerateGuide"][
                     AppManagerPalette`Private`nb, Visible -> False, 
                     "PostFunction" -> Function[AppManagerPalette`Private`page, 
                     ((NotebookClose[AppManagerPalette`Private`page]; #)& )[
@@ -6739,8 +6737,8 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                    AppManagerPalette`Private`currentApp, 
                    AppManagerPalette`Private`notebooks}, 
                   AppManagerPalette`Private`notebooks = 
-                   AppManagerPalette`Private`whichPacF["GenerateTutorial"][
-                    AppManagerPalette`Private`nb, 
+                   AppManagerPalette`Private`whichPacF[
+                    "DocGenGenerateTutorial"][AppManagerPalette`Private`nb, 
                     AppManagerPalette`Private`whichPacF["AppDirectory"][
                     AppManagerPalette`Private`currentApp, "Tutorials"], False,
                      Visible -> False]; ((Map[NotebookClose, 
@@ -6765,16 +6763,16 @@ UVdVBS7LErWUErUQAlwUBWrO+aIZY7MJpRT+Mmdfqc/QmA==
           EventHandler[
            Button[
             Style["Regenerate DocInfo", 
-             GrayLevel[0.2]], CheckAbort[Block[{$ContextPath = {"System`"}}, 
+             GrayLevel[0.2]], CheckAll[Block[{$ContextPath = {"System`"}}, 
                 Needs[
                  StringJoin[AppManagerPalette`Private`$appName, "`"]]]; 
               SystemOpen[
-                BTools`Private`Hidden`AppRegenerateDocInfo[
+                BTools`AppRegenerateDocInfo[
                 AppManagerPalette`Private`currentApp]], 
               BTools`Private`UUIDActive[
-               "Button-fd9bd20e-8f34-445a-bd34-93abb3570f20"] = False]; 
+               "Button-8eb5c21f-0631-43d1-9c4a-904faf988404"] = False]; 
             BTools`Private`UUIDActive[
-              "Button-fd9bd20e-8f34-445a-bd34-93abb3570f20"] = False, 
+              "Button-8eb5c21f-0631-43d1-9c4a-904faf988404"] = False, 
             Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -6803,7 +6801,7 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-fd9bd20e-8f34-445a-bd34-93abb3570f20"]], "Pressed", 
+                 "Button-8eb5c21f-0631-43d1-9c4a-904faf988404"]], "Pressed", 
                 Automatic]]}, Method -> "Queued", 
             FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
             Appearance -> {"Palette", 
@@ -6811,7 +6809,7 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-fd9bd20e-8f34-445a-bd34-93abb3570f20"]], "Pressed", 
+                 "Button-8eb5c21f-0631-43d1-9c4a-904faf988404"]], "Pressed", 
                 Automatic]]}], {"MouseClicked" :> If[
               TrueQ[
                Replace[
@@ -6819,12 +6817,12 @@ mEXTyg==
                    Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
                 Automatic -> True]], 
               BTools`Private`UUIDActive[
-               "Button-fd9bd20e-8f34-445a-bd34-93abb3570f20"] = True], 
+               "Button-8eb5c21f-0631-43d1-9c4a-904faf988404"] = True], 
             PassEventsDown -> True}], 
           EventHandler[
            Button[
             Style["Index Documentation", 
-             GrayLevel[0.2]], CheckAbort[Block[{$ContextPath = {"System`"}}, 
+             GrayLevel[0.2]], CheckAll[Block[{$ContextPath = {"System`"}}, 
                 Needs[
                  StringJoin[AppManagerPalette`Private`$appName, "`"]]]; 
               AppManagerPalette`Private`paletteDialog[
@@ -6832,9 +6830,9 @@ mEXTyg==
                 AppManagerPalette`Private`currentApp], 
                 "Indexing documentation"], 
               BTools`Private`UUIDActive[
-               "Button-75454423-c84a-4f33-b653-a3b4f6e03893"] = False]; 
+               "Button-a9ff2d68-730e-470e-a029-4d22321088ce"] = False]; 
             BTools`Private`UUIDActive[
-              "Button-75454423-c84a-4f33-b653-a3b4f6e03893"] = False, 
+              "Button-a9ff2d68-730e-470e-a029-4d22321088ce"] = False, 
             Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -6863,7 +6861,7 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-75454423-c84a-4f33-b653-a3b4f6e03893"]], "Pressed", 
+                 "Button-a9ff2d68-730e-470e-a029-4d22321088ce"]], "Pressed", 
                 Automatic]]}, Method -> "Queued", 
             FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
             Appearance -> {"Palette", 
@@ -6871,7 +6869,7 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-75454423-c84a-4f33-b653-a3b4f6e03893"]], "Pressed", 
+                 "Button-a9ff2d68-730e-470e-a029-4d22321088ce"]], "Pressed", 
                 Automatic]]}], {"MouseClicked" :> If[
               TrueQ[
                Replace[
@@ -6879,7 +6877,7 @@ mEXTyg==
                    Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
                 Automatic -> True]], 
               BTools`Private`UUIDActive[
-               "Button-75454423-c84a-4f33-b653-a3b4f6e03893"] = True], 
+               "Button-a9ff2d68-730e-470e-a029-4d22321088ce"] = True], 
             PassEventsDown -> True}], 
           Panel[
           "", ImageSize -> {190, 1}, ImageMargins -> 5, Appearance -> 
@@ -6988,8 +6986,8 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     "AppPackageSymbolNotebook"][
                     AppManagerPalette`Private`currentApp, #], Visible -> 
                     False]}, 
-                    AppManagerPalette`Private`whichPacF["SaveSymbolPages"][
-                    AppManagerPalette`Private`nb, 
+                    AppManagerPalette`Private`whichPacF[
+                    "DocGenSaveSymbolPages"][AppManagerPalette`Private`nb, 
                     AppManagerPalette`Private`whichPacF["AppDirectory"][
                     AppManagerPalette`Private`currentApp, "Symbols"], False]; 
                     NotebookClose[AppManagerPalette`Private`nb]]& , 
@@ -7006,8 +7004,8 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     "AppPackageSymbolNotebook"][
                     AppManagerPalette`Private`currentApp, #], Visible -> 
                     False]}, 
-                    AppManagerPalette`Private`whichPacF["SaveSymbolPages"][
-                    AppManagerPalette`Private`nb, 
+                    AppManagerPalette`Private`whichPacF[
+                    "DocGenSaveSymbolPages"][AppManagerPalette`Private`nb, 
                     AppManagerPalette`Private`whichPacF["AppDirectory"][
                     AppManagerPalette`Private`currentApp, "Symbols"], False]; 
                     NotebookClose[AppManagerPalette`Private`nb]], 
@@ -7113,7 +7111,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     AppManagerPalette`Private`whichPacF["AppGuideNotebook"][
                     AppManagerPalette`Private`currentApp], Visible -> 
                     False])}, 
-                   AppManagerPalette`Private`whichPacF["SaveGuide"][
+                   AppManagerPalette`Private`whichPacF["DocGenSaveGuide"][
                     AppManagerPalette`Private`nb, 
                     AppManagerPalette`Private`whichPacF["AppDirectory"][
                     AppManagerPalette`Private`currentApp, "Guides"], False]; 
@@ -7129,7 +7127,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     AppManagerPalette`Private`whichPacF["AppGuideNotebook"][
                     AppManagerPalette`Private`currentApp], Visible -> 
                     False])}, 
-                    AppManagerPalette`Private`whichPacF["SaveGuide"][
+                    AppManagerPalette`Private`whichPacF["DocGenSaveGuide"][
                     AppManagerPalette`Private`nb, 
                     AppManagerPalette`Private`whichPacF[
                     "AppPackageGuideNotebook"][
@@ -7149,7 +7147,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     
                     Block[{BTools`$DocActive = 
                     AppManagerPalette`Private`currentApp}, 
-                    AppManagerPalette`Private`whichPacF["GenerateGuide"][
+                    AppManagerPalette`Private`whichPacF["DocGenGenerateGuide"][
                     CreateDocument[
                     AppManagerPalette`Private`whichPacF[
                     "AppPackageGuideNotebook"][
@@ -7251,7 +7249,8 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                     
                     Block[{BTools`$DocActive = 
                     AppManagerPalette`Private`currentApp}, 
-                    AppManagerPalette`Private`whichPacF["GenerateTutorial"][
+                    AppManagerPalette`Private`whichPacF[
+                    "DocGenGenerateTutorial"][
                     CreateDocument[
                     AppManagerPalette`Private`docs, Visible -> False]]]]], 
                   "Creating tutorial page"]}]], 
@@ -7278,7 +7277,7 @@ UVdVBS7LErWUErUQAlwUBWrO+aIZY7MJpRT+Mmdfqc/QmA==
           EventHandler[
            Button[
             Style["Publish", 
-             GrayLevel[0.2]], CheckAbort[Block[{$ContextPath = {"System`"}}, 
+             GrayLevel[0.2]], CheckAll[Block[{$ContextPath = {"System`"}}, 
                 Needs[
                  StringJoin[AppManagerPalette`Private`$appName, "`"]]]; 
               AppManagerPalette`Private`paletteDialog[
@@ -7295,9 +7294,9 @@ UVdVBS7LErWUErUQAlwUBWrO+aIZY7MJpRT+Mmdfqc/QmA==
                     Lookup[AppManagerPalette`Private`r, "ServerURL"]]]], 
                 "Publishing"], 
               BTools`Private`UUIDActive[
-               "Button-30378d71-3274-4dbb-9926-d777e86fff0f"] = False]; 
+               "Button-6461c461-e463-4510-88f8-d32e24afdfa1"] = False]; 
             BTools`Private`UUIDActive[
-              "Button-30378d71-3274-4dbb-9926-d777e86fff0f"] = False, 
+              "Button-6461c461-e463-4510-88f8-d32e24afdfa1"] = False, 
             Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -7326,7 +7325,7 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-30378d71-3274-4dbb-9926-d777e86fff0f"]], "Pressed", 
+                 "Button-6461c461-e463-4510-88f8-d32e24afdfa1"]], "Pressed", 
                 Automatic]]}, Method -> "Queued", 
             FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
             Appearance -> {"Palette", 
@@ -7334,7 +7333,7 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-30378d71-3274-4dbb-9926-d777e86fff0f"]], "Pressed", 
+                 "Button-6461c461-e463-4510-88f8-d32e24afdfa1"]], "Pressed", 
                 Automatic]]}], {"MouseClicked" :> If[
               TrueQ[
                Replace[
@@ -7342,7 +7341,7 @@ mEXTyg==
                    Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
                 Automatic -> True]], 
               BTools`Private`UUIDActive[
-               "Button-30378d71-3274-4dbb-9926-d777e86fff0f"] = True], 
+               "Button-6461c461-e463-4510-88f8-d32e24afdfa1"] = True], 
             PassEventsDown -> True}], 
           Row[{
             Grid[{{
@@ -7888,15 +7887,15 @@ UVdVBS7LErWUErUQAlwUBWrO+aIZY7MJpRT+Mmdfqc/QmA==
           EventHandler[
            Button[
             Style["Git Commit", 
-             GrayLevel[0.2]], CheckAbort[Block[{$ContextPath = {"System`"}}, 
+             GrayLevel[0.2]], CheckAll[Block[{$ContextPath = {"System`"}}, 
                 Needs[
                  StringJoin[AppManagerPalette`Private`$appName, "`"]]]; 
               AppManagerPalette`Private`whichPacF["AppGitCommit"][
                AppManagerPalette`Private`currentApp], 
               BTools`Private`UUIDActive[
-               "Button-df59e305-018c-4020-8e19-4b95846e867d"] = False]; 
+               "Button-39fd407b-4a2d-40ba-812b-f73f48764971"] = False]; 
             BTools`Private`UUIDActive[
-              "Button-df59e305-018c-4020-8e19-4b95846e867d"] = False, 
+              "Button-39fd407b-4a2d-40ba-812b-f73f48764971"] = False, 
             Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -7925,7 +7924,7 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-df59e305-018c-4020-8e19-4b95846e867d"]], "Pressed", 
+                 "Button-39fd407b-4a2d-40ba-812b-f73f48764971"]], "Pressed", 
                 Automatic]]}, Method -> "Queued", 
             FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
             Appearance -> {"Palette", 
@@ -7933,7 +7932,7 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-df59e305-018c-4020-8e19-4b95846e867d"]], "Pressed", 
+                 "Button-39fd407b-4a2d-40ba-812b-f73f48764971"]], "Pressed", 
                 Automatic]]}], {"MouseClicked" :> If[
               TrueQ[
                Replace[
@@ -7941,7 +7940,7 @@ mEXTyg==
                    Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
                 Automatic -> True]], 
               BTools`Private`UUIDActive[
-               "Button-df59e305-018c-4020-8e19-4b95846e867d"] = True], 
+               "Button-39fd407b-4a2d-40ba-812b-f73f48764971"] = True], 
             PassEventsDown -> True}], 
           Row[{
             Button[
@@ -8037,7 +8036,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
           EventHandler[
            Button[
             Style["Push to GitHub", 
-             GrayLevel[0.2]], CheckAbort[Block[{$ContextPath = {"System`"}}, 
+             GrayLevel[0.2]], CheckAll[Block[{$ContextPath = {"System`"}}, 
                 Needs[
                  StringJoin[AppManagerPalette`Private`$appName, "`"]]]; (Quiet[
                  AppManagerPalette`Private`whichPacF["AppGitHubPush"][
@@ -8045,9 +8044,9 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                  AppManagerPalette`Private`whichPacF["AppGitHubRepo"][
                  AppManagerPalette`Private`currentApp, None]]), 
               BTools`Private`UUIDActive[
-               "Button-d5684560-92d4-4c72-98ef-9a1db4f07060"] = False]; 
+               "Button-52d0e509-e25a-449a-a67e-e282b21a273a"] = False]; 
             BTools`Private`UUIDActive[
-              "Button-d5684560-92d4-4c72-98ef-9a1db4f07060"] = False, 
+              "Button-52d0e509-e25a-449a-a67e-e282b21a273a"] = False, 
             Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -8076,7 +8075,7 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-d5684560-92d4-4c72-98ef-9a1db4f07060"]], "Pressed", 
+                 "Button-52d0e509-e25a-449a-a67e-e282b21a273a"]], "Pressed", 
                 Automatic]]}, Method -> "Queued", 
             FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
             Appearance -> {"Palette", 
@@ -8084,7 +8083,7 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-d5684560-92d4-4c72-98ef-9a1db4f07060"]], "Pressed", 
+                 "Button-52d0e509-e25a-449a-a67e-e282b21a273a"]], "Pressed", 
                 Automatic]]}], {"MouseClicked" :> If[
               TrueQ[
                Replace[
@@ -8092,21 +8091,21 @@ mEXTyg==
                    Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
                 Automatic -> True]], 
               BTools`Private`UUIDActive[
-               "Button-d5684560-92d4-4c72-98ef-9a1db4f07060"] = True], 
+               "Button-52d0e509-e25a-449a-a67e-e282b21a273a"] = True], 
             PassEventsDown -> True}], 
           EventHandler[
            Button[
             Style["Create GitHub Repo", 
-             GrayLevel[0.2]], CheckAbort[Block[{$ContextPath = {"System`"}}, 
+             GrayLevel[0.2]], CheckAll[Block[{$ContextPath = {"System`"}}, 
                 Needs[
                  StringJoin[AppManagerPalette`Private`$appName, "`"]]]; 
               Quiet[
                 AppManagerPalette`Private`whichPacF["AppGitHubConfigure"][
                 AppManagerPalette`Private`currentApp]], 
               BTools`Private`UUIDActive[
-               "Button-b6021900-227c-4f57-9d4c-87694a7dbcb3"] = False]; 
+               "Button-e51e0d78-50fb-4c97-816a-1a809a787356"] = False]; 
             BTools`Private`UUIDActive[
-              "Button-b6021900-227c-4f57-9d4c-87694a7dbcb3"] = False, 
+              "Button-e51e0d78-50fb-4c97-816a-1a809a787356"] = False, 
             Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -8135,7 +8134,7 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-b6021900-227c-4f57-9d4c-87694a7dbcb3"]], "Pressed", 
+                 "Button-e51e0d78-50fb-4c97-816a-1a809a787356"]], "Pressed", 
                 Automatic]]}, Method -> "Queued", 
             FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
             Appearance -> {"Palette", 
@@ -8143,7 +8142,7 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-b6021900-227c-4f57-9d4c-87694a7dbcb3"]], "Pressed", 
+                 "Button-e51e0d78-50fb-4c97-816a-1a809a787356"]], "Pressed", 
                 Automatic]]}], {"MouseClicked" :> If[
               TrueQ[
                Replace[
@@ -8151,21 +8150,21 @@ mEXTyg==
                    Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
                 Automatic -> True]], 
               BTools`Private`UUIDActive[
-               "Button-b6021900-227c-4f57-9d4c-87694a7dbcb3"] = True], 
+               "Button-e51e0d78-50fb-4c97-816a-1a809a787356"] = True], 
             PassEventsDown -> True}], 
           EventHandler[
            Button[
             Style["Delete GitHub Repo", 
-             GrayLevel[0.2]], CheckAbort[Block[{$ContextPath = {"System`"}}, 
+             GrayLevel[0.2]], CheckAll[Block[{$ContextPath = {"System`"}}, 
                 Needs[
                  StringJoin[AppManagerPalette`Private`$appName, "`"]]]; 
               Quiet[
                 AppManagerPalette`Private`whichPacF["AppGitHubDelete"][
                 AppManagerPalette`Private`currentApp]], 
               BTools`Private`UUIDActive[
-               "Button-506d772a-4e2a-443d-aeda-8d1472e3bb48"] = False]; 
+               "Button-3877900e-f250-41df-8dc7-6d7a68fbf72c"] = False]; 
             BTools`Private`UUIDActive[
-              "Button-506d772a-4e2a-443d-aeda-8d1472e3bb48"] = False, 
+              "Button-3877900e-f250-41df-8dc7-6d7a68fbf72c"] = False, 
             Appearance -> {"Default" -> Image[CompressedData["
 1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
 5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
@@ -8194,7 +8193,7 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-506d772a-4e2a-443d-aeda-8d1472e3bb48"]], "Pressed", 
+                 "Button-3877900e-f250-41df-8dc7-6d7a68fbf72c"]], "Pressed", 
                 Automatic]]}, Method -> "Queued", 
             FrameMargins -> {{5, 5}, {2, 0}}, ImageSize -> 200, 
             Appearance -> {"Palette", 
@@ -8202,7 +8201,7 @@ mEXTyg==
                If[
                 TrueQ[
                  BTools`Private`UUIDActive[
-                 "Button-506d772a-4e2a-443d-aeda-8d1472e3bb48"]], "Pressed", 
+                 "Button-3877900e-f250-41df-8dc7-6d7a68fbf72c"]], "Pressed", 
                 Automatic]]}], {"MouseClicked" :> If[
               TrueQ[
                Replace[
@@ -8210,7 +8209,7 @@ mEXTyg==
                    Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
                 Automatic -> True]], 
               BTools`Private`UUIDActive[
-               "Button-506d772a-4e2a-443d-aeda-8d1472e3bb48"] = True], 
+               "Button-3877900e-f250-41df-8dc7-6d7a68fbf72c"] = True], 
             PassEventsDown -> True}], 
           Panel[
           "", ImageSize -> {190, 1}, ImageMargins -> 5, Appearance -> 
@@ -8306,7 +8305,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                 0, 
                 SystemOpen[
                  First[
-                  BTools`Private`Hidden`AppDeployImages[
+                  BTools`AppDeployImages[
                   AppManagerPalette`Private`currentApp]]]], "CSS" :> If[Length[
                   FileNames["*", 
                    AppManagerPalette`Private`whichPacF["AppPath"][
@@ -8314,7 +8313,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
                 0, 
                 SystemOpen[
                  First[
-                  BTools`Private`Hidden`AppDeployCSS[
+                  BTools`AppDeployCSS[
                   AppManagerPalette`Private`currentApp]]]], "HTML" :> 
               If[Length[
                   FileNames["*", 
@@ -8444,7 +8443,7 @@ sE9G7JP//mn9Mf+vNt9hRD/zDdI7LNg=
  ShowStringCharacters->False,
  FontFamily:>CurrentValue["PanelFontFamily"],
  FontSize:>CurrentValue[
-  "PanelFontSize"],ExpressionUUID->"1d732ff6-2af6-4159-991f-056b1b72417e"]
+  "PanelFontSize"],ExpressionUUID->"3b593c39-c2c4-4b99-9cc7-fd1bc7a62624"]
 },
 ClosingSaveDialog->False,
 WindowSize->{All, 
@@ -8467,7 +8466,7 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[584, 21, 445312, 8425, 858, InheritFromParent,ExpressionUUID->"1d732ff6-2af6-4159-991f-056b1b72417e",
+Cell[584, 21, 445464, 8424, 858, InheritFromParent,ExpressionUUID->"3b593c39-c2c4-4b99-9cc7-fd1bc7a62624",
  PageBreakAbove->True,
  PageBreakWithin->False]
 }

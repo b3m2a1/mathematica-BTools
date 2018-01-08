@@ -19,7 +19,7 @@
 
 
 
-$DocDefaultResourceBase=
+$DocGenWebResourceBase=
 	URLBuild@
 		<|
 			"Scheme"->"https",
@@ -1647,12 +1647,12 @@ webExportGetURLBase[url_,doc:"Docs"|"Resource":"Docs",deploy:True|False:False]:=
 					doc,
 					"Docs",
 						If[deploy,
-							$DocDefaultURLBase,
+							$DocGenURLBase,
 							"/"
 							],
 					"Resource",
 						If[deploy,
-							$DocDefaultResourceBase,
+							$DocGenWebResourceBase,
 							"/"
 							]
 					]
@@ -1667,17 +1667,17 @@ webExportGetURLBase[url_,doc:"Docs"|"Resource":"Docs",deploy:True|False:False]:=
 		}];
 
 
-GenerateHTMLDocumentation::nopkg=
+DocGenGenerateHTMLDocumentation::nopkg=
 	"DocumentationBuild and/or Transmogrify missing";
 
 
-GenerateHTMLDocumentation::fail=
+DocGenGenerateHTMLDocumentation::fail=
 	"Failed to build HTML documentation. Check Message stack.";
 
 
-Options[GenerateHTMLDocumentation]=
+Options[DocGenGenerateHTMLDocumentation]=
 	Join[
-		Options[GenerateSymbolPages],
+		Options[DocGenGenerateSymbolPages],
 		Options[webExportPostProcess],
 		Options[DocumentationBuild`Export`ExportWebPage],
 		Options[webExportAssetsDeploy],{
@@ -1686,9 +1686,9 @@ Options[GenerateHTMLDocumentation]=
 			"DeployAssets"->False,
 			"CopyAssets"->True
 		}];
-Options[GenerateHTMLDocumentation]=
-	Options[GenerateHTMLDocumentation];
-GenerateHTMLDocumentation[
+Options[DocGenGenerateHTMLDocumentation]=
+	Options[DocGenGenerateHTMLDocumentation];
+DocGenGenerateHTMLDocumentation[
 	dir_String?DirectoryQ,
 	nb:{__Notebook}|None,
 	ops:OptionsPattern[]
@@ -1707,7 +1707,7 @@ GenerateHTMLDocumentation[
 			webExportAssetsCopy[dir]
 			];
 		If[Length@webExportApplicationsInstall[]<2,
-			Message[GenerateHTMLDocumentation::nopkg];
+			Message[DocGenGenerateHTMLDocumentation::nopkg];
 			$Failed,
 			CheckAbort[
 				Function[
@@ -1789,7 +1789,7 @@ GenerateHTMLDocumentation[
 										webExportNotebook[dir,nb[[i]],params],{
 										Except[_String?FileExistsQ]:>
 											(
-												Message[GenerateHTMLDocumentation::fail];
+												Message[DocGenGenerateHTMLDocumentation::fail];
 												Throw[$Failed]
 												),
 										f_String?FileExistsQ:>
@@ -1841,17 +1841,17 @@ GenerateHTMLDocumentation[
 		];
 
 
-GenerateHTMLDocumentation::notnb=
+DocGenGenerateHTMLDocumentation::notnb=
 	"`` is not a notebook";
 
 
-GenerateHTMLDocumentation[
+DocGenGenerateHTMLDocumentation[
 	dir_String?DirectoryQ,
 	nb:{__NotebookObject},
 	ops___?OptionQ
 	]:=
-	GenerateHTMLDocumentation[dir,NotebookGet/@nb,ops];
-GenerateHTMLDocumentation[
+	DocGenGenerateHTMLDocumentation[dir,NotebookGet/@nb,ops];
+DocGenGenerateHTMLDocumentation[
 	dir_String?DirectoryQ,
 	f:{__String?FileExistsQ},
 	ops___?OptionQ
@@ -1861,8 +1861,8 @@ GenerateHTMLDocumentation[
 			Table[
 				With[{nb=Import[file]},
 					If[MatchQ[nb,_Notebook],
-						GenerateHTMLDocumentation[dir,nb,ops],
-						Message[GenerateHTMLDocumentation::nonb,nb];
+						DocGenGenerateHTMLDocumentation[dir,nb,ops],
+						Message[DocGenGenerateHTMLDocumentation::nonb,nb];
 						$Failed
 						]
 					],
@@ -1874,20 +1874,20 @@ GenerateHTMLDocumentation[
 				]
 			]
 		];
-GenerateHTMLDocumentation[dir_String?DirectoryQ,
+DocGenGenerateHTMLDocumentation[dir_String?DirectoryQ,
 	nb:_Notebook|_NotebookObject|(_String|_File)?(FileExistsQ@#&&Not@DirectoryQ@#&),
 	ops___?OptionQ
 	]:=
 	Replace[
-		GenerateHTMLDocumentation[dir,{nb},ops],
+		DocGenGenerateHTMLDocumentation[dir,{nb},ops],
 		{l_}:>l
 		];
-GenerateHTMLDocumentation[
+DocGenGenerateHTMLDocumentation[
 	dir_String?DirectoryQ,
 	d_String?DirectoryQ,
 	ops___?OptionQ
 	]:=	
-	GenerateHTMLDocumentation[dir,
+	DocGenGenerateHTMLDocumentation[dir,
 		FileNames["*.nb",
 			If[DirectoryQ@FileNameJoin@{d,"Documentation","English"},
 				FileNameJoin@{d,"Documentation","English"},
@@ -1898,54 +1898,55 @@ GenerateHTMLDocumentation[
 		];
 
 
-GenerateHTMLDocumentation::nopac=
+DocGenGenerateHTMLDocumentation::nopac=
 	"Paclet `` not found at location ``"
 
 
-GenerateHTMLDocumentation[
+DocGenGenerateHTMLDocumentation[
 	dir_String?DirectoryQ,
 	p_PacletManager`Paclet,
 	ops___?OptionQ
 	]:=
 	With[{d=PacletLookup[p,"Location"]},
 		If[DirectoryQ[d],
-			GenerateHTMLDocumentation[dir,d,ops],
-			Message[GenerateHTMLDocumentation::nopac,p,d];
+			DocGenGenerateHTMLDocumentation[dir,d,ops],
+			Message[DocGenGenerateHTMLDocumentation::nopac,p,d];
 			$Failed
 			]
 		];
-GenerateHTMLDocumentation[
+DocGenGenerateHTMLDocumentation[
 	dir_String?DirectoryQ,
 	p:{__PacletManager`Paclet},
 	ops___?OptionQ
 	]:=
-	GenerateHTMLDocumentation[dir,#,ops]&/@p
+	DocGenGenerateHTMLDocumentation[dir,#,ops]&/@p
 
 
-GenerateHTMLDocumentation::ambig=
+DocGenGenerateHTMLDocumentation::ambig=
 	"No unique symbol for pattern ``";
 
 
-GenerateHTMLDocumentation[
+DocGenGenerateHTMLDocumentation[
 	dir:(_String|_File)?DirectoryQ|_FileName?(DirectoryQ@*ToFileName),
 	pattern:_String?(Not@*FileExistsQ)|_Symbol,
 	ops___?OptionQ
 	]:=
 	With[{n=Names[pattern]},
 		If[Length@n!=1,
-			Message[GenerateHTMLDocumentation::ambig,pattern];
+			Message[DocGenGenerateHTMLDocumentation::ambig,pattern];
 			$Failed,
-			With[{
-				nb=
-					First[{NotebookGet[#],NotebookClose[#]}]&@
-						First@Flatten@List@
-							GenerateSymbolPages[
-								Evaluate@First@n,
-								Evaluate@FilterRules[{ops},Options@GenerateSymbolPages],
-								Visible->False
-								]
-				},
-					GenerateHTMLDocumentation[
+			With[
+				{
+					nb=
+						First[{NotebookGet[#],NotebookClose[#]}]&@
+							First@Flatten@List@
+								GenerateSymbolPages[
+									Evaluate@First@n,
+									Evaluate@FilterRules[{ops},Options@GenerateSymbolPages],
+									Visible->False
+									]
+					},
+					DocGenGenerateHTMLDocumentation[
 						Replace[dir,f_FileName:>ToFileName[f]],
 						nb,
 						ops
@@ -1955,18 +1956,18 @@ GenerateHTMLDocumentation[
 		];
 
 
-GenerateHTMLDocumentation[
+DocGenGenerateHTMLDocumentation[
 	Optional[Automatic,Automatic],
 	s:Except[_?OptionQ],
 	e:Except[(_String|_File)?DirectoryQ|_PacletManager`Paclet]...
 	]:=
 	With[{dir=
 		Quiet[
-			(*DeleteDirectory[$WebDocsDirectory,DeleteContents\[Rule]True];*)
-			CreateDirectory[$WebDocsDirectory];
-			$WebDocsDirectory
+			(*DeleteDirectory[$DocGenWebDocsDirectory,DeleteContents\[Rule]True];*)
+			CreateDirectory[$DocGenWebDocsDirectory];
+			$DocGenWebDocsDirectory
 			]},
-		GenerateHTMLDocumentation[
+		DocGenGenerateHTMLDocumentation[
 			dir,
 			s,
 			e

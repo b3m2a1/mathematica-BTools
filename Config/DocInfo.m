@@ -2,5 +2,8 @@
 {
  "Usage" -> System`Automatic, "Functions" -> System`Automatic,
  "Details" -> System`Automatic, "Examples" -> System`Defer,
- "RelatedLinks" -> System`None, "GuideOptions" -> {}, "TutorialOptions" -> {}
+ "RelatedLinks" -> System`None,
+ "GuideOptions" -> {},
+ "TutorialOptions" -> {},
+ "DeployOptions" -> { CloudConnect -> "DocumentationAccount" }
  }

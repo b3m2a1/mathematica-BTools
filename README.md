@@ -10,6 +10,36 @@ If you want me to spin off subpackages which only contain some portion of this f
 
 ---
 
+<a id="installation" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
+
+# Installation
+
+The easiest way to install these packages is using a paclet server installation:
+
+```mathematica
+ PacletInstall[
+ "BTools",
+ "Site"->
+  "http://www.wolframcloud.com/objects/b3m2a1.paclets/PacletServer"
+ ]
+```
+
+If you’ve already installed it you can update using:
+
+```mathematica
+ PacletUpdate[
+ "BTools",
+ "Site"->
+  "http://www.wolframcloud.com/objects/b3m2a1.paclets/PacletServer"
+ ]
+```
+
+Alternately you can download this repo as a ZIP file and put extract it in  ```$UserBaseDirectory/Applications```
+
+---
+
+Note that this is currently out of date. A new breakdown of the packages is coming sometime in the next 5-10 years.
+
 <a id="package-listing" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
 
 # Package Listing
@@ -40,7 +70,7 @@ On the development side, the  [CodePackage](FrontEnd/StyleSheets/BTools/CodePack
 
 	(*Out:*)
 	
- ![readme-1409732338692002428](project/img/readme-1409732338692002428.png)
+![title-1409732338692002428](project/img/title-1409732338692002428.png)
 
 ---
 
@@ -64,12 +94,14 @@ On the development side, the  [CodePackage](FrontEnd/StyleSheets/BTools/CodePack
 
 ```GenerateSymbolPages```  builds a symbol page from a notebook or automatically generates symbol pages from a symbol or set of symbols.  ```FEScreenShot```  is a function from  [FETools.m](Packages/FETools.m)  that uses GUIKit to screenshot a notebook.
 
-	img = FEScreenShot@GenerateSymbolPages@GenerateSymbolPages;
-	ImageTake[img, 250]
+```mathematica
+ img=FEScreenShot@DocGenGenerateSymbolPages@DocGenGenerateSymbolPages; 
+ ImageTake[img,250]
+```
 
 	(*Out:*)
 	
- ![readme-7442896922375253717](project/img/readme-7442896922375253717.png)
+![title-1292702132161691219](project/img/title-1292702132161691219.png)
 
 ---
 
@@ -91,20 +123,23 @@ On the development side, the  [CodePackage](FrontEnd/StyleSheets/BTools/CodePack
 
 Install a paclet from a non-standard source:
 
-	PacletInstallPaclet@"https://github.com/szhorvat/MaTex"
+```mathematica
+ PacletInstallPaclet@"https://github.com/szhorvat/MaTex"
+```
 
 	(*Out:*)
 	
- ![readme-7627680171142513795](project/img/readme-7627680171142513795.png)
+![title-691477844103673864](project/img/title-691477844103673864.png)
 
 Add a paclet to the default paclet server and deploy it:
 
-	PacletServerAdd["ServiceConnection_PackageData"];
-	PacletServerBuild["AutoDeploy" -> True];
+```mathematica
+ PacletServerAdd["ServiceConnection_PackageData"];  PacletServerBuild["AutoDeploy"True];
+```
 
 	(*Out:*)
 	
- ![readme-3169777872084840222](project/img/readme-3169777872084840222.png)
+![title-3169777872084840222](project/img/title-3169777872084840222.png)
 
 ---
 
@@ -136,12 +171,14 @@ Add a paclet to the default paclet server and deploy it:
 
 ```StoreExpression```  generates a compressed form of a variable (only  ```OwnValues```  are currently supported) and writes a cell to restore that variable:
 
-	var = {1, 2, 3};
-	StoreExpression@var
+```mathematica
+ var={1,2,3}; 
+ StoreExpression@var
+```
 
 	(*Out:*)
 	
- ![readme-1601186910705832175](project/img/readme-1601186910705832175.png)
+![title-1601186910705832175](project/img/title-1601186910705832175.png)
 
 ---
 
@@ -163,25 +200,29 @@ Add a paclet to the default paclet server and deploy it:
 
 ```FEAddAutocompletions```  provides a wrapper for adding autocompletions to a function:
 
-	f[x : "A" | "B" | "C", b_Notebook] := x;
-	FEAddAutocompletions[f,
-	   {
-	     {"A", "B", "C"},
-	     Notebook
-	     }
-	   ];
+```mathematica
+ f[x:"A"|"B"|"C",b_Notebook]:=x; 
+ FEAddAutocompletions[f,
+ {
+  {"A","B","C"},
+  Notebook
+  }
+ ];
+```
 
 	(*Out:*)
 	
- ![readme-5436828446961647922](project/img/readme-5436828446961647922.png)
+![title-5436828446961647922](project/img/title-5436828446961647922.png)
 
 Add an attached cell to the evaluation cell:
 
-	FEAttachCell[Graphics[Disk[], ImageSize -> Tiny]]
+```mathematica
+ FEAttachCell[Graphics[Disk[],ImageSizeTiny]]
+```
 
 	(*Out:*)
 	
- ![readme-4499149176453005575](project/img/readme-4499149176453005575.png)
+![title-4499149176453005575](project/img/title-4499149176453005575.png)
 
 ---
 
@@ -203,18 +244,21 @@ Add an attached cell to the evaluation cell:
 
 Create a simple authentication dialog:
 
-	AuthenticationDialog["GitHub", "https://github.com"]
+```mathematica
+ AuthenticationDialog["GitHub","https://github.com"]
+```
 
-![readme-7327455162654501707](project/img/readme-7327455162654501707.png)
+![title-7327455162654501707](project/img/title-7327455162654501707.png)
 
 	(*Out:*)
 	
-	<|"https://github.com" -> {"me@me.com", 
-	   "me password's on the internet!"}|>
+	"https://github.com"{"me@me.com","me password's on the internet!"}
 
 Switch between cloud accounts:
 
-	KeyChainConnect["PacletsAccount"]
+```mathematica
+ KeyChainConnect["PacletsAccount"]
+```
 
 	(*Out:*)
 	

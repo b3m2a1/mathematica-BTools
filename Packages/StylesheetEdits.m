@@ -547,15 +547,20 @@ $StyleSheetCellStylePatterns=
 	$StyleSheetCellStyleSinglePattern|{$StyleSheetCellStyleSinglePattern..};
 
 
-cellTypeMatchQ[type_String,types_]:=
+cellTypeMatchQ//Clear
+
+
+cellTypeMatchQ[type:_String|All,types_]:=
 	Which[
-		types==="*",True,
-		types==={},False,
-		MatchQ[types,_Verbatim],
+		types==={"*"},
+			True,
+		types==={},
+			False,
+		MatchQ[types, _Verbatim],
 			Length@First@types<=1&&
-				cellTypeMatchQ[type,First@types],
-		MatchQ[types,StyleData[_]],
-			cellTypeMatchQ[type,First@types],
+			cellTypeMatchQ[type, First@types],
+		MatchQ[types, StyleData[_]],
+			cellTypeMatchQ[type, First@types],
 		MatchQ[types,
 			Except[
 				_List|
@@ -563,27 +568,33 @@ cellTypeMatchQ[type_String,types_]:=
 				_StringExpression|
 				_Alternatives
 				]
-			],False,
-		MatchQ[types,_List],
+			],
+			False,
+		MatchQ[types, _List],
 			MemberQ[
 				Replace[types,
-					{s_,"*"..}:>{s},
+					{s_, "*"..}:>{s},
 					1
 					],
 				type
 				],
-		MatchQ[type,_String|_StringExpression],StringMatchQ[type,types],
-		True,False
+		StringPattern`StringPatternQ[type],
+			StringMatchQ[type,
+				Alternatives@@
+					Select[Flatten@List@types, StringPattern`StringPatternQ]
+				],
+		True,
+			False
 		];
-cellTypeMatchQ[All,All]:=True;
-cellTypeMatchQ[type_Symbol,"*"]:=True;
+cellTypeMatchQ[type_Symbol, "*"]:=True;
 cellTypeMatchQ[type:Except[_String],_]:=False;
 cellTypeMatchQ[types_][type_]:=cellTypeMatchQ[type,types];
 
 
 cellStyleMovingMatchQ[s_, types_]:=
 	With[{styleDatas=
-		Replace[Cases[Flatten@{types},_StyleData|_Verbatim],
+		Replace[
+			Cases[Flatten@{types},_StyleData|_Verbatim],
 			{
 				HoldPattern[Verbatim][d_StyleData]:>
 					If[Length@d!=Length@s,
@@ -600,7 +611,7 @@ cellStyleMovingMatchQ[s_, types_]:=
 						Nothing,
 						Join[
 							List@@d,
-							ConstantArray["*",Max@{Length@s-Length@d,0}]
+							ConstantArray["*", Max@{Length@s-Length@d,0}]
 							]
 						]
 				},
@@ -620,54 +631,83 @@ cellStyleNameMatchQ[
 			cellTypeMatchQ[First@s,types],
 			Length@s>0&&
 				(
-					cellTypeMatchQ[First@s,Cases[Flatten@{types},_String|_Symbol]]||
+					cellTypeMatchQ[
+						First@s,
+						Cases[Flatten@{types}, _String|_Symbol]
+						]||
 					cellStyleMovingMatchQ[s, types]
 					)
 			];
 
 
 cellStyleDataMatchQ[s_StyleData,types_]:=
-	With[{matchData=DeleteCases[s,Except[_String|_Symbol]]},
-		MatchQ[s,
+	With[{matchData=DeleteCases[s, Except[_String|_Symbol]]},
+		MatchQ[matchData,
 			Alternatives@@
-				Replace[Flatten@{types},{
-					DefaultStyle[d_]:>
-						StyleData[StyleDefinitions->d],
-					DefaultStyle[p_List,f_String]:>
-						StyleData[StyleDefinitions->FrontEnd`FileName[{p},f]],
-					DefaultStyle[a__,b_]:>
-						StyleData[StyleDefinitions->StyleData[a,b]]
-					},
-					1]
-				]||
-			cellStyleNameMatchQ[matchData,types]
+				Replace[
+					Flatten@{types},
+					{
+						DefaultStyle[d_]:>
+							StyleData[StyleDefinitions->d],
+						DefaultStyle[p_List,f_String]:>
+							StyleData[StyleDefinitions->FrontEnd`FileName[{p},f]],
+						DefaultStyle[a__,b_]:>
+							StyleData[StyleDefinitions->StyleData[a,b]]
+						},
+					1
+					]
+			]||
+		cellStyleNameMatchQ[matchData, types]
 		];
 cellStyleDataMatchQ[types_][s_]:=
-	cellStyleDataMatchQ[s,types];
+	cellStyleDataMatchQ[s, types];
 
 
-cellMatchQ[cell_,types_,Optional[StyleData,StyleData]]:=
+cellMatchQ[cell_, types_, Optional[StyleData,StyleData]]:=
 	Replace[
-cell,
-{
-Cell[_,_String,___]:>False,
-Cell[_?(
-MatchQ[
-Replace[#,_BoxData:>ToExpression[#,StandardForm,Hold]],
-If[types===Default,
+		cell,
+		{
+			Cell[_, _String, ___]:>
+				False,
+			Cell[
+				If[types===Default,
+					StyleData[StyleDefinitions->_,___],
+					_StyleData?(cellStyleDataMatchQ[types])
+					],
+				___
+				]:>
+				True,
+			Cell[
+				_?(
+					MatchQ[
+						Replace[#,
+							_BoxData:>ToExpression[#,StandardForm,Hold]
+							],
+						If[types===Default,
 							StyleData[StyleDefinitions->_,___],
-_StyleData?(cellStyleDataMatchQ[types])
-]
-]&),
-				___]:>True,
-_->False
-}
-];
-cellMatchQ[cell_,types_,Normal]:=Replace[
-cell,
-{Cell[_,_?(cellTypeMatchQ[types]),___]:>True,
-_:>False
-}]
+							_StyleData?(cellStyleDataMatchQ[types])
+							]
+						]&
+					),
+				___
+				]:>
+				True,
+			_->
+				False
+			}
+		];
+
+
+cellMatchQ[cell_,types_,Normal]:=
+	Replace[
+		cell,
+		{
+			Cell[_, _?(cellTypeMatchQ[types]), ___]:>
+				True,
+			_:>
+				False
+			}
+		];
 cellMatchQ[cell_,types_,_]:=False
 
 
@@ -745,7 +785,7 @@ StyleSheetCells[
 						n_Notebook:>(First@NotebookTools`FlattenCellGroups[n])
 						}
 					],
-				cellMatchQ[Replace[#,c_CellObject:>NotebookRead@c],types,mode]&
+				cellMatchQ[Replace[#,c_CellObject:>NotebookRead@c], types, mode]&
 				],{
 			l_List:>
 				If[mode===StyleData&&make,

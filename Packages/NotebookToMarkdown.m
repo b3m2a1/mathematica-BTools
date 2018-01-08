@@ -2258,7 +2258,7 @@ iNotebookToMarkdownRegister[pathInfo_,
 	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "FencedCode",___]]:=
 	markdownCodeCellIOReformat[
 		pathInfo,
-		e,
+		ReplaceAll[e, BoxData->TextData],
 		"PlainText",
 		Replace[
 			ReplacePart[#, 
@@ -2297,6 +2297,18 @@ iNotebookToMarkdownRegister[pathInfo_,
 			BoxData@FormBox[expr_, _]:>BoxData@expr
 			],
 		"InputText",
+		"```"<>#<>If[StringEndsQ[#,"`"]," ",""]<>"```"&
+		];
+iNotebookToMarkdownRegister[pathInfo_,
+	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms],"InlineText",___]]:=
+	markdownCodeCellIOReformat[pathInfo,
+		Replace[e,
+			{
+				BoxData@FormBox[expr_, _]:>TextData@expr,
+				BoxData@FormBox[expr_, _]:>TextData@expr
+				}
+			],
+		"PlainText",
 		"```"<>#<>If[StringEndsQ[#,"`"]," ",""]<>"```"&
 		];
 iNotebookToMarkdownRegister[pathInfo_,

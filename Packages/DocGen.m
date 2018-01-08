@@ -24,8 +24,30 @@
 
 
 
+$DocGenDirectory::usage=
+	"The build directory for DocGen";
+
+
 $DocGenLine::usage=
 	"The $Line for writing docs";
+
+
+$DocGenColoring::usage=
+	"The coloring table for auto-generated documentation";
+$DocGenActive::usage=
+	"The application actively being documented";
+$DocGenLinkBase::usage=
+	"The ref link base for docs";
+
+
+PackageScopeBlock[
+	DocLinkBase::usage=
+		"Wrapper function for $DocGenLinkBase";
+	];
+
+
+$DocGenFooter::usage=
+	"The default footer to use when making doc pages";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -33,28 +55,7 @@ $DocGenLine::usage=
 
 
 
-$DocumentationColoring::usage=
-	"The coloring table for auto-generated documentation";
-$DocActive::usage=
-	"The application actively being documented";
-$DocLinkBase::usage=
-	"The ref link base for docs";
-
-
-PackageScopeBlock[	
-
-	DocLinkBase::usage=
-		"Wrapper function for $DocLinkBase";
-		
-	];
-
-
-$DocFooter::usage=
-	"The default footer to use when making doc pages";
-
-
 PackageScopeBlock[
-
 	AutoGenerateUsage::usage=
 		"Automatically provides usage info for a function based on usage messages and *Values";
 	AutoGenerateExamples::usage=
@@ -63,22 +64,26 @@ PackageScopeBlock[
 		"Automatically provides details for a function";
 	SymbolPageNotebook::usage=
 		"Creates a documentation notebook";
-	
 	];
 
 
-GenerateSymbolPages::usage=
+DocGenGenerateSymbolPages::usage=
 	"Opens a documentation notebook";
-SaveSymbolPages::usage=
+DocGenSaveSymbolPages::usage=
 	"Saves the documentation pages to a directory";
 
 
-PackageScopeBlock[
+$DocGenWebResourceBase::usage=
+	"URL for web resources in documentation building";
 
-	DocPageRefLink::usage="Generates RefLink boxes to a symbol";
-	SymbolPageTemplate::usage="Makes a template cell group to fill out from";
-	SymbolPageContextTemplate::usage="Makes a template notebook for a context";
-	
+
+PackageScopeBlock[
+	DocGenRefLink::usage=
+		"Generates RefLink boxes to a symbol";
+	SymbolPageTemplate::usage=
+		"Makes a template cell group to fill out from";
+	SymbolPageContextTemplate::usage=
+		"Makes a template notebook for a context";	
 	]
 
 
@@ -95,9 +100,9 @@ PackageScopeBlock[
 	];
 
 
-GenerateGuide::usage=
+DocGenGenerateGuide::usage=
 	"Generates a guide from a spec or from a template";
-SaveGuide::usage=
+DocGenSaveGuide::usage=
 	"Saves a guide in a directory";
 
 
@@ -123,7 +128,7 @@ PackageScopeBlock[
 		"Formats a tutorial notebook from a spec";
 	];
 
-GenerateTutorial::usage=
+DocGenGenerateTutorial::usage=
 	"Generates a tutorial from a spec or from a template";
 
 
@@ -140,26 +145,33 @@ PackageScopeBlock[
 
 
 
-IndexDocumentation::usage=
+DocGenIndexDocumentation::usage=
 	"Generates an index for documentation located in a directory";
 
 
-GenerateDocumentation::usage=
+DocGenGenerateDocumentation::usage=
 	"Generates and documentation and saves it in a basic documentation paclet";
-
-
-GenerateHTMLDocumentation::usage=
-	"Exports doc pages as HTML";
-
-
-$DocDefaultURLBase::usage=
-	"The default URL base for web docs";
 
 
 PackageScopeBlock[
 	DocAddUsage::usage=
 		"Adds a usage to the usages for a symbol";
 	];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Web*)
+
+
+
+$DocGenURLBase::usage=
+	"The default URL base for web docs";
+$DocGenWebDocsDirectory::usage=
+	"";
+
+
+DocGenGenerateHTMLDocumentation::usage=
+	"Exports doc pages as HTML";
 
 
 Begin["`Private`"];
@@ -183,33 +195,33 @@ If[!TrueQ@$docGenInitialized,
 	];
 
 
-If[!StringQ@$WebDocsDirectory,
-	$WebDocsDirectory=
+If[!StringQ@$DocGenWebDocsDirectory,
+	$DocGenWebDocsDirectory=
 		If[$DocGenBuildPermanent//TrueQ,
 			FileNameJoin@{
 				$UserBaseDirectory,
 				"ApplicationData",
 				"DocGen",
-				"WebDocs"
+				"Web"
 				},
 			FileNameJoin@{$TemporaryDirectory,"web_docs"};
 			];
 	]
 
 
-If[!StringQ@$DocPacletsDirectory,
-	$DocPacletsDirectory=
+If[!StringQ@$DocGenDirectory,
+	$DocGenDirectory=
 		If[$DocGenBuildPermanent//TrueQ,
 			FileNameJoin@{
 				$UserBaseDirectory,
 				"ApplicationData",
 				"DocGen",
-				"DocPaclets"
+				"Paclets"
 				},
 			FileNameJoin@{$TemporaryDirectory,"doc_paclets"};
 			];
-	If[DirectoryQ@$DocPacletsDirectory,
-		PacletManager`PacletDirectoryAdd[$DocPacletsDirectory]
+	If[DirectoryQ@$DocGenDirectory,
+		PacletManager`PacletDirectoryAdd[$DocGenDirectory]
 		];
 	]
 
@@ -238,13 +250,13 @@ docGenBlock~SetAttributes~HoldFirst
 
 
 (* ::Subsubsection::Closed:: *)
-(*$DocActive*)
+(*$DocGenActive*)
 
 
 
-If[Length@OwnValues@$DocActive==0,
+If[Length@OwnValues@$DocGenActive==0,
 	$docActive=None;
-	$DocActive:=
+	$DocGenActive:=
 		Replace[$docActive,
 			Except[_String]:>
 				Replace[Quiet@NotebookFileName[],{
@@ -255,14 +267,14 @@ If[Length@OwnValues@$DocActive==0,
 					$Failed->"System"
 					}]
 			];
-	$DocActive/:
-		HoldPattern[Set[$DocActive,v_]]:=
+	$DocGenActive/:
+		HoldPattern[Set[$DocGenActive,v_]]:=
 			Set[$docActive,v];
-	$DocActive/:
-		HoldPattern[SetDelayed[$DocActive,v_]]:=
+	$DocGenActive/:
+		HoldPattern[SetDelayed[$DocGenActive,v_]]:=
 			SetDelayed[$docActive,v];
-	$DocActive/:
-		HoldPattern[Unset[$DocActive]]:=
+	$DocGenActive/:
+		HoldPattern[Unset[$DocGenActive]]:=
 			$docActive=None;
 	];
 
@@ -272,8 +284,8 @@ If[Length@OwnValues@$DocActive==0,
 
 
 
-If[MatchQ[$DocLinkBase,Except[{__Rule}]],
-	$DocLinkBase={
+If[MatchQ[$DocGenLinkBase,Except[{__Rule}]],
+	$DocGenLinkBase={
 		"System"->
 			Nothing
 		};
@@ -304,9 +316,9 @@ DocLinkBase[s_String]:=
 						]
 				],
 			"`"]/.
-			Append[Replace[$DocLinkBase,Except[_List]:>{}],
+			Append[Replace[$DocGenLinkBase,Except[_List]:>{}],
 				a_:>
-					With[{app=Replace[a,"Global"|"DocGenPrivate":>$DocActive]},
+					With[{app=Replace[a,"Global"|"DocGenPrivate":>$DocGenActive]},
 						With[{pac=PacletManager`PacletFind[app]},
 							If[Length[pac]>0,
 								Replace[
@@ -472,12 +484,12 @@ pacletLinkBuild[s_,type_]/;$pacletBuildLink:=
 	With[{base=
 		Replace[s,{
 			Except[_String]:>
-				$DocActive
+				$DocGenActive
 			}]},
 		pacletLinkBuild[s,
 			If[MatchQ[type,"ref"|"format"|"message"|{"ref",___}],
 				DocLinkBase@base,
-				Replace[$DocActive,
+				Replace[$DocGenActive,
 					Except[_String]:>"System"
 					]
 				],
@@ -510,12 +522,12 @@ pacletLinkBuild[s_,e___]:=
 
 
 (* ::Subsubsection::Closed:: *)
-(*$DocumentationColoring*)
+(*$DocGenColoring*)
 
 
 
-If[MatchQ[$DocumentationColoring,{Except[_Rule]..}|Except[_List]],
-	$DocumentationColoring={
+If[MatchQ[$DocGenColoring,{Except[_Rule]..}|Except[_List]],
+	$DocGenColoring={
 		"BUILT-IN SYMBOL"->RGBColor[0.023529, 0.427451, 0.729412],
 		"GUIDE"->RGBColor[0.8, 0.4, 0],
 		"TUTORIAL"->RGBColor[0.641154, 0.223011, 0.0623026],
@@ -572,7 +584,7 @@ docSymType~SetAttributes~HoldFirst;
 
 
 docTypeColor[s_]:=
-	s/.Append[$DocumentationColoring,_->GrayLevel[0.5]]
+	s/.Append[$DocGenColoring,_->GrayLevel[0.5]]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -710,7 +722,7 @@ anchorBarCell[pacletArgs:{_,_},menus___List]:=
 
 
 
-$DocDefaultURLBase=
+$DocGenURLBase=
 	URLBuild@<|
 		"Scheme"->"https",
 		"Domain"->"www.wolframcloud.com",
@@ -719,11 +731,11 @@ $DocDefaultURLBase=
 
 
 (* ::Subsubsection::Closed:: *)
-(*DocPageRefLink*)
+(*DocGenRefLink*)
 
 
 
-DocPageRefLink[s_String,cell:True|False:True]:=
+DocGenRefLink[s_String,cell:True|False:True]:=
 	Cell@*BoxData@
 		TemplateBox[
 			{
@@ -733,15 +745,15 @@ DocPageRefLink[s_String,cell:True|False:True]:=
 			"RefLink",
 			BaseStyle->{"InlineFormula"}
 			];
-DocPageRefLink[s_Symbol]:=
+DocGenRefLink[s_Symbol]:=
 	With[{sname=dgQuietSymbolName@Unevaluated[s]},
-		DocPageRefLink[sname]
+		DocGenRefLink[sname]
 		];
-DocPageRefLink[h_Hyperlink]:=
+DocGenRefLink[h_Hyperlink]:=
 	Cell[BoxData@ToBoxes@h,"Hyperlink"];
-DocPageRefLink[e_?BoxQ]:=
-	e/.s_String?makeRefTest:>DocPageRefLink[s];
-DocPageRefLink~SetAttributes~HoldFirst
+DocGenRefLink[e_?BoxQ]:=
+	e/.s_String?makeRefTest:>DocGenRefLink[s];
+DocGenRefLink~SetAttributes~HoldFirst
 
 
 (* ::Subsubsection::Closed:: *)
@@ -762,7 +774,7 @@ parseRefText[t_]:=
 			]:>
 			Replace[s,{
 				_String?makeRefTest:>
-					DocPageRefLink[s],
+					DocGenRefLink[s],
 				"..."->
 					StyleBox["...","TI"],
 				SubscriptBox[a_,b_]:>
@@ -785,7 +797,7 @@ parseRefText[t_]:=
 							hold:(StyleBox|FormBox)[f_,e___]:>
 								StyleBox[parseRefText[f],e],
 							ref_String?makeRefTest:>
-								DocPageRefLink[ref],
+								DocGenRefLink[ref],
 							r_String?(StringMatchQ["\"*\""]):>
 								Cell[
 									BoxData@
@@ -861,7 +873,7 @@ generateUrlRefs[refString_String]:=
 	With[{url=
 		If[StringStartsQ[refString,"ref"|"guide"|"tutorial"],
 			URLBuild[{"http://reference.wolfram.com/language",refString}],
-			URLBuild@{$DocDefaultURLBase,refString}
+			URLBuild@{$DocGenURLBase,refString}
 			]
 		},
 		{
@@ -1075,7 +1087,7 @@ docMetadata[ops:OptionsPattern[]]:=
 		"context"->
 			Replace[OptionValue["Context"],
 				Except[_String?(StringEndsQ["`"])]:>
-					StringTrim[Replace[$DocActive,Except[_String]->"System"],"`"]<>"`"
+					StringTrim[Replace[$DocGenActive,Except[_String]->"System"],"`"]<>"`"
 				],
 		"keywords"->
 			Replace[OptionValue["Keywords"],{
@@ -1870,7 +1882,7 @@ Get/@
 
 
 
-IndexDocumentation[
+DocGenIndexDocumentation[
 	src_String?DirectoryQ,
 	dest:_String?DirectoryQ|Automatic:Automatic
 	]:=
@@ -1902,8 +1914,8 @@ IndexDocumentation[
 
 Options[generateDocumentation]=
 	Join[
-		Options@GenerateSymbolPages,
-		Options@GenerateGuide,{
+		Options@DocGenGenerateSymbolPages,
+		Options@DocGenGenerateGuide,{
 		"Install"->False,
 		"Upload"->False,
 		"Index"->Automatic,
@@ -1911,7 +1923,7 @@ Options[generateDocumentation]=
 		},
 		Options@PacletUpload,
 		Options@PacletExpressionBundle,
-		Options@GenerateHTMLDocumentation
+		Options@DocGenGenerateHTMLDocumentation
 		];
 generateDocumentation[
 	pattern:_String,
@@ -1924,7 +1936,7 @@ generateDocumentation[
 			FileNameJoin@{
 				Replace[base,
 					Automatic:>
-						$DocPacletsDirectory
+						$DocGenDirectory
 					],
 				StringReplace[pattern,Except["$"|WordCharacter]->""]
 				},
@@ -1947,19 +1959,19 @@ generateDocumentation[
 			CreateDirectory[dir,
 				CreateIntermediateDirectories->True
 				];
-			Block[{$DocActive=linkbase},
-				SaveSymbolPages[pattern,dir,
+			Block[{$DocGenActive=linkbase},
+				DocGenSaveSymbolPages[pattern,dir,
 					Sequence@@
 						DeleteDuplicatesBy[First]@
 						FilterRules[{
 							ops,
 							"RelatedGuides"->(linkbase<>"/guide/"<>linkbase)
 							},
-							Options@SaveSymbolPages
+							Options@DocGenSaveSymbolPages
 							]
 					];
 				Monitor[
-					SaveGuide[pattern,dir,
+					DocGenSaveGuide[pattern,dir,
 						Sequence@@
 							DeleteDuplicatesBy[First]@
 							FilterRules[{
@@ -1970,7 +1982,7 @@ generateDocumentation[
 										],
 									ops
 									},
-								Options@SaveGuide
+								Options@DocGenSaveGuide
 								]
 						],
 					Internal`LoadingPanel[
@@ -1981,26 +1993,26 @@ generateDocumentation[
 			If[OptionValue["GenerateHTML"]//TrueQ,
 				If[!DirectoryQ@
 					FileNameJoin@{
-							$DocPacletsDirectory,
+							$DocGenDirectory,
 							"html"
 							},
 					CreateDirectory@
 						FileNameJoin@{
-							$DocPacletsDirectory,
+							$DocGenDirectory,
 							"html"
 							}
 					];
 				html=
-					GenerateHTMLDocumentation[
+					DocGenGenerateHTMLDocumentation[
 						FileNameJoin@{
-							$DocPacletsDirectory,
+							$DocGenDirectory,
 							"html"
 							},
 						dir,
 						FilterRules[{
 							ops
 							},
-							Options@GenerateHTMLDocumentation
+							Options@DocGenGenerateHTMLDocumentation
 							]
 						]
 				];
@@ -2008,7 +2020,7 @@ generateDocumentation[
 					Automatic->
 						OptionValue@"Install"],
 					Monitor[
-						IndexDocumentation[dir],
+						DocGenIndexDocumentation[dir],
 						Internal`LoadingPanel[
 							"Indexing documentation"
 							]
@@ -2028,7 +2040,7 @@ generateDocumentation[
 			PacletManager`PacletDirectoryRemove@
 				Replace[base,
 					Automatic:>
-						$DocPacletsDirectory
+						$DocGenDirectory
 					];
 			bundle=
 				If[TrueQ@OptionValue["Install"]||
@@ -2037,7 +2049,7 @@ generateDocumentation[
 						"BuildRoot"->
 							Replace[base,
 								Automatic:>
-									$DocPacletsDirectory
+									$DocGenDirectory
 								]
 						]
 					];
@@ -2053,13 +2065,13 @@ generateDocumentation[
 								],
 							Replace[base,
 								Automatic:>
-									$DocPacletsDirectory
+									$DocGenDirectory
 								]
 							];
 					PacletManager`PacletDirectoryAdd@
 						Replace[base,
 							Automatic:>
-								$DocPacletsDirectory
+								$DocGenDirectory
 							]
 					]
 				];
@@ -2108,16 +2120,16 @@ generateDocumentation[
 
 
 
-Options[GenerateDocumentation]=
+Options[DocGenGenerateDocumentation]=
 	Options[generateDocumentation];
-GenerateDocumentation[
+DocGenGenerateDocumentation[
 	patterns:{__String},
 	base:_String?DirectoryQ|Automatic:Automatic,
 	open:True|False:True,
 	ops:OptionsPattern[]
 	]:=
 	If[OptionValue["Upload"]===Default,
-		GenerateDocumentation[patterns,base,open,
+		DocGenGenerateDocumentation[patterns,base,open,
 			"Upload"->True,
 			"ServerName"->Default,
 			"UploadSiteFile"->True,
@@ -2160,13 +2172,13 @@ GenerateDocumentation[
 				]
 			]
 		];
-GenerateDocumentation[
+DocGenGenerateDocumentation[
 	patterns_String,
 	base:_String?DirectoryQ|Automatic:Automatic,
 	open:True|False:True,
 	ops:OptionsPattern[]
 	]:=
-	GenerateDocumentation[{patterns},
+	DocGenGenerateDocumentation[{patterns},
 		base,
 		open,
 		ops
