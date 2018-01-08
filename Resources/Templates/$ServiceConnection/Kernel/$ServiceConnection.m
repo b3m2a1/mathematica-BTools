@@ -206,7 +206,7 @@ $$serviceconnectionaccesstokenextractor:=
 		]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Auth Info*)
 
 
@@ -390,7 +390,7 @@ KeyValueMap[
 	]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Request Data*)
 
 
@@ -484,7 +484,7 @@ $serviceconnectioncookeddata["RequestData",id_, query_String]:=
 										$serviceconnectioncookeddata["RequestData",id, q]
 									],
 								Quiet[
-									Check[$serviceconnectionpsuedodata[id,query],Missing["UnknownRequest"]],
+									Check[$serviceconnectionpsuedodata[id,query], Missing["UnknownRequest"]],
 									Lookup::invrl
 									],
 								Infinity	
