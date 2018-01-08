@@ -24,7 +24,7 @@ The easiest way to install these packages is using a paclet server installation:
  ]
 ```
 
-If you’ve already installed it you can update using:
+If you've already installed it you can update using:
 
 ```mathematica
  PacletUpdate[
@@ -68,8 +68,6 @@ It integrates with the rest of the BTools package to allow paclet deployment, do
 
 On the development side, the  [CodePackage](FrontEnd/StyleSheets/BTools/CodePackage.nb)  stylesheet provides a convenient stylesheet for developing packages, interfacing with other packages to allow more customizable syntax coloring, block indentation, and package markdown in the automatically generate package.
 
-	(*Out:*)
-	
 ![title-1409732338692002428](project/img/title-1409732338692002428.png)
 
 ---
@@ -134,7 +132,7 @@ Install a paclet from a non-standard source:
 Add a paclet to the default paclet server and deploy it:
 
 ```mathematica
- PacletServerAdd["ServiceConnection_PackageData"];  PacletServerBuild["AutoDeploy"True];
+ PacletServerAdd["ServiceConnection_PackageData"];  PacletServerBuild["AutoDeploy"->True];
 ```
 
 	(*Out:*)
@@ -217,7 +215,7 @@ Add a paclet to the default paclet server and deploy it:
 Add an attached cell to the evaluation cell:
 
 ```mathematica
- FEAttachCell[Graphics[Disk[],ImageSizeTiny]]
+ FEAttachCell[Graphics[Disk[],ImageSize->Tiny]]
 ```
 
 	(*Out:*)
@@ -252,7 +250,7 @@ Create a simple authentication dialog:
 
 	(*Out:*)
 	
-	"https://github.com"{"me@me.com","me password's on the internet!"}
+	<|"https://github.com"->{"me@me.com","me password's on the internet!"}|>
 
 Switch between cloud accounts:
 

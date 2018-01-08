@@ -1479,7 +1479,8 @@ $NotebookToMarkdownLongToUnicodeReplacements=
 		"\\[ShortLeftArrow]"->"\[ShortLeftArrow]",
 		"\\[ShortUpArrow]"->"\[ShortUpArrow]",
 		"\\[ShortDownArrow]"->"\[ShortDownArrow]",
-		"\\[RuleDelayed]"->"\[RuleDelayed]",
+		"\\[Rule]"->"->",
+		"\\[RuleDelayed]"->":>",
 		"\\[DoubleRightArrow]"->"\[DoubleRightArrow]",
 		"\\[DoubleLeftArrow]"->"\[DoubleLeftArrow]",
 		"\\[DoubleUpArrow]"->"\[DoubleUpArrow]",
@@ -1629,8 +1630,11 @@ NotebookToMarkdown[nb_NotebookObject]:=
 						FileNameJoin@ConstantArray["..",1+FileNameDepth[MarkdownContentPath[dir]]]
 					},
 					StringReplace[
-						Normal@
-							$NotebookToMarkdownLongToUnicodeReplacements
+						Join[
+							Normal@
+								$NotebookToMarkdownLongToUnicodeReplacements,
+							CurrentValue[nb,ExportAutoReplacements]
+							]
 						]@
 					StringRiffle[
 						ReplaceAll[
