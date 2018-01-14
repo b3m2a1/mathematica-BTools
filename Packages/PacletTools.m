@@ -540,6 +540,7 @@ Options[PacletExpression]=
 			"BuildNumber"->Automatic,
 			"Extensions"->Automatic,
 			"Tags"->Automatic,
+			"Icon"->Automatic,
 			"Categories"->Automatic,
 			"Authors"->Automatic
 			},
@@ -3311,10 +3312,26 @@ SetPacletFormatting[]:=
 				BoxForm`ArrangeSummaryBox[
 					"Paclet",
 					p,
-					Pane[
-						Style[Last@StringSplit[a["Name"],"_"],"Input"],
-						{Automatic,28},
-						Alignment->Center
+					Replace[
+						FileNames[
+							Lookup[
+								a,
+								"Icon",
+								"PacletIcon"~~"."~~
+									Alternatives@@ToLowerCase[Image`$ImportImageFormats]
+								],
+							p["Location"]
+							],
+						{
+							{f_, ___}:>
+								Import[f],
+							{}:>
+								Pane[
+									Style[Last@StringSplit[a["Name"],"_"],"Input"],
+									{Automatic,28},
+									Alignment->Center
+									]
+							}
 						],
 					KeyValueMap[
 						BoxForm`MakeSummaryItem[

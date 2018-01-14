@@ -505,7 +505,8 @@ CustomServiceConnection[
 								Graphics[e,ImageSize->24,o],
 							Except[None|_Graphics]->Automatic
 							}],
-						ops},Options@customServiceConnectionPrep]
+						ops},
+					Options@customServiceConnectionPrep]
 				]
 			},
 			If[AllTrue[res,StringQ@#&&FileExistsQ@#&],
@@ -584,7 +585,18 @@ CustomServiceConnection[
 				If[pack,
 					PacletExpressionBundle[
 						FileNameJoin@{dir,"ServiceConnection_"<>name},
-						FilterRules[{ops},Options@PacletExpressionBundle]
+						FilterRules[Flatten@{
+							FilterRules[{ops}, Except["Icon"]],
+							"Icon"->
+								FileNameJoin@{
+										"FrontEnd",
+										"SystemResources",
+										"Bitmaps",
+										ToLowerCase@name<>"@2.png"
+										}
+								},
+							Options@PacletExpressionBundle
+							]
 						];
 					PacletBundle@FileNameJoin@{dir,"ServiceConnection_"<>name},
 					FileNameJoin@{dir,"ServiceConnection_"<>name}
