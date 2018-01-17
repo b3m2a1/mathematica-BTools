@@ -3292,7 +3292,7 @@ pacletGetIcon[a_]:=
 			Lookup[
 				a,
 				"Icon",
-				"PacletIcon.png"
+				"PacletIcon.m"|"PacletIcon.png"
 				],
 			a["Location"]
 			],
@@ -3300,8 +3300,11 @@ pacletGetIcon[a_]:=
 			{f_, ___}:>
 				Lookup[$pacletIconCache, f, $pacletIconCache[f] = Import[f]],
 			{}:>
-				With[{f=PackageFindFile["Resources", "Icons", "PacletIcon.png"]},
-					Lookup[$pacletIconCache, f, $pacletIconCache[f] = Import[f]]
+				With[{f=PackageFilePath["Resources", "Icons", "PacletIcon.png"]},
+					Image[
+						Lookup[$pacletIconCache, f, $pacletIconCache[f] = Import[f]],
+						ImageSize->28
+						]
 					]
 				(*Pane[
 					Style[Last@StringSplit[a["Name"],"_"],"Input"],
