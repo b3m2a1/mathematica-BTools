@@ -35,17 +35,59 @@ $PackageDeclared=
 $PackageFEHiddenSymbols={};
 $PackageScopedSymbols={};
 $PackageLoadSpecs=
-	With[{f=FileNameJoin@{$PackageDirectory, "Config", "LoadInfo.m"}},
-			Replace[
-				Quiet[
-					Import@f,
-					Import::nffil
-					],
-				Except[KeyValuePattern[{}]]:>
-					{}
+	Merge[
+		{
+			With[
+				{
+					f=
+						Append[
+							FileNames[
+								"LoadInfo."~~"m"|"wl",
+								FileNameJoin@{$PackageDirectory, "Config"}
+								],
+							None
+							][[1]]
+					},
+				Replace[
+						Quiet[
+							Import@f,
+							Import::nffil
+							],
+					Except[KeyValuePattern[{}]]:>
+						{}
+					]
+				],
+			With[
+				{
+					f=
+						Append[
+							FileNames[
+								"LoadInfo."~~"m"|"wl",
+								FileNameJoin@{$PackageDirectory, "Private", "Config"}
+								],
+							None
+							][[1]]},
+				Replace[
+					Quiet[
+						Import@f,
+						Import::nffil
+						],
+					Except[KeyValuePattern[{}]]:>
+						{}
+					]
 				]
+			},
+		Last
 		];
 $AllowPackageRescoping=
-	$TopLevelLoad||Lookup[$PackageLoadSpecs, "AllowRescoping", True];
+	Replace[
+		Lookup[$PackageLoadSpecs, "AllowRescoping"],
+		Except[True|False]->
+			$TopLevelLoad
+		];
 $AllowPackageRecoloring=
-	$TopLevelLoad||Lookup[$PackageLoadSpecs, "AllowRecoloring", True];
+	Replace[
+		Lookup[$PackageLoadSpecs, "AllowRecoloring"],
+		Except[True|False]->
+			$TopLevelLoad
+		];

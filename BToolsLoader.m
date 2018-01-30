@@ -88,20 +88,62 @@ $PackageDeclared=
 $PackageFEHiddenSymbols={};
 $PackageScopedSymbols={};
 $PackageLoadSpecs=
-	With[{f=FileNameJoin@{$PackageDirectory, "Config", "LoadInfo.m"}},
-			Replace[
-				Quiet[
-					Import@f,
-					Import::nffil
-					],
-				Except[KeyValuePattern[{}]]:>
-					{}
+	Merge[
+		{
+			With[
+				{
+					f=
+						Append[
+							FileNames[
+								"LoadInfo."~~"m"|"wl",
+								FileNameJoin@{$PackageDirectory, "Config"}
+								],
+							None
+							][[1]]
+					},
+				Replace[
+						Quiet[
+							Import@f,
+							Import::nffil
+							],
+					Except[KeyValuePattern[{}]]:>
+						{}
+					]
+				],
+			With[
+				{
+					f=
+						Append[
+							FileNames[
+								"LoadInfo."~~"m"|"wl",
+								FileNameJoin@{$PackageDirectory, "Private", "Config"}
+								],
+							None
+							][[1]]},
+				Replace[
+					Quiet[
+						Import@f,
+						Import::nffil
+						],
+					Except[KeyValuePattern[{}]]:>
+						{}
+					]
 				]
+			},
+		Last
 		];
 $AllowPackageRescoping=
-	$TopLevelLoad||Lookup[$PackageLoadSpecs, "AllowRescoping", True];
+	Replace[
+		Lookup[$PackageLoadSpecs, "AllowRescoping"],
+		Except[True|False]->
+			$TopLevelLoad
+		];
 $AllowPackageRecoloring=
-	$TopLevelLoad||Lookup[$PackageLoadSpecs, "AllowRecoloring", True];
+	Replace[
+		Lookup[$PackageLoadSpecs, "AllowRecoloring"],
+		Except[True|False]->
+			$TopLevelLoad
+		];
 (* ::Subsection:: *)
 (*Paths*)
 
@@ -521,7 +563,7 @@ PackageRecontext[
 (*Autocompletion*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Formats*)
 
 
@@ -575,7 +617,7 @@ $PackageAutoCompletionFormats=
 		};
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*AddAutocompletions Base*)
 
 
@@ -593,7 +635,7 @@ PackageAddAutocompletions[pat:(_String->{$PackageAutoCompletionFormats..})]:=
 	PackageAddAutocompletions[{pat}];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*AddAutocompletions Helpers*)
 
 
@@ -634,7 +676,7 @@ $PackageAutocompletionAliases=
 		};
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*AddAutocompletions Convenience*)
 
 
@@ -675,7 +717,7 @@ PackageAddAutocompletions[l_,v_]:=
 			};
 
 
-PackageAddAutocompletions[PackageAddAutocompletions,
+(*PackageAddAutocompletions[PackageAddAutocompletions,
 	{None,
 		Join[
 			Replace[Keys[$PackageAutocompletionAliases],
@@ -685,7 +727,7 @@ PackageAddAutocompletions[PackageAddAutocompletions,
 			{FileName,AbsoluteFileName}/.$PackageAutocompletionAliases
 			]
 		}
-	]
+	]*)
 
 
 (* ::Subsubsection::Closed:: *)

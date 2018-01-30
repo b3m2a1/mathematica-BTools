@@ -144,6 +144,10 @@ FEFindFileOnPath::usage=
 	"Safe version of FrontEnd`FindFileOnPath"
 
 
+FEUserBaseFile::usage=
+	"Locates or copies a system file in $UserBaseDirectory";
+
+
 Begin["`Private`"];
 
 
@@ -852,7 +856,9 @@ Options[FEFindFileOnPath]=
 		"ReturnKey"->False,
 		"SelectFirst"->True
 		};
-FEFindFileOnPath[
+Options[iFEFindFileOnPath]=
+	Options@FEFindFileOnPath;
+iFEFindFileOnPath[
 	file_,
 	path:{__String?(KeyMemberQ[$FEPathMap,#]&)},
 	ops:OptionsPattern[]
@@ -897,16 +903,41 @@ FEFindFileOnPath[
 					]&,
 				Flatten@Lookup[$FEPathMap,path]
 				];
-FEFindFileOnPath[file_,
-	path:_String|Automatic:Automatic,
+FEFindFileOnPath[
+	file_,
+	path:{__String?(KeyMemberQ[$FEPathMap,#]&)},
+	exts:
+		{__String?(StringLength[#]<6&&StringMatchQ[#, WordCharacter..]&)}:
+		{"nb", "tr", "m"},
 	ops:OptionsPattern[]
 	]:=
-	If[path===Automatic,
-		FEFindFileOnPath[file,
-			Keys@DeleteDuplicates@$FEPathMap,
-			ops
+	Replace[iFEFindFileOnPath[file, path, ops],
+		$Failed:>
+			Replace[Null->$Failed]@
+				Catch@
+					Scan[
+						Replace[e:Except[$Failed]:>Throw[e]]@
+							iFEFindFileOnPath[file<>"."<>#, path, ops]&,
+						exts
+						]
+		];
+FEFindFileOnPath[file_,
+	path:_String|Automatic:Automatic,
+	exts:
+		{__String?(StringLength[#]<6&&StringMatchQ[#, WordCharacter..]&)}:
+		{"nb", "tr", "m"},
+	ops:OptionsPattern[]
+	]:=
+	FEFindFileOnPath[
+		file,
+		Replace[path, 
+			{
+				Automatic:>Keys@DeleteDuplicates@$FEPathMap,
+				s_String:>{s}
+				}
 			],
-		FEFindFileOnPath[file,{path},ops]
+		exts,
+		ops
 		];
 
 
@@ -924,7 +955,7 @@ FEFindFileOnPath[file_,
 	]*)
 
 
-`Package`PackageAddAutocompletions[
+PackageAddAutocompletions[
 	"FEFindFileOnPath",
 	{
 		None,
@@ -936,6 +967,80 @@ FEFindFileOnPath[file_,
 			"s"
 			]}
 	];
+
+
+Options[FEUserBaseFile]=
+	{
+		AutoCopy->False
+		};
+FEUserBaseFile[
+	fName_,
+	fep:
+		{
+			__String?(KeyMemberQ[$FEPathMap,#]&)
+			}|
+			_String|Automatic:Automatic,
+	exts:
+		{__String?(StringLength[#]<6&&StringMatchQ[#, WordCharacter..]&)}:
+		{"nb", "m", "tr"}
+	]:=
+	Module[
+		{
+			res=FEFindFileOnPath[fName, fep, exts, "ReturnKey"->True],
+			path,
+			heads,
+			file,
+			fileNew,
+			autocopy=TrueQ@OptionValue[AutoCopy]
+			},
+		If[res=!=$Failed,
+			path=res[[1]];
+			path=
+				DeleteCases[{StringJoin@#[[;;2]], #[[3]]}, ""]&@
+					StringSplit[path, (p:"Paths"|"Path"):>p, 2];
+			heads=
+				ToFileName/@
+					AbsoluteCurrentValue[$FrontEndSession, path];
+			file = res[[2]];
+			fileNew = 
+				Catch[
+					Scan[
+						If[StringStartsQ[file, #],
+							Throw[
+								StringReplace[file,
+									#->
+										StringReplace[
+											#,
+											StringSplit[#, 
+												"FrontEnd"|"Fonts"|"SpellingDictionaries"|
+													"Converters"|"Components", 2][[1]]->
+												StringRiffle[
+													{$UserBaseDirectory, "SystemFiles", ""},
+													$PathnameSeparator
+													]
+											]
+									]
+								]
+							]&,
+						heads
+						]
+					];
+			If[StringQ@fileNew,	
+				If[autocopy,
+					If[!FileExistsQ@fileNew,
+						If[!DirectoryQ@DirectoryName@fileNew,
+							CreateDirectory[DirectoryName@fileNew,
+								CreateIntermediateDirectories->True
+								]
+							]
+						]
+					];
+				fileNew,
+				$Failed
+				],
+			$Failed
+			]
+		]
 
 
 Options[FEBoxRef]={

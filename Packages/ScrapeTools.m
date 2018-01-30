@@ -305,7 +305,7 @@ SystemExpressionsSearch[pat_,
 												"tr",
 													trFileExpressions[fileListing[[i]]],
 												_,
-													Import[fileListing[[i]]]
+													Get[fileListing[[i]]]
 												],
 											pat,
 											\[Infinity],

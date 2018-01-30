@@ -4,7 +4,7 @@
 (*Autocompletion*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Formats*)
 
 
@@ -58,7 +58,7 @@ $PackageAutoCompletionFormats=
 		};
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*AddAutocompletions Base*)
 
 
@@ -76,7 +76,7 @@ PackageAddAutocompletions[pat:(_String->{$PackageAutoCompletionFormats..})]:=
 	PackageAddAutocompletions[{pat}];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*AddAutocompletions Helpers*)
 
 
@@ -117,7 +117,7 @@ $PackageAutocompletionAliases=
 		};
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*AddAutocompletions Convenience*)
 
 
@@ -158,7 +158,7 @@ PackageAddAutocompletions[l_,v_]:=
 			};
 
 
-PackageAddAutocompletions[PackageAddAutocompletions,
+(*PackageAddAutocompletions[PackageAddAutocompletions,
 	{None,
 		Join[
 			Replace[Keys[$PackageAutocompletionAliases],
@@ -168,7 +168,7 @@ PackageAddAutocompletions[PackageAddAutocompletions,
 			{FileName,AbsoluteFileName}/.$PackageAutocompletionAliases
 			]
 		}
-	]
+	]*)
 
 
 (* ::Subsubsection::Closed:: *)

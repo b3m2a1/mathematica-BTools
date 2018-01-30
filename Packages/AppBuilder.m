@@ -2292,7 +2292,7 @@ Options[AppPublish]=
 		"GitCommit"->Automatic,
 		"ConfigureGitHub"->Automatic,
 		"PushToGitHub"->True,
-		"PushToCloud"->True,
+		"PushToCloud"->False,
 		"PushToServer"->True,
 		"PublishServer"->Automatic,
 		"MakeSite"->True,
