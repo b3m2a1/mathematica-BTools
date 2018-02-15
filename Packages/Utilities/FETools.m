@@ -365,7 +365,7 @@ FEDragMouse[]:=
 	FEDragMouse[{10,0},{-10,0},Automatic]
 
 
-FEParent[obj,n]~`Package`addUsage~
+FEParent[obj,n]~addUsage~
 	"Gets the nth parent object of obj";
 FEParent[
 	obj:_NotebookObject|_CellObject|_BoxObject,
@@ -389,7 +389,7 @@ FEParent[
 		];
 
 
-FEChildren[obj,n]~`Package`addUsage~
+FEChildren[obj,n]~addUsage~
 	"Gets the association of object children for obj to depth n";
 FEChildren[
 	obj:_FrontEndObject|_NotebookObject|_CellObject|_BoxObject,

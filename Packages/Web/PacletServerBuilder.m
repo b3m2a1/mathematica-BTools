@@ -204,11 +204,26 @@ localPacletServer=
 
 
 
+PacletServerURL//Clear
+
+
 PacletServerURL[serv:localPacletServerPat]:=
 	PacletSiteURL@
 		FilterRules[serv,
 			Options[PacletSiteURL]
 			];
+PacletServerURL[s_String?(KeyMemberQ[$PacletServers, #]&)]:=
+	PacletSiteURL@$PacletServers[s];
+PacletServerURL[]:=
+	With[{res=
+		If[Length@$PacletServers>0,
+			Replace[PacletServerURL["Default"],
+				_PacletServerURL:>PacletServerURL@First@$PacletServers
+				]
+			]
+		},
+		res/;StringQ@res
+		]
 
 
 $PacletServerURL:=
@@ -220,7 +235,10 @@ $PacletServerURL:=
 
 
 
-PacletServerDeploymentURL[server_]:=
+PacletServerDeploymentURL//Clear
+
+
+PacletServerDeploymentURL[server:localPacletServerPat]:=
 	PacletSiteURL@
 		FilterRules[
 			Flatten@{
@@ -232,7 +250,19 @@ PacletServerDeploymentURL[server_]:=
 				Normal@server
 				},
 			Options[PacletSiteURL]
+			];
+PacletServerDeploymentURL[s_String?(KeyMemberQ[$PacletServers, #]&)]:=
+	PacletServerDeploymentURL@$PacletServers[s];
+PacletServerDeploymentURL[]:=
+	With[{res=
+		If[Length@$PacletServers>0,
+			Replace[PacletServerDeploymentURL["Default"],
+				_PacletServerDeploymentURL:>PacletServerDeploymentURL@First@$PacletServers
+				]
 			]
+		},
+		res/;StringQ@res
+		]
 
 
 (* ::Subsubsection::Closed:: *)

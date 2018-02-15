@@ -684,14 +684,14 @@ TutorialTemplate[s_String,ops:OptionsPattern[]]:=
 			]
 		},
 		StyleDefinitions->
-			With[{p=`Package`$PackageName},
+			With[{p=$PackageName},
 				FrontEnd`FileName[{p},"DocGen.nb"]
 				]
 		];
 TutorialTemplate[s:{__String},ops:OptionsPattern[]]:=
 	Notebook[Flatten[First@TutorialTemplate[#,ops]&/@s],
 		StyleDefinitions->
-			With[{p=`Package`$PackageName},
+			With[{p=$PackageName},
 				FrontEnd`FileName[{p},"DocGen.nb"]
 				]
 		];

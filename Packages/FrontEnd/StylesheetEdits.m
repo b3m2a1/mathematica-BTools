@@ -229,7 +229,7 @@ ssNotebookInformationNotebook[nb_]:=
 	Replace[
 		Lookup[
 			Replace[NotebookInformation[nb], Except[_?OptionQ]->{}],
-			"StyleDefinitons"
+			"StyleDefinitions"
 			],
 		{n_NotebookObject,___}:>n
 		]
@@ -251,29 +251,30 @@ StyleSheetNotebookObject[nb_NotebookObject]:=
 	Replace[
 		Replace[ssNotebookInformationNotebook[nb],
 			Except[_NotebookObject?(NotebookInformation@#===$Failed&)]:>
-			Lookup[$ssNbObjCache,nb]
+			Lookup[$ssNbObjCache, nb]
 			],
 		{
 			_Missing|_NotebookObject?(NotebookInformation@#===$Failed&):>
 				Set[$ssNbObjCache[nb],
-					First@Lookup[
-						Replace[NotebookInformation[nb], Except[_?OptionQ]->{}],
-						"StyleDefinitons",
-						{
-							Replace[StyleSheetNotebookFileName[nb],{
-								f_String:>
-									Replace[FENotebooks[f],{
-										{}:>Missing["NotFound"],
-										{n_,___}:>n
-										}],
-								_Missing:>
-									With[{n=CurrentValue[nb,StyleDefinitions]},
-										SelectFirst[FENotebooks[],
-											NotebookGet@#===n&]
-										]
-								}]
-							}
-						]
+					First@
+						Lookup[
+							Replace[NotebookInformation[nb], Except[_?OptionQ]->{}],
+							"StyleDefinitons",
+							{
+								Replace[StyleSheetNotebookFileName[nb],{
+									f_String:>
+										Replace[FENotebooks[f],{
+											{}:>Missing["NotFound"],
+											{n_,___}:>n
+											}],
+									_Missing:>
+										With[{n=CurrentValue[nb,StyleDefinitions]},
+											SelectFirst[FENotebooks[],
+												NotebookGet@#===n&]
+											]
+									}]
+								}
+							]
 					]
 			}
 		];

@@ -285,18 +285,32 @@ Begin["`Private`"];
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*Load*)
+
+
+
 If[!ValueQ[$AppDirectoryRoot],
 	$AppDirectoryRoot=$UserBaseDirectory;
 	$AppDirectoryName="Applications";
 	$AppDirectory:=
-		FileNameJoin@{$AppDirectoryRoot,$AppDirectoryName};
+		FileNameJoin@{$AppDirectoryRoot, $AppDirectoryName};
 	$AppUploadDefault=
 		"Cloud";
 	$AppBackupDefault=
-		"GoogleDrive";
+		Which[
+			DirectoryQ@FileNameJoin@{$HomeDirectory, "Google Drive"},
+				"GoogleDrive",
+			DirectoryQ@FileNameJoin@{$HomeDirectory, "Dropbox"},
+				"Dropbox",
+			DirectoryQ@FileNameJoin@{$HomeDirectory, "OneDrive"},
+				"OneDrive",
+			_,
+				"Cloud"
+			];
 	Replace[
 		SelectFirst[
-			`Package`PackageFilePath["Private","AppBuilderConfig."<>#]&/@{"m","wl"},
+			PackageFilePath["Private", "Config", "AppBuilderConfig."<>#]&/@{"m","wl"},
 			FileExistsQ
 			],
 			f_String:>Get@f
@@ -545,7 +559,7 @@ $appInitStrings:=
 				}]&/@
 				FileNames[
 					"*.wl",
-					`Package`PackageFilePath[
+					PackageFilePath[
 						"Resources",
 						"Templates",
 						"Initialization"
@@ -585,7 +599,7 @@ appInitTemplate[pkg_]:=
 
 
 
-AppRegenerateInit[name]~`Package`PackageAddUsage~
+AppRegenerateInit[name]~PackageAddUsage~
 	"regenerates the main package .m file for the application name";
 AppRegenerateInit[name_String]:=
 	With[{
@@ -2767,7 +2781,7 @@ AppGet[appName_,pkgName_String]:=
 		cont=$Context
 		},
 		Replace[
-			Names[app<>"`Private`Package`PackageAppGet"],{
+			Names[app<>"`Private`PackageAppGet"],{
 				{n_}:>
 					Replace[
 						FileNames[pkgName~~".wl"|".m",
@@ -3282,7 +3296,7 @@ AppGenerateTestingNotebook[app_]:=
 			]
 		},
 		StyleDefinitions->
-			FrontEnd`FileName[Evaluate@{`Package`$PackageName},"CodeNotebook.nb"]
+			FrontEnd`FileName[Evaluate@{$PackageName},"CodeNotebook.nb"]
 		];
 AppGenerateTestingNotebook[Optional[Automatic,Automatic]]:=
 	AppGenerateTestingNotebook[AppFromFile[]]

@@ -508,27 +508,119 @@ OpsFind[options_List,
 			]
 
 
-Options@MsgFind=Options@PaneColumn;
-MsgFind[sym_Symbol,mpat_String,ops:OptionsPattern[]]:=
-	With[{m=First/@Messages@sym},
-		Cases[m,
-			HoldPattern[
-				Verbatim[HoldPattern][mn:MessageName[sym,mname_?(StringContainsQ[mpat])]]
-				]:>
-				Button[
-					Mouseover[
-						Style[mname,"Hyperlink"],
-						Style[mname,"HyperlinkActive"]
-						],
-					Print@mn,
-					Method->"Queued",
-					Appearance->"Frameless"
-					]
-				]//
-				If[Length@#>0,
-					PaneColumn[#,FilterRules[{ops,Options@DocFind},Options@PaneColumn]],
-					None]&
+MsgFind//Clear
+
+
+Options@MsgFind=
+	Join[
+		Options@PaneColumn,
+		Options@StringContainsQ,
+		Options@Names,
+		{
+			"SearchBody"->False
+			}
 		];
+MsgFind[{syms___Symbol},mpat_?(StringPattern`StringPatternQ),ops:OptionsPattern[]]:=
+	With[
+		{
+			sco=Sequence@@FilterRules[{ops}, Options@StringContainsQ],
+			sb=TrueQ@OptionValue@"SearchBody"
+			},
+		If[Length@#>0,
+					PaneColumn[#,
+						FilterRules[
+							{ops,Options@MsgFind},
+							Options@PaneColumn
+							]
+						],
+					None
+					]&@
+		Quiet@
+		Flatten@
+			List@
+			ReleaseHold@
+			Map[
+				Function[
+					sym,
+					With[{m=First/@Messages@sym},
+						Cases[m,
+							If[sb,
+								Verbatim[HoldPattern][
+									mn_MessageName?(StringContainsQ[___~~mpat~~___, sco])
+									],
+								HoldPattern[
+									Verbatim[HoldPattern][
+										mn:MessageName[sym,
+												mname_?(StringContainsQ[___~~mpat~~___, sco])
+												]
+											]
+									]
+								]:>
+								Button[
+									Tooltip[
+										Mouseover[
+											Style[HoldForm[mn],"Hyperlink"],
+											Style[HoldForm[mn],"HyperlinkActive"]
+											],
+										mn
+										],
+									Print@
+									Interpretation[
+										MessageObject@
+											<|
+												"MessageSymbol":>sym,
+												"MessageTag"->mname,
+												"MessageTemplate"->mn
+												|>,
+										MessageObject@
+											<|
+												"MessageSymbol":>sym,
+												"MessageTag"->mname,
+												"MessageTemplate"->mn
+												|>
+										],
+									Method->"Queued",
+									Appearance->"Frameless"
+									]
+								]
+						],
+				HoldFirst
+				],
+			Hold[syms]
+			]
+		];
+MsgFind[sym_Symbol,mpat_?(StringPattern`StringPatternQ),ops:OptionsPattern[]]:=
+	MsgFind[{sym}, mpat, ops];
+MsgFind[
+	names:_?(StringPattern`StringPatternQ):"*",
+	mpat_?(StringPattern`StringPatternQ),
+	ops:OptionsPattern[]
+	]:=
+Replace[
+	Thread[
+		ToExpression[
+			Names[names, FilterRules[{ops}, Options@Names]], 
+			StandardForm, 
+			Hold
+			],
+		Hold
+		],
+	Hold[s_]:>MsgFind[s, mpat, ops]
+	];
+MsgFind[
+	e_,
+	mpat_?(StringPattern`StringPatternQ),
+	ops:OptionsPattern[]
+	]/;!TrueQ[$inMsgFind]:=
+	Block[
+		{
+			$inMsgFind=True,
+			res
+			},
+		res=MsgFind[Evaluate@e, mpat, ops];
+		res/;Head[res]=!=MsgFind
+		];
+MsgFind~SetAttributes~HoldFirst
 
 
 definitionPatternsSimplify[valueSpec_List]:=

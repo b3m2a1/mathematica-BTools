@@ -902,19 +902,21 @@ WebSiteTemplateGatherArgs[fileContent_, args_]:=
 	With[
 		{
 			content=
-				Replace[fileContent,{
-						l:{__XMLElement}:>
-							StringRiffle[
-								ExportString[#,"XML"]&/@l,
-								"\n"
-								],
-						x_XMLElement:>
-							ExportString[x,"XML"],
-						None->
-							"",
-						e:Except[_String]:>
-							(Message[WebSiteBuild::nocnt,Short[e]])
-						}]
+				Replace[fileContent,
+					{
+							l:{__XMLElement}:>
+								StringRiffle[
+									ExportString[#,"XML"]&/@l,
+									"\n"
+									],
+							x_XMLElement:>
+								ExportString[x,"XML"],
+							None->
+								"",
+							e:Except[_String]:>
+								(Message[WebSiteBuild::nocnt,Short[e]])
+							}
+					]
 			},
 		Merge[
 			{
@@ -943,11 +945,13 @@ WebSiteTemplateGatherArgs[fileContent_, args_]:=
 							Replace[
 								Lookup[args,"SummaryLength"],{
 									i_Integer?Positive:>
-										Quantity[i,"Characters"],
-									q:Quantity[_Integer?Positive,$WebSiteSummaryUnits]:>
-										q,
+										{i, "Characters"},
+									_[i_Integer?Positive, u:Alternatives@@$WebSiteSummaryBaseUnits]:>
+										{i, u},
+									_[i_Integer?Positive, u_String?(MatchQ[u, $WebSiteSummaryBaseUnits])]:>
+										{i, u},
 									_:>
-										Quantity[1,"Paragraph"]
+										{1,"Paragraph"}
 								}]
 						},
 						With[
@@ -955,9 +959,10 @@ WebSiteTemplateGatherArgs[fileContent_, args_]:=
 								cont=ImportString[content,"HTML"]
 								},
 							Replace[sl,{
-								Quantity[i_,
+								{
+									i_,
 									"Characters"|IndependentUnit["characters"]
-									]:>
+									}:>
 									Function[
 										If[
 											StringLength[#]>i,
@@ -966,15 +971,19 @@ WebSiteTemplateGatherArgs[fileContent_, args_]:=
 											]
 										]@
 										StringReplace[cont,Whitespace->" "],
-								Quantity[i_,
+								{
+									i_,
 									"Lines"|IndependentUnit["lines"|"lines of code"]
-									]:>
+									}:>
 									StringRiffle@
 										Take[
 											StringSplit[cont,"\n"],
 											UpTo[i]
 											],
-								Quantity[i_,IndependentUnit[t_]|t_]:>
+								{
+									i_,
+									IndependentUnit[t_]|t_String
+									}:>
 									StringRiffle[
 										TextCases[cont,
 											ToUpperCase[StringTake[#,1]]<>

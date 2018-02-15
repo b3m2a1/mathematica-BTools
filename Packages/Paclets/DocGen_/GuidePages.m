@@ -816,14 +816,14 @@ GuideTemplate[s_String, ops:OptionsPattern[]]:=
 			]
 		},
 		StyleDefinitions->
-			With[{p=`Package`$PackageName},
+			With[{p=$PackageName},
 				FrontEnd`FileName[{p},"DocGen.nb"]
 				]
 		];
 GuideTemplate[s:{__String},ops:OptionsPattern[]]:=
 	Notebook[Flatten[First@GuideTemplate[#,ops]&/@s],
 		StyleDefinitions->
-			With[{p=`Package`$PackageName},
+			With[{p=$PackageName},
 				FrontEnd`FileName[{p},"DocGen.nb"]
 				]
 		];

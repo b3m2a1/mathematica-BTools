@@ -22,10 +22,9 @@
 MakeIndentable::usage="Makes a cell or notebook in/dedentable";
 
 
-IndentationDecrease::usage="Dedents lines in cell";
+(*IndentationDecrease::usage="Dedents lines in cell";
 IndentationIncrease::usage="Indents lines";
-IndentationEvent::usage=
-	"Determines whether to indent or dedent";
+*)
 
 
 (*
@@ -36,22 +35,33 @@ IndentingNewLineRestore::usage=
 	*)
 
 
-IndentationReplace::usage=
+(*IndentationReplace::usage=
 	"Replaces all indenting new lines with appropriate indentation";
 IndentationRestore::usage=
-	"Replaces all raw newlines and indentation with indenting new lines";
+	"Replaces all raw newlines and indentation with indenting new lines";*)
+
+
+IndentationEvent::usage=
+	"Adds/Removes/Toggles indents in a notebook";
+BatchIndentationEvent::usage=
+	"Applies an IndentationEvent in batch to a notebook";
 
 
 Begin["`Private`"];
 
 
 $IndentationCharDefault="\t";
-GetIndentationChar[]:=
+GetIndentationChar[nb:(_NotebookObject|Automatic):Automatic]:=
 	Set[$IndentationChar, 
-		Replace[CurrentValue[InputNotebook[], {TaggingRules, "IndentCharacter"}],
+		Replace[
+			CurrentValue[
+				Replace[nb, Automatic:>InputNotebook[]], 
+				{TaggingRules, "IndentCharacter"}
+				],
 			Except[_String]->$IndentationCharDefault
 			]
 		];
+If[!ValueQ@$IndentationChar, $IndentationChar:=GetIndentationChar[]]
 
 
 (* ::Subsection:: *)
@@ -72,7 +82,7 @@ MakeIndentable[
 	Replace[
 		Replace[Flatten@List@cell,
 			Except[{__CellObject}]:>
-				StyleSheetCells[StyleSheetEditNotebook@nb,cell,"MakeCell"->True]
+				StyleSheetCells[StyleSheetEditNotebook@nb, cell,"MakeCell"->True]
 			],{
 		s:{__CellObject}:>
 			CompoundExpression[
@@ -93,20 +103,47 @@ MakeIndentable[
 					{"MenuCommand","SelectionCloseAllGroups"}:>
 						Quiet@Check[
 							Needs[pkg];
-							IndentationEvent["Indent"],
+							Replace[
+								Join[
+									Names[pkg<>"IndentationEvent"],
+									Names[pkg<>"*`IndentationEvent"]
+								 ],
+							 {
+								 {f_, ___}:>ToExpression[f]["Indent"],
+								 _:>SetAttributes[EvaluationCell[],CellEventActions->None]
+								 }
+								],
 							SetAttributes[EvaluationCell[],CellEventActions->None]
 							],
 					{"MenuCommand","SelectionOpenAllGroups"}:>
 						Quiet@Check[
 							Needs[pkg];
-							IndentationEvent["Dedent"],
+							Replace[
+								Join[
+									Names[pkg<>"IndentationEvent"],
+									Names[pkg<>"*`IndentationEvent"]
+								 ],
+							 {
+								 {f_, ___}:>ToExpression[f]["Dedent"],
+								 _:>SetAttributes[EvaluationCell[],CellEventActions->None]
+								 }
+								],
 							SetAttributes[EvaluationCell[],CellEventActions->None]
 							],
 					{"MenuCommand","InsertMatchingBrackets"}:>
 					Quiet@Check[
 							Needs[pkg];
-							IndentationEvent["Toggle"],
-							SetAttributes[EvaluationCell[],CellEventActions->None]
+							Replace[
+								Join[
+									Names[pkg<>"IndentationEvent"],
+									Names[pkg<>"*`IndentationEvent"]
+								 ],
+							 {
+								 {f_, ___}:>ToExpression[f]["Toggle"],
+								 _:>SetAttributes[EvaluationCell[], CellEventActions->None]
+								 }
+								],
+							SetAttributes[EvaluationCell[], CellEventActions->None]
 							],
 					PassEventsDown->False
 					}]
@@ -214,7 +251,7 @@ IndentingNewLineReplace[s_String]:=
 	s;
 
 
-IndentationReplace[nb_:Automatic]:=
+IndentationReplace[nb:(_NotebookObject|Automatic):Automatic]:=
 	With[{inputNotebook=Replace[nb,Automatic:>InputNotebook[]]},
 		With[{selection=IndentationSelection@inputNotebook},
 			With[{write=IndentingNewLineReplace@selection},
@@ -252,9 +289,10 @@ IndentingNewLineRestore[r:RowBox[data_]]:=
 				]
 			]
 		];
+IndentingNewLineRestore[s_String]:=s;
 
 
-IndentationRestore[nb_:Automatic]:=
+IndentationRestore[nb:(_NotebookObject|Automatic):Automatic]:=
 	With[{inputNotebook=Replace[nb,Automatic:>InputNotebook[]]},
 		With[{selection=IndentationSelection@inputNotebook},
 			With[{write=IndentingNewLineRestore@selection},
@@ -270,6 +308,15 @@ IndentationRestore[nb_:Automatic]:=
 				]
 			]
 		];
+
+
+IndentationToggle[nb:(_NotebookObject|Automatic):Automatic]:=
+	With[{no=Replace[nb, Automatic:>InputNotebook[]]},
+		If[Not@FreeQ[IndentationSelection@no,$indentingNewLine],
+			IndentationReplace[no],
+			IndentationRestore[no]
+			]
+		]
 
 
 (* ::Subsection:: *)
@@ -314,7 +361,7 @@ indentationAddTabs[sel_]:=
 		}];
 
 
-IndentationIncrease[nb_:Automatic]:=
+IndentationIncrease[nb:(_NotebookObject|Automatic):Automatic]:=
 With[{inputNotebook=Replace[nb,Automatic:>InputNotebook[]]},
 With[{write=indentationAddTabs@IndentationSelection@inputNotebook},
 NotebookWrite[
@@ -374,7 +421,7 @@ indentationDelTabs[sel_]:=
 		}];
 
 
-IndentationDecrease[nb_:Automatic]:=
+IndentationDecrease[nb:(_NotebookObject|Automatic):Automatic]:=
 	With[{inputNotebook=Replace[nb,Automatic:>InputNotebook[]]},
 		With[{write=indentationDelTabs@IndentationSelection@inputNotebook},
 			NotebookWrite[
@@ -389,51 +436,106 @@ IndentationDecrease[nb_:Automatic]:=
 		];
 
 
-IndentationEvent["Indent"]:=
-	(
-		GetIndentationChar[];
-		If[Not@FreeQ[NotebookRead@EvaluationNotebook[],$indentingNewLine],
-			IndentationReplace[],
-			IndentationIncrease[]
+(* ::Subsection:: *)
+(*Main handler*)
+
+
+
+IndentationEvent[nb:(_NotebookObject|Automatic):Automatic, 
+	mode:"Indent"|"Dedent"|"Replace"|"Restore"|"Toggle"
+	]:=
+	With[{no=Replace[nb, Automatic:>EvaluationNotebook[]]},
+		GetIndentationChar[no];
+		Switch[
+			mode,
+			"Indent",
+				If[Not@FreeQ[NotebookRead@no,$indentingNewLine],
+					IndentationReplace[no],
+					IndentationIncrease[no]
+					],
+			"Dedent",
+				IndentationDecrease[no],
+			"Replace",
+				IndentationReplace[no],
+			"Restore",
+				IndentationRestore[no],
+			"Toggle",
+				If[Not@FreeQ[NotebookRead@no,$indentingNewLine],
+					IndentationReplace[no],
+					IndentationRestore[no]
+					]
 			]
-		)
+		]
 
 
-IndentationEvent["Dedent"]:=
-	(
-		GetIndentationChar[];
-		IndentationDecrease[]
-		)
-
-
-IndentationEvent["Toggle"]:=
-	(
-		GetIndentationChar[];
-		If[Not@FreeQ[NotebookRead@EvaluationNotebook[],$indentingNewLine],
-			IndentationReplace[],
-			IndentationRestore[]
-			]
-			)
-
-
-IndentationEvent[]:=
-	(
-		GetIndentationChar[];
+IndentationEvent[nb:(_NotebookObject|Automatic):Automatic]:=
+	With[{no=Replace[nb, Automatic:>EvaluationNotebook[]]},
 		If[AllTrue[
 				{"OptionKey","ShiftKey"},
-				CurrentValue[EvaluationNotebook[],#]&
+				CurrentValue[no,#]&
 				],
-			IndentationRestore[],
+			IndentationEvent[no, "Toggle"],
 			Which[
-				Not@FreeQ[NotebookRead@EvaluationNotebook[],$indentingNewLine],
-					IndentationReplace[],
+				Not@FreeQ[NotebookRead@no,$indentingNewLine],
+					IndentationEvent[no, "Replace"],
 				CurrentValue["OptionKey"],
-					IndentationDecrease[],
+					IndentationEvent[no, "Decrease"],
 				True,
-					IndentationIncrease[]
+					IndentationEvent[no, "Increase"]
 				]
 			];
-			)
+		]
+
+
+Options[batchIndentationEvent]=
+	Options@Cells;
+batchIndentationEvent[no_NotebookObject, 
+	function_,
+	ops:OptionsPattern[]
+	]:=
+	Internal`WithLocalSettings[
+		FrontEndExecute@
+			FrontEnd`NotebookSuspendScreenUpdates[no],
+		Map[
+			Function[
+				SelectionMove[#, All, CellContents,
+					AutoScroll->False
+					];
+				function[no]
+				],
+			Cells[no, Sequence@@FilterRules[{ops}, Options@Cells]]
+			];,
+		FrontEndExecute@
+			FrontEnd`NotebookResumeScreenUpdates[no]
+	];
+
+
+Options[BatchIndentationEvent]=
+	Options[batchIndentationEvent];
+BatchIndentationEvent[
+	nb:(_NotebookObject|Automatic):Automatic,
+	mode:"Indent"|"Dedent"|"Toggle"|"Replace"|"Restore",
+	ops:OptionsPattern[]
+	]:=
+	With[{no=Replace[nb, Automatic:>EvaluationNotebook[]]},
+		GetIndentationChar[no];
+		batchIndentationEvent[
+			no,
+			Switch[mode, 
+				"Indent",
+					IndentationIncrease,
+				"Dedent",
+					IndentationDecrease,
+				"Replace",
+					IndentationReplace,
+				"Restore",
+					IndentationRestore,
+				"Toggle",
+					IndentationToggle
+				],
+			ops
+			]
+		]
 
 
 End[];

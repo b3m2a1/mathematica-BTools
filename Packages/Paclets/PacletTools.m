@@ -172,7 +172,7 @@ If[$pacletConfigLoaded//TrueQ//Not,
 	$FormatPaclets=False;
 	Replace[
 		SelectFirst[
-			`Package`PackageFilePath["Private","PacletConfig."<>#]&/@{"m","wl"},
+			PackageFilePath["Private","PacletConfig."<>#]&/@{"m","wl"},
 			FileExistsQ
 			],
 			f_String:>Get@f
@@ -654,7 +654,7 @@ PacletExpression[
 
 Options[PacletExpressionBundle]=
 	Options[PacletExpression];
-PacletExpressionBundle[paclet,dest]~~`Package`PackageAddUsage~~
+PacletExpressionBundle[paclet,dest]~~PackageAddUsage~~
 	"bundles paclet into a PacletInfo.m file in dest";
 PacletExpressionBundle[
 	paclet_PacletManager`Paclet,
@@ -778,7 +778,7 @@ CreateDocument[
 
 
 
-PacletBundle[dir]~`Package`PackageAddUsage~
+PacletBundle[dir]~PackageAddUsage~
 	"creates a .paclet file from dir and places it in the default build directory";
 Options[PacletBundle]=
 	Join[
@@ -1280,7 +1280,7 @@ PacletSiteInfo//Clear
 
 Options[PacletSiteInfo]=
 	Options[PacletSiteFiles];
-(*PacletSiteInfo[specs]~~`Package`PackageAddUsage~~
+(*PacletSiteInfo[specs]~~PackageAddUsage~~
 	"extracts the PacletSite info stored in specs";*)
 PacletSiteInfo[infoFiles:Except[_?OptionQ]|All|{}:All,ops:OptionsPattern[]]:=
 	With[{
@@ -1397,9 +1397,9 @@ PacletSiteInfo[infoFiles:Except[_?OptionQ]|All|{}:All,ops:OptionsPattern[]]:=
 
 
 (*PacletSiteInfoDataset::usages="";
-PacletSiteInfoDataset[site]~`Package`PackageAddUsage~
+PacletSiteInfoDataset[site]~PackageAddUsage~
 	"formats a Dataset from the PacletInfo in site";
-PacletSiteInfoDataset[files]~`Package`PackageAddUsage~
+PacletSiteInfoDataset[files]~PackageAddUsage~
 	"formats from the PacletSiteInfo in files";*)
 
 
@@ -1427,7 +1427,7 @@ Options[PacletSiteBundle]=
 			},
 		Options@PacletSiteInfo
 		];
-(*PacletSiteBundle[infoFiles]~~`Package`PackageAddUsage~~
+(*PacletSiteBundle[infoFiles]~~PackageAddUsage~~
 	"bundles the PacletInfo.m files found in infoFiles into a compressed PacletSite file";*)
 PacletSiteBundle[dir_String?DirectoryQ, ops:OptionsPattern[]]:=
 	PacletSiteBundle[
@@ -2688,7 +2688,7 @@ Options[PacletUpload]=
 	Options[pacletUpload];
 PacletUpload::nobby="Unkown site base ``"
 PacletUpload::nopac="Unable to find paclet files ``";
-PacletUpload[pacletFiles]~~`Package`PackageAddUsage~~
+PacletUpload[pacletFiles]~~PackageAddUsage~~
 	"uploads pacletFiles to the specified server and configures installers";
 PacletUpload[
 	pacletSpecs:$PacletUploadPatterns,

@@ -987,7 +987,7 @@ $KeyChainCloudAccounts=
 		"PaidAccount"|"FreeAccount";
 
 
-`Package`PackageAddAutocompletions[
+PackageAddAutocompletions[
 	"KeyChainConnect",
 	{List@@$KeyChainCloudAccounts}
 	]

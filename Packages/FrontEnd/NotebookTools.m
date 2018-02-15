@@ -2218,7 +2218,7 @@ GenerateNewPackage[name:_String:"Untitled Package"]:=
 		Cell["","SectionSeparator"]
 		},
 		StyleDefinitions->
-			With[{p=`Package`$PackageName},
+			With[{p=$PackageName},
 				FrontEnd`FileName[{p},"CodePackage.nb"]
 				]
 		];

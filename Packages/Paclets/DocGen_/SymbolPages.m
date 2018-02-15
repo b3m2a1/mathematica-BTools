@@ -1534,7 +1534,7 @@ SymbolPageTemplate[s:{__String},ops:OptionsPattern[]]:=
 				OptionValue@"Footers"
 				},
 		StyleDefinitions->
-			With[{p=`Package`$PackageName},
+			With[{p=$PackageName},
 				FrontEnd`FileName[{p}, "DocGen.nb"]
 				]
 		];

@@ -42,6 +42,11 @@ SyntaxHiglightingStylesheet::usage=
 Begin["`Private`"];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Config*)
+
+
+
 $SyntaxHighlightingStyles={
 	"CodeStyle","CommandStyle","TypeStyle",
 	"FormattingHeadStyle","ConstantStyle","FunctionStyle",
@@ -61,7 +66,7 @@ $SyntaxHighlightingStyles={
 SyntaxHiglightingStylesheet[notebookArg:None|_Notebook:None]:=
 	StyleSheetTemplate[notebookArg,
 		DefaultStyle[
-			FrontEnd`FileName[Evaluate@{`Package`$PackageName},
+			FrontEnd`FileName[Evaluate@{$PackageName},
 				"SyntaxHighlighting.nb"]
 			],
 		Sequence@@$SyntaxStyles,
@@ -218,14 +223,14 @@ SyntaxHiglightingSetHighlightingStyle[nb_,override:True|False:True]:=
 				DefaultStyle[
 					Except@
 						FrontEnd`FileName[
-							Evaluate@{`Package`$PackageName},
+							Evaluate@{$PackageName},
 							"SyntaxHighlighting.nb"
 							]
 					]
 				];
 		StyleSheetCells[
 			DefaultStyle[
-				FrontEnd`FileName[Evaluate@{`Package`$PackageName},
+				FrontEnd`FileName[Evaluate@{$PackageName},
 				"SyntaxHighlighting.nb"]
 				],
 			True
