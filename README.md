@@ -127,7 +127,7 @@ Autogenerate documentation:
 
 ![title-2335057591968686920](project/img/title-2335057591968686920.png)
 
-More info can be found in the  [Paclet examples](examples/Paclets.md) .
+More info can be found in the  [Paclet examples](project/examples/Paclets.md) .
 
 ---
 
@@ -200,7 +200,7 @@ More info can be found in the  [Paclet examples](examples/Paclets.md) .
 	
 ![title-1601186910705832175](project/img/title-1601186910705832175.png)
 
-More info can be found in the  [FrontEnd examples](examples/FrontEnd.md) .
+More info can be found in the  [FrontEnd examples](project/examples/FrontEnd.md) .
 
 ---
 
@@ -363,4 +363,4 @@ Create a repository in GitHub
 	
 ![title-1488024117533531756](project/img/title-1488024117533531756.png)
 
-More info can be found in the  [External examples](examples/External.md) .
+More info can be found in the  [External examples](project/examples/External.md) .
