@@ -4,10 +4,6 @@
 
 The BTools application is a multi-use Mathematica application, largely devoted to simplifying the development process. The application has an autoloader primary file that exposed package-scoped helper functions and loads all of the packages in the  [Packages](Packages)  directory into the main context.
 
-Sample documentation lives  [here](https://www.wolframcloud.com/objects/b3m2a1.docs/reference/BTools/guide/BTools.html)  but it should be noted that this is auto-built and hence essentially example-less documentation. I am, however, responsive via email and can provide examples and better-written documentation for functions and packages upon request.
-
-If you want me to spin off subpackages which only contain some portion of this functionality contact me and I can easily do that too.
-
 ---
 
 <a id="installation" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
@@ -113,7 +109,7 @@ Install a paclet from GitHub:
 
 	(*Out:*)
 	
-![title-7434877519484664965](../../../../../../../../project/img/title-7434877519484664965.png)
+![title-7434877519484664965](project/img/title-7434877519484664965.png)
 
 Autogenerate documentation:
 
@@ -123,9 +119,9 @@ Autogenerate documentation:
 
 	(*Out:*)
 	
-	NotebookObject[![title-8322091606775763118](../../../../../../../../project/img/title-8322091606775763118.png)]
+	NotebookObject[![title-8322091606775763118](project/img/title-8322091606775763118.png)]
 
-![title-2335057591968686920](../../../../../../../../project/img/title-2335057591968686920.png)
+![title-2335057591968686920](project/img/title-2335057591968686920.png)
 
 More info can be found in the  [Paclet examples](project/examples/Paclets.md) .
 
@@ -169,7 +165,7 @@ More info can be found in the  [Paclet examples](project/examples/Paclets.md) .
 
 	(*Out:*)
 	
-![title-9046101401840380990](../../../../../../../../project/img/title-9046101401840380990.png)
+![title-9046101401840380990](project/img/title-9046101401840380990.png)
 
 * ```NinePatchCreate```  turns anything into a nine-patch to be used as an  ```Appearance``` . It's used, for example, in  ```NinePatchNameTag```  to make a nice name-tag appearances.
 
@@ -187,7 +183,7 @@ More info can be found in the  [Paclet examples](project/examples/Paclets.md) .
 
 	(*Out:*)
 	
-![title-2260547031847133199](../../../../../../../../project/img/title-2260547031847133199.png)
+![title-2260547031847133199](project/img/title-2260547031847133199.png)
 
 * ```StoreExpression```  generates a compressed form of a variable (only  ```OwnValues```  are currently supported) and writes a cell to restore that variable:
 
@@ -198,7 +194,7 @@ More info can be found in the  [Paclet examples](project/examples/Paclets.md) .
 
 	(*Out:*)
 	
-![title-1601186910705832175](../../../../../../../../project/img/title-1601186910705832175.png)
+![title-1601186910705832175](project/img/title-1601186910705832175.png)
 
 More info can be found in the  [FrontEnd examples](project/examples/FrontEnd.md) .
 
@@ -270,7 +266,7 @@ Search for functions with  ```"Do"```  in them anywhere in a context starting wi
 
 	(*Out:*)
 	
-![title-2281886144100136916](../../../../../../../../project/img/title-2281886144100136916.png)
+![title-2281886144100136916](project/img/title-2281886144100136916.png)
 
 Search a directory for a regex pattern:
 
@@ -292,7 +288,7 @@ Search a directory for a regex pattern:
 
 	(*Out:*)
 	
-![title-5436828446961647922](../../../../../../../../project/img/title-5436828446961647922.png)
+![title-5436828446961647922](project/img/title-5436828446961647922.png)
 
 Add an attached cell to the evaluation cell:
 
@@ -302,7 +298,7 @@ Add an attached cell to the evaluation cell:
 
 	(*Out:*)
 	
-![title-4499149176453005575](../../../../../../../../project/img/title-4499149176453005575.png)
+![title-4499149176453005575](project/img/title-4499149176453005575.png)
 
 ---
 
@@ -361,6 +357,6 @@ Create a repository in GitHub
 
 	(*Out:*)
 	
-![title-1488024117533531756](../../../../../../../../project/img/title-1488024117533531756.png)
+![title-1488024117533531756](project/img/title-1488024117533531756.png)
 
 More info can be found in the  [External examples](project/examples/External.md) .

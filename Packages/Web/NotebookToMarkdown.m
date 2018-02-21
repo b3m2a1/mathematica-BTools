@@ -1641,7 +1641,7 @@ NotebookToMarkdown[nb_NotebookObject]:=
 									<|
 										"Root"->d2,
 										"Path"->
-											If[StringMatchQ[dir, MarkdownContentPath[dir]~~__],
+											If[StringMatchQ[dir, MarkdownContentPath[dir]~~___],
 												"",
 												URLBuild@ConstantArray["..",
 													1+FileNameDepth[MarkdownContentPath[dir]]]
