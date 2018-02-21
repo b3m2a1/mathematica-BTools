@@ -23,10 +23,6 @@ $StyleSheetTitleCellStyles::usage="The styles that are section-like";
 $StyleSheetSectionCellStyles::usage="The styles that are section-like";
 $StyleSheetIOCellStyles::usage="The styles that are code-like";
 $StyleSheetTextCellStyles::usage="The styles that are text-like";
-$DefaultStyleSheetNotebook::usage=
-	"Default.nb hidden notebook";
-FindStyleSheetNotebook::usage=
-	"Finds the notebook for a given stylesheet";
 
 
 $StyleSheetCellDisplayStyleOptions::usage=
@@ -56,12 +52,18 @@ Styles can be specified by a String, Symbol, or StyleData expression or a list t
 	"Finds the stylesheet notebook expression the given notebook depends on";*)
 
 
-StyleSheetEditNotebook::usage=
-	"The style notebook object for editing a given notebook";
+$DefaultStyleSheetNotebook::usage=
+	"Default.nb hidden notebook";(*
+StyleSheetNotebookFind::usage=
+	"Finds the notebook for a given stylesheet";*)
+
+
 StyleSheetNotebookObject::usage=
-	"Gets the NotebookObject that stores the styles of a given NotebookObject";
+	"The style notebook object for editing a given notebook";
+StyleSheetParentNotebook::usage=
+	"Returns the NotebookObject that stores the styles of a given NotebookObject";
 StyleSheetNotebookGet::usage=
-	"Gets the NotebookObject the stores the styles of a given NotebookObject";
+	"NotebookGets the StyleSheetParentNotebook";
 StyleSheetStyles::usage=
 	"Gets the styles from a stylesheet";
 
@@ -170,59 +172,81 @@ $StyleSheetCellDisplayStyleOptions:=
 		];
 
 
-FindStyleSheetNotebook[parts___String, name_String]:=
+ssFENotebooks[f_String?FileExistsQ]:=
+	List@SelectFirst[FrontEndExecute@FrontEnd`ObjectChildren[$FrontEnd],
+Quiet@NotebookFileName@#===f&
+		];
+ssFENotebooks[Optional["*","*"]]:=
+	FrontEndExecute@FrontEnd`ObjectChildren[$FrontEnd];
+ssFENotebooks[pat:Except["*"|_String?FileExistsQ]]:=
+	Select[FrontEndExecute@FrontEnd`ObjectChildren[$FrontEnd],
+		Replace[Quiet@NotebookFileName@#,{
+				s_String:>
+					StringMatchQ[s,pat],
+				_->False
+				}
+			]||
+		Replace[Quiet@NotebookFileName@#,{
+				s_String:>
+					FileBaseName@StringMatchQ[s,pat],
+				_->False
+				}
+			]||
+		StringMatchQ[
+			WindowTitle/.AbsoluteOptions[#,WindowTitle],
+			pat
+			]&
+		]
+
+
+StyleSheetNotebookFind//Clear
+StyleSheetNotebookFind[name:_String|{__String}|_FrontEnd`FileName]:=
 	Replace[
-		FileNameJoin@Flatten@{
-			$InstallationDirectory,
-			"SystemFiles","FrontEnd","StyleSheets",
-			parts,name<>".nb"
-			},{
-		f_String?FileExistsQ:>
-			Replace[FENotebooks@f,{
-				{}->Missing["NotFound"],
-				{nb_}:>nb
-				}],
-		_->Missing["FileNotFound"]
-		}];
+		FrontEndExecute@
+			FrontEnd`FindFileOnPath[
+				StringTrim[
+					Replace[name, 
+						{
+							l_List:>FileNameJoin[l],
+							f_FrontEnd`FileName:>ToFileName[f]
+							}
+							],
+					".nb"
+					]<>".nb",
+				"StyleSheetPath"
+				],
+		{
+			f_String?FileExistsQ:>
+				Replace[
+					ssFENotebooks@f,
+					{
+						{}->Missing["NotFound"],
+						{nb_}:>nb
+						}
+					],
+			_->Missing["FileNotFound"]
+			}
+		];
 
 
 $DefaultStyleSheetNotebook:=
-FindStyleSheetNotebook["Default"]
+StyleSheetNotebookFind["Default"]
 
 
-ssFileNameJoin[args__]:=
-	FileNameJoin@
-		Flatten@{
-			$InstallationDirectory,
-			"SystemFiles",
-			"FrontEnd",
-			"StyleSheets",
-			args
-			};
-
-
-ssFileName@FrontEnd`FileName[baseComponents_List,base_,___]:=
-	If[FileExistsQ@FileNameJoin@Append[baseComponents,base],
-		FileNameJoin@Append[baseComponents,base],
-		If[FileExistsQ@ssFileNameJoin[baseComponents,base],
-			ssFileNameJoin[baseComponents,base],
-			First@FrontEndFiles@
-				FileNameJoin@Flatten@{baseComponents,base}
+ssFileName[file_]:=
+	FrontEndExecute@
+		FrontEnd`FindFileOnPath[
+			StringTrim[
+				Replace[file, 
+					{
+						l_List:>FileNameJoin[l],
+						f_FrontEnd`FileName:>ToFileName[f]
+						}
+						],
+				".nb"
+				]<>".nb",
+			"StyleSheetPath"
 			]
-		];
-ssFileName[base:_String?(Not@*FileExistsQ)|{__String}]:=
-	If[FileExistsQ@ssFileNameJoin[base],
-		ssFileNameJoin[base],
-		Replace[
-			FrontEndExecute@
-				FrontEnd`FindFileOnPath[
-					FileNameJoin@Flatten@{base},
-					"StyleSheetPath"
-					],{
-			s_String:>
-				FileNameJoin@Flatten@{s,"FrontEnd","StyleSheets",base}
-			}]
-		];
 
 
 ssNotebookInformationNotebook[nb_]:=
@@ -236,18 +260,21 @@ ssNotebookInformationNotebook[nb_]:=
 
 
 StyleSheetNotebookFileName[nb_NotebookObject]:=
-	Replace[CurrentValue[nb,StyleDefinitions],{
-		f:_String|_FrontEnd`FileName:>
-			ssFileName[f],
-		_Notebook:>
-			Missing["NotAvailable"]
-		}];
+	Replace[
+		CurrentValue[nb,StyleDefinitions],
+		{
+			f:_String|_FrontEnd`FileName:>
+				ssFileName[f],
+			_Notebook:>
+				Missing["NotAvailable"]
+			}
+		];
 
 
 If[!AssociationQ@$ssNbObjCache,
 	$ssNbObjCache=<||>
 	];
-StyleSheetNotebookObject[nb_NotebookObject]:=
+StyleSheetParentNotebook[nb_NotebookObject]:=
 	Replace[
 		Replace[ssNotebookInformationNotebook[nb],
 			Except[_NotebookObject?(NotebookInformation@#===$Failed&)]:>
@@ -263,13 +290,13 @@ StyleSheetNotebookObject[nb_NotebookObject]:=
 							{
 								Replace[StyleSheetNotebookFileName[nb],{
 									f_String:>
-										Replace[FENotebooks[f],{
+										Replace[ssFENotebooks[f],{
 											{}:>Missing["NotFound"],
 											{n_,___}:>n
 											}],
 									_Missing:>
 										With[{n=CurrentValue[nb,StyleDefinitions]},
-											SelectFirst[FENotebooks[],
+											SelectFirst[ssFENotebooks[],
 												NotebookGet@#===n&]
 											]
 									}]
@@ -278,47 +305,51 @@ StyleSheetNotebookObject[nb_NotebookObject]:=
 					]
 			}
 		];
+StyleSheetParentNotebook[name:_String|{__String}|_FrontEnd`FileName]:=
+	Replace[StyleSheetNotebookFind[name],
+		nb_NotebookObject:>StyleSheetParentNotebook[nb]
+		]
 
 
-StyleSheetNotebookObject/:
-	HoldPattern[Unset[StyleSheetNotebookObject[nb_NotebookObject]]]:=
+StyleSheetParentNotebook/:
+	HoldPattern[Unset[StyleSheetParentNotebook[nb_NotebookObject]]]:=
 		$ssNbObjCache[nb]=.;
-StyleSheetNotebookObject/:
-	HoldPattern[Unset[StyleSheetNotebookObject[nb:EvaluationNotebook[]|InputNotebook[]]]]:=
+StyleSheetParentNotebook/:
+	HoldPattern[Unset[StyleSheetParentNotebook[nb:EvaluationNotebook[]|InputNotebook[]]]]:=
 		With[{n=nb},
-			Unset[StyleSheetNotebookObject[n]]
+			Unset[StyleSheetParentNotebook[n]]
 			];
-StyleSheetNotebookObject/:
-	HoldPattern[Set[StyleSheetNotebookObject[nb_NotebookObject],n_NotebookObject]]:=
+StyleSheetParentNotebook/:
+	HoldPattern[Set[StyleSheetParentNotebook[nb_NotebookObject],n_NotebookObject]]:=
 		$ssNbObjCache[nb]=n;
-StyleSheetNotebookObject/:
+StyleSheetParentNotebook/:
 	HoldPattern[
-		Set[StyleSheetNotebookObject[nb:EvaluationNotebook[]|InputNotebook[]],
+		Set[StyleSheetParentNotebook[nb:EvaluationNotebook[]|InputNotebook[]],
 			n_NotebookObject]
 		]:=
 		With[{e=nb},
-			Set[StyleSheetNotebookObject[e],n]
+			Set[StyleSheetParentNotebook[e],n]
 			];
-StyleSheetNotebookObject/:
-	HoldPattern[SetDelayed[StyleSheetNotebookObject[nb_NotebookObject],n_]]:=
+StyleSheetParentNotebook/:
+	HoldPattern[SetDelayed[StyleSheetParentNotebook[nb_NotebookObject],n_]]:=
 		$ssNbObjCache[nb]:=n;
-StyleSheetNotebookObject/:
+StyleSheetParentNotebook/:
 	HoldPattern[
-		SetDelayed[StyleSheetNotebookObject[nb:EvaluationNotebook[]|InputNotebook[]],
+		SetDelayed[StyleSheetParentNotebook[nb:EvaluationNotebook[]|InputNotebook[]],
 			n_]
 		]:=
 		With[{e=nb},
-			SetDelayed[StyleSheetNotebookObject[e],n]
+			SetDelayed[StyleSheetParentNotebook[e],n]
 			];
 
 
 StyleSheetNotebookGet[nb_NotebookObject]:=
-	NotebookGet@StyleSheetNotebookObject@nb;
+	NotebookGet@StyleSheetParentNotebook@nb;
 StyleSheetNotebookGet[Optional[Automatic,Automatic]]:=
 	StyleSheetNotebookGet@EvaluationNotebook[];
 
 
-StyleSheetEditNotebook[nb:_NotebookObject|Automatic:Automatic]:=
+StyleSheetNotebookObject[nb:_NotebookObject|Automatic:Automatic]:=
 	With[{e=Replace[nb,Automatic:>EvaluationNotebook[]]},
 		Replace[CurrentValue[e,StyleDefinitions],{
 			"StylesheetFormatting.nb"|"PrivateStylesheetFormatting.nb"|
@@ -343,131 +374,16 @@ StyleSheetEditNotebook[nb:_NotebookObject|Automatic:Automatic]:=
 								]
 						];
 					$ssNbObjCache[e]=.;
-					StyleSheetNotebookObject[e]
+					StyleSheetParentNotebook[e]
 					),
 			_:>
-				StyleSheetNotebookObject[e]
+				StyleSheetParentNotebook[e]
 			}]
 		];
-
-
-$StyleSheetNewCellStyles=
-	_String|All|_StyleData|_DefaultStyle|
-		{(_String|All|_StyleData|_DefaultStyle)..};
-$StyleSheetNewParentStyles=
-	_FrontEnd`FileName|_String|_StyleData|None|
-			{(_FrontEnd`FileName|_String|_StyleData|None)..};
-
-
-StyleSheetStyleData[styleNames_,parentStyles_]:=
-	MapThread[
-		If[#2===None,
-			StyleData[#],
-			StyleData[#,StyleDefinitions->StyleData[#2]]
-			]&,
-		With[{
-			styles=
-				{styleNames}/.{
-					(h:Rule|RuleDelayed)[s_List,e_]:>
-						Flatten@Map[Thread[h[#,e]]&,s],
-					(h:Rule|RuleDelayed)[s_,e_List]:>
-						Flatten@Map[Thread[h[s,#]]&,e]
-					}//Flatten
-			},
-			{
-				styles,
-				Take[
-					ConstantArray[
-						{parentStyles}/.{
-							(h:Rule|RuleDelayed)[s_List,e_]:>
-								Flatten@Map[Thread[h[#,e]]&,s],
-							(h:Rule|RuleDelayed)[s_,e_List]:>
-								Flatten@Map[Thread[h[s,#]]&,e]
-							},
-						Length@styles
-						]//Flatten,
-					Length@styles
-					]
-			}]
-		]//.{
-			(Rule|RuleDelayed)[name:Except[StyleDefinitions],env_]:>
-				StyleData@@Flatten@{name,env}
-			}//.{
-			DefaultStyle[f__]:>(
-				StyleDefinitions->
-					Replace[{f},{
-						{s_String}:>
-							StringTrim[s,".nb"]<>".nb",
-						{path__,name_}:>
-							FrontEnd`FileName[{path},
-								Evaluate[StringTrim[name,".nb"]<>".nb"]],
-						{e_}:>
-							e
-						}]
-				),
-			StyleData[a___,StyleData[b___],c___]:>
-				StyleData[a,b,c]
-			}
-
-
-Options[StyleSheetNew]=
-	DeleteDuplicatesBy[
-		Join[
-			Options[Cell],
-			Options[Notebook],
-			Options[NotebookWrite]
-			],
-		First];
-StyleSheetNew[nb:_NotebookObject|Automatic:Automatic,
-	type:$StyleSheetNewCellStyles,
-	parentType:$StyleSheetNewParentStyles:
-		None,
-	placement:Next|First|Last|Automatic:Automatic,
-	ops:OptionsPattern[]]:=
-	With[{
-		ec=EvaluationCell[],
-		notebook=Replace[nb,Automatic:>StyleSheetEditNotebook[]],
-		position=
-				Replace[placement,
-					Automatic:>Replace[type,{_DefaultStyle->First,_->Next}]],
-		styleDecs=
-			StyleSheetStyleData[type,parentType]
-		},
-		Switch[position,
-			First,SelectionMove[notebook,Before,Notebook],
-			Next,SelectionMove[notebook,After,Cell],
-			Last,SelectionMove[notebook,After,Notebook]
-			];
-		NotebookWrite[notebook,
-			Cell[#,
-				Sequence@@FilterRules[{ops},
-					Except[Alternatives@@Map[First,Options[NotebookWrite]]]
-					]
-				],
-			Sequence@@FilterRules[{ops},Options@NotebookWrite]
-			]&/@styleDecs;
-		];
-
-
-StyleSheetDelete[
-	nb:_NotebookObject|Automatic:Automatic,
-	type:_String|_List|_DefaultStyle]:=
-	Replace[StyleSheetCells[nb,type],{
-		c:{__CellObject}:>
-			NotebookDelete@c
-		}];
-
-
-StyleSheetUpdate[
-	nb:_NotebookObject|Automatic:Automatic,
-	type:All|_String|_List|_DefaultStyle,
-	parentType:_FrontEnd`FileName|_String|_List|_StyleData|None:None,
-	placement:Next|First|Last|Automatic:Automatic,
-	ops:(_Rule|_RuleDelayed)...]:=
-	(
-		StyleSheetDelete[nb,type];
-		StyleSheetNew[nb,type,parentType,placement,ops]
-		);
+StyleSheetNotebookObject[name:_String|{__String}|_FrontEnd`FileName]:=
+	Replace[StyleSheetNotebookFind[name],
+		nb_NotebookObject:>StyleSheetNotebookObject[nb]
+		]
 
 
 StyleSheetTemplate[newNB:_Notebook|_NotebookObject|None:None,
@@ -510,7 +426,7 @@ StyleSheetTemplate[
 
 
 StyleSheetOpen[nb:_NotebookObject|Automatic:Automatic]:=
-With[{notebook=Replace[nb,Automatic:>StyleSheetEditNotebook[]]},
+With[{notebook=Replace[nb,Automatic:>StyleSheetNotebookObject[]]},
 	(*FrontEndTokenExecute@"EditStyleDefinitions";*)
 Replace[
 StyleDefinitions/.Options[notebook,StyleDefinitions],{
@@ -535,13 +451,74 @@ StyleSheetDefaultStyles[
 		];
 
 
+ssNormalizeStyleName[s_String]:=
+	Replace[StringSplit[s, "/"],
+		{
+			{n_}:>n,
+			{n__}:>StyleData[n]
+			}
+		];
+ssNormalizeStyleName[e_]:=e
+
+
+iStyleSheetStyleData[canonicalStyles_]:=
+	Replace[
+		canonicalStyles,
+		{
+			(Rule|RuleDelayed)[s_String, p_String]:>
+				StyleData[s, StyleDefinitions->StyleData[p]],
+			(Rule|RuleDelayed)[{s__String},p_String]:>
+				StyleData[s, StyleDefinitions->StyleData[p]],
+			(Rule|RuleDelayed)[s_String,{p__String}]:>
+				StyleData[s, StyleDefinitions->StyleData[p]],
+			(Rule|RuleDelayed)[{s__String}, {p__String}]:>
+				StyleData[s, StyleDefinitions->StyleData[p]],
+			e_:>
+				StyleData[e]
+			},
+		1
+		]//.{
+			(Rule|RuleDelayed)[name:Except[StyleDefinitions],env_]:>
+				StyleData@@Flatten@{name,env}
+			}//.{
+			DefaultStyle[f__]:>(
+				StyleDefinitions->
+					Replace[{f},{
+						{s_String}:>
+							StringTrim[s,".nb"]<>".nb",
+						{path__,name_}:>
+							FrontEnd`FileName[{path},
+								Evaluate[StringTrim[name,".nb"]<>".nb"]],
+						{e_}:>
+							e
+						}]
+				),
+			StyleData[a___, StyleData[b___], c___]:>
+				StyleData[a,b,c]
+			};
+StyleSheetStyleData[styleNames_]:=
+		iStyleSheetStyleData@Flatten@
+			Replace[
+				ssNormalizeStyleName/@Flatten[{styleNames}, 1],
+				{
+					(h:Rule|RuleDelayed)[s_List,e_]:>
+							Map[Thread[h[#,e]]&,s],
+					(h:Rule|RuleDelayed)[s_,e_List]:>
+							Map[Thread[h[s,#]]&,e]
+					},
+				1
+				];
+
+
 $StyleSheetCellStyleBaseStylePattern=
 	All|_String|_StyleData|_Verbatim|Default;
 $StyleSheetCellStyleSubStylePattern=
 	$StyleSheetCellStyleBaseStylePattern|{$StyleSheetCellStyleBaseStylePattern..}->
 		$StyleSheetCellStyleBaseStylePattern|{$StyleSheetCellStyleBaseStylePattern..};
 $StyleSheetCellStyleSinglePattern=
-	$StyleSheetCellStyleBaseStylePattern|$StyleSheetCellStyleSubStylePattern
+	$StyleSheetCellStyleBaseStylePattern|
+		$StyleSheetCellStyleSubStylePattern|
+		_?StringPattern`StringPatternQ
 
 
 $StyleSheetCellStylePatterns=
@@ -551,41 +528,27 @@ $StyleSheetCellStylePatterns=
 cellTypeMatchQ//Clear
 
 
-cellTypeMatchQ[type:_String|All,types_]:=
+cellTypeMatchQ[type:_String|All, types_]:=
 	Which[
 		types==={"*"},
 			True,
 		types==={},
 			False,
-		MatchQ[types, _Verbatim],
-			Length@First@types<=1&&
-			cellTypeMatchQ[type, First@types],
 		MatchQ[types, StyleData[_]],
 			cellTypeMatchQ[type, First@types],
-		MatchQ[types,
-			Except[
-				_List|
-				_String|
-				_StringExpression|
-				_Alternatives
-				]
-			],
-			False,
-		MatchQ[types, _List],
-			MemberQ[
-				Replace[types,
-					{s_, "*"..}:>{s},
-					1
-					],
-				type
-				],
 		StringPattern`StringPatternQ[type],
 			StringMatchQ[type,
 				Alternatives@@
 					Select[Flatten@List@types, StringPattern`StringPatternQ]
 				],
 		True,
-			False
+			MemberQ[
+				Replace[types,
+					{s_, "*"..}:>{s},
+					1
+					],
+				type
+				]
 		];
 cellTypeMatchQ[type_Symbol, "*"]:=True;
 cellTypeMatchQ[type:Except[_String],_]:=False;
@@ -595,7 +558,7 @@ cellTypeMatchQ[types_][type_]:=cellTypeMatchQ[type,types];
 cellStyleMovingMatchQ[s_, types_]:=
 	With[{styleDatas=
 		Replace[
-			Cases[Flatten@{types},_StyleData|_Verbatim],
+			Cases[Flatten@{types}, _StyleData|_Verbatim],
 			{
 				HoldPattern[Verbatim][d_StyleData]:>
 					If[Length@d!=Length@s,
@@ -618,8 +581,10 @@ cellStyleMovingMatchQ[s_, types_]:=
 				},
 			1]
 			},
-		AnyTrue[styleDatas,
-			And@@MapThread[cellTypeMatchQ,{List@@s,#}]&]
+		AnyTrue[
+			styleDatas,
+				And@@MapThread[cellTypeMatchQ, {List@@s,#}]&
+			]
 		]
 
 
@@ -629,20 +594,26 @@ cellStyleNameMatchQ[
 	]:=
 	types=!={}&&
 		If[Length@s==1,
-			cellTypeMatchQ[First@s,types],
+			cellTypeMatchQ[First@s, 
+				First/@Select[types, Length@#==1&]
+				],
 			Length@s>0&&
 				(
 					cellTypeMatchQ[
 						First@s,
-						Cases[Flatten@{types}, _String|_Symbol]
+						First/@Select[types, Length@#==1&]
 						]||
 					cellStyleMovingMatchQ[s, types]
 					)
 			];
 
 
-cellStyleDataMatchQ[s_StyleData,types_]:=
-	With[{matchData=DeleteCases[s, Except[_String|_Symbol]]},
+cellStyleDataMatchQ[s_StyleData, types_]:=
+	With[
+		{
+			matchData=
+				DeleteCases[s, Except[_String|_Symbol|_?StringPattern`StringPatternQ]]
+				},
 		MatchQ[matchData,
 			Alternatives@@
 				Replace[
@@ -650,7 +621,7 @@ cellStyleDataMatchQ[s_StyleData,types_]:=
 					{
 						DefaultStyle[d_]:>
 							StyleData[StyleDefinitions->d],
-						DefaultStyle[p_List,f_String]:>
+						DefaultStyle[p_List, f_String]:>
 							StyleData[StyleDefinitions->FrontEnd`FileName[{p},f]],
 						DefaultStyle[a__,b_]:>
 							StyleData[StyleDefinitions->StyleData[a,b]]
@@ -745,8 +716,9 @@ stylesheetNotebook[
 		];
 
 
-ssMakeStyleDatas[typeData_]:=
-	Replace[Flatten@List@typeData,
+ssMakeEnvDatas[typeData_]:=
+	Replace[
+		ssNormalizeStyleName/@Flatten@List@typeData,
 		(a_->b_):>
 			StyleData[
 				Sequence@@Flatten@{a},
@@ -760,7 +732,8 @@ ssMakeStyleDatas[typeData_]:=
 StyleSheetCells//Clear
 Options[StyleSheetCells]={
 	"MakeCell"->False,
-	"SelectMode"->StyleData
+	"SelectMode"->StyleData,
+	"DetectStylesheet"->True
 	};
 StyleSheetCells[
 	nb:_Notebook|_NotebookObject|Automatic:Automatic,
@@ -775,47 +748,118 @@ StyleSheetCells[
 				Except[Normal|StyleData]->StyleData
 				],
 		types=
-			ssMakeStyleDatas[typeData]
+			DeleteCases[#, _Rule]&/@StyleSheetStyleData[typeData]
 		},
 		Replace[
 			Select[
+				(* get the CellObjects against which to match *)
 				Replace[
-					Replace[nb,Automatic:>StyleSheetEditNotebook[]],
+					If[TrueQ@OptionValue["DetectStylesheet"],
+						StyleSheetNotebookObject[nb],
+						Replace[nb, Automatic:>EvaluationNotebook[]]
+						],
 					{
 						n_NotebookObject:>Cells[n],
 						n_Notebook:>(First@NotebookTools`FlattenCellGroups[n])
 						}
 					],
 				cellMatchQ[Replace[#,c_CellObject:>NotebookRead@c], types, mode]&
-				],{
-			l_List:>
-				If[mode===StyleData&&make,
-					With[{missingStyles=
-						Select[Flatten[{types},1],
-							With[{c=NotebookRead/@l},
-								With[{s=#},
-									Not@AnyTrue[c, cellMatchQ[#,s,StyleData]&]
-									]&
+				],
+			{
+				l_List:>
+					If[mode===StyleData&&make,
+						(* if there were styles that weren't found, make them *)
+						With[
+							{missingStyles=
+								Select[
+									Cases[Flatten[{types},1], _StyleData|_String],
+									With[{c=NotebookRead/@l},
+										With[{s=#},
+											Not@AnyTrue[c, cellMatchQ[#, s, StyleData]&]
+											]&
+										]
+									]
+								},
+							StyleSheetNew[nb, missingStyles];
+							Join[
+								StyleSheetCells[nb,
+									missingStyles,
+									"MakeCell"->False,
+									ops
+									],
+								l
 								]
-							]
-						},
-						StyleSheetNew[nb, missingStyles];
-						Join[
-							StyleSheetCells[nb,
-								missingStyles,
-								"MakeCell"->False,
-								ops
-								],
-							l
-							]
-						],
-					l]	
-			}]
+							],
+						l]	
+				}
+			]
 		];
 
 
+$StyleSheetNewCellStyles=
+	$StyleSheetCellStylePatterns;
+$StyleSheetNewParentStyles=
+	_FrontEnd`FileName|_String|_StyleData|None|
+			{(_FrontEnd`FileName|_String|_StyleData|None)..};
+
+
+Options[StyleSheetNew]=
+	DeleteDuplicatesBy[
+		Join[
+			Options[Cell],
+			Options[Notebook],
+			Options[NotebookWrite],
+			{
+				"DetectStylesheet"->True
+				}
+			],
+		First];
+StyleSheetNew[
+	nb:_NotebookObject|Automatic:Automatic,
+	type:$StyleSheetNewCellStyles,
+	placement:Next|First|Last|Automatic:Automatic,
+	ops:OptionsPattern[]
+	]:=
+	With[{
+		ec=EvaluationCell[],
+		notebook=
+			If[TrueQ@OptionValue["DetectStylesheet"],
+				StyleSheetNotebookObject[nb],
+				Replace[nb, Automatic:>EvaluationNotebook[]]
+				],
+		position=
+				Replace[placement,
+					Automatic:>Replace[type,{_DefaultStyle->First,_->Next}]],
+		styleDecs=
+			StyleSheetStyleData[type]
+		},
+		Switch[position,
+			First,SelectionMove[notebook,Before,Notebook],
+			Next,SelectionMove[notebook,After,Cell],
+			Last,SelectionMove[notebook,After,Notebook]
+			];
+		NotebookWrite[notebook,
+			Cell[#,
+				Sequence@@FilterRules[{ops},
+					Except[Alternatives@@Map[First,Options[NotebookWrite]]]
+					]
+				],
+			Sequence@@FilterRules[{ops},Options@NotebookWrite]
+			]&/@styleDecs;
+		];
+
+
+StyleSheetDelete[
+	nb:_NotebookObject|Automatic:Automatic,
+	type:_String|_List|_DefaultStyle]:=
+	Replace[StyleSheetCells[nb,type],{
+		c:{__CellObject}:>
+			NotebookDelete@c
+		}];
+
+
 StylesheetNotebook[nb:_Notebook|_NotebookObject|Automatic:Automatic]:=
-	With[{n=Replace[nb,Automatic:>StyleSheetEditNotebook[]]},
+	With[{n=Replace[nb,Automatic:>StyleSheetNotebookObject[]]},
 		Module[{styleDefs=StyleDefinitions/.Options[n,StyleDefinitions],
 				parentNB,extraStyles},
 				parentNB=
@@ -922,7 +966,9 @@ StyleSheetApplyEdits[cells:{__CellObject}]:=
 					][
 					StyleSheetSuspendScreen[nb];
 					Map[
-						StyleSheetSelectionMove[#,All,Cell];
+						StyleSheetSelectionMove[#,All,Cell,
+							AutoScroll->False
+							];
 						StyleSheetToggleShowExpr[nb]~Do~2;
 						&,
 						#2
@@ -943,9 +989,14 @@ StyleSheetApplyEdits[nb:_CellObject|Automatic:Automatic]:=
 
 StyleSheetSetOptions[obj_,ops__]:=
 	If[$frontEndExecuteBlock,
-		frontEndExecuteSow[FrontEnd`SetOptions[obj,ops]],
+		frontEndExecuteSow[
+			FrontEnd`SetOptions[obj, ops]
+			],
 		SetOptions[obj,ops]
 		]
+
+
+StyleSheetEdit//ClearAll
 
 
 StyleSheetEdit[
@@ -996,7 +1047,7 @@ StyleSheetEdit[
 							],
 						{o,Flatten@{conf}}]
 						},
-				StyleSheetSetOptions[c,oplist]
+				StyleSheetSetOptions[c, oplist]
 				],
 				{c,cells}
 			];
@@ -1069,7 +1120,7 @@ StyleSheetEdit[
 	With[{cells=StyleSheetCells[nb,types,ops]},
 		If[Length@cells===0,
 			$Failed,
-	StyleSheetEdit[cells,conf]
+StyleSheetEdit[cells, conf]
 			]
 	];
 
@@ -1140,7 +1191,7 @@ StyleSheetValue[
 					Map[
 						Replace[
 							mode[
-								StyleSheetEditNotebook@nb,
+								StyleSheetNotebookObject@nb,
 								{StyleDefinitions,cellStyle,#}
 								],
 							$Failed->Inherited
@@ -1314,7 +1365,7 @@ StyleSheetEditEvents[
 		With[{obop=
 			Replace[nb,{
 				Automatic:>
-					{StyleSheetEditNotebook[nb],
+					{StyleSheetNotebookObject[nb],
 						Replace[op,Automatic:>NotebookEventActions]
 						},
 				_CellObject|{__CellObject}:>
@@ -1358,7 +1409,7 @@ StyleSheetEditAliases[
 	With[{obop=
 		Replace[nb,{
 			Automatic:>
-				{StyleSheetEditNotebook[nb],
+				{StyleSheetNotebookObject[nb],
 					InputAliases
 					},
 			_CellObject|{__CellObject}:>
@@ -1401,7 +1452,7 @@ StyleSheetEditAutoReplacements[
 	With[{obop=
 		Replace[nb,{
 			Automatic:>
-				{StyleSheetEditNotebook[nb],
+				{StyleSheetNotebookObject[nb],
 					InputAutoReplacements
 					},
 			_CellObject|{__CellObject}:>
@@ -1444,7 +1495,7 @@ StyleSheetEditTaggingRules[
 	With[{obop=
 		Replace[nb,{
 			Automatic:>
-				{StyleSheetEditNotebook[nb],
+				{StyleSheetNotebookObject[nb],
 					TaggingRules
 					},
 			_CellObject|{__CellObject}:>

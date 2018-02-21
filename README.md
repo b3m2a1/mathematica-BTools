@@ -38,88 +38,74 @@ Alternately you can download this repo as a ZIP file and put extract it in  ```$
 
 ---
 
-Note that this is currently out of date. A new breakdown of the packages is coming sometime in the next 5-10 years.
-
 <a id="package-listing" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
 
 # Package Listing
 
-<a id="application-development" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
+BTools has been refactored. Functionality is now divided into different contexts for ease of use.
 
-## Application Development
+<a id="paclets" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
+
+## Paclets
+
+The paclets context handles the paclet development functionality
 
 ### Packages
 
 * [AppBuilder](Packages/AppBuilder.m)
 
-### Palettes
-
-* [AppManager](FrontEnd/Palettes/AppManager.nb)
-
-### Stylesheets
-
-* [CodePackage](FrontEnd/StyleSheets/BTools/CodePackage.nb)
-
-### Description
-
-The AppBuilder package supports building Mathematica Applications. It supports formatting applications, adding and finding application content, as well as creating sub-applications from current application content.
-
-It integrates with the rest of the BTools package to allow paclet deployment, documentation building, publishing to GitHub, etc. This functionality is then encapsulated in the  [AppManager](FrontEnd/Palettes/AppManager.nb)  palette for ease of use
-
-On the development side, the  [CodePackage](FrontEnd/StyleSheets/BTools/CodePackage.nb)  stylesheet provides a convenient stylesheet for developing packages, interfacing with other packages to allow more customizable syntax coloring, block indentation, and package markdown in the automatically generate package.
-
-![title-1409732338692002428](project/img/title-1409732338692002428.png)
-
----
-
-<a id="documentation-building" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
-
-## Documentation Building
-
-### Packages
+* [PacletTools](Packages/PacletTools.m)
 
 * [DocGen](Packages/DocGen.m)
 
 ### Palettes
 
+* [AppManager](FrontEnd/Palettes/AppManager.nb)
+
+* [Paclet Server Manager](FrontEnd/Palettes/PacletServerManager.nb)
+
+### Stylesheets
+
+* [SyntaxHiglighting](FrontEnd/StyleSheets/BTools/SyntaxHiglighting.nb)
+
+* [CodePackage](FrontEnd/StyleSheets/BTools/CodePackage.nb)
+
+* [CodeNotebook](FrontEnd/StyleSheets/BTools/CodePackage.nb)
+
 * [DocGen](FrontEnd/StyleSheets/BTools/DocGen.nb)
 
 ### Description
 
-[DocGen.m](Packages/DocGen.m)  provides functionality for creating documentation automatically or via templates. The built documentation notebooks can also be exported to HTML and used on the web, or simply indexed and used in the documentation center. The  [DocGen](FrontEnd/StyleSheets/BTools/DocGen.nb)  stylesheet makes building documentation templates that work with DocGen.m easier.
+The  [AppBuilder](Packages/AppBuilder.m)  package supports building Mathematica Applications. It supports formatting applications, adding and finding application content, as well as creating sub-applications from current application content.
 
-### Examples
+It integrates with the rest of  BTools to allow paclet deployment, documentation building, publishing to GitHub, etc. This functionality is then encapsulated in the  [AppManager](FrontEnd/Palettes/AppManager.nb)  palette for ease of use
 
-```GenerateSymbolPages```  builds a symbol page from a notebook or automatically generates symbol pages from a symbol or set of symbols.  ```FEScreenShot```  is a function from  [FETools.m](Packages/FETools.m)  that uses GUIKit to screenshot a notebook.
+[PacletTools](Packages/PacletTools.m)  makes it easy to create, distribute, and work with paclets. It provides automatic creation and updating of PacletInfo.m files, paclet packing and upload, paclet installation from a non-paclet source, etc. It also supports a different paclet front-end format for easier inspection.
+
+
+
+<a id="examples" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
+
+## Examples
+
+Load the package:
 
 ```mathematica
- img=FEScreenShot@DocGenGenerateSymbolPages@DocGenGenerateSymbolPages; 
- ImageTake[img,250]
+ <<BTools`Paclets`
+```
+
+Create a new application
+
+```mathematica
+ $AppDirectoryRoot = $TemporaryDirectory; 
+ AppConfigure["NewApp"]
 ```
 
 	(*Out:*)
 	
-![title-1292702132161691219](project/img/title-1292702132161691219.png)
+	"/private/var/folders/9t/tqc70b7d61v753jkdbjkvd640000gp/T/Applications/NewApp"
 
----
-
-<a id="paclet-distribution" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
-
-## Paclet Distribution
-
-### Packages
-
-* [PacletTools](Packages/PacletTools.m)
-
-* [PacletServerBuilder](Packages/PacletServerBuilder.m)
-
-### Packages
-
-[PacletTools.m](Packages/PacletTools.m)  supports building and distribution paclets. It provides automatic creation and updating of PacletInfo.m files, paclet packing and upload, paclet installation from a non-paclet source, etc. It also supports a different paclet front-end format for easier inspection.
-
-### Examples
-
-Install a paclet from a non-standard source:
+Install a paclet from GitHub:
 
 ```mathematica
  PacletInstallPaclet@"https://github.com/szhorvat/MaTex"
@@ -127,23 +113,27 @@ Install a paclet from a non-standard source:
 
 	(*Out:*)
 	
-![title-691477844103673864](project/img/title-691477844103673864.png)
+![title-7434877519484664965](project/img/title-7434877519484664965.png)
 
-Add a paclet to the default paclet server and deploy it:
+Autogenerate documentation:
 
 ```mathematica
- PacletServerAdd["ServiceConnection_PackageData"];  PacletServerBuild["AutoDeploy"->True];
+ DocGen[DocGen]
 ```
 
 	(*Out:*)
 	
-![title-3169777872084840222](project/img/title-3169777872084840222.png)
+	NotebookObject[![title-8322091606775763118](project/img/title-8322091606775763118.png)]
+
+![title-2335057591968686920](project/img/title-2335057591968686920.png)
+
+More info can be found in the  [Paclet examples](examples/Paclets.md) .
 
 ---
 
-<a id="notebook-aides" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
+<a id="frontend" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
 
-## Notebook Aides
+## FrontEnd
 
 ### Packages
 
@@ -167,7 +157,39 @@ Add a paclet to the default paclet server and deploy it:
 
 ### Examples:
 
-```StoreExpression```  generates a compressed form of a variable (only  ```OwnValues```  are currently supported) and writes a cell to restore that variable:
+* ```StyleSheetEdit```  allows one to very easily edit stylesheets, even without opening the stylesheet. 
+
+* ```MakeIndentable```  makes a  ```Cell```  or  ```Notebook```  block-indentable
+
+* ```GradientButton```  and friends provide a collection of attractive interface elements
+
+```mathematica
+ GradientButtonBar[{1:>2, 3:>4, 5:>6}, FrameMargins->5]
+```
+
+	(*Out:*)
+	
+![title-9046101401840380990](project/img/title-9046101401840380990.png)
+
+* ```NinePatchCreate```  turns anything into a nine-patch to be used as an  ```Appearance``` . It's used, for example, in  ```NinePatchNameTag```  to make a nice name-tag appearances.
+
+```mathematica
+ Panel[
+ StringTake[ExampleData[{"Text", "LoremIpsum"}], 1000],
+ Appearance->
+ NinePatchNameTag[
+  {Background->Hue[.6,.5,.5], RoundingRadius->5},
+  {Background->White},
+  {Background->Hue[.6,.5,.5], RoundingRadius->5}
+  ]
+ ]
+```
+
+	(*Out:*)
+	
+![title-2260547031847133199](project/img/title-2260547031847133199.png)
+
+* ```StoreExpression```  generates a compressed form of a variable (only  ```OwnValues```  are currently supported) and writes a cell to restore that variable:
 
 ```mathematica
  var={1,2,3}; 
@@ -178,13 +200,57 @@ Add a paclet to the default paclet server and deploy it:
 	
 ![title-1601186910705832175](project/img/title-1601186910705832175.png)
 
+More info can be found in the  [FrontEnd examples](examples/FrontEnd.md) .
+
 ---
 
-<a id="frontend-tools" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
+<a id="web" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
 
-## Front-End Tools
+## Web
 
 ### Packages
+
+* [SiteBuilder](Packages/SiteBuilder.m)
+
+* [MarkdownParsers](Packages/MarkdownParsers.m)
+
+* [NotebookToMarkdown](Packages/NotebookToMarkdown.m)
+
+* [PacletServerBuilder](Packages/PacletServerBuilder.m)
+
+* [PelicanTools](Packages/PelicanTools.m)
+
+### Stylesheets
+
+* [MarkdownNotebook](FrontEnd/StyleSheets/BTools/MarkdownNotebook.nb)
+
+* [PelicanMarkdown](FrontEnd/StyleSheets/BTools/PelicanMarkdown.nb)
+
+### Palettes
+
+* [Site Builder](FrontEnd/Palettes/SiteBuilder.nb)
+
+* [Paclet Server Manager](FrontEnd/Palettes/PacletServerManager.nb)
+
+### Description
+
+[SiteBuilder.m](Packages/SiteBuilder.m)  is a Mathematica rewrite of the pelican static site generator with convenience functions for deploying to the cloud.  [MarkdownParsers.m](Packages/MarkdownParsers.m)  provides functions for parsing markdown text to  [Symbolic XML](http://reference.wolfram.com/language/XML/tutorial/RepresentingXML.html#1695) .  [NotebookToMarkdown.m](Packages/NotebookToMarkdown.m)  goes the other way, exporting a notebook to markdown. The [ ](http://reference.wolfram.com/language/XML/tutorial/RepresentingXML.html#1695) [PacletServerBuilder](Packages/PacletServerBuilder.m)  is then a layer on top of this to make 
+
+### Examples
+
+[This](https://www.wolframcloud.com/objects/b3m2a1/home/main.html)  is a site built via the pelican link in  [PelicanTools](Packages/PelicanTools.m)  and  [this](https://www.wolframcloud.com/objects/b3m2a1.paclets/PacletServer/main.html)  is a site built with the  [PacletServerBuilder](Packages/PacletServerBuilder.m) . Both implicitly use the  ```NotebookMarkdownSave```  function in  [MarkdownToNotebook](Packages/MarkdownToNotebook.m)  which gets called automatically with the  [MarkdownNotebook](FrontEnd/StyleSheets/BTools/MarkdownNotebook.nb)  stylesheet, which also provides convenient style configurations and key-bindings to make notebooks that are processable by  ```NotebookMarkdownSave``` .  [SiteBuilder.m](Packages/SiteBuilder.m)  also makes use of the  ```MarkdownToXML```  function in  [MarkdownParsers.m](Packages/MarkdownParsers.m)  for filling out its templates.
+
+These have been pretty well explored on the web, for instance,  [here](https://www.wolframcloud.com/objects/b3m2a1/home/building-websites-with-mathematica.html#main-content) ,  [here](https://www.wolframcloud.com/objects/b3m2a1/home/building-websites-with-mathematica-part-2.html#main-content) , and  [here](http://community.wolfram.com/groups/-/m/t/1251138#_19_message_1253177) . More examples are coming when I have time.
+
+---
+
+### Utilities
+
+* [DocFind](Packages/DocFind.m)
+
+* [ScrapeTools](Packages/ScrapeTools.m)
+
+* [ContextTools](Packages/ContextTools.m)
 
 * [FETools](Packages/FETools.m)
 
@@ -192,9 +258,25 @@ Add a paclet to the default paclet server and deploy it:
 
 ### Description
 
-[FETools.m](Packages/FETools.m)  provides access to a wide array of useful front-end functionality, largely by creating top-level functions for various  [front-end packets](https://mathematica.stackexchange.com/q/13451/38205) .  [TRTools.m](Packages/TRTools.m)  exposes helper functions for working with the front-end TextResource system which is useful for modifying the system.
+[FETools.m](Packages/FETools.m)  provides access to a wide array of useful front-end functionality, largely by creating top-level functions for various  [front-end packets](https://mathematica.stackexchange.com/q/13451/38205) .  [TRTools.m](Packages/TRTools.m)  exposes helper functions for working with the front-end TextResource system which is useful for modifying the system.  [DocFind](Packages/DocFind.m)  implements a set of nice documentation search interfaces and  [ScrapeTools](Packages/ScrapeTools.m)  provides a bunch of functions for scraping formation from the system.
 
 ### Examples:
+
+Search for functions with  ```"Do"```  in them anywhere in a context starting with  ```"Int"```
+
+```mathematica
+ DocFind["Do", "Int*", Select->"Function"]
+```
+
+	(*Out:*)
+	
+![title-2281886144100136916](project/img/title-2281886144100136916.png)
+
+Search a directory for a regex pattern:
+
+	(*Out:*)
+	
+	{"/Applications/Mathematica.app/Contents/AddOns/Applications/StandardOceanData/Kernel/StandardOceanData.m","/Applications/Mathematica.app/Contents/AddOns/Applications/DataDropClient/Kernel/DataDropClientAdd.m","/Applications/Mathematica.app/Contents/AddOns/Applications/EntityFramework/Resources/FunctionalFrequency/specialArgFunctions.tr","/Applications/Mathematica.app/Contents/AddOns/Applications/AstronomyConvenienceFunctions/Kernel/AstronomyConvenienceFunctions.m"}
 
 ```FEAddAutocompletions```  provides a wrapper for adding autocompletions to a function:
 
@@ -224,75 +306,9 @@ Add an attached cell to the evaluation cell:
 
 ---
 
-<a id="authentication-tools" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
+<a id="frameworks" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
 
-# Authentication Tools
-
-### Packages
-
-* [AuthDialogs](Packages/AuthDialogs.m)
-
-* [EncodedCache](Packages/EncodedCache.m)
-
-### Description
-
-[AuthDialogs.m](Packages/AuthDialogs.m)  provides a set of functions for creating attractive authentication dialogs.  [EncodedCache.m](Packages/EncodedCache.m)  provides and interface for creating password-encoded key-value caches. It also provides a  ```$KeyChain```  cache which uses the authentication dialogs to ask for and save log-in credentials which may be used later. This is particularly useful for Wolfram Cloud accounts, and a special function for connection via the  ```$KeyChain```  is provided.
-
-### Examples
-
-Create a simple authentication dialog:
-
-```mathematica
- AuthenticationDialog["GitHub","https://github.com"]
-```
-
-![title-7327455162654501707](project/img/title-7327455162654501707.png)
-
-	(*Out:*)
-	
-	<|"https://github.com"->{"me@me.com","me password's on the internet!"}|>
-
-Switch between cloud accounts:
-
-```mathematica
- KeyChainConnect["PacletsAccount"]
-```
-
-	(*Out:*)
-	
-	"b3m2a1.paclets@gmail.com"
-
-<a id="web-tools" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
-
-# Web Tools
-
-### Packages
-
-* [WebTemplating](Packages/WebTemplating.m)
-
-* [SiteBuilder](Packages/SiteBuilder.m)
-
-* [MarkdownParsers](Packages/MarkdownParsers.m)
-
-### Stylesheets
-
-* [MarkdownNotebook](FrontEnd/StyleSheets/BTools/MarkdownNotebook.nb)
-
-* [HTMLTemplating](FrontEnd/StyleSheets/BTools/HTMLTemplating.nb)
-
-* [PelicanMarkdown](FrontEnd/StyleSheets/BTools/PelicanMarkdown.nb)
-
-### Description
-
-[WebTemplating.m](Packages/WebTemplating.m)  works with the  [HTMLTemplating](FrontEnd/StyleSheets/BTools/HTMLTemplating.nb)  stylesheet to allow one to write HTML as cells in a notebook (with appropriate conversions of options, etc.) as well as providing interface functions to the pelican static site generator.  [SiteBuilder.m](Packages/SiteBuilder.m)  is a Mathematica rewrite of the pelican static site generator with convenience functions for deploying to the cloud. The  [MarkdownParsers.m](Packages/MarkdownParsers.m)  package provides functions for both parsing markdown text to  [Symbolic XML](http://reference.wolfram.com/language/XML/tutorial/RepresentingXML.html#1695)  and exporting a notebook to markdown.
-
-### Examples
-
-[This](https://www.wolframcloud.com/objects/b3m2a1/home/main.html)  is a site built via the pelican link in  [WebTemplating.m](Packages/WebTemplating.m)  and  [this](https://www.wolframcloud.com/objects/b3m2a1.paclets/PacletServer/main.html)  is a site built directly with  [SiteBuilder.m](Packages/SiteBuilder.m) . Both implicitly use the  ```NotebookMarkdownSave```  function in  [MarkdownParsers.m](Packages/MarkdownParsers.m)  which gets called automatically with the  [MarkdownNotebook](FrontEnd/StyleSheets/BTools/MarkdownNotebook.nb)  stylesheet, which also provides convenient style configurations and key-bindings to make notebooks that are processable by  ```NotebookMarkdownSave``` .  [SiteBuilder.m](Packages/SiteBuilder.m)  also makes use of the  ```MarkdownToXML```  function in  [MarkdownParsers.m](Packages/MarkdownParsers.m)  for filling out its templates.
-
-<a id="paclet-templates" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
-
-# Paclet Templates
+# Frameworks
 
 ### Packages
 
@@ -304,13 +320,19 @@ Switch between cloud accounts:
 
 These two packages provide a single function each of which fills a paclet from a template. They also provide template notebooks for building such paclets.  [CustomServiceConnection](Packages/CustomServiceConnection.m)  provides a function for making a new  ```ServiceObject```  and  [CuratedData](Packages/CuratedData.m)  provides a function for building a collection of curated data paclets which function like  ```ChemicalData``` .
 
-<a id="external-services" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
+More info about them can be found  [here](https://www.wolframcloud.com/objects/b3m2a1/home/serviceconnections---mathematica-on-the-web.html#main-content)  and  [here](https://mathematica.stackexchange.com/a/146221/38205) .
 
-# External Services
+---
+
+<a id="external" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
+
+# External
 
 ### Packages
 
 * [GitConnection](Packages/GitConnection.m)
+
+* [GoogleDrive](Packages/GoogleDrive.m)
 
 * [PyTools](Packages/PyTools.m)
 
@@ -319,3 +341,26 @@ These two packages provide a single function each of which fills a paclet from a
 ### Description
 
 [GitConnection](Packages/GitConnection.m)  has three primary functions,  ```Git``` ,  ```GitHub``` ,  and  ```SVN```  which act as wrapper functions to their respective services.  [PyTools](Packages/PyTools.m)  provides a two wrappers for useful python functionality,  [virtualenv](https://virtualenv.pypa.io/en/stable/)  and  [SimpleHTTPServer](https://docs.python.org/2/library/simplehttpserver.html)  and may support more functionality in the future.  [ProcessTools](Packages/ProcessTools.m)  just provides a few wrappers on the  ```RunProcess```  /  ```StartProcess```  system.
+
+### Examples
+
+Load the package
+
+```mathematica
+ <<BTools`External`
+```
+
+Create a repository in GitHub
+
+```mathematica
+ GitHub["Create", "test-repo",
+ "Description"->"a test repo",
+ "GitHubImport"->False
+ ]
+```
+
+	(*Out:*)
+	
+![title-1488024117533531756](project/img/title-1488024117533531756.png)
+
+More info can be found in the  [External examples](examples/External.md) .

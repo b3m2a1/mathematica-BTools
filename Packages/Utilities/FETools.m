@@ -853,7 +853,7 @@ FEFindFileOnPath//Clear
 
 Options[FEFindFileOnPath]=
 	{
-		"ReturnKey"->False,
+		"ReturnPath"->False,
 		"SelectFirst"->True
 		};
 Options[iFEFindFileOnPath]=
@@ -894,7 +894,7 @@ iFEFindFileOnPath[
 					s:Except[$Failed]:>
 						CompoundExpression[
 							Sow@
-								If[OptionValue@"ReturnKey"//TrueQ,
+								If[OptionValue@"ReturnPath"//TrueQ,
 									#->s,
 									s
 									],

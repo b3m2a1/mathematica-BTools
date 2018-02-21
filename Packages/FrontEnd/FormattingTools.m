@@ -1450,17 +1450,19 @@ GradientButtonAppearance[
 		c_?ColorQ,
 		Except[_?OptionQ]...,
 		ops:OptionsPattern[]]:=
-		GradientButtonAppearance[c,app,ops];
+		GradientButtonAppearance[c,app,ops];(*
 	GradientButtonAppearance[
-		Replace[Replace[app,Automatic:>OptionValue@Appearance],{
-			"Palette":>{c,Lighter[c,.2],Lighter[c,.7]},
-			Flat:>{c,Darker[c,.05],Lighter[c,.05]},
-			"Shiny":>{c,Darker[c,.2],Lighter[c,.2]},
+		Replace[
+			Replace[app,Automatic:>OptionValue@Appearance],
+			{
+				"Palette"\[RuleDelayed]{c,Lighter[c,.2],Lighter[c,.7]},
+				Flat:>{c,Darker[c,.05],Lighter[c,.05]},
+				"Shiny"\[RuleDelayed]{c,Darker[c,.2],Lighter[c,.2]},
 			_->{c,c,c}
 			}],
 		ops,
 		ImageAdjust->{0,.025,-.05}
-		];
+		];*)
 GradientButtonAppearance["Palette",ops:OptionsPattern[]]:=
 	GradientButtonAppearance[
 		{
@@ -1523,7 +1525,8 @@ Options[GradientDropDownAppearance]=
 GradientDropDownAppearance[
 	h1:_?ColorQ|{__?ColorQ},
 	h2:_?ColorQ|{_?ColorQ,_?ColorQ}:{Black,Gray},
-	ops:OptionsPattern[]]:=
+	ops:OptionsPattern[]
+	]:=
 	With[{base=
 		GradientButtonAppearance[
 			h1,
@@ -1615,12 +1618,15 @@ GradientPopupDropDown[
 			Appearance->
 				GradientDropDownAppearance@@
 					Append[
-							Flatten@{
-								Replace[OptionValue[Appearance],{
-									c_?ColorQ:>
-										{c,If[ColorDistance[c,Black]>.5,Black,White]}
-									}]
-								},
+							Flatten[
+								{
+									Replace[OptionValue[Appearance],{
+										c_?ColorQ:>
+											{c,If[ColorDistance[c,Black]>.5,Black,White]}
+										}]
+									},
+								1
+								],
 						ImageSize->
 							Replace[OptionValue[ImageSize],{
 								Automatic:>
@@ -1678,16 +1684,19 @@ Options@GradientActionDropDown=
 GradientActionDropDown[actions_List,ops:OptionsPattern[]]:=
 	With[{u=Replace[OptionValue["UUID"],Automatic:>CreateUUID["ActionMenu-"]]},
 		ActionMenu[
-			If[MatchQ[u,_String],UUIDButton[##,"UUID"->u]&,Button]["",Null,
+			If[MatchQ[u,_String], UUIDButton[##,"UUID"->u]&,Button]["",Null,
 				Appearance->
 					GradientDropDownAppearance@@
 						Append[
-								Flatten@{
-									Replace[OptionValue[Appearance],{
-										c_?ColorQ:>
-											{c,If[ColorDistance[c,Black]>.5,Black,White]}
-										}]
-									},
+								Flatten[
+									{
+										Replace[OptionValue[Appearance],{
+											c_?ColorQ:>
+												{c,If[ColorDistance[c,Black]>.5,Black,White]}
+											}]
+										},
+									1
+									],
 							ImageSize->
 								Replace[OptionValue[ImageSize],{
 									Automatic:>
@@ -1765,37 +1774,42 @@ GradientButtonDropDownRow[
 				Automatic:>CreateUUID["ButtonRow-"]]},
 		Row[{
 			GradientButton[buttonLbl,buttonCommand,
-				Evaluate@FilterRules[{
+				Evaluate@
+				FilterRules[{
 					Appearance->
 						With[{aBase=
-							Flatten[{
-								Replace[OptionValue@Appearance,{
-									{a_List,___}:>a,
-									{a_,___,_List}:>a
-									}],
-								FrameStyle->
-									OptionValue[FrameStyle]
-								},
+							Flatten[
+								{
+									Replace[OptionValue@Appearance,{
+										{a_List,___}:>a,
+										{a_,___,_List}:>a
+										}],
+									FrameStyle->
+										OptionValue[FrameStyle]
+									},
+									1
+									]
+							},
+							Flatten[
+								{
+									Replace[aBase,{
+										c:"Palette":>
+											c,
+										PopupMenu|ActionMenu:>
+											White,
+										Automatic|Generic:>
+											Automatic,
+										(ImagePadding->_)->Nothing
+										},
+										1],
+									ImagePadding->
+										GradientImagePaddingFormat[
+											First,
+											Lookup[Select[aBase,OptionQ],ImagePadding,Automatic]
+											]
+									},
 								1
 								]
-							},
-							Flatten@{
-								Replace[aBase,{
-									c:"Palette":>
-										c,
-									PopupMenu|ActionMenu:>
-										White,
-									Automatic|Generic:>
-										Automatic,
-									(ImagePadding->_)->Nothing
-									},
-									1],
-								ImagePadding->
-									GradientImagePaddingFormat[
-										First,
-										Lookup[Select[aBase,OptionQ],ImagePadding,Automatic]
-										]
-								}
 							],
 					ImageSize->
 						imgSize,
@@ -1837,35 +1851,38 @@ GradientButtonDropDownRow[
 								1
 								]
 							},
-							Flatten@{
-								Select[base, Not@*OptionQ],
-								FilterRules[
-									Select[base, OptionQ],
-									Except[ImagePadding]
-									],
-								ImagePadding->
-									GradientImagePaddingFormat[
-										Last,
-										Lookup[Select[base,OptionQ],ImagePadding,Automatic]
+							Flatten[
+								{
+									Select[base, Not@*OptionQ],
+									FilterRules[
+										Select[base, OptionQ],
+										Except[ImagePadding]
 										],
-								FrameStyle->
-									Replace[OptionValue[FrameStyle],{
-										Automatic:>
-											If[MemberQ[base,Automatic],
-												With[{c=Darker@GrayLevel[.95]},
-													{
-														{Lighter@c,c},
-														{c,c}
-														}
+									ImagePadding->
+										GradientImagePaddingFormat[
+											Last,
+											Lookup[Select[base,OptionQ],ImagePadding,Automatic]
+											],
+									FrameStyle->
+										Replace[OptionValue[FrameStyle],{
+											Automatic:>
+												If[MemberQ[base,Automatic],
+													With[{c=Darker@GrayLevel[.95]},
+														{
+															{Lighter@c,c},
+															{c,c}
+															}
+														],
+													Automatic
 													],
-												Automatic
-												],
-										c_?ColorQ:>
-											{{Lighter@c,c},{c,c}},
-										{c_?ColorQ,v_}:>
-											{{Lighter@c,c},{v,v}}
-										}]
-								}
+											c_?ColorQ:>
+												{{Lighter@c,c},{c,c}},
+											{c_?ColorQ,v_}:>
+												{{Lighter@c,c},{v,v}}
+											}]
+									},
+								1
+								]
 							],
 						ImageSize->
 							Replace[OptionValue@ImageSize,{
@@ -2167,30 +2184,38 @@ GradientButtonBar[args:{_,__},ops:OptionsPattern[]]:=
 					Appearance->
 						With[{app=OptionValue[Appearance]},
 							GradientButtonAppearance@@
-								Flatten@{
-									DeleteCases[Flatten@{app},
-										ImagePadding->_],
-									ImagePadding->
-										Switch[ind,
-											1,
-												GradientImagePaddingFormat[
-													First,
-													Lookup[Select[Flatten@{app},OptionQ],
-														ImagePadding,Automatic]
-													],
-											Length@args,
-												GradientImagePaddingFormat[
-													Last,
-													Lookup[Select[Flatten@{app},OptionQ],
-														ImagePadding,Automatic]
-													],
-											_,
-												GradientImagePaddingFormat[
-													Lookup[Select[Flatten@{app},OptionQ],
-														ImagePadding,Automatic]
-													]
-											]
-									}
+								Flatten[
+									{
+										DeleteCases[
+											Flatten[{app}, 1],
+											ImagePadding->_
+											],
+										ImagePadding->
+											Switch[ind,
+												1,
+													GradientImagePaddingFormat[
+														First,
+														Lookup[
+															Select[Flatten[{app}, 1],OptionQ],
+															ImagePadding,
+															Automatic
+															]
+														],
+												Length@args,
+													GradientImagePaddingFormat[
+														Last,
+														Lookup[Select[Flatten[{app}, 1],OptionQ],
+															ImagePadding,Automatic]
+														],
+												_,
+													GradientImagePaddingFormat[
+														Lookup[Select[Flatten[{app}, 1],OptionQ],
+															ImagePadding,Automatic]
+														]
+												]
+										},
+									1
+									]
 							],
 					ImageSize->
 						Replace[OptionValue@ImageSize,{
@@ -2253,7 +2278,7 @@ GradientSetter[v_,val_,lbl:Except[_?OptionQ]:None,ops:OptionsPattern[]]:=
 				Appearance->
 					Append[
 						GradientButtonAppearance@@
-							Flatten@{OptionValue[Appearance]},
+							Flatten[{OptionValue[Appearance]}, 1],
 						Dynamic[If[ReleaseHold[dvar]===val,"Pressed",Automatic]]
 						]
 				]
@@ -2298,17 +2323,20 @@ GradientSetterBar[v_,vals_,ops:OptionsPattern[]]:=
 						Appearance->
 							Append[
 								GradientButtonAppearance@@
-									Flatten@{
-										OptionValue[Appearance],
-										Switch[ind,
-											1,
-												ImagePadding->{{1,0},{1,1}},
-											Length@vals,
-												ImagePadding->{{1,1},{1,1}},
-											_,
-												ImagePadding->{{1,0},{1,1}}
-											]
-										},
+									Flatten[
+										{
+											OptionValue[Appearance],
+											Switch[ind,
+												1,
+													ImagePadding->{{1,0},{1,1}},
+												Length@vals,
+													ImagePadding->{{1,1},{1,1}},
+												_,
+													ImagePadding->{{1,0},{1,1}}
+												]
+											},
+										1
+										],
 								Dynamic[If[ReleaseHold[dvar]===val,"Pressed",Automatic]]
 								],
 						ImageSize->
@@ -2381,10 +2409,13 @@ GradientDockElement[lab_String->ops_?OptionQ]:=
 GradientDockElement[e_->(ops_?OptionQ)]:=
 	GradientButton[e,Null,
 		Evaluate@
-			Flatten@{
-				ops,
-				Enabled->False
-				}
+			Flatten[
+				{
+					ops,
+					Enabled->False
+					},
+				1
+				]
 		]
 (*
 GradientDockElement[(assoc_Association)->ops_?OptionQ]:=
@@ -2405,7 +2436,7 @@ GradientDockElement[spec:_Rule|_RuleDelayed,ops__]:=
 				]
 			],
 		GradientDockElement[
-			First[spec]->Flatten@{Last@spec,ops}
+			First[spec]->Flatten[{Last@spec,ops}, 1]
 			],
 		GradientDockElement[spec->{ops}]
 		];	
@@ -2425,68 +2456,71 @@ Options[GradientDock]=
 			];
 GradientDock[dockThings:{__},ops:OptionsPattern[]]:=
 	Grid[
-		List@Flatten@{
-			GradientDockElement[
-				First@dockThings,
-				Flatten@{
-					Appearance->
-						Flatten@{
-							Lookup[Flatten@{ops},Appearance,{}],
-							"Palette",
-							ImagePadding->
-								Switch[First@dockThings,
-									_[_,{(_RuleDelayed|Delimiter)...}]|
-										(_Rule|_RuleDelayed)...,
-										{Center,1,{1,0}},
-									_,
-										{{0,0},{1,0}}
-									]
-								},
-					ops,
-					ImageSize->{Automatic,40}
-					}],
-			GradientDockElement[#,
-				Flatten@{
-					Appearance->
-						Flatten@{
-							Lookup[Flatten@{ops},Appearance,{}],
-							"Palette",
-							ImagePadding->
-								{{1,0},{1,0}}
-							},
-					ops,
-					ImageSize->{Automatic,40}
-					}]&/@Rest@dockThings,
-			GradientButton["",
-				Null,
-				Evaluate@
-					Replace[
-						Flatten@{
-							Enabled->False,
-							Appearance->
-								Flatten@{
-									Lookup[Flatten@{ops},Appearance,{}],
-									"Palette",
-									ImagePadding->{{1,0},{1,0}}
+		List@Flatten[
+			{
+				GradientDockElement[
+					First@dockThings,
+					Flatten@{
+						Appearance->
+							Flatten@{
+								Lookup[Flatten@{ops},Appearance,{}],
+								"Palette",
+								ImagePadding->
+									Switch[First@dockThings,
+										_[_,{(_RuleDelayed|Delimiter)...}]|
+											(_Rule|_RuleDelayed)...,
+											{Center,1,{1,0}},
+										_,
+											{{0,0},{1,0}}
+										]
 									},
-							ops,
-							ImageSize->40
-							},
-						{
-							(ImageSize->s_):>
-								(
-									ImageSize->
-										Replace[s,{
-											{_,i_}:>
-												{Scaled[1],i},
-											i_:>{Scaled[1],i}
-											}]
-									)
-							},
-						1
-						]
-				]
-			},
+						ops,
+						ImageSize->{Automatic,40}
+						}],
+				GradientDockElement[#,
+					Flatten@{
+						Appearance->
+							Flatten@{
+								Lookup[Flatten@{ops},Appearance,{}],
+								"Palette",
+								ImagePadding->
+									{{1,0},{1,0}}
+								},
+						ops,
+						ImageSize->{Automatic,40}
+						}]&/@Rest@dockThings,
+				GradientButton["",
+					Null,
+					Evaluate@
+						Replace[
+							Flatten@{
+								Enabled->False,
+								Appearance->
+									Flatten@{
+										Lookup[Flatten@{ops},Appearance,{}],
+										"Palette",
+										ImagePadding->{{1,0},{1,0}}
+										},
+								ops,
+								ImageSize->40
+								},
+							{
+								(ImageSize->s_):>
+									(
+										ImageSize->
+											Replace[s,{
+												{_,i_}:>
+													{Scaled[1],i},
+												i_:>{Scaled[1],i}
+												}]
+										)
+								},
+							1
+							]
+					]
+				},
+			1
+			],
 		Spacings->{0,0},
 		Alignment->Bottom,
 		ItemSize->{{-1->Full},{}}

@@ -839,7 +839,7 @@ pacletDownloadLine[
 
 
 Options[pacletSectionXML]=
-	Options[PacletExpression];
+	Options[PacletInfoExpression];
 pacletSectionXML[site_,ops:OptionsPattern[]]:=
 	XMLElement["div",
 		{

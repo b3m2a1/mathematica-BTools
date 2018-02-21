@@ -28,19 +28,23 @@ Begin["`Private`"];
 
 ContextRemove[pkgContext_String]:=
 	With[{cont=StringTrim[pkgContext, ("*"|"`")..]<>"`"},
-		Quiet[
-			Unprotect[cont<>"*", cont<>"`*"];
-			Remove[cont<>"*", cont<>"`*"];
-			$ContextPath=
-				Select[$ContextPath, Not@*StringStartsQ[cont]];
-			Unprotect[$Packages];
-			$Packages=Select[$Packages, Not@*StringStartsQ[cont]];
-			Protect[$Packages];,
-			{
-				General::readp,
-				Protect::locked,
-				Attributes::locked
-				}
+		With[{cps=NestList[#<>"`*"&, cont<>"*", 3]},
+			Quiet[
+				Unprotect@@cps;
+				ClearAll@@cps;
+				Remove@@cps;
+				$ContextPath=
+					Select[$ContextPath, Not@*StringStartsQ[cont]];
+				Unprotect[$Packages];
+				$Packages=Select[$Packages, Not@*StringStartsQ[cont]];
+				Protect[$Packages];,
+				{
+					General::readp,
+					Protect::locked,
+					Attributes::locked,
+					Remove::rmnsm
+					}
+				]
 			]
 		]
 

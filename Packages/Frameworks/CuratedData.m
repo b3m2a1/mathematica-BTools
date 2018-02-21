@@ -568,7 +568,7 @@ CuratedDataIndexPaclet[
 				(* ------- Paclets  ------- *)
 				If[pack,
 					Quiet@
-						PacletExpressionBundle[
+						PacletInfoExpressionBundle[
 							FileNameJoin@{
 								Replace[dir,
 									Automatic:>
@@ -580,7 +580,7 @@ CuratedDataIndexPaclet[
 							];
 					Map[
 						Quiet@
-							PacletExpressionBundle[
+							PacletInfoExpressionBundle[
 								FileNameJoin@{
 									Replace[dir,
 										Automatic:>
@@ -777,7 +777,7 @@ CuratedDataPaclet[
 				];
 			If[pack,
 				(
-					PacletExpressionBundle[#,
+					PacletInfoExpressionBundle[#,
 						Flatten@{
 							pacletInfo,
 							"Version"->$dataPacletVersionNumber
@@ -900,7 +900,7 @@ CuratedDataWrapperPaclet[
 				];
 			If[pack,
 				(
-					PacletExpressionBundle[#,
+					PacletInfoExpressionBundle[#,
 						Flatten@{
 							pacletInfo,
 							"Version"->$dataPacletVersionNumber
@@ -931,7 +931,7 @@ CuratedDataWrapperPaclet[
 
 
 Options[CuratedDataExport]=
-	Options@PacletExpressionBundle;
+	Options@PacletInfoExpressionBundle;
 CuratedDataExport[
 	dir:_String?DirectoryQ|Automatic:Automatic,
 	dataType_String,

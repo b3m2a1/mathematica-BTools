@@ -475,7 +475,7 @@ Options[CustomServiceConnection]=
 			"Icon"->None
 			},
 		Options@customServiceConnectionPrep,
-		Options@PacletExpressionBundle
+		Options@PacletInfoExpressionBundle
 		];
 
 
@@ -583,7 +583,7 @@ CustomServiceConnection[
 						]
 					];
 				If[pack,
-					PacletExpressionBundle[
+					PacletInfoExpressionBundle[
 						FileNameJoin@{dir,"ServiceConnection_"<>name},
 						FilterRules[Flatten@{
 							FilterRules[{ops}, Except["Icon"]],
@@ -595,7 +595,7 @@ CustomServiceConnection[
 										ToLowerCase@name<>"@2.png"
 										}
 								},
-							Options@PacletExpressionBundle
+							Options@PacletInfoExpressionBundle
 							]
 						];
 					PacletBundle@FileNameJoin@{dir,"ServiceConnection_"<>name},

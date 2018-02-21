@@ -474,7 +474,11 @@ PackageAppNeeds[pkg_String]:=
 $PackageScopeBlockEvalExpr=TrueQ[$PackageScopeBlockEvalExpr];
 PackageScopeBlock[e_,scope_String:"Hidden"]/;TrueQ[$AllowPackageRescoping]:=
 	With[{newcont="BTools`Private`"<>StringTrim[scope,"`"]<>"`"},
-		If[!MemberQ[$PackageContexts,newcont],AppendTo[$PackageContexts,newcont]];
+		If[!MemberQ[$PackageContexts,newcont],
+			Unprotect[$PackageContexts];
+			AppendTo[$PackageContexts,newcont];
+			Protect[$PackageContexts];
+			];
 		Replace[
 			Thread[
 				Cases[
@@ -498,7 +502,9 @@ PackageScopeBlock[e_,scope_String:"Hidden"]/;TrueQ[$AllowPackageRescoping]:=
 							newcont->
 								HoldComplete[s]
 							},
-					PackageFERehideSymbols[s];
+					Block[{$AllowPackageRecoloring=True},
+						PackageFERehideSymbols[s]
+						];
 					Map[
 						Function[Null,
 							Quiet[

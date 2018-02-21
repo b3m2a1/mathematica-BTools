@@ -768,11 +768,11 @@ AppPacletDocs[app_String,ops:OptionsPattern[]]:=
 
 
 Options[AppPaclet]=
-	Options[PacletExpression];
+	Options[PacletInfoExpression];
 AppPaclet[ops:OptionsPattern[]]:=
-	PacletExpression[ops];
+	PacletInfoExpression[ops];
 AppPaclet[app_String,ops:OptionsPattern[]]:=
-	PacletExpression[
+	PacletInfoExpression[
 		AppDirectory[app],
 		"Kernel"->{
 			Root -> ".",
@@ -824,7 +824,7 @@ Options[AppRegeneratePacletInfo]=
 AppRegeneratePacletInfo[name_,
 	pacletOps:OptionsPattern[]
 	]:=
-	PacletExpressionBundle[
+	PacletInfoExpressionBundle[
 		AppPaclet[name,pacletOps],
 		AppDirectory[name]
 		];
@@ -2781,8 +2781,8 @@ AppGet[appName_,pkgName_String]:=
 		cont=$Context
 		},
 		Replace[
-			Names[app<>"`Private`PackageAppGet"],{
-				{n_}:>
+			Names[app<>"`Private*`PackageAppGet"],{
+				{n_, ___}:>
 					Replace[
 						FileNames[pkgName~~".wl"|".m",
 							AppPath[app,"Packages"],
@@ -4086,7 +4086,7 @@ Options[AppPacletUpload]=
 				"RebundlePaclets"->True,
 				"UploadSiteFile"->True,
 				"UploadInstaller"->False,
-				"UploadInstallLink"->Automatic,
+				"UploadInstallLink"->False,
 				"UploadUninstaller"->False
 				},
 			Options[PacletUpload],

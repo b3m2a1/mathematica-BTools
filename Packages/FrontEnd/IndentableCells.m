@@ -82,7 +82,10 @@ MakeIndentable[
 	Replace[
 		Replace[Flatten@List@cell,
 			Except[{__CellObject}]:>
-				StyleSheetCells[StyleSheetEditNotebook@nb, cell,"MakeCell"->True]
+				StyleSheetCells[nb, cell,
+					"MakeCell"->True,
+					"DetectStylesheet"->True
+					]
 			],{
 		s:{__CellObject}:>
 			CompoundExpression[
@@ -93,7 +96,8 @@ MakeIndentable[
 					}];
 				Replace[OptionValue["IndentCharacter"],
 					t_String:>
-						StyleSheetEditTaggingRules[s,
+						StyleSheetEditTaggingRules[
+							s,
 							{
 								"IndentCharacter"->t
 								}
@@ -109,7 +113,8 @@ MakeIndentable[
 									Names[pkg<>"*`IndentationEvent"]
 								 ],
 							 {
-								 {f_, ___}:>ToExpression[f]["Indent"],
+								 f:{__}:>
+								 	SelectFirst[ToExpression[f], Length@DownValues[#]>0&]["Indent"],
 								 _:>SetAttributes[EvaluationCell[],CellEventActions->None]
 								 }
 								],
@@ -124,7 +129,8 @@ MakeIndentable[
 									Names[pkg<>"*`IndentationEvent"]
 								 ],
 							 {
-								 {f_, ___}:>ToExpression[f]["Dedent"],
+								 {f_, ___}:>
+								 	SelectFirst[ToExpression[f], Length@DownValues[#]>0&]["Dedent"],
 								 _:>SetAttributes[EvaluationCell[],CellEventActions->None]
 								 }
 								],
@@ -139,7 +145,8 @@ MakeIndentable[
 									Names[pkg<>"*`IndentationEvent"]
 								 ],
 							 {
-								 {f_, ___}:>ToExpression[f]["Toggle"],
+								 {f_, ___}:>
+								 	SelectFirst[ToExpression[f], Length@DownValues[#]>0&]["Toggle"],
 								 _:>SetAttributes[EvaluationCell[], CellEventActions->None]
 								 }
 								],

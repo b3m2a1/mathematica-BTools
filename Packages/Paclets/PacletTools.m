@@ -32,25 +32,23 @@
 PackageScopeBlock[
 	PacletInfo::usage=
 		"Extracts the Paclet from a PacletInfo.m file";
-	PacletInfoAssociation::usage=
-		"Converts a Paclet into an Association";
-	PacletExpression::usage=
-		"Generates a Paclet expression for a directory";	
-	PacletExpressionBundle::usage=
-		"Bundles a PacletExpression into a PacletInfo.m file";
-	PacletBundle::usage=
-		"Bundles a paclet site from a directory in a standard build directory";
-	PacletAutoPaclet::usage=
-		"Autogenerates a paclet";
-	PacletLookup::usage=
-		"Applies Lookup to paclets";
+	PacletInfoExpressionBundle::usage=
+		"Bundles a PacletInfoExpression into a PacletInfo.m file";
 	];
 
 
+PacletInfoAssociation::usage=
+	"Converts a Paclet into an Association";
+PacletInfoExpression::usage=
+	"Generates a Paclet expression for a directory";	
+PacletBundle::usage=
+	"Bundles a paclet site from a directory in a standard build directory";
+PacletAutoPaclet::usage=
+	"Autogenerates a paclet";
+PacletLookup::usage=
+	"Applies Lookup to paclets";
 PacletInfoGenerate::usage=
 	"Generates a PacletInfo.m file from a directory";
-
-
 PacletOpen::usage=
 	"Opens an installed paclet from its \"Location\"";
 
@@ -60,16 +58,14 @@ PacletOpen::usage=
 
 
 
-PackageScopeBlock[
-	PacletSiteURL::usage=
-		"Provides the default URL for a paclet site";
-	PacletSiteInfo::usage=
-		"Extracts a PacletSite from a .paclet or PacletSite.mz file";
-	PacletSiteInfoDataset::usage=
-		"Formats a PacletSite into a Dataset";
-	PacletSiteBundle::usage=
-		"Bundles a PacletSite.mz from a collection of PacletInfo specs";
-	];
+PacletSiteURL::usage=
+	"Provides the default URL for a paclet site";
+PacletSiteInfo::usage=
+	"Extracts a PacletSite from a .paclet or PacletSite.mz file";
+PacletSiteInfoDataset::usage=
+	"Formats a PacletSite into a Dataset";
+PacletSiteBundle::usage=
+	"Bundles a PacletSite.mz from a collection of PacletInfo specs";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -77,14 +73,21 @@ PackageScopeBlock[
 
 
 
-PacletInstallerURL::usage=
-	"Provides the default URL for a paclet installer";
-PacletUploadInstaller::usage=
-	"Uploads the paclet installer script";
-PacletUninstallerURL::usage=
-	"Provides the default URL for a paclet installer";
-PacletUploadUninstaller::usage=
-	"Uploads the paclet installer script";
+PackageScopeBlock[
+	PacletInstallerURL::usage=
+		"Provides the default URL for a paclet installer";
+	PacletUploadInstaller::usage=
+		"Uploads the paclet installer script";
+	PacletUninstallerURL::usage=
+		"Provides the default URL for a paclet installer";
+	PacletUploadUninstaller::usage=
+		"Uploads the paclet installer script";
+	PacletSiteInstall::usage=
+		"Installs from the Installer.m file if possible";
+	PacletSiteUninstall::usage=
+		"Uninstalls from the Uninstaller.m file if possible";,
+	"Deprecated"
+	];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -112,14 +115,6 @@ PacletUpload::usage=
 	"Uploads a paclet to a server";
 PacletRemove::usage=
 	"Removes a paclet from a server";
-
-
-PackageScopeBlock[
-	PacletSiteInstall::usage=
-		"Installs from the Installer.m file if possible";
-	PacletSiteUninstall::usage=
-		"Uninstalls from the Uninstaller.m file if possible";
-	];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -240,7 +235,7 @@ pacletToolsThrow[v_:$Failed, tag_:Automatic]:=
 
 
 PacletInfoAssociation[PacletManager`Paclet[k__]]:=
-	With[{o=Keys@Options[PacletExpression]},
+	With[{o=Keys@Options[PacletInfoExpression]},
 		KeySortBy[First@FirstPosition[o,#]&]
 		]@
 		With[{base=
@@ -529,11 +524,11 @@ PacletExtensionData[pacletInfo_Association,dest_,ops:OptionsPattern[]]:=
 
 
 (* ::Subsubsection::Closed:: *)
-(*PacletExpression*)
+(*PacletInfoExpression*)
 
 
 
-Options[PacletExpression]=
+Options[PacletInfoExpression]=
 	Join[
 		{
 			"Name"->"MyPaclet",
@@ -558,23 +553,23 @@ Options[PacletExpression]=
 			},
 		Options@PacletExtensionData
 		];
-PacletExpression[ops:OptionsPattern[]]:=
+PacletInfoExpression[ops:OptionsPattern[]]:=
 	PacletManager`Paclet@@
 		SortBy[DeleteCases[DeleteDuplicatesBy[{ops},First],_->None],
-			With[{o=Options@PacletExpression},Position[o,First@#]&]
+			With[{o=Options@PacletInfoExpression},Position[o,First@#]&]
 			];
 
 
-(*PacletExpression[dir]~~PackageAddUsage~~
+(*PacletInfoExpression[dir]~~PackageAddUsage~~
 	"generates a Paclet expression from dir";*)
-Options[iPacletExpression]=
-	Options[PacletExpression];
-iPacletExpression[
+Options[iPacletInfoExpression]=
+	Options[PacletInfoExpression];
+iPacletInfoExpression[
 	dest_String?DirectoryQ,
 	ops:OptionsPattern[]
 	]:=
 	With[{pacletInfo=KeyDrop[PacletInfoAssociation[dest], "Location"]},
-		PacletExpression[
+		PacletInfoExpression[
 			Sequence@@FilterRules[{ops},
 				Except["Kernel"|"Documentation"|"Extensions"|"FrontEnd"]],
 			"Name"->FileBaseName@dest,
@@ -637,26 +632,26 @@ iPacletExpression[
 				Sequence@@Normal@pacletInfo
 			]
 		];
-PacletExpression[
+PacletInfoExpression[
 	dest_String?DirectoryQ,
 	ops:OptionsPattern[]
 	]:=
-	iPacletExpression[
+	iPacletInfoExpression[
 		dest,
-		FilterRules[{ops}, Options@PacletExpression]
+		FilterRules[{ops}, Options@PacletInfoExpression]
 		]
 
 
 (* ::Subsubsection::Closed:: *)
-(*PacletExpressionBundle*)
+(*PacletInfoExpressionBundle*)
 
 
 
-Options[PacletExpressionBundle]=
-	Options[PacletExpression];
-PacletExpressionBundle[paclet,dest]~~PackageAddUsage~~
-	"bundles paclet into a PacletInfo.m file in dest";
-PacletExpressionBundle[
+Options[PacletInfoExpressionBundle]=
+	Options[PacletInfoExpression];(*
+PacletInfoExpressionBundle[paclet,dest]~~PackageAddUsage~~
+	"bundles paclet into a PacletInfo.m file in dest";*)
+PacletInfoExpressionBundle[
 	paclet_PacletManager`Paclet,
 	dest_String?DirectoryQ]:=
 	With[{pacletFile=FileNameJoin@{dest,"PacletInfo.m"}},
@@ -669,23 +664,23 @@ PacletExpressionBundle[
 		End[];
 		pacletFile
 		];
-PacletExpressionBundle[
+PacletInfoExpressionBundle[
 	dest_String?DirectoryQ,
 	ops:OptionsPattern[]
 	]:=
-	PacletExpressionBundle[
-		PacletExpression[dest,ops],
+	PacletInfoExpressionBundle[
+		PacletInfoExpression[dest,ops],
 		dest
 		];
 
 
 Options[PacletInfoGenerate]=
-	Options[PacletExpressionBundle];
+	Options[PacletInfoExpressionBundle];
 PacletInfoGenerate[
 	dest_String?DirectoryQ,
 	ops:OptionsPattern[]
 	]:=
-	PacletExpressionBundle[dest,ops]
+	PacletInfoExpressionBundle[dest,ops]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -729,7 +724,7 @@ PacletOpen[p_,which:_:First]:=
 
 
 Options[PacletAutoPaclet]=
-	Options[PacletExpressionBundle];
+	Options[PacletInfoExpressionBundle];
 PacletAutoPaclet[
 	dir:_String?DirectoryQ|Automatic:Automatic, 
 	f_String?FileExistsQ,
@@ -741,14 +736,14 @@ PacletAutoPaclet[
 				DirectoryQ@f,
 					CopyDirectory[d, f];
 					If[!FileExistsQ@FileNameJoin@{d, "PacletInfo.m"},
-						PacletExpressionBundle[d, ops]
+						PacletInfoExpressionBundle[d, ops]
 						],
 				MatchQ[FileExtension[f],
 					Alternatives@@CreateArchiveDump`$CONVERTERS
 					],
 					ExtractArchive[f, d];
 					If[!FileExistsQ@FileNameJoin@{d, "PacletInfo.m"},
-						PacletExpressionBundle[d, ops]
+						PacletInfoExpressionBundle[d, ops]
 						],
 				True,
 					Switch[FileExtension[f],
@@ -766,7 +761,7 @@ CreateDocument[
 							"Text"
 							];
 						];
-					PacletExpressionBundle[d, ops]
+					PacletInfoExpressionBundle[d, ops]
 				];
 			d
 			]
@@ -787,7 +782,7 @@ Options[PacletBundle]=
 			"RemovePatterns"->{},
 			"BuildRoot":>$PacletBuildRoot
 			},
-		Options[PacletExpressionBundle]
+		Options[PacletInfoExpressionBundle]
 		];
 PacletBundle[dir:(_String|_File)?DirectoryQ, ops:OptionsPattern[]]:=
 	With[{
@@ -877,7 +872,7 @@ PacletBundle[f:(_String|_File)?FileExistsQ, ops:OptionsPattern[]]:=
 									FileNameTake[f]
 									]
 							},
-						Options[PacletExpressionBundle]
+						Options[PacletInfoExpressionBundle]
 						]
 					], 
 				ops
@@ -1478,6 +1473,11 @@ PacletSiteBundle[
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*PacletInstallerURL*)
+
+
+
 Options[PacletInstallerURL]=
 	Options@PacletSiteURL;
 PacletInstallerURL[ops:OptionsPattern[]]:=
@@ -1485,6 +1485,11 @@ PacletInstallerURL[ops:OptionsPattern[]]:=
 		URLBuild@{PacletSiteURL[ops],"Installer.m"},
 		StartOfString~~"file:"->"file://"
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*PacletInstallerScript*)
+
 
 
 Options[PacletInstallerScript]:=
@@ -1701,6 +1706,11 @@ PacletInstallerScript[
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*PacletUploadInstaller*)
+
+
+
 Options[PacletUploadInstaller]:=
 	DeleteDuplicatesBy[First]@
 		Join[
@@ -1758,6 +1768,11 @@ PacletUploadInstaller[ops:OptionsPattern[]]:=
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*PacletUninstallerURL*)
+
+
+
 Options[PacletUninstallerURL]=
 	Options@PacletSiteURL;
 PacletUninstallerURL[ops:OptionsPattern[]]:=
@@ -1765,6 +1780,11 @@ PacletUninstallerURL[ops:OptionsPattern[]]:=
 		URLBuild@{PacletSiteURL[ops],"Uninstaller.m"},
 		StartOfString~~"file:"->"file://"
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*PacletUninstallerScript*)
+
 
 
 Options[PacletUninstallerScript]:=
@@ -1890,6 +1910,11 @@ PacletUninstallerScript[
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*PacletUploadUninstaller*)
+
+
+
 Options[PacletUploadUninstaller]:=
 	DeleteDuplicatesBy[First]@
 		Join[
@@ -1947,6 +1972,11 @@ PacletUploadUninstaller[ops:OptionsPattern[]]:=
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*PacletInstallerLink*)
+
+
+
 Options[PacletInstallerLink]=
 	Options@CloudExport;
 PacletInstallerLink[pacletURL:_String,uri_,ops:OptionsPattern[]]:=
@@ -1987,6 +2017,11 @@ PacletInstallerLink[c:{__CloudObject},uri_,ops:OptionsPattern[]]:=
 	PacletInstallerLink[First/@c,uri,ops];
 
 
+(* ::Subsubsection::Closed:: *)
+(*PacletSiteInstall*)
+
+
+
 Options[PacletSiteInstall]=
 	Options@PacletSiteURL;
 PacletSiteInstall[site_String]:=
@@ -2020,6 +2055,11 @@ PacletSiteInstall[site_String]:=
 		];
 PacletSiteInstall[ops:OptionsPattern[]]:=
 	PacletSiteInstall[PacletSiteURL[ops]];
+
+
+(* ::Subsubsection::Closed:: *)
+(*PacletSiteUninstall*)
+
 
 
 Options[PacletSiteUninstall]=
@@ -2296,7 +2336,7 @@ builtPacletFileFind[
 				!FileExistsQ[FileNameJoin@{f,"PacletInfo.m"}],
 				(* prep non-paclet directories for packing *)
 				If[build,
-					PacletExpressionBundle[Replace[f,File[s_]:>s]];
+					PacletInfoExpressionBundle[Replace[f,File[s_]:>s]];
 					builtPacletFileFind[f,ops],
 					True
 					],
@@ -2381,7 +2421,8 @@ builtPacletFileQ[spec_,
 
 
 pacletUploadPostProcess[assoc_, uploadInstallLink_, site_, perms_]:=
-	Replace[uploadInstallLink,{
+	Replace[uploadInstallLink,
+	{
 		True:>
 			Append[#,
 				"PacletInstallLinks"->
@@ -2423,7 +2464,8 @@ pacletUploadPostProcess[assoc_, uploadInstallLink_, site_, perms_]:=
 						]
 				],
 		_:>#
-		}]&@assoc;
+		}
+		]&@assoc;
 pacletUploadPostProcess[uploadInstallLink_, site_, perms_][assoc_]:=
 	pacletUploadPostProcess[assoc, uploadInstallLink, site, perms]
 
@@ -2590,11 +2632,11 @@ pacletUpload[
 										Map[
 											pacletUploadCloudObjectRouteExport[url, OptionValue[Permissions], #]&,
 											pacletFiles
-											],
+											](*,
 									"PacletInstaller"->
 										If[OptionValue["UploadInstaller"]//TrueQ,
 											PacletUploadInstaller[ops,
-												Permissions->
+												Permissions\[Rule]
 													pacletStandardServerPermissions@OptionValue[Permissions],
 												"PacletSiteFile"->
 													pacletMZ
@@ -2604,13 +2646,13 @@ pacletUpload[
 									"PacletUninstaller"->
 										If[OptionValue["UploadUninstaller"]//TrueQ,
 											PacletUploadUninstaller[ops,
-												Permissions->
+												Permissions\[Rule]
 													pacletStandardServerPermissions@OptionValue[Permissions],
 												"PacletSiteFile"->
 													pacletMZ
 												],
 											Nothing
-											]
+											]*)
 									|>	
 								],
 						(* ------------------- Local Paclets ------------------- *)
@@ -2908,12 +2950,12 @@ installPacletGenerate[dir:(_String|_File)?DirectoryQ,ops:OptionsPattern[]]:=
 				FileExistsQ@FileNameJoin@{dir,"Kernel","init"<>".m"}||
 				FileExistsQ@FileNameJoin@{dir,"Kernel","init"<>".wl"},
 				bundleDir=dir;
-				PacletExpressionBundle[bundleDir],
+				PacletInfoExpressionBundle[bundleDir],
 			FileExistsQ@FileNameJoin@{dir,FileBaseName@dir,"PacletInfo.m"},
 				bundleDir=FileNameJoin@{dir,FileBaseName@dir},
 			FileExistsQ@FileNameJoin@{dir,FileBaseName@dir,FileBaseName@dir<>".m"},
 				bundleDir=FileNameJoin@{dir,FileBaseName@dir};
-				PacletExpressionBundle[bundleDir],
+				PacletInfoExpressionBundle[bundleDir],
 			FileExistsQ@FileNameJoin@{dir,FileBaseName[dir]<>".nb"},
 				Export[
 					FileNameJoin@{dir,FileBaseName[dir]<>".m"};
@@ -2925,7 +2967,7 @@ CreateDocument[
 					"Text"
 					];
 				bundleDir=dir;
-				PacletExpressionBundle[bundleDir],
+				PacletInfoExpressionBundle[bundleDir],
 			_,
 				Message[PacletInstallPaclet::laywha];
 				pacletToolsThrow[]
@@ -3005,7 +3047,7 @@ installPacletGenerate[file:(_String|_File)?FileExistsQ,ops:OptionsPattern[]]:=
 						},
 					OverwriteTarget->True
 					];
-				PacletExpressionBundle[dir,
+				PacletInfoExpressionBundle[dir,
 					"Name"->
 						StringReplace[FileBaseName[dir],
 							Except[WordCharacter|"$"]->""]
@@ -3216,7 +3258,8 @@ PacletInstallPaclet[
 	ops:OptionsPattern[]
 	]:=
 	Which[
-		URLParse[loc,"Domain"]==="github.com",
+		URLParse[loc, "Domain"]==="github.com"||
+			URLParse[loc, "Scheme"]=="github",
 			With[{dir=
 				If[OptionValue@"Verbose"//TrueQ,
 					Monitor[

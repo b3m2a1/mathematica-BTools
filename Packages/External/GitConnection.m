@@ -76,17 +76,15 @@ PackageScopeBlock[
 
 PackageScopeBlock[
 	GitRepositories::usage="Finds all the directories that support a git repo";
-	]
-
-
-$GitRepo::usage="The current git repo";
-GitRepo::usage=
-	"Returns: 
+	$GitRepo::usage="The current git repo";
+	GitRepo::usage=
+		"Returns: 
 the arg if it is a repo, 
 a github URL if the arg is github:<repo>, 
 else None";
-GitRepoQ::usage=
-	"Returns true if the thing is a directory with a .git file";
+	GitRepoQ::usage=
+		"Returns true if the thing is a directory with a .git file";
+	]
 
 
 $GitActions::usage=
@@ -105,11 +103,11 @@ PackageScopeBlock[
 	SVNFileNames::usage="svn ls";
 	SVNCheckOut::usage="Uses SVN to clone from a server";
 	SVNExport::usage="Uses SVN to pull a single file from a server";
+	$SVNActions::usage=
+		"Known actions for SVN";
 	]
 
 
-$SVNActions::usage=
-	"Known actions for SVN";
 SVN::usage=
 	"A general head for all SVN actions";
 
@@ -124,32 +122,30 @@ PackageScopeBlock[
 		"The user's github username";
 	$GitHubPassword::usage=
 		"The user's github password";
-	FormatGitHubPath::usage=""
-	];
-
-
-GitHubPath::usage=
-	"Represents a github path";
-GitHubRepoQ::usage=
-	"Returns if the path could be a github repo";
-
-
-PackageScopeBlock[
+	FormatGitHubPath::usage="";
+	GitHubPath::usage=
+		"Represents a github path";
+	GitHubRepoQ::usage=
+		"Returns if the path could be a github repo";
+	GitHubPathQ::usage="";
 	GitHubCreate::usage="";
 	GitHubDelete::usage="";
 	GitHubDeployments::usage="";
 	GitHubReleases::usage="";
 	GitHubRepositories::usage="";
+	$GitHubActions::usage=
+		"A collection of known calls for the GitHub function";
 	]
 
 
-GitHubSVN::usage="Formats a repo for SVN";
-$GitHubActions::usage=
-	"A collection of known calls for the GitHub function";
 GitHub::usage=
 	"A connection to the GitHub functinality";
-GitHubImport::usage=
-	"Imports and converts GitHub JSON";
+
+
+PackageScopeBlock[
+	GitHubImport::usage=
+		"Imports and converts GitHub JSON";
+	]
 
 
 Begin["`Private`"];
@@ -207,9 +203,9 @@ GitRun[
 		If[MatchQ[d,_String],
 			ProcessRun[
 				{"git",cmd1, cmd2}//
-					Map[If[FileExistsQ@#, AbsoluteFileName@#, #]&],
+					Map[If[FileExistsQ@#, ExpandFileName@#, #]&],
 				Git::err, 
-				ProcessDirectory->AbsoluteFileName@d
+				ProcessDirectory->ExpandFileName@d
 				],
 			ProcessRun[{"git",cmd1, cmd2}, 
 				Git::err
@@ -228,7 +224,7 @@ GitRun[
 				Riffle[Prepend["git"]@*Flatten@*List/@{cmd1, cmd2},"\n\n"],
 				1
 				]//
-				Map[If[FileExistsQ@#, AbsoluteFileName@#, #]&]
+				Map[If[FileExistsQ@#, ExpandFileName@#, #]&]
 		},
 		Replace[
 			Git::err,
@@ -239,7 +235,7 @@ GitRun[
 			ProcessRun[
 				cmdBits,
 				Git::err,
-				ProcessDirectory->AbsoluteFileName@d
+				ProcessDirectory->ExpandFileName@d
 				],
 			ProcessRun[
 				cmdBits,
@@ -380,10 +376,9 @@ GitClone[
 				]
 			},
 		If[overrwriteTarget,
-			Quiet@
-				DeleteDirectory[d,DeleteContents->True]
+			Quiet@DeleteDirectory[d,DeleteContents->True]
 			];
-		CreateDirectory@d;
+		CreateDirectory[d, CreateIntermediateDirectories->True];
 		GitRun[d, "clone", r, d];
 		d
 		];
@@ -1097,6 +1092,10 @@ GitWipeTheSlate[
 
 $GitActions=
 	<|
+		"Repo"->
+			GitRepo,
+		"RepoQ"->
+			GitRepoQ,
 		"Init"->
 			GitInit,
 		"Clone"->
@@ -1518,13 +1517,18 @@ $GitHubEncodePassword:=
 	TrueQ@$GitHubConfig["EncodePassword"];
 
 
+ClearAll[GitHubPath, FormatGitHubPath]
+
+
 Options[GitHubPath]={
 	"Username"->Automatic,
-	"Password"->None
+	"Password"->None,
+	"Branch"->"master",
+	"Tree"->"tree"
 	};
 Options[FormatGitHubPath]=
 	Options[GitHubPath];
-FormatGitHubPath[path__String,ops:OptionsPattern[]]:=
+FormatGitHubPath[path___String,ops:OptionsPattern[]]:=
 	URLBuild@<|
 		"Scheme"->
 			"https",
@@ -1559,19 +1563,61 @@ FormatGitHubPath[path__String,ops:OptionsPattern[]]:=
 					],
 			Nothing
 			],
-		"Path"->{
-			Replace[OptionValue@"Username",
-				Automatic:>$GitHubUserName
-				],
-			path
-			}
+		"Path"->
+			{
+				Replace[OptionValue@"Username",
+					Automatic:>$GitHubUserName
+					],
+				If[Length@{path}>1,
+					Sequence@@Flatten@
+						Insert[{path}, 
+							{OptionValue["Tree"], OptionValue["Branch"]}, 
+							2
+							],
+					Sequence@@{path}
+					]
+				}
 		|>;
-GitHubPath[path__String,ops:OptionsPattern[]]/;(TrueQ@$GitHubPathFormat):=
+GitHubPath[repo_String, 
+	t:"tree"|"raw"|"trunk", 
+	branch_String, 
+	p___String, 
+	ops:OptionsPattern[]
+	]:=
+	GitHubPath[repo,
+		If[t==="trunk", branch, Sequence@@{}],
+		p, 
+		"Branch"->If[t==="trunk", Nothing, branch],
+		"Tree"->t,
+		ops
+		];
+GitHubPath[path___String,ops:OptionsPattern[]]/;(TrueQ@$GitHubPathFormat):=
 	FormatGitHubPath[path,ops];
+GitHubPath[
+	s_String?(
+		(
+			URLParse[#, "Scheme"]===None&&
+				URLParse[#, "Domain"]===None&&
+				Length@URLParse[#, "Path"]>1
+			)||
+		URLParse[#, "Scheme"]==="github"&
+		),
+	o:OptionsPattern[]
+	]:=
+	GitHubPathParse[
+		If[URLParse[s, "Scheme"]===None&&URLParse[s, "Domain"]===None,
+			"github:"<>s,
+			s
+			],
+		o
+		];
+GitHubPath[URL[s_String], ops:OptionsPattern[]]:=GitHubPath[s, ops];
+GitHubPath[GitHubPath[p___String, o___?OptionQ], op:OptionsPattern[]]:=
+	GitHubPath[p, Sequence@@DeleteDuplicatesBy[Flatten@{op, o}, First]]
 
 
 GitHubPath/:
-	Normal[GitHubPath[repos___,ops__?OptionQ]]:=
+	Normal[GitHubPath[repos___,ops___?OptionQ]]:=
 		{
 			FirstCase[{ops},
 				("Username"->u_):>u,
@@ -1580,30 +1626,52 @@ GitHubPath/:
 			repos
 			};
 GitHubPath/:
-	URL[GitHubPath[path__String,ops:OptionsPattern[]]]:=
+	URL[GitHubPath[path___String,ops:OptionsPattern[]]]:=
 		FormatGitHubPath[path,ops]
 
 
+Format[g:GitHubPath[path___String,ops:OptionsPattern[]]]:=
+	RawBoxes@
+		BoxForm`ArrangeSummaryBox[
+			"GitHubPath",
+			g,
+			None,
+			{
+				BoxForm`MakeSummaryItem[{"Path: ", URLBuild[{path}]}, StandardForm],
+				BoxForm`MakeSummaryItem[
+					{"URL: ", 
+						Hyperlink[FormatGitHubPath@@g]
+						}, StandardForm]
+				},
+			Map[
+				BoxForm`MakeSummaryItem[
+					{
+						Row@{#[[1]], ": "}, #[[2]]
+						},
+					StandardForm
+					]&,
+				Flatten[Normal/@{ops}]
+				],
+			StandardForm
+			]
+
+
 (* ::Subsubsection::Closed:: *)
-(*GitHubSVN*)
+(*GitHubPathQ*)
 
 
 
-Options[GitHubSVN]=
-	Options[GitHubPath];
-Options[formatGitHubSVN]=Options[GitHubSVN];
-formatGitHubSVN[
-	root_String?(Not@*GitHubRepoQ),
-	subparts___String,
-	ops:OptionsPattern[]
-	]:=
-	URLBuild@{
-		FormatGitHubPath[root,ops],
-		"trunk",
-		subparts
-		};
-GitHubSVN[path__String,ops:OptionsPattern[]]/;(TrueQ@$GitHubRepoFormat):=
-	formatGitHubSVN[path,ops]
+GitHubPathQ[path:_String|_URL]:=
+	With[{p=URLParse[path]},
+		(
+			(MatchQ[p["Scheme"],"http"|"https"|None]&&p["Domain"]==="github.com")||
+			p["Scheme"]==="github"&&p["Domain"]===None
+			)
+			&&
+		Length@p["Path"]>0
+		];
+GitHubPathQ[_GitHubPath]:=
+	True;
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1611,15 +1679,18 @@ GitHubSVN[path__String,ops:OptionsPattern[]]/;(TrueQ@$GitHubRepoFormat):=
 
 
 
-GitHubPathParse[path:_String|_URL]:=
+Options[GitHubPathParse]=
+	Options[GitHubPath];
+GitHubPathParse[path:_String|_URL, o:OptionsPattern[]]:=
 	If[GitHubPathQ[path],
 		Replace[
 			DeleteCases[""]@
-				URLParse[path,"Path"],{
-			{user_,parts__}|
-			{user_,parts__}:>
-				GitHubPath[parts,"Username"->user]
-			}],
+				URLParse[path,"Path"],
+			{
+				{user_,parts___}:>
+					GitHubPath[parts,"Username"->user, o]
+				}
+			],
 		$Failed
 		];
 
@@ -1644,42 +1715,23 @@ GitHubRepoParse[path:_String|_URL]:=
 
 
 (* ::Subsubsection::Closed:: *)
-(*GitHubPathQ*)
-
-
-
-GitHubPathQ[path:_String|_URL]:=
-	With[{p=URLParse[path]},
-		MatchQ[p["Scheme"],"http"|"https"]&&
-		p["Domain"]=="github.com"&&
-		Length@p["Path"]>0
-		];
-GitHubPathQ[_GitHubPath]:=
-	True;
-
-
-(* ::Subsubsection::Closed:: *)
 (*GitHubRepoQ*)
 
 
 
-GitHubRepoQ[path:_String|_URL]:=
+iGitHubRepoQ[path:_String|_URL]:=
+	GitHubPathQ[path]&&
 	With[{p=URLParse[path]},
-		MatchQ[p["Scheme"],"http"|"https"]&&
-		p["Domain"]=="github.com"&&
-		Length@p["Path"]>0&&
 		!MatchQ[p["Path"],
 			{"repos",__}|
 			{__,"releases"|"deployments"}|
 			{__,"releases"|"deployments","tag",___}
 			]
 		];
-GitHubRepoQ[GitHubPath[path__String,___?OptionQ]]:=
-	!MatchQ[{path},
-		{"repos",__}|
-		{__,"releases"|"deployments"}|
-		{__,"releases"|"deployments","tag",___}
-		];
+GitHubRepoQ[p:GitHubPath[___String,___?OptionQ]]:=
+	iGitHubRepoQ[URL@p]
+GitHubRepoQ[path:_String|_URL]:=
+	GitHubRepoQ[GitHubPath@path];
 GitHubRepoQ[_]:=False
 
 
@@ -1844,12 +1896,38 @@ GitHubRepositories[
 
 
 
+$gitHubCreateParamMap=
+	{
+		"AutoInit"->"auto_init",
+		"HasWiki"->"has_issues",
+		"HasProjects"->"has_projects",
+		"HasIssues"->"has_wiki",
+		"Private"->"team_id",
+		"GitIgnore"->"gitignore_template",
+		"LicenseTemplate"->"license_template",
+		"AllowSquashMerge"->"allow_squash_merge",
+		"AllowMergeCommit"->"allow_merge_commit",
+		"AllowRebaseMerge"->"allow_rebase_merge",
+		e_:>ToLowerCase[e]
+		};
+
+
 Options[GitHubCreate]=
 	{
 		"Username"->Automatic,
 		"Password"->Automatic,
-		"Description"->None,
-		"HomePage"->None
+		"Description"->Automatic,
+		"HomePage"->Automatic,
+		"AutoInit"->True,
+		"HasWiki"->Automatic,
+		"HasProjects"->Automatic,
+		"HasIssues"->Automatic,
+		"Private"->Automatic,
+		"GitIgnore"->Automatic,
+		"LicenseTemplate"->Automatic,
+		"AllowSquashMerge"->Automatic,
+		"AllowMergeCommit"->Automatic,
+		"AllowRebaseMerge"->Automatic
 		};
 GitHubCreate[
 	repo_String,
@@ -1865,14 +1943,16 @@ GitHubCreate[
 				"Method"->"POST",
 				"Body"->
 					ExportString[
-						Map[ToLowerCase[First@#]->Last@#&,
-							DeleteCases[_->None]@
+						Map[(First@#/.$gitHubCreateParamMap)->Last@#&,
+							DeleteCases[_->Except[_String|True|False]]@
 								FilterRules[
-									{
-										"Name"->repo,
-										ops
-										},
-									Except["Password"]
+									Flatten@
+										{
+											"Name"->repo,
+											ops,
+											Options[GitHubCreate]
+											},
+									Except["Username"|"Password"]
 									]
 							],
 						"JSON"
@@ -1894,6 +1974,9 @@ GitHubCreate[
 
 
 
+GitHubDelete//ClearAll
+
+
 Options[GitHubDelete]=
 	{
 		"Username"->Automatic,
@@ -1903,18 +1986,19 @@ GitHubDelete[
 	repo_GitHubPath?GitHubRepoQ,
 	ops:OptionsPattern[]
 	]:=
-	With[{r=Normal@repo},
+	With[{uu=URLParse[URL@repo]},
 		GitHubReposAPI[
 			repo,
 			<|
 				"Method"->"DELETE",
-				"Headers"->{
-					"Authorization"->
-						GitHubAuthHeader[
-							First@r,
-							OptionValue["Password"]
-							]
-						}
+				"Headers"->
+					{
+						"Authorization"->
+							GitHubAuthHeader[
+								DeleteCases[uu["Path"], ""][[1]],
+								OptionValue["Password"]
+								]
+							}
 				|>
 			]
 		];
@@ -1923,19 +2007,23 @@ GitHubDelete[
 	ops:OptionsPattern[]
 	]:=
 	Block[{$GitHubPathFormat=False},
-		GitHubDelete[GitHubRepoParse@s,ops]
+		GitHubDelete[
+			GitHubPath[s, FilterRules[{ops}, Options@GitHubPath]],
+			ops
+			]
 		];
-GitHubDelete[
+(*GitHubDelete[
 	s_String?(
 		URLParse[#,"Scheme"]===None&&
-		Length@URLParse[#,"Path"]===1&),
+		Length@URLParse[#,"Path"]===1&
+		),
 	ops:OptionsPattern[]
 	]:=
 	GitHubDelete[
 		GitHubPath[s,
 			FilterRules[{ops},Options@GitHubPath]
 			],
-		ops]
+		ops]*)
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2008,35 +2096,77 @@ GitHubDeployments[repo:(_GitHubRepo|_String)?GitHubRepoQ,
 
 
 
+GitHubClone//Clear
+
+
+Options[GitHubClone]=
+	Join[
+		Options[GitHubPath],
+		{
+			OverwriteTarget->False
+			}
+		];
 GitHubClone[
-	repo:(_String|_GitHubPath)?GitHubRepoQ,
-	dir:_String|Automatic:Automatic
+	repo:(_String|_GitHubPath)?(Not@*GitHubReleaseQ),
+	dir:(_String?(DirectoryQ@*DirectoryName))|Automatic:Automatic,
+	ops:OptionsPattern[]
 	]:=
-	Quiet[
-		Replace[
-			GitClone[
-				If[MatchQ[repo,_GitHubPath],
-					URL@repo,
-					repo
-					],
-				dir
-				],
-			d:Except[_String?GitRepoQ]:>(
-				SVNExport[
-					If[MatchQ[repo,_GitHubPath],
-						URL@repo,
-						repo
-						],
-					dir,
-					"TrustServer"->True
+	Module[
+		{
+			path=
+				If[MatchQ[repo, _GitHubPath],
+					repo,
+					GitHubPath[repo, FilterRules[{ops}, Options@GitHubPath]]
 					]
-				)
-			],
-	GitRun::err
-	];
+			},
+		With[
+			{
+				o=Options[path],
+				n=Normal[path]
+				},
+			Switch[Lookup[o, "Tree", "tree"],
+				"tree",
+					If[Length@n<3,
+						GitClone[URL[path], dir,
+							TrueQ@OptionValue[OverwriteTarget]
+							],
+						SVNExport[
+							URL[GitHubPath[repo, "Tree"->"trunk", "Branch"->Nothing]],
+							dir,
+							"TrustServer"->True,
+							OverwriteTarget->OptionValue[OverwriteTarget]
+							]
+						],
+				"trunk",
+					SVNExport[
+						URL[path],
+						dir,
+						"TrustServer"->True,
+						OverwriteTarget->OptionValue[OverwriteTarget]
+						],
+				"raw",
+					Replace[
+						URLDownload[
+							URL[path],
+							FileNameJoin@{
+								If[StringQ@dir, 
+									If[!DirectoryQ@dir, CreateDirectory[dir]];
+									dir,
+									$TemporaryDirectory
+									], 
+								Last@n
+								}
+							],
+						File[f_]:>f
+						],
+				_,
+					$Failed
+				]
+			]/;path=!=$Failed
+		];
 GitHubClone[
 	repo:(_String|_GitHubPath)?GitHubReleaseQ,
-	dir:_String|Automatic:Automatic
+	dir:(_String?(DirectoryQ@*DirectoryName))|Automatic:Automatic
 	]:=
 	With[{release=
 		GitHubImport["Releases",
@@ -2049,9 +2179,15 @@ GitHubClone[
 				With[{url=
 					release[["Assets",-1,"BrowserDownloadURL"]]
 					},
-					URLDownload[url,
+					URLDownload[
+						url,
 						FileNameJoin@{
-							Replace[dir,Automatic:>$TemporaryDirectory],
+							Replace[dir, 
+								{
+									Automatic:>$TemporaryDirectory,
+									_:>(If[!DirectoryQ@dir, CreateDirectory[dir]];dir)
+									}
+								],
 							URLParse[url,"Path"][[-1]]
 							}
 						]
@@ -2064,9 +2200,11 @@ GitHubClone[
 							URLParse[release["ZipballURL"],"Path"][[-1]]
 							}
 						],
-					Replace[dir,
-						Automatic:>
-							$TemporaryDirectory
+					Replace[dir, 
+						{
+							Automatic:>$TemporaryDirectory,
+							_:>(If[!DirectoryQ@dir, CreateDirectory[dir]];dir)
+							}
 						]
 					]
 				],
@@ -2165,7 +2303,35 @@ $GitHubActions=
 		"Releases"->
 			GitHubReleases,
 		"Deployments"->
-			GitHubDownloads
+			GitHubDownloads,
+		"Path"->
+			Function[GitHubPath[##]],
+		"URL"->
+			Function[
+				Replace[GitHubPath[##],
+					g_GitHubPath:>URL[g]
+					]
+				],
+		"RawPath"->
+			Function[GitHubPath[##, "Tree"->"raw"]],
+		"RawURL"->
+			Function[
+				Replace[GitHubPath[##, "Tree"->"raw"],
+					g_GitHubPath:>URL[g]
+					]
+				],
+		"SVNPath"->
+			Function[GitHubPath[##, "Tree"->"trunk", "Branch"->Nothing]],
+		"SVNURL"->
+			Function[
+				Replace[GitHubPath[##, "Tree"->"trunk", "Branch"->Nothing],
+					g_GitHubPath:>URL[g]
+					]
+				],
+		"PathQ"->
+			GitHubPathQ,
+		"RepoQ"->
+			GitHubRepoQ
 		|>;
 
 
@@ -2181,16 +2347,40 @@ PackageAddAutocompletions[
 	]
 
 
+GitHub//Clear
+
+
 GitHub[
 	command_?(KeyMemberQ[$githubactions,ToLowerCase@#]&),
-	args___
+	args:Except[_?OptionQ]...,
+	opp___?OptionQ
 	]:=
 	Block[{$GitHubRepoFormat=True},
-		With[{cmd=$githubactions[ToLowerCase@command]},
-			With[{r=cmd[args]},
+		With[
+			{
+				cmd=$githubactions[ToLowerCase@command],
+				ropp=Sequence@@FilterRules[{opp}, Except["GitHubImport"]]
+				},
+			With[
+				{
+					r=
+						If[Options[cmd]=!={},
+							cmd[args, Sequence@@FilterRules[{opp}, Options@cmd]],
+							With[{c=cmd[args, ropp]},
+								If[Head@c===cmd,
+									cmd[args],
+									c
+									]
+								]
+							]
+					},
 				Replace[r,
 					h_HTTPRequest:>
-						URLRead[h]
+						If[Lookup[{opp}, "GitHubImport", $GitHubImport]=!=False, 
+							GitHubImport, 
+							Identity
+							]@
+							URLRead[h]
 					]/;Head[r]=!=cmd
 				]
 			]
@@ -2200,16 +2390,22 @@ GitHub[
 GitHub[
 	path:{___String}|_String:{},
 	query:(_String->_)|{(_String->_)...}:{},
-	headers:_Association:<||>
+	headers:_Association:<||>,
+	opp___?OptionQ
 	]:=
 	Block[{$GitHubRepoFormat=True},
-		URLRead[
-			GitHubQuery[
-				path,
-				query,
-				headers
+		If[
+			Lookup[{opp}, "GitHubImport", $GitHubImport]=!=False, 
+			GitHubImport, 
+			Identity
+			]@
+			URLRead[
+				GitHubQuery[
+					path,
+					query,
+					headers
+					]
 				]
-			]
 		];
 
 
@@ -2248,7 +2444,14 @@ GitHubImport[h_HTTPResponse]:=
 			h["StatusCode"],
 		"Content"->
 			If[MatchQ[h["StatusCode"],0|(_?(Between@{200,299}))],
-				GitHubImport@Import[h,"RawJSON"],
+				Quiet[
+					Check[
+						GitHubImport@Import[h, "RawJSON"],
+						Null,
+						Import::jsonnullinput
+						],
+					Import::jsonnullinput
+					],
 				$Failed
 				]
 		|>;
