@@ -270,6 +270,10 @@ Search for functions with  ```"Do"```  in them anywhere in a context starting wi
 
 Search a directory for a regex pattern:
 
+```mathematica
+ GrepDirectory[FileNameJoin@{$InstallationDirectory, "AddOns"}, "EntityValue"]
+```
+
 	(*Out:*)
 	
 	{"/Applications/Mathematica.app/Contents/AddOns/Applications/StandardOceanData/Kernel/StandardOceanData.m","/Applications/Mathematica.app/Contents/AddOns/Applications/DataDropClient/Kernel/DataDropClientAdd.m","/Applications/Mathematica.app/Contents/AddOns/Applications/EntityFramework/Resources/FunctionalFrequency/specialArgFunctions.tr","/Applications/Mathematica.app/Contents/AddOns/Applications/AstronomyConvenienceFunctions/Kernel/AstronomyConvenienceFunctions.m"}
