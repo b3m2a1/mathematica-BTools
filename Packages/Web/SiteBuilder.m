@@ -53,10 +53,15 @@ $WebSitePath=
 	{
 		$WebSiteDirectory
 		};
+$WebThemesURLBase=
+	CloudObject["user:b3m2a1.paclets/PacletServer/Resources/SiteBuilder"][[1]];
+$WebSiteTempThemeDir=
+	FileNameJoin@{$TemporaryDirectory, "SiteBuilder_tmp", "Themes"};
 $WebSiteThemePath=
 	{
 		PackageFilePath["Resources","Themes"],
-		FileNameJoin@{$WebSiteDirectory, "Themes"}
+		FileNameJoin@{$WebSiteDirectory, "Themes"},
+		$WebSiteTempThemeDir
 		};
 
 
@@ -391,6 +396,31 @@ WebSiteThemes[themePat_]:=
 		FileNames[themePat, $WebSiteThemePath]
 
 
+validTHemeURL[s_]:=
+	With[{parse=URLParse[s]},
+		MatchQ[parse["Scheme"], "http"|"https"]
+		];
+WebSiteInstallTheme[
+	themeURL_String?validThemeURL, 
+	dir:_String?DirectoryQ|Automatic:Automatic
+	]:=
+	With[{d=Replace[dir, Automatic:>$WebSiteTempThemeDir]},
+		With[{arc=ExtractArchive[URLDownload[themeURL], d]},
+			Replace[
+				MinimalBy[DirectoryName/@arc, FileNameDepth],
+				{
+					{t_, ___}:>t,
+					_->$Failed
+					}
+				]
+			]
+		];
+
+
+Options[WebSiteFindTheme]=
+	{
+		"DownloadTheme"->False
+		};
 WebSiteFindTheme[dir_String?DirectoryQ, theme_String]:=
 	SelectFirst[
 		Join[
@@ -404,7 +434,16 @@ WebSiteFindTheme[dir_String?DirectoryQ, theme_String]:=
 				]
 			],
 		DirectoryQ,
-		$Failed
+		If[OptionValue["DownloadTheme"]===True,
+			Replace[
+				WebSiteInstallTheme[
+					URLBuild@{$WebThemesURLBase, theme}
+					],
+				s_String:>
+					WebSiteFindTheme[dir, theme, "DownloadTheme"->False]
+				],
+			$Failed
+			]
 		];
 WebSiteFindTheme[dir_String?DirectoryQ]:=
 	Module[
