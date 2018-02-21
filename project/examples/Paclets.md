@@ -165,7 +165,7 @@ Autogenerate an overview guide for a context
 
 	(*Out:*)
 	
-	NotebookObject[![title-3797213598954323457](../../project/img/title-3797213598954323457.png)]
+![title-6456334289508492125](../../project/img/title-6456334289508492125.png)
 
 Autogenerate documentation paclets from a set of contexts:
 

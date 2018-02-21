@@ -119,7 +119,7 @@ Autogenerate documentation:
 
 	(*Out:*)
 	
-	NotebookObject[![title-8322091606775763118](project/img/title-8322091606775763118.png)]
+![title-3555623215494686127](project/img/title-3555623215494686127.png)
 
 ![title-2335057591968686920](project/img/title-2335057591968686920.png)
 

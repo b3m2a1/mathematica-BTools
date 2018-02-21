@@ -1776,7 +1776,7 @@ $iNotebookToMarkdownRasterizeBaseForms=
 		___
 		]|
 	TemplateBox[__,
-		"DateObject",
+		"DateObject"|"CellObject"|"BoxObject"|"NotebookObject"|"NotebookObjectUnsaved",
 		___
 		]|
 	InterpretationBox[

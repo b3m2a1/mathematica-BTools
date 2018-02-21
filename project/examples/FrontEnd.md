@@ -32,7 +32,7 @@ Then we can find the style cell where this is implemented:
 
 	(*Out:*)
 	
-	{CellObject[![title-146644801494397031](../../project/img/title-146644801494397031.png)]}
+![title-3381609911906399936](../../project/img/title-3381609911906399936.png)
 
 On top of this we have:
 
