@@ -14,7 +14,7 @@ Load the package
 
 You'll be prompted to put your info into an encoded keychain BTools implements:
 
-![title-1640741396710622126](project/img/title-1640741396710622126.png)
+![title-1640741396710622126](../../project/img/title-1640741396710622126.png)
 
 Get the path to the repo
 
@@ -24,7 +24,7 @@ Get the path to the repo
 
 	(*Out:*)
 	
-![title-5566786704425655860](project/img/title-5566786704425655860.png)
+![title-5566786704425655860](../../project/img/title-5566786704425655860.png)
 
 Clone the repo:
 
@@ -48,7 +48,7 @@ Delete the repo
 
 	(*Out:*)
 	
-![title-8696902593167440952](project/img/title-8696902593167440952.png)
+![title-8696902593167440952](../../project/img/title-8696902593167440952.png)
 
 <a id="working-with-python" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
 
@@ -56,4 +56,4 @@ Delete the repo
 
 Start a  [SimpleHTTPServer](https://docs.python.org/2/library/simplehttpserver.html)  and open the landing page:
 
-![title-6843185186968722183](project/img/title-6843185186968722183.png)
+![title-6843185186968722183](../../project/img/title-6843185186968722183.png)

@@ -22,7 +22,7 @@ Load the package
  ]
 ```
 
-![title-6872989756726750125](project/img/title-6872989756726750125.png)
+![title-6872989756726750125](../../project/img/title-6872989756726750125.png)
 
 Then we can find the style cell where this is implemented:
 
@@ -32,7 +32,7 @@ Then we can find the style cell where this is implemented:
 
 	(*Out:*)
 	
-	{CellObject[![title-146644801494397031](project/img/title-146644801494397031.png)]}
+	{CellObject[![title-146644801494397031](../../project/img/title-146644801494397031.png)]}
 
 On top of this we have:
 
@@ -57,7 +57,7 @@ On top of this we have:
  MakeIndentable[inb]
 ```
 
-![title-8801250787185254727](project/img/title-8801250787185254727.png)
+![title-8801250787185254727](../../project/img/title-8801250787185254727.png)
 
 The indentation methods themselves can be called with  ```IndentationEvent```  or  ```BatchIndentationEvent``` . The latter applies an indentation event to the entire notebook, which can be useful with the  ```"Replace"```  event for turning  ```"∖[IndentingNewLine]"```  indented into  ```"\n"```  indented cells
 
@@ -73,7 +73,7 @@ The indentation methods themselves can be called with  ```IndentationEvent```  o
 
 	(*Out:*)
 	
-![title-9046101401840380990](project/img/title-9046101401840380990.png)
+![title-9046101401840380990](../../project/img/title-9046101401840380990.png)
 
 And we can use whatever colors we like:
 
@@ -88,7 +88,7 @@ And we can use whatever colors we like:
 
 	(*Out:*)
 	
-![title-1526923896790945062](project/img/title-1526923896790945062.png)
+![title-1526923896790945062](../../project/img/title-1526923896790945062.png)
 
 Or one of a small collection of named styles:
 
@@ -105,7 +105,7 @@ Or one of a small collection of named styles:
 
 	(*Out:*)
 	
-![title-2570629531543374290](project/img/title-2570629531543374290.png)
+![title-2570629531543374290](../../project/img/title-2570629531543374290.png)
 
 There are also generalize nine-patch appearances.  ```NinePatchCreate```  turns anything into a nine-patch to be used as an  ```Appearance``` . It's used, for example, in  ```NinePatchNameTag```  to make a nice name-tag appearances.
 
@@ -123,7 +123,7 @@ There are also generalize nine-patch appearances.  ```NinePatchCreate```  turns 
 
 	(*Out:*)
 	
-![title-2260547031847133199](project/img/title-2260547031847133199.png)
+![title-2260547031847133199](../../project/img/title-2260547031847133199.png)
 
 But we can use it on other things:
 
@@ -142,7 +142,7 @@ But we can use it on other things:
 
 	(*Out:*)
 	
-![title-4874399652568004251](project/img/title-4874399652568004251.png)
+![title-4874399652568004251](../../project/img/title-4874399652568004251.png)
 
 <a id="notebooktools" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
 
@@ -159,7 +159,7 @@ But we can use it on other things:
 
 	(*Out:*)
 	
-![title-1601186910705832175](project/img/title-1601186910705832175.png)
+![title-1601186910705832175](../../project/img/title-1601186910705832175.png)
 
 The  ```Newlineate```  family of functions adds newlines to boxes:
 

@@ -91,7 +91,7 @@ Someone could install the app like
 
 	(*Out:*)
 	
-![title-6306276067128488378](project/img/title-6306276067128488378.png)
+![title-6306276067128488378](../../project/img/title-6306276067128488378.png)
 
 <a id="working-with-paclets" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
 
@@ -105,7 +105,7 @@ Install a paclet from GitHub
 
 	(*Out:*)
 	
-![title-8783817164103644286](project/img/title-8783817164103644286.png)
+![title-8783817164103644286](../../project/img/title-8783817164103644286.png)
 
 Find the names of all the paclets available on a server:
 
@@ -155,7 +155,7 @@ Autogenerate documentation:
  DocGen[DocGen]
 ```
 
-![title-3944086624101741822](project/img/title-3944086624101741822.png)
+![title-3944086624101741822](../../project/img/title-3944086624101741822.png)
 
 Autogenerate an overview guide for a context
 
@@ -165,7 +165,7 @@ Autogenerate an overview guide for a context
 
 	(*Out:*)
 	
-	NotebookObject[![title-3797213598954323457](project/img/title-3797213598954323457.png)]
+	NotebookObject[![title-3797213598954323457](../../project/img/title-3797213598954323457.png)]
 
 Autogenerate documentation paclets from a set of contexts:
 
@@ -184,17 +184,17 @@ Autogenerate documentation paclets from a set of contexts:
  ]
 ```
 
-![title-8350260503414164841](project/img/title-8350260503414164841.png)
+![title-8350260503414164841](../../project/img/title-8350260503414164841.png)
 
 Generate a template notebook for writing a tutorial
 
-![title-8031869743256385252](project/img/title-8031869743256385252.png)
+![title-8031869743256385252](../../project/img/title-8031869743256385252.png)
 
 The  ```"SymbolPage"``` ,  ```"Guide"``` , and  ```"Tutorial"```  types support  ```"Template"``` ,  ```"Notebook"``` , and  ```"Save"```  methods.
 
 We can write content in the template notebook and use the bar on the top to generate a tutorial.
 
-![title-265881908806275627](project/img/title-265881908806275627.png)
+![title-265881908806275627](../../project/img/title-265881908806275627.png)
 
 <a id="frontend-resources" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
 

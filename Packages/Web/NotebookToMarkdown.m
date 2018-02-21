@@ -1625,9 +1625,7 @@ NotebookToMarkdown[nb_NotebookObject]:=
 					d2=
 						MarkdownSiteBase[dir],
 					cext=
-						MarkdownContentExtension[MarkdownSiteBase@dir],
-					path=
-						FileNameJoin@ConstantArray["..",1+FileNameDepth[MarkdownContentPath[dir]]]
+						MarkdownContentExtension[MarkdownSiteBase@dir]
 					},
 					StringReplace[
 						Join[
@@ -1642,7 +1640,12 @@ NotebookToMarkdown[nb_NotebookObject]:=
 								iNotebookToMarkdown[
 									<|
 										"Root"->d2,
-										"Path"->path,
+										"Path"->
+											If[StringMatchQ[dir, MarkdownContentPath[dir]~~__],
+												"",
+												URLBuild@ConstantArray["..",
+													1+FileNameDepth[MarkdownContentPath[dir]]]
+												],
 										"Name"->name,
 										"ContentExtension"->cext,
 										"Meta"->meta,
@@ -2988,7 +2991,9 @@ markdownNotebookHashExport[
 					"content",
 						"{filename}",
 					_String,
-						pathInfo["ContentExtension"],
+						pathInfo["Path"]<>
+							If[StringLength[pathInfo["Path"]]>0, "/", ""]<>
+							pathInfo["ContentExtension"],
 					_,
 						Nothing
 					],
