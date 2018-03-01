@@ -1700,6 +1700,9 @@ GitRegisterFunction[
 	];
 
 
+GitListRemotes//Clear
+
+
 Options[GitListRemotes]=
 	Options[iGitRemoteShow];
 GitListRemotes[
@@ -1768,7 +1771,7 @@ GitRemoveRemote[
 
 
 (* ::Subsubsection::Closed:: *)
-(*GitRemoteGetURL*)
+(*GetRemoteURL*)
 
 
 
@@ -1776,7 +1779,6 @@ GitRegisterFunction[
 	iGitRemoteGetURL,
 	{"remote", "get-url"},
 	{
-		"FetchURL"->"fetch",
 		"PushURL"->"push",
 		"AllURLs"->"all"
 		}
@@ -1791,7 +1793,7 @@ GitGetRemoteURL[
 
 
 (* ::Subsubsection::Closed:: *)
-(*GitRemoteSetURL*)
+(*SetRemoteURL*)
 
 
 
@@ -1799,7 +1801,6 @@ GitRegisterFunction[
 	iGitRemoteSetURL,
 	{"remote", "set-url"},
 	{
-		"FetchURL"->"fetch",
 		"PushURL"->"push",
 		"AllURLs"->"all",
 		"AddURL"->"add",
@@ -1925,7 +1926,6 @@ GitPush[
 	]:=
 	iGitPush[
 		dir,
-		"push",
 		ops,
 		locs
 		];
@@ -2740,6 +2740,10 @@ $GitActions=
 			GitAddRemote,
 		"RemoveRemote"->
 			GitRemoveRemote,
+		"GetRemoteURL"->
+			GitGetRemoteURL,
+		"SetRemoteURL"->
+			GitSetRemoteURL,
 		"RealignRemotes"->
 			GitRealignRemotes,
 		"ReattachHead"->
@@ -2759,11 +2763,11 @@ $GitActions=
 		"Push"->
 			GitPush,
 		"PushOrigin"->
-			GitPushOrigin,
+			GitPushOrigin,(*
 		"GetPushURL"->
 			GitGetPushURL,
 		"GetFetchURL"->
-			GitGetFetchURL,
+			GitGetFetchURL,*)
 		"Repositories"->
 			GitRepositories,
 		"Log"->
@@ -3994,7 +3998,7 @@ GitHubPush[
 	Replace[repo,{
 		Automatic:>
 			Replace[
-				GitGetPushURL[dir],
+				GitGetRemoteURL[dir, "PushURL"->True],
 				{
 					s_String:>
 						Git["Push", dir, s],
