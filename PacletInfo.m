@@ -11,4 +11,4 @@ editing, etc.", Enabled -> True, Extensions ->
    {"FrontEnd", "Prepend" -> True}}, Internal -> False, Loading -> "Manual", 
  Name -> "BTools", Publisher -> "", Qualifier -> "", Support -> "", 
  SystemID -> All, Tags -> {"documentation", "front-end", "paclets", "web"}, 
- Version -> "2.0.9", WolframVersion -> "10+"]
+ Version -> "2.0.8", WolframVersion -> "10+"]
