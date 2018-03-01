@@ -260,7 +260,13 @@ PacletInfoAssociation[p:PacletManager`Paclet[k__]]:=
 	Merge[
 		{
 			iPacletInfoAssociation[p],
-			PacletManager`PacletInformation[p]
+			Thread[
+				PacletManager`Manager`Private`$pacletInformationPIFields->
+					Lookup[
+						PacletManager`PacletInformation[p],
+						PacletManager`Manager`Private`$pacletInformationPIFields
+						]
+				]
 			},
 		First
 		];
@@ -328,7 +334,13 @@ Options[PacletDocsInfo]={
 	};
 PacletDocsInfo[ops:OptionsPattern[]]:=
 	SortBy[DeleteCases[DeleteDuplicatesBy[{ops},First],_->None],
-		With[{o=Options@PacletDocsInfo},Position[o,First@#]&]];
+		With[
+			{
+				o=
+					Association@MapIndexed[#->#2[[1]]&, Options@PacletDocsInfo]
+				},
+			Lookup[o,First@#, Length@o+1]&]
+			];
 PacletDocsInfo[dest_String?DirectoryQ,ops:OptionsPattern[]]:=
 	With[{lang=
 		FileBaseName@
@@ -571,7 +583,12 @@ Options[PacletInfoExpression]=
 PacletInfoExpression[ops:OptionsPattern[]]:=
 	PacletManager`Paclet@@
 		SortBy[DeleteCases[DeleteDuplicatesBy[{ops},First],_->None],
-			With[{o=Options@PacletInfoExpression},Position[o,First@#]&]
+			With[
+				{
+					o=Association@MapIndexed[#->#2[[1]]&, Options@PacletInfoExpression]
+					}, 
+				Lookup[o, First@#, Length@o+1]&
+				]
 			];
 
 
