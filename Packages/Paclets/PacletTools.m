@@ -555,6 +555,16 @@ PacletExtensionData[pacletInfo_Association,dest_,ops:OptionsPattern[]]:=
 
 
 
+validatePacletRules//ClearAll
+validatePacletRules["BuildNumber"->s_String]:=
+	If[!StringMatchQ[s, NumberString],
+		Nothing,
+		"BuildNumber"->s
+		];
+validatePacletRules[e_]:=e;
+validatePacletRules~SetAttributes~Listable		
+
+
 Options[PacletInfoExpression]=
 	Join[
 		{
@@ -582,6 +592,7 @@ Options[PacletInfoExpression]=
 		];
 PacletInfoExpression[ops:OptionsPattern[]]:=
 	PacletManager`Paclet@@
+		validatePacletRules@
 		SortBy[DeleteCases[DeleteDuplicatesBy[{ops},First],_->None],
 			With[
 				{
