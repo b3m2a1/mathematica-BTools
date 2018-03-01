@@ -561,6 +561,8 @@ validatePacletRules["BuildNumber"->s_String]:=
 		Nothing,
 		"BuildNumber"->s
 		];
+validatePacletRules[_->""]:=
+	Nothing;
 validatePacletRules[e_]:=e;
 validatePacletRules~SetAttributes~Listable		
 

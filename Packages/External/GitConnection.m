@@ -1691,11 +1691,24 @@ GitRepoQ[r:(_String|_File)?DirectoryQ]:=
 
 
 
+GitRegisterFunction[
+	iGitRemoteShow,
+	{"remote", "-v", "show"},
+	{
+		"UseCached"->"n"
+		}
+	];
+
+
+Options[GitListRemotes]=
+	Options[iGitRemoteShow];
 GitListRemotes[
 	dir:_String?DirectoryQ|Automatic:Automatic,
-	remoteName:_String?(Not@*DirectoryQ):"origin"
+	remoteName:_String?((StringLength[#]==0||Not@DirectoryQ[#]&)):"origin",
+	args___String,
+	ops:OptionsPattern[]
 	]:=
-	GitRun[dir,"remote", "-v", "show", remoteName];
+	iGitRemoteShow[dir, remoteName, args, ops]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1706,14 +1719,31 @@ GitListRemotes[
 GitAddRemote//Clear
 
 
+GitRegisterFunction[
+	iGitRemoteAdd,
+	{"remote", "add"},
+	{
+		"AutoFetch"->"f",
+		"ImportTags"->"tags",
+		"NoImportTags"->"no-tags",
+		"TrackBranch"->{"t", " "},
+		"Mirror"->"m"
+		}
+	];
+
+
+Options[GitAddRemote]=
+	Options[iGitRemoteAdd];
 GitAddRemote[
 	dir:_String?DirectoryQ|Automatic:Automatic,
-	remoteName:_String?(Not@*DirectoryQ):"origin",
-	remote:_String|_URL
+	remoteName:_String?((StringLength[#]==0||Not@DirectoryQ[#]&)):"origin",
+	remote:_String|_URL,
+	ops:OptionsPattern[]
 	]:=
-	GitRun[dir,
-		"remote","add",remoteName,
-		URLBuild@remote
+	iGitRemoteAdd[dir,
+		remoteName,
+		URLBuild@remote,
+		ops
 		];
 
 
@@ -1722,12 +1752,67 @@ GitAddRemote[
 
 
 
+GitRegisterFunction[
+	iGitRemoteRemove,
+	{"remote", "remove"},
+	{
+		}
+	];
+
+
 GitRemoveRemote[
 	dir:_String?DirectoryQ|Automatic:Automatic,
-	remote:_String|_URL]:=
-	GitRun[dir,
-		"remote","rm","origin"
-		];
+	remoteName:_String?((StringLength[#]==0||Not@DirectoryQ[#]&)):"origin"
+	]:=
+	iGitRemoteRemove[dir, remoteName]
+
+
+(* ::Subsubsection::Closed:: *)
+(*GitRemoteGetURL*)
+
+
+
+GitRegisterFunction[
+	iGitRemoteGetURL,
+	{"remote", "get-url"},
+	{
+		"FetchURL"->"fetch",
+		"PushURL"->"push",
+		"AllURLs"->"all"
+		}
+	];
+GitGetRemoteURL[
+	dir:_String?DirectoryQ|Automatic:Automatic,
+	remoteName:_String?((StringLength[#]==0||Not@DirectoryQ[#]&)):"origin",
+	args___String,
+	ops:OptionsPattern[]
+	]:=
+	iGitRemoteGetURL[dir, remoteName, args, ops]
+
+
+(* ::Subsubsection::Closed:: *)
+(*GitRemoteSetURL*)
+
+
+
+GitRegisterFunction[
+	iGitRemoteSetURL,
+	{"remote", "set-url"},
+	{
+		"FetchURL"->"fetch",
+		"PushURL"->"push",
+		"AllURLs"->"all",
+		"AddURL"->"add",
+		"DeleteURL"->"delete"
+		}
+	];
+GitSetRemoteURL[
+	dir:_String?DirectoryQ|Automatic:Automatic,
+	remoteName:_String?((StringLength[#]==0||Not@DirectoryQ[#]&)):"origin",
+	args___String,
+	ops:OptionsPattern[]
+	]:=
+	iGitRemoteSetURL[dir, remoteName, args, ops]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1737,14 +1822,14 @@ GitRemoveRemote[
 
 GitSetRemote[
 	dir:_String?DirectoryQ|Automatic:Automatic,
-	remoteName:_String?(Not@*DirectoryQ):"origin",
+	remoteName:_String?((StringLength[#]==0||Not@DirectoryQ[#]&)):"origin",
 	origin:(_String|_GitHubPath)?GitHubRepoQ
 	]:=
 	Quiet@
 		Check[
-			GitAddRemote[dir, origin],
-			GitRemoveRemote[dir, origin];
-			GitAddRemote[dir, origin]
+			GitAddRemote[dir, remoteName, origin],
+			GitRemoveRemote[dir, remoteName];
+			GitAddRemote[dir, remoteName, origin]
 			];
 
 
@@ -1820,6 +1905,9 @@ GitRegisterFunction[
 	]
 
 
+GitPush//Clear
+
+
 Options[GitPush]=
 	Join[
 		{
@@ -1832,16 +1920,14 @@ Options[GitPush]=
 		];
 GitPush[
 	dir:_String?DirectoryQ,
-	loc_String,
-	branch:_String:"master",
+	locs__String,
 	ops:OptionsPattern[]
 	]:=
 	iGitPush[
 		dir,
 		"push",
 		ops,
-		loc,
-		branch
+		locs
 		];
 
 
@@ -3170,12 +3256,13 @@ $GitHubEncodePassword:=
 ClearAll[GitHubPath, FormatGitHubPath]
 
 
-Options[GitHubPath]={
-	"Username"->Automatic,
-	"Password"->None,
-	"Branch"->"master",
-	"Tree"->"tree"
-	};
+Options[GitHubPath]=
+	{
+		"Username"->Automatic,
+		"Password"->None,
+		"Branch"->"master",
+		"Tree"->"tree"
+		};
 Options[FormatGitHubPath]=
 	Options[GitHubPath];
 FormatGitHubPath[path___String,ops:OptionsPattern[]]:=
@@ -3906,7 +3993,8 @@ GitHubPush[
 	]:=
 	Replace[repo,{
 		Automatic:>
-			Replace[GitGetPushURL[dir],
+			Replace[
+				GitGetPushURL[dir],
 				{
 					s_String:>
 						Git["Push", dir, s],

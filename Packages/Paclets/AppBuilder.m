@@ -2866,9 +2866,7 @@ AppGitHubPush[appName_:Automatic]:=
 	With[{app=AppFromFile[appName]},
 		If[GitRepoQ@AppDirectory[app],
 			Block[{$GitHubEncodePassword=True},
-				GitPush[AppDirectory[app],
-					AppGitHubRepo[appName,Automatic]
-					]
+				GitHubPush[AppDirectory[app]]
 				]
 			]
 		];
