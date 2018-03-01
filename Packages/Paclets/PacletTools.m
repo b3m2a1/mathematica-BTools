@@ -337,7 +337,7 @@ PacletDocsInfo[ops:OptionsPattern[]]:=
 		With[
 			{
 				o=
-					Association@MapIndexed[#->#2[[1]]&, Options@PacletDocsInfo]
+					Association@MapIndexed[#->#2[[1]]&, Keys@Options@PacletDocsInfo]
 				},
 			Lookup[o,First@#, Length@o+1]&]
 			];
@@ -585,7 +585,7 @@ PacletInfoExpression[ops:OptionsPattern[]]:=
 		SortBy[DeleteCases[DeleteDuplicatesBy[{ops},First],_->None],
 			With[
 				{
-					o=Association@MapIndexed[#->#2[[1]]&, Options@PacletInfoExpression]
+					o=Association@MapIndexed[#->#2[[1]]&, Keys@Options@PacletInfoExpression]
 					}, 
 				Lookup[o, First@#, Length@o+1]&
 				]
