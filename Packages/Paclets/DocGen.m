@@ -38,6 +38,16 @@ Begin["`Private`"];
 
 
 
+If[!TrueQ@$docGenInitialized,
+	$DocGenBuildPermanent=
+		False;
+	If[FileExistsQ@PackageFilePath["Private", "DocGenConfig.wl"],
+		Get@PackageFilePath["Private", "DocGenConfig.wl"]
+		];
+	$docGenInitialized=False
+	];
+
+
 If[!AssociationQ@$DocGenSettings,
 	$DocGenSettings=
 		<|

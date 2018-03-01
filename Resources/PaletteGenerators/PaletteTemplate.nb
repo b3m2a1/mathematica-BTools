@@ -132,8 +132,8 @@ Cell[BoxData[{
             RowBox[{"(", 
              RowBox[{
               RowBox[{"Needs", "[", "\"\<BTools`\>\"", "]"}], ";", 
-              RowBox[{"BTools`AppFromFile", "[", "Automatic", "]"}]}], 
-             ")"}]}]}], "\n", "\t\t\t\t\t", "}"}]}], "]"}]}], "\n", 
+              RowBox[{"BTools`Paclets`AppFromFile", "[", "Automatic", "]"}]}],
+              ")"}]}]}], "\n", "\t\t\t\t\t", "}"}]}], "]"}]}], "\n", 
       "\t\t\t\t", "]"}]}], "\n", "\t\t\t", ")"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{"GetAppName", "[", "]"}], ";"}]}], "CodeInput",
@@ -141,7 +141,8 @@ Cell[BoxData[{
   3.7044728622459373`*^9, 3.7044729951278877`*^9}, {3.704473035057168*^9, 
   3.704473152005465*^9}, {3.704473315397564*^9, 3.704473391183715*^9}, {
   3.7051873900566063`*^9, 3.705187390580605*^9}, {3.705187938316206*^9, 
-  3.705187945134679*^9}},ExpressionUUID->"7069a19f-602c-4d8c-978c-\
+  3.705187945134679*^9}, {3.728787541646648*^9, 
+  3.728787544187581*^9}},ExpressionUUID->"7069a19f-602c-4d8c-978c-\
 cd07f8d74d41"],
 
 Cell[BoxData[{
@@ -159,7 +160,7 @@ Cell[BoxData[{
   3.705187560944337*^9}, {3.7051879694515533`*^9, 
   3.705188016540567*^9}},ExpressionUUID->"00f60c4d-a6d8-4d25-821d-\
 f0d53a85dab1"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -635,8 +636,9 @@ Cell[CellGroupData[{
 Cell["ProjectsSelectors", "CodeSubsubsection",
  CellChangeTimes->{{3.7053448321769953`*^9, 3.7053448351548357`*^9}, {
   3.7053449167763042`*^9, 3.705344917860526*^9}, {3.705345200233926*^9, 
-  3.705345201815893*^9}, {3.723731662937451*^9, 
-  3.7237316764819117`*^9}},ExpressionUUID->"0f02e41d-c210-4149-abcb-\
+  3.705345201815893*^9}, {3.723731662937451*^9, 3.7237316764819117`*^9}, {
+  3.728789245896186*^9, 
+  3.728789246101219*^9}},ExpressionUUID->"0f02e41d-c210-4149-abcb-\
 f64fb40571ee"],
 
 Cell[BoxData[{
@@ -676,36 +678,52 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{"$FileNamesSelector", "=", 
    RowBox[{"(", 
-    RowBox[{"True", "&"}], ")"}]}], ";"}]}], "CodeInput",
- CellChangeTimes->{{3.7237316033657637`*^9, 
-  3.7237316253529167`*^9}},ExpressionUUID->"ff80ae21-1377-48c4-8aaf-\
+    RowBox[{"True", "&"}], ")"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"$FileNamesDepth", "=", "1"}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.7237316033657637`*^9, 3.7237316253529167`*^9}, {
+  3.7287892363798723`*^9, 
+  3.7287892432694397`*^9}},ExpressionUUID->"ff80ae21-1377-48c4-8aaf-\
 03da40afa973"],
 
 Cell[BoxData[
- RowBox[{
-  RowBox[{"GetProjectList", "[", "]"}], ":=", "\n", "\t", 
-  RowBox[{"(", "\n", "\t\t", 
+ RowBox[{"With", "[", "\n", "\t", 
+  RowBox[{
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"$FileNamesPattern", "=", "$FileNamesPattern"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"$FileNamesSelector", "=", "$FileNamesSelector"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"$FileNamesDepth", "=", "$FileNamesDepth"}]}], "\n", "\t\t", 
+    "}"}], ",", "\n", 
    RowBox[{
-    RowBox[{"$ProjectList", "=", "\n", "\t\t\t", 
-     RowBox[{"Select", "[", "\n", "\t", "\t\t\t", 
-      RowBox[{
-       RowBox[{"FileNames", "[", 
-        RowBox[{"$FileNamesPattern", ",", " ", 
-         RowBox[{"GetProjectDirectory", "[", "]"}]}], "]"}], ",", "\n", 
-       "\t\t\t\t", "$FileNamesSelector"}], "\n", "\t\t\t\t", "]"}]}], ";", 
-    "\n", "\t\t", 
-    RowBox[{"If", "[", 
+    RowBox[{"GetProjectList", "[", "]"}], ":=", "\n", "\t", 
+    RowBox[{"(", "\n", "\t\t", 
      RowBox[{
-      RowBox[{"!", 
-       RowBox[{"StringQ", "@", "$CurrentProject"}]}], ",", "\n", "\t\t\t", 
-      RowBox[{"$CurrentProject", "=", 
-       RowBox[{"First", "@", "$ProjectList"}]}]}], "\n", "\t\t\t", "]"}], ";",
-     "\n", "\t\t", "$ProjectList"}], "\n", "\t\t", ")"}]}]], "CodeInput",
+      RowBox[{"$ProjectList", "=", "\n", "\t\t\t", 
+       RowBox[{"Select", "[", "\n", "\t", "\t\t\t", 
+        RowBox[{
+         RowBox[{"FileNames", "[", 
+          RowBox[{"$FileNamesPattern", ",", " ", 
+           RowBox[{"GetProjectDirectory", "[", "]"}]}], "]"}], ",", "\n", 
+         "\t\t\t\t", "$FileNamesSelector"}], "\n", "\t\t\t\t", "]"}]}], ";", 
+      "\n", "\t\t", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"!", 
+         RowBox[{"StringQ", "@", "$CurrentProject"}]}], ",", "\n", "\t\t\t", 
+        RowBox[{"$CurrentProject", "=", 
+         RowBox[{"First", "@", "$ProjectList"}]}]}], "\n", "\t\t\t", "]"}], 
+      ";", "\n", "\t\t", "$ProjectList"}], "\n", "\t\t", ")"}]}]}], "\n", 
+  "]"}]], "CodeInput",
  CellChangeTimes->{{3.7230051806934023`*^9, 3.723005198078855*^9}, {
   3.723005506577379*^9, 3.723005530649238*^9}, {3.72373135167922*^9, 
   3.723731410341755*^9}, {3.7237315197402487`*^9, 3.7237315221773453`*^9}, {
   3.723731585929624*^9, 3.723731655403463*^9}, {3.723731759803473*^9, 
-  3.7237317829626713`*^9}},ExpressionUUID->"2b89765a-d844-448d-a00b-\
+  3.7237317829626713`*^9}, {3.728787305071927*^9, 3.7287873190385723`*^9}, {
+  3.728789238063438*^9, 
+  3.728789238502421*^9}},ExpressionUUID->"2b89765a-d844-448d-a00b-\
 24f787756915"]
 }, Closed]],
 
@@ -1419,8 +1437,8 @@ Cell[BoxData[
          RowBox[{"GetProjectDirectoryDVs", "=", 
           RowBox[{"DownValues", "[", "GetProjectDirectory", "]"}]}], ",", 
          "\n", "\t\t", 
-         RowBox[{"ListProjectsDVs", "=", 
-          RowBox[{"DownValues", "[", "ListProjects", "]"}]}], ",", "\n", 
+         RowBox[{"GetProjectListDVs", "=", 
+          RowBox[{"DownValues", "[", "GetProjectList", "]"}]}], ",", "\n", 
          "\t\t", 
          RowBox[{"sysOpenDVs", "=", 
           RowBox[{"DownValues", "[", "sysOpenDVs", "]"}]}], ",", "\n", "\t\t", 
@@ -1576,12 +1594,13 @@ Cell[BoxData[
            RowBox[{"If", "[", 
             RowBox[{
              RowBox[{
-              RowBox[{"DownValues", "[", "ListProjects", "]"}], "\[Equal]", 
+              RowBox[{"DownValues", "[", "GetProjectList", "]"}], "\[Equal]", 
+              
               RowBox[{"{", "}"}]}], ",", "\n", "\t\t\t\t\t\t", 
              RowBox[{
-              RowBox[{"DownValues", "[", "ListProjects", "]"}], "=", 
-              "ListProjectsDVs"}]}], "]"}], ";", "\n", "\t\t\t\t\t", 
-           RowBox[{"ListProjects", "[", "]"}], ";", "\n", "\t\t\t\t\t", 
+              RowBox[{"DownValues", "[", "GetProjectList", "]"}], "=", 
+              "GetProjectListDVs"}]}], "]"}], ";", "\n", "\t\t\t\t\t", 
+           RowBox[{"GetProjectList", "[", "]"}], ";", "\n", "\t\t\t\t\t", 
            RowBox[{
             RowBox[{"DownValues", "[", "whichPacF", "]"}], "=", "\n", 
             "\t\t\t\t\t\t", "whichPacFDVs"}], ";", "\n", "\t\t\t\t\t", 
@@ -1688,8 +1707,8 @@ Cell[BoxData[
    3.7230370646782417`*^9}, 3.7230497691333303`*^9, {3.723051624216675*^9, 
    3.723051647124542*^9}, 3.723411668665042*^9, {3.7235740331396027`*^9, 
    3.723574037860663*^9}, {3.7237458386018763`*^9, 3.7237459527086287`*^9}, {
-   3.7237459863766537`*^9, 
-   3.7237460182896976`*^9}},ExpressionUUID->"43f66058-923b-419b-a21e-\
+   3.7237459863766537`*^9, 3.7237460182896976`*^9}, {3.728789092236312*^9, 
+   3.7287890922790117`*^9}},ExpressionUUID->"43f66058-923b-419b-a21e-\
 7672fcf03f37"]
 }, Closed]],
 
@@ -1705,7 +1724,7 @@ Cell[BoxData[{
   RowBox[{"$PalettesDirectory", "=", "\n", "\t", 
    RowBox[{"Replace", "[", "\n", "\t\t", 
     RowBox[{
-     RowBox[{"BTools`AppPath", "[", "\n", "\t\t\t", 
+     RowBox[{"BTools`Paclets`AppPath", "[", "\n", "\t\t\t", 
       RowBox[{
       "$AppName", ",", "\n", "\t", "\t\t", "\"\<Palettes\>\"", ",", "\n", 
        "\t\t\t", "$AppName"}], "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
@@ -1730,8 +1749,8 @@ Cell[BoxData[{
         RowBox[{"Except", "[", 
          RowBox[{"WordCharacter", "|", "\"\<.\>\""}], "]"}], "\[Rule]", 
         "\"\<\>\""}]}], "]"}]}], "\n", "\t\t", "}"}]}]}]}], "CodeInput",
- CellChangeTimes->{{3.723733481640663*^9, 
-  3.723733574798647*^9}},ExpressionUUID->"214cebf4-7048-48ed-9fb3-\
+ CellChangeTimes->{{3.723733481640663*^9, 3.723733574798647*^9}, 
+   3.7287875347706614`*^9},ExpressionUUID->"214cebf4-7048-48ed-9fb3-\
 e21631de9acc"],
 
 Cell[BoxData[
@@ -1829,7 +1848,7 @@ Cell[BoxData[
   3.705190408935831*^9, 
   3.705190409517251*^9}},ExpressionUUID->"31e86267-4ca5-4afc-966d-\
 59ff2e3100ef"]
-}, Closed]]
+}, Open  ]]
 }, Open  ]],
 
 Cell[BoxData[

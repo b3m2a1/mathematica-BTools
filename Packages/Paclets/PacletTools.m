@@ -234,9 +234,16 @@ pacletToolsThrow[v_:$Failed, tag_:Automatic]:=
 
 
 
-PacletInfoAssociation[PacletManager`Paclet[k__]]:=
-	With[{o=Keys@Options[PacletInfoExpression]},
-		KeySortBy[First@FirstPosition[o,#]&]
+iPacletInfoAssociation[PacletManager`Paclet[k__]]:=
+	With[
+		{
+			omap=
+				AssociationThread[
+					Keys@Options[PacletInfoExpression],
+					Range[Length[Options[PacletInfoExpression]]]
+					]
+			},
+		KeySortBy[omap]
 		]@
 		With[{base=
 			KeyMap[Replace[s_Symbol:>SymbolName[s]],<|k|>]
@@ -249,6 +256,14 @@ PacletInfoAssociation[PacletManager`Paclet[k__]]:=
 						]
 				]
 			];
+PacletInfoAssociation[p:PacletManager`Paclet[k__]]:=
+	Merge[
+		{
+			iPacletInfoAssociation[p],
+			PacletManager`PacletInformation[p]
+			},
+		First
+		];
 PacletInfoAssociation[infoFile_]:=
 	Replace[PacletInfo[infoFile],{
 		p:PacletManager`Paclet[__]:>
@@ -688,12 +703,17 @@ PacletInfoGenerate[
 
 
 
-PacletLookup[p:{__PacletManager`Paclet},props_]:=
-	Lookup[PacletManager`PacletInformation/@p,props];
+PacletLookup[p:{__PacletManager`Paclet}, props_]:=
+	Lookup[PacletInfoAssociation/@p,props];
+PacletLookup[p:{__PacletManager`Paclet}, props_, def_]:=
+	Lookup[PacletInfoAssociation/@p, props, def];
 PacletLookup[p_PacletManager`Paclet,props_]:=
-	Lookup[PacletManager`PacletInformation@p,props];
+	Lookup[PacletInfoAssociation@p,props];
+PacletLookup[p_PacletManager`Paclet, props_, def_]:=
+	Lookup[PacletInfoAssociation@p, props, def];
 PacletLookup[p:_String|{_String,_String},props_]:=
 	PacletLookup[PacletManager`PacletFind[p],props];
+PacletLookup~SetAttributes~HoldRest
 
 
 (* ::Subsubsection::Closed:: *)

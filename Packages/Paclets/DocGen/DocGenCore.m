@@ -169,8 +169,8 @@ $DocGenVersionNumber=$VersionNumber;
 If[!TrueQ@$docGenInitialized,
 	$DocGenBuildPermanent=
 		False;
-	If[FileExistsQ@PackageFilePath["Private","DocGenConfig.wl"],
-		Import@PackageFilePath["Private","DocGenConfig.wl"]
+	If[FileExistsQ@PackageFilePath["Private", "DocGenConfig.wl"],
+		Import@PackageFilePath["Private", "DocGenConfig.wl"]
 		];
 	$docGenInitialized=False
 	];

@@ -1,0 +1,19 @@
+Map[
+  Function[
+    BeginPackage[
+      FileBaseName[DirectoryName@$InputFileName]<>"`"<>#<>"`",
+      FileBaseName[DirectoryName@$InputFileName]<>"`"
+      ];
+    EndPackage[]
+    ],
+  {
+    "Paclets",
+    "Utilities",
+    "FrontEnd",
+    "Frameworks",
+    "External",
+    "Web"
+    }
+  ]
+
+FrontEnd`Private`GetUpdatedSymbolContexts[]

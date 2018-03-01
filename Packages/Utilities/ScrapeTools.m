@@ -253,6 +253,9 @@ GrepSelect[files:{__String?(FileExistsQ)},pattern_String]:=
 		];
 
 
+SystemExpressionsSearch//Clear
+
+
 trFileExpressions[f_]:=
 	With[{strings=
 		DeleteCases[
@@ -271,10 +274,17 @@ Options[SystemExpressionsSearch]=
 		Monitor->True,
 		Options@Cases
 		};
-SystemExpressionsSearch[pat_,
-	files:(Except[_Symbol|_Rule|_RuleDelayed]..),
+SystemExpressionsSearch[
+	pat_,
+	files:(
+		Except[
+			"All"|"Notebooks"|"Packages"|"TextResources",
+			_?StringPattern`StringPatternQ
+			]|_List
+		)..,
 	function:InternalFiles|FrontEndFiles|InternalSystemFiles:InternalFiles,
-	ops:OptionsPattern[]]:=
+	ops:OptionsPattern[]
+	]:=
 	CompoundExpression[
 		Begin["SystemSearchDump`"],
 		SetDirectory@$TemporaryDirectory;
@@ -283,10 +293,14 @@ SystemExpressionsSearch[pat_,
 			)&@
 			Module[{
 				fileListing=
-					Replace[First@{files},{
-						fs_List:>fs,
-						Except@_String?FileExistsQ:>function[files]
-						}],
+					Replace[
+						Flatten[{files}, 1],
+						{
+							{_String?FileExistsQ, ___String}:>files,
+							_List:>function[Alternatives@@files],
+							Except@_String?FileExistsQ:>function[files]
+							}
+						],
 				filesNew
 				},
 				filesNew=
@@ -343,13 +357,50 @@ SystemExpressionsSearch[pat_,
 		];
 
 
-SystemExpressionsSearch[pat_,
+SystemExpressionsSearch[
+	pat_,
+	Optional["All", "All"],
 	function:InternalFiles|FrontEndFiles|InternalSystemFiles:InternalFiles,
 	ops:OptionsPattern[]]:=
-		SystemExpressionsSearch[pat,"*.tr"|"*.m"|"*.nb",function,ops];
+		SystemExpressionsSearch[pat,
+			"*.tr"|"*.m"|"*.nb",
+			function,
+			ops
+			];
+SystemExpressionsSearch[
+	pat_,
+	"Notebooks",
+	function:InternalFiles|FrontEndFiles|InternalSystemFiles:InternalFiles,
+	ops:OptionsPattern[]]:=
+		SystemExpressionsSearch[pat,
+			"*.nb",
+			function,
+			ops
+			];
+SystemExpressionsSearch[
+	pat_,
+	"Packages",
+	function:InternalFiles|FrontEndFiles|InternalSystemFiles:InternalFiles,
+	ops:OptionsPattern[]]:=
+		SystemExpressionsSearch[pat,
+			"*.m"|"*.wl",
+			function,
+			ops
+			];
+SystemExpressionsSearch[
+	pat_,
+	"TextResources",
+	function:InternalFiles|FrontEndFiles|InternalSystemFiles:InternalFiles,
+	ops:OptionsPattern[]]:=
+		SystemExpressionsSearch[pat,
+			"*.tr",
+			function,
+			ops
+			];
 
 
-SystemHeadSearch[pat_,
+SystemHeadSearch[
+	pat_,
 	e___
 	]:=
 	SystemExpressionsSearch[
@@ -358,7 +409,8 @@ SystemHeadSearch[pat_,
 		];
 
 
-SystemArgSearch[pat_,
+SystemArgSearch[
+	pat_,
 	e___
 	]:=
 	SystemExpressionsSearch[
@@ -368,7 +420,7 @@ SystemArgSearch[pat_,
 
 
 SystemContextSearch[
-	context:_String|_StringExpression|_Alternatives,
+	context:_?StringPattern`StringPatternQ,
 	e___]:=
 	SystemHeadSearch[
 		_Symbol?(
@@ -388,7 +440,7 @@ SystemContextSearch[s_Symbol,
 
 
 SystemFunctionSearch[
-	functionName:_String|_StringExpression|_Alternatives,
+	functionName:_?StringPattern`StringPatternQ,
 	e___]:=
 	SystemHeadSearch[
 		_Symbol?(
@@ -405,6 +457,28 @@ SystemFunctionSearch[s_Symbol,
 		SymbolName@s,
 		e
 		]
+
+
+PackageAddAutocompletions[
+	Map[
+		SymbolName[#]->
+			{
+				None,
+				{
+					"All", "Notebooks", "Packages", "TextResources"(*,
+					"{\"*.m\",\"*.wl\",\"*.tr\"}",
+					"{\"*.nb\",\"*.tr\"}"*)
+					}
+				}&,
+		{
+			SystemExpressionsSearch,
+			SystemHeadSearch,
+			SystemArgSearch,
+			SystemContextSearch,
+			SystemFunctionSearch
+			}
+		]
+	]
 
 
 spelunkSymValues[sym_Symbol|Verbatim[HoldPattern][sym_Symbol]]:=
@@ -1157,7 +1231,9 @@ WithOverrideDefs[{blocks___Rule},e_]:=
 										$WithOverrideDefs[HoldComplete@blockSym]=False
 										];
 								DownValues[blockSym]=
-									RotateRight[DownValues[blockSym]];
+									SortBy[DownValues[blockSym], 
+										FreeQ[$WithOverrideDefs[HoldComplete@blockSym]]
+										];
 								]
 							),
 					1

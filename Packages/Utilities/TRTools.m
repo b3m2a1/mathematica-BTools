@@ -23,7 +23,9 @@ $FrontEndDirectory::usage=
 	"The root internal front end directory";
 
 
-$FEResourceList::usage="The resource sets I know about";
+$FEResourceGroups::usage="The resource sets I know about";
+FEResourceKeys::usage=
+	"Extracts keys from resource file";
 FEResourceFind::usage=
 	"Tries to find resources by that name in the known resources sets";
 FEResourceGroup::usage=
@@ -80,6 +82,29 @@ ToExpression@{
 	"RemoveMask","Scope"
 	};
 End[];
+
+
+(* ::Subsubsection::Closed:: *)
+(*FEResources*)
+
+
+
+FEResourceKeys[tr_String?FileExistsQ]:=
+	StringCases[Import[tr, "Text"],
+		Shortest[StartOfLine~~"@@resource"~~r__~~EndOfLine]:>
+		Replace[StringSplit[StringTrim[r]], {l_}:>l]
+		];
+
+
+FEResourceKeys[s_String]:=
+	With[
+		{
+			r=
+				FEResourceKeys@
+					FEFindFileOnPath[s, "TextResource"]
+			},
+		r/;ListQ@r
+		]
 
 
 $FEResourceCompleteListing={
@@ -890,46 +915,49 @@ $FEResourceStringListing=
 		};
 
 
-$FEResourceList=
+$FEResourceGroups=
 	Select[
 		$FEResourceRuleListing,
-		StringContainsQ["Expressions"|"Bitmaps"]];
+		StringContainsQ["Expressions"|"Bitmaps"]
+		];
 
 
 FEResourceFind[resources:{__Rule},resourceChunk_]:=
 	Select[resources,
-		StringMatchQ[ToString@First@#,___~~resourceChunk~~___]&
+		StringMatchQ[ToString@First@#, ___~~resourceChunk~~___]&
 		];
-FEResourceFind[feList:{__String},resourceChunk_]:=
+FEResourceFind[feList:{__String}, resourceChunk_]:=
 FEResourceFind[
 		Join@@(
 			Replace[FrontEndResource[#],
 				e:Except[_List]:>{#->e}]&/@feList),
 		resourceChunk];
-FEResourceFind[fe_String,resourceChunk_]:=
-	FEResourceFind[{fe},resourceChunk];
+FEResourceFind[fe_String, resourceChunk_]:=
+	FEResourceFind[{fe}, resourceChunk];
 FEResourceFind[resourceSet_List]:=
-	FEResourceFind[resourceSet,"*"];
+	FEResourceFind[resourceSet, "*"];
 FEResourceFind[Automatic,resourceChunk_]:=
-	FEResourceFind[$FEResourceList,resourceChunk];
+	FEResourceFind[$FEResourceGroups, resourceChunk];
 FEResourceFind[All,resourceChunk_]:=
-	FEResourceFind[$FEResourceRuleListing,resourceChunk];
+	FEResourceFind[$FEResourceRuleListing, resourceChunk];
 FEResourceFind[Full,resourceChunk_]:=
-	FEResourceFind[$FEResourceCompleteListing,resourceChunk];
+	FEResourceFind[$FEResourceCompleteListing, resourceChunk];
 FEResourceFind[resourceChunk:Except[_List]]:=
-	If[MemberQ[$FEResourceList,resourceChunk],
+	If[MemberQ[$FEResourceGroups,resourceChunk],
 		FEResourceFind[resourceChunk,"*"],
-		FEResourceFind[$FEResourceList,resourceChunk]
+		FEResourceFind[$FEResourceGroups,resourceChunk]
 		];
 
 
 FEResourceGroup[g_]:=
-	Replace[Select[$FEResourceList,MemberQ[First/@FrontEndResource[#],g]&],
-		{}:>Select[$FEResourceRuleListing,MemberQ[First/@FrontEndResource[#],g]&]
+	Replace[
+		Select[$FEResourceGroups, MemberQ[First/@FrontEndResource[#], g]&],
+		{}:>Select[$FEResourceRuleListing, MemberQ[First/@FrontEndResource[#],g]&]
 		];
 
 
 FEFormatResource//Clear;
+FEFormatResource[s_String]:=s;
 FEFormatResource[r_Function]:=Mouseover["Function",r];
 FEFormatResource[r:Except[_String]?BoxQ]:=
 	RawBoxes@r;
@@ -938,44 +966,78 @@ FEFormatResource[f_String?FileExistsQ]:=
 FEFormatResource[FEImport[f_]]:=
 	f;
 FEFormatResource[n_->r_]:=n->FEFormatResource[r];
-FEFormatResource[e:Except[_List]]:=
+FEFormatResource[e:Except[_List|_String]]:=
 	Quiet@
-		Replace[ToExpression@e,
+		Replace[
+			ToExpression@e,
 			$Failed:>
-				Check[FEFormatResource@FEImport[e],e]];
+				Check[FEFormatResource@FEImport[e],e]
+			];
 FEFormatResource~SetAttributes~Listable
 
 
-Options[FEResourceBrowse]={
-	Format->Automatic
-	};
+Options[FEResourceBrowse]=
+	{
+		Format->Automatic,
+		"ReturnGroup"->False
+		};
 FEResourceBrowse[
-	rList:Except[_Rule|_RuleDelayed]:None,
-	pat:Except[_Rule|_RuleDelayed],
+	rList:_?StringPattern`StringPatternQ|All|None|Automatic:None,
+	pat:_?StringPattern`StringPatternQ,
 	ops:OptionsPattern[]]:=
-	With[{formatFunction=
-		Replace[OptionValue[Format],{
-			Automatic:>
-				(Replace[FEFormatResource@#,$Failed:>#]&),
-			None->Identity
-			}]},
-		PaneColumn[
-			Table[
-				With[{r=r},
-					Button[
-						Tooltip[formatFunction@Last@r,First@r],
-						Print@(First@r->formatFunction@Last@r),
-						Appearance->"Frameless"
+	With[
+		{
+			formatFunction=
+				Replace[
+					OptionValue[Format],
+					{
+						Automatic:>
+							(Replace[FEFormatResource@#, $Failed:>#]&),
+						None->Identity
+						}
+					],
+			resRaw=
+				If[rList=!=None,
+					FEResourceFind[rList, pat],
+					FEResourceFind[pat]
+					],
+			retG=TrueQ@OptionValue["ReturnGroup"]
+			},
+		With[
+			{
+				res=
+					If[retG,
+						Thread[
+							Thread[{FEResourceGroup/@resRaw[[All, 1]], resRaw[[All, 1]]}]->
+							resRaw[[All, 2]]
+							],
+						resRaw
+						]
+				},
+			Interpretation[
+				PaneColumn[
+					Table[
+						With[{r=r},
+							Interpretation[
+								Button[
+									Tooltip[formatFunction@Last@r, First@r],
+									Print@(First@r->formatFunction@Last@r),
+									Appearance->"Frameless"
+									],
+								First@r
+								]
+							],
+						{r, res}
 						]
 					],
-				{r,
-					If[rList=!=None,
-						FEResourceFind[rList,pat],
-						FEResourceFind[pat]
-						]}
-				]]
+				res[[All, 1]]
+				]
+			]
 		];
-FEResourceBrowse[s:Except[_Rule|_RuleDelayed],ops:OptionsPattern[]]:=
+FEResourceBrowse[
+	s:Except[_Rule|_RuleDelayed],
+	ops:OptionsPattern[]
+	]:=
 	FEResourceBrowse[None,s,ops];
 
 

@@ -257,32 +257,42 @@ Options@DocFind=
 
 With[{
 	callablePattern=(
-	Except[None|_List|_String|_Rule|
+	Except[
+		None|_List|_String|_Rule|
 		_Alternatives|_StringExpression|Automatic|
-		_?(NumericQ)|_?(BooleanQ)]
+		_?(NumericQ)|_?(BooleanQ)|_?StringPattern`StringPatternQ|
+		_?AtomQ
+		]
 		)
 	},
 DocFind[
-	name:(_String|_StringExpression|_Alternatives|_Verbatim):"*",
-	cont:(_String|_Alternatives|_StringExpression|Automatic):Automatic,
+	name:_?StringPattern`StringPatternQ:"*",
+	cont:(_?StringPattern`StringPatternQ|Automatic):Automatic,
 	sortBySorting:None|callablePattern:None,
 	ops:OptionsPattern[]
 	]:=
 	Module[{searchName,names,selectBy},
 		searchName=
 			StringExpression@@{
-				Replace[#context,Except[_String]->""],
-				Replace[#context,
+				#context,
+				Replace[
+					#context,
 					{
-						Except[_String]|_?(StringMatchQ[""|Whitespace])->"",
+						_String?(StringMatchQ[""|Whitespace])->"",
 						_->"`"
-					}],
-				If[
-					#autocomp,"*",""],
-					#name,
-					If[#autocomp,"*",""]
+						}
+					],
+				If[#autocomp,"*",""],
+				#name,
+				If[#autocomp,"*",""]
 				}&@<|
-						"context"->Replace[cont,Automatic->OptionValue@Context],
+						"context"->
+							Replace[Except[_?StringPattern`StringPatternQ]->""]@
+							Replace[cont, 
+								{
+									Automatic->OptionValue@Context
+									}
+								],
 						"name"->Replace[name,Verbatim[Verbatim][s_]:>s],
 						"autocomp"->
 							Replace[name,{_Verbatim->False,_:>TrueQ[OptionValue@Autocomplete]}]
@@ -424,6 +434,26 @@ DocFind[
 				]
 			]
 		];
+
+
+PackageAddAutocompletions[
+	"DocFind",
+	{
+		None,
+		{
+			"System",
+			"Internal",
+			"FrontEnd",
+			"FEPrivate",
+			"PacletManager",
+			"MathLink",
+			"GeneralUtilities",
+			"TypeSystem",
+			"Dataset",
+			"Documentation"
+			}
+		}
+	]
 
 
 Options@OpsFind:=

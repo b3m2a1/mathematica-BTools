@@ -945,11 +945,16 @@ KeyChainAdd[
 						WindowTitle->s,
 						FieldMasked->False
 						]
-				}];
+					}
+			];
 
 
 KeyChainRemove[site_->username:Except[None]]:=
 	$KeyChain[{site,username}]=.;
+
+
+$KeyChainGetAccountKeys=
+	{"AccountData", "WolframCloud"};
 
 
 KeyChainGet[site_String,lookup:True|False:False]:=
@@ -960,24 +965,60 @@ KeyChainGet[site_String,lookup:True|False:False]:=
 		FirstCase[#,_String?(StringLength@#>0&)]
 		]&@
 		$KeyChain[{site,Key@{site,""}}];
-KeyChainGet[
-	{site_String,username_String},
-	lookup:True|False:False]:=
-	If[lookup,
-		FirstCase[#,Except[$keyChainFailureForms],
-			KeyChainAdd[site->username]
-			],
-		FirstCase[#,Except[$keyChainFailureForms]]
-		]&@$KeyChain[{Key@{site,username}}];
-KeyChainGet[
-	site_->{None,key_},
+iKeyChainGet[
+	{
+		site_String, 
+		username_String,
+		subparts___String
+		},
 	lookup:True|False:False
 	]:=
-	Replace[
-		KeyChainGet[{site,key}],
-		e:$keyChainFailureForms:>
-			If[lookup,KeyChainAdd[site->{None,key}],e]
-		]
+	If[lookup,
+		FirstCase[#,Except[$keyChainFailureForms],
+			KeyChainAdd[site->StringJoin[username, subparts]]
+			],
+		FirstCase[#,Except[$keyChainFailureForms]]
+		]&@$KeyChain[{Key@{site,StringJoin[username, subparts]}}];
+KeyChainGet[
+	{
+		site:Except[Alternatives@@Append[$KeyChainGetAccountKeys, ""], _String], 
+		username_String,
+		subparts___String
+		},
+	lookup:True|False:False
+	]:=
+	iKeyChainGet[{site, username, subparts}, lookup];
+KeyChainGet[
+	site_->{None, username_String, subparts___String},
+	lookup:True|False:False
+	]:=
+	With[{key=StringJoin[username, subparts]},
+		Replace[
+			iKeyChainGet[{site,key}],
+			e:$keyChainFailureForms:>
+				If[lookup, KeyChainAdd[site->{None,key}], e]
+			]
+		];
+KeyChainGet[
+	{
+		site:Alternatives@@$KeyChainGetAccountKeys, 
+		username_String,
+		subparts___String
+		},
+	lookup:True|False:False
+	]:=
+	KeyChainGet[
+
+
+PackageAddAutocompletions[
+	"KeyChainGet",
+	{
+		Map[
+			ToString[{"\""<>#<>"\"", "accountName"}]&,
+			$KeyChainGetAccountKeys
+			]
+		}
+	]
 
 
 $KeyChainCloudAccounts=
@@ -1007,7 +1048,7 @@ KeyChainConnect[
 	With[
 		{
 			user=
-				Replace[acct,Key[a_]:>KeyChainGet["WolframCloud"->{None,a},True]],
+				Replace[acct,Key[a_]:>KeyChainGet[{"WolframCloud", a},True]],
 			base=
 				Replace[OptionValue[CloudBase],Automatic:>$CloudBase]
 			},
@@ -1025,7 +1066,7 @@ KeyChainConnect[
 	]:=
 	With[{
 		user=
-			Replace[acct,Key[a_]:>KeyChainGet["WolframCloud"->{None,a},True]],
+			Replace[acct,Key[a_]:>KeyChainGet[{"WolframCloud", a}, True]],
 		base=Replace[OptionValue[CloudBase],Automatic:>$CloudBase]
 		},
 		If[$WolframID=!=user||$CloudBase=!=base,

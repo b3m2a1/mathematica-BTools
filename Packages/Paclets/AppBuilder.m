@@ -36,15 +36,16 @@
 $AppDirectory::usage="Joins the root and name";
 AppPath::usage=
 	"A path parser for a given app name";
-AppDirectory::usage=
-	"Used by AppPath find appropriate directories";
-(*PackageScopeBlock[*)
-	AppNames::usage="Finds the names of apps matching a pattern";
-	AppPackage::usage="A function to find a package by name";
-	AppPackages::usage=
-		"Finds the packages in a given app";
-	AppStylesheet::usage="A function to find a stylesheet by name";
-(*	]*)
+PackageFEHiddenBlock[
+	AppDirectory::usage=
+		"Used by AppPath find appropriate directories"
+	];
+AppNames::usage="Finds the names of apps matching a pattern";
+AppFileNames::usage="FileNames on an app";
+AppPackage::usage="A function to find a package by name";
+AppPackages::usage=
+	"Finds the packages in a given app";
+AppStylesheet::usage="A function to find a stylesheet by name";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -281,7 +282,7 @@ Begin["`Private`"];
 
 
 (* ::Subsection:: *)
-(*Builder*)
+(*Find*)
 
 
 
@@ -290,13 +291,30 @@ Begin["`Private`"];
 
 
 
-If[!ValueQ[$AppDirectoryRoot],
+If[Length@OwnValues[$AppDirectoryRoot]==0,
 	$AppDirectoryRoot=$UserBaseDirectory;
-	$AppDirectoryName="Applications";
+	];
+If[Length@OwnValues[$AppDirectoryName]==0,
+	$AppDirectoryName="Applications"
+	];
+If[Length@OwnValues[$AppDirectory]==0,
 	$AppDirectory:=
-		FileNameJoin@{$AppDirectoryRoot, $AppDirectoryName};
-	$AppUploadDefault=
-		"Cloud";
+		FileNameJoin@{$AppDirectoryRoot, $AppDirectoryName}
+	];
+If[Length@OwnValues[$AppDirectories]==0,
+	$AppDirectories:=
+		Prepend[
+			Join[
+				PacletManager`Package`$extraPacletDirs,
+				$Path
+				],
+			$AppDirectory
+			]
+	];
+If[Length@OwnValues[$AppUploadDefault]==0,
+	$AppUploadDefault="Cloud"
+	];
+If[Length@OwnValues[$AppBackupDefault]==0,
 	$AppBackupDefault=
 		Which[
 			DirectoryQ@FileNameJoin@{$HomeDirectory, "Google Drive"},
@@ -307,15 +325,275 @@ If[!ValueQ[$AppDirectoryRoot],
 				"OneDrive",
 			_,
 				"Cloud"
-			];
+			]
+	];
+If[$AppBuilderConfigLoaded=!=True,
 	Replace[
 		SelectFirst[
 			PackageFilePath["Private", "Config", "AppBuilderConfig."<>#]&/@{"m","wl"},
 			FileExistsQ
 			],
 			f_String:>Get@f
-		]
+		];
+	$AppBuilderConfigLoaded=True
 	];
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppNames*)
+
+
+
+AppNames[
+	pat:_?StringPattern`StringPatternQ:WordCharacter..,
+	baseName:True|False:True
+	]:=
+	DeleteDuplicates@
+	If[baseName, Map[FileBaseName], Identity]@
+		Select[FileExistsQ@FileNameJoin[{#, "PacletInfo.m"}]&]@
+			DeleteDuplicates@
+				Join[
+					FileNames[pat, $AppDirectory],
+					FileNames[pat, $AppDirectories]
+					];
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppFileNames*)
+
+
+
+Options[AppFileNames]=
+	Join[
+		Options[FileNames],
+		{
+			"DropDirectory"->True,
+			Select->Automatic
+			}
+		];
+AppFileNames[
+	app:_String|Automatic,
+	p___String,
+	pat:_?StringPattern`StringPatternQ:"*",
+	depth:_Integer?Positive|Infinity:1,
+	ops:OptionsPattern[]
+	]:=
+	With[{d=AppPath[app, p], sel=OptionValue[Select]},
+		If[TrueQ@OptionValue["DropDirectory"],
+			Map[FileNameDrop[#, FileNameDepth[d]]&],
+			Identity
+			]@
+			If[sel=!=Automatic, 
+				Select[TrueQ@sel[#]&], 
+				Identity
+				]@
+			FileNames[pat, d, depth,
+				FilterRules[{ops}, Options@FileNames]
+				]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppComponentFiles*)
+
+
+
+Options[AppComponentFiles]=
+	Join[
+		{
+			"DropExtension"->True
+			},
+		Options[AppFileNames]
+		];
+AppComponentFiles[
+	app:_String|Automatic,
+	path___String,
+	ext_?StringPattern`StringPatternQ,
+	o:OptionsPattern[]
+	]:=
+	If[TrueQ@OptionValue["DropExtension"],
+		StringTrim[#, "."~~ext],
+		#
+		]&@
+	AppFileNames[
+		app,
+		path,
+		__~~"."~~ext,
+		Infinity,
+		IgnoreCase->True
+		]	
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppContexts*)
+
+
+
+AppContexts[
+	app:_String?(MemberQ[FileBaseName/@AppNames["*", False],#]&)|Automatic:Automatic
+	]:=
+	StringReplace[
+		AppFileNames[app, 
+			"Packages", 
+			WordCharacter..,
+			Infinity,
+			"DropDirectory"->True,
+			Select->DirectoryQ
+			],
+		$PathnameSeparator->"`"
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppPackages*)
+
+
+
+Options[AppPackages]=
+	Options[AppComponentFiles]
+AppPackages[
+	app:_String|Automatic
+	]:=
+	AppComponentFiles[app, "Packages", "m"|"wl"]
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppStyleSheets*)
+
+
+
+Options[AppStyleSheets]=
+	Options[AppComponentFiles]
+AppStyleSheets[
+	app:_String|Automatic
+	]:=
+	AppComponentFiles[app, "StyleSheets", "nb"]
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppPalettes*)
+
+
+
+Options[AppPalettes]=
+	Options[AppComponentFiles]
+AppPalettes[
+	app:_String|Automatic
+	]:=
+	AppComponentFiles[app, "Palettes", "nb"]
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppSymbolPages*)
+
+
+
+Options[AppSymbolPages]=
+	Options[AppComponentFiles]
+AppSymbolPages[
+	app:_String|Automatic
+	]:=
+	AppComponentFiles[app, "Symbols", "nb"]
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppGuides*)
+
+
+
+Options[AppGuides]=
+	Options[AppComponentFiles]
+AppGuides[
+	app:_String|Automatic
+	]:=
+	AppComponentFiles[app, "Guides", "nb"]
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppTutorials*)
+
+
+
+Options[AppTutorials]=
+	Options[AppComponentFiles]
+AppTutorials[
+	app:_String|Automatic
+	]:=
+	AppComponentFiles[app, "Tutorials", "nb"]
+
+
+(* ::Subsection:: *)
+(*Builder*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppPathFormat*)
+
+
+
+$AppPathMap=
+	{
+			"Packages"->{"Packages"},
+			"Resources"->{"Resources"},
+			"Palettes"->{"FrontEnd","Palettes"},
+			"StyleSheets"->{"FrontEnd","StyleSheets"},
+			"TextResources"->{"FrontEnd","TextResources"},
+			"SystemResources"->{"FrontEnd","SystemResources"},
+			"Guides"->{"Documentation","English","Guides"},
+			"ReferencePages"->{"Documentation","English","ReferencePages"},
+			"Symbols"->{"Documentation", "English","ReferencePages","Symbols"},
+			"Tutorials"->{"Documentation", "English","Tutorials"},
+			"Objects"->{"Resources", "Objects"},
+			"Private"->{"Private"}
+			};
+
+
+AppPathFormat[pspec_]:=
+	Replace[
+		Flatten[{pspec}, 1],
+		$AppPathMap,
+		1]
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppLocate*)
+
+
+
+AppLocate[app_]:=
+	Replace[
+		AppNames[app, False], 
+		{
+			{
+				f_,
+				___
+				}:>f,
+			_->$Failed
+			}
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppDirectory*)
+
+
+
+AppDirectory[app_, extensions___]:=
+	FileNameJoin@
+		Flatten@
+			{
+				Replace[
+					AppLocate[app],
+					$Failed:>
+						{
+							$AppDirectoryRoot,
+							$AppDirectoryName,
+							app
+							}
+					],
+				AppPathFormat@{extensions}
+				};
 
 
 (* ::Subsubsection::Closed:: *)
@@ -342,38 +620,6 @@ AppPath[format:True|False:False, app:_String|Automatic, e___]:=
 		];
 
 
-AppPathFormat[pspec_]:=
-	Replace[
-		Flatten[{pspec}, 1],
-		{
-			"Palettes"->{"FrontEnd","Palettes"},
-			"StyleSheets"->{"FrontEnd","StyleSheets"},
-			"TextResources"->{"FrontEnd","TextResources"},
-			"SystemResources"->{"FrontEnd","SystemResources"},
-			"Guides"->{"Documentation","English","Guides"},
-			"ReferencePages"->{"Documentation","English","ReferencePages"},
-			"Symbols"->{"Documentation","English","ReferencePages","Symbols"},
-			"Tutorials"->{"Documentation","English","Tutorials"},
-			"Objects"->{"Objects"},
-			"Private"->{"Private"}
-			},
-		1]
-
-
-(* ::Subsubsection::Closed:: *)
-(*AppDirectory*)
-
-
-
-AppDirectory[app_,extensions___]:=
-	FileNameJoin@
-		Flatten@{
-			$AppDirectoryRoot,$AppDirectoryName,
-			app,
-			AppPathFormat@{extensions}
-			};
-
-
 AppPackage[app_:Automatic,pkg_String]:=
 	Replace[
 		AppPath[AppFromFile[app],"Packages",pkg],{
@@ -386,10 +632,6 @@ AppPackage[app_:Automatic,pkg_String]:=
 						],
 					Missing["NotFound"]]
 			}]
-
-
-AppStylesheet[app_:Automatic,stylesheet_String]:=
-	AppDirectory[AppFromFile[app],"StyleSheets",stylesheet<>".nb"]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1215,120 +1457,6 @@ AppReconfigureSubapp[
 			];
 		appDir
 		]
-
-
-(* ::Subsection:: *)
-(*Find*)
-
-
-
-(* ::Subsubsection::Closed:: *)
-(*AppNames*)
-
-
-
-AppNames[pat_:"*"]:=
-	FileNames[pat,$AppDirectory];
-
-
-(* ::Subsubsection::Closed:: *)
-(*AppPackages*)
-
-
-
-AppPackages[
-	app:_String?(MemberQ[FileBaseName/@AppNames[],#]&)|Automatic:Automatic
-	]:=
-	FileNames["*.m"|"*.wl",
-		AppDirectory[AppFromFile@app,"Packages"]
-		];
-
-
-(* ::Subsubsection::Closed:: *)
-(*AppStyleSheets*)
-
-
-
-AppStyleSheets[
-	appName:_String?(MemberQ[FileBaseName/@AppNames[],#]&)|Automatic:Automatic
-	]:=
-	With[{app=AppFromFile@appName},
-		Join[
-			FileNames["*.nb",
-				AppDirectory[app,"StyleSheets"]
-				],
-			FileNames["*.nb",
-				AppDirectory[app,
-					"StyleSheets",app]
-				]
-			]
-		];
-
-
-(* ::Subsubsection::Closed:: *)
-(*AppPalettes*)
-
-
-
-AppPalettes[
-	appName:_String?(MemberQ[FileBaseName/@AppNames[],#]&)|Automatic:Automatic
-	]:=
-	With[{app=AppFromFile@appName},
-		Join[
-			FileNames["*.nb",
-				AppDirectory[app,"Palettes"]
-				],
-			FileNames["*.nb",
-				AppDirectory[app,
-					"Palettes",app]
-				]
-			]
-		];
-
-
-(* ::Subsubsection::Closed:: *)
-(*AppSymbolPages*)
-
-
-
-AppSymbolPages[
-	appName:_String?(MemberQ[FileBaseName/@AppNames[],#]&)|Automatic:Automatic
-	]:=
-	With[{app=AppFromFile@appName},
-		FileNames["*.nb",
-			AppDirectory[app,"Symbols"]
-			]
-		];
-
-
-(* ::Subsubsection::Closed:: *)
-(*AppGuides*)
-
-
-
-AppGuides[
-	appName:_String?(MemberQ[FileBaseName/@AppNames[],#]&)|Automatic:Automatic
-	]:=
-	With[{app=AppFromFile@appName},
-		FileNames["*.nb",
-			AppDirectory[app,"Guides"]
-			]
-		];
-
-
-(* ::Subsubsection::Closed:: *)
-(*AppTutorials*)
-
-
-
-AppTutorials[
-	appName:_String?(MemberQ[FileBaseName/@AppNames[],#]&)|Automatic:Automatic
-	]:=
-	With[{app=AppFromFile@appName},
-		FileNames["*.nb",
-			AppDirectory[app,"Tutorials"]
-			]
-		];
 
 
 (* ::Subsection:: *)
@@ -2609,7 +2737,7 @@ AppGitCommit[
 			With[{d=AppDirectory[app]},
 				If[add,GitAdd[d,"-A"]];
 				GitCommit[d,
-					Message->
+					"Message"->
 						Replace[message,
 							Automatic:>
 								TemplateApply[
@@ -2914,7 +3042,7 @@ AppFromFile[f_String]:=
 		},
 		Replace[
 			SelectFirst[Range[Length@splitPath,1,-1],
-				FileExistsQ@FileNameJoin@Append[Take[splitPath,#],"PacletInfo.m"]&,
+				FileExistsQ@FileNameJoin@Append[Take[splitPath,#], "PacletInfo.m"]&,
 				Which[
 					StringMatchQ[ExpandFileName@f,$AppDirectory~~__],
 						FileNameTake[
@@ -2923,7 +3051,7 @@ AppFromFile[f_String]:=
 							],
 					StringMatchQ[f,"http*"~~"/"~~WordCharacter..],
 						URLParse[f]["Path"]//Last,
-					MemberQ[FileNameTake/@AppNames[], f],
+					MemberQ[FileNameTake/@AppNames["*", False], f],
 						f,
 					Length@PacletManager`PacletFind[f]>0,	
 						PacletManager`PacletFind[f][[1]]["Location"]//FileBaseName,
@@ -3076,7 +3204,7 @@ AppPackageFunctions[app:_String|Automatic:Automatic,pkgFile_String?FileExistsQ]:
 		];
 AppPackageFunctions[
 	app:
-		_String?(MemberQ[FileBaseName/@AppNames[],#]&)|
+		_String?(MemberQ[FileBaseName/@AppNames["*", False],#]&)|
 		Automatic:Automatic,
 	path_String]/;
 		MemberQ[FileBaseName/@AppPackages[app],path]:=
@@ -3090,7 +3218,7 @@ AppPackageFunctions[app_:Automatic,paths:{__String}]:=
 		];
 AppPackageFunctions[
 	app:
-		_String?(MemberQ[FileBaseName/@AppNames[],#]&)|
+		_String?(MemberQ[FileBaseName/@AppNames["*", False],#]&)|
 		Automatic:Automatic]:=
 	AppPackageFunctions[app,
 		FileBaseName/@FileNames["*.m",
@@ -4284,6 +4412,84 @@ AppPacletServerPage[app:Except[_?OptionQ],ops:OptionsPattern[]]:=
 				],
 		ops
 		];
+
+
+(* ::Subsection:: *)
+(*FE Stuff*)
+
+
+
+$AppNamesCurrent=
+	AppNames["*", True];
+
+
+PackageAddAutocompletions@
+	Map[
+		#->
+			{
+				$AppNamesCurrent,
+				Keys@$AppPathMap
+				}&,
+		{
+			"AppPath"(*,
+			"AppDirectory"*)
+			}
+		]
+
+
+PackageAddAutocompletions@
+	Map[
+		#->
+		{
+			$AppNamesCurrent
+			}&,
+		{
+			"AppGet","AppNeeds",
+			"AppBackup","AppBundle",
+			"AppPaclet","AppUpload",
+			"AppBackups","AppGitInit",
+			"AppInstall","AppPackage",
+			"AppFileNames",
+			"AppPublish","AppRestore",
+			"AppDownload","AppFromFile",
+			"AppGitClone","AppPackages",
+			"AppConfigure","AppDeployCSS",
+			"AppGitCommit",
+			"AppIndexDocs","AppSaveGuide",
+			"AppAddContent","AppAddDocPage",
+			"AppAddPackage","AppAddPalette",
+			"AppDeployHTML","AppGitHubPull",
+			"AppGitHubPush","AppGitHubRepo",
+			"AppPacletInfo","AppStylesheet",
+			"$AppDirectory","AppPackageOpen",
+			"AppAddGuidePage","AppDeployImages",
+			"AppDeployReadme","AppGitHubDelete",
+			"AppPacletBackup","AppPacletBundle",
+			"AppPacletUpload","AppAddStylesheet",
+			"AppGitSafeCommit","AppGuideNotebook",
+			"AppPacletSiteURL","AppPacletSiteInfo",
+			"AppRegenerateInit","AppSymbolNotebook",
+			"$AppDirectoryName","$AppDirectoryRoot",
+			"AppAddTutorialPage","AppConfigureSubapp",
+			"AppGitHubConfigure","AppGitHubSetRemote",
+			"AppSaveSymbolPages","AppSubpacletUpload",
+			"$AppCloudExtension","AppPackageFunctions",
+			"AppPackageSaveGuide","AppPacletServerPage",
+			"AppPacletSiteBundle","AppRegenerateReadme",
+			"AppTutorialNotebook","AppGitRealignRemotes",
+			"AppReconfigureSubapp","AppRegenerateDocInfo",
+			"AppPacletDirectoryAdd","AppPacletInstallerURL",
+			"AppRegenerateLoadInfo","AppPackageDependencies",
+			"AppRegenerateGitIgnore","AppFunctionDependencies",
+			"AppPackageGuideNotebook","AppPacletUninstallerURL",
+			"AppRegenerateBundleInfo","AppRegenerateGitExclude",
+			"AppRegeneratePacletInfo","AppRegenerateUploadInfo",
+			"AppDocumentationTemplate","AppGenerateDocumentation",
+			"AppPackageSymbolNotebook","AppRegenerateDirectories",
+			"AppPackageSaveSymbolPages","AppGenerateTestingNotebook",
+			"AppGenerateHTMLDocumentation","AppPackageGenerateDocumentation"
+			}
+		]	
 
 
 End[];

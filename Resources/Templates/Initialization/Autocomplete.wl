@@ -65,11 +65,11 @@ $PackageAutoCompletionFormats=
 PackageAddAutocompletions[pats:{(_String->{$PackageAutoCompletionFormats..})..}]:=
 	If[$Notebooks&&
 		Internal`CachedSystemInformation["FrontEnd","VersionNumber"]>10.0,
-		Scan[
-			FE`Evaluate[FEPrivate`AddSpecialArgCompletion[#]]&,
-			pats
-			];
-		pats,
+		FrontEndExecute@FrontEnd`Value@
+			Map[
+				FEPrivate`AddSpecialArgCompletion[#]&,
+				pats
+				],
 		$Failed
 		];
 PackageAddAutocompletions[pat:(_String->{$PackageAutoCompletionFormats..})]:=

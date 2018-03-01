@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     55947,       1145]
-NotebookOptionsPosition[     54525,       1112]
-NotebookOutlinePosition[     55196,       1136]
-CellTagsIndexPosition[     55153,       1133]
+NotebookDataLength[     76194,       1559]
+NotebookOptionsPosition[     74771,       1526]
+NotebookOutlinePosition[     75442,       1550]
+CellTagsIndexPosition[     75399,       1547]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -42,34 +42,32 @@ Cell[StyleData["Notebook"],
  InitializationCellEvaluation->False,
  InitializationCellWarning->False,
  NotebookEventActions:>{{"MenuCommand", "Save"} :> 
-   With[{$CellContext`mact = 
+   With[{BTools`Paclets`mact = 
       CurrentValue[$FrontEndSession, {
         MessageOptions, "KernelMessageAction"}]}, 
      CheckAbort[
      CurrentValue[$FrontEndSession, {MessageOptions, "KernelMessageAction"}] = 
-       "PrintToConsole"; NotebookSave[
-        EvaluationNotebook[]]; 
-      With[{$CellContext`ev = EvaluationNotebook[]}, Needs["BTools`"]; 
+       "PrintToConsole"; 
+      With[{BTools`Paclets`ev = EvaluationNotebook[]}, Needs["BTools`"]; 
         MessageDialog[
           DynamicModule[{}, 1, Initialization :> (NotebookClose[
-              EvaluationNotebook[]]; 
-            BTools`PelicanNotebookSave[$CellContext`ev]), 
+              EvaluationNotebook[]]; SelectFirst[
+              ToExpression[
+               Names["*`*`PelicanNotebookSave"]], Length[
+                Join[
+                 DownValues[#], 
+                 OwnValues[#]]] > 0& ][BTools`Paclets`ev]), 
            SynchronousInitialization -> False], Visible -> False]]; 
-      CurrentValue[$FrontEndSession, {
-         MessageOptions, "KernelMessageAction"}] = $CellContext`mact, 
-      CurrentValue[$FrontEndSession, {
-        MessageOptions, "KernelMessageAction"}] = $CellContext`mact]]},
+      CurrentValue[$FrontEndSession, {MessageOptions, "KernelMessageAction"}] = 
+       BTools`Paclets`mact, 
+      CurrentValue[$FrontEndSession, {MessageOptions, "KernelMessageAction"}] = 
+      BTools`Paclets`mact]], EvaluationOrder -> After, PassEventsDown -> True},
  DockedCells->Cell[
    BoxData[
     TagBox[
      GridBox[{{
         ButtonBox[
-         InterpretationBox[
-          StyleBox[
-           
-           GraphicsBox[{}, ImageSize -> {25, 0}, BaselinePosition -> 
-            Baseline], "CacheGraphics" -> False], 
-          Spacer[25], Selectable -> False], ButtonFunction :> Null, 
+         TemplateBox[{25}, "Spacer1"], ButtonFunction :> Null, 
          Appearance -> {"Default" -> Image[CompressedData["
 1:eJzN1DELgkAYxvGjGoKW9qa+RWtjq9EHUDJpMdAg+ih+NFEUFUUUEUXn65Zn
 kIgnmnrhd3DHf7rh3Ro37TITQrhLdWj6Y+84+vO4VpeT7V4t2zwf7Ltpmc7O
@@ -96,7 +94,14 @@ xg2CGKb29u3bBDFM7Z07dwhiMtQyEKmWYbConTlz5n9CmEB5g1H+AACpMiOr
          FrameMargins -> {{10, 10}, {0, 0}}, ImageSize -> {Automatic, 40}, 
          Enabled -> False, Evaluator -> Automatic, Method -> "Preemptive"], 
         ButtonBox[
-        "\"Save Markdown\"", ButtonFunction :> BTools`PelicanNotebookSave[], 
+        "\"Save Markdown\"", 
+         ButtonFunction :> (Needs["BTools`"]; SelectFirst[
+            ToExpression[
+             Names["*`PelicanNotebookSave"]], Length[
+              Join[
+               DownValues[#], 
+               OwnValues[#]]] > 0& ][
+            EvaluationNotebook[]]), 
          Appearance -> {"Default" -> Image[CompressedData["
 1:eJzN1LEKglAYhuFDNTQ0tDd1F62NrUYXoGTRYqBBdClemiiKiiKKiKKznQbh
 c+mrpn54DpzDO53hX2tX5TQRQlhzeSjqfWua6mO/lJeDYV3Ohn7cGTf9rJsb
@@ -151,9 +156,19 @@ yOpv3LhBECOrv337NkGMrP7OnTsEMZnqGUhQzzBY1RODiSzbUMo4AAT5aWY=
          FrameMargins -> {{10, 10}, {0, 0}}, ImageSize -> {Automatic, 40}, 
          Evaluator -> Automatic, Method -> "Preemptive"], 
         ButtonBox[
-        "\"Open Root\"", ButtonFunction :> (BTools`PelicanBuild; SystemOpen[
-            BTools`Private`PelicanSiteBase[
-             NotebookDirectory[]]]), 
+        "\"Open Root\"", ButtonFunction :> (Needs["BTools`"]; SelectFirst[
+            ToExpression[
+             Names["*`PelicanBuild"]], Length[
+              Join[
+               DownValues[#], 
+               OwnValues[#]]] > 0& ]; SystemOpen[
+            SelectFirst[
+             ToExpression[
+              Names["*`*`PelicanSiteBase"]], Length[
+               Join[
+                DownValues[#], 
+                OwnValues[#]]] > 0& ][
+             NotebookDirectory[]]]; Null), 
          Appearance -> {"Default" -> Image[CompressedData["
 1:eJzN1LEKglAYhuFDNTQ0tDd1F62NrUYXoGTRYqBBdClemiiKiiKKiKKznQbh
 c+mrpn54DpzDO53hX2tX5TQRQlhzeSjqfWua6mO/lJeDYV3Ohn7cGTf9rJsb
@@ -180,12 +195,7 @@ yOpv3LhBECOrv337NkGMrP7OnTsEMZnqGUhQzzBY1RODiSzbUMo4AAT5aWY=
          FrameMargins -> {{10, 10}, {0, 0}}, ImageSize -> {Automatic, 40}, 
          Evaluator -> Automatic, Method -> "Preemptive"], 
         ButtonBox[
-         InterpretationBox[
-          StyleBox[
-           
-           GraphicsBox[{}, ImageSize -> {15, 0}, BaselinePosition -> 
-            Baseline], "CacheGraphics" -> False], 
-          Spacer[15], Selectable -> False], ButtonFunction :> Null, 
+         TemplateBox[{15}, "Spacer1"], ButtonFunction :> Null, 
          Appearance -> {"Default" -> Image[CompressedData["
 1:eJzN1LEKglAYhuFDNTQ0tDd1F62NrUYXoGTRYqBBdClemiiKiiKKiKKznQbh
 c+mrpn54DpzDO53hX2tX5TQRQlhzeSjqfWua6mO/lJeDYV3Ohn7cGTf9rJsb
@@ -212,40 +222,50 @@ yOpv3LhBECOrv337NkGMrP7OnTsEMZnqGUhQzzBY1RODiSzbUMo4AAT5aWY=
          FrameMargins -> {{10, 10}, {0, 0}}, ImageSize -> {Automatic, 40}, 
          Enabled -> False, Evaluator -> Automatic, Method -> "Preemptive"], 
         TagBox[
-         ButtonBox["\"Build Pages\"", ButtonFunction :> (CheckAbort[
+         ButtonBox["\"Build Pages\"", ButtonFunction :> (CheckAll[
              
-             With[{$CellContext`mact = 
+             With[{BTools`Paclets`mact = 
                CurrentValue[$FrontEndSession, {
                  MessageOptions, "KernelMessageAction"}]}, 
               CheckAbort[
               CurrentValue[$FrontEndSession, {
                   MessageOptions, "KernelMessageAction"}] = "PrintToConsole"; 
-               Needs["BTools`"]; (If[StringLength[
-                   StringJoin[
+               Needs["BTools`"]; 
+               With[{PelicanHelperPalette`Private`pb = SelectFirst[
+                    ToExpression[
+                    Names["*`PelicanBuild"]], Length[
+                    Join[
+                    DownValues[#], 
+                    OwnValues[#]]] > 0& ]}, 
+                 (If[StringLength[
+                    StringJoin[
                     Slot["StandardOutput"], 
                     Slot["StandardError"]]] > 0, 
-                 MessageName[BTools`PelicanBuild, "build"] = "``"; Message[
-                   MessageName[BTools`PelicanBuild, "build"], 
-                   StringTrim[
+                  MessageName[PelicanHelperPalette`Private`pb, "build"] = 
+                   "``"; Message[
+                    MessageName[PelicanHelperPalette`Private`pb, "build"], 
+                    StringTrim[
                     StringRiffle[
                     Values[#], "\n\n"]], "Message", "MSG"]]& )[
-                 BTools`PelicanBuild[
-                  Replace[
-                   FileNameSplit[
+                  PelicanHelperPalette`Private`pb[
+                   Replace[
+                    FileNameSplit[
                     NotebookDirectory[]], {
-                    Pattern[$CellContext`d, 
+                    Pattern[PelicanHelperPalette`Private`d, 
                     Shortest[
                     BlankNullSequence[]]], "content", 
-                    BlankNullSequence[]} :> FileNameJoin[{$CellContext`d}]]]]; 
+                    BlankNullSequence[]} :> 
+                    FileNameJoin[{PelicanHelperPalette`Private`d}]]]]]; 
                CurrentValue[$FrontEndSession, {
-                  MessageOptions, "KernelMessageAction"}] = $CellContext`mact,
-                CurrentValue[$FrontEndSession, {
-                 MessageOptions, 
-                  "KernelMessageAction"}] = $CellContext`mact]], 
-             BTools`Private`UUIDActive[
-              "Button-c2e88a69-9ceb-44fa-8d59-e436f80ccf4d"] = False]; 
-           BTools`Private`UUIDActive[
-             "Button-c2e88a69-9ceb-44fa-8d59-e436f80ccf4d"] = False), 
+                  MessageOptions, "KernelMessageAction"}] = 
+                BTools`Paclets`mact, 
+               CurrentValue[$FrontEndSession, {
+                 MessageOptions, "KernelMessageAction"}] = 
+               BTools`Paclets`mact]], 
+             BTools`FrontEnd`Private`UUIDActive[
+              "Button-4c25ecd3-bb55-4cb6-929c-08417863ca81"] = False]; 
+           BTools`FrontEnd`Private`UUIDActive[
+             "Button-4c25ecd3-bb55-4cb6-929c-08417863ca81"] = False), 
           Appearance -> {"Default" -> Image[CompressedData["
 1:eJzN1LEKglAYhuFDNTQ0tDd1F62NrUYXoGTRYqBBdClemiiKiiKKiKKznQbh
 c+mrpn54DpzDO53hX2tX5TQRQlhzeSjqfWua6mO/lJeDYV3Ohn7cGTf9rJsb
@@ -270,21 +290,25 @@ yOpv3LhBECOrv337NkGMrP7OnTsEMZnqGUhQzzBY1RODiSzbUMo4AAT5aWY=
             Dynamic[
              If[
               TrueQ[
-               BTools`Private`UUIDActive[
-               "Button-c2e88a69-9ceb-44fa-8d59-e436f80ccf4d"]], "Pressed", 
+               BTools`FrontEnd`Private`UUIDActive[
+               "Button-4c25ecd3-bb55-4cb6-929c-08417863ca81"]], "Pressed", 
               Automatic]]}, Method -> "Queued", 
           Appearance -> {"Palette", ImagePadding -> {{1, 0}, {1, 0}}, 
             Dynamic[
              If[
               TrueQ[
-               BTools`Private`UUIDActive[
-               "Button-c2e88a69-9ceb-44fa-8d59-e436f80ccf4d"]], "Pressed", 
+               BTools`FrontEnd`Private`UUIDActive[
+               "Button-4c25ecd3-bb55-4cb6-929c-08417863ca81"]], "Pressed", 
               Automatic]]}, FrameMargins -> {{10, 10}, {0, 0}}, 
           ImageSize -> {Automatic, 40}, Evaluator -> Automatic], 
-         EventHandlerTag[{
-          "MouseClicked" :> (
-            BTools`Private`UUIDActive[
-             "Button-c2e88a69-9ceb-44fa-8d59-e436f80ccf4d"] = True), 
+         EventHandlerTag[{"MouseClicked" :> If[
+             TrueQ[
+              Replace[
+               Replace[Automatic, Pattern[BTools`Private`Package`d, 
+                  Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
+               Automatic -> True]], 
+             BTools`FrontEnd`Private`UUIDActive[
+              "Button-4c25ecd3-bb55-4cb6-929c-08417863ca81"] = True], 
            PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
            True}]], 
         TemplateBox[{
@@ -292,11 +316,11 @@ yOpv3LhBECOrv337NkGMrP7OnTsEMZnqGUhQzzBY1RODiSzbUMo4AAT5aWY=
            ButtonBox[
            "\"Deploy\"", 
             ButtonFunction :> (
-             CheckAbort[
-              Null, BTools`Private`UUIDActive[
-                "ButtonRow-53af3f8e-a17a-415c-a9b6-b995c934b94d"] = False]; 
-             BTools`Private`UUIDActive[
-               "ButtonRow-53af3f8e-a17a-415c-a9b6-b995c934b94d"] = False), 
+             CheckAll[
+              Null, BTools`FrontEnd`Private`UUIDActive[
+                "ButtonRow-507bf1f2-ed05-48f1-a042-6ed34efd84b3"] = False]; 
+             BTools`FrontEnd`Private`UUIDActive[
+               "ButtonRow-507bf1f2-ed05-48f1-a042-6ed34efd84b3"] = False), 
             Appearance -> ("Default" -> Image[CompressedData["
 1:eJzN1LEKglAYhuFDNTQ0tDd1F62NrUYXoGTRYqBBdBleniiKiiKKiKKznQbh
 c+mrpn54DpzDO53hX2tX5TQRQlhzeSjqfWua6mO/lJeDYV3Ohn7cGTf9rJsb
@@ -311,41 +335,44 @@ aSjs27alsO+6jvqxF1/04l/7T3y420Y77gnqO7s4
               Dynamic[
                If[
                 TrueQ[
-                 BTools`Private`UUIDActive[
-                 "ButtonRow-53af3f8e-a17a-415c-a9b6-b995c934b94d"]], 
+                 BTools`FrontEnd`Private`UUIDActive[
+                 "ButtonRow-507bf1f2-ed05-48f1-a042-6ed34efd84b3"]], 
                 "Pressed", Automatic]]}, ImageSize -> {Automatic, 40}, 
             FrameMargins -> {{10, 10}, {0, 0}}, Method -> "Queued", 
             Appearance -> {"Palette", ImagePadding -> {{1, 0}, {1, 0}}, 
               Dynamic[
                If[
                 TrueQ[
-                 BTools`Private`UUIDActive[
-                 "ButtonRow-53af3f8e-a17a-415c-a9b6-b995c934b94d"]], 
+                 BTools`FrontEnd`Private`UUIDActive[
+                 "ButtonRow-507bf1f2-ed05-48f1-a042-6ed34efd84b3"]], 
                 "Pressed", Automatic]]}, FrameMargins -> {{10, 10}, {0, 0}}, 
             ImageSize -> {Automatic, 40}, Appearance -> {ActionMenu, 
               Dynamic[
                If[
                 TrueQ[
-                 BTools`Private`UUIDActive[
-                 "ButtonRow-53af3f8e-a17a-415c-a9b6-b995c934b94d"]], 
+                 BTools`FrontEnd`Private`UUIDActive[
+                 "ButtonRow-507bf1f2-ed05-48f1-a042-6ed34efd84b3"]], 
                 "Pressed", Automatic]]}, Alignment -> Automatic, Background -> 
             None, DefaultBaseStyle -> {}, Evaluator -> Automatic], 
-           
-           EventHandlerTag[{
-            "MouseClicked" :> (
-              BTools`Private`UUIDActive[
-               "ButtonRow-53af3f8e-a17a-415c-a9b6-b995c934b94d"] = True), 
+           EventHandlerTag[{"MouseClicked" :> If[
+               TrueQ[
+                Replace[
+                 Replace[Automatic, Pattern[BTools`Private`Package`d, 
+                    Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
+                 Automatic -> True]], 
+               BTools`FrontEnd`Private`UUIDActive[
+                "ButtonRow-507bf1f2-ed05-48f1-a042-6ed34efd84b3"] = True], 
              PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
              True}]], 
           ActionMenuBox[
            TagBox[
             ButtonBox[
             "\"\"", ButtonFunction :> (
-              CheckAbort[
-               Null, BTools`Private`UUIDActive[
-                 "ButtonRow-53af3f8e-a17a-415c-a9b6-b995c934b94d"] = False]; 
-              BTools`Private`UUIDActive[
-                "ButtonRow-53af3f8e-a17a-415c-a9b6-b995c934b94d"] = False), 
+              CheckAll[
+               Null, BTools`FrontEnd`Private`UUIDActive[
+                 "ButtonRow-507bf1f2-ed05-48f1-a042-6ed34efd84b3"] = False]; 
+              BTools`FrontEnd`Private`UUIDActive[
+                "ButtonRow-507bf1f2-ed05-48f1-a042-6ed34efd84b3"] = False), 
              Appearance -> {"Default" -> Image[CompressedData["
 1:eJzt171uglAYxvGTtkPHbp0YuvYKunbsatML0NSaLjTBRtLLQL0PEu5GQL7k
 IyiCgM4KTUyfRrE1eUs6eJIfCeQ9/w3IuWm9NV7OGGPdy+LSaIr3gtD8eLwq
@@ -390,88 +417,86 @@ ozY7tU/t/9Kmxr7m2LPqr86yWwgDRDY=
                Dynamic[
                 If[
                  TrueQ[
-                  BTools`Private`UUIDActive[
-                  "ButtonRow-53af3f8e-a17a-415c-a9b6-b995c934b94d"]], 
+                  BTools`FrontEnd`Private`UUIDActive[
+                  "ButtonRow-507bf1f2-ed05-48f1-a042-6ed34efd84b3"]], 
                  "Pressed", Automatic]]}, Evaluator -> Automatic, Method -> 
              "Preemptive"], 
-            
-            EventHandlerTag[{
-             "MouseClicked" :> (
-               BTools`Private`UUIDActive[
-                "ButtonRow-53af3f8e-a17a-415c-a9b6-b995c934b94d"] = True), 
+            EventHandlerTag[{"MouseClicked" :> If[
+                TrueQ[
+                 Replace[
+                  Replace[Automatic, Pattern[BTools`Private`Package`d, 
+                    Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
+                  Automatic -> True]], 
+                BTools`FrontEnd`Private`UUIDActive[
+                 "ButtonRow-507bf1f2-ed05-48f1-a042-6ed34efd84b3"] = True], 
               PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
-              True}]], {"\"Page\"" :> (CheckAbort[
+              True}]], {"\"Site\"" :> (CheckAbort[
                
-               With[{$CellContext`mact = 
+               With[{BTools`Paclets`mact = 
                  CurrentValue[$FrontEndSession, {
                    MessageOptions, "KernelMessageAction"}]}, 
                 CheckAbort[
                 CurrentValue[$FrontEndSession, {
                     MessageOptions, "KernelMessageAction"}] = 
-                  "PrintToConsole"; ((
-                  MessageName[BTools`PelicanDeploy, "deploy"] = "Pages: ``"; 
-                  Message[
-                    MessageName[BTools`PelicanDeploy, "deploy"], #])& )[
-                  BTools`KeyChainConnect[
-                    Key["DeploymentsAccount"]]; BTools`PelicanDeploy[
-                    BTools`Private`PelicanSiteBase[
-                    NotebookFileName[
-                    EvaluationNotebook[]]], FileNameForms -> 
-                    StringExpression[
-                    BTools`Private`pelicanFileMetadataSlug[
-                    Lookup[
-                    BTools`Private`PelicanNotebookMetadata[
-                    InputNotebook[]], "Slug", Automatic], 
-                    NotebookFileName[
-                    EvaluationNotebook[]]], ".html"], "LastDeployment" -> 
-                    None]]; CurrentValue[$FrontEndSession, {
-                    MessageOptions, 
-                    "KernelMessageAction"}] = $CellContext`mact, 
-                 CurrentValue[$FrontEndSession, {
-                   MessageOptions, 
-                    "KernelMessageAction"}] = $CellContext`mact]], 
-               BTools`Private`UUIDActive[
-                "ButtonRow-53af3f8e-a17a-415c-a9b6-b995c934b94d"] = False]; 
-             BTools`Private`UUIDActive[
-               "ButtonRow-53af3f8e-a17a-415c-a9b6-b995c934b94d"] = False), 
-            "\"Site\"" :> (CheckAbort[
-               
-               With[{$CellContext`mact = 
-                 CurrentValue[$FrontEndSession, {
-                   MessageOptions, "KernelMessageAction"}]}, 
-                CheckAbort[
-                CurrentValue[$FrontEndSession, {
-                    MessageOptions, "KernelMessageAction"}] = 
-                  "PrintToConsole"; ((
-                  MessageName[BTools`PelicanDeploy, "deploy"] = "Pages: ``"; 
-                  Message[
-                    MessageName[BTools`PelicanDeploy, "deploy"], #])& )[
-                  BTools`KeyChainConnect[
-                    Key["DeploymentsAccount"]]; BTools`PelicanDeploy[
-                    BTools`Private`PelicanSiteBase[
+                  "PrintToConsole"; 
+                 With[{PelicanHelperPalette`Private`pd = SelectFirst[
+                    ToExpression[
+                    Names["*`*`PelicanDeploy"]], Length[
+                    Join[
+                    DownValues[#], 
+                    OwnValues[#]]] > 0& ], BTools`Paclets`kc = SelectFirst[
+                    ToExpression[
+                    Names["*`*`KeyChainConnect"]], Length[
+                    Join[
+                    DownValues[#], 
+                    OwnValues[#]]] > 0& ], BTools`Paclets`psb = SelectFirst[
+                    ToExpression[
+                    Names["*`*`PelicanSiteBase"]], Length[
+                    Join[
+                    DownValues[#], 
+                    OwnValues[#]]] > 0& ], BTools`Paclets`mds = SelectFirst[
+                    ToExpression[
+                    Names["*`*`pelicanFileMetadataSlug"]], Length[
+                    Join[
+                    DownValues[#], 
+                    OwnValues[#]]] > 0& ], BTools`Paclets`md = SelectFirst[
+                    ToExpression[
+                    Names["*`*`PelicanNotebookMetadata"]], Length[
+                    Join[
+                    DownValues[#], 
+                    OwnValues[#]]] > 0& ]}, 
+                   ((
+                   MessageName[PelicanHelperPalette`Private`pd, "deploy"] = 
+                    "Pages: ``"; Message[
+                    MessageName[
+                    PelicanHelperPalette`Private`pd, "deploy"], #])& )[
+                   BTools`Paclets`kc[
+                    Key["DeploymentsAccount"]]; 
+                    PelicanHelperPalette`Private`pd[
+                    BTools`Paclets`psb[
                     NotebookDirectory[
-                    EvaluationNotebook[]]]]]; 
+                    EvaluationNotebook[]]]]]]; 
                  CurrentValue[$FrontEndSession, {
-                    MessageOptions, 
-                    "KernelMessageAction"}] = $CellContext`mact, 
+                    MessageOptions, "KernelMessageAction"}] = 
+                  BTools`Paclets`mact, 
                  CurrentValue[$FrontEndSession, {
-                   MessageOptions, 
-                    "KernelMessageAction"}] = $CellContext`mact]], 
-               BTools`Private`UUIDActive[
-                "ButtonRow-53af3f8e-a17a-415c-a9b6-b995c934b94d"] = False]; 
-             BTools`Private`UUIDActive[
-               "ButtonRow-53af3f8e-a17a-415c-a9b6-b995c934b94d"] = False)}, 
+                   MessageOptions, "KernelMessageAction"}] = 
+                 BTools`Paclets`mact]], 
+               BTools`FrontEnd`Private`UUIDActive[
+                "ButtonRow-507bf1f2-ed05-48f1-a042-6ed34efd84b3"] = False]; 
+             BTools`FrontEnd`Private`UUIDActive[
+               "ButtonRow-507bf1f2-ed05-48f1-a042-6ed34efd84b3"] = False)}, 
            Appearance -> None, {Method -> "Queued"}]}, "RowDefault"], 
         TemplateBox[{
           TagBox[
            ButtonBox[
            "\"Open\"", 
             ButtonFunction :> (
-             CheckAbort[
-              Null, BTools`Private`UUIDActive[
-                "ButtonRow-3106a2a0-6f24-4bae-95ab-3ea3a700975f"] = False]; 
-             BTools`Private`UUIDActive[
-               "ButtonRow-3106a2a0-6f24-4bae-95ab-3ea3a700975f"] = False), 
+             CheckAll[
+              Null, BTools`FrontEnd`Private`UUIDActive[
+                "ButtonRow-6d179cc4-a76f-4cdf-8d7d-06de660fb884"] = False]; 
+             BTools`FrontEnd`Private`UUIDActive[
+               "ButtonRow-6d179cc4-a76f-4cdf-8d7d-06de660fb884"] = False), 
             Appearance -> ("Default" -> Image[CompressedData["
 1:eJzN1LEKglAYhuFDNTQ0tDd1F62NrUYXoGTRYqBBdBleniiKiiKKiKKznQbh
 c+mrpn54DpzDO53hX2tX5TQRQlhzeSjqfWua6mO/lJeDYV3Ohn7cGTf9rJsb
@@ -486,41 +511,44 @@ aSjs27alsO+6jvqxF1/04l/7T3y420Y77gnqO7s4
               Dynamic[
                If[
                 TrueQ[
-                 BTools`Private`UUIDActive[
-                 "ButtonRow-3106a2a0-6f24-4bae-95ab-3ea3a700975f"]], 
+                 BTools`FrontEnd`Private`UUIDActive[
+                 "ButtonRow-6d179cc4-a76f-4cdf-8d7d-06de660fb884"]], 
                 "Pressed", Automatic]]}, ImageSize -> {Automatic, 40}, 
             FrameMargins -> {{10, 10}, {0, 0}}, Method -> "Queued", 
             Appearance -> {"Palette", ImagePadding -> {{1, 0}, {1, 0}}, 
               Dynamic[
                If[
                 TrueQ[
-                 BTools`Private`UUIDActive[
-                 "ButtonRow-3106a2a0-6f24-4bae-95ab-3ea3a700975f"]], 
+                 BTools`FrontEnd`Private`UUIDActive[
+                 "ButtonRow-6d179cc4-a76f-4cdf-8d7d-06de660fb884"]], 
                 "Pressed", Automatic]]}, FrameMargins -> {{10, 10}, {0, 0}}, 
             ImageSize -> {Automatic, 40}, Appearance -> {ActionMenu, 
               Dynamic[
                If[
                 TrueQ[
-                 BTools`Private`UUIDActive[
-                 "ButtonRow-3106a2a0-6f24-4bae-95ab-3ea3a700975f"]], 
+                 BTools`FrontEnd`Private`UUIDActive[
+                 "ButtonRow-6d179cc4-a76f-4cdf-8d7d-06de660fb884"]], 
                 "Pressed", Automatic]]}, Alignment -> Automatic, Background -> 
             None, DefaultBaseStyle -> {}, Evaluator -> Automatic], 
-           
-           EventHandlerTag[{
-            "MouseClicked" :> (
-              BTools`Private`UUIDActive[
-               "ButtonRow-3106a2a0-6f24-4bae-95ab-3ea3a700975f"] = True), 
+           EventHandlerTag[{"MouseClicked" :> If[
+               TrueQ[
+                Replace[
+                 Replace[Automatic, Pattern[BTools`Private`Package`d, 
+                    Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
+                 Automatic -> True]], 
+               BTools`FrontEnd`Private`UUIDActive[
+                "ButtonRow-6d179cc4-a76f-4cdf-8d7d-06de660fb884"] = True], 
              PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
              True}]], 
           ActionMenuBox[
            TagBox[
             ButtonBox[
             "\"\"", ButtonFunction :> (
-              CheckAbort[
-               Null, BTools`Private`UUIDActive[
-                 "ButtonRow-3106a2a0-6f24-4bae-95ab-3ea3a700975f"] = False]; 
-              BTools`Private`UUIDActive[
-                "ButtonRow-3106a2a0-6f24-4bae-95ab-3ea3a700975f"] = False), 
+              CheckAll[
+               Null, BTools`FrontEnd`Private`UUIDActive[
+                 "ButtonRow-6d179cc4-a76f-4cdf-8d7d-06de660fb884"] = False]; 
+              BTools`FrontEnd`Private`UUIDActive[
+                "ButtonRow-6d179cc4-a76f-4cdf-8d7d-06de660fb884"] = False), 
              Appearance -> {"Default" -> Image[CompressedData["
 1:eJzt171uglAYxvGTtkPHbp0YuvYKunbsatML0NSaLjTBRtLLQL0PEu5GQL7k
 IyiCgM4KTUyfRrE1eUs6eJIfCeQ9/w3IuWm9NV7OGGPdy+LSaIr3gtD8eLwq
@@ -565,37 +593,71 @@ ozY7tU/t/9Kmxr7m2LPqr86yWwgDRDY=
                Dynamic[
                 If[
                  TrueQ[
-                  BTools`Private`UUIDActive[
-                  "ButtonRow-3106a2a0-6f24-4bae-95ab-3ea3a700975f"]], 
+                  BTools`FrontEnd`Private`UUIDActive[
+                  "ButtonRow-6d179cc4-a76f-4cdf-8d7d-06de660fb884"]], 
                  "Pressed", Automatic]]}, Evaluator -> Automatic, Method -> 
              "Preemptive"], 
-            
-            EventHandlerTag[{
-             "MouseClicked" :> (
-               BTools`Private`UUIDActive[
-                "ButtonRow-3106a2a0-6f24-4bae-95ab-3ea3a700975f"] = True), 
+            EventHandlerTag[{"MouseClicked" :> If[
+                TrueQ[
+                 Replace[
+                  Replace[Automatic, Pattern[BTools`Private`Package`d, 
+                    Blank[Dynamic]] :> First[BTools`Private`Package`d]], 
+                  Automatic -> True]], 
+                BTools`FrontEnd`Private`UUIDActive[
+                 "ButtonRow-6d179cc4-a76f-4cdf-8d7d-06de660fb884"] = True], 
               PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
-              True}]], {
-           "\"Local Site\"" :> (
-             CheckAbort[BTools`PelicanBuild; BTools`PySimpleServerOpen[
-                 FileNameJoin[{
-                   BTools`Private`PelicanSiteBase[
+              True}]], {"\"Local Site\"" :> (CheckAbort[
+               With[{PelicanHelperPalette`Private`pb = SelectFirst[
+                   ToExpression[
+                    Names["*`*`PelicanBuild"]], Length[
+                    Join[
+                    DownValues[#], 
+                    OwnValues[#]]] > 0& ], BTools`Paclets`pso = SelectFirst[
+                   ToExpression[
+                    Names["*`*`PySimpleServerOpen"]], Length[
+                    Join[
+                    DownValues[#], 
+                    OwnValues[#]]] > 0& ], BTools`Paclets`psb = SelectFirst[
+                   ToExpression[
+                    Names["*`*`PelicanSiteBase"]], Length[
+                    Join[
+                    DownValues[#], 
+                    OwnValues[#]]] > 0& ]}, PelicanHelperPalette`Private`pb; 
+                BTools`Paclets`pso[
+                  FileNameJoin[{
+                    BTools`Paclets`psb[
                     NotebookDirectory[
-                    EvaluationNotebook[]]], "output"}]], 
-               BTools`Private`UUIDActive[
-                "ButtonRow-3106a2a0-6f24-4bae-95ab-3ea3a700975f"] = False]; 
-             BTools`Private`UUIDActive[
-               "ButtonRow-3106a2a0-6f24-4bae-95ab-3ea3a700975f"] = False), 
+                    EvaluationNotebook[]]], "output"}]]], 
+               BTools`FrontEnd`Private`UUIDActive[
+                "ButtonRow-6d179cc4-a76f-4cdf-8d7d-06de660fb884"] = False]; 
+             BTools`FrontEnd`Private`UUIDActive[
+               "ButtonRow-6d179cc4-a76f-4cdf-8d7d-06de660fb884"] = False), 
             "\"Web Site\"" :> (CheckAbort[
-               SystemOpen[
-                Lookup[BTools`PelicanBuild; BTools`Private`PelicanSiteSettings[
-                   BTools`Private`PelicanSiteBase[
+               With[{PelicanHelperPalette`Private`pb = SelectFirst[
+                   ToExpression[
+                    Names["*`*`PelicanBuild"]], Length[
+                    Join[
+                    DownValues[#], 
+                    OwnValues[#]]] > 0& ], BTools`Paclets`pss = SelectFirst[
+                   ToExpression[
+                    Names["*`*`PelicanSiteSettings"]], Length[
+                    Join[
+                    DownValues[#], 
+                    OwnValues[#]]] > 0& ], BTools`Paclets`psb = SelectFirst[
+                   ToExpression[
+                    Names["*`*`PelicanSiteBase"]], Length[
+                    Join[
+                    DownValues[#], 
+                    OwnValues[#]]] > 0& ]}, 
+                SystemOpen[
+                 Lookup[PelicanHelperPalette`Private`pb; BTools`Paclets`pss[
+                    BTools`Paclets`psb[
                     NotebookDirectory[
-                    EvaluationNotebook[]]]], "SITEURL"]], 
-               BTools`Private`UUIDActive[
-                "ButtonRow-3106a2a0-6f24-4bae-95ab-3ea3a700975f"] = False]; 
-             BTools`Private`UUIDActive[
-               "ButtonRow-3106a2a0-6f24-4bae-95ab-3ea3a700975f"] = False)}, 
+                    EvaluationNotebook[]]]], "SITEURL"]]], 
+               BTools`FrontEnd`Private`UUIDActive[
+                "ButtonRow-6d179cc4-a76f-4cdf-8d7d-06de660fb884"] = False]; 
+             BTools`FrontEnd`Private`UUIDActive[
+               "ButtonRow-6d179cc4-a76f-4cdf-8d7d-06de660fb884"] = False)}, 
            Appearance -> None, {Method -> "Queued"}]}, "RowDefault"], 
         ButtonBox[
         "\"\"", ButtonFunction :> Null, 
@@ -652,9 +714,26 @@ Cell[BoxData[
        RowBox[{"Spacer", "[", "25", "]"}], ",", "\[IndentingNewLine]", 
        RowBox[{
        "\"\<Save Markdown\>\"", "\[RuleDelayed]", "\[IndentingNewLine]", 
-        RowBox[{"BTools`PelicanNotebookSave", "[", 
-         RowBox[{"EvaluationNotebook", "[", "]"}], "]"}]}], ",", 
-       "\[IndentingNewLine]", 
+        RowBox[{"(", "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"Needs", "[", "\"\<BTools`\>\"", "]"}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{"SelectFirst", "[", "\[IndentingNewLine]", 
+            RowBox[{
+             RowBox[{"ToExpression", "[", 
+              RowBox[{"Names", "[", "\"\<*`PelicanNotebookSave\>\"", "]"}], 
+              "]"}], ",", "\[IndentingNewLine]", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Length", "@", 
+                RowBox[{"Join", "[", 
+                 RowBox[{
+                  RowBox[{"DownValues", "[", "#", "]"}], ",", " ", 
+                  RowBox[{"OwnValues", "[", "#", "]"}]}], "]"}]}], ">", "0"}],
+               "&"}]}], "\[IndentingNewLine]", "]"}], "[", 
+           RowBox[{"EvaluationNotebook", "[", "]"}], "]"}]}], 
+         "\[IndentingNewLine]", ")"}]}], ",", "\[IndentingNewLine]", 
        RowBox[{
        "\"\<Open Markdown\>\"", "\[RuleDelayed]", "\[IndentingNewLine]", 
         RowBox[{"SystemOpen", "@", 
@@ -666,10 +745,39 @@ Cell[BoxData[
             "\"\<.md\>\""}]}], "]"}]}]}], ",", "\[IndentingNewLine]", 
        RowBox[{"\"\<Open Root\>\"", "\[RuleDelayed]", 
         RowBox[{"(", "\[IndentingNewLine]", 
-         RowBox[{"BTools`PelicanBuild", ";", "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"Needs", "[", "\"\<BTools`\>\"", "]"}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"SelectFirst", "[", "\[IndentingNewLine]", 
+           RowBox[{
+            RowBox[{"ToExpression", "[", 
+             RowBox[{"Names", "[", "\"\<*`PelicanBuild\>\"", "]"}], "]"}], 
+            ",", "\[IndentingNewLine]", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"Length", "@", 
+               RowBox[{"Join", "[", 
+                RowBox[{
+                 RowBox[{"DownValues", "[", "#", "]"}], ",", " ", 
+                 RowBox[{"OwnValues", "[", "#", "]"}]}], "]"}]}], ">", "0"}], 
+             "&"}]}], "\[IndentingNewLine]", "]"}], ";", 
+          "\[IndentingNewLine]", 
           RowBox[{"SystemOpen", "@", "\[IndentingNewLine]", 
-           RowBox[{"BTools`Private`PelicanSiteBase", "@", 
-            RowBox[{"NotebookDirectory", "[", "]"}]}]}]}], 
+           RowBox[{
+            RowBox[{"SelectFirst", "[", "\[IndentingNewLine]", 
+             RowBox[{
+              RowBox[{"ToExpression", "[", 
+               RowBox[{"Names", "[", "\"\<*`*`PelicanSiteBase\>\"", "]"}], 
+               "]"}], ",", "\[IndentingNewLine]", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"Length", "@", 
+                 RowBox[{"Join", "[", 
+                  RowBox[{
+                   RowBox[{"DownValues", "[", "#", "]"}], ",", " ", 
+                   RowBox[{"OwnValues", "[", "#", "]"}]}], "]"}]}], ">", 
+                "0"}], "&"}]}], "\[IndentingNewLine]", "]"}], "[", 
+            RowBox[{"NotebookDirectory", "[", "]"}], "]"}]}], ";"}], 
          "\[IndentingNewLine]", ")"}]}], ",", "\[IndentingNewLine]", 
        RowBox[{"Spacer", "[", "15", "]"}], ",", "\[IndentingNewLine]", 
        RowBox[{
@@ -700,22 +808,39 @@ Cell[BoxData[
                 "\"\<PrintToConsole\>\""}], ";", "\[IndentingNewLine]", 
                RowBox[{"Needs", "[", "\"\<BTools`\>\"", "]"}], ";", 
                "\[IndentingNewLine]", 
-               RowBox[{
-                RowBox[{"Function", "[", "\[IndentingNewLine]", 
-                 RowBox[{"If", "[", "\[IndentingNewLine]", 
-                  RowBox[{
-                   RowBox[{
+               RowBox[{"With", "[", 
+                RowBox[{
+                 RowBox[{"{", 
+                  RowBox[{"pb", "=", 
+                   RowBox[{"SelectFirst", "[", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"ToExpression", "[", 
+                    RowBox[{"Names", "[", "\"\<*`PelicanBuild\>\"", "]"}], 
+                    "]"}], ",", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", 
+                    RowBox[{"Join", "[", 
+                    RowBox[{
+                    RowBox[{"DownValues", "[", "#", "]"}], ",", " ", 
+                    RowBox[{"OwnValues", "[", "#", "]"}]}], "]"}]}], ">", 
+                    "0"}], "&"}]}], "\[IndentingNewLine]", "]"}]}], "}"}], 
+                 ",", "\[IndentingNewLine]", 
+                 RowBox[{
+                  RowBox[{"Function", "[", "\[IndentingNewLine]", 
+                   RowBox[{"If", "[", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{
                     RowBox[{"StringLength", "[", 
                     RowBox[{"#StandardOutput", "<>", "#StandardError"}], 
                     "]"}], ">", "0"}], ",", "\[IndentingNewLine]", 
-                   RowBox[{
                     RowBox[{
-                    RowBox[{"BTools`PelicanBuild", "::", "build"}], "=", 
-                    "\"\<``\>\""}], ";", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"pb", "::", "build"}], "=", "\"\<``\>\""}], ";", 
+                    "\[IndentingNewLine]", 
                     RowBox[{"Message", "[", "\[IndentingNewLine]", 
                     RowBox[{
-                    RowBox[{"BTools`PelicanBuild", "::", "build"}], ",", 
-                    "\[IndentingNewLine]", 
+                    RowBox[{"pb", "::", "build"}], ",", "\[IndentingNewLine]", 
                     RowBox[{"StringTrim", "@", 
                     RowBox[{"StringRiffle", "[", 
                     RowBox[{
@@ -723,15 +848,15 @@ Cell[BoxData[
                     "\"\<\\n\\n\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
                     "\"\<Message\>\"", ",", "\"\<MSG\>\""}], 
                     "\[IndentingNewLine]", "]"}]}]}], "\[IndentingNewLine]", 
-                  "]"}], "\[IndentingNewLine]", "]"}], "@", 
-                "\[IndentingNewLine]", 
-                RowBox[{"BTools`PelicanBuild", "[", "\[IndentingNewLine]", 
-                 RowBox[{"Replace", "[", 
-                  RowBox[{
-                   RowBox[{"FileNameSplit", "@", 
+                    "]"}], "\[IndentingNewLine]", "]"}], "@", 
+                  "\[IndentingNewLine]", 
+                  RowBox[{"pb", "[", "\[IndentingNewLine]", 
+                   RowBox[{"Replace", "[", 
+                    RowBox[{
+                    RowBox[{"FileNameSplit", "@", 
                     RowBox[{"NotebookDirectory", "[", "]"}]}], ",", 
-                   "\[IndentingNewLine]", 
-                   RowBox[{
+                    "\[IndentingNewLine]", 
+                    RowBox[{
                     RowBox[{"{", 
                     RowBox[{
                     RowBox[{"d", ":", 
@@ -740,8 +865,8 @@ Cell[BoxData[
                     "\[IndentingNewLine]", 
                     RowBox[{"FileNameJoin", "@", 
                     RowBox[{"{", "d", "}"}]}]}]}], "\[IndentingNewLine]", 
-                  "]"}], "\[IndentingNewLine]", "]"}]}], ";", 
-               "\[IndentingNewLine]", 
+                    "]"}], "\[IndentingNewLine]", "]"}]}]}], 
+                "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", 
                RowBox[{
                 RowBox[{"CurrentValue", "[", 
                  RowBox[{"$FrontEndSession", ",", 
@@ -769,63 +894,146 @@ Cell[BoxData[
         RowBox[{"(", 
          RowBox[{"\"\<Deploy\>\"", "\[Rule]", 
           RowBox[{"{", "\[IndentingNewLine]", 
-           RowBox[{
-            RowBox[{"\"\<Page\>\"", "\[RuleDelayed]", "\[IndentingNewLine]", 
-             RowBox[{"With", "[", 
-              RowBox[{
-               RowBox[{"{", 
-                RowBox[{"mact", "=", "\[IndentingNewLine]", 
-                 RowBox[{"CurrentValue", "[", 
-                  RowBox[{"$FrontEndSession", ",", 
-                   RowBox[{"{", 
+           RowBox[{"(*", 
+            RowBox[{
+             RowBox[{
+             "\"\<Page\>\"", "\[RuleDelayed]", "\[IndentingNewLine]", 
+              RowBox[{"With", "[", 
+               RowBox[{
+                RowBox[{"{", 
+                 RowBox[{"mact", "=", "\[IndentingNewLine]", 
+                  RowBox[{"CurrentValue", "[", 
+                   RowBox[{"$FrontEndSession", ",", 
+                    RowBox[{"{", 
                     RowBox[{
                     "MessageOptions", ",", "\"\<KernelMessageAction\>\""}], 
                     "}"}]}], "]"}]}], "\[IndentingNewLine]", "}"}], ",", 
-               "\[IndentingNewLine]", 
-               RowBox[{"CheckAbort", "[", "\[IndentingNewLine]", 
-                RowBox[{
+                "\[IndentingNewLine]", 
+                RowBox[{"CheckAbort", "[", "\[IndentingNewLine]", 
                  RowBox[{
                   RowBox[{
-                   RowBox[{"CurrentValue", "[", 
+                   RowBox[{
+                    RowBox[{"CurrentValue", "[", 
                     RowBox[{"$FrontEndSession", ",", 
                     RowBox[{"{", 
                     RowBox[{
                     "MessageOptions", ",", "\"\<KernelMessageAction\>\""}], 
                     "}"}]}], "]"}], "=", "\[IndentingNewLine]", 
-                   "\"\<PrintToConsole\>\""}], ";", "\[IndentingNewLine]", 
-                  RowBox[{
-                   RowBox[{"Function", "[", "\[IndentingNewLine]", 
+                    "\"\<PrintToConsole\>\""}], ";", "\[IndentingNewLine]", 
+                   RowBox[{"With", "[", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"{", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"pd", "=", 
+                    RowBox[{"SelectFirst", "[", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"ToExpression", "[", 
+                    RowBox[{"Names", "[", "\"\<*`*`PelicanDeploy\>\"", "]"}], 
+                    "]"}], ",", "\[IndentingNewLine]", 
                     RowBox[{
                     RowBox[{
-                    RowBox[{"BTools`PelicanDeploy", "::", "deploy"}], "=", 
+                    RowBox[{"Length", "@", 
+                    RowBox[{"Join", "[", 
+                    RowBox[{
+                    RowBox[{"DownValues", "[", "#", "]"}], ",", " ", 
+                    RowBox[{"OwnValues", "[", "#", "]"}]}], "]"}]}], ">", 
+                    "0"}], "&"}]}], "\[IndentingNewLine]", "]"}]}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"kc", "=", 
+                    RowBox[{"SelectFirst", "[", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"ToExpression", "[", 
+                    RowBox[{
+                    "Names", "[", "\"\<*`*`KeyChainConnect\>\"", "]"}], "]"}],
+                     ",", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", 
+                    RowBox[{"Join", "[", 
+                    RowBox[{
+                    RowBox[{"DownValues", "[", "#", "]"}], ",", " ", 
+                    RowBox[{"OwnValues", "[", "#", "]"}]}], "]"}]}], ">", 
+                    "0"}], "&"}]}], "\[IndentingNewLine]", "]"}]}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"psb", "=", 
+                    RowBox[{"SelectFirst", "[", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"ToExpression", "[", 
+                    RowBox[{
+                    "Names", "[", "\"\<*`*`PelicanSiteBase\>\"", "]"}], "]"}],
+                     ",", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", 
+                    RowBox[{"Join", "[", 
+                    RowBox[{
+                    RowBox[{"DownValues", "[", "#", "]"}], ",", " ", 
+                    RowBox[{"OwnValues", "[", "#", "]"}]}], "]"}]}], ">", 
+                    "0"}], "&"}]}], "\[IndentingNewLine]", "]"}]}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"mds", "=", "\[IndentingNewLine]", 
+                    RowBox[{"SelectFirst", "[", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"ToExpression", "[", 
+                    RowBox[{
+                    "Names", "[", "\"\<*`*`pelicanFileMetadataSlug\>\"", 
+                    "]"}], "]"}], ",", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", 
+                    RowBox[{"Join", "[", 
+                    RowBox[{
+                    RowBox[{"DownValues", "[", "#", "]"}], ",", " ", 
+                    RowBox[{"OwnValues", "[", "#", "]"}]}], "]"}]}], ">", 
+                    "0"}], "&"}]}], "\[IndentingNewLine]", "]"}]}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"md", "=", "\[IndentingNewLine]", 
+                    RowBox[{"SelectFirst", "[", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"ToExpression", "[", 
+                    RowBox[{
+                    "Names", "[", "\"\<*`*`PelicanNotebookMetadata\>\"", 
+                    "]"}], "]"}], ",", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", 
+                    RowBox[{"Join", "[", 
+                    RowBox[{
+                    RowBox[{"DownValues", "[", "#", "]"}], ",", " ", 
+                    RowBox[{"OwnValues", "[", "#", "]"}]}], "]"}]}], ">", 
+                    "0"}], "&"}]}], "\[IndentingNewLine]", "]"}]}]}], 
+                    "\[IndentingNewLine]", "}"}], ",", "\[IndentingNewLine]", 
+                    
+                    RowBox[{
+                    RowBox[{"Function", "[", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"pd", "::", "deploy"}], "=", 
                     "\"\<Pages: ``\>\""}], ";", "\[IndentingNewLine]", 
                     RowBox[{"Message", "[", "\[IndentingNewLine]", 
                     RowBox[{
-                    RowBox[{"BTools`PelicanDeploy", "::", "deploy"}], ",", 
+                    RowBox[{"pd", "::", "deploy"}], ",", 
                     "\[IndentingNewLine]", "#"}], "\[IndentingNewLine]", 
                     "]"}]}], "\[IndentingNewLine]", "]"}], "@", 
-                   RowBox[{"(", "\[IndentingNewLine]", 
+                    RowBox[{"(", "\[IndentingNewLine]", 
                     RowBox[{
-                    RowBox[{"BTools`KeyChainConnect", "[", 
+                    RowBox[{"kc", "[", 
                     RowBox[{"Key", "[", "\"\<DeploymentsAccount\>\"", "]"}], 
                     "]"}], ";", "\[IndentingNewLine]", 
+                    RowBox[{"pd", "[", "\[IndentingNewLine]", 
                     RowBox[{
-                    "BTools`PelicanDeploy", "[", "\[IndentingNewLine]", 
-                    RowBox[{
-                    RowBox[{"BTools`Private`PelicanSiteBase", "@", 
+                    RowBox[{"psb", "@", 
                     RowBox[{"NotebookFileName", "[", 
                     RowBox[{"EvaluationNotebook", "[", "]"}], "]"}]}], ",", 
                     "\[IndentingNewLine]", 
                     RowBox[{"FileNameForms", "\[Rule]", "\[IndentingNewLine]", 
                     RowBox[{"(", "\[IndentingNewLine]", 
                     RowBox[{
-                    RowBox[{
-                    "BTools`Private`pelicanFileMetadataSlug", "[", 
-                    "\[IndentingNewLine]", 
+                    RowBox[{"mds", "[", "\[IndentingNewLine]", 
                     RowBox[{
                     RowBox[{"Lookup", "[", "\[IndentingNewLine]", 
                     RowBox[{
-                    RowBox[{"BTools`Private`PelicanNotebookMetadata", "[", 
+                    RowBox[{"md", "[", 
                     RowBox[{"InputNotebook", "[", "]"}], "]"}], ",", 
                     "\[IndentingNewLine]", "\"\<Slug\>\"", ",", 
                     "\[IndentingNewLine]", "Automatic"}], 
@@ -838,7 +1046,16 @@ Cell[BoxData[
                     "\[IndentingNewLine]", 
                     RowBox[{"\"\<LastDeployment\>\"", "\[Rule]", "None"}]}], 
                     "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", 
-                    ")"}]}], ";", "\[IndentingNewLine]", 
+                    ")"}]}]}], "\[IndentingNewLine]", "]"}], ";", 
+                   "\[IndentingNewLine]", 
+                   RowBox[{
+                    RowBox[{"CurrentValue", "[", 
+                    RowBox[{"$FrontEndSession", ",", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    "MessageOptions", ",", "\"\<KernelMessageAction\>\""}], 
+                    "}"}]}], "]"}], "=", "\[IndentingNewLine]", "mact"}]}], 
+                  ",", "\[IndentingNewLine]", 
                   RowBox[{
                    RowBox[{"CurrentValue", "[", 
                     RowBox[{"$FrontEndSession", ",", 
@@ -846,7 +1063,138 @@ Cell[BoxData[
                     RowBox[{
                     "MessageOptions", ",", "\"\<KernelMessageAction\>\""}], 
                     "}"}]}], "]"}], "=", "\[IndentingNewLine]", "mact"}]}], 
-                 ",", "\[IndentingNewLine]", 
+                 "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", 
+               "]"}]}], ","}], "*)"}], "\[IndentingNewLine]", 
+           RowBox[{"\"\<Site\>\"", "\[RuleDelayed]", "\[IndentingNewLine]", 
+            RowBox[{"With", "[", 
+             RowBox[{
+              RowBox[{"{", 
+               RowBox[{"mact", "=", "\[IndentingNewLine]", 
+                RowBox[{"CurrentValue", "[", 
+                 RowBox[{"$FrontEndSession", ",", 
+                  RowBox[{"{", 
+                   RowBox[{
+                   "MessageOptions", ",", "\"\<KernelMessageAction\>\""}], 
+                   "}"}]}], "]"}]}], "\[IndentingNewLine]", "}"}], ",", 
+              "\[IndentingNewLine]", 
+              RowBox[{"CheckAbort", "[", "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"CurrentValue", "[", 
+                   RowBox[{"$FrontEndSession", ",", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    "MessageOptions", ",", "\"\<KernelMessageAction\>\""}], 
+                    "}"}]}], "]"}], "=", "\[IndentingNewLine]", 
+                  "\"\<PrintToConsole\>\""}], ";", "\[IndentingNewLine]", 
+                 RowBox[{"With", "[", "\[IndentingNewLine]", 
+                  RowBox[{
+                   RowBox[{"{", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"pd", "=", 
+                    RowBox[{"SelectFirst", "[", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"ToExpression", "[", 
+                    RowBox[{"Names", "[", "\"\<*`*`PelicanDeploy\>\"", "]"}], 
+                    "]"}], ",", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", 
+                    RowBox[{"Join", "[", 
+                    RowBox[{
+                    RowBox[{"DownValues", "[", "#", "]"}], ",", " ", 
+                    RowBox[{"OwnValues", "[", "#", "]"}]}], "]"}]}], ">", 
+                    "0"}], "&"}]}], "\[IndentingNewLine]", "]"}]}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"kc", "=", 
+                    RowBox[{"SelectFirst", "[", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"ToExpression", "[", 
+                    RowBox[{
+                    "Names", "[", "\"\<*`*`KeyChainConnect\>\"", "]"}], "]"}],
+                     ",", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", 
+                    RowBox[{"Join", "[", 
+                    RowBox[{
+                    RowBox[{"DownValues", "[", "#", "]"}], ",", " ", 
+                    RowBox[{"OwnValues", "[", "#", "]"}]}], "]"}]}], ">", 
+                    "0"}], "&"}]}], "\[IndentingNewLine]", "]"}]}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"psb", "=", 
+                    RowBox[{"SelectFirst", "[", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"ToExpression", "[", 
+                    RowBox[{
+                    "Names", "[", "\"\<*`*`PelicanSiteBase\>\"", "]"}], "]"}],
+                     ",", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", 
+                    RowBox[{"Join", "[", 
+                    RowBox[{
+                    RowBox[{"DownValues", "[", "#", "]"}], ",", " ", 
+                    RowBox[{"OwnValues", "[", "#", "]"}]}], "]"}]}], ">", 
+                    "0"}], "&"}]}], "\[IndentingNewLine]", "]"}]}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"mds", "=", "\[IndentingNewLine]", 
+                    RowBox[{"SelectFirst", "[", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"ToExpression", "[", 
+                    RowBox[{
+                    "Names", "[", "\"\<*`*`pelicanFileMetadataSlug\>\"", 
+                    "]"}], "]"}], ",", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", 
+                    RowBox[{"Join", "[", 
+                    RowBox[{
+                    RowBox[{"DownValues", "[", "#", "]"}], ",", " ", 
+                    RowBox[{"OwnValues", "[", "#", "]"}]}], "]"}]}], ">", 
+                    "0"}], "&"}]}], "\[IndentingNewLine]", "]"}]}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"md", "=", "\[IndentingNewLine]", 
+                    RowBox[{"SelectFirst", "[", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"ToExpression", "[", 
+                    RowBox[{
+                    "Names", "[", "\"\<*`*`PelicanNotebookMetadata\>\"", 
+                    "]"}], "]"}], ",", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", 
+                    RowBox[{"Join", "[", 
+                    RowBox[{
+                    RowBox[{"DownValues", "[", "#", "]"}], ",", " ", 
+                    RowBox[{"OwnValues", "[", "#", "]"}]}], "]"}]}], ">", 
+                    "0"}], "&"}]}], "\[IndentingNewLine]", "]"}]}]}], 
+                    "\[IndentingNewLine]", "}"}], ",", "\[IndentingNewLine]", 
+                   
+                   RowBox[{
+                    RowBox[{"Function", "[", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"pd", "::", "deploy"}], "=", 
+                    "\"\<Pages: ``\>\""}], ";", "\[IndentingNewLine]", 
+                    RowBox[{"Message", "[", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"pd", "::", "deploy"}], ",", 
+                    "\[IndentingNewLine]", "#"}], "\[IndentingNewLine]", 
+                    "]"}]}], "\[IndentingNewLine]", "]"}], "@", 
+                    RowBox[{"(", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"kc", "[", 
+                    RowBox[{"Key", "[", "\"\<DeploymentsAccount\>\"", "]"}], 
+                    "]"}], ";", "\[IndentingNewLine]", 
+                    RowBox[{"pd", "[", "\[IndentingNewLine]", 
+                    RowBox[{"psb", "@", "\[IndentingNewLine]", 
+                    RowBox[{"NotebookDirectory", "[", 
+                    RowBox[{"EvaluationNotebook", "[", "]"}], "]"}]}], 
+                    "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", 
+                    ")"}]}]}], "\[IndentingNewLine]", "]"}], ";", 
+                 "\[IndentingNewLine]", 
                  RowBox[{
                   RowBox[{"CurrentValue", "[", 
                    RowBox[{"$FrontEndSession", ",", 
@@ -854,74 +1202,16 @@ Cell[BoxData[
                     RowBox[{
                     "MessageOptions", ",", "\"\<KernelMessageAction\>\""}], 
                     "}"}]}], "]"}], "=", "\[IndentingNewLine]", "mact"}]}], 
-                "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", 
-              "]"}]}], ",", "\[IndentingNewLine]", 
-            RowBox[{"\"\<Site\>\"", "\[RuleDelayed]", "\[IndentingNewLine]", 
-             RowBox[{"With", "[", 
-              RowBox[{
-               RowBox[{"{", 
-                RowBox[{"mact", "=", "\[IndentingNewLine]", 
+                ",", "\[IndentingNewLine]", 
+                RowBox[{
                  RowBox[{"CurrentValue", "[", 
                   RowBox[{"$FrontEndSession", ",", 
                    RowBox[{"{", 
                     RowBox[{
                     "MessageOptions", ",", "\"\<KernelMessageAction\>\""}], 
-                    "}"}]}], "]"}]}], "\[IndentingNewLine]", "}"}], ",", 
-               "\[IndentingNewLine]", 
-               RowBox[{"CheckAbort", "[", "\[IndentingNewLine]", 
-                RowBox[{
-                 RowBox[{
-                  RowBox[{
-                   RowBox[{"CurrentValue", "[", 
-                    RowBox[{"$FrontEndSession", ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "MessageOptions", ",", "\"\<KernelMessageAction\>\""}], 
-                    "}"}]}], "]"}], "=", "\[IndentingNewLine]", 
-                   "\"\<PrintToConsole\>\""}], ";", "\[IndentingNewLine]", 
-                  RowBox[{
-                   RowBox[{"Function", "[", "\[IndentingNewLine]", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{"BTools`PelicanDeploy", "::", "deploy"}], "=", 
-                    "\"\<Pages: ``\>\""}], ";", "\[IndentingNewLine]", 
-                    RowBox[{"Message", "[", "\[IndentingNewLine]", 
-                    RowBox[{
-                    RowBox[{"BTools`PelicanDeploy", "::", "deploy"}], ",", 
-                    "\[IndentingNewLine]", "#"}], "\[IndentingNewLine]", 
-                    "]"}]}], "\[IndentingNewLine]", "]"}], "@", 
-                   RowBox[{"(", "\[IndentingNewLine]", 
-                    RowBox[{
-                    RowBox[{"BTools`KeyChainConnect", "[", 
-                    RowBox[{"Key", "[", "\"\<DeploymentsAccount\>\"", "]"}], 
-                    "]"}], ";", "\[IndentingNewLine]", 
-                    RowBox[{
-                    "BTools`PelicanDeploy", "[", "\[IndentingNewLine]", 
-                    RowBox[{
-                    "BTools`Private`PelicanSiteBase", "@", 
-                    "\[IndentingNewLine]", 
-                    RowBox[{"NotebookDirectory", "[", 
-                    RowBox[{"EvaluationNotebook", "[", "]"}], "]"}]}], 
-                    "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", 
-                    ")"}]}], ";", "\[IndentingNewLine]", 
-                  RowBox[{
-                   RowBox[{"CurrentValue", "[", 
-                    RowBox[{"$FrontEndSession", ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "MessageOptions", ",", "\"\<KernelMessageAction\>\""}], 
                     "}"}]}], "]"}], "=", "\[IndentingNewLine]", "mact"}]}], 
-                 ",", "\[IndentingNewLine]", 
-                 RowBox[{
-                  RowBox[{"CurrentValue", "[", 
-                   RowBox[{"$FrontEndSession", ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "MessageOptions", ",", "\"\<KernelMessageAction\>\""}], 
-                    "}"}]}], "]"}], "=", "\[IndentingNewLine]", "mact"}]}], 
-                "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", 
-              "]"}]}]}], "\[IndentingNewLine]", "}"}]}], 
-         "\[IndentingNewLine]", ")"}], "->", 
+               "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", "]"}]}],
+            "\[IndentingNewLine]", "}"}]}], "\[IndentingNewLine]", ")"}], "->", 
         RowBox[{"{", "\[IndentingNewLine]", 
          RowBox[{
           RowBox[{"Method", "\[Rule]", "\"\<Queued\>\""}], ",", 
@@ -936,34 +1226,134 @@ Cell[BoxData[
             RowBox[{
             "\"\<Local Site\>\"", "\[RuleDelayed]", "\[IndentingNewLine]", 
              RowBox[{"(", "\[IndentingNewLine]", 
-              RowBox[{"BTools`PelicanBuild", ";", "\[IndentingNewLine]", 
+              RowBox[{"With", "[", "\[IndentingNewLine]", 
                RowBox[{
-               "BTools`PySimpleServerOpen", "[", "\[IndentingNewLine]", 
-                RowBox[{"FileNameJoin", "@", 
-                 RowBox[{"{", "\[IndentingNewLine]", 
-                  RowBox[{
-                   RowBox[{"BTools`Private`PelicanSiteBase", "[", 
+                RowBox[{"{", "\[IndentingNewLine]", 
+                 RowBox[{
+                  RowBox[{"pb", "=", 
+                   RowBox[{"SelectFirst", "[", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"ToExpression", "[", 
+                    RowBox[{"Names", "[", "\"\<*`*`PelicanBuild\>\"", "]"}], 
+                    "]"}], ",", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", 
+                    RowBox[{"Join", "[", 
+                    RowBox[{
+                    RowBox[{"DownValues", "[", "#", "]"}], ",", " ", 
+                    RowBox[{"OwnValues", "[", "#", "]"}]}], "]"}]}], ">", 
+                    "0"}], "&"}]}], "\[IndentingNewLine]", "]"}]}], ",", 
+                  "\[IndentingNewLine]", 
+                  RowBox[{"pso", "=", 
+                   RowBox[{"SelectFirst", "[", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"ToExpression", "[", 
+                    RowBox[{
+                    "Names", "[", "\"\<*`*`PySimpleServerOpen\>\"", "]"}], 
+                    "]"}], ",", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", 
+                    RowBox[{"Join", "[", 
+                    RowBox[{
+                    RowBox[{"DownValues", "[", "#", "]"}], ",", " ", 
+                    RowBox[{"OwnValues", "[", "#", "]"}]}], "]"}]}], ">", 
+                    "0"}], "&"}]}], "\[IndentingNewLine]", "]"}]}], ",", 
+                  "\[IndentingNewLine]", 
+                  RowBox[{"psb", "=", 
+                   RowBox[{"SelectFirst", "[", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"ToExpression", "[", 
+                    RowBox[{
+                    "Names", "[", "\"\<*`*`PelicanSiteBase\>\"", "]"}], "]"}],
+                     ",", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", 
+                    RowBox[{"Join", "[", 
+                    RowBox[{
+                    RowBox[{"DownValues", "[", "#", "]"}], ",", " ", 
+                    RowBox[{"OwnValues", "[", "#", "]"}]}], "]"}]}], ">", 
+                    "0"}], "&"}]}], "\[IndentingNewLine]", "]"}]}]}], 
+                 "\[IndentingNewLine]", "}"}], ",", "\[IndentingNewLine]", 
+                RowBox[{"pb", ";", "\[IndentingNewLine]", 
+                 RowBox[{"pso", "[", "\[IndentingNewLine]", 
+                  RowBox[{"FileNameJoin", "@", 
+                   RowBox[{"{", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"psb", "[", 
                     RowBox[{"NotebookDirectory", "[", 
                     RowBox[{"EvaluationNotebook", "[", "]"}], "]"}], "]"}], 
-                   ",", "\[IndentingNewLine]", "\"\<output\>\""}], 
-                  "\[IndentingNewLine]", "}"}]}], "\[IndentingNewLine]", 
-                "]"}]}], "\[IndentingNewLine]", ")"}]}], ",", 
-            "\[IndentingNewLine]", 
+                    ",", "\[IndentingNewLine]", "\"\<output\>\""}], 
+                    "\[IndentingNewLine]", "}"}]}], "\[IndentingNewLine]", 
+                  "]"}]}]}], "\[IndentingNewLine]", "]"}], 
+              "\[IndentingNewLine]", ")"}]}], ",", "\[IndentingNewLine]", 
             RowBox[{
             "\"\<Web Site\>\"", "\[RuleDelayed]", "\[IndentingNewLine]", 
-             RowBox[{"SystemOpen", "@", "\[IndentingNewLine]", 
-              RowBox[{"Lookup", "[", "\[IndentingNewLine]", 
-               RowBox[{
-                RowBox[{"BTools`PelicanBuild", ";", "\[IndentingNewLine]", 
+             RowBox[{"With", "[", "\[IndentingNewLine]", 
+              RowBox[{
+               RowBox[{"{", "\[IndentingNewLine]", 
+                RowBox[{
+                 RowBox[{"pb", "=", 
+                  RowBox[{"SelectFirst", "[", "\[IndentingNewLine]", 
+                   RowBox[{
+                    RowBox[{"ToExpression", "[", 
+                    RowBox[{"Names", "[", "\"\<*`*`PelicanBuild\>\"", "]"}], 
+                    "]"}], ",", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", 
+                    RowBox[{"Join", "[", 
+                    RowBox[{
+                    RowBox[{"DownValues", "[", "#", "]"}], ",", " ", 
+                    RowBox[{"OwnValues", "[", "#", "]"}]}], "]"}]}], ">", 
+                    "0"}], "&"}]}], "\[IndentingNewLine]", "]"}]}], ",", 
+                 "\[IndentingNewLine]", 
+                 RowBox[{"pss", "=", 
+                  RowBox[{"SelectFirst", "[", "\[IndentingNewLine]", 
+                   RowBox[{
+                    RowBox[{"ToExpression", "[", 
+                    RowBox[{
+                    "Names", "[", "\"\<*`*`PelicanSiteSettings\>\"", "]"}], 
+                    "]"}], ",", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", 
+                    RowBox[{"Join", "[", 
+                    RowBox[{
+                    RowBox[{"DownValues", "[", "#", "]"}], ",", " ", 
+                    RowBox[{"OwnValues", "[", "#", "]"}]}], "]"}]}], ">", 
+                    "0"}], "&"}]}], "\[IndentingNewLine]", "]"}]}], ",", 
+                 "\[IndentingNewLine]", 
+                 RowBox[{"psb", "=", 
+                  RowBox[{"SelectFirst", "[", "\[IndentingNewLine]", 
+                   RowBox[{
+                    RowBox[{"ToExpression", "[", 
+                    RowBox[{
+                    "Names", "[", "\"\<*`*`PelicanSiteBase\>\"", "]"}], "]"}],
+                     ",", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", 
+                    RowBox[{"Join", "[", 
+                    RowBox[{
+                    RowBox[{"DownValues", "[", "#", "]"}], ",", " ", 
+                    RowBox[{"OwnValues", "[", "#", "]"}]}], "]"}]}], ">", 
+                    "0"}], "&"}]}], "\[IndentingNewLine]", "]"}]}]}], 
+                "\[IndentingNewLine]", "}"}], ",", "\[IndentingNewLine]", 
+               RowBox[{"SystemOpen", "@", "\[IndentingNewLine]", 
+                RowBox[{"Lookup", "[", "\[IndentingNewLine]", 
                  RowBox[{
-                 "BTools`Private`PelicanSiteSettings", "[", 
-                  "\[IndentingNewLine]", 
-                  RowBox[{"BTools`Private`PelicanSiteBase", "[", 
-                   RowBox[{"NotebookDirectory", "[", 
+                  RowBox[{"pb", ";", "\[IndentingNewLine]", 
+                   RowBox[{"pss", "[", "\[IndentingNewLine]", 
+                    RowBox[{"psb", "[", 
+                    RowBox[{"NotebookDirectory", "[", 
                     RowBox[{"EvaluationNotebook", "[", "]"}], "]"}], "]"}], 
-                  "\[IndentingNewLine]", "]"}]}], ",", "\[IndentingNewLine]", 
-                "\"\<SITEURL\>\""}], "\[IndentingNewLine]", "]"}]}]}]}], 
-           "\[IndentingNewLine]", "}"}]}], ")"}], "\[Rule]", 
+                    "\[IndentingNewLine]", "]"}]}], ",", 
+                  "\[IndentingNewLine]", "\"\<SITEURL\>\""}], 
+                 "\[IndentingNewLine]", "]"}]}]}], "\[IndentingNewLine]", 
+              "]"}]}]}], "\[IndentingNewLine]", "}"}]}], ")"}], "\[Rule]", 
         "\[IndentingNewLine]", 
         RowBox[{"{", "\[IndentingNewLine]", 
          RowBox[{
@@ -981,32 +1371,33 @@ Cell[BoxData[
          RowBox[{"0", ",", "0"}], "}"}]}], "}"}]}]}], "\[IndentingNewLine]", 
     "]"}]}], ";"}]], "Input",
  CellChangeTimes->CompressedData["
-1:eJwdzl1Ik2EAxfGxFOJ1qNHaxrpY6mY6uujCESsRR0xE281obUilS/KLlQNn
-aWiQBo0M5VVMNja1zRRNjUDUaiyR5ceYEiuk7SWaEgauC4cjB0b1nOfi8Lv6
-w8m51ay/zefxeHIyeLyRFUS8cc2b0iwpDB0dXIKZ/ufF8KlNzUaJ81deOCAn
-Nr6E9xQj07Cg++gDFGmLluD1HUkAas/ZP0KfrTCdI9qeMQxk/zHZMP90AzXE
-CO7AsM/9EI6XXuiBVX1zVFe1goUS58Eg7ItNBfaID94J12CTrtXAH4trOopD
-JqgfLhgTEc9/1lFrSkZfw5uThg1Ywi2FYYNKGYPK+sxd+EoopXa9tw+IifZa
-N/VLrcYB1XrGBa9+PxGB/XWtHLzoe5QlQRfdOgVl3RMeKf6oWT88e5gIQOGZ
-u0HYPGwaz0Xv23wLLSbjMhTMtlBvfJOvwljaTBCupNI/wZ+Jcqqz/lcMflU9
-2Yb+9bYk1Msq/8Aizzo/j9ipu3YM2u4b9guJ1sUuav9QZ5WWeNmdZobShR+e
-FNGRbPHCx+aMLetkXPO3bJ+68zsShe0nrRyssEy7E8T83iT1P1rdNGA=
+1:eJwdzltIk2EAxvGxFORzeMDlxrrQSucBL7xQYmrih0yk3M1wOqQ0FU+hOXBm
+RgtyRiNF+QyNibOaJzRLBLHUMQ9MU1nhIaTtQ1wSBc4Ll0MFo3qf9+Lhd/WH
+53JZvbpCKBAI5GQwqIYTuQa87GRWqAw6z4/TYYi9JwM+1ys4N3E6740Z8pLC
+IXg/9tU4jDeez8NIZcoCvLUvdUBlkmkZ2vQJgTxR384wkPvHhEH5pWqqkxHV
+wS2b5TEczrrWBos6p6h9JbEclPYed8NOz5jjgPhwVrwK76oaNcJBL/sow6mF
+6v74wUhi8raKeifz9QQsHtV8hpn8whasTk30wMSqkJ/wrVhGbZkzvZAQTeUW
+6tdy1gwVaqYP5u+Fu2BXZSMP02xPQqXo3DsXYZRxxCrDHwVnh3GnPgcUR99b
+h/X92uEr6G1fZmCttnAJit43UG/vxnyCnoB363DlLHAD/vLlUnurDj3wW+qz
+79C+9sAP1VE3/8AU65rwKtGgKrgA9U2aowSi7mMLteuloUhJzLYElELZhx/W
+M6LZ3zAAW0uDd3SjXvZvzhF1/8Tlhs0ROh7eqB23+IjyDj91u2mxLGfVyxol
+1yvg001DDfy9GdYD/wME0UWY
   
   "],ExpressionUUID->"db283c09-56f0-4ae0-b3a1-457c2f34f265"],
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"SSEdit", "[", 
+  RowBox[{"StyleSheetEdit", "[", 
    RowBox[{"\"\<Notebook\>\"", ",", 
     RowBox[{"DockedCells", "\[Rule]", "$dock"}]}], "]"}], "//", 
   "Quiet"}]], "Input",
- CellChangeTimes->{{3.710119081590513*^9, 
-  3.710119096817832*^9}},ExpressionUUID->"f4f40ddc-0a1e-40bb-9ab9-\
+ CellChangeTimes->{{3.710119081590513*^9, 3.710119096817832*^9}, 
+   3.7288808344072943`*^9},ExpressionUUID->"f4f40ddc-0a1e-40bb-9ab9-\
 0684bc4cc3e0"],
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"SSEdit", "[", 
+  RowBox[{"StyleSheetEdit", "[", 
    RowBox[{"\"\<Notebook\>\"", ",", 
     RowBox[{"{", "\[IndentingNewLine]", 
      RowBox[{
@@ -1015,46 +1406,49 @@ Cell[BoxData[
       RowBox[{"NotebookEventActions", "\[RuleDelayed]", "\[IndentingNewLine]", 
        RowBox[{"{", "\[IndentingNewLine]", 
         RowBox[{
-         RowBox[{"{", 
-          RowBox[{"\"\<MenuCommand\>\"", ",", "\"\<Save\>\""}], "}"}], 
-         "\[RuleDelayed]", "\[IndentingNewLine]", 
-         RowBox[{"With", "[", 
-          RowBox[{
-           RowBox[{"{", 
-            RowBox[{"mact", "=", "\[IndentingNewLine]", 
-             RowBox[{"CurrentValue", "[", 
-              RowBox[{"$FrontEndSession", ",", 
-               RowBox[{"{", 
-                RowBox[{
-                "MessageOptions", ",", "\"\<KernelMessageAction\>\""}], 
-                "}"}]}], "]"}]}], "\[IndentingNewLine]", "}"}], ",", 
-           "\[IndentingNewLine]", 
-           RowBox[{"CheckAbort", "[", "\[IndentingNewLine]", 
-            RowBox[{
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"\"\<MenuCommand\>\"", ",", "\"\<Save\>\""}], "}"}], 
+          "\[RuleDelayed]", "\[IndentingNewLine]", 
+          RowBox[{"With", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"mact", "=", "\[IndentingNewLine]", 
+              RowBox[{"CurrentValue", "[", 
+               RowBox[{"$FrontEndSession", ",", 
+                RowBox[{"{", 
+                 RowBox[{
+                 "MessageOptions", ",", "\"\<KernelMessageAction\>\""}], 
+                 "}"}]}], "]"}]}], "\[IndentingNewLine]", "}"}], ",", 
+            "\[IndentingNewLine]", 
+            RowBox[{"CheckAbort", "[", "\[IndentingNewLine]", 
              RowBox[{
               RowBox[{
-               RowBox[{"CurrentValue", "[", 
-                RowBox[{"$FrontEndSession", ",", 
-                 RowBox[{"{", 
-                  RowBox[{
-                  "MessageOptions", ",", "\"\<KernelMessageAction\>\""}], 
-                  "}"}]}], "]"}], "=", "\[IndentingNewLine]", 
-               "\"\<PrintToConsole\>\""}], ";", "\[IndentingNewLine]", 
-              RowBox[{"NotebookSave", "[", 
-               RowBox[{"EvaluationNotebook", "[", "]"}], "]"}], ";", 
-              "\[IndentingNewLine]", 
-              RowBox[{"With", "[", 
                RowBox[{
-                RowBox[{"{", 
-                 RowBox[{"ev", "=", 
-                  RowBox[{"EvaluationNotebook", "[", "]"}]}], "}"}], ",", 
-                "\[IndentingNewLine]", 
+                RowBox[{"CurrentValue", "[", 
+                 RowBox[{"$FrontEndSession", ",", 
+                  RowBox[{"{", 
+                   RowBox[{
+                   "MessageOptions", ",", "\"\<KernelMessageAction\>\""}], 
+                   "}"}]}], "]"}], "=", "\[IndentingNewLine]", 
+                "\"\<PrintToConsole\>\""}], ";", 
+               RowBox[{"(*", "\[IndentingNewLine]", 
                 RowBox[{
-                 RowBox[{"Needs", "[", "\"\<BTools`\>\"", "]"}], ";", 
+                 RowBox[{"NotebookSave", "[", 
+                  RowBox[{"EvaluationNotebook", "[", "]"}], "]"}], ";"}], 
+                "*)"}], "\[IndentingNewLine]", 
+               RowBox[{"With", "[", 
+                RowBox[{
+                 RowBox[{"{", 
+                  RowBox[{"ev", "=", 
+                   RowBox[{"EvaluationNotebook", "[", "]"}]}], "}"}], ",", 
                  "\[IndentingNewLine]", 
-                 RowBox[{"MessageDialog", "[", "\[IndentingNewLine]", 
-                  RowBox[{
-                   RowBox[{"DynamicModule", "[", 
+                 RowBox[{
+                  RowBox[{"Needs", "[", "\"\<BTools`\>\"", "]"}], ";", 
+                  "\[IndentingNewLine]", 
+                  RowBox[{"MessageDialog", "[", "\[IndentingNewLine]", 
+                   RowBox[{
+                    RowBox[{"DynamicModule", "[", 
                     RowBox[{
                     RowBox[{"{", "}"}], ",", "\[IndentingNewLine]", "1", ",", 
                     "\[IndentingNewLine]", 
@@ -1064,31 +1458,49 @@ Cell[BoxData[
                     RowBox[{"NotebookClose", "@", 
                     RowBox[{"EvaluationNotebook", "[", "]"}]}], ";", 
                     "\[IndentingNewLine]", 
-                    RowBox[{"BTools`PelicanNotebookSave", "[", "ev", "]"}]}], 
-                    "\[IndentingNewLine]", ")"}]}], ",", 
+                    RowBox[{
+                    RowBox[{"SelectFirst", "[", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"ToExpression", "[", 
+                    RowBox[{
+                    "Names", "[", "\"\<*`*`PelicanNotebookSave\>\"", "]"}], 
+                    "]"}], ",", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", 
+                    RowBox[{"Join", "[", 
+                    RowBox[{
+                    RowBox[{"DownValues", "[", "#", "]"}], ",", " ", 
+                    RowBox[{"OwnValues", "[", "#", "]"}]}], "]"}]}], ">", 
+                    "0"}], "&"}]}], "\[IndentingNewLine]", "]"}], "[", "ev", 
+                    "]"}]}], "\[IndentingNewLine]", ")"}]}], ",", 
                     "\[IndentingNewLine]", 
                     RowBox[{
                     "SynchronousInitialization", "\[Rule]", "False"}]}], 
                     "]"}], ",", "\[IndentingNewLine]", 
-                   RowBox[{"Visible", "\[Rule]", "False"}]}], 
-                  "\[IndentingNewLine]", "]"}]}]}], "\[IndentingNewLine]", 
-               "]"}], ";", "\[IndentingNewLine]", 
+                    RowBox[{"Visible", "\[Rule]", "False"}]}], 
+                   "\[IndentingNewLine]", "]"}]}]}], "\[IndentingNewLine]", 
+                "]"}], ";", "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{"CurrentValue", "[", 
+                 RowBox[{"$FrontEndSession", ",", 
+                  RowBox[{"{", 
+                   RowBox[{
+                   "MessageOptions", ",", "\"\<KernelMessageAction\>\""}], 
+                   "}"}]}], "]"}], "=", "\[IndentingNewLine]", "mact"}]}], 
+              ",", "\[IndentingNewLine]", 
               RowBox[{
                RowBox[{"CurrentValue", "[", 
                 RowBox[{"$FrontEndSession", ",", 
                  RowBox[{"{", 
                   RowBox[{
                   "MessageOptions", ",", "\"\<KernelMessageAction\>\""}], 
-                  "}"}]}], "]"}], "=", "\[IndentingNewLine]", "mact"}]}], ",",
-              "\[IndentingNewLine]", 
-             RowBox[{
-              RowBox[{"CurrentValue", "[", 
-               RowBox[{"$FrontEndSession", ",", 
-                RowBox[{"{", 
-                 RowBox[{
-                 "MessageOptions", ",", "\"\<KernelMessageAction\>\""}], 
-                 "}"}]}], "]"}], "=", "\[IndentingNewLine]", "mact"}]}], 
-            "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", "]"}]}], 
+                  "}"}]}], "]"}], "=", "\[IndentingNewLine]", "mact"}]}], 
+             "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", "]"}]}], 
+         ",", "\[IndentingNewLine]", 
+         RowBox[{"EvaluationOrder", "\[Rule]", "After"}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"PassEventsDown", "\[Rule]", "True"}]}], 
         "\[IndentingNewLine]", "}"}]}], ",", "\[IndentingNewLine]", 
       RowBox[{"InitializationCellEvaluation", "\[Rule]", "False"}], ",", 
       "\[IndentingNewLine]", 
@@ -1104,8 +1516,10 @@ Cell[BoxData[
    3.7101193007380857`*^9, 3.710119331453837*^9}, {3.710119393144279*^9, 
    3.7101194336528273`*^9}, {3.7103711841157293`*^9, 3.710371184425061*^9}, {
    3.712714752642584*^9, 3.71271475665407*^9}, {3.712714814647406*^9, 
-   3.712714820999036*^9}, {3.714590825878623*^9, 
-   3.714590855628429*^9}},ExpressionUUID->"8b8863e7-1bf1-40f6-bb44-\
+   3.712714820999036*^9}, {3.714590825878623*^9, 3.714590855628429*^9}, {
+   3.7288808344171753`*^9, 3.7288808615366383`*^9}, {3.728880897225814*^9, 
+   3.728880920293429*^9}, {3.728880952211583*^9, 
+   3.7288809558232517`*^9}},ExpressionUUID->"8b8863e7-1bf1-40f6-bb44-\
 7fd154284bf0"]
 }, Open  ]]
 }, Open  ]]
@@ -1140,11 +1554,11 @@ Cell[CellGroupData[{
 Cell[732, 26, 134, 3, 45, "Subsection",ExpressionUUID->"19873ffb-8d32-418e-b116-3e1998160348"],
 Cell[869, 31, 252, 5, 30, "Input",ExpressionUUID->"c6c54409-53f8-44be-a31b-029235f41cb0"],
 Cell[CellGroupData[{
-Cell[1146, 40, 30082, 592, 36, 27, 0, "StyleData", "Notebook", "All",ExpressionUUID->"0bd427c5-6664-4a4d-8196-32a2dc326698"],
-Cell[31231, 634, 301, 8, 30, "Input",ExpressionUUID->"faa2fbb9-5a22-40b2-abd7-878d017e3595"],
-Cell[31535, 644, 17557, 350, 3076, "Input",ExpressionUUID->"db283c09-56f0-4ae0-b3a1-457c2f34f265"],
-Cell[49095, 996, 300, 8, 30, "Input",ExpressionUUID->"f4f40ddc-0a1e-40bb-9ab9-0684bc4cc3e0"],
-Cell[49398, 1006, 5099, 102, 745, "Input",ExpressionUUID->"8b8863e7-1bf1-40f6-bb44-7fd154284bf0"]
+Cell[1146, 40, 33154, 654, 36, 27, 0, "StyleData", "Notebook", "All",ExpressionUUID->"0bd427c5-6664-4a4d-8196-32a2dc326698"],
+Cell[34303, 696, 301, 8, 30, "Input",ExpressionUUID->"faa2fbb9-5a22-40b2-abd7-878d017e3595"],
+Cell[34607, 706, 33529, 679, 5218, "Input",ExpressionUUID->"db283c09-56f0-4ae0-b3a1-457c2f34f265"],
+Cell[68139, 1387, 333, 8, 30, "Input",ExpressionUUID->"f4f40ddc-0a1e-40bb-9ab9-0684bc4cc3e0"],
+Cell[68475, 1397, 6268, 125, 850, "Input",ExpressionUUID->"8b8863e7-1bf1-40f6-bb44-7fd154284bf0"]
 }, Open  ]]
 }, Open  ]]
 }
