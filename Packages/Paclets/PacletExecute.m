@@ -137,7 +137,7 @@ $PacletExecuteSiteMethods=
 			PacletSiteURL,
 		"SiteDataset"->
 			PacletSiteInfoDataset,
-		"SiteBundle"->
+		"BundleSite"->
 			PacletSiteBundle
 		|>;
 
@@ -193,9 +193,10 @@ PacletExecute[
 
 
 
+exprPats=_String|{_String, _String}|_PacletManager`Paclet|{__PacletManager`Paclet};
 PacletExecute[
 	method_?(KeyExistsQ[$PacletExecuteExpressionMethods, #]&),
-	pac:_String|{_String, _String}|_PacletManager`Paclet|{__PacletManager`Paclet},
+	pac:exprPats,
 	args___
 	]:=
 	With[{fn=$PacletExecuteExpressionMethods[method]},
@@ -212,18 +213,10 @@ PacletExecute[
 
 
 
-$PacletFilePatterns:=
-	PacletExecuteSettingsLookup[
-		"FilePattern",
-		(_String|_URL|_File|_PacletManager`Paclet)|
-		(
-			(_String|_PacletManager`Paclet)->
-				(_String|_URL|_File|_PacletManager`Paclet)
-			)
-		];
+fiPats=$PacletFilePatterns;
 PacletExecute[
 	method_?(KeyExistsQ[$PacletExecuteSiteMethods, #]&),
-	pac:$PacletFilePatterns|None:None,
+	pac:fiPats|None:None,
 	args___?OptionQ
 	]:=
 	With[{fn=$PacletExecuteSiteMethods[method]},
@@ -240,20 +233,10 @@ PacletExecute[
 
 
 
-$PacletSpecPattern:=
-	PacletExecuteSettingsLookup[
-		"UploadPattern",
-		(_String|_URL|_File|{_String,_String}|_PacletManager`Paclet)|
-			Rule[
-				_String|_PacletManager`Paclet,
-				(_String|_URL|_File|{_String,_String}|_PacletManager`Paclet)
-				]
-		];
-$PacletUploadPatterns:=
-	$PacletSpecPattern|{$PacletSpecPattern..}
+upPats=$PacletUploadPatterns;
 PacletExecute[
 	method_?(KeyExistsQ[$PacletExecuteUploadMethods, #]&),
-	pac:$PacletUploadPatterns,
+	pac:upPats,
 	args___
 	]:=
 	With[{fn=$PacletExecuteUploadMethods[method]},

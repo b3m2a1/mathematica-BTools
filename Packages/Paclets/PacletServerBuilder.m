@@ -19,6 +19,19 @@
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*Block*)
+
+
+
+$PacletServers::usage=
+		"The listing of possible servers";
+$PacletServer::usage=
+	"The configuration for the default paclet server";
+PacletServerExecute::usage=
+	"Runs functions on a paclet server";
+
+
 PackageScopeBlock[
 	PacletServerPage::usage=
 		"Generates a page laying out the available paclets on that server";
@@ -27,19 +40,21 @@ PackageScopeBlock[
 	PacletMarkdownNotebookUpdate::usage=
 		"Updates a markdown notebook for a paclet";
 	LoadPacletServers::usage="";
-	$PacletServers::usage=
-		"The listing of possible servers";
 	$DefaultPacletServer::usage=
 		"The key of the default paclet server";
 	PacletServerURL::usage=
 		"";
 	PacletServerDeploymentURL::usage=
 		"";
+	PacletServerBundleSite::usage=
+		"Bundles the site dataset for the server";
 	PacletServerFile::usage=
 		"Finds a file on a paclet server";
 	PacletServerDirectory::usage=
 		"";
 	PacletServerDataset::usage=
+		"";
+	PacletServerExposedPaclets::usage=
 		"";
 	PacletServerInitialize::usage="";
 	PacletServerDelete::usage=
@@ -52,8 +67,9 @@ PackageScopeBlock[
 	]
 
 
-$PacletServer::usage=
-	"The configuration for the default paclet server";
+(* ::Subsubsection::Closed:: *)
+(*Add / Remove*)
+
 
 
 PacletServerAdd::usage=
@@ -304,6 +320,111 @@ PacletServerDataset[
 				Normal@server,
 			Options[PacletSiteInfoDataset]
 			];
+
+
+(* ::Subsubsection::Closed:: *)
+(*PacletServerExposedPaclets*)
+
+
+
+PacletServerExposedPaclets//Clear
+
+
+PacletServerExposedPaclets[
+	pacletSpecs:{___Association}
+	]:=
+	Map[Normal,
+		Select[
+			SortBy[
+				DeleteDuplicatesBy[
+					Reverse@SortBy[ToExpression@StringSplit[#Version,"."]&]@
+						Flatten@{pacletSpecs},
+					#Name&
+					],
+				#Name&
+				],
+			!StringEndsQ[#Name,("_Part"~~NumberString)|"_Index"]&
+			]
+		];
+PacletServerExposedPaclets[d_Dataset]:=
+	PacletServerExposedPaclets@Normal@d;
+PacletServerExposedPaclets[server:localPacletServerPat]:=
+	PacletServerExposedPaclets@
+		PacletSiteInfoDataset[
+			PacletServerFile[server, "PacletSite.mz"]
+			]
+
+
+$PacletServerExposedPaclets:=
+	PacletServerExposedPaclets@$PacletServer
+
+
+(* ::Subsubsection::Closed:: *)
+(*PacletServerBundleSite*)
+
+
+
+PacletServerBundleSite[
+	server:localPacletServerPat
+	]:=
+	With[{ps=PacletExecute["BundleSite", PacletServerDirectory[server]]},
+		CopyFile[
+			ps,
+			PacletServerFile[server, "PacletSite.mz"],
+			OverwriteTarget->True
+			]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*PacletServerExecute*)
+
+
+
+$PacletServerExecuteFunctions=
+	<|
+		"URL"->
+			PacletServerURL,
+		"DeploymentURL"->
+			PacletServerDeploymentURL,
+		"Directory"->
+			PacletServerDirectory,
+		"Path"->
+			PacletServerFile,
+		"ExposedPaclets"->
+			PacletServerExposedPaclets,
+		"Dataset"->
+			PacletServerDataset,
+		"BundleSite"->
+			PacletServerBundleSite
+		|>;
+PacletServerExecute[
+	server:localPacletServerPat,
+	k_?(KeyExistsQ[$PacletServerExecuteFunctions, #]&),
+	args___
+	]:=
+	With[{fn=$PacletServerExecuteFunctions[k]},
+		With[{res=fn[server, args]},
+			res/;Head[res]=!=fn
+			]
+		];
+PacletServerExecute[
+	s_String?(KeyExistsQ[$PacletServers, #]&),
+	k_?(KeyExistsQ[$PacletServerExecuteFunctions, #]&),
+	args___
+	]:=
+	With[{r=PacletServerExecute[$PacletServers[s], k, args]},
+		r/;Head[r]=!=PacletServerExecute
+		];
+
+
+PackageAddAutocompletions[
+	"PacletServerExecute",
+	{
+		None,
+		Keys@$PacletServerExecuteFunctions
+		}
+	]
 
 
 (* ::Subsection:: *)
@@ -721,43 +842,6 @@ PacletServerInterface[
 			ops
 			]
 		]
-
-
-(* ::Subsubsection::Closed:: *)
-(*PacletServerExposedPaclets*)
-
-
-
-PacletServerExposedPaclets//Clear
-
-
-PacletServerExposedPaclets[
-	pacletSpecs:{___Association}
-	]:=
-	Map[Normal,
-		Select[
-			SortBy[
-				DeleteDuplicatesBy[
-					Reverse@SortBy[ToExpression@StringSplit[#Version,"."]&]@
-						Flatten@{pacletSpecs},
-					#Name&
-					],
-				#Name&
-				],
-			!StringEndsQ[#Name,("_Part"~~NumberString)|"_Index"]&
-			]
-		];
-PacletServerExposedPaclets[d_Dataset]:=
-	PacletServerExposedPaclets@Normal@d;
-PacletServerExposedPaclets[server:localPacletServerPat]:=
-	PacletServerExposedPaclets@
-		PacletSiteInfoDataset[
-			PacletServerFile[server, "PacletSite.mz"]
-			]
-
-
-$PacletServerExposedPaclets:=
-	PacletServerExposedPaclets@$PacletServer
 
 
 (* ::Subsection:: *)

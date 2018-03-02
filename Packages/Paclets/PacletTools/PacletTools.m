@@ -182,6 +182,30 @@ $FormatPaclets:=
 	PacletExecuteSettingsLookup["FormatPaclets"];
 
 
+$PacletFilePatterns:=
+	PacletExecuteSettingsLookup[
+		"FilePattern",
+		(_String|_URL|_File|_PacletManager`Paclet)|
+		(
+			(_String|_PacletManager`Paclet)->
+				(_String|_URL|_File|_PacletManager`Paclet)
+			)
+		];
+
+
+$PacletSpecPattern:=
+	PacletExecuteSettingsLookup[
+		"UploadPattern",
+		(_String|_URL|_File|{_String,_String}|_PacletManager`Paclet)|
+			Rule[
+				_String|_PacletManager`Paclet,
+				(_String|_URL|_File|{_String,_String}|_PacletManager`Paclet)
+				]
+		];
+$PacletUploadPatterns:=
+	$PacletSpecPattern|{$PacletSpecPattern..}
+
+
 (* ::Subsection:: *)
 (*Error Handling*)
 
@@ -262,20 +286,33 @@ iPacletInfoAssociation[PacletManager`Paclet[k__]]:=
 						]
 				]
 			];
+
+
+Clear[validatePacletAssociationField];
+validatePacletAssociationField["Location", Except[_String?DirectoryQ]]:=
+	Nothing;
+validatePacletAssociationField[k_, f_]:=
+	k->f;
+
+
 PacletInfoAssociation[p:PacletManager`Paclet[k__]]:=
-	Merge[
-		{
-			iPacletInfoAssociation[p],
-			Thread[
-				PacletManager`Manager`Private`$pacletInformationPIFields->
-					Lookup[
-						PacletManager`PacletInformation[p],
-						PacletManager`Manager`Private`$pacletInformationPIFields
+	Association@
+		KeyValueMap[
+			validatePacletAssociationField,
+			Merge[
+				{
+					iPacletInfoAssociation[p],
+					Thread[
+						PacletManager`Manager`Private`$pacletInformationPIFields->
+							Lookup[
+								Quiet[PacletManager`PacletInformation[p]],
+								PacletManager`Manager`Private`$pacletInformationPIFields
+								]
 						]
+					},
+				First
 				]
-			},
-		First
-		];
+			];
 PacletInfoAssociation[infoFile_]:=
 	Replace[PacletInfo[infoFile],{
 		p:PacletManager`Paclet[__]:>
@@ -314,7 +351,7 @@ PacletInfo[infoFile:(_String|_File)?FileExistsQ]:=
 		];
 PacletInfo[pac_PacletManager`Paclet]:=
 	With[{pf=pac["Location"]},
-		If[FileExistsQ@FileNameJoin@{pf,"PacletInfo.m"},
+		If[StringQ@pf&&FileExistsQ@FileNameJoin@{pf,"PacletInfo.m"},
 			PacletInfo@FileNameJoin@{pf,"PacletInfo.m"},
 			pac
 			]
@@ -486,7 +523,7 @@ PacletExtensionData[pacletInfo_Association,dest_,ops:OptionsPattern[]]:=
 									FileNameJoin@{dest,"Data"},
 									\[Infinity]],
 								Not@DirectoryQ@#&&
-									Not@StringMatchQ[FileNameTake@#,".DS_Store"]&
+									Not@StringMatchQ[FileNameTake@#, ".DS_Store"]&
 								]>0,
 							"Resource"->
 								<|
@@ -501,7 +538,7 @@ PacletExtensionData[pacletInfo_Association,dest_,ops:OptionsPattern[]]:=
 													FileNameJoin@{dest,"Data"},
 													\[Infinity]],
 												Not@DirectoryQ@#&&
-													Not@StringMatchQ[FileNameTake@#,".DS_Store"]&
+													Not@StringMatchQ[FileNameTake@#, ".DS_Store"]&
 												]
 											]
 									|>,
@@ -1477,7 +1514,7 @@ PacletSiteInfoDataset//Clear
 Options[PacletSiteInfoDataset]=
 	Options[PacletSiteInfo];
 PacletSiteInfoDataset[PacletManager`PacletSite[p___]]:=
-	Dataset@Map[PacletInfoAssociation,{p}];
+	Dataset@Map[PacletInfoAssociation, {p}];
 PacletSiteInfoDataset[files:Except[_?OptionQ]|All|{}:All,ops:OptionsPattern[]]:=
 	PacletSiteInfoDataset[PacletSiteInfo[files,ops]];
 
@@ -3424,17 +3461,20 @@ PacletInstallPaclet[
 If[!AssociationQ@$pacletIconCache, $pacletIconCache=<||>];
 pacletGetIcon[a_]:=
 	Replace[
-		FileNames[
-			Lookup[
-				a,
-				"Thumbnail",
+		If[StringQ@a["Location"]&&StringLength[a["Location"]]>0,
+			FileNames[
 				Lookup[
 					a,
-					"Icon",
-					"PacletIcon.m"|"PacletIcon.png"
-					]
+					"Thumbnail",
+					Lookup[
+						a,
+						"Icon",
+						"PacletIcon.m"|"PacletIcon.png"
+						]
+					],
+				a["Location"]
 				],
-			a["Location"]
+			{}
 			],
 		{
 			{f_, ___}:>
@@ -3466,13 +3506,17 @@ pacletMakeSummaryItem[k_, v_]:=
 		]
 
 
+validPacletToFormat[p_]:=
+	MatchQ[p, PacletManager`Paclet[__Rule]]&&
+		StringQ@p["Name"]
+
+
 SetPacletFormatting[]:=
 	(
 		Format[p_PacletManager`Paclet/;
-			($FormatPaclets&&AssociationQ@
-				PacletInfoAssociation[p])]:=
+			($FormatPaclets&&validPacletToFormat[p])]:=
 			With[{a=PacletInfoAssociation[p]},
-				RawBoxes@
+			RawBoxes@
 				BoxForm`ArrangeSummaryBox[
 					"Paclet",
 					p,
@@ -3490,7 +3534,7 @@ SetPacletFormatting[]:=
 						},
 					Join[
 						{
-							If[KeyMemberQ[a,"Location"],
+							If[StringQ[a["Location"]]&&DirectoryQ@a["Location"],
 								pacletMakeSummaryItem["Location",
 									With[{l=a["Location"]},
 										Button[
