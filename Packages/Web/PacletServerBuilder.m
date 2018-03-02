@@ -105,18 +105,7 @@ LoadPacletServers[]:=
 			$PacletServers=
 				<|
 					"Default"->
-						<|
-							"ServerBase"->
-								$WebSiteDirectory,
-							"ServerExtension"->
-								Nothing,
-							"ServerName"->
-								"PacletServer",
-							Permissions->
-								"Public",
-							CloudConnect->
-								"PacletsAccount"
-							|>
+						$PacletExecuteSettings["ServerDefaults"]
 					|>
 			]
 		)

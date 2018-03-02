@@ -289,8 +289,8 @@ PackageAppNeeds[pkg_String]:=
 
 
 $PackageScopeBlockEvalExpr=TrueQ[$PackageScopeBlockEvalExpr];
-PackageScopeBlock[e_,scope_String:"Hidden"]/;TrueQ[$AllowPackageRescoping]:=
-	With[{newcont="$Name`Private`"<>StringTrim[scope,"`"]<>"`"},
+PackageScopeBlock[e_,scope_String:"Package"]/;TrueQ[$AllowPackageRescoping]:=
+	With[{newcont="$Name`PackageScope`"<>StringTrim[scope,"`"]<>"`"},
 		If[!MemberQ[$PackageContexts,newcont],
 			Unprotect[$PackageContexts];
 			AppendTo[$PackageContexts,newcont];
@@ -340,7 +340,7 @@ PackageScopeBlock[e_,scope_String:"Hidden"]/;TrueQ[$AllowPackageRescoping]:=
 			];
 		If[$PackageScopeBlockEvalExpr,e]
 		];
-PackageScopeBlock[e_, scope_String:"Hidden"]/;Not@TrueQ[$AllowPackageRescoping]:=
+PackageScopeBlock[e_, scope_String:"Package"]/;Not@TrueQ[$AllowPackageRescoping]:=
 	If[$PackageScopeBlockEvalExpr,e];
 PackageScopeBlock~SetAttributes~HoldAllComplete;
 
@@ -351,11 +351,11 @@ PackageScopeBlock~SetAttributes~HoldAllComplete;
 
 PackageDecontext[
 	pkgFile_String?(KeyMemberQ[$DeclaredPackages,#]&),
-	scope_String:"Hidden"
+	scope_String:"Package"
 	]/;TrueQ[$AllowPackageRescoping]:=
 	With[{
 		names=$DeclaredPackages[pkgFile],
-		ctx="$Name`Private`"<>StringTrim[scope,"`"]<>"`"
+		ctx="$Name`PackageScope`"<>StringTrim[scope,"`"]<>"`"
 		},
 		Replace[names,
 			Verbatim[HoldPattern][s_]:>

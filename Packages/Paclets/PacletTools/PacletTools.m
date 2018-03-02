@@ -25,13 +25,39 @@
 
 
 (* ::Subsubsection::Closed:: *)
+(*Settings*)
+
+
+
+$PacletBuildRoot::usage="The root directory for building paclets";
+$PacletBuildExtension::usage="The directory extension for building paclets";
+$PacletBuildDirectory::usage="Joins the root and extension";
+$PacletExtension::usage="The default ServerExtension";
+$PacletServerBase::usage="The default ServerBase";
+$PacletUseKeyChain::usage="Whether to use the KeyChain or not";
+$FormatPaclets::usage="Specifies whether or not to use new paclet formatting";
+
+
+$PacletUploadPatterns::usage=
+	"Possible forms for PacletUpload";
+$PacletRemovePatterns::usage=
+	"Possible forms for PacletRemove";
+$PacletFilePatterns::usage=
+	"Possible forms for a paclet file";
+$PacletUploadAccount::usage=
+	"The account to which paclets get uploaded by default";
+
+
+(* ::Subsubsection::Closed:: *)
 (*Paclets*)
 
 
 
+PacletInfo::usage=
+	"Extracts the Paclet from a PacletInfo.m file";
+
+
 PackageScopeBlock[
-	PacletInfo::usage=
-		"Extracts the Paclet from a PacletInfo.m file";
 	PacletInfoExpressionBundle::usage=
 		"Bundles a PacletInfoExpression into a PacletInfo.m file";
 	];
@@ -95,20 +121,10 @@ PackageScopeBlock[
 
 
 
-PackageScopeBlock[
-	$PacletUploadPatterns::usage=
-		"Possible forms for PacletUpload";
-	$PacletRemovePatterns::usage=
-		"Possible forms for PacletRemove";
-	$PacletFilePatterns::usage=
-		"Possible forms for a paclet file";
-	$PacletUploadAccount::usage=
-		"The account to which paclets get uploaded by default";
-	PacletSiteUpload::usage=
-		"Uploads a PacletSite.mz file";
-	PacletAPIUpload::usage=
-		"Creates a paclet link via an API based upload";
-	];
+PacletSiteUpload::usage=
+	"Uploads a PacletSite.mz file";
+PacletAPIUpload::usage=
+	"Creates a paclet link via an API based upload";
 
 
 PacletUpload::usage=
@@ -139,12 +155,16 @@ PacletInstallPaclet::usage="Installs a paclet from a URL";
 
 
 
-PackageScopeBlock[
-	PacletFormattingSet::usage="Sets new paclet formatting type"
-	];
+SetPacletFormatting::usage="Sets new paclet formatting";
 
 
 Begin["`Private`"];
+
+
+PacletExecuteSettingsLookup[key_]:=
+	Lookup[$PacletExecuteSettings, key];
+PacletExecuteSettingsLookup[key_, default_]:=
+	Lookup[$PacletExecuteSettings, key, default];
 
 
 (* ::Subsection:: *)
@@ -152,28 +172,20 @@ Begin["`Private`"];
 
 
 
-(*$pacletConfigLoaded//ClearAll*)
+$PacletBuildDirectory:=
+	FileNameJoin@{$PacletBuildRoot, $PacletBuildExtension};
 
 
-If[$pacletConfigLoaded//TrueQ//Not,
-	$PacletBuildRoot=$TemporaryDirectory;
-	$PacletBuildExtension=
-		"_paclets";
-	$PacletBuildDirectory:=
-		FileNameJoin@{$PacletBuildRoot,$PacletBuildExtension};
-	$PacletExtension="paclets";
-	$PacletServerBase=CloudObject;
-	$PacletUseKeyChain=False;
-	$FormatPaclets=False;
-	Replace[
-		SelectFirst[
-			PackageFilePath["Private","PacletConfig."<>#]&/@{"m","wl"},
-			FileExistsQ
-			],
-			f_String:>Get@f
-		]
-	];
-$pacletConfigLoaded=True
+$PacletBuildRoot:=
+	PacletExecuteSettingsLookup["BuildRoot"];
+$PacletBuildExtension:=
+	PacletExecuteSettingsLookup["BuildExtension"];
+$PacletUseKeyChain:=
+	PacletExecuteSettingsLookup["UseKeyChain"];
+
+
+$FormatPaclets:=
+	PacletExecuteSettingsLookup["FormatPaclets"];
 
 
 (* ::Subsection:: *)
@@ -567,6 +579,30 @@ validatePacletRules[e_]:=e;
 validatePacletRules~SetAttributes~Listable		
 
 
+$ValidPacletKeys=
+	{
+		"Name",
+		"Version",
+		"Creator",
+		"URL",
+		"Description",
+		"Root",
+		"WolframVersion",
+		"MathematicaVersion",
+		"Internal",
+		"Loading",
+		"Qualifier",
+		"SystemID",
+		"BuildNumber",
+		"Tags",
+		"Categories",
+		"Authors",
+		"Thumbnail",
+		"Icon",
+		"Extensions"
+		};
+
+
 Options[PacletInfoExpression]=
 	Join[
 		{
@@ -742,7 +778,7 @@ PacletLookup[p_PacletManager`Paclet,props_]:=
 PacletLookup[p_PacletManager`Paclet, props_, def_]:=
 	Lookup[PacletInfoAssociation@p, props, def];
 PacletLookup[p:_String|{_String,_String},props_]:=
-	PacletLookup[PacletManager`PacletFind[p],props];
+	PacletLookup[If[Length@#==1, #[[1]], #]&@PacletManager`PacletFind[p],props];
 PacletLookup~SetAttributes~HoldRest
 
 
@@ -823,8 +859,6 @@ CreateDocument[
 
 
 
-PacletBundle[dir]~PackageAddUsage~
-	"creates a .paclet file from dir and places it in the default build directory";
 Options[PacletBundle]=
 	Join[
 		{
@@ -948,7 +982,7 @@ pacletStandardServerName[serverName_]:=
 				Automatic:>
 					"PacletServer",
 				Default:>
-					Lookup[$PacletServer,"ServerName"]
+					Lookup[$PacletServer, "ServerName"]
 				}
 			],{
 		e:Except[_String]:>(Nothing)
@@ -970,7 +1004,7 @@ pacletStandardServerBase[serverBase_,
 				serverBase,
 				{
 					Default:>
-						Lookup[$PacletServer,"ServerBase"]
+						Lookup[$PacletServer, "ServerBase"]
 					}
 				],{
 			e:Except[
@@ -1223,18 +1257,13 @@ PacletSiteURL[ops:OptionsPattern[]]:=
 
 
 Options[PacletSiteFiles]=
-	Join[{
-		"MergePacletInfo"->Automatic
-		},
+	Join[
+		{
+			"MergePacletInfo"->Automatic
+			},
 		Options@PacletSiteURL
 		];
-$PacletFilePatterns=
-	(_String|_URL|_File|_PacletManager`Paclet)|
-		(
-			(_String|_PacletManager`Paclet)->
-				(_String|_URL|_File|_PacletManager`Paclet)
-			);
-PacletSiteFiles[infoFiles_,ops:OptionsPattern[]]:=
+PacletSiteFiles[infoFiles_, ops:OptionsPattern[]]:=
 	DeleteCases[Except[$PacletFilePatterns]]@
 		Replace[
 			Replace[
@@ -2313,16 +2342,6 @@ pacletAPIUpload[pacletFile_,"GoogleDrive"]:=
 
 
 
-$PacletSpecPattern=
-	(_String|_URL|_File|{_String,_String}|_PacletManager`Paclet)|
-		Rule[
-			_String|_PacletManager`Paclet,
-			(_String|_URL|_File|{_String,_String}|_PacletManager`Paclet)
-			];
-$PacletUploadPatterns=
-	$PacletSpecPattern|{$PacletSpecPattern..}
-
-
 urlBasedPacletQ[url_String]:=
 	With[{data=URLParse[url]},
 		(
@@ -2780,8 +2799,6 @@ Options[PacletUpload]=
 	Options[pacletUpload];
 PacletUpload::nobby="Unkown site base ``"
 PacletUpload::nopac="Unable to find paclet files ``";
-PacletUpload[pacletFiles]~~PackageAddUsage~~
-	"uploads pacletFiles to the specified server and configures installers";
 PacletUpload[
 	pacletSpecs:$PacletUploadPatterns,
 	ops:OptionsPattern[]
@@ -2867,9 +2884,12 @@ pacletRemove[server_,siteExpr_,PacletManager`PacletSite[pacSpecs___]]:=
 
 
 
-$PacletRemoveSpec=
-	{_String,_String}|PacletManager`Paclet|_String;
-$PacletRemovePatterns=
+$PacletRemoveSpec:=
+	PacletExecuteSettingsLookup[
+		"RemovePattern",
+		{_String,_String}|PacletManager`Paclet|_String
+		];
+$PacletRemovePatterns:=
 	$PacletRemoveSpec|{$PacletRemoveSpec..}
 
 
@@ -3452,7 +3472,7 @@ pacletMakeSummaryItem[k_, v_]:=
 		]
 
 
-PacletFormattingSet[]:=
+SetPacletFormatting[]:=
 	(
 		Format[p_PacletManager`Paclet/;
 			($FormatPaclets&&AssociationQ@
@@ -3520,7 +3540,7 @@ PacletFormattingSet[]:=
 				FreeQ[HoldPattern[$FormatPaclets]]
 				]
 		);
-If[$TopLevelLoad, PacletFormattingSet[]]
+If[$TopLevelLoad, SetPacletFormatting[]]
 
 
 End[];

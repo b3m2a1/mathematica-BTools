@@ -30,6 +30,11 @@ DocGen::usage=
 	"Generates various types of documentation";
 
 
+PackageScopeBlock[
+	$DocGenFunction::usage="The proper implementation function for most doc gens";
+	]
+
+
 Begin["`Private`"];
 
 
@@ -136,7 +141,9 @@ $DocGenMethodRouter=
 				"Template"->
 					GuideTemplate,
 				"Notebook"->
-					GuideNotebook
+					GuideNotebook,
+				"MultiPackageOverview"->
+					DocumentationMultiPackageOverviewNotebook
 				|>,
 		"Tutorial"->
 			<|
@@ -156,6 +163,51 @@ $DocGenMethodRouter=
 		"Index"->
 			DocGenIndexDocumentation
 		|>;
+
+
+docGenDefault[docObj_, type_, fun_, meth_, methOps_, ops___]:=
+	Which[
+		fun===DocGenGenerateDocumentation,
+			fun[docObj,
+				Lookup[methOps, 
+					Directory,
+					Automatic
+					],
+				Lookup[methOps,
+				 "OpenOnBuild",
+				 True
+				 ],
+				Evaluate@FilterRules[{ops}, Options@fun]
+				],
+		fun===DocGenGenerateHTMLDocumentation,
+			fun[
+				Lookup[methOps, 
+					Directory,
+					Automatic
+					],
+				docObj,
+				Evaluate@FilterRules[{ops}, Options@fun]
+				],
+		meth==="Save",
+			fun[docObj, 
+				Lookup[methOps, 
+					Directory,
+					$DocGenDirectory
+					],
+				Lookup[methOps,
+				 Extension,
+				 True
+				 ],
+				Evaluate@FilterRules[{ops}, Options@fun]
+				],
+		True,
+			fun[docObj, Evaluate@FilterRules[{ops}, Options@fun]]
+		];
+docGenDefault~SetAttributes~HoldFirst
+
+
+$DocGenFunction=
+	docGenDefault
 
 
 DocGen//Clear
@@ -191,45 +243,8 @@ DocGen[
 				type,
 				Keys@$DocGenMethodRouter[type]
 				];
-			res=fun["Sad sad sad"],
-			res=
-				Which[
-					type==="Paclet",
-						fun[docObj, 
-							Lookup[methOps, 
-								Directory,
-								Automatic
-								],
-							Lookup[methOps,
-							 "OpenOnBuild",
-							 True
-							 ],
-							Evaluate@FilterRules[{ops}, Options@fun]
-							],
-					type==="HTML",
-						fun[
-							Lookup[methOps, 
-								Directory,
-								Automatic
-								],
-							docObj,
-							Evaluate@FilterRules[{ops}, Options@fun]
-							],
-					meth==="Save",
-						fun[docObj, 
-							Lookup[methOps, 
-								Directory,
-								$DocGenDirectory
-								],
-							Lookup[methOps,
-							 Extension,
-							 True
-							 ],
-							Evaluate@FilterRules[{ops}, Options@fun]
-							],
-					True,
-						fun[docObj, Evaluate@FilterRules[{ops}, Options@fun]]
-					];
+			res=None,
+			res=$DocGenFunction[docObj, type, fun, meth, methOps, ops];
 			If[Head[res]===fun, 
 				Message[DocGen::nogen,
 					type,
@@ -237,7 +252,7 @@ DocGen[
 					]
 				];
 			];
-		res/;Head[res]=!=fun
+		res/;res=!=None&&Head[res]=!=fun
 		];
 DocGen~SetAttributes~HoldRest
 

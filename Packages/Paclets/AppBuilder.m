@@ -61,21 +61,38 @@ AppReconfigureSubapp::usage=
 	"Reconfigures a subapp, preserving files, etc.";
 
 
-(*PackageScopeBlock[*)
-	AppAddContent::usage="Adds a file to the app";
+AppAddContent::usage="Adds a file to the app";
+PackageScopeBlock[
 	AppAddPackage::usage="Adds a package";
 	AppAddPalette::usage="Adds a palette to the app";
 	AppAddStylesheet::usage="Adds a stylesheet to the app";
 	AppAddDocPage::usage="Adds a doc page for a symbol to the app";
 	AppAddGuidePage::usage="Adds a guide to the app";
 	AppAddTutorialPage::usage="Adds a tutorial page to the app";
-(*	]*)
+	]
 
 
-AppRegenerateDirectories::usage=
-	"Regerates missing directories in the app";
-AppRegenerateInit::usage=
-	"Regenerates a default init file";
+AppConfigRegenerate::usage="Regenerates a config file";
+PackageScopeBlock[
+	AppRegenerateDirectories::usage=
+		"Regenerates missing directories in the app";
+	AppRegenerateInit::usage=
+		"Regenerates a default init file";
+	AppRegenerateDocInfo::usage=
+		"Regenerates the DocInfo.m file";
+	AppRegenerateBundleInfo::usage=
+		"Regenerates the BundleInfo file";
+	AppRegenerateLoadInfo::usage=
+		"Regenerates the LoadInfo file";
+	AppRegenerateGitIgnore::usage=
+		"Rebuilds the .gitignore file";
+	AppRegenerateGitExclude::usage=
+		"Rebuilds the .git/info/exclude file";
+	AppRegenerateReadme::usage=
+		"Generates a GitHub README.md file for the app";
+	AppRegenerateUploadInfo::usage=
+		"Regenerates the UploadInfo.m file";
+	];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -114,9 +131,8 @@ AppFromFile::usage=
 
 
 
-(*PackageScopeBlock[*)
-	AppRegenerateDocInfo::usage=
-		"Regenerates the DocInfo.m file";
+AppDocGen::usage="";
+PackageScopeBlock[
 	AppIndexDocs::usage=
 		"Indexes the doc pages of an app";
 	AppSymbolNotebook::usage=
@@ -131,10 +147,6 @@ AppFromFile::usage=
 		"Generates a tutorial overview for the app";
 	AppDocumentationTemplate::usage=
 		"Creates a total documentation template for an app";
-(*	]*)
-
-
-(*PackageScopeBlock[*)
 	AppSaveSymbolPages::usage=
 		"Saves auto-generated symbol pages";
 	AppPackageSaveSymbolPages::usage=
@@ -143,17 +155,13 @@ AppFromFile::usage=
 		"Saves an auto-generated guide for an app";
 	AppPackageSaveGuide::usage=
 		"Saves auto-generated guide for a package";
-(*	]*)
-
-
-AppGenerateDocumentation::usage=
-	"Generates symbol pages and guide page for an app";
-AppPackageGenerateDocumentation::usage=
-	"Generates symbol pages and guide page for a package";
-
-
-AppGenerateHTMLDocumentation::usage=
-	"Generates HTML documentation for an app";
+	AppGenerateDocumentation::usage=
+		"Generates symbol pages and guide page for an app";
+	AppPackageGenerateDocumentation::usage=
+		"Generates symbol pages and guide page for a package";
+	AppGenerateHTMLDocumentation::usage=
+		"Generates HTML documentation for an app";
+	];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -161,17 +169,14 @@ AppGenerateHTMLDocumentation::usage=
 
 
 
+$AppCloudExtension::usage="The cloud extension for applications";
+
+
 AppPublish::usage=
 	"Publishes the app to GitHub and PacletServer";
 
 
-(*PackageFEHiddenBlock[*)
-	AppRegenerateBundleInfo::usage=
-		"Regenerates the BundleInfo file";
-	AppRegenerateLoadInfo::usage=
-		"Regenerates the LoadInfo file";
-(*	];
-PackageScopeBlock[*)
+(*PackageScopeBlock[
 	AppBundle::usage="Creates a sync bunde for an app";
 	AppUpload::usage="Uploads an application zip to the cloud";
 	AppDownload::usage="Downloads an app into a directory";
@@ -179,7 +184,6 @@ PackageScopeBlock[*)
 	AppBackup::usage="Backs up the app";
 	AppBackups::usage="Gets all the backed-up versions of the app";
 	AppRestore::usage="Restores the most recent version of the app";
-	$AppCloudExtension::usage="The cloud extension for applications";(*
 	]*)
 
 
@@ -188,7 +192,7 @@ PackageScopeBlock[*)
 
 
 
-(*PackageScopeBlock[*)
+(*PackageScopeBlock[
 	AppDeployReadme::usage=
 		"Deploys the app README.md file";
 	AppDeployHTML::usage=
@@ -197,7 +201,7 @@ PackageScopeBlock[*)
 		"Deploys the app img files";
 	AppDeployCSS::usage=
 		"Deploys the app css files";
-(*	]*)
+	]*)
 
 
 (* ::Subsubsection::Closed:: *)
@@ -205,7 +209,9 @@ PackageScopeBlock[*)
 
 
 
-(*PackageScopeBlock[*)
+AppGit::usage=
+	"Git-type wrapper for apps";
+PackageScopeBlock[
 	AppGitInit::usage=
 		"Configures a Git repository for the app";
 	AppGitClone::usage=
@@ -214,10 +220,6 @@ PackageScopeBlock[*)
 		"Configures pushes to the git repo";
 	AppGitSafeCommit::usage=
 		"Commits, making sure the ignore and exclude exist";
-	AppRegenerateGitIgnore::usage=
-		"Rebuilds the .gitignore file";
-	AppRegenerateGitExclude::usage=
-		"Rebuilds the .git/info/exclude file";
 	AppGitHubConfigure::usage=
 		"Configures the app to be able to push to github";
 	AppGitHubRepo::usage=
@@ -232,9 +234,7 @@ PackageScopeBlock[*)
 		"Pushes the app to its master branch";
 	AppGitHubDelete::usage=
 		"Removes a repo from github";
-	AppRegenerateReadme::usage=
-		"Generates a GitHub README.md file for the app";
-(*	];*)
+	];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -242,9 +242,8 @@ PackageScopeBlock[*)
 
 
 
-(*PackageScopeBlock[*)
-	AppRegenerateUploadInfo::usage=
-		"Regenerates the UploadInfo.m file";
+AppPacletExecute::usage="PacletManage-type wrapper for apps";
+PackageScopeBlock[
 	AppPacletBundle::usage=
 		"Packs the .paclet file, removing the specified paths first";
 	AppPaclet::usage=
@@ -269,13 +268,11 @@ PackageScopeBlock[*)
 		"Gets the URL to the auto-configure uninstaller";
 	AppPacletServerPage::usage=
 		"Uploads a paclet access page to a server";
-(*	];*)
-
-
-AppPacletUpload::usage=
+	AppPacletUpload::usage=
 		"Uploads paclet files to a server";
-AppSubpacletUpload::usage=
-	"Uploads a sub-app";
+	AppSubpacletUpload::usage=
+		"Uploads a sub-app";
+	];
 
 
 Begin["`Private`"];
@@ -408,7 +405,12 @@ Options[AppComponentFiles]=
 AppComponentFiles[
 	app:_String|Automatic,
 	path___String,
-	ext_?StringPattern`StringPatternQ,
+	ext:
+		Except[
+			"Palettes"|"Packages"|"StyleSheets"|
+				"SymbolPages"|"Guides"|"Tutorials",
+			_?StringPattern`StringPatternQ
+			],
 	o:OptionsPattern[]
 	]:=
 	If[TrueQ@OptionValue["DropExtension"],
@@ -422,6 +424,20 @@ AppComponentFiles[
 		Infinity,
 		IgnoreCase->True
 		]	
+
+
+AppComponentFiles[app_String, "Packages", ops:OptionsPattern[]]:=
+	AppComponentFiles[app, "Packages", "m"|"wl", ops];
+AppComponentFiles[app_String, "Palettes", ops:OptionsPattern[]]:=
+	AppComponentFiles[app, "Palettes", "nb", ops];
+AppComponentFiles[app_String, "StyleSheets", ops:OptionsPattern[]]:=
+	AppComponentFiles[app, "StyleSheets", "nb", ops];
+AppComponentFiles[app_String, "SymbolPages", ops:OptionsPattern[]]:=
+	AppComponentFiles[app, "SymbolPages", "nb", ops];
+AppComponentFiles[app_String, "Guides", ops:OptionsPattern[]]:=
+	AppComponentFiles[app, "Guides", "nb", ops];
+AppComponentFiles[app_String, "Tutorials", ops:OptionsPattern[]]:=
+	AppComponentFiles[app, "Tutorials", "nb", ops];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1095,8 +1111,11 @@ Options[AppConfigure]={
 AppConfigure[
 	name_?StringQ,
 	packages:
-		(_Symbol|Except[_Symbol]?(MatchQ[(_String|_File)?FileExistsQ]))|
-			{(
+		(
+			_Symbol|Except[_Symbol]?(MatchQ[(_String|_File)?FileExistsQ])
+			)|
+		{
+			(
 				_Symbol|Except[_Symbol]?(MatchQ[(_String|_File)?FileExistsQ])|
 					{
 						Except[_Symbol]?(MatchQ[(_String|_File)?FileExistsQ]),
@@ -1459,6 +1478,38 @@ AppReconfigureSubapp[
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*Regens*)
+
+
+
+$AppRegenRouter=
+	<|
+			"PacletInfo"->
+				AppRegeneratePacletInfo,
+			"Loader"->
+				AppRegenerateInit,
+			"Directories"->
+				AppRegenerateDirectories,
+			"LoadInfo"->
+				AppRegenerateLoadInfo,
+			"BundleInfo"->
+				AppRegenerateBundleInfo,
+			"UploadInfo"->
+				AppRegenerateUploadInfo,
+			"DocInfo"->
+				AppRegenerateDocInfo,
+			"README"->
+				AppRegenerateReadme,
+			"GitIgnore"->
+				AppRegenerateGitIgnore,
+			"GitExclude"->
+				AppRegenerateGitExclude
+		|>;
+AppConfigRegenerate[app_, thing_?(KeyExistsQ[$AppRegenRouter, #]&), args___]:=
+	$AppRegenRouter[thing][app, args];
+
+
 (* ::Subsection:: *)
 (*Edit*)
 
@@ -1469,61 +1520,89 @@ AppReconfigureSubapp[
 
 
 
-AppAddContent[name_,file_String?FileExistsQ,path__String,
-	o:(OverwriteTarget->True|False):(OverwriteTarget->False)]:=
-	With[{copyTo=AppDirectory[name,path,FileNameTake@file]},
+Options[AppAddContent]=
+	Join[(*
+		Options[CreateDirectory],*)
+		Options[CopyFile]
+		];
+AppAddContent[
+	name_,
+	file_String?FileExistsQ,
+	path__String,
+	ops:OptionsPattern[]
+	]:=
+	With[
+		{
+			copyTo=
+				AppPath[name,path,FileNameTake@file]
+			},
 		If[Not@FileExistsQ@DirectoryName@copyTo,
 			CreateDirectory[DirectoryName@copyTo,
-				CreateIntermediateDirectories->True]
+				CreateIntermediateDirectories->True
+				]
 			];
-		CopyFile[file,copyTo,o]
+		CopyFile[file,copyTo,
+			FilterRules[{ops}, Options@CopyFile]
+			]
 		];
-AppAddContent[name_,file_String?FileExistsQ,
-	o:(OverwriteTarget->True|False):(OverwriteTarget->False)]:=
+AppAddContent[
+	name_,
+	file_String?FileExistsQ,
+	ops:OptionsPattern[]
+	]:=
 	With[{path=
 		Switch[
 			{FileBaseName@file,FileExtension@file},
 			{"PacletInfo","m"},{},
-			{_,"m"},"Packages",
+			{_,"m"|"wl"},"Packages",
 			{_,"nb"},
-				Replace[Get@file,{
-					nb:Notebook[data_,
-						{___,
-							StyleDefinitions->_?(
-									Not@*FreeQ@FrontEnd`FileName[{"Wolfram"},"Reference"]
-									),___}]:>
-							If[FreeQ[data,Cell[__,"GuideTitle",___]],
-								"Symbols",
-								"Guides"
-								],
-					Notebook[_,
-						{___,(_Rule|_RuleDelayed)[AutoGeneratedPackage,Except[False]],___}]->
-						"Packages",
-					Notebook[
-						_?(MemberQ[NotebookTools`FlattenCellGroups@#,
-								Cell[StyleData[__],___]]&),
-						___]->
-						"StyleSheets",
-					_->"Packages"
-					}],
+				Replace[
+					Get@file,
+					{
+						nb:Notebook[data_,
+							{___,
+								StyleDefinitions->_?(
+										Not@*FreeQ@FrontEnd`FileName[{"Wolfram"},"Reference"]
+										),___}]:>
+								If[FreeQ[data,Cell[__,"GuideTitle",___]],
+									"Symbols",
+									"Guides"
+									],
+						Notebook[_,
+							{___,(_Rule|_RuleDelayed)[AutoGeneratedPackage,Except[False]],___}]->
+							"Packages",
+						Notebook[
+							_?(MemberQ[NotebookTools`FlattenCellGroups@#,
+									Cell[StyleData[__],___]]&),
+							___
+						]->
+							{name, "StyleSheets"},
+						_->"Resources"
+						}
+					],
 			_,{}
 			]},
-		AppAddContent[name,file,path,o]
+		AppAddContent[name,file,path,ops]
 		];
-AppAddContent[appName_,
+AppAddContent[
+	appName_,
 	nb:(_NotebookObject|Automatic):Automatic,
-	o:(OverwriteTarget->True|False):(OverwriteTarget->False)]:=
+	ops:OptionsPattern[]
+	]:=
 	Replace[
-		NotebookFileName@Replace[nb,Automatic:>EvaluationNotebook[]],{
-			fName_String:>AppAddContent[appName,nb,FileBaseName@fName,o],
+		NotebookFileName@Replace[nb,Automatic:>EvaluationNotebook[]],
+		{
+			fName_String:>AppAddContent[appName,nb,FileBaseName@fName,ops],
 			_:>$Failed
 			}
 		];
-AppAddContent[appName_,
+AppAddContent[
+	appName_,
 	nb:(_NotebookObject|Automatic):Automatic,
 	fName_String?(StringMatchQ[Except[$PathnameSeparator]..]),
 	path:__String|None:None,
-	o:(OverwriteTarget->True|False):(OverwriteTarget->False)]:=
+	ops:OptionsPattern[]
+	]:=
 	With[{file=
 			NotebookSaveRename[
 				Replace[nb,Automatic:>EvaluationNotebook[]],
@@ -1534,8 +1613,8 @@ AppAddContent[appName_,
 		With[{new=
 			Check[
 				If[{path}=!={None},
-					AppAddContent[appName,file,path,o],
-					AppAddContent[appName,file,o]
+					AppAddContent[appName,file,path,ops],
+					AppAddContent[appName,file,ops]
 					],
 				$Failed]},
 			If[MatchQ[new,_String?FileExistsQ],
@@ -1552,22 +1631,28 @@ AppAddContent[appName_,
 
 
 
-AppAddPackage[name_,file_]:=AppAddContent[name,file,"Packages"];
+AppAddPackage[name_,file_]:=
+	AppAddContent[name,file,"Packages"];
 
 
-AppAddStylesheet[name_,file_]:=AppAddContent[name,file,"StyleSheets"];
+AppAddStylesheet[name_,file_]:=
+	AppAddContent[name,file,"StyleSheets"];
 
 
-AppAddPalette[name_,file_]:=AppAddContent[name,file,"Palettes"];
+AppAddPalette[name_,file_]:=
+	AppAddContent[name,file,"Palettes"];
 
 
-AppAddDocPage[name_,file_]:=AppAddContent[name,file,"Symbols"];
+AppAddDocPage[name_,file_]:=
+	AppAddContent[name,file,"Symbols"];
 
 
-AppAddGuidePage[name_,file_]:=AppAddContent[name,file,"Guides"];
+AppAddGuidePage[name_,file_]:=
+	AppAddContent[name,file,"Guides"];
 
 
-AppAddTutorialPage[name_,file_]:=AppAddContent[name,file,"Tutorials"];
+AppAddTutorialPage[name_,file_]:=
+	AppAddContent[name,file,"Tutorials"];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1623,6 +1708,138 @@ AppRegenerateLoadInfo[app_String,ops:OptionsPattern[]]:=
 
 
 (* ::Subsubsection::Closed:: *)
+(*AppDocGen*)
+
+
+
+(* ::Text:: *)
+(*Use this to dispatch to all of the other App docs methods*)
+
+
+
+$AppDocGenMethodRouter=
+	<|
+		"SymbolPage"->
+			<|
+				Automatic->
+					AppSymbolNotebook,
+				"Template"->
+					AppSymbolNotebook,
+				"PackageTemplate"->
+					AppPackageSymbolNotebook,
+				"Save"->
+					AppSaveSymbolPages,
+				"PackageSave"->
+					AppPackageSaveSymbolPages
+				|>,
+		"Guide"->
+			<|
+				Automatic->
+					AppGuideNotebook,
+				"Save"->
+					AppSaveGuide,
+				"Template"->
+					AppGuideNotebook
+				|>,
+		"Tutorial"->
+			<|
+				Automatic->AppTutorialNotebook,
+				"PackageTemplate"->AppPackageDocumentationTemplate
+				|>,
+		"Documentation"->
+			<|
+				Automatic->AppGenerateDocumentation,
+				"Package"->AppPackageGenerateDocumentation,
+				"Template"->AppDocumentationTemplate
+				|>,
+		"HTML"->
+			<|
+				Automatic->AppGenerateHTMLDocumentation,
+				"Package"->AppPackageGenerateHTMLDocumentation
+				|>,
+		"Index"->
+			AppIndexDocs
+		|>;
+
+
+AppDocGen::nopkg=
+	"Method `` requires ";
+appDocGenDefault[
+	app_String, type_String, 
+	fun_Symbol, method:_String|_Symbol, 
+	methOps_?OptionQ, ops___?OptionQ
+	]:=
+	Catch@
+	With[
+		{
+			pkg=Lookup[methOps, "Package", None], 
+			meth=ToString[method],
+			dir=
+				Lookup[methOps, Directory, Automatic],
+			ext=
+				Lookup[methOps, Extension, True],
+			gtype=
+				Lookup[methOps, "GenerateType", All],
+			fnp=
+				Lookup[methOps, "FileNamePattern", All]
+			},
+		If[StringStartsQ[meth, "Package"]&&!StringQ[pkg],
+			Message[AppDocGen::nopkg, pkg];
+			Throw@$Failed
+			];
+		Which[
+			fun===AppGenerateDocumentation||StringEndsQ[meth, "Save"],
+				If[StringStartsQ[meth, "Package"],
+					fun[app, pkg, dir, ext,
+						Evaluate@FilterRules[{ops}, Options@fun]
+						],
+					fun[app, dir, ext,
+						Evaluate@FilterRules[{ops}, Options@fun]
+						]
+					],
+			type==="Documentation",
+				Which[
+					StringStartsQ[meth, "Package"],
+						fun[app, pkg, dir, gtype, fnp,
+							Evaluate@FilterRules[{ops}, Options@fun]
+							],
+					StringStartsQ[meth, "Template"],
+						fun[app,
+							Evaluate@FilterRules[{ops}, Options@fun]
+							],
+					True,
+						fun[app, dir, gtype, fnp,
+							Evaluate@FilterRules[{ops}, Options@fun]
+							]
+					],
+			StringStartsQ[meth, "Package"],
+				fun[app, pkg, Evaluate@FilterRules[{ops}, Options@fun]],
+			True,
+				fun[app, Evaluate@FilterRules[{ops}, Options@fun]]
+			]
+		];
+
+
+Options[AppDocGen]=
+	{
+		Method->Automatic
+		};
+AppDocGen[
+	app_String,
+	type:_?(KeyExistsQ[$AppDocGenMethodRouter, #]&):"SymbolPage",
+	ops:OptionsPattern[]
+	]:=
+	Block[
+		{
+			$DocGenMethodRouter=$AppDocGenMethodRouter,
+			$DocGenFunction=appDocGenDefault
+			},
+		DocGen[type, app, ops]
+		]
+AppDocGen~SetAttributes~HoldRest
+
+
+(* ::Subsubsection::Closed:: *)
 (*DocInfo*)
 
 
@@ -1650,7 +1867,8 @@ AppRegenerateDocInfo[app_String,ops:OptionsPattern[]]:=
 
 
 AppIndexDocs[app_,lang:_String:"English"]:=
-	DocGenIndexDocumentation[
+	DocGen[
+		"Index",
 		AppPath[app,"Documentation",lang]
 		];
 
@@ -2028,13 +2246,108 @@ AppTutorialNotebook[app_,ops:OptionsPattern[]]:=
 
 
 (* ::Subsubsection::Closed:: *)
+(*AppPackageTutorialNotebook*)
+
+
+
+Options[AppPackageTutorialNotebook]=
+	Prepend["DocInfo"->Automatic]@
+		Options@TutorialTemplate;
+AppPackageTutorialNotebook[app_, pkg_, ops:OptionsPattern[]]:=
+	Replace[OptionValue@"DocInfo",{
+		Automatic:>
+			AppPackageTutorialNotebook[app,
+				"DocInfo"->
+					AppPath[app,
+						"Config",
+						"DocInfo.m"
+						],
+				ops],
+		f_String?FileExistsQ:>
+			AppTutorialNotebook[app,
+				"DocInfo"->None,
+				ops,
+				Sequence@@
+					FilterRules[
+						DeleteCases[
+							Lookup[Import[f],"TutorialOptions",{}],
+							Alternatives@@Options@AppTutorialNotebook
+							],
+						Options@AppTutorialNotebook
+						]
+					],
+		e_:>
+			With[{fs=AppPackageFunctions[app, pkg]},
+				TutorialTemplate[app,
+					Sequence@@FilterRules[{ops},
+						Options@TutorialTemplate
+						],
+					"Title"->(app<>" "<>pkg<>" Tutorial"),
+					"Description"->
+						TemplateApply[
+							"Tutorial for the `` package in the `` application",
+							{pkg, app}
+							],
+					"Content"->
+						KeyValueMap[
+							#->{
+								TemplateApply[
+									"The `` package has `` functions.",
+									{pkg, Length@fs}
+									],
+								"These are:",
+								Thread@{fs}
+								}&,
+							fs
+							],
+					"Functions"->
+						fs,
+					"RelatedGuides"->
+						Prepend[
+							Map[#->#<>"PackageGuide"&, Keys@fs],
+							(app<>" Overview")->app
+							],
+					"RelatedTutorials"->
+						None,
+					"RelatedLinks"->
+						None
+					]//
+					Replace[
+						Notebook[{a__},o___]:>
+							Notebook[
+								{
+									Cell[app<>" Documentation Template","Title"],
+									Cell[BoxData@RowBox@{"<<",app<>"`"}, "Input"],
+									Cell[
+										BoxData@RowBox@
+											{
+												ToBoxes[Unevaluated[$DocActive]],"="," \""<>app<>"\"",";"
+												},
+										"Input"
+										],
+									Cell["","BlockSeparator"],
+									a
+									},
+								o
+								]
+						]
+				]
+		}];
+
+
+(* ::Subsubsection::Closed:: *)
 (*AppDocumentationTemplate*)
 
 
 
-AppDocumentationTemplate[app_]:=
-	With[{docs=
-		AppSymbolNotebook[app]},
+Options[AppDocumentationTemplate]=
+	Join[
+		Options[AppSymbolNotebook],
+		Options[AppGuideNotebook],
+		Options[AppTutorialNotebook]
+		];
+AppDocumentationTemplate[app_, ops:OptionsPattern[]]:=
+	With[{docs=AppSymbolNotebook[app, FilterRules[{ops}, Options@AppSymbolNotebook]]},
 		Notebook[
 			Flatten@
 				{
@@ -2047,13 +2360,54 @@ AppDocumentationTemplate[app_]:=
 					Cell[app<>" Ref Pages","Chapter"],
 					First@docs,
 					Cell[app<>" Guide Pages","Chapter"],
-					First@AppGuideNotebook[app],
+					First@AppGuideNotebook[app, FilterRules[{ops}, Options@AppGuideNotebook]],
 					Map[
 						First@AppPackageGuideNotebook[app,#]&,
 						FileBaseName/@AppPackages[app]
 						],
 					Cell[app<>" Tutorial Page","Chapter"],
-					First@AppTutorialNotebook[app]
+					First@AppTutorialNotebook[app, FilterRules[{ops}, Options@AppTutorialNotebook]]
+					},
+			Sequence@@Rest@docs
+			]
+	]
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppPackageDocumentationTemplate*)
+
+
+
+Options[AppPackageDocumentationTemplate]=
+	Join[
+		Options[AppPackageSymbolNotebook],
+		Options[AppPackageGuideNotebook],
+		Options[AppPackageTutorialNotebook]
+		];
+AppPackageDocumentationTemplate[app_, pkg_, ops:OptionsPattern[]]:=
+	With[
+		{
+			docs=AppPackageSymbolNotebook[app, FilterRules[{ops}, Options@AppSymbolNotebook]]
+			},
+		Notebook[
+			Flatten@
+				{
+					Cell[app " "<>pkg<>" Package Template","Title"],
+					Cell[BoxData@RowBox@{"<<",app<>"`"},"Input"],
+					Cell[BoxData@ToBoxes@Unevaluated[$DocActive=app;],
+						"Input"
+						],
+					Cell["","BlockSeparator"],
+					Cell[app<>" "<>pkg<>" Package Ref Pages","Chapter"],
+					First@docs,
+					Cell[app<>" "<>pkg<>" Package Guide Pages","Chapter"],
+					First@
+						AppPackageGuideNotebook[app, pkg,
+							FilterRules[{ops}, Options@AppPackageGuideNotebook]],
+					Cell[app<>" "<>pkg<>" Package Tutorial","Chapter"],
+					First@
+						AppPackageTutorialNotebook[app, pkg,
+							FilterRules[{ops}, Options@AppPackageTutorialNotebook]]
 					},
 			Sequence@@Rest@docs
 			]
@@ -2470,7 +2824,7 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 					],
 			"PushToGitHub"->
 				If[gitHubPush,
-					Quiet[AppGitHubPush[app],Git::err]
+					Quiet[AppGitHubPush[app], Git::err]
 					],
 			"PushToCloud"->
 				If[pacletCloudPush,
@@ -2542,6 +2896,10 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 
 
 
+AppGit::usage=
+	"Git-type wrapper for apps";
+
+
 (* ::Subsubsection::Closed:: *)
 (*GitInit*)
 
@@ -2587,7 +2945,7 @@ AppRegenerateGitIgnore[appName_:Automatic,
 		];
 
 
-(* ::Subsubsection::Closed:: *)
+ (* ::Subsubsection::Closed:: *)
 (*RegenerateGitExclude*)
 
 
@@ -4020,6 +4378,50 @@ AppDeployHTML[appName_,ops:OptionsPattern[]]:=
 
 
 
+$AppPacletExecuteMethods=
+	<|
+		"Paclet"->
+			AppPaclet,
+		"SiteURL"->
+			AppPacletSiteURL,
+		"BundleSite"->
+			AppPacletSiteBundle,
+		"Upload"->
+			AppPacletUpload,
+		"Bundle"->
+			PacletBundle,
+		"Backup"->
+			AppPacletBackup,
+		"UploadSubpaclet"->
+			AppSubpacletUpload
+		|>;
+
+
+AppPacletExecute//Clear
+
+
+AppPacletExecute[
+	app_,
+	k_?(KeyExistsQ[$AppPacletExecuteMethods, #]&),
+	args___
+	]:=
+	With[{fn=$AppPacletExecuteMethods[k]},
+		With[{res=fn[app, args]},
+			res/;Head[res]=!=fn
+			]
+		];
+AppPacletExecute[
+	k_?(KeyExistsQ[$AppPacletExecuteMethods, #]&),
+	Optional["Function", "Function"]
+	]:=
+	$AppPacletExecuteMethods[k];
+AppPacletExecute[
+	k_?(KeyExistsQ[$AppPacletExecuteMethods, #]&),
+	"Options"
+	]:=
+	Options@Evaluate@$AppPacletExecuteMethods[k];
+
+
 (* ::Subsubsection::Closed:: *)
 (*AppRegenerateUploadInfo*)
 
@@ -4417,6 +4819,11 @@ AppPacletServerPage[app:Except[_?OptionQ],ops:OptionsPattern[]]:=
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*Autocompletions*)
+
+
+
 $AppNamesCurrent=
 	AppNames["*", True];
 
@@ -4429,8 +4836,60 @@ PackageAddAutocompletions@
 				Keys@$AppPathMap
 				}&,
 		{
-			"AppPath"(*,
-			"AppDirectory"*)
+			"AppPath"
+			}
+		]
+
+
+PackageAddAutocompletions@
+	Map[
+		#->
+			{
+				$AppNamesCurrent,
+				FileName,
+				Keys@$AppPathMap
+				}&,
+		{
+			"AppAddContent"
+			}
+		]
+
+
+PackageAddAutocompletions@
+	Map[
+		#->
+			{
+				$AppNamesCurrent,
+				Keys@$AppDocGenMethodRouter
+				}&,
+		{
+			"AppDocGen"
+			}
+		]
+
+
+PackageAddAutocompletions@
+	Map[
+		#->
+			{
+				$AppNamesCurrent,
+				Keys@$AppPacletExecuteMethods
+				}&,
+		{
+			"AppPacletExecute"
+			}
+		]
+
+
+PackageAddAutocompletions@
+	Map[
+		#->
+			{
+				$AppNamesCurrent,
+				Keys@$AppRegenRouter
+				}&,
+		{
+			"AppConfigRegenerate"
 			}
 		]
 
@@ -4442,50 +4901,19 @@ PackageAddAutocompletions@
 			$AppNamesCurrent
 			}&,
 		{
+			"AppConfigure","AppConfigureSubapp","AppReconfigureSubapp",
+			"AppFileNames","AppPackages",
+			"AppPackage","AppPackageOpen","AppPackageFunctions",
+			"AppStylesheet",
+			"AppFunctionDependencies",
+			"AppPaclet",
 			"AppGet","AppNeeds",
-			"AppBackup","AppBundle",
-			"AppPaclet","AppUpload",
-			"AppBackups","AppGitInit",
-			"AppInstall","AppPackage",
-			"AppFileNames",
-			"AppPublish","AppRestore",
-			"AppDownload","AppFromFile",
-			"AppGitClone","AppPackages",
-			"AppConfigure","AppDeployCSS",
-			"AppGitCommit",
-			"AppIndexDocs","AppSaveGuide",
-			"AppAddContent","AppAddDocPage",
-			"AppAddPackage","AppAddPalette",
-			"AppDeployHTML","AppGitHubPull",
-			"AppGitHubPush","AppGitHubRepo",
-			"AppPacletInfo","AppStylesheet",
-			"$AppDirectory","AppPackageOpen",
-			"AppAddGuidePage","AppDeployImages",
-			"AppDeployReadme","AppGitHubDelete",
-			"AppPacletBackup","AppPacletBundle",
-			"AppPacletUpload","AppAddStylesheet",
-			"AppGitSafeCommit","AppGuideNotebook",
-			"AppPacletSiteURL","AppPacletSiteInfo",
-			"AppRegenerateInit","AppSymbolNotebook",
-			"$AppDirectoryName","$AppDirectoryRoot",
-			"AppAddTutorialPage","AppConfigureSubapp",
-			"AppGitHubConfigure","AppGitHubSetRemote",
-			"AppSaveSymbolPages","AppSubpacletUpload",
-			"$AppCloudExtension","AppPackageFunctions",
-			"AppPackageSaveGuide","AppPacletServerPage",
-			"AppPacletSiteBundle","AppRegenerateReadme",
-			"AppTutorialNotebook","AppGitRealignRemotes",
-			"AppReconfigureSubapp","AppRegenerateDocInfo",
-			"AppPacletDirectoryAdd","AppPacletInstallerURL",
-			"AppRegenerateLoadInfo","AppPackageDependencies",
-			"AppRegenerateGitIgnore","AppFunctionDependencies",
-			"AppPackageGuideNotebook","AppPacletUninstallerURL",
-			"AppRegenerateBundleInfo","AppRegenerateGitExclude",
-			"AppRegeneratePacletInfo","AppRegenerateUploadInfo",
-			"AppDocumentationTemplate","AppGenerateDocumentation",
-			"AppPackageSymbolNotebook","AppRegenerateDirectories",
-			"AppPackageSaveSymbolPages","AppGenerateTestingNotebook",
-			"AppGenerateHTMLDocumentation","AppPackageGenerateDocumentation"
+			"AppPaclet","AppPacletBackup",
+			"AppPacletBundle","AppPacletDirectoryAdd","AppPacletInfo",
+			"AppPacletInstallerURL","AppPacletServerPage","AppPacletSiteBundle",
+			"AppPacletSiteInfo","AppPacletSiteURL","AppPacletUninstallerURL",
+			"AppPacletUpload","AppPublish",
+			"AppSubpacletUpload"
 			}
 		]	
 

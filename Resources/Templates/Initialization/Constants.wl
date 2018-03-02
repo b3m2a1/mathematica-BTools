@@ -21,8 +21,8 @@ $PackageName=
 $PackageListing=<||>;
 $PackageContexts={
 		"$Name`",
-		"$Name`Private`Package`",
-		"$Name`Private`Hidden`"
+		"$Name`PackageScope`Private`",
+		"$Name`PackageScope`Package`"
 		};
 $PackageDeclared=
 	TrueQ[$PackageDeclared];
