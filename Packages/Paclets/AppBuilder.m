@@ -2829,7 +2829,8 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 					],
 			"PushToGitHub"->
 				If[gitHubPush,
-					Quiet[AppGitHubPush[app], Git::err]
+					Quiet[AppGitHubPush[app], Git::err];
+					AppGitHubRepo[app]
 					],
 			"PushToCloud"->
 				If[pacletCloudPush,
@@ -2901,8 +2902,45 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 
 
 
-AppGit::usage=
-	"Git-type wrapper for apps";
+$AppGitRouter=
+	<|
+		"Init"->
+			AppGitInit,
+		"Clone"->
+			AppGitClone,
+		"Commit"->
+			AppGitSafeCommit,
+		"GitHubRepo"->
+			AppGitHubRepo,
+		"GitHubConfigure"->
+			AppGitHubRepo,
+		"GitHubPush"->
+			AppGitHubPush,
+		"GitHubDelete"->
+			AppGitHubDelete
+		|>
+
+
+AppGit[
+	app_,
+	k_?(KeyExistsQ[$AppGitRouter, #]&),
+	args___
+	]:=
+	With[{fn=$AppGitRouter[k]},
+		With[{res=fn[app, args]},
+			res/;Head[res]=!=fn
+			]
+		];
+AppGit[
+	k_?(KeyExistsQ[$AppGitRouter, #]&),
+	Optional["Function", "Function"]
+	]:=
+	$AppGitRouter[k];
+AppGit[
+	k_?(KeyExistsQ[$AppGitRouter, #]&),
+	"Options"
+	]:=
+	Options@Evaluate@$AppGitRouter[k];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -3147,11 +3185,16 @@ AppGitHubRepo[appName_,password_:None]:=
 	Replace[
 		AppFromFile[appName],
 		s_String:>
-			URL@
-				GitHubPath[
-					$AppGitHubPrefix<>s,
-					"Password"->password
+			With[{u=Git["GetRemoteURL", AppPath[s]]},
+				If[URLParse[u, "Domain"]=!="github.com",
+					URL@
+						GitHubPath[
+							$AppGitHubPrefix<>s,
+							"Password"->password
+							],
+					u
 					]
+				]
 		];
 
 
@@ -3236,7 +3279,7 @@ AppGitHubPush[appName_:Automatic]:=
 
 
 (* ::Subsubsection::Closed:: *)
-(*GitHubRemove*)
+(*GitHubDelete*)
 
 
 
@@ -4383,6 +4426,11 @@ AppDeployHTML[appName_,ops:OptionsPattern[]]:=
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*PacletExecute*)
+
+
+
 $AppPacletExecuteMethods=
 	<|
 		"Paclet"->
@@ -4878,10 +4926,23 @@ PackageAddAutocompletions@
 		#->
 			{
 				$AppNamesCurrent,
-				Keys@$AppPacletExecuteMethods
+				Join[{"Function", "Options"}, Keys@$AppPacletExecuteMethods]
 				}&,
 		{
 			"AppPacletExecute"
+			}
+		]
+
+
+PackageAddAutocompletions@
+	Map[
+		#->
+			{
+				$AppNamesCurrent,
+				Join[{"Function", "Options"}, Keys@$AppGitRouter]
+				}&,
+		{
+			"AppGit"
 			}
 		]
 
