@@ -2781,6 +2781,11 @@ AppPackageGenerateHTMLDocumentation[
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*AppPublish*)
+
+
+
 Options[AppPublish]=
 	{
 		"PacletBackup"->True,
