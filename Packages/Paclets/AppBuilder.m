@@ -242,7 +242,7 @@ PackageScopeBlock[
 
 
 
-AppPacletExecute::usage="PacletManage-type wrapper for apps";
+AppPacletExecute::usage="PacletExecute-type wrapper for apps";
 PackageScopeBlock[
 	AppPacletBundle::usage=
 		"Packs the .paclet file, removing the specified paths first";
@@ -3265,7 +3265,7 @@ AppGet[appName_,pkgName_String]:=
 		cont=$Context
 		},
 		Replace[
-			Names[app<>"`Private*`PackageAppGet"],{
+			Names[app<>"`*`PackageAppGet"],{
 				{n_, ___}:>
 					Replace[
 						FileNames[pkgName~~".wl"|".m",
@@ -3312,7 +3312,7 @@ AppGet[appName_,pkgName_String]:=
 								DeleteDuplicates@
 									Join[
 										Replace[
-											ToExpression[$Context<>"Private`Package`$PackageContexts"],
+											ToExpression[$Context<>"PackageScope`Private`$PackageContexts"],
 											Except[{__String}]->{}
 											],
 										$ContextPath
@@ -3525,7 +3525,7 @@ AppPackageFunctions[app:_String|Automatic:Automatic,pkgFile_String?FileExistsQ]:
 				Replace[cont,None:>{appName,"`"}]<>"Private`",
 			$ContextPath=
 				Join[
-					Replace[ToExpression[appName<>"`Private`Package`$PackageContexts"],
+					Replace[ToExpression[appName<>"`PackageScope`Private`$PackageContexts"],
 						Except[{__String}]->{}
 						],
 					{
@@ -4906,14 +4906,7 @@ PackageAddAutocompletions@
 			"AppPackage","AppPackageOpen","AppPackageFunctions",
 			"AppStylesheet",
 			"AppFunctionDependencies",
-			"AppPaclet",
-			"AppGet","AppNeeds",
-			"AppPaclet","AppPacletBackup",
-			"AppPacletBundle","AppPacletDirectoryAdd","AppPacletInfo",
-			"AppPacletInstallerURL","AppPacletServerPage","AppPacletSiteBundle",
-			"AppPacletSiteInfo","AppPacletSiteURL","AppPacletUninstallerURL",
-			"AppPacletUpload","AppPublish",
-			"AppSubpacletUpload"
+			"AppGet","AppNeeds","AppPublish"
 			}
 		]	
 
