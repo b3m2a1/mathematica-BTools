@@ -30,7 +30,19 @@ PacletExecute::usage=
 	"Wrapper for all paclet actions";
 
 
+PackageScopeBlock[
+	PacletExecuteSettingsLookup::usage=
+		"Lookup on the $PacletExecuteSettings"
+	]
+
+
 Begin["`Private`"];
+
+
+PacletExecuteSettingsLookup[key_]:=
+	Lookup[$PacletExecuteSettings, key];
+PacletExecuteSettingsLookup[key_, default_]:=
+	Lookup[$PacletExecuteSettings, key, default];
 
 
 (* ::Subsubsection::Closed:: *)

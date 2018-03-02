@@ -161,12 +161,6 @@ SetPacletFormatting::usage="Sets new paclet formatting";
 Begin["`Private`"];
 
 
-PacletExecuteSettingsLookup[key_]:=
-	Lookup[$PacletExecuteSettings, key];
-PacletExecuteSettingsLookup[key_, default_]:=
-	Lookup[$PacletExecuteSettings, key, default];
-
-
 (* ::Subsection:: *)
 (*Config*)
 

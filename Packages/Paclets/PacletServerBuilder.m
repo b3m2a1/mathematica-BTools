@@ -31,8 +31,6 @@ PackageScopeBlock[
 		"The listing of possible servers";
 	$DefaultPacletServer::usage=
 		"The key of the default paclet server";
-	$PacletServer::usage=
-		"The configuration for the default paclet server";
 	PacletServerURL::usage=
 		"";
 	PacletServerDeploymentURL::usage=
@@ -52,6 +50,10 @@ PackageScopeBlock[
 		"Pushes a Git repo server to GitHub";
 	PacletServerGitHubRepoExistsQ::usage="";
 	]
+
+
+$PacletServer::usage=
+	"The configuration for the default paclet server";
 
 
 PacletServerAdd::usage=
