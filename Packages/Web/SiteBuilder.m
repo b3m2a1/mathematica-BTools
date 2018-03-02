@@ -396,7 +396,7 @@ WebSiteThemes[themePat_]:=
 		FileNames[themePat, $WebSiteThemePath]
 
 
-validTHemeURL[s_]:=
+validThemeURL[s_]:=
 	With[{parse=URLParse[s]},
 		MatchQ[parse["Scheme"], "http"|"https"]
 		];
@@ -417,11 +417,25 @@ WebSiteInstallTheme[
 		];
 
 
+(*CopyFile[
+	#,
+	CloudObject[
+		URLBuild@{BTools`Web`Private`$WebThemesURLBase, FileNameTake[#]},
+		Permissions\[Rule]"Public"
+		]
+	]&/@
+		FileNames["*.zip", 
+			FileNameJoin@{$UserDocumentsDirectory, "Wolfram Mathematica", "WebThemes"}
+			]*)
+
+
 Options[WebSiteFindTheme]=
 	{
 		"DownloadTheme"->False
 		};
-WebSiteFindTheme[dir_String?DirectoryQ, theme_String]:=
+WebSiteFindTheme[dir_String?DirectoryQ, theme_String,
+	o:OptionsPattern[]
+	]:=
 	SelectFirst[
 		Join[
 			{
@@ -437,7 +451,7 @@ WebSiteFindTheme[dir_String?DirectoryQ, theme_String]:=
 		If[OptionValue["DownloadTheme"]===True,
 			Replace[
 				WebSiteInstallTheme[
-					URLBuild@{$WebThemesURLBase, theme}
+					URLBuild@{$WebThemesURLBase, theme<>".zip"}
 					],
 				s_String:>
 					WebSiteFindTheme[dir, theme, "DownloadTheme"->False]
@@ -445,7 +459,7 @@ WebSiteFindTheme[dir_String?DirectoryQ, theme_String]:=
 			$Failed
 			]
 		];
-WebSiteFindTheme[dir_String?DirectoryQ]:=
+WebSiteFindTheme[dir_String?DirectoryQ, op:OptionsPattern[]]:=
 	Module[
 		{
 			ops=WebSiteOptions[dir],
@@ -455,11 +469,11 @@ WebSiteFindTheme[dir_String?DirectoryQ]:=
 			Lookup[ops, "Theme"],
 			{
 				s_String:>
-					WebSiteFindTheme[dir, s],
+					WebSiteFindTheme[dir, s, op],
 				_:>
 					If[DirectoryQ@FileNameJoin@{dir, "theme"},
 						FileNameJoin@{dir, "theme"},
-						Replace[WebSiteFindTheme[dir, "minimal"],
+						Replace[WebSiteFindTheme[dir, "minimal", op],
 							$Failed:>
 								SelectFirst[
 									FileNames["*", $WebSiteThemePath],
@@ -1680,7 +1694,7 @@ WebSiteGenerateAggregationPages[
 	With[
 		{
 			longDir=ExpandFileName@dir,
-			thm=WebSiteFindTheme[dir,theme]
+			thm=WebSiteFindTheme[dir,theme, "DownloadTheme"->True]
 			},
 		Block[{
 			aggbit,
@@ -1859,7 +1873,7 @@ WebSiteGenerateIndexPage[dir_,outDir_,theme_,config_, ops:OptionsPattern[]]:=
 	With[
 		{
 			longDir=ExpandFileName@dir,
-			thm=WebSiteFindTheme[dir, theme]
+			thm=WebSiteFindTheme[dir, theme, "DownloadTheme"->True]
 			},
 			WebSiteTemplateExportPaginated[
 				"index.html",
@@ -1901,7 +1915,7 @@ WebSiteGenerateContent[
 	With[
 		{
 			longDir=ExpandFileName@dir,
-			thm=WebSiteFindTheme[dir, theme],
+			thm=WebSiteFindTheme[dir, theme, "DownloadTheme"->True],
 			lb=OptionValue["LastBuild"]
 			},
 		Block[
@@ -2032,7 +2046,7 @@ WebSiteCopyTheme[dir_,outDir_, theme_,
 	With[{
 		thm=
 			FileNameJoin@{
-				WebSiteFindTheme[dir,theme],
+				WebSiteFindTheme[dir, theme, "DownloadTheme"->True],
 				"static"
 				}
 		},
