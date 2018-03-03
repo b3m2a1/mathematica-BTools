@@ -19,14 +19,29 @@
 
 
 
-PillImage::usage="";
-PillGradientImage::usage="";
+(* ::Subsubsection::Closed:: *)
+(*PillImage*)
+
+
+
+PillImage::usage="A little frame masked image to look like a pill";
+PillGradientImage::usage="Applies PillImage to LinearGradientImage";
+
+
+(* ::Subsubsection::Closed:: *)
+(*NinePatchCreate*)
+
 
 
 NinePatchCreate::usage=
 	"Creates a NinePatch image for use in Appearance";
 NinePatchNameTag::usage=
 	"";
+
+
+(* ::Subsubsection::Closed:: *)
+(*Appearance Images*)
+
 
 
 AppearanceReadyImage::usage=
@@ -37,36 +52,51 @@ FrameMasked::usage=
 	"Creates a mask with Framed for images";
 
 
-ColorizedAppearances::usage=
+PackageScopeBlock[
+	FramedButton::usage=
+		"Formats a button in a frame";
+	FramedPopupMenu::usage=
+		"A popup menu that is also framed";
+	FramedActionMenu::usage=
+		"A popup menu that is also framed",
+	"Useless"
+	]
+
+
+PackageScopeBlock[
+	ColorizedAppearances::usage=
 	"Colorizes appearance images";
-ColorizationAdjust::usage=
-	"Adjusts the colorization so mouseover differences are more notable";
+	ColorizationAdjust::usage=
+		"Adjusts the colorization so mouseover differences are more notable";
+	ColoredButton::usage=
+		"Formats a rounded button from a set of predefined choices";
+	ColoredButtonAppearances::usage=
+		"Gets the appearance used by ColoredButton";
+	ColoredPanel::usage=
+		"Panel equivalent of ColoredButton";
+	ColoredPanelAppearances::usage=
+		"Gets the appearance used by ColoredPanel";
+	ColoredPopupMenu::usage=
+		"Formats a rounded popup menu using ColoredButton";
+	ColoredActionMenu::usage=
+		"Formats a rounded popup menu using ColoredButton";
+	PopupDropDown::usage=
+		"A label-less popup using the standard down-arrow appearance";
+	ActionDropDown::usage=
+		"A label-less actionmenu using the standard down-arrow appearance";
+	ButtonPopupMenu::usage=
+		"A combination button/popup menu";
+	ButtonActionMenu::usage=
+		"A combination button/action menu";
+	ButtonActionPopup::usage=
+		"A combination button/action menu/popup menu";,
+	"Useless"
+	]
 
 
-FramedButton::usage=
-	"Formats a button in a frame";
-FramedPopupMenu::usage=
-	"A popup menu that is also framed";
-FramedActionMenu::usage=
-	"A popup menu that is also framed";
+(* ::Subsubsection::Closed:: *)
+(*Gradient Buttons and Panels*)
 
-
-ColoredButton::usage=
-	"Formats a rounded button from a set of predefined choices";
-ColoredButtonAppearances::usage=
-	"Gets the appearance used by ColoredButton";
-
-
-ColoredPanel::usage=
-	"Panel equivalent of ColoredButton";
-ColoredPanelAppearances::usage=
-	"Gets the appearance used by ColoredPanel";
-
-
-ColoredPopupMenu::usage=
-	"Formats a rounded popup menu using ColoredButton";
-ColoredActionMenu::usage=
-	"Formats a rounded popup menu using ColoredButton";
 
 
 GradientPanelAppearance::usage=
@@ -105,18 +135,9 @@ GradientDockedCell::usage=
 	"Builds a docked cell from a GradientDock";
 
 
-PopupDropDown::usage=
-	"A label-less popup using the standard down-arrow appearance";
-ActionDropDown::usage=
-	"A label-less actionmenu using the standard down-arrow appearance";
+(* ::Subsubsection::Closed:: *)
+(*Other Interface Elements*)
 
-
-ButtonPopupMenu::usage=
-	"A combination button/popup menu";
-ButtonActionMenu::usage=
-	"A combination button/action menu";
-ButtonActionPopup::usage=
-	"A combination button/action menu/popup menu"
 
 
 PaneColumn::usage="Formats a column in a pane and frame";
@@ -139,12 +160,8 @@ DirectoryChooser::usage="FileChooser but restricted to dirs";
 
 PaneWindow::usage=
 	"A little embedded window with a title bar";
-
-
 CloseButton::usage=
 	"A little button that closes its parent";
-
-
 IButton::usage=
 	"A little info-icon button";
 
@@ -362,6 +379,11 @@ PillGradientImage[
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*NinePatchNameTag*)
+
+
+
 NinePatchNameTag[
 	head:_?OptionQ,
 	main:_?OptionQ|None:None,
@@ -463,6 +485,11 @@ Module[
 
 (* ::Subsection:: *)
 (*Appearances*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*NinePatchCreate*)
 
 
 
@@ -621,6 +648,11 @@ NinePatchCreate[e_,
 	NinePatchCreate[Rasterize[e],stretch,content]
 
 
+(* ::Subsubsection::Closed:: *)
+(*AppearanceReadyImage*)
+
+
+
 Options[AppearanceReadyImage]=
 	Join[
 		{
@@ -752,6 +784,11 @@ AppearanceReadyImage[Mouseover[e1_,e2_],ops:OptionsPattern[]]:=
 		};
 
 
+(* ::Subsubsection::Closed:: *)
+(*GradientImagePaddingFormat*)
+
+
+
 GradientImagePaddingFormat[where_:None,pad_]:=
 	Switch[where,
 		Automatic,
@@ -823,6 +860,11 @@ GradientImagePaddingFormat[where_:None,pad_]:=
 					({{r,l/.Automatic->0},{b,t}}/.Automatic->1)
 				}]
 	];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GradientAppearance*)
+
 
 
 Options[GradientAppearance]={
@@ -995,6 +1037,11 @@ GradientAppearance[
 	];
 
 
+(* ::Subsubsection::Closed:: *)
+(*FrameMasked*)
+
+
+
 Options[FrameMasked]=
 	Join[
 		Options@Framed,
@@ -1060,7 +1107,12 @@ FrameMasked[r:{__Rule},ops:OptionsPattern[]]:=
 	FrameMasked[#,ops]&/@r;
 
 
-gradientPreservingColoration[image_?ImageQ,colorValue_?ColorQ]:=
+(* ::Subsubsection::Closed:: *)
+(*ColorizedAppearances*)
+
+
+
+(*gradientPreservingColoration[image_?ImageQ,colorValue_?ColorQ]:=
 	With[{
 			img=ColorConvert[image,Hue],
 			color=ColorConvert[colorValue,Hue]
@@ -1073,13 +1125,13 @@ gradientPreservingColoration[image_?ImageQ,colorValue_?ColorQ]:=
 				ImageAdjust[
 					ImageMultiply[Lighter[img,brightnessDistance],color],
 					{0.5,-.1}],
-				Interleaving->True
+				Interleaving\[Rule]True
 				]
 			]
-		];
+		];*)
 
 
-$colorizerDefaultColors=
+(*$colorizerDefaultColors=
 	Hue@@@
 		Join[
 			Tuples[{Range[0,1,.1],{1},Range[.5,1,.25]}],
@@ -1096,25 +1148,25 @@ ColorizedAppearances[
 	c_?ColorQ]:=
 	gradientPreservingColoration[im,c];
 ColorizedAppearances[
-	assoc_Association?(MatchQ[Normal@#,{(_->_?ImageQ)..}]&),
+	assoc_Association?(MatchQ[Normal@#,{(_\[Rule]_?ImageQ)..}]&),
 	pixelValues:_?ColorQ|{__?ColorQ}:
 		$colorizerDefaultColors
 	]:=
 	Normal@Map[ColorizedAppearances[#,pixelValues]&,assoc];
-ColorizedAppearances[ims:{(_->_?ImageQ)..},
+ColorizedAppearances[ims:{(_\[Rule]_?ImageQ)..},
 	pixelValues:_?ColorQ|{__?ColorQ}:
 		$colorizerDefaultColors]:=
 With[{assoc=Association@ims},
 ColorizedAppearances[assoc,pixelValues]
 ];
-ColorizedAppearances[ims:{(_->_FrontEnd`FileName)..},
+ColorizedAppearances[ims:{(_\[Rule]_FrontEnd`FileName)..},
 	pixelValues:_?ColorQ|{__?ColorQ}:
 		$colorizerDefaultColors]:=
 	ColorizedAppearances[
-		Map[First@#->FEImport[Last@#]&,ims],
+		Map[First@#\[Rule]FEImport[Last@#]&,ims],
 		pixelValues
 		];
-ColorizedAppearances[ims:{(_->_RawBoxes)..},
+ColorizedAppearances[ims:{(_\[Rule]_RawBoxes)..},
 	pixelValues:_?ColorQ|{__?ColorQ}:
 		$colorizerDefaultColors]:=
 With[{assoc=ToExpression@*First/@Association@ims},
@@ -1128,9 +1180,9 @@ ColorizedAppearances[s_String,
 		Replace[
 			FEFormatResource@
 				FirstCase[resource,
-					{(_->(_?ImageQ|_FrontEnd`FileName))..},
+					{(_\[Rule](_?ImageQ|_FrontEnd`FileName))..},
 					$Failed,\[Infinity]],{
-			$Failed:>
+			$Failed\[RuleDelayed]
 					Replace[
 						FirstCase[resource,
 							_?ImageQ|_RawBoxes,
@@ -1150,10 +1202,15 @@ ColorizedAppearances[spec_,
 			Norm@(List@@#-List@@#2)<.05&
 			]
 		];
-	
+	*)
 
 
-ColorizationAdjust[color_,appearanceList_List]:=
+(* ::Subsubsection::Closed:: *)
+(*ColorizationAdjust*)
+
+
+
+(*ColorizationAdjust[color_,appearanceList_List]:=
 	MapThread[
 		First@#2->
 			#@Last@#2&,
@@ -1161,7 +1218,7 @@ ColorizationAdjust[color_,appearanceList_List]:=
 			Take[
 				With[{cd=
 					ColorDistance[color,Black,
-						DistanceFunction->(Abs[#1[[1]]-#2[[1]]]&)]
+						DistanceFunction\[Rule](Abs[#1[[1]]-#2[[1]]]&)]
 					},
 					With[{rescale=
 						If[cd<.5,
@@ -1172,7 +1229,7 @@ ColorizationAdjust[color_,appearanceList_List]:=
 						If[rescale<0,
 							{
 								Image[Darker[#,-rescale],
-										Interleaving->True
+										Interleaving\[Rule]True
 										]&,
 								Identity,
 								Identity
@@ -1180,7 +1237,7 @@ ColorizationAdjust[color_,appearanceList_List]:=
 							{
 								Identity,
 								Image[Lighter[#,rescale],
-									Interleaving->True
+									Interleaving\[Rule]True
 									]&,
 								Identity}
 							]
@@ -1189,7 +1246,7 @@ ColorizationAdjust[color_,appearanceList_List]:=
 				UpTo@Length@appearanceList
 				],
 			Take[appearanceList,UpTo[3]]
-			}];
+			}];*)
 
 
 (* ::Subsection:: *)
@@ -1254,6 +1311,11 @@ UUIDButton~SetAttributes~HoldAll;
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*GradientPanelAppearance*)
+
+
+
 Options[GradientPanelAppearance]=
 	Options@GradientAppearance;
 GradientPanelAppearance[
@@ -1301,6 +1363,11 @@ GradientPanelAppearance["Palette",ops___]:=
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*GradientPanel*)
+
+
+
 Options[GradientPanel]=
 	Options[Panel];
 GradientPanel[lab_,
@@ -1315,6 +1382,11 @@ GradientPanel[lab_,
 					}],
 		ops
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GradientButtonAppearance*)
+
 
 
 Options[GradientButtonAppearance]=
@@ -1480,6 +1552,11 @@ GradientButtonAppearance[
 	GradientButtonAppearance[GrayLevel[.95],app,ops];
 
 
+(* ::Subsubsection::Closed:: *)
+(*GradientButton*)
+
+
+
 Options[GradientButton]=
 	Prepend[Options[Button],
 		"UUID"->None
@@ -1518,6 +1595,11 @@ GradientButton[lab_,
 		]
 	];
 GradientButton~SetAttributes~HoldRest;
+
+
+(* ::Subsubsection::Closed:: *)
+(*GradientDropDownAppearance*)
+
 
 
 Options[GradientDropDownAppearance]=
@@ -1585,6 +1667,11 @@ GradientDropDownAppearance["Palette",ops:OptionsPattern[]]:=
 		ops,
 		FrameStyle->GrayLevel[.6]
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GradientPopupDropDown*)
+
 
 
 Options@GradientPopupDropDown=
@@ -1665,6 +1752,11 @@ GradientPopupDropDown[
 	];
 
 
+(* ::Subsubsection::Closed:: *)
+(*GradientActionDropDown*)
+
+
+
 Options@GradientActionDropDown=
 	DeleteDuplicatesBy[
 		Join[
@@ -1736,6 +1828,11 @@ GradientActionDropDown[actions_List,ops:OptionsPattern[]]:=
 			]
 		]
 	];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GradientButtonDropDownRow*)
+
 
 
 Options[GradientButtonDropDownRow]=
@@ -1939,6 +2036,11 @@ GradientButtonDropDownRow[
 GradientButtonDropDownRow~SetAttributes~HoldRest;
 
 
+(* ::Subsubsection::Closed:: *)
+(*GradientPopupMenu*)
+
+
+
 Options@GradientPopupMenu=
 	Options@GradientPopupDropDown;
 GradientPopupMenu[
@@ -1956,6 +2058,11 @@ GradientPopupMenu[
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*GradientActionMenu*)
+
+
+
 Options@GradientActionMenu=
 	Options@GradientActionDropDown;
 GradientActionMenu[lbl_,actions_List,ops:OptionsPattern[]]:=
@@ -1968,6 +2075,11 @@ GradientActionMenu[lbl_,actions_List,ops:OptionsPattern[]]:=
 					Alternatives@@Options@ActionMenu]
 				]
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GradientButtonPopupMenu*)
+
 
 
 Options@GradientButtonPopupMenu=
@@ -2068,6 +2180,11 @@ GradientButtonPopupMenu[
 GradientButtonPopupMenu~SetAttributes~HoldRest
 
 
+(* ::Subsubsection::Closed:: *)
+(*GradientButtonActionMenu*)
+
+
+
 Options@GradientButtonActionMenu=
 	DeleteDuplicatesBy[
 		Join[
@@ -2095,6 +2212,11 @@ GradientButtonActionMenu[
 					]
 		];
 GradientButtonActionMenu~SetAttributes~HoldRest
+
+
+(* ::Subsubsection::Closed:: *)
+(*GradientButtonActionPopup*)
+
 
 
 Options[GradientButtonActionPopup]=
@@ -2157,6 +2279,11 @@ GradientButtonActionPopup[
 			]
 		]
 ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GradientButtonBar*)
+
 
 
 Options[GradientButtonBar]=
@@ -2245,6 +2372,11 @@ GradientButtonBar[args:{_,__},ops:OptionsPattern[]]:=
 			];
 
 
+(* ::Subsubsection::Closed:: *)
+(*GradientSetter*)
+
+
+
 Options[GradientSetter]=
 	Join[
 		Options@Setter,
@@ -2285,6 +2417,11 @@ GradientSetter[v_,val_,lbl:Except[_?OptionQ]:None,ops:OptionsPattern[]]:=
 			]
 		]
 	];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GradientSetterBar*)
+
 
 
 Options[GradientSetterBar]=
@@ -2364,6 +2501,11 @@ GradientSetterBar[v_,vals_,ops:OptionsPattern[]]:=
 			]
 		]
 	];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GradientDock*)
+
 
 
 GradientDockElement//ClearAll
@@ -2527,6 +2669,11 @@ GradientDock[dockThings:{__},ops:OptionsPattern[]]:=
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*GradientDockedCell*)
+
+
+
 Options[GradientDockedCell]=
 	Join[
 		Options[GradientDock],
@@ -2554,6 +2701,16 @@ GradientDockedCell[dockThings:{__},ops:OptionsPattern[]]:=
 
 notRules=
 	Except[_Rule|_RuleDelayed|{(_Rule|_RuleDelayed)..}|_FilterRules];
+
+
+(* ::Subsection:: *)
+(*Framed**)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*FramedButton*)
+
 
 
 Options@FramedButton=
@@ -2598,6 +2755,11 @@ FramedButton[disp_,expr_:Null,ops:OptionsPattern[]]:=
 			]
 		];
 FramedButton~SetAttributes~HoldRest;
+
+
+(* ::Subsubsection::Closed:: *)
+(*FramedPopupMenu*)
+
 
 
 Options@FramedPopupMenu=
@@ -2653,6 +2815,11 @@ FramedPopupMenu[
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*FramedActionMenu*)
+
+
+
 Options@FramedActionMenu=
 	DeleteDuplicatesBy[
 		Join[
@@ -2698,8 +2865,18 @@ FramedActionMenu[
 		];
 
 
-ColoredButtonAppearances[
-	a:_String|_?ImageQ|{"Default"->_,"Hover"->_,"Pressed"->_},
+(* ::Subsection:: *)
+(*Colored**)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*ColoredButton*)
+
+
+
+(*ColoredButtonAppearances[
+	a:_String|_?ImageQ|{"Default"\[Rule]_,"Hover"\[Rule]_,"Pressed"\[Rule]_},
 	color_?ColorQ]:=
 	ColorizationAdjust[
 		color,
@@ -2722,21 +2899,21 @@ ColoredButtonAppearances[spec_,i:_Integer|_String]:=
 	ColorizedAppearances[spec,i];
 ColoredButtonAppearances[s_String]:=
 	Replace[FEResourceFind[s],{
-		{_->g_,___}:>
+		{_\[Rule]g_,___}:>
 			g,
 		_:>
 			ColoredButtonAppearances[Automatic]
-		}];
+		}];*)
 
 
-Options[ColoredButton]=
+(*Options[ColoredButton]=
 	Options@Button;
 ColoredButton[label_,
 	expr:notRules:Null,
 	ops:OptionsPattern[]]:=
 	Button[label,
 		expr,
-		Appearance->
+		Appearance\[Rule]
 			Replace[
 				Flatten@{
 					Replace[OptionValue@Appearance,{
@@ -2754,7 +2931,7 @@ ColoredButton[label_,
 							Lookup[Association@a,
 								{"Default","Pressed","Hover"}]
 							],
-						_->_Missing
+						_\[Rule]_Missing
 						],
 				b_:>
 					Thread[
@@ -2765,10 +2942,15 @@ ColoredButton[label_,
 		ops,
 		Alignment->Top
 		];
-ColoredButton~SetAttributes~HoldRest;
+ColoredButton~SetAttributes~HoldRest;*)
 
 
-$baseColoredPanel=
+(* ::Subsubsection::Closed:: *)
+(*ColoredPanel*)
+
+
+
+(*$baseColoredPanel=
 	FirstCase[
 		FrontEndResource["FEExpressions","HelpViewerToolbar"],
 		_Image,
@@ -2782,17 +2964,17 @@ $baseColoredPanel=
 				],
 			1,
 			RGBColor[0,0,0,0]
-			]&;
+			]&;*)
 
 
-$coloredPanelAppearance=
+(*$coloredPanelAppearance=
 	AppearanceReadyImage[$baseColoredPanel,
-		BorderDimensions->Automatic
-		];
+		BorderDimensions\[Rule]Automatic
+		];*)
 
 
-ColoredPanelAppearances[
-	a:_String|_?ImageQ|{"Default"->_,"Hover"->_,"Pressed"->_},
+(*ColoredPanelAppearances[
+	a:_String|_?ImageQ|{"Default"\[Rule]_,"Hover"\[Rule]_,"Pressed"\[Rule]_},
 	color_?ColorQ]:=
 	ColorizedAppearances[a,color];
 ColoredPanelAppearances[
@@ -2805,19 +2987,19 @@ ColoredPanelAppearances[spec_,i:_Integer|_String]:=
 	ColorizedAppearances[spec,i];
 ColoredButtonAppearances[s_String]:=
 	Replace[FEResourceFind[s],{
-		{_->g_,___}:>
+		{_\[Rule]g_,___}:>
 			g,
 		_:>
 			ColoredButtonAppearances[Automatic]
-		}];
+		}];*)
 
 
-Options[ColoredPanel]=
+(*Options[ColoredPanel]=
 	Options[Panel];
 ColoredPanel[label_,
 	ops:OptionsPattern[]]:=
 	Panel[label,
-		Appearance->
+		Appearance\[Rule]
 			Replace[
 				Flatten@{
 					Last/@
@@ -2831,7 +3013,7 @@ ColoredPanel[label_,
 									ColorizedAppearances[l,c]
 								}]}
 						},{
-					{"Frameless"->i_}:>
+					{"Frameless"\[Rule]i_}:>
 						i,
 					a:{__Rule}:>
 						DeleteCases[
@@ -2840,7 +3022,7 @@ ColoredPanel[label_,
 								Lookup[Association@a,
 									{"Default","Pressed","Hover"}]
 								],
-							_->_Missing
+							_\[Rule]_Missing
 							],
 					b_:>
 						Thread[
@@ -2850,10 +3032,15 @@ ColoredPanel[label_,
 				}],
 		ops,
 		Alignment->Top
-		];
+		];*)
 
 
-Options@ColoredPopupMenu=
+(* ::Subsubsection::Closed:: *)
+(*ColoredPopupMenu*)
+
+
+
+(*Options@ColoredPopupMenu=
 	DeleteDuplicatesBy[
 		Join[
 			Options@ColoredButton,
@@ -2870,7 +3057,7 @@ ColoredPopupMenu[
 		var,
 		settings,
 		Replace[var,
-			Verbatim[Dynamic][e_,___]:>e
+			Verbatim[Dynamic][e_,___]\[RuleDelayed]e
 			],
 		ColoredButton[
 			Replace[
@@ -2886,10 +3073,15 @@ ColoredPopupMenu[
 				FilterRules[Options@PopupMenu,
 					Except[Alternatives@@Map[First,Options@ColoredButton]]]
 				]
-		];
+		];*)
 
 
-Options@ColoredActionMenu=
+(* ::Subsubsection::Closed:: *)
+(*ColoredActionMenu*)
+
+
+
+(*Options@ColoredActionMenu=
 	DeleteDuplicatesBy[
 		Join[
 			Options@ColoredButton,
@@ -2901,12 +3093,22 @@ ColoredActionMenu[expr_,actions_List,ops:OptionsPattern[]]:=
 	ActionMenu[
 		ColoredButton[expr,Null,Evaluate@FilterRules[{ops},Options@ColoredButton]],
 		actions,
-		Appearance->None,
+		Appearance\[Rule]None,
 		FilterRules[{ops},Except[Alternatives@@Map[First,Options@ColoredButton]]]
-		]
+		]*)
 
 
-coloredTriangleAppearance//Clear
+(* ::Subsection:: *)
+(*Combos*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*coloredTriangleAppearance*)
+
+
+
+(*coloredTriangleAppearance//Clear
 coloredTriangleAppearance[img_,fill_?ColorQ]:=
 	ReplacePixelValue[img,
 		Join[
@@ -2914,7 +3116,7 @@ coloredTriangleAppearance[img_,fill_?ColorQ]:=
 			Thread[{Range[11,13],15}],
 			Thread[{Range[11,13],14}],
 			{{12,13}}
-			]->fill
+			]\[Rule]fill
 		];
 coloredTriangleAppearance[img_,Except[_?ColorQ]..]:=
 	img;
@@ -2928,17 +3130,22 @@ coloredTriangleAppearance[img_,fill_,border_?ColorQ]:=
 				{9,16},{15,16},
 				{10,14},{14,14},
 				{12,12}
-				}->
+				}\[Rule]
 				If[ColorQ@fill,Blend[{border,fill},.3],border],
-			{{10,15},{14,15}}->
+			{{10,15},{14,15}}\[Rule]
 				If[ColorQ@fill,Blend[{border,fill},.4],border],
 			{{11,13},{13,13}}->
 				If[ColorQ@fill,Blend[{border,fill},.2],border]
 			}
-		]
+		]*)
 
 
-Options[PopupDropDown]=
+(* ::Subsubsection::Closed:: *)
+(*PopupDropDown*)
+
+
+
+(*Options[PopupDropDown]=
 	Options[PopupMenu];
 PopupDropDown[var_,settings_List,ops:OptionsPattern[]]:=
 	With[{
@@ -2947,16 +3154,16 @@ PopupDropDown[var_,settings_List,ops:OptionsPattern[]]:=
 				Except[_Dynamic|None]:>
 					With[{s=Unique@"FE`popupVar$"},
 						s=Replace[settings,{
-							k_->v_:>v,
-							{k_->v_,___}:>v,
-							{v_,___}:>v
+							k_\[Rule]v_\[RuleDelayed]v,
+							{k_\[Rule]v_,___}\[RuleDelayed]v,
+							{v_,___}\[RuleDelayed]v
 							}];
 						Dynamic[s]
 					]
 				}],
 		appearance=
 			Replace[OptionValue[Appearance],{
-				c_?ColorQ:>
+				c_?ColorQ\[RuleDelayed]
 					ColorizationAdjust[
 						c,
 						ColorizedAppearances[
@@ -2994,19 +3201,19 @@ PopupDropDown[var_,settings_List,ops:OptionsPattern[]]:=
 					ColorizedAppearances[s,c],
 				{l:_List|_?ImageQ,c_}:>
 					ColorizedAppearances[l,c],
-				Except[_List|_?ImageQ]:>
+				Except[_List|_?ImageQ]\[RuleDelayed]
 					FrontEndResource["NotebookTemplatingExpressions",
 						"ButtonDropdownRightAppearance"]
 				}],
 		imageSize=
 			Replace[OptionValue[ImageSize],{
-				25->
+				25\[Rule]
 					Automatic,
-				s:Except[_List]:>
+				s:Except[_List]\[RuleDelayed]
 					{Automatic,s},
 				{_,25}:>
 					Automatic,
-				{_,s_}:>
+				{_,s_}\[RuleDelayed]
 					{Automatic,s}
 				}],
 		frameMargins=
@@ -3022,24 +3229,29 @@ PopupDropDown[var_,settings_List,ops:OptionsPattern[]]:=
 			settings,
 			Null,
 			Button[Null,
-				Appearance->appearance,
-				ImageSize->imageSize,
-				FrameMargins->frameMargins
+				Appearance\[Rule]appearance,
+				ImageSize\[Rule]imageSize,
+				FrameMargins\[Rule]frameMargins
 				],
-			Appearance->None,
+			Appearance\[Rule]None,
 			FilterRules[{ops},
 				Except[ImageSize|Appearance|FrameMargins]]
 			]
-		];
+		];*)
 
 
-Options[ActionDropDown]=
+(* ::Subsubsection::Closed:: *)
+(*ActionDropDown*)
+
+
+
+(*Options[ActionDropDown]=
 	Options[ActionMenu];
 ActionDropDown[settings_List,ops:OptionsPattern[]]:=
 	With[{
 		appearance=
 			Replace[OptionValue[Appearance],{
-				c_?ColorQ:>
+				c_?ColorQ\[RuleDelayed]
 					ColorizationAdjust[
 						c,
 						ColorizedAppearances[
@@ -3075,36 +3287,41 @@ ActionDropDown[settings_List,ops:OptionsPattern[]]:=
 					ColorizedAppearances[s,c],
 				{l:_List|_?ImageQ,c_}:>
 					ColorizedAppearances[l,c],
-				Except[_List|_?ImageQ]:>
+				Except[_List|_?ImageQ]\[RuleDelayed]
 					FrontEndResource["NotebookTemplatingExpressions",
 						"ButtonDropdownRightAppearance"]
 				}],
 		imageSize=
 			Replace[OptionValue[ImageSize],{
-				25->
+				25\[Rule]
 					Automatic,
-				s:Except[_List]:>
+				s:Except[_List]\[RuleDelayed]
 					{Automatic,s},
 				{_,25}:>
 					Automatic,
-				{_,s_}:>
+				{_,s_}\[RuleDelayed]
 					{Automatic,s}
 				}]
 		},
 		ActionMenu[
 				Button["",
-				Appearance->appearance,
-				ImageSize->imageSize,
+				Appearance\[Rule]appearance,
+				ImageSize\[Rule]imageSize,
 				FilterRules[{ops},Options@Button]
 				],
 			settings,
-			Appearance->None,
+			Appearance\[Rule]None,
 			FilterRules[{ops},Except[ImageSize|Appearance]]
 			]
-		];
+		];*)
 
 
-Options@ButtonPopupMenu=
+(* ::Subsubsection::Closed:: *)
+(*ButtonPopupMenu*)
+
+
+
+(*Options@ButtonPopupMenu=
 	DeleteDuplicatesBy[
 		Join[
 			Options@Button,
@@ -3115,13 +3332,13 @@ Options@ButtonPopupMenu=
 With[{notRules=notRules},
 ButtonPopupMenu[
 	label_,
-	varList:_List|(_List->_),
+	varList:_List|(_List\[Rule]_),
 	buttonCall:notRules:None,
 	ops:OptionsPattern[]
 	]:=
 	ButtonPopupMenu[Automatic,label,varList,buttonCall,ops];
 ButtonPopupMenu[
-	varList:_List|(_List->_),
+	varList:_List|(_List\[Rule]_),
 	buttonCall:notRules:None,
 	ops:OptionsPattern[]
 	]:=
@@ -3129,7 +3346,7 @@ ButtonPopupMenu[
 ButtonPopupMenu[
 	buttonLabel_,
 	label_,
-	varList:_List|(_List->_),
+	varList:_List|(_List\[Rule]_),
 	buttonCall:notRules:None,
 	ops:OptionsPattern[]
 	]:=
@@ -3139,9 +3356,9 @@ ButtonPopupMenu[
 				Automatic:>
 					With[{s=Unique@"FE`popupVar$"},
 						s=Replace[varList,{
-							k_->v_:>v,
-							{k_->v_,___}:>v,
-							{v_,___}:>v
+							k_\[Rule]v_\[RuleDelayed]v,
+							{k_\[Rule]v_,___}\[RuleDelayed]v,
+							{v_,___}\[RuleDelayed]v
 							}];
 						Dynamic[s]
 						],
@@ -3150,18 +3367,18 @@ ButtonPopupMenu[
 				}],
 		defaultElement=
 			Replace[varList,{
-				(_List->d_):>
+				(_List\[Rule]d_)\[RuleDelayed]
 					d,
-				_->""
+				_\[Rule]""
 				}],
 		appearanceAssoc=
 			Association@
 				Replace[
-					Replace[varList,(l_List->_):>l],{
+					Replace[varList,(l_List\[Rule]_)\[RuleDelayed]l],{
 						RuleDelayed[a_,b_]:>
-							(a->b),
+							(a\[Rule]b),
 						a:Except[_Rule]:>
-							(a->a)
+							(a\[Rule]a)
 					},1],
 		imgSize=
 			Replace[OptionValue@ImageSize,{
@@ -3176,9 +3393,9 @@ ButtonPopupMenu[
 				}],
 		useApp=
 			Replace[OptionValue[Appearance],{
-				PopupMenu->{
+				PopupMenu\[Rule]{
 					{"ButtonDefaultAppearance",GrayLevel[.98]},
-					{Hue[0.5847145488029466, 0.7269076305220883, 0.9764705882352941],White,Hue[0.65, 0.3, 1]}
+					{,White,}
 					}
 				}]
 		},
@@ -3210,7 +3427,7 @@ ButtonPopupMenu[
 						With[{realApp=
 							Replace[
 								Replace[useApp,{
-									{a_,___}:>a
+									{a_,___}\[RuleDelayed]a
 									}],{
 									{s_String,c_}:>
 										ColoredButtonAppearances[s,c],
@@ -3226,20 +3443,20 @@ ButtonPopupMenu[
 								realApp
 								]
 							],
-					ImageSize->imgSize,
+					ImageSize\[Rule]imgSize,
 					FrameMargins->
 						Replace[OptionValue@FrameMargins,
-							i_Integer:>
+							i_Integer\[RuleDelayed]
 								{{i,i},{0,0}}
 							],
 					FilterRules[{ops},Options@Button]
 					],
 				PopupDropDown[popVar,
-					Replace[varList,(l_->_):>l],
+					Replace[varList,(l_\[Rule]_)\[RuleDelayed]l],
 					Appearance->
 						Replace[
 							Replace[useApp,{
-								{___,a_}:>a
+								{___,a_}\[RuleDelayed]a
 								}],{
 								s_String:>
 									ColoredButtonAppearances[s],
@@ -3250,14 +3467,14 @@ ButtonPopupMenu[
 								}],
 					FrameMargins->
 						Replace[OptionValue@FrameMargins,
-							i_Integer:>
+							i_Integer\[RuleDelayed]
 								{{i,i},{0,0}}
 							],
 					ImageSize->
 						Replace[OptionValue@ImageSize,{
 							i_Integer:>
 								Automatic,
-							{_List,s_}:>s
+							{_List,s_}\[RuleDelayed]s
 							}],
 					ops
 					]
@@ -3266,10 +3483,15 @@ ButtonPopupMenu[
 			]
 		];
 ];
-ButtonPopupMenu~SetAttributes~HoldRest
+ButtonPopupMenu~SetAttributes~HoldRest*)
 
 
-Options@ButtonActionMenu=
+(* ::Subsubsection::Closed:: *)
+(*ButtonActionMenu*)
+
+
+
+(*Options@ButtonActionMenu=
 	DeleteDuplicatesBy[
 		Join[
 			Options@Button,
@@ -3287,9 +3509,9 @@ ButtonActionMenu[
 	With[{
 		useApp=
 			Replace[OptionValue[Appearance],{
-				PopupMenu->{
+				PopupMenu\[Rule]{
 					{"ButtonDefaultAppearance",GrayLevel[.98]},
-					{Hue[0.5847145488029466, 0.7269076305220883, 0.9764705882352941],White,Hue[0.65, 0.3, 1]}
+					{,White,}
 					}
 				}]
 		},
@@ -3301,7 +3523,7 @@ ButtonActionMenu[
 					With[{realApp=
 						Replace[
 							Replace[useApp,{
-								{a_,___}:>a
+								{a_,___}\[RuleDelayed]a
 								}],{
 								{s_String,c_}:>
 									ColoredButtonAppearances[s,c],
@@ -3324,7 +3546,7 @@ ButtonActionMenu[
 				Appearance->
 					Replace[
 						Replace[useApp,{
-							{___,a_}:>a
+							{___,a_}\[RuleDelayed]a
 							}],{
 							s_String:>
 								ColoredButtonAppearances[s],
@@ -3337,11 +3559,11 @@ ButtonActionMenu[
 					Replace[OptionValue@ImageSize,{
 						i_Integer:>
 							Automatic,
-						{_List,s_}:>s
+						{_List,s_}\[RuleDelayed]s
 						}],
 				FrameMargins->
 					Replace[OptionValue@FrameMargins,
-						i_Integer:>
+						i_Integer\[RuleDelayed]
 							{{i,i},{0,0}}
 						],
 				ops
@@ -3350,15 +3572,20 @@ ButtonActionMenu[
 		]
 		];
 ];
-ButtonActionMenu~SetAttributes~HoldRest
+ButtonActionMenu~SetAttributes~HoldRest*)
 
 
-Options[ButtonActionPopup]=
+(* ::Subsubsection::Closed:: *)
+(*ButtonActionPopup*)
+
+
+
+(*Options[ButtonActionPopup]=
 	Options[ButtonPopupMenu];
 With[{notRules=notRules},
 ButtonActionPopup[
 	label_:Automatic,
-	setList:_List|(_List->_),
+	setList:_List|(_List\[Rule]_),
 	function:notRules,
 	setfunction:notRules:Set,
 	ops:OptionsPattern[]
@@ -3412,7 +3639,17 @@ ButtonActionPopup[
 				]
 			]
 		]
-];
+];*)
+
+
+(* ::Subsection:: *)
+(*Misc Interface Elements*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*PaneColumn*)
+
 
 
 Options[PaneColumn]=Join[{
@@ -3465,6 +3702,11 @@ Framed[#,FilterRules[Join[{ops},Options@PaneColumn],Options@Framed]]&,
 Identity]
 
 
+(* ::Subsubsection::Closed:: *)
+(*HyperlinkBrowse*)
+
+
+
 Options[HyperlinkBrowse]=Join[
 	{
 		Function->None,
@@ -3514,6 +3756,11 @@ HyperlinkBrowse[
 			]
 
 
+(* ::Subsubsection::Closed:: *)
+(*CellOpenerView*)
+
+
+
 Options[CellOpenerView]=Append[Options@Column,ImageSize->Automatic];
 CellOpenerView[{head_,dropDown__},open:True|False:False,ops:OptionsPattern[]]:=With[{
 stuff=Max@(First/@ImageDimensions/@(Pane/@Thread[HoldForm[{dropDown}]]))},
@@ -3524,6 +3771,11 @@ Toggler[If[open//TrueQ,T,F],{T,F}]
 ]
 ];
 CellOpenerView~SetAttributes~HoldFirst;
+
+
+(* ::Subsubsection::Closed:: *)
+(*FileBrowser*)
+
 
 
 Clear@FileBrowser;
@@ -3980,6 +4232,11 @@ rF8mjJc9
 								]
 
 
+(* ::Subsubsection::Closed:: *)
+(*ComboButton*)
+
+
+
 Options[ComboButton]=
 	Join[
 		Options[FramedButton],
@@ -4061,6 +4318,11 @@ ComboButton[label_,
 ComboButton~SetAttributes~HoldRest
 
 
+(* ::Subsubsection::Closed:: *)
+(*HoverAppearButton*)
+
+
+
 Options[HoverAppearButton]=
 	Options@Button;
 HoverAppearButton[l_,e_,ops:OptionsPattern[]]:=
@@ -4092,6 +4354,11 @@ HoverAppearButton[l_,e_,ops:OptionsPattern[]]:=
 		ops
 		];
 HoverAppearButton~SetAttributes~HoldAll;
+
+
+(* ::Subsubsection::Closed:: *)
+(*SearchField*)
+
 
 
 SearchField[search_:(NotebookFind[InputNotebook[],#,Next,WrapAround->True]&)]:=
@@ -4128,6 +4395,11 @@ SearchField[search_:(NotebookFind[InputNotebook[],#,Next,WrapAround->True]&)]:=
 			count=1
 			]
 		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*File Chooser*)
+
 
 
 Options[FileChooser]=
@@ -4184,6 +4456,11 @@ FileChooser[lbl:_Dynamic|Automatic:Automatic,
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Directory Chooser*)
+
+
+
 DirectoryChooser[lbl:_Dynamic|Automatic:Automatic,
 	dirs:_List|_String?DirectoryQ,
 	ops:OptionsPattern[]
@@ -4191,6 +4468,11 @@ DirectoryChooser[lbl:_Dynamic|Automatic:Automatic,
 	FileChooser[lbl,dirs,
 		ops,
 		Select->DirectoryQ]
+
+
+(* ::Subsubsection::Closed:: *)
+(*PaneWindow*)
+
 
 
 Options[PaneWindow]=
@@ -4343,6 +4625,11 @@ PaneWindow[content_,
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*closeButtonObjectFind*)
+
+
+
 closeButtonObjectFind//Clear;
 closeButtonObjectFind[Automatic]:=
 	ParentBox@EvaluationBox[];
@@ -4437,6 +4724,11 @@ closeButtonObjectFind[{b:Except[_List],n_}]:=
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*CloseButton*)
+
+
+
 CloseButton[box_:Automatic]:=
 	Button["",
 		NotebookDelete@closeButtonObjectFind[box],
@@ -4452,6 +4744,11 @@ CloseButton[box_:Automatic]:=
 				ToExpression@
 					FrontEndResource["FEBitmaps","CircleXIconPressed"]
 			}]
+
+
+(* ::Subsubsection::Closed:: *)
+(*IButton*)
+
 
 
 Options[IButton]=
@@ -4494,6 +4791,189 @@ xEJA/BubPAhs3LgRV9yC8GtoeIDCdSe6PCgMQADkHzzhMRspbq3R0wfIbpBf
 			},
 		ops
 		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*DragPaneDynamicModule*)
+
+
+
+Options[DragPaneDynamicModule] =
+  Join[
+   Options[Pane],
+   {
+    AutoAction -> False
+    }
+   ];
+DragPaneDynamicModule[
+   exp_,
+   {width_, height_},
+   ops : OptionsPattern[]
+   ] :=
+  With[
+   {
+    boxSize =
+     {#[[1]], 3 + Total@#[[2 ;;]]} &@First@
+       FrontEndExecute@
+        GetBoundingBoxSizePacket[
+         Cell[BoxData[ToBoxes[exp]],
+          "Output",
+          PageWidth -> \[Infinity],
+          ShowCellBracket -> False,
+           CellMargins -> {{0, 0}, {0, 0}}
+          ]
+         ]
+    },
+   DynamicModule[
+    {
+     scrollX = 0., scrollY = 0.,
+     maxWidth =
+      If[! NumericQ@width,
+       boxSize[[1]],
+       Max@{boxSize[[1]], width}
+       ],
+     boxWidth =
+      If[! NumericQ@width, Min@{boxSize[[1]], 360} , width],
+      maxHeight =
+      If[! NumericQ@height,
+       boxSize[[2]],
+       Max@{boxSize[[2]], height}
+       ],
+     boxHeight =
+      If[! NumericQ@height, Min@{boxSize[[2]], 360} , height],
+     setXScroll,
+     setYScroll,
+     getXScroll,
+     getYScroll,
+     scrolling = False,
+     refWidth, refX,
+     refHeight, refY
+     },
+    Pane[
+     EventHandler[
+       Pane[
+        Pane[exp, 2*boxSize, Alignment -> {Left, Top}],
+        Full,
+        ScrollPosition :>
+         Dynamic[
+          If[
+           TrueQ[scrolling],
+           {
+            setXScroll[],
+            setYScroll[]
+            },
+           {scrollX, scrollY}
+           ],
+          Function[
+           scrollX =
+            Clip[#[[1]], {0., Max@{maxWidth - boxWidth, 0.}}];
+           scrollY =
+            Clip[#[[2]], {0., Max@{maxHeight - boxHeight, 0.}}];
+           ],
+          TrackedSymbols :> {scrollX, scrollY}
+          ],
+         Alignment -> {Left, Top}
+        ],
+       {
+        If[TrueQ@OptionValue[AutoAction],
+          "MouseEntered",
+          "MouseDown"
+          ] :>
+         (
+          refX = scrollX;
+          refY = scrollY;
+          {refWidth, refHeight} = MousePosition["ScreenAbsolute"];
+          scrolling = True
+          ),
+        If[TrueQ@OptionValue[AutoAction],
+          "MouseMoved",
+          "MouseDragged"
+          ] :>
+         (
+          If[! AllTrue[{refWidth, refHeight}, NumericQ],
+           refX = scrollX;
+           refY = scrollY;
+           {refWidth, refHeight} = MousePosition["ScreenAbsolute"];
+           scrolling = True
+           ];
+          setXScroll[];
+          ),
+        If[TrueQ@OptionValue[AutoAction],
+          "MouseExited",
+          "MouseUp"
+          ] :>
+         (
+          scrolling = False;
+          setXScroll[];
+          setYScroll[];
+          Clear[refWidth, refHeight, refX, refY];
+          )
+        }
+       ] // MouseAppearance[#, "PanView"] &,
+     FilterRules[
+      {
+       ImageSize ->
+        Dynamic[{boxWidth, boxHeight}],
+       ops
+       },
+      Options[Pane]
+      ]
+     ],
+    Initialization :>
+     {
+      getXScroll[x_] :=
+       Clip[
+        refX + refWidth - x,
+        {0., Max@{maxWidth - boxWidth, 0.}}
+        ];
+      getXScroll[] :=
+
+       getXScroll[First@MousePosition["ScreenAbsolute"]],
+      setXScroll[x___] :=
+       scrollX = getXScroll[x],
+      getYScroll[y_] :=
+       Clip[
+        refY + refHeight - y,
+        {0., Max@{maxHeight - boxHeight, 0.}}
+        ];
+      getYScroll[] :=
+
+       getYScroll[Last@MousePosition["ScreenAbsolute"]],
+      setYScroll[y___] :=
+       scrollY = getYScroll[y]
+      }
+    ]
+   ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*DragPane*)
+
+
+
+Options[DragPane] =
+  Options[DragPaneDynamicModule];
+DragPane[
+   exp_,
+   w : _?NumericQ | Automatic,
+   ops : OptionsPattern[]
+   ] :=
+  DragPane[exp, {w, Automatic}, ops];
+DragPane[
+   exp_,
+   ops : OptionsPattern[]
+   ] :=
+  DragPane[exp,
+    OptionValue[ImageSize],
+   ops
+   ];
+Format[dp : 
+    DragPane[exp_, {width_, height_}, ops : OptionsPattern[]], 
+   StandardForm] :=
+  Interpretation[
+   DragPaneDynamicModule[exp, {width, height}, ops],
+   dp
+   ];
 
 
 End[];

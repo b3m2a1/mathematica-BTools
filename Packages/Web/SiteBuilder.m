@@ -417,18 +417,6 @@ WebSiteInstallTheme[
 		];
 
 
-(*CopyFile[
-	#,
-	CloudObject[
-		URLBuild@{BTools`Web`Private`$WebThemesURLBase, FileNameTake[#]},
-		Permissions\[Rule]"Public"
-		]
-	]&/@
-		FileNames["*.zip", 
-			FileNameJoin@{$UserDocumentsDirectory, "Wolfram Mathematica", "WebThemes"}
-			]*)
-
-
 Options[WebSiteFindTheme]=
 	{
 		"DownloadTheme"->False
