@@ -3360,7 +3360,9 @@ AppGet[appName_,pkgName_String]:=
 								DeleteDuplicates@
 									Join[
 										Replace[
-											ToExpression[$Context<>"PackageScope`Private`$PackageContexts"],
+											ToExpression[
+												$Context<>"PackageScope`Private`$PackageContexts"
+												],
 											Except[{__String}]->{}
 											],
 										$ContextPath
@@ -3391,7 +3393,7 @@ AppGet[appName_,pkgName_String]:=
 					Catch[
 						Do[
 							If[i<100,
-								If[$Context===cont,Throw[$Context,"success"],End[]],
+								If[$Context===cont, Throw[$Context,"success"],End[]],
 								Throw[$Failed,"fail"]
 								],
 							{i,1000}

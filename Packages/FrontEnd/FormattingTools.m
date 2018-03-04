@@ -166,6 +166,9 @@ IButton::usage=
 	"A little info-icon button";
 
 
+DragPane::usage="Displays as a draggable Pane";
+
+
 Begin["`Private`"];
 
 
@@ -4802,7 +4805,8 @@ Options[DragPaneDynamicModule] =
   Join[
    Options[Pane],
    {
-    AutoAction -> False
+    AutoAction -> False,
+    "Modifiers" -> None
     }
    ];
 DragPaneDynamicModule[
@@ -4822,7 +4826,11 @@ DragPaneDynamicModule[
           ShowCellBracket -> False,
            CellMargins -> {{0, 0}, {0, 0}}
           ]
-         ]
+         ],
+     mkeys = 
+    	 Cases[Flatten@List@OptionValue["Modifiers"], 
+    	 	"Shift"|"Control"|"Alt"|"Command"
+    	 	]
     },
    DynamicModule[
     {
@@ -4847,17 +4855,18 @@ DragPaneDynamicModule[
      getYScroll,
      scrolling = False,
      refWidth, refX,
-     refHeight, refY
+     refHeight, refY,
+     applyEvent,
+     mods = mkeys
      },
     Pane[
      EventHandler[
        Pane[
         Pane[exp, 2*boxSize, Alignment -> {Left, Top}],
         Full,
-        ScrollPosition :>
+        ScrollPosition ->
          Dynamic[
-          If[
-           TrueQ[scrolling],
+          If[TrueQ[scrolling],
            {
             setXScroll[],
             setYScroll[]
@@ -4879,35 +4888,37 @@ DragPaneDynamicModule[
           "MouseEntered",
           "MouseDown"
           ] :>
-         (
+         If[applyEvent[],
           refX = scrollX;
           refY = scrollY;
           {refWidth, refHeight} = MousePosition["ScreenAbsolute"];
           scrolling = True
-          ),
+          ],
         If[TrueQ@OptionValue[AutoAction],
           "MouseMoved",
           "MouseDragged"
           ] :>
-         (
+         If[applyEvent[],
           If[! AllTrue[{refWidth, refHeight}, NumericQ],
            refX = scrollX;
            refY = scrollY;
-           {refWidth, refHeight} = MousePosition["ScreenAbsolute"];
+           {refWidth, refHeight} =
+          	 MousePosition["ScreenAbsolute"];
            scrolling = True
            ];
           setXScroll[];
-          ),
+          ],
         If[TrueQ@OptionValue[AutoAction],
           "MouseExited",
           "MouseUp"
           ] :>
-         (
+         If[applyEvent[],
           scrolling = False;
           setXScroll[];
           setYScroll[];
           Clear[refWidth, refHeight, refX, refY];
-          )
+          ],
+        PassEventsDown->Length@mods>0
         }
        ] // MouseAppearance[#, "PanView"] &,
      FilterRules[
@@ -4921,13 +4932,15 @@ DragPaneDynamicModule[
      ],
     Initialization :>
      {
+      applyEvent[]:=
+       Length@mods==0||
+	       Intersection[mods, CurrentValue["ModifierKeys"]]==mods,
       getXScroll[x_] :=
        Clip[
         refX + refWidth - x,
         {0., Max@{maxWidth - boxWidth, 0.}}
         ];
       getXScroll[] :=
-
        getXScroll[First@MousePosition["ScreenAbsolute"]],
       setXScroll[x___] :=
        scrollX = getXScroll[x],
@@ -4937,7 +4950,6 @@ DragPaneDynamicModule[
         {0., Max@{maxHeight - boxHeight, 0.}}
         ];
       getYScroll[] :=
-
        getYScroll[Last@MousePosition["ScreenAbsolute"]],
       setYScroll[y___] :=
        scrollY = getYScroll[y]

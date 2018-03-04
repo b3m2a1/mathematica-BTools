@@ -1125,6 +1125,14 @@ StyleSheetEdit[cells, conf]
 	];
 
 
+PackageAddAutocompletions[
+	StyleSheetEdit,
+	{
+		Style
+		}
+	]
+
+
 $StyleSheetCellOptionPatterns=
 	_String|_Symbol|{(_String|_Symbol)..};
 
