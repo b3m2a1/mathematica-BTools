@@ -1125,12 +1125,15 @@ StyleSheetEdit[cells, conf]
 	];
 
 
-PackageAddAutocompletions[
-	StyleSheetEdit,
-	{
-		Style
-		}
-	]
+PackageAddAutocompletions@
+	Map[
+		#->{Style}&,
+		{
+			"StyleSheetEdits",
+			"StyleSheetNew",
+			"StyleSheetCells"
+			}
+		]
 
 
 $StyleSheetCellOptionPatterns=

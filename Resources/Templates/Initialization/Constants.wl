@@ -51,7 +51,10 @@ $PackageLoadSpecs=
 				Replace[
 						Quiet[
 							Import@f,
-							Import::nffil
+							{
+								Import::nffil,
+								Import::chtype
+								}
 							],
 					Except[KeyValuePattern[{}]]:>
 						{}
@@ -70,7 +73,10 @@ $PackageLoadSpecs=
 				Replace[
 					Quiet[
 						Import@f,
-						Import::nffil
+						{
+							Import::nffil,
+							Import::chtype
+							}
 						],
 					Except[KeyValuePattern[{}]]:>
 						{}
