@@ -19,6 +19,11 @@
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*Styles*)
+
+
+
 $StyleSheetTitleCellStyles::usage="The styles that are section-like";
 $StyleSheetSectionCellStyles::usage="The styles that are section-like";
 $StyleSheetIOCellStyles::usage="The styles that are code-like";
@@ -27,6 +32,11 @@ $StyleSheetTextCellStyles::usage="The styles that are text-like";
 
 $StyleSheetCellDisplayStyleOptions::usage=
 	"A listing of cell style options to make two cells look the same";
+
+
+(* ::Subsubsection::Closed:: *)
+(*New*)
+
 
 
 StyleSheetOpen::usage="Opens the style definitions notebook for a given notebook";
@@ -43,6 +53,11 @@ StyleSheetUpdate::usage="StyleSheetDelete + StyleSheetNew";
 StyleSheetDefaultStyles::usage="Sets a default styling cascade";
 
 
+(* ::Subsubsection::Closed:: *)
+(*Cells*)
+
+
+
 StyleSheetCells::usage=
 	"Gets the cells in the current stylesheet that match a given style.
 Styles can be specified by a String, Symbol, or StyleData expression or a list thereof";
@@ -50,6 +65,11 @@ Styles can be specified by a String, Symbol, or StyleData expression or a list t
 
 (*StylesheetNotebook::usage=
 	"Finds the stylesheet notebook expression the given notebook depends on";*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Notebook*)
+
 
 
 $DefaultStyleSheetNotebook::usage=
@@ -66,6 +86,11 @@ StyleSheetNotebookGet::usage=
 	"NotebookGets the StyleSheetParentNotebook";
 StyleSheetStyles::usage=
 	"Gets the styles from a stylesheet";
+
+
+(* ::Subsubsection::Closed:: *)
+(*Edit*)
+
 
 
 StyleSheetApplyEdits::usage=
@@ -87,7 +112,20 @@ StyleSheetEditTaggingRules::usage=
 	"Edits the TaggingRules";
 
 
+(* ::Subsubsection::Closed:: *)
+(*Style Attributes*)
+
+
+
+StyleDefinitionsValue::usage="experimental";
+
+
 Begin["`Private`"];
+
+
+(* ::Subsubsection::Closed:: *)
+(*frontEndExecuteBlock*)
+
 
 
 If[!ValueQ[$frontEndExecuteBlock],
@@ -123,6 +161,11 @@ frontEndExecuteBlock[e_]/;!TrueQ[$frontEndExecuteBlock]:=
 		];
 frontEndExecuteBlock[e_]/;TrueQ[$frontEndExecuteBlock]:=e;
 frontEndExecuteBlock~SetAttributes~HoldAllComplete;
+
+
+(* ::Subsubsection::Closed:: *)
+(*Styles*)
+
 
 
 $StyleSheetTitleCellStyles={"Title","Chapter","Subchapter"};
@@ -170,6 +213,11 @@ $StyleSheetCellDisplayStyleOptions:=
 		$StyleSheetCellFrameStyleOptions,
 		$StyleSheetCellSpacingStyleOptions
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*StyleSheetNotebookFind*)
+
 
 
 ssFENotebooks[f_String?FileExistsQ]:=
@@ -231,6 +279,11 @@ StyleSheetNotebookFind[name:_String|{__String}|_FrontEnd`FileName]:=
 
 $DefaultStyleSheetNotebook:=
 StyleSheetNotebookFind["Default"]
+
+
+(* ::Subsubsection::Closed:: *)
+(*ParentNotebook*)
+
 
 
 ssFileName[file_]:=
@@ -343,10 +396,20 @@ StyleSheetParentNotebook/:
 			];
 
 
+(* ::Subsubsection::Closed:: *)
+(*NotebookGet*)
+
+
+
 StyleSheetNotebookGet[nb_NotebookObject]:=
 	NotebookGet@StyleSheetParentNotebook@nb;
 StyleSheetNotebookGet[Optional[Automatic,Automatic]]:=
 	StyleSheetNotebookGet@EvaluationNotebook[];
+
+
+(* ::Subsubsection::Closed:: *)
+(*NotebookObject*)
+
 
 
 StyleSheetNotebookObject[nb:_NotebookObject|Automatic:Automatic]:=
@@ -384,6 +447,11 @@ StyleSheetNotebookObject[name:_String|{__String}|_FrontEnd`FileName]:=
 	Replace[StyleSheetNotebookFind[name],
 		nb_NotebookObject:>StyleSheetNotebookObject[nb]
 		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*StyleSheetTemplate*)
+
 
 
 StyleSheetTemplate[newNB:_Notebook|_NotebookObject|None:None,
@@ -425,6 +493,11 @@ StyleSheetTemplate[
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*StyleSheetOpen*)
+
+
+
 StyleSheetOpen[nb:_NotebookObject|Automatic:Automatic]:=
 With[{notebook=Replace[nb,Automatic:>StyleSheetNotebookObject[]]},
 	(*FrontEndTokenExecute@"EditStyleDefinitions";*)
@@ -440,6 +513,11 @@ n:(_Notebook):>
 ];
 
 
+(* ::Subsubsection::Closed:: *)
+(*StyleSheetDefaultStyles*)
+
+
+
 StyleSheetDefaultStyles[
 	nb:_NotebookObject|Automatic:Automatic,
 	styles__String]:=
@@ -449,6 +527,11 @@ StyleSheetDefaultStyles[
 			{i,Length@sList-1}
 			]
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*StyleSheetStyleData*)
+
 
 
 ssNormalizeStyleName[s_String]:=
@@ -508,6 +591,11 @@ StyleSheetStyleData[styleNames_]:=
 					},
 				1
 				];
+
+
+(* ::Subsubsection::Closed:: *)
+(*StyleSheetCells*)
+
 
 
 $StyleSheetCellStyleBaseStylePattern=
@@ -796,6 +884,11 @@ StyleSheetCells[
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*StyleSheetNew*)
+
+
+
 $StyleSheetNewCellStyles=
 	$StyleSheetCellStylePatterns;
 $StyleSheetNewParentStyles=
@@ -849,6 +942,11 @@ StyleSheetNew[
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*StyleSheetDelete*)
+
+
+
 StyleSheetDelete[
 	nb:_NotebookObject|Automatic:Automatic,
 	type:_String|_List|_DefaultStyle]:=
@@ -856,6 +954,11 @@ StyleSheetDelete[
 		c:{__CellObject}:>
 			NotebookDelete@c
 		}];
+
+
+(* ::Subsubsection::Closed:: *)
+(*StylesheetNotebook*)
+
 
 
 StylesheetNotebook[nb:_Notebook|_NotebookObject|Automatic:Automatic]:=
@@ -900,6 +1003,11 @@ StylesheetNotebook[nb:_Notebook|_NotebookObject|Automatic:Automatic]:=
 			];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Styles*)
+
+
+
 StyleSheetStyles[nb:_Notebook|_NotebookObject|Automatic:Automatic]:=
 	Module[
 		{defaultCells=StyleSheetCells[nb,Default]},
@@ -918,6 +1026,11 @@ StyleSheetStyles[nb:_Notebook|_NotebookObject|Automatic:Automatic]:=
 			Join@@defaultCells
 		}
 	];
+
+
+(* ::Subsubsection::Closed:: *)
+(*ApplyEdits*)
+
 
 
 StyleSheetSuspendScreen[nb_]:=
@@ -987,6 +1100,11 @@ StyleSheetApplyEdits[nb:_CellObject|Automatic:Automatic]:=
 	StyleSheetApplyEdits[{Replace[nb,Automatic:>EvaluationCell[]]}];
 
 
+(* ::Subsubsection::Closed:: *)
+(*SetOptions*)
+
+
+
 StyleSheetSetOptions[obj_,ops__]:=
 	If[$frontEndExecuteBlock,
 		frontEndExecuteSow[
@@ -994,6 +1112,11 @@ StyleSheetSetOptions[obj_,ops__]:=
 			],
 		SetOptions[obj,ops]
 		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*StyleSheetEdit*)
+
 
 
 StyleSheetEdit//ClearAll
@@ -1023,6 +1146,9 @@ StyleSheetEdit[
 			]
 
 
+$StyleSheetEditApplyFunctions=False;
+
+
 StyleSheetEdit[
 	cellObs:_CellObject|{__CellObject},
 	conf_?OptionQ
@@ -1030,26 +1156,34 @@ StyleSheetEdit[
 	frontEndExecuteBlock@
 		With[{cells=Flatten@{cellObs}},
 			Do[
-				With[{oplist=
-					Table[
-						If[MatchQ[o,_Rule],
-							With[{op=Options[c,First@o]},
-								Replace[op,{
-									{k_->v_,___}:>
-										(k->
-											Replace[Last@o,
-												f_Function:>(f[v,c])]
-											),
-									{}->o
-									}]
-								],
-							o
-							],
-						{o,Flatten@{conf}}]
+				With[
+					{
+						oplist=
+							If[$StyleSheetEditApplyFunctions,
+								Table[
+									If[MatchQ[o,_Rule],
+										With[{op=Options[c,First@o]},
+											Replace[op,
+												{
+													{k_->v_,___}:>
+														(k->
+															Replace[Last@o,
+																f_Function:>(f[v,c])]
+															),
+													{}->o
+													}
+												]
+											],
+										o
+										],
+									{o, Flatten@{conf}}
+									],
+								Flatten@{conf}
+								]
 						},
-				StyleSheetSetOptions[c, oplist]
-				],
-				{c,cells}
+					StyleSheetSetOptions[c, oplist]
+					],
+			{c,cells}
 			];
 		StyleSheetApplyEdits@cells;
 		]
@@ -1110,30 +1244,46 @@ StyleSheetEdit[
 
 
 Options[StyleSheetEdit]=
-	Options[StyleSheetCells];
+	Join[
+		Options[StyleSheetCells],
+		{
+			"ApplyFunctions"->False
+			}
+		];
 StyleSheetEdit[
 	nb:_NotebookObject|Automatic:Automatic,
 	types:$StyleSheetCellStylePatterns,
 	conf_?OptionQ,
 	ops:OptionsPattern[]
 	]:=
-	With[{cells=StyleSheetCells[nb,types,ops]},
-		If[Length@cells===0,
-			$Failed,
-StyleSheetEdit[cells, conf]
+	Block[
+	{
+		$StyleSheetEditApplyFunctions=
+			Replace[OptionValue["ApplyFunctions"],
+				{
+					Automatic:>Not@FreeQ[conf, Verbatim[Function][___, _Function, ___]],
+					Except[True]->False
+					}
+				]
+			},
+		With[
+			{
+				cells=
+					StyleSheetCells[nb,types,
+						FilterRules[{ops}, Options[StyleSheetCells]]
+						]
+				},
+			If[Length@cells===0,
+				$Failed,
+				StyleSheetEdit[cells, conf]
+				]
 			]
-	];
+		];
 
 
-PackageAddAutocompletions@
-	Map[
-		#->{Style}&,
-		{
-			"StyleSheetEdits",
-			"StyleSheetNew",
-			"StyleSheetCells"
-			}
-		]
+(* ::Subsubsection::Closed:: *)
+(*StyleSheetValue*)
+
 
 
 $StyleSheetCellOptionPatterns=
@@ -1214,6 +1364,11 @@ StyleSheetValue[
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*StyleSheetSync*)
+
+
+
 Options[StyleSheetSync]=
 	DeleteDuplicatesBy[First]@
 	Join[
@@ -1262,6 +1417,11 @@ StyleSheetSync[
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*StyleSheetDrop*)
+
+
+
 StyleSheetDrop[cellObs:_CellObject|{__CellObject},ops__]:=
 StyleSheetEdit[cellObs,Sequence@@Thread[{ops}->Inherited]]
 
@@ -1282,6 +1442,11 @@ StyleSheetDrop[
 			},
 		StyleSheetDrop[cells,op,ops]
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*StyleSheetEditRuleListOption*)
+
 
 
 resolveStyleSheetRuleListMergeTag[e_]:=e
@@ -1355,6 +1520,11 @@ StyleSheetEditRuleListOption[
 		}];
 
 
+(* ::Subsubsection::Closed:: *)
+(*StyleSheetEditEvents*)
+
+
+
 Options[StyleSheetEditEvents]=
 	Join[
 		Options[StyleSheetEditRuleListOption],
@@ -1410,6 +1580,11 @@ StyleSheetEditEvents[
 		}];
 
 
+(* ::Subsubsection::Closed:: *)
+(*StyleSheetEditAliases*)
+
+
+
 Options[StyleSheetEditAliases]=
 	Options[StyleSheetEditRuleListOption];
 StyleSheetEditAliases[
@@ -1451,6 +1626,11 @@ StyleSheetEditAliases[
 			StyleSheetEditAliases[c,events,ops],
 		_->Null
 		}];
+
+
+(* ::Subsubsection::Closed:: *)
+(*StyleSheetEditAutoReplacements*)
+
 
 
 Options[StyleSheetEditAutoReplacements]=
@@ -1496,6 +1676,11 @@ StyleSheetEditAutoReplacements[
 		}];
 
 
+(* ::Subsubsection::Closed:: *)
+(*StyleSheetEditTaggingRules*)
+
+
+
 Options[StyleSheetEditTaggingRules]=
 	Options[StyleSheetEditRuleListOption];
 StyleSheetEditTaggingRules[
@@ -1537,6 +1722,55 @@ StyleSheetEditTaggingRules[
 			StyleSheetEditTaggingRules[c,events,ops],
 		_->Null
 		}];
+
+
+(* ::Subsection:: *)
+(*Autocompletions*)
+
+
+
+PackageAddAutocompletions@
+	Map[
+		#->{Style}&,
+		{
+			"StyleSheetEdit",
+			"StyleSheetNew",
+			"StyleSheetCells"
+			}
+		]
+
+
+(* ::Subsection:: *)
+(*Style Stuff*)
+
+
+
+StyleDefinitionsValue[
+	bobj:
+		$FrontEndSession|_FrontEndObject|_NotebookObject|_CellObject|
+			_BoxObject|_FrontEnd`EvaluationNotebook|_FrontEnd`InputNotebook|
+			_FrontEnd`EvaluationCell|_FrontEnd`EvaluationBox|_FrontEnd`Self|
+			_FrontEnd`ButtonNotebook|_FrontEnd`MessagesNotebook|
+			_FrontEnd`ClipboardNotebook|Automatic:Automatic, 
+	styles:All|_StringPattern`StringPatternQ:"*", 
+	attr_
+	]:=
+	With[{obj=Replace[bobj, Automatic:>InputNotebook[]]},
+		With[
+			{
+				stills=
+					Select[
+						Select[Values@FE`Evaluate@FEPrivate`GetPopupList[obj, "MenuListStyles"],
+							StringQ
+							],
+						If[styles===All, True&, StringMatchQ[styles]]
+						]},
+			AssociationMap[
+				CurrentValue[obj, {StyleDefinitions, #, attr}]&,
+				stills
+				]
+			]
+		]
 
 
 End[];

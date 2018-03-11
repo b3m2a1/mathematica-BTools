@@ -478,8 +478,19 @@ PackageAppNeeds[pkg_String]:=
 
 
 $PackageScopeBlockEvalExpr=TrueQ[$PackageScopeBlockEvalExpr];
-PackageScopeBlock[e_,scope_String:"Package"]/;TrueQ[$AllowPackageRescoping]:=
-	With[{newcont="BTools`PackageScope`"<>StringTrim[scope,"`"]<>"`"},
+PackageScopeBlock[
+	e_,
+	scope:_String?(StringFreeQ["`"]):"Package",
+	context:_String?(StringEndsQ["`"]):"`PackageScope`"
+	]/;TrueQ[$AllowPackageRescoping]:=
+	With[{
+		newcont=
+			If[StringStartsQ[context, "`"],
+				"BTools"<>context<>scope<>"`",
+				context<>scope<>"`"
+				],
+		res=If[$PackageScopeBlockEvalExpr,e]
+		},
 		If[!MemberQ[$PackageContexts,newcont],
 			Unprotect[$PackageContexts];
 			AppendTo[$PackageContexts,newcont];
@@ -515,7 +526,7 @@ PackageScopeBlock[e_,scope_String:"Package"]/;TrueQ[$AllowPackageRescoping]:=
 						Function[Null,
 							Quiet[
 								Check[
-									Set[Context[#],newcont],
+									Set[Context[#], newcont],
 									Remove[#],
 									Context::cxdup
 									],
@@ -527,7 +538,7 @@ PackageScopeBlock[e_,scope_String:"Package"]/;TrueQ[$AllowPackageRescoping]:=
 						]//ReleaseHold;
 					]
 			];
-		If[$PackageScopeBlockEvalExpr,e]
+		res
 		];
 PackageScopeBlock[e_, scope_String:"Package"]/;Not@TrueQ[$AllowPackageRescoping]:=
 	If[$PackageScopeBlockEvalExpr,e];
@@ -540,15 +551,20 @@ PackageScopeBlock~SetAttributes~HoldAllComplete;
 
 PackageDecontext[
 	pkgFile_String?(KeyMemberQ[$DeclaredPackages,#]&),
-	scope_String:"Package"
+	scope:_String?(StringFreeQ["`"]):"Package",
+	context:_String?(StringEndsQ["`"]):"`PackageScope`"
 	]/;TrueQ[$AllowPackageRescoping]:=
 	With[{
 		names=$DeclaredPackages[pkgFile],
-		ctx="BTools`PackageScope`"<>StringTrim[scope,"`"]<>"`"
+		ctx=
+		 If[StringStartsQ[context, "`"],
+			"BTools"<>context<>scope<>"`",
+			context<>scope<>"`"
+			]
 		},
 		Replace[names,
 			Verbatim[HoldPattern][s_]:>
-				Set[Context[s],ctx],
+				Set[Context[s], ctx],
 			1
 			]
 		];

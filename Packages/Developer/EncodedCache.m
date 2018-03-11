@@ -19,18 +19,50 @@
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*Package Scope*)
+
+
+
 PackageScopeBlock[
+	(*  Options *)
 	$EncodedCacheDefaultOptions::usage="";
 	EncodedCacheOption::usage="";
+	EncodedCacheOptionsFile::usage="";
+	EncodedCacheOptionsLoad::usage="";
+	EncodedCacheOptionsExport::usage="";
+	(*  Passwords *)
 	EncodedCachePassword::usage="";
+	EncodedCachePasswordDialog::usage="";
+	EncodedCachePasswordFile::usage="";
+	EncodedCachePasswordLoad::usage="";
+	EncodedCachePasswordExport::usage="";
 	$EncodedCachePasswords::usage="";
-	];
+	(* Functions *)
+	EncodedCacheLoaded::usage="";
+	EncodedCacheFile::usage="";
+	EncodedCacheExport::usage="";
+	(* Symbols *)
+	MakeEncodedCacheSymbol::usage="",
+	"Package",
+	$Context
+	]
+
+
+(* ::Subsubsection::Closed:: *)
+(*EncodedCache*)
+
 
 
 EncodedCache::usage=
 	"An object representing an encoded Association";
 EncodedCacheLoad::usage=
 	"Loads an EncodedCache from a directory";
+
+
+(* ::Subsubsection::Closed:: *)
+(*$EncodedCache*)
+
 
 
 $EncodedCache::usage=
@@ -43,39 +75,16 @@ $EncodedCacheDirectory::usage=
 	"A settable directory to change where the $EncodedCache loads from";
 
 
-KeyChainConnect::usage="Uses the keychain to cloud connect";
-
-
-KeyChainAdd::usage=
-	"Adds auth data to the KeyChain";
-KeyChainRemove::usage=
-	"Removes auth data from the KeyChain";
-KeyChainGet::usage=
-	"Gets auth data from the KeyChain";
-
-
-$KeyChain::usage=
-	"An interface object to a password keychain";
-$KeyChainSettings::usage=
-	"An interface object for the options of the keychain";
-$KeyChainPassword::usage=
-	"An interface object for the password of the keychain";
-$KeyChainDirectory::usage=
-	"A settable directory to change where the $KeyChain loads from";
-
-
-$KeyChainCloudAccounts::usage=
-	"A collection of known accounts for KeyChainConnect";
-
-
-(*KeyChainGenerateWord::usage="Futurized password-management function for building secure passwords"*)
-
-
 Begin["`Private`"];
 
 
 (* ::Subsection:: *)
 (*Options*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*Base*)
 
 
 
@@ -121,6 +130,11 @@ If[!AssociationQ@$EncodedCacheOptions,
 	];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Lookup*)
+
+
+
 EncodedCacheOption[spec_?StringQ,option_]:=
 	Lookup[
 		Lookup[$EncodedCacheOptions,
@@ -135,8 +149,38 @@ EncodedCacheOption[spec_?StringQ,option_]:=
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Set / Unset*)
+
+
+
 EncodedCacheOption/:
-	Set[EncodedCacheOption[spec_?StringQ,option_],value_]:=
+	Set[EncodedCacheOption[spec_?StringQ],value_]:=
+		(
+			$EncodedCacheOptions[spec]=value;
+			If[EncodedCacheOption[spec,"SaveOptionsToDisk"],
+				EncodedCacheOptionsExport[spec]
+				];
+			value
+			);
+EncodedCacheOption/:
+	SetDelayed[EncodedCacheOption[spec_?StringQ],value_]:=
+		(
+			$EncodedCacheOptions[spec]:=value;
+			If[EncodedCacheOption[spec,"SaveOptionsToDisk"],
+				EncodedCacheOptionsExport[spec]
+				];
+			value
+			);
+EncodedCacheOption/:
+	Unset[EncodedCacheOption[spec_?StringQ]]:=(
+		$EncodedCacheOptions[spec]=.;
+		If[EncodedCacheOption[spec,"SaveOptionsToDisk"],
+			EncodedCacheOptionsExport[spec]
+			];
+		);
+EncodedCacheOption/:
+	Set[EncodedCacheOption[spec_?StringQ, option_],value_]:=
 		(
 			If[!KeyMemberQ[$EncodedCacheOptions,spec],
 				$EncodedCacheOptions[spec]=<||>
@@ -151,12 +195,25 @@ EncodedCacheOption/:
 			value
 			);
 EncodedCacheOption/:
-	Unset[EncodedCacheOption[spec_?StringQ]]:=(
-		$EncodedCacheOptions[spec]=.;
-		If[EncodedCacheOption[spec,"SaveOptionsToDisk"],
-			EncodedCacheOptionsExport[spec]
-			];
-		);
+	SetDelayed[EncodedCacheOption[spec_?StringQ,option_],value_]:=
+		(
+			If[!KeyMemberQ[$EncodedCacheOptions,spec],
+				$EncodedCacheOptions[spec]=<||>
+				];
+			If[value===Inherited,
+				$EncodedCacheOptions[spec,option]=.,
+				$EncodedCacheOptions[spec,option]:=value
+				];
+			If[EncodedCacheOption[spec,"SaveOptionsToDisk"],
+				EncodedCacheOptionsExport[spec]
+				];
+			value
+			);
+
+
+(* ::Subsubsection::Closed:: *)
+(*Load / Export*)
+
 
 
 EncodedCacheOptionsFile[spec_?StringQ]:=
@@ -220,11 +277,21 @@ EncodedCacheOptionsExport[spec_?StringQ]:=
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*Base*)
+
+
+
 If[!AssociationQ@$EncodedCachePasswords,
 	$EncodedCachePasswords=
 		<|
 			|>
 	];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Lookup*)
+
 
 
 EncodedCachePasswordDialog[spec_]:=
@@ -273,9 +340,27 @@ EncodedCachePassword[spec_?StringQ]:=
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Set / Unset*)
+
+
+
 EncodedCachePassword/:
 	Set[EncodedCachePassword[spec_?StringQ],pwd_]:=(
 		$EncodedCachePasswords[spec]=pwd;
+		If[EncodedCacheOption[spec,"SavePasswordToDisk"],
+			EncodedCachePasswordExport[spec]
+			];
+		If[!EncodedCacheOption[spec,"StorePasswordInMemory"],
+			EncodedCachePassword[spec]=.
+			];
+		pwd
+		);
+
+
+EncodedCachePassword/:
+	SetDelayed[EncodedCachePassword[spec_?StringQ],pwd_]:=(
+		$EncodedCachePasswords[spec]:=pwd;
 		If[EncodedCacheOption[spec,"SavePasswordToDisk"],
 			EncodedCachePasswordExport[spec]
 			];
@@ -295,6 +380,11 @@ EncodedCachePassword/:
 			];
 		$EncodedCachePasswords[spec]=.;
 		);
+
+
+(* ::Subsubsection::Closed:: *)
+(*Load / Export*)
+
 
 
 EncodedCachePasswordFile[spec_?StringQ]:=
@@ -352,11 +442,21 @@ EncodedCachePasswordExport[spec_?StringQ]:=
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*Bases*)
+
+
+
 If[!AssociationQ@$EncodedCaches,
 	$EncodedCaches=
 		<|
 			|>
 	];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Export / Load*)
+
 
 
 EncodedCacheLoaded[spec_?StringQ]:=
@@ -389,14 +489,17 @@ EncodedCacheFiles[pat_:"*"]:=
 		]
 
 
-EncodedCacheExport[(spec_?StringQ)?(KeyMemberQ[$EncodedCaches,#]&)]:=
+EncodedCacheExport[
+ (spec_?StringQ)?(KeyMemberQ[$EncodedCaches,#]&),
+ val:_?AssociationQ|Automatic:Automatic
+ ]:=
 	With[{
 		file=EncodedCacheFile[spec],
 		temp=FileNameJoin@{$TemporaryDirectory,RandomSample[Alphabet[],10]<>".m"}
 		},
 		Export[
 			temp,
-			$EncodedCaches[spec]
+			Replace[val, Automatic:>$EncodedCaches[spec]]
 			];
 		Quiet@
 			CreateDirectory[
@@ -489,6 +592,21 @@ EncodedCacheLoad[d_String?DirectoryQ]:=
 		);
 
 
+(* ::Subsubsection::Closed:: *)
+(*Destructuring Interface*)
+
+
+
+EncodedCache/:
+	Key[EncodedCache[spec_?StringQ]]:=
+		spec;
+
+
+(* ::Subsubsection::Closed:: *)
+(*Lookup Interface*)
+
+
+
 EncodedCache[spec_?StringQ][keys__]:=
 	If[TrueQ@EncodedCacheOption[spec,"StoreInMemory"],
 		(
@@ -519,6 +637,11 @@ EncodedCache[spec_?StringQ,"Password"]:=
 			];
 		EncodedCachePassword[spec]
 		);
+
+
+(* ::Subsubsection::Closed:: *)
+(*Set / Unset Interface*)
+
 
 
 EncodedCache/:
@@ -634,12 +757,298 @@ EncodedCache/:
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Mutation Handler*)
+
+
+
+validEncodedCacheQ[EncodedCache[spec_?StringQ]]:=
+	True;
+validEncodedCacheQ[s_Symbol]:=
+	MatchQ[OwnValues[s], 
+		{_:>_EncodedCache?validEncodedCacheQ}
+		];
+validEncodedCacheQ[_]:=
+	False;
+
+
+ClearAll[EncodedCacheMutationHandler];
+EncodedCacheMutationHandler~SetAttributes~HoldAllComplete
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Basic*)
+
+
+
+EncodedCacheMutationHandler[
+	Set[
+		(symbol_Symbol?validEncodedCacheQ)[attr_],
+		val_
+		]
+	]:=
+	Set[Evaluate@symbol[attr], val];
+EncodedCacheMutationHandler[
+	SetDelayed[
+		(symbol_Symbol?validEncodedCacheQ)[attr_],
+		val_
+		]
+	]:=
+	SetDelayed[Evaluate@symbol[attr], val];
+EncodedCacheMutationHandler[
+	Unset[
+		(symbol_Symbol?validEncodedCacheQ)[attr_]
+		]
+	]:=
+	Unset[Evaluate@symbol[attr]];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Password*)
+
+
+
+EncodedCacheMutationHandler[
+	Set[
+		(symbol_Symbol?validEncodedCacheQ)[attr_, "Password"],
+		val_
+		]
+	]:=
+	Set[Evaluate@symbol[attr, "Password"], val];
+EncodedCacheMutationHandler[
+	SetDelayed[
+		(symbol_Symbol?validEncodedCacheQ)[attr_, "Password"],
+		val_
+		]
+	]:=
+	SetDelayed[Evaluate@symbol[attr, "Password"], val];
+EncodedCacheMutationHandler[
+	Unset[
+		(symbol_Symbol?validEncodedCacheQ)[attr_, "Password"]
+		]
+	]:=
+	Unset[Evaluate@symbol[attr, "Password"]];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Options*)
+
+
+
+EncodedCacheMutationHandler[
+	Set[
+		(symbol_Symbol?validEncodedCacheQ)[attr_, "Options"],
+		val_
+		]
+	]:=
+	Set[Evaluate@symbol[attr, "Options"], val];
+EncodedCacheMutationHandler[
+	SetDelayed[
+		(symbol_Symbol?validEncodedCacheQ)[attr_, "Options"],
+		val_
+		]
+	]:=
+	SetDelayed[Evaluate@symbol[attr, "Options"], val];
+EncodedCacheMutationHandler[
+	Unset[
+		(symbol_Symbol?validEncodedCacheQ)[attr_, "Options"]
+		]
+	]:=
+	Unset[Evaluate@symbol[attr, "Options"]];
+
+
+EncodedCacheMutationHandler[
+	Set[
+		Options[
+			symbol:(_Symbol|_EncodedCache)?validEncodedCacheQ
+			],
+		val_
+		]
+	]:=
+	With[{k=Key@symbol},
+		Set[EncodedCacheOption[k], val]
+		];
+EncodedCacheMutationHandler[
+	SetDelayed[
+		Options[
+			symbol:(_Symbol|_EncodedCache)?validEncodedCacheQ
+			],
+		val_
+		]
+	]:=
+	With[{k=Key@symbol},
+		SetDelayed[EncodedCacheOption[k], val]
+		];
+EncodedCacheMutationHandler[
+	Unset[
+		Options[
+			symbol:(_Symbol|_EncodedCache)?validEncodedCacheQ
+			]
+		]
+	]:=
+	With[{k=Key@symbol},
+		Unset[EncodedCacheOption[k]]
+		];
+
+
+EncodedCacheMutationHandler[
+	Set[
+		Options[
+			symbol:(_Symbol|_EncodedCache)?validEncodedCacheQ,
+			opt_
+			],
+		val_
+		]
+	]:=
+	With[{k=Key@symbol},
+		Set[EncodedCacheOption[k, opt], val]
+		];
+EncodedCacheMutationHandler[
+	SetDelayed[
+		Options[
+			symbol:(_Symbol|_EncodedCache)?validEncodedCacheQ,
+			opt_
+			],
+		val_
+		]
+	]:=
+	With[{k=Key@symbol},
+		SetDelayed[EncodedCacheOption[k, opt], val]
+		];
+EncodedCacheMutationHandler[
+	Unset[
+		Options[
+			symbol:(_Symbol|_EncodedCache)?validEncodedCacheQ,
+			opt_
+			]
+		]
+	]:=
+	With[{k=Key@symbol},
+		Unset[EncodedCacheOption[k, opt]]
+		];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*SetMutationHandler*)
+
+
+
+EncodedCacheMutationHandler[___]:=
+	Language`MutationFallthrough
+
+
+Language`SetMutationHandler[EncodedCache, EncodedCacheMutationHandler]
+
+
+(* ::Subsubsection::Closed:: *)
+(*File / Delete Interface*)
+
+
+
 EncodedCache/:
 	File[EncodedCache[spec_?StringQ]]:=
 		EncodedCacheFile[spec];
 EncodedCache/:
 	DeleteFile[EncodedCache[spec_?StringQ]]:=
 		DeleteFile@EncodedCacheFile[spec];
+EncodedCache/:
+	Export[c:EncodedCache[spec_?StringQ], val:_?AssociationQ|Automatic:Automatic]:=
+		EncodedCacheExport[c, val]
+
+
+(* ::Subsection:: *)
+(*Symbol*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*MakeEncodedCacheSymbol*)
+
+
+
+Options[MakeEncodedCacheSymbol]=
+	{
+		"Key"->Automatic,
+		"Directory"->Automatic,
+		"Settings"->{}
+		};
+
+
+iMakeEncodedCacheSymbol[
+	symName_String, 
+	key:_String|Automatic,
+	dir:_String?DirectoryQ|Automatic,
+	settings_?OptionQ
+	]:=
+	Catch@
+		With[
+			{
+				sym=Check[Symbol[symName], Throw[$Failed]],
+				keySym=
+					Symbol@Evaluate@
+						If[StringContainsQ[symName, "`"],
+							symName<>"`Key",
+							"`"<>symName<>"`Key"
+							],
+				dirSym=
+					Symbol@Evaluate@
+						If[StringContainsQ[symName, "`"],
+							symName<>"`Directory",
+							"`"<>symName<>"`Directory"
+							],
+				settingsSym=
+					Symbol@Evaluate@
+						If[StringContainsQ[symName, "`"],
+							symName<>"`Options",
+							"`"<>symName<>"`Options"
+							],
+				},
+			If[key===Automatic,
+				If[!ValueQ[keySym], keySym=symName],
+				keySym=key
+				];
+			dirSym=dir;
+			HoldPattern[sym[k__]]:=
+				EncodedCache[keySym][k];
+			sym/:
+				Set[sym[k__],v_]:=
+					Set[EncodedCache[keySym][k],v];
+			sym/:
+				SetDelayed[sym[k__],v_]:=
+					SetDelayed[EncodedCache[keySym][k],v];
+			sym/:
+				Unset[sym[k__]]:=
+					Unset[EncodedCache[keySym][k]];
+			sym/:
+				File@sym:=
+					EncodedCacheFile[keySym];
+			sym/:
+				DeleteFile[sym]:=
+					DeleteFile@File@sym;
+			sym/:
+				Set[sym,a_Association]:=
+					Set[EncodedCache[keySym],a];
+			sym/:
+				Unset[sym,a_Association]:=
+					Unset[EncodedCache[keySym]];
+			(*
+			Make settings symbol
+			*)
+			settingsSym[k__]:=
+				EncodedCache[keySym, "Options"][k];
+			settingsSym/:
+				Set[settingsSym[k__],v_]:=
+					Set[EncodedCache[keySym, "Options"][k],v];
+			settingsSym/:
+				Unset[settingsSym[k__]]:=
+					Unset[EncodedCache[keySym, "Options"][k]];
+			settingsSym/:
+				File@settingsSym:=
+					EncodedCacheOptionsFile[keySym];
+			settingsSym/:
+				DeleteFile@settingsSym:=
+					DeleteFile@File@settingsSym;
+			]
 
 
 (* ::Subsection:: *)
@@ -661,6 +1070,11 @@ If[!ValueQ@$EncodedCacheDirectory,
 			$EncodedCacheDirectory=Automatic
 			)
 	];
+
+
+(* ::Subsubsection::Closed:: *)
+(*$EncodedCache*)
+
 
 
 HoldPattern[$EncodedCache[k__]]:=
@@ -692,6 +1106,11 @@ $EncodedCache/:
 		Unset[EncodedCache[$EncodedCacheDefaultKey]];
 
 
+(* ::Subsubsection::Closed:: *)
+(*$EncodedCacheSettings*)
+
+
+
 $EncodedCacheSettings[k__]:=
 	EncodedCache[$EncodedCacheDefaultKey,"Options"][k];
 $EncodedCacheSettings/:
@@ -708,6 +1127,11 @@ $EncodedCacheSettings/:
 $EncodedCacheSettings/:
 	DeleteFile@$EncodedCacheSettings:=
 		DeleteFile@File@$EncodedCacheSettings;
+
+
+(* ::Subsubsection::Closed:: *)
+(*$EncodedCachePassword*)
+
 
 
 $EncodedCachePassword[]:=
@@ -729,6 +1153,11 @@ $EncodedCachePassword/:
 $EncodedCachePassword/:
 	DeleteFile@$EncodedCachePassword:=
 		DeleteFile@File@$EncodedCachePassword;
+
+
+(* ::Subsubsection::Closed:: *)
+(*$EncodedCacheDirectory*)
+
 
 
 $EncodedCacheDirectory/:
@@ -762,322 +1191,6 @@ $EncodedCacheDirectory/:
 				dir
 				]
 			];
-
-
-If[!ValueQ@$KeyChainKey,
-	$KeyChainKey:=
-		(
-			$KeyChainDirectory=Automatic;
-			$KeyChainKey="KeyChain"
-			)
-	];
-If[!ValueQ@$KeyChainDirectory,
-	$KeyChainDirectory:=
-		(
-			$KeyChainKey="KeyChain";
-			$KeyChainDirectory=Automatic
-			)
-	];
-
-
-HoldPattern[$KeyChain[k__]]:=
-	EncodedCache[$KeyChainKey][k];
-$KeyChain/:
-	Set[$KeyChain[k__],v_]:=
-		Set[EncodedCache[$KeyChainKey][k],v];
-$KeyChain/:
-	SetDelayed[$KeyChain[k__],v_]:=
-		SetDelayed[EncodedCache[$KeyChainKey][k],v];
-$KeyChain/:
-	Unset[$KeyChain[k__]]:=
-		Unset[EncodedCache[$KeyChainKey][k]];
-
-
-$KeyChain/:
-	File@$KeyChain:=
-		EncodedCacheFile[$KeyChainKey];
-$KeyChain/:
-	DeleteFile[$KeyChain]:=
-		DeleteFile@File@$KeyChain;
-
-
-$KeyChain/:
-	Set[$KeyChain,a_Association]:=
-		Set[EncodedCache[$KeyChainKey],a];
-$KeyChain/:
-	Unset[$KeyChain]:=
-		Unset[EncodedCache[$KeyChainKey]];
-
-
-$KeyChainSettings[k__]:=
-	EncodedCache[$KeyChainKey,"Options"][k];
-$KeyChainSettings/:
-	Set[$KeyChainSettings[k__],v_]:=
-		Set[EncodedCache[$KeyChainKey,"Options"][k],v];
-$KeyChainSettings/:
-	Unset[$KeyChainSettings[k__]]:=
-		Unset[EncodedCache[$KeyChainKey,"Options"][k]];
-
-
-$KeyChainSettings/:
-	File@$KeyChainSettings:=
-		EncodedCacheOptionsFile[$KeyChainKey];
-$KeyChainSettings/:
-	DeleteFile@$KeyChainSettings:=
-		DeleteFile@File@$KeyChainSettings;
-
-
-$KeyChainPassword[]:=
-	EncodedCache[$KeyChainKey,"Password"];
-$KeyChainPassword/:
-	Set[$KeyChainPassword[],v_]:=
-		Set[
-			EncodedCache[$KeyChainKey,"Password"],
-			v
-			];
-$KeyChainPassword/:
-	Unset[$KeyChainPassword[]]:=
-		Unset[EncodedCache[$KeyChainKey,"Password"]];
-
-
-$KeyChainPassword/:
-	File@$KeyChainPassword:=
-		EncodedCachePasswordFile[$KeyChainKey];
-$KeyChainPassword/:
-	DeleteFile@$KeyChainPassword:=
-		DeleteFile@File@$KeyChainPassword;
-
-
-$KeyChainDirectory/:
-	Set[$KeyChainDirectory,dir_]/;(!TrueQ@$inEncodedCacheDirectoryOverload):=
-		Block[{$inEncodedCacheDirectoryOverload=True},
-			If[dir=!=$KeyChainDirectory,
-				Replace[dir,{
-					Automatic:>
-						(
-							$KeyChainKey="KeyChain";
-							EncodedCacheOptionsLoad[$KeyChainKey];
-							EncodedCacheLoad[$KeyChainKey];
-							$KeyChainDirectory=Automatic
-							),
-					f:FileName[{p___,n_}]:>
-						(
-							EncodedCacheLoad[FileNameJoin[{p,n}]];
-							$KeyChainKey=FileBaseName@n;
-							$KeyChainDirectory=f;
-							),
-					d:(_String|_File)?DirectoryQ:>
-						Replace[EncodedCacheLoad[d],
-							a_Association:>
-								(
-									EncodedCacheLoad[d];
-									$KeyChainKey=FileBaseName@d;
-									$KeyChainDirectory=d;
-									)
-							]
-					}],
-				dir
-				]
-			];
-
-
-$keyChainFailureForms=""|$Failed|$Canceled|_Missing;
-
-
-KeyChainAdd[site_->{username:Except[None],password:Except[$keyChainFailureForms]}]:=
-	$KeyChain[{site,username}]=password;
-KeyChainAdd[{site_->{username:Except[None],password:Except[$keyChainFailureForms]}}]:=
-	$KeyChain[{site,username}]=password;
-KeyChainAdd[sites:{(_->{Except[None],_}),(_->{Except[None],_})..}]:=
-	With[{
-		saveOps=$KeyChainSettings["SaveOptionsToDisk"],
-		saveDisk=$KeyChainSettings["SaveToDisk"],
-		storeLocal=$KeyChainSettings["StoreInMemory"]
-		},
-		$KeyChainSettings["SaveOptionsToDisk"]=False;
-		If[storeLocal,
-			$KeyChainSettings["SaveToDisk"]=False
-			];
-		With[{s=KeyChainAdd/@Most@sites},
-			If[storeLocal,
-				$KeyChainSettings["SaveToDisk"]=saveDisk
-				];
-			$KeyChainSettings["SaveOptionsToDisk"]=saveOps;
-			Append[s,
-				KeyChainAdd@Last@sites
-				]
-			]
-		];
-KeyChainAdd[
-	sites:(
-		_String|(_String->_String)|
-			{(_String|(_String->_String))..}
-		)
-	]:=
-	(Clear@$keyChainAuth;Replace[#,_KeyChainAdd->$Failed])&@
-		KeyChainAdd@
-			Normal@
-				AuthenticationDialog[
-					Dynamic@$keyChainAuth,
-					"",
-					None,
-					Sequence@@
-						Replace[Flatten@{sites},
-							(s_->u_):>
-								{{s,Automatic},u},
-							1
-							]
-					];
-KeyChainAdd[
-	site_->{None,s_String}
-	]:=
-	(Clear@$keyChainAuth;Replace[#,_KeyChainAdd->$Failed])&@
-		KeyChainAdd[
-			site->
-				{
-					s,
-					PasswordDialog[
-						Dynamic@$keyChainAuth,
-						s,
-						s,
-						"PromptString"->
-							"Enter ``:",
-						WindowTitle->s,
-						FieldMasked->False
-						]
-					}
-			];
-
-
-KeyChainRemove[site_->username:Except[None]]:=
-	$KeyChain[{site,username}]=.;
-
-
-$KeyChainGetAccountKeys=
-	{"AccountData", "WolframCloud"};
-
-
-KeyChainGet[site_String,lookup:True|False:False]:=
-	If[lookup,
-		FirstCase[#,_String?(StringLength@#>0&),
-			KeyChainAdd[site]
-			],
-		FirstCase[#,_String?(StringLength@#>0&)]
-		]&@
-		$KeyChain[{site,Key@{site,""}}];
-iKeyChainGet[
-	{
-		site_String, 
-		username_String,
-		subparts___String
-		},
-	lookup:True|False:False
-	]:=
-	If[lookup,
-		FirstCase[#,Except[$keyChainFailureForms],
-			KeyChainAdd[site->StringJoin[username, subparts]]
-			],
-		FirstCase[#,Except[$keyChainFailureForms]]
-		]&@$KeyChain[{Key@{site,StringJoin[username, subparts]}}];
-KeyChainGet[
-	{
-		site:Except[Alternatives@@Append[$KeyChainGetAccountKeys, ""], _String], 
-		username_String,
-		subparts___String
-		},
-	lookup:True|False:False
-	]:=
-	iKeyChainGet[{site, username, subparts}, lookup];
-KeyChainGet[
-	site_->{None, username_String, subparts___String},
-	lookup:True|False:False
-	]:=
-	With[{key=StringJoin[username, subparts]},
-		Replace[
-			iKeyChainGet[{site,key}],
-			e:$keyChainFailureForms:>
-				If[lookup, KeyChainAdd[site->{None,key}], e]
-			]
-		];
-KeyChainGet[
-	{
-		site:Alternatives@@$KeyChainGetAccountKeys, 
-		username_String,
-		subparts___String
-		},
-	lookup:True|False:False
-	]:=
-	KeyChainGet[
-		site->{None, username, subparts}
-		]
-
-
-PackageAddAutocompletions[
-	"KeyChainGet",
-	{
-		Map[
-			ToString[{"\""<>#<>"\"", "accountName"}]&,
-			$KeyChainGetAccountKeys
-			]
-		}
-	]
-
-
-$KeyChainCloudAccounts=
-	"TestingAccount"|"DeploymentsAccount"|
-		"PacletsAccount"|"DatasetsAccount"|
-		"ServiceConnectionsAccount"|"DocumentationAccount"|
-		"PaidAccount"|"FreeAccount";
-
-
-PackageAddAutocompletions[
-	"KeyChainConnect",
-	{List@@$KeyChainCloudAccounts}
-	]
-
-
-Options[KeyChainConnect]=
-	Options[CloudConnect];
-KeyChainConnect[
-	acc:$KeyChainCloudAccounts,
-	ops:OptionsPattern[]
-	]:=
-	KeyChainConnect[Key[acc],ops];
-KeyChainConnect[
-	acct:_String|Key[_String]:Key["TestingAccount"],
-	ops:OptionsPattern[]
-	]:=
-	With[
-		{
-			user=
-				Replace[acct,Key[a_]:>KeyChainGet[{"WolframCloud", a},True]],
-			base=
-				Replace[OptionValue[CloudBase],Automatic:>$CloudBase]
-			},
-		If[$WolframID=!=user||$CloudBase=!=base,
-			CloudConnect[user,
-				KeyChainGet[{base,user},True],
-				ops
-				]
-			]
-		];
-KeyChainConnect[
-	acct:_String|Key[_String],
-	pass_String,
-	ops:OptionsPattern[]
-	]:=
-	With[{
-		user=
-			Replace[acct,Key[a_]:>KeyChainGet[{"WolframCloud", a}, True]],
-		base=Replace[OptionValue[CloudBase],Automatic:>$CloudBase]
-		},
-		If[$WolframID=!=user||$CloudBase=!=base,
-			CloudConnect[user,
-				pass,
-				ops
-				]
-			]
-		];
 
 
 End[];

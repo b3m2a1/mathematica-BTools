@@ -25,12 +25,12 @@ BannerDialogInput::usage=
 	"Generates a dialog for with a banner";
 
 
-AuthenticationDialog::usage=
+AuthDialog::usage=
 	"Generates an authentication dialog";
 PasswordDialog::usage=
 	"A raw password dialog";
 OAuthDialog::usage=
-	"Uses AuthenticationDialog to generate an OAuth dialog";
+	"Uses AuthDialog to generate an OAuth dialog";
 
 
 Begin["`Private`"];
@@ -473,12 +473,12 @@ SetAttributes[#,
 		};
 
 
-Options[AuthenticationDialog]=
+Options[AuthDialog]=
 	Join[
 		Options@BannerDialogConfig,{
 		FieldMasked->True
 		}];
-AuthenticationDialog[
+AuthDialog[
 	var:Verbatim[Dynamic][_Symbol]:Dynamic[None],
 	banner_:"Authentication Credentials",
 	header_:None,
@@ -492,7 +492,7 @@ AuthenticationDialog[
 	If[MatchQ[var,Verbatim[Dynamic][None]],
 		Clear@$AuthenticationCache;
 		(Clear@$AuthenticationCache;#)&@
-		AuthenticationDialog[Dynamic[$AuthenticationCache],
+		AuthDialog[Dynamic[$AuthenticationCache],
 			banner,
 			header,
 			specs,
@@ -553,7 +553,7 @@ AuthenticationDialog[
 
 Options[PasswordDialog]=
 	Append[
-		Options[AuthenticationDialog],
+		Options[AuthDialog],
 		"PromptString"->"Input the password for ``:"
 		];
 PasswordDialog[
@@ -578,7 +578,7 @@ PasswordDialog[
 						p
 					}]
 			]@
-			AuthenticationDialog[var,
+			AuthDialog[var,
 				banner,
 				OptionValue["PromptString"]~TemplateApply~spec,
 				{{spec,Null},None,{"",None}},
@@ -588,14 +588,14 @@ PasswordDialog[
 						Appearance->"Password",
 						WindowTitle->"Input Password"
 						},
-						Options@AuthenticationDialog
+						Options@AuthDialog
 						]
 				]
 		]
 
 
 Options[OAuthDialog]=
-	Options[AuthenticationDialog];
+	Options[AuthDialog];
 OAuthDialog[
 	var:Verbatim[Dynamic][_Symbol]:Dynamic[None],
 	banner_:"OAuth",
@@ -623,7 +623,7 @@ OAuthDialog[
 							]
 					}]
 			]@
-			AuthenticationDialog[var,
+			AuthDialog[var,
 				banner,
 				Replace[header,{
 					s_String:>

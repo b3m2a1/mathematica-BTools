@@ -1,6 +1,7 @@
 (* Created with the Wolfram Language : www.wolfram.com *)
-Paclet[Name -> "BTools", Version -> "2.0.17", Creator -> "b3m2a1@gmail.com", 
- Description -> "A general purpose package that implements useful \
+Paclet[Name -> "BTools", Version -> "2.0.18", Creator -> "b3m2a1@gmail.com", 
+ URL -> "https://www.wolframcloud.com/objects/b3m2a1.paclets/PacletServer/bto\
+ols.html", Description -> "A general purpose package that implements useful \
 functionality for application   development including distribution, \
 documentation generation, formatting,    front-end manipulation, application \
 editing, etc.", WolframVersion -> "10+", Internal -> False, SystemID -> All, 

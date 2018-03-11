@@ -131,21 +131,24 @@ PackageScopeBlock[
 	GitHubCreate::usage="";
 	GitHubDelete::usage="";
 	GitHubDeployments::usage="";
+	GitHubCreateRelease::usage="";
+	GitHubEditRelease::usage="";
+	GitHubDeleteRelease::usage="";
+	GitHubUploadReleaseAsset::usage="";
+	GitHubGetReleaseAsset::usage="";
+	GitHubEditReleaseAsset::usage="";
+	GitHubDeleteReleaseAsset::usage="";
 	GitHubReleases::usage="";
 	GitHubRepositories::usage="";
 	$GitHubActions::usage=
 		"A collection of known calls for the GitHub function";
+	GitHubImport::usage=
+		"Imports and converts GitHub JSON";
 	]
 
 
 GitHub::usage=
 	"A connection to the GitHub functinality";
-
-
-PackageScopeBlock[
-	GitHubImport::usage=
-		"Imports and converts GitHub JSON";
-	]
 
 
 Begin["`Private`"];
@@ -3185,7 +3188,7 @@ GitHubPassword[s_String]:=
 			base,
 			If[$GitHubStorePassword,
 				KeyChainGet[{"github.com",	s}, True],
-				AuthenticationDialog[
+				AuthDialog[
 					Dynamic@$ghauth,
 					"",
 					None,
@@ -3518,6 +3521,34 @@ GitHubQuery[
 
 
 (* ::Subsubsection::Closed:: *)
+(*GitHubQueryParamFilter*)
+
+
+
+$GitHubParamMap=<||>;
+
+
+GitHubQueryParamFilter[s_Symbol, ops_?OptionQ]:=
+	With[{kd=Dispatch[$GitHubParamMap[s]]},
+		Replace[
+			FilterRules[
+				Flatten@{
+					ops,
+					Options[s]
+					},
+				Keys[$GitHubParamMap[s]]
+				],
+			{
+				(k_->v:_String|_?NumberQ|True|False):>
+					Replace[k, kd]->v,
+				_->Nothing
+				},
+			1
+			]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
 (*Auth*)
 
 
@@ -3637,8 +3668,12 @@ GitHubRepositories[
 
 
 
-$gitHubCreateParamMap=
+$GitHubParamMap[GitHubCreate]=
 	{
+		"Name"->"name",
+		"Description"->"description",
+		"Private"->"private",
+		"HomePage"->"homepage",
 		"AutoInit"->"auto_init",
 		"HasWiki"->"has_issues",
 		"HasProjects"->"has_projects",
@@ -3648,8 +3683,7 @@ $gitHubCreateParamMap=
 		"LicenseTemplate"->"license_template",
 		"AllowSquashMerge"->"allow_squash_merge",
 		"AllowMergeCommit"->"allow_merge_commit",
-		"AllowRebaseMerge"->"allow_rebase_merge",
-		e_:>ToLowerCase[e]
+		"AllowRebaseMerge"->"allow_rebase_merge"
 		};
 
 
@@ -3684,17 +3718,12 @@ GitHubCreate[
 				"Method"->"POST",
 				"Body"->
 					ExportString[
-						Map[(First@#/.$gitHubCreateParamMap)->Last@#&,
-							DeleteCases[_->Except[_String|True|False]]@
-								FilterRules[
-									Flatten@
-										{
-											"Name"->repo,
-											ops,
-											Options[GitHubCreate]
-											},
-									Except["Username"|"Password"]
-									]
+						GitHubQueryParamFilter[
+							GitHubCreate,
+							{
+								"Name"->repo,
+								ops
+								}
 							],
 						"JSON"
 						],
@@ -3814,6 +3843,458 @@ GitHubReleases[
 		GitHubPath[s__,"releases",o__?OptionQ]:>
 			GitHubReleases[GitHubPath[s,o],identifier]
 		}]
+
+
+(* ::Subsubsection::Closed:: *)
+(*CreateRelease*)
+
+
+
+$GitHubParamMap[GitHubCreateRelease]=
+	{
+		"Name"->"name",
+		"TagName"->"tag_name",
+		"TargetCommitish"->"target_commitish",
+		"Description"->"body",
+		"Draft"->"draft",
+		"PreRelease"->"prerelease"
+		};
+
+
+Options[GitHubCreateRelease]=
+	{
+		"Username"->Automatic,
+		"Password"->Automatic,
+		"Name"->Automatic,
+		"TargetCommitish"->Automatic,
+		"Description"->Automatic,
+		"Draft"->Automatic,
+		"PreRelease"->Automatic
+		};
+GitHubCreateRelease[
+	repo_String,
+	tagName_String,
+	ops:OptionsPattern[]
+	]:=
+	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUserName]},
+		GitHubQuery[
+			{
+				"repos",
+				u,
+				repo,
+				"releases"
+				},
+			<|
+				"Method"->"POST",
+				"Body"->
+				ExportString[
+						GitHubQueryParamFilter[
+							GitHubCreateRelease,
+							{
+								"TagName"->tagName,
+								ops
+								}
+							],
+						"JSON"
+						],
+				"Headers"->{
+					"Authorization"->
+						GitHubAuthHeader[
+							u,
+							OptionValue["Password"]
+							]
+						}
+				|>
+			]
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*EditRelease*)
+
+
+
+$GitHubParamMap[GitHubEditRelease]=
+	{
+		"Name"->"name",
+		"TagName"->"tag_name",
+		"TargetCommitish"->"target_commitish",
+		"Description"->"body",
+		"Draft"->"draft",
+		"PreRelease"->"prerelease"
+		};
+
+
+Options[GitHubEditRelease]=
+	{
+		"Username"->Automatic,
+		"Password"->Automatic,
+		"TagName"->Automatic,
+		"Name"->Automatic,
+		"TargetCommitish"->Automatic,
+		"Description"->Automatic,
+		"Draft"->Automatic,
+		"PreRelease"->Automatic
+		};
+GitHubEditRelease[
+	repo_String,
+	id_String,
+	ops:OptionsPattern[]
+	]:=
+	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUserName]},
+		GitHubQuery[
+			{
+				"repos",
+				u,
+				repo,
+				"releases",
+				id
+				},
+			<|
+				"Method"->"PATCH",
+				"Body"->
+					ExportString[
+						GitHubQueryParamFilter[
+							GitHubCreateRelease,
+							{
+								ops
+								}
+							],
+						"JSON"
+						],
+				"Headers"->{
+					"Authorization"->
+						GitHubAuthHeader[
+							u,
+							OptionValue["Password"]
+							]
+						}
+				|>
+			]
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*DeleteRelease*)
+
+
+
+Options[GitHubDeleteRelease]=
+	{
+		"Username"->Automatic,
+		"Password"->Automatic
+		};
+GitHubDeleteRelease[
+	repo_String,
+	id_String,
+	ops:OptionsPattern[]
+	]:=
+	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUserName]},
+		GitHubQuery[
+			{
+				"repos",
+				u,
+				repo,
+				"releases",
+				id
+				},
+			<|
+				"Method"->"DELETE",
+				"Headers"->{
+					"Authorization"->
+						GitHubAuthHeader[
+							u,
+							OptionValue["Password"]
+							]
+						}
+				|>
+			]
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*ListReleaseAssets*)
+
+
+
+Options[GitHubListReleaseAssets]=
+	{
+		"Username"->Automatic,
+		"Password"->Automatic
+		};
+GitHubListReleaseAssets[
+	repo_String,
+	id_String,
+	ops:OptionsPattern[]
+	]:=
+	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUserName]},
+		GitHubQuery[
+			{
+				"repos",
+				u,
+				repo,
+				"releases",
+				id,
+				"assets"
+				},
+			<|
+				"Method"->"GET",
+				"Headers"->{
+					"Authorization"->
+						GitHubAuthHeader[
+							u,
+							OptionValue["Password"]
+							]
+						}
+				|>
+			]
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*UploadReleaseAsset*)
+
+
+
+$GitHubParamMap[GitHubUploadReleaseAsset]=
+	{
+		"Name"->Automatic,
+		"Label"->Automatic
+		};
+
+
+Options[GitHubUploadReleaseAsset]=
+	{
+		"Username"->Automatic,
+		"Password"->Automatic,
+		"ContentType"->Automatic,
+		"Name"->Automatic,
+		"Label"->Automatic
+		};
+GitHubUploadReleaseAsset[
+	repo_String,
+	id_String,
+	asset:(_String|_File)?FileExistsQ,
+	ops:OptionsPattern[]
+	]:=
+	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUserName]},
+		GitHubQuery[
+			{
+				"repos",
+				u,
+				repo,
+				"releases",
+				id,
+				"assets"
+				},
+			{
+				Replace[OptionValue["Name"],
+					{
+						s_String:>
+							("name"->s),
+						_:>
+							("name"->FileNameTake[asset])
+						}
+					],
+				Replace[OptionValue["Label"],
+					{
+						s_String:>
+							("label"->s),
+						_:>
+							Nothing
+						}
+					]
+				},
+			<|
+				"Method"->"GET",
+				"Body"->
+					ReadString[asset],
+				"Headers"->{
+					Replace[OptionValue["ContentType"],
+						{
+							s_String:>
+								"ContentType"->s,
+							_->Nothing
+							}
+						],
+					"Authorization"->
+						GitHubAuthHeader[
+							u,
+							OptionValue["Password"]
+							]
+						}
+				|>
+			]
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GetReleaseAsset*)
+
+
+
+Options[GitHubGetReleaseAsset]=
+	{
+		"Username"->Automatic,
+		"Password"->Automatic
+		};
+GitHubGetReleaseAsset[
+	repo_String,
+	id_String,
+	ops:OptionsPattern[]
+	]:=
+	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUserName]},
+		GitHubQuery[
+			{
+				"repos",
+				u,
+				repo,
+				"releases",
+				"assets",
+				id
+				},
+			<|
+				"Method"->"GET",
+				"Headers"->{
+					"Authorization"->
+						GitHubAuthHeader[
+							u,
+							OptionValue["Password"]
+							]
+						}
+				|>
+			]
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*EditReleaseAsset*)
+
+
+
+$GitHubParamMap[GitHubEditReleaseAsset]=
+	{
+		"Name"->Automatic,
+		"Label"->Automatic
+		};
+
+
+Options[GitHubEditReleaseAsset]=
+	{
+		"Username"->Automatic,
+		"Password"->Automatic,
+		"ContentType"->Automatic,
+		"Name"->Automatic,
+		"Label"->Automatic
+		};
+GitHubEditReleaseAsset[
+	repo_String,
+	id_String,
+	asset:(_String|_File)?FileExistsQ|None:None,
+	ops:OptionsPattern[]
+	]:=
+	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUserName]},
+		GitHubQuery[
+			{
+				"repos",
+				u,
+				repo,
+				"releases",
+				"assets",
+				id
+				},
+			{
+				Replace[OptionValue["Name"],
+					{
+						s_String:>
+							("name"->s),
+						_:>
+							If[asset=!=None,
+								"name"->FileNameTake[asset],
+								Nothing
+								]
+						}
+					],
+				Replace[OptionValue["Label"],
+					{
+						s_String:>
+							("label"->s),
+						_:>
+							Nothing
+						}
+					]
+				},
+			<|
+				"Method"->"GET",
+				If[asset=!=None,
+					"Body"->
+						ReadString[asset],
+					Nothing
+					],
+				"Headers"->{
+					Replace[OptionValue["ContentType"],
+						{
+							s_String:>
+								"ContentType"->s,
+							_->Nothing
+							}
+						],
+					"Authorization"->
+						GitHubAuthHeader[
+							u,
+							OptionValue["Password"]
+							]
+						}
+				|>
+			]
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*DeleteReleaseAsset*)
+
+
+
+$GitHubParamMap[GitHubEditReleaseAsset]=
+	{
+		"Name"->Automatic,
+		"Label"->Automatic
+		};
+
+
+Options[GitHubDeleteReleaseAsset]=
+	{
+		"Username"->Automatic,
+		"Password"->Automatic
+		};
+GitHubEditReleaseAsset[
+	repo_String,
+	id_String,
+	ops:OptionsPattern[]
+	]:=
+	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUserName]},
+		GitHubQuery[
+			{
+				"repos",
+				u,
+				repo,
+				"releases",
+				"assets",
+				id
+				},
+			<|
+				"Method"->"DELETE",
+				"Headers"->
+					{	
+						"Authorization"->
+							GitHubAuthHeader[
+								u,
+								OptionValue["Password"]
+								]
+							}
+				|>
+			]
+		];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -4044,6 +4525,20 @@ $GitHubActions=
 			GitHubCreateReadme,
 		"Releases"->
 			GitHubReleases,
+		"CreateRelease"->
+			GitHubCreateRelease,
+		"EditRelease"->
+			GitHubEditRelease,
+		"DeleteRelease"->
+			GitHubDeleteRelease,
+		"UploadReleaseAsset"->
+			GitHubUploadReleaseAsset,
+		"GetReleaseAsset"->
+			GitHubGetReleaseAsset,
+		"EditReleaseAsset"->
+			GitHubEditReleaseAsset,
+		"DeleteReleaseAsset"->
+			GitHubDeleteReleaseAsset,
 		"Deployments"->
 			GitHubDownloads,
 		"Path"->

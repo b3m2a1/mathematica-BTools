@@ -79,6 +79,10 @@ PacletOpen::usage=
 	"Opens an installed paclet from its \"Location\"";
 
 
+PacletInstalledQ::usage=
+	"Tests whether a paclet has been installed";
+
+
 (* ::Subsubsection::Closed:: *)
 (*Paclet Sites*)
 
@@ -168,6 +172,9 @@ Begin["`Private`"];
 
 $PacletBuildDirectory:=
 	FileNameJoin@{$PacletBuildRoot, $PacletBuildExtension};
+If[PacletExecuteSettingsLookup["ClearBuildCacheOnLoad"],
+	Quiet@DeleteDirectory[$PacletBuildDirectory, DeleteContents->True];
+	];
 
 
 $PacletBuildRoot:=
@@ -264,17 +271,17 @@ pacletToolsThrow[v_:$Failed, tag_:Automatic]:=
 
 
 
-iPacletInfoAssociation[PacletManager`Paclet[k__]]:=
-	With[
-		{
-			omap=
-				AssociationThread[
-					Keys@Options[PacletInfoExpression],
-					Range[Length[Options[PacletInfoExpression]]]
-					]
-			},
-		KeySortBy[omap]
-		]@
+$validPacletFields=
+	Keys@Options[PacletInfoExpression];
+$pacletFieldMap=
+	AssociationThread[
+		$validPacletFields,
+		Range[Length[$validPacletFields]]
+		];
+
+
+makePacletInfoAssociation[PacletManager`Paclet[k__]]:=
+	KeySortBy[$pacletFieldMap]@
 		With[{base=
 			KeyMap[Replace[s_Symbol:>SymbolName[s]],<|k|>]
 			},
@@ -291,76 +298,79 @@ iPacletInfoAssociation[PacletManager`Paclet[k__]]:=
 Clear[validatePacletAssociationField];
 validatePacletAssociationField["Location", Except[_String?DirectoryQ]]:=
 	Nothing;
+validatePacletAssociationField[_, ""]:=
+	Nothing;
 validatePacletAssociationField[k_, f_]:=
 	k->f;
 
 
-PacletInfoAssociation[p:PacletManager`Paclet[k__]]:=
+iPacletInfoAssociation[p:PacletManager`Paclet[k__]]:=
 	Association@
 		KeyValueMap[
 			validatePacletAssociationField,
-			Merge[
-				{
-					iPacletInfoAssociation[p],
-					Thread[
-						PacletManager`Manager`Private`$pacletInformationPIFields->
-							Lookup[
-								Quiet[PacletManager`PacletInformation[p]],
-								PacletManager`Manager`Private`$pacletInformationPIFields
-								]
-						]
-					},
-				First
-				]
+			makePacletInfoAssociation[p]
 			];
-PacletInfoAssociation[infoFile_]:=
-	Replace[PacletInfo[infoFile],{
-		p:PacletManager`Paclet[__]:>
-			PacletInfoAssociation@p,
-		_-><||>
-		}];
-PacletInfo[infoFile:(_String|_File)?FileExistsQ]:=
-	With[{pacletInfo=
-		Replace[infoFile,{
-			d:(_String|_File)?DirectoryQ:>
-				FileNameJoin@{d,"PacletInfo.m"},
-			f:(_String|_File)?(FileExtension[#]=="paclet"&&FileExistsQ[#]&):>
-				With[{rd=CreateDirectory[]},
-					First@ExtractArchive[f,rd,"*PacletInfo.m"]
-					]
-			}]
-		},
-		(If[
-			StringContainsQ[
-				Nest[DirectoryName,pacletInfo,3],
-				$TemporaryDirectory
-				]&&
-					(StringTrim[DirectoryName@pacletInfo,$PathnameSeparator~~EndOfString]!=
-						StringTrim[
-							If[DirectoryQ@infoFile,
-								infoFile,
-								DirectoryName@infoFile],
-							$PathnameSeparator~~EndOfString
-							]),
-				DeleteDirectory[Nest[DirectoryName,pacletInfo,2],DeleteContents->True]
-				];#)&@
-		If[FileExistsQ@pacletInfo,
-			PacletManager`CreatePaclet[pacletInfo],
-			PacletManager`Paclet[]
+
+
+$pacletInfoSpec=
+	_String|
+	{_String, _String?(StringEndsQ[NumberString])}|
+	_File?FileExistsQ|
+	_PacletManager`Paclet;
+
+
+PacletInfoAssociation[infoFile:$pacletInfoSpec]:=
+	Replace[PacletInfo[infoFile],
+		{
+			p:PacletManager`Paclet[__]:>
+				iPacletInfoAssociation@p,
+			_-><||>
+			}
+		];
+PacletInfoAssociation[l:{$pacletInfoSpec..}]:=
+	PacletInfoAssociation/@l;
+
+
+Options[PacletInfo]=
+	Options[PacletManager`PacletFind];
+PacletInfo[infoFile:(_String|_File)?FileExistsQ, ops:OptionsPattern[]]:=
+	Block[{$tmpdir},
+		With[{pacletInfo=
+			Replace[infoFile,
+				{
+					d:(_String|_File)?DirectoryQ:>
+						FileNameJoin@{d,"PacletInfo.m"},
+					f:(_String|_File)?(FileExtension[#]=="paclet"&&FileExistsQ[#]&):>
+						With[{rd=$tmpdir=CreateDirectory[]},
+							First@ExtractArchive[f,rd,"*PacletInfo.m"]
+							]
+					}
+				]
+			},
+			(
+				If[StringQ[$tmpdir], DeleteDirectory[$tmpdir, DeleteContents->True]];
+				#
+				)&@
+			If[FileExistsQ@pacletInfo,
+				PacletManager`CreatePaclet[pacletInfo],
+				PacletManager`Paclet[]
+				]
 			]
 		];
-PacletInfo[pac_PacletManager`Paclet]:=
-	With[{pf=pac["Location"]},
-		If[StringQ@pf&&FileExistsQ@FileNameJoin@{pf,"PacletInfo.m"},
-			PacletInfo@FileNameJoin@{pf,"PacletInfo.m"},
+PacletInfo[pac_PacletManager`Paclet, ops:OptionsPattern[]]:=
+	pac;(*With[{pf=pac["Location"]},
+		If[StringQ@pf&&FileExistsQ@FileNameJoin@{pf, "PacletInfo.m"},
+			PacletInfo@FileNameJoin@{pf, "PacletInfo.m"},
 			pac
 			]
-		];
-PacletInfo[p_String]:=
-	Replace[PacletManager`PacletFind[p],
-		{pac_}:>
-			PacletInfo[pac]
-		]
+		];*)
+PacletInfo[
+	p:_String|{_String, _String?(StringEndsQ[NumberString])}, 
+	ops:OptionsPattern[]
+	]:=
+	(*PacletInfo@*)PacletManager`PacletFind[p, ops];
+PacletInfo[l:{$pacletInfoSpec..}, ops:OptionsPattern[]]:=
+	PacletInfo[#, ops]&/@l;
 
 
 (* ::Subsubsection::Closed:: *)
@@ -993,6 +1003,31 @@ PacletBundle[f:(_String|_File)?FileExistsQ, ops:OptionsPattern[]]:=
 				ops
 				]
 		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*PacletInstalledQ*)
+
+
+
+Options[PacletInstalledQ]=
+	Options[PacletManager`PacletFind];
+PacletInstalledQ[pac:_String|{_String, _String}, ops:OptionsPattern[]]:=
+	Length@PacletManager`PacletFind[pac, ops]>0;
+PacletInstalledQ[pac_PacletManager`Paclet, ops:OptionsPattern[]]:=
+	PacletInstalledQ[{pac["Name"], pac["Version"]}];
+
+
+(* ::Subsubsection::Closed:: *)
+(*PacletExistsQ*)
+
+
+
+Options[PacletExistsQ]=
+	Options[PacletInstalledQ];
+PacletExistsQ[pac:_String|{_String, _String}, ops:OptionsPattern[]]:=
+	PacletInstalledQ[pac, ops]||
+		Length@PacletManager`PacletFindRemote[pac, ops]>0;
 
 
 (* ::Subsection:: *)
@@ -3478,7 +3513,10 @@ pacletGetIcon[a_]:=
 			],
 		{
 			{f_, ___}:>
-				Lookup[$pacletIconCache, f, $pacletIconCache[f] = Import[f]],
+				Replace[
+					Lookup[$pacletIconCache, f, $pacletIconCache[f] = Import[f]],
+					i_?ImageQ:>Image[i, ImageSize->28]
+					],
 			{}:>
 				With[{f=PackageFilePath["Resources", "Icons", "PacletIcon.png"]},
 					Image[
@@ -3495,6 +3533,15 @@ pacletGetIcon[a_]:=
 		];			
 
 
+pacletSiteIcon[_]:=
+	With[{f=PackageFilePath["Resources", "Icons", "PacletSiteIcon.png"]},
+			Image[
+				Lookup[$pacletIconCache, f, $pacletIconCache[f] = Import[f]],
+				ImageSize->28
+				]
+			]
+
+
 pacletGetDocsLink[a_]:=
 	"paclet:"<>StringReplace[a["Name"], "ServiceConnection_"->"ref/service"]
 
@@ -3504,6 +3551,12 @@ pacletMakeSummaryItem[k_, v_]:=
 		{Row[{k, ": "}], Short@v},
 		StandardForm
 		]
+
+
+pacletSummaryDynamic[expr_, a_]:=
+	Dynamic[Refresh[expr, None], TrackedSymbols:>{}, UpdateInterval->Infinity]/.
+		Key[k_String]:>RuleCondition[a[k], True];
+pacletSummaryDynamic~SetAttributes~HoldFirst;
 
 
 validPacletToFormat[p_]:=
@@ -3523,10 +3576,13 @@ SetPacletFormatting[]:=
 					pacletGetIcon[a],
 					{
 						pacletMakeSummaryItem["Name",
-							With[{dl=pacletGetDocsLink[a]},
-								If[StringQ@Documentation`ResolveLink[dl],
-									Hyperlink[a["Name"], dl],
-									a["Name"]
+							With[{dl=pacletGetDocsLink[a], n=a["Name"]},
+								pacletSummaryDynamic[
+									If[StringQ@Documentation`ResolveLink[dl],
+										Hyperlink[Key["Name"], dl],
+										Key["Name"]
+										],
+									a
 									]
 								]
 							],
@@ -3545,7 +3601,28 @@ SetPacletFormatting[]:=
 											]
 										]
 									],
-								Nothing
+								pacletMakeSummaryItem[
+									"Installed",
+									pacletSummaryDynamic[
+										If[PacletInstalledQ[{Key["Name"], Key["Version"]}],
+											True,
+											If[PacletExistsQ[{Key["Name"], Key["Version"]}],
+												Button[
+													Mouseover[
+														Style["Click to install", "Hyperlink"],
+														Style["Click to install", "HyperlinkActive"]
+														],
+													PacletInstall[Key["Name"]],
+													Appearance->None,
+													BaseStyle->"Hyperlink",
+													Method->"Queued"
+													],
+												False
+												]
+											],
+										a
+										]
+									]
 								],
 							If[KeyMemberQ[a,"URL"],
 								pacletMakeSummaryItem["URL",
@@ -3557,7 +3634,12 @@ SetPacletFormatting[]:=
 						KeyValueMap[
 							pacletMakeSummaryItem,
 							KeyDrop[a,
-								{"Name", "Version", "Location", "URL", "Extensions"}]
+								{
+									"Name", "Version", 
+									"Location", "URL", 
+									"Extensions"
+									}
+								]
 							],
 						Sequence@@KeyValueMap[
 							With[{k=#, asso=#2},
@@ -3566,11 +3648,34 @@ SetPacletFormatting[]:=
 									KeyMap[k<>#&, KeySelect[asso, StringQ]]
 									]
 								]&,
-							a["Extensions"]
+							Lookup[a, "Extensions", <||>]
 							]
 						],
 					StandardForm
 					]
+				];
+		Format[site:PacletManager`PacletSite[p__PacletManager`Paclet]/;
+			($FormatPaclets&&AllTrue[{p}, validPacletToFormat])]:=
+			With[{a=PacletLookup[{p}, {"Name", "Version"}]},
+				RawBoxes@
+					BoxForm`ArrangeSummaryBox[
+						"PacletSite",
+						site,
+						pacletSiteIcon[site],
+						{
+							pacletMakeSummaryItem[
+								"Paclets",
+								Short@
+									Map[
+										StringRiffle[#, "-"]&,
+										a
+										]
+								]
+							},
+						{
+							},
+						StandardForm
+						]
 				];
 		FormatValues[PacletManager`Paclet]=
 			SortBy[

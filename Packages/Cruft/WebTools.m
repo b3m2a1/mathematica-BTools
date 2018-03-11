@@ -270,7 +270,7 @@ serverGetUserNamePassword[server_,u_,p_,usekeychain_]:=
 			];
 		If[!StringQ[username]||!StringQ[password],
 			With[{res=
-				AuthenticationDialog[
+				AuthDialog[
 					"SSH Tunnel",
 					{server,
 						Replace[username,Except[_String]->""],

@@ -31,6 +31,9 @@ PacletExecute::usage=
 
 
 PackageScopeBlock[
+	$PacletExecuteExpressionMethods::usage="internal";
+	$PacletExecuteSiteMethods::usage="";
+	$PacletExecuteUploadMethods::usage="";
 	PacletExecuteSettingsLookup::usage=
 		"Lookup on the $PacletExecuteSettings"
 	]
@@ -57,6 +60,8 @@ If[!AssociationQ@$PacletExecuteSettings,
 				$TemporaryDirectory,
 			"BuildExtension"->
 				"_paclets",
+			"ClearBuildCacheOnLoad"->
+				True,
 			"ServerDefaults":>
 				<|
 					"ServerBase"->
@@ -124,6 +129,10 @@ $PacletExecuteExpressionMethods=
 			PacletLookup,
 		"Open"->
 			PacletOpen,
+		"InstalledQ"->
+			PacletInstalledQ,
+		"ExistsQ"->
+			PacletExistsQ,
 		"SetFormatting"->
 			SetPacletFormatting
 		|>;

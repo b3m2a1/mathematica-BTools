@@ -35,11 +35,18 @@ SyntaxHiglightingApplyStyling::usage=
 	"Applies syntax coloring to a cell or cell style";
 SyntaxHiglightingClearStyling::usage=
 	"Removes syntax coloring from a cell or cell style";
+
+
 SyntaxHiglightingStylesheet::usage=
 	"Uses StyleSheetTemplate to make a template for stylesheet editing";
 
 
 Begin["`Private`"];
+
+
+(* ::Subsection:: *)
+(*Symbol Configuration*)
+
 
 
 (* ::Subsubsection::Closed:: *)
@@ -74,6 +81,11 @@ SyntaxHiglightingStylesheet[notebookArg:None|_Notebook:None]:=
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Clear Stuff*)
+
+
+
 Clear/@{
 "$SyntaxHiglightingPunctuation",
 "$SyntaxHiglightingFormattingHeads",
@@ -84,8 +96,18 @@ Clear/@{
 "$SyntaxHiglightingContextStyling"};
 
 
+(* ::Subsubsection::Closed:: *)
+(*String*)
+
+
+
 $SyntaxHiglightingStringSepDefault={"\""};
 $SyntaxHiglightingStringSep=$SyntaxHiglightingStringSepDefault;
+
+
+(* ::Subsubsection::Closed:: *)
+(*Punctuation*)
+
 
 
 $SyntaxHiglightingPunctuationDefault={
@@ -105,6 +127,11 @@ $SyntaxHiglightingPunctuationDefault={
 $SyntaxHiglightingPunctuation=$SyntaxHiglightingPunctuationDefault;
 
 
+(* ::Subsubsection::Closed:: *)
+(*FormattingHeads*)
+
+
+
 $SyntaxHiglightingFormattingHeadsDefault={
 "Graphics","Graphics3D",
 "Point","Line",
@@ -114,11 +141,21 @@ $SyntaxHiglightingFormattingHeadsDefault={
 $SyntaxHiglightingFormattingHeads=$SyntaxHiglightingFormattingHeadsDefault;
 
 
+(* ::Subsubsection::Closed:: *)
+(*Constants*)
+
+
+
 $SyntaxHiglightingConstantsDefault={
 "$Failed","False","True","$Canceled",
 "All"
 };
 $SyntaxHiglightingConstants=$SyntaxHiglightingConstantsDefault;
+
+
+(* ::Subsubsection::Closed:: *)
+(*Types*)
+
 
 
 $SyntaxHiglightingTypesDefault={
@@ -131,6 +168,11 @@ $SyntaxHiglightingTypesDefault={
 $SyntaxHiglightingTypes=$SyntaxHiglightingTypesDefault;
 
 
+(* ::Subsubsection::Closed:: *)
+(*Commands*)
+
+
+
 $SyntaxHiglightingCommandsDefault={
 "Return","Break","DialogReturn",
 "Goto","Throw","Catch",
@@ -140,6 +182,11 @@ $SyntaxHiglightingCommandsDefault={
 "End","EndPackage"
 };
 $SyntaxHiglightingCommands=$SyntaxHiglightingCommandsDefault;
+
+
+(* ::Subsubsection::Closed:: *)
+(*Functions*)
+
 
 
 $SyntaxHiglightingFunctionsDefault={
@@ -154,12 +201,22 @@ $SyntaxHiglightingFunctionsDefault={
 $SyntaxHiglightingFunctions=$SyntaxHiglightingFunctionsDefault;
 
 
+(* ::Subsubsection::Closed:: *)
+(*Contexts*)
+
+
+
 $SyntaxHiglightingContextStylingDefault={
 	"System`"->"SystemStyle",
 	"Global`"->"GlobalStyle",
 	Automatic->"UndefinedStyle"
 	};
 $SyntaxHiglightingContextStyling=$SyntaxHiglightingContextStylingDefault;
+
+
+(* ::Subsubsection::Closed:: *)
+(*UpValues*)
+
 
 
 Map[
@@ -213,7 +270,17 @@ MapThread[
 		}]
 
 
+(* ::Subsection:: *)
+(*Coloring Function*)
+
+
+
 $SyntaxHiglightingForceCells=True;
+
+
+(* ::Subsubsection::Closed:: *)
+(*SetSyntaxHighlighting*)
+
 
 
 SyntaxHiglightingSetHighlightingStyle[nb_,override:True|False:True]:=
@@ -236,6 +303,11 @@ SyntaxHiglightingSetHighlightingStyle[nb_,override:True|False:True]:=
 			True
 			]
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*SyntaxHiglightingConfigureSyntaxColoring*)
+
 
 
 Options[SyntaxHiglightingConfigureSyntaxColoring]={
@@ -340,6 +412,11 @@ SyntaxHiglightingConfigureSyntaxColoring[
 			}];
 
 
+(* ::Subsubsection::Closed:: *)
+(*SyntaxHiglightingRemoveSyntaxColoring*)
+
+
+
 SyntaxHiglightingRemoveSyntaxColoring[objs_]:=
 	StyleSheetEdit[objs,
 		AutoStyleWords->
@@ -374,6 +451,11 @@ SyntaxHiglightingRemoveSyntaxColoring[objs_]:=
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*SyntaxHiglightingApplyStyling*)
+
+
+
 Clear@SyntaxHiglightingApplyStyling;
 Options[SyntaxHiglightingApplyStyling]=
 	Options@SyntaxHiglightingConfigureSyntaxColoring;
@@ -398,6 +480,11 @@ SyntaxHiglightingApplyStyling[
 			SyntaxHiglightingConfigureSyntaxColoring[s,ops]
 			]
 		);
+
+
+(* ::Subsubsection::Closed:: *)
+(*SyntaxHiglightingClearStyling*)
+
 
 
 SyntaxHiglightingClearStyling[cell:_CellObject|{__CellObject}]:=
