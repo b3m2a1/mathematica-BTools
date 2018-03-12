@@ -769,6 +769,16 @@ PacletInfoExpression[
 
 
 
+cleanPacletForExport[pac_PacletManager`Paclet]:=
+	Map[
+		If[StringQ[#[[1]]], ToExpression[#[[1]]], #[[1]]]->#[[2]]&, 
+		Select[
+			DeleteCases[pac, "Location"->_|"Resources"->_], 
+			MatchQ[_String|_Symbol->_]
+			]
+		]
+
+
 Options[PacletInfoExpressionBundle]=
 	Options[PacletInfoExpression];(*
 PacletInfoExpressionBundle[paclet,dest]~~PackageAddUsage~~
@@ -779,9 +789,7 @@ PacletInfoExpressionBundle[
 	With[{pacletFile=FileNameJoin@{dest,"PacletInfo.m"}},
 		Begin["PacletManager`"];
 		Block[{$ContextPath={"System`","PacletManager`"}},
-			With[{pac=Map[ToExpression[#[[1]]]->#[[2]]&, Select[paclet,OptionQ]]},
-				Export[pacletFile,pac]
-				]
+			Export[pacletFile, cleanPacletForExport[paclet]]
 			];
 		End[];
 		pacletFile
@@ -1559,6 +1567,33 @@ PacletSiteInfoDataset[files:Except[_?OptionQ]|All|{}:All,ops:OptionsPattern[]]:=
 
 
 
+pacletSiteFileName[br_, fp_, if_, baseName_]:=
+	FileNameJoin@{
+		With[{d=
+			FileNameJoin@{
+				br,
+				$PacletBuildExtension
+				}
+			},
+			If[!FileExistsQ@d,
+				CreateDirectory@d
+				];
+			d
+			],
+		Replace[fp,{
+			Automatic:>
+				With[{f=First@if},
+					If[StringMatchQ[FileNameTake[f],"*.*"],
+						DirectoryName[f],
+						FileBaseName[f]
+						]
+					]<>"-",
+			s_String:>(s<>"-"),
+			_->""
+			}]<>baseName
+		}
+
+
 Options[PacletSiteBundle]=
 	Join[
 		{
@@ -1578,38 +1613,25 @@ PacletSiteBundle[
 	infoFiles:$PacletFilePatterns|{$PacletFilePatterns...},
 	ops:OptionsPattern[]
 	]:=
-	Export[
-		FileNameJoin@{
-			With[{d=
-				FileNameJoin@{
-					OptionValue["BuildRoot"],
-					$PacletBuildExtension
-					}
-				},
-				If[!FileExistsQ@d,
-					CreateDirectory@d
-					];
-				d
+	Block[{$ContextPath={"System`","PacletManager`"}, $Context="PacletManager`"},
+		Export[
+			pacletSiteFileName[
+				OptionValue["BuildRoot"], 
+				OptionValue["FilePrefix"],
+				{infoFiles},
+				"PacletSite.mz"
 				],
-			Replace[OptionValue["FilePrefix"],{
-				Automatic:>
-					With[{f=First@{infoFiles}},
-						If[StringMatchQ[FileNameTake[f],"*.*"],
-							DirectoryName[f],
-							FileBaseName[f]
-							]
-						]<>"-",
-				s_String:>(s<>"-"),
-				_->""
-				}]<>"PacletSite.mz"
-			},
-		PacletSiteInfo[
-			infoFiles,
-			FilterRules[{ops},
-				Options@PacletSiteInfo
-				]
-			],
-		{"ZIP", "PacletSite.m"}
+			Map[
+				cleanPacletForExport,
+				PacletSiteInfo[
+					infoFiles,
+					FilterRules[{ops},
+						Options@PacletSiteInfo
+						]
+					]
+				],
+			{"ZIP", "PacletSite.m"}
+			]
 		];
 
 
