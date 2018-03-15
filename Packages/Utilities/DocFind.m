@@ -436,22 +436,27 @@ DocFind[
 		];
 
 
-PackageAddAutocompletions[
-	"DocFind",
+$DocFindInterestingContexts=
 	{
-		None,
-		{
 			"System",
 			"Internal",
 			"FrontEnd",
 			"FEPrivate",
 			"PacletManager",
+			"System`Convert",
 			"MathLink",
 			"GeneralUtilities",
 			"TypeSystem",
 			"Dataset",
 			"Documentation"
-			}
+			};
+
+
+PackageAddAutocompletions[
+	"DocFind",
+	{
+		None,
+		
 		}
 	]
 

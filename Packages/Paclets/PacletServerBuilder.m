@@ -202,6 +202,8 @@ localPacletServerPat=
 				),
 		"ServerName"->_
 		}];
+localPacletServerPatOrDir=
+	localPacletServerPat|_String?DirectoryQ;
 localPacletServer=
 	MatchQ[localPacletServerPat]
 
@@ -219,6 +221,8 @@ PacletServerURL[serv:localPacletServerPat]:=
 		FilterRules[serv,
 			Options[PacletSiteURL]
 			];
+PacletServerURL[serv_String?DirectoryQ]:=
+	URLBuild[<|"Scheme"->"file", "Path"->FileNameSplit[serv]|>];
 PacletServerURL[s_String?(KeyMemberQ[$PacletServers, #]&)]:=
 	PacletSiteURL@$PacletServers[s];
 PacletServerURL[]:=
@@ -258,6 +262,12 @@ PacletServerDeploymentURL[server:localPacletServerPat]:=
 				},
 			Options[PacletSiteURL]
 			];
+PacletServerDeploymentURL[s_String?DirectoryQ]:=
+	Lookup[
+		Import[PacletServerFile[s, "SiteConfig.wl"]],
+		"SiteURL",
+		$Failed
+		];
 PacletServerDeploymentURL[s_String?(KeyMemberQ[$PacletServers, #]&)]:=
 	PacletServerDeploymentURL@$PacletServers[s];
 PacletServerDeploymentURL[]:=
@@ -287,8 +297,13 @@ PacletServerFile[
 			u
 			]
 		];
+PacletServerFile[
+	server:_String?DirectoryQ,
+	fileName:_String|{__String}|Nothing
+	]:=
+	FileNameJoin@Flatten@{server, fileName}
 PacletServerDirectory[
-	server:localPacletServerPat
+	server:localPacletServerPat|_String?DirectoryQ
 	]:=
 	PacletServerFile[server, Nothing]
 
@@ -348,7 +363,7 @@ PacletServerExposedPaclets[
 		];
 PacletServerExposedPaclets[d_Dataset]:=
 	PacletServerExposedPaclets@Normal@d;
-PacletServerExposedPaclets[server:localPacletServerPat]:=
+PacletServerExposedPaclets[server:localPacletServerPatOrDir]:=
 	PacletServerExposedPaclets@
 		PacletSiteInfoDataset[
 			PacletServerFile[server, "PacletSite.mz"]
@@ -365,7 +380,7 @@ $PacletServerExposedPaclets:=
 
 
 PacletServerBundleSite[
-	server:localPacletServerPat
+	server:localPacletServerPatOrDir
 	]:=
 	With[{ps=PacletExecute["BundleSite", PacletServerDirectory[server]]},
 		CopyFile[
@@ -379,6 +394,9 @@ PacletServerBundleSite[
 (* ::Subsubsection::Closed:: *)
 (*PacletServerExecute*)
 
+
+
+PacletServerExecute//Clear
 
 
 $PacletServerExecuteFunctions=
@@ -399,8 +417,8 @@ $PacletServerExecuteFunctions=
 			PacletServerBundleSite
 		|>;
 PacletServerExecute[
-	server:localPacletServerPat,
 	k_?(KeyExistsQ[$PacletServerExecuteFunctions, #]&),
+	server:localPacletServerPatOrDir,
 	args___
 	]:=
 	With[{fn=$PacletServerExecuteFunctions[k]},
@@ -409,11 +427,11 @@ PacletServerExecute[
 			]
 		];
 PacletServerExecute[
-	s_String?(KeyExistsQ[$PacletServers, #]&),
 	k_?(KeyExistsQ[$PacletServerExecuteFunctions, #]&),
+	s_String?(KeyExistsQ[$PacletServers, #]&),
 	args___
 	]:=
-	With[{r=PacletServerExecute[$PacletServers[s], k, args]},
+	With[{r=PacletServerExecute[k, $PacletServers[s], args]},
 		r/;Head[r]=!=PacletServerExecute
 		];
 
@@ -421,8 +439,8 @@ PacletServerExecute[
 PackageAddAutocompletions[
 	"PacletServerExecute",
 	{
-		None,
-		Keys@$PacletServerExecuteFunctions
+		Keys@$PacletServerExecuteFunctions,
+		Keys@$PacletServers
 		}
 	]
 
@@ -1399,7 +1417,7 @@ PacletMarkdownNotebook[
 		{
 			Cell[
 				BoxData@ToBoxes@
-					a,
+					KeyDrop[a, "URL"],
 				"Metadata"
 				],
 			Cell@CellGroupData@
@@ -1587,7 +1605,7 @@ $PacletServerInitialized:=
 PacletServerInitialize//Clear
 
 
-PacletServerInitialize[server:localPacletServerPat]:=
+PacletServerInitialize[server:localPacletServerPatOrDir]:=
 	If[!PacletServerInitialized@server,
 		With[{d=PacletServerDirectory@server},
 			If[!DirectoryQ@d,	
@@ -1618,9 +1636,6 @@ PacletServerInitialize[server:localPacletServerPat]:=
 
 
 
-PacletServerBuild//Clear
-
-
 Options[PacletServerBuild]=
 	Join[
 		Options[WebSiteBuild],
@@ -1630,7 +1645,7 @@ Options[PacletServerBuild]=
 			}
 		];
 PacletServerBuild[
-	server:localPacletServerPat,
+	server:localPacletServerPatOrDir,
 	ops:OptionsPattern[]
 	]:=
 	With[{siteData=PacletServerExposedPaclets[server]},
@@ -1693,26 +1708,29 @@ PacletServerBuild[
 											}
 										]
 								},
-							Join[
-								<|
-									"SiteName"->
-										Lookup[server, "ServerName"],
-									"SiteURL"->
-										With[
-											{
-												cc=
-													PacletServerDeploymentURL[server]
-												},
-											cc
-											],
-									"Theme"->
-										"PacletServer",
-									CloudConnect->
-										server[CloudConnect],
-									Permissions->
-										server[Permissions]
-									|>,
-								conf
+							If[StringQ@server,
+								conf,
+								Join[
+									<|
+										"SiteName"->
+											Lookup[server, "ServerName"],
+										"SiteURL"->
+											With[
+												{
+													cc=
+														PacletServerDeploymentURL[server]
+													},
+												cc
+												],
+										"Theme"->
+											"PacletServer",
+										CloudConnect->
+											server[CloudConnect],
+										Permissions->
+											server[Permissions]
+										|>,
+									conf
+									]
 								]
 							],
 					Sequence@@
@@ -1732,13 +1750,20 @@ PacletServerBuild[
 							]
 					],
 				Quiet@CreateDirectory@
-					PacletServerFile[server,
+					PacletServerFile[
+						server,
 						If[GitRepoQ@PacletServerDirectory[server],
 							 "output",
 							 "docs"
 								]
 						];
-				PacletServerFile[server, "output"]
+				PacletServerFile[
+						server,
+						If[GitRepoQ@PacletServerDirectory[server],
+							 "output",
+							 "docs"
+								]
+						]
 				]
 			},
 			If[TrueQ[OptionValue["AutoDeploy"]]||
