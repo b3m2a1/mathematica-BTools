@@ -37,7 +37,7 @@
 $AppPathMap::usage="";
 AppLocate::usage="Locates an app";
 AppPathFormat::usage="";
-AppAppComponentFiles::usage="";
+AppComponentFiles::usage="";
 AppContexts::usage="";
 AppStyleSheets::usage="";
 AppPalettes::usage=""
