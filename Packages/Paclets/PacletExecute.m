@@ -119,8 +119,10 @@ $PacletExecuteExpressionMethods=
 			PacletInfo,
 		"Association"->
 			PacletInfoAssociation,
-		"GeneratePacletInfo"->
+		"GeneratePacletExpression"->
 			PacletInfoExpression,
+		"GeneratePacletInfo"->
+			PacletInfoGenerate,
 		"AutoGeneratePaclet"->
 			PacletAutoPaclet,
 		"Bundle"->

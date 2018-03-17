@@ -785,7 +785,8 @@ PacletInfoExpressionBundle[paclet,dest]~~PackageAddUsage~~
 	"bundles paclet into a PacletInfo.m file in dest";*)
 PacletInfoExpressionBundle[
 	paclet_PacletManager`Paclet,
-	dest_String?DirectoryQ]:=
+	dest_String?DirectoryQ
+	]:=
 	With[{pacletFile=FileNameJoin@{dest,"PacletInfo.m"}},
 		Begin["PacletManager`"];
 		Block[{$ContextPath={"System`","PacletManager`"}},
