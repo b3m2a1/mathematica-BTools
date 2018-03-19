@@ -28,7 +28,7 @@ $PackageDeclared=
 	TrueQ[$PackageDeclared];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Scoping*)
 
 
@@ -88,8 +88,7 @@ $PackageLoadSpecs=
 $AllowPackageRescoping=
 	Replace[
 		Lookup[$PackageLoadSpecs, "AllowRescoping"],
-		Except[True|False]->
-			$TopLevelLoad
+		Except[True|False]->$TopLevelLoad
 		];
 $AllowPackageRecoloring=
 	Replace[

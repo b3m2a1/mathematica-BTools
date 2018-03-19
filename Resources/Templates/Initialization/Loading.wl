@@ -353,7 +353,7 @@ PackageScopeBlock[
 		];
 PackageScopeBlock[e_, scope_String:"Package"]/;Not@TrueQ[$AllowPackageRescoping]:=
 	If[$PackageScopeBlockEvalExpr,e];
-PackageScopeBlock~SetAttributes~HoldAllComplete;
+PackageScopeBlock~SetAttributes~HoldFirst;
 
 
 (* ::Subsubsection::Closed:: *)

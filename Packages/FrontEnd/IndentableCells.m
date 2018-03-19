@@ -340,6 +340,9 @@ IndentationSelection[inputNotebook_]:=
 		}];
 
 
+indentationAddTabsRecursiveCall//Clear
+
+
 indentationAddTabsRecursiveCall[RowBox[d:{___}]]:=
 	RowBox@
 		Replace[d,{
@@ -351,6 +354,10 @@ indentationAddTabsRecursiveCall[RowBox[d:{___}]]:=
 				StringInsert[s,$IndentationChar,2]
 				},
 			1];
+indentationAddTabsRecursiveCall[b_[d_RowBox, a___]]:=
+	b[indentationAddTabsRecursiveCall[d], a];
+indentationAddTabsRecursiveCall[e_]:=
+	e;
 indentationAddTabs[sel_]:=
 	Replace[
 		sel,{
@@ -388,6 +395,7 @@ All],
 
 
 
+indentationDelTabsRecursiveCall//Clear
 indentationDelTabsRecursiveCall[RowBox[d:{___}]]:=
 	RowBox@
 		Replace[d,{
@@ -410,6 +418,10 @@ indentationDelTabsRecursiveCall[RowBox[d:{___}]]:=
 					]
 				},
 			1];
+indentationDelTabsRecursiveCall[b_[d_RowBox, a___]]:=
+	b[indentationDelTabsRecursiveCall[d], a];
+indentationDelTabsRecursiveCall[e_]:=
+	e;
 indentationDelTabs[sel_]:=
 	Replace[sel,
 		{

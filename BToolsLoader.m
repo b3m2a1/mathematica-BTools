@@ -81,7 +81,7 @@ $PackageDeclared=
 	TrueQ[$PackageDeclared];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Scoping*)
 
 
@@ -141,8 +141,7 @@ $PackageLoadSpecs=
 $AllowPackageRescoping=
 	Replace[
 		Lookup[$PackageLoadSpecs, "AllowRescoping"],
-		Except[True|False]->
-			$TopLevelLoad
+		Except[True|False]->$TopLevelLoad
 		];
 $AllowPackageRecoloring=
 	Replace[
@@ -542,7 +541,7 @@ PackageScopeBlock[
 		];
 PackageScopeBlock[e_, scope_String:"Package"]/;Not@TrueQ[$AllowPackageRescoping]:=
 	If[$PackageScopeBlockEvalExpr,e];
-PackageScopeBlock~SetAttributes~HoldAllComplete;
+PackageScopeBlock~SetAttributes~HoldFirst;
 
 
 (* ::Subsubsection::Closed:: *)
