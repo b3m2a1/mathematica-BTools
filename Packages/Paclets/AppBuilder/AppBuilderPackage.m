@@ -635,10 +635,7 @@ appInitTemplate[pkg_]:=
 						strings["Paths"],
 						strings["Loading"],
 						strings["Autocomplete"],
-						strings["SyntaxInformation"],
-						strings["Usage"],
-						strings["FrontEnd"],
-						strings["Objects"]
+						strings["FrontEnd"]
 						},
 						"\n"
 						],

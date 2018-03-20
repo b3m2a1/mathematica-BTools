@@ -279,7 +279,7 @@ DocFind[
 					#context,
 					{
 						_String?(StringMatchQ[""|Whitespace])->"",
-						_->"`"
+						_->("`"|"")
 						}
 					],
 				If[#autocomp,"*",""],
@@ -290,7 +290,8 @@ DocFind[
 							Replace[Except[_?StringPattern`StringPatternQ]->""]@
 							Replace[cont, 
 								{
-									Automatic->OptionValue@Context
+									s_String?(StringEndsQ["`"]):>StringTrim[s, "`"],
+									Automatic:>Alternatives@@$Packages
 									}
 								],
 						"name"->Replace[name,Verbatim[Verbatim][s_]:>s],
@@ -438,17 +439,19 @@ DocFind[
 
 $DocFindInterestingContexts=
 	{
-			"System",
-			"Internal",
-			"FrontEnd",
-			"FEPrivate",
-			"PacletManager",
-			"System`Convert",
-			"MathLink",
-			"GeneralUtilities",
-			"TypeSystem",
-			"Dataset",
-			"Documentation"
+			"System`",
+			"System`Private`",
+			"System`Convert`",
+			"System`*`",
+			"Internal`",
+			"FrontEnd`",
+			"FEPrivate`",
+			"PacletManager`",
+			"MathLink`",
+			"GeneralUtilities`",
+			"TypeSystem`",
+			"Dataset`",
+			"Documentation`"
 			};
 
 
@@ -456,7 +459,7 @@ PackageAddAutocompletions[
 	"DocFind",
 	{
 		None,
-		
+		$DocFindInterestingContexts
 		}
 	]
 

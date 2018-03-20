@@ -200,6 +200,43 @@ If[$AppBuilderConfigLoaded=!=True,
 
 
 (* ::Subsection:: *)
+(*Execute*)
+
+
+
+(*	<|
+		"Path"->
+			AppPath,
+		"Configure"->
+			AppConfigure,
+		"ConfigureSubapp"->
+			AppConfigureSubapp,
+		"ReconfigureSubapp"->
+			AppReconfigureSubapp,
+		"FileNames"->
+			AppFileNames,
+		"Packages"->
+			AppPackages,
+		"Packages"->
+			AppPackages,
+		"AddContent"->
+			AppAddContent,
+		"GitHubConfigure"->
+			AppGitHubRepo,
+		"GitHubPush"->
+			AppGitHubPush,
+		"GitHubDelete"->
+			AppGitHubDelete
+		|>
+AppObjectExecute[
+	
+	]:=*)
+
+
+(*AppObject[appName_String]:=*)
+
+
+(* ::Subsection:: *)
 (*Find*)
 
 
