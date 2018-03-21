@@ -1030,7 +1030,7 @@ Cell[BoxData[{
      RowBox[{"\"\<Language\>\"", "\[Rule]", "\"\<English\>\""}], ",", "\n", 
      "\t", 
      RowBox[{"\"\<Root\>\"", "\[Rule]", "None"}], ",", "\n", "\t", 
-     RowBox[{"\"\<LinkBase\>\"", "\[Rule]", "None"}], ",", "\n", "\t", 
+     RowBox[{"\"\<LinkBase\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t", 
      RowBox[{"\"\<MainPage\>\"", "\[Rule]", "None"}]}], 
     RowBox[{"(*", 
      RowBox[{",", "\n", "\t", 
@@ -1097,9 +1097,28 @@ Cell[BoxData[{
        RowBox[{"{", "}"}], ",", "\n", "\t\t\t", 
        RowBox[{"PacletDocsInfo", "[", 
         RowBox[{"ops", ",", "\n", "\t", "\t\t\t", 
-         RowBox[{
-         "\"\<Language\>\"", "\[Rule]", "\n", "\t", "\t\t\t\t", "lang"}], ",",
-          "\n", "\t", "\t\t\t", 
+         RowBox[{"\"\<Language\>\"", "\[Rule]", "\n", "\t\t\t\t\t", "lang"}], 
+         ",", "\n", "\t\t\t\t", 
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{
+             RowBox[{"OptionValue", "[", "\"\<LinkBase\>\"", "]"}], "===", 
+             "Automatic"}], "&&", "\n", "\t\t\t\t\t", 
+            RowBox[{"StringMatchQ", "[", 
+             RowBox[{
+              RowBox[{"FileBaseName", "[", "dest", "]"}], ",", " ", 
+              "\"\<Documentation_*\>\""}], "]"}]}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{"\"\<LinkBase\>\"", "\[Rule]", 
+            RowBox[{
+             RowBox[{"StringSplit", "[", 
+              RowBox[{
+               RowBox[{"FileBaseName", "[", "dest", "]"}], ",", " ", 
+               "\"\<_\>\""}], "]"}], "[", 
+             RowBox[{"[", "2", "]"}], "]"}]}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{"Sequence", "@@", 
+            RowBox[{"{", "}"}]}]}], "\n", "\t\t\t\t\t", "]"}], ",", "\n", 
+         "\t\t\t\t", 
          RowBox[{"\"\<MainPage\>\"", "->", "\n", "\t", "\t\t\t\t", 
           RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t\t", 
            RowBox[{
@@ -1141,38 +1160,608 @@ Cell[BoxData[{
               "\t\t\t\t\t", 
               RowBox[{
                RowBox[{"p", ":", 
-                RowBox[{"{", "__", "}"}]}], ":>", "\n", "\t", "\t\t\t\t\t\t", 
-               
-               RowBox[{"First", "@", "\n", "\t", "\t\t\t\t\t\t\t", 
-                RowBox[{"SortBy", "[", 
-                 RowBox[{
-                  RowBox[{"StringTrim", "[", 
-                   RowBox[{"p", ",", "\"\<.nb\>\""}], "]"}], ",", "\n", "\t", 
-                  "\t\t\t\t\t\t\t\t", 
-                  RowBox[{
-                   RowBox[{"EditDistance", "[", 
+                RowBox[{"{", "__", "}"}]}], ":>", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"If", "[", 
+                RowBox[{
+                 RowBox[{"MemberQ", "[", 
+                  RowBox[{"p", ",", " ", "\"\<Guides/Overview.nb\>\""}], 
+                  "]"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                 "\"\<Guides/Overview.nb\>\"", ",", "\n", "\t\t\t\t\t\t\t\t", 
+                 
+                 RowBox[{"First", "@", "\n", "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"SortBy", "[", 
+                   RowBox[{
+                    RowBox[{"StringTrim", "[", 
+                    RowBox[{"p", ",", " ", "\"\<.nb\>\""}], "]"}], ",", "\n", 
+                    "\t", "\t", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"EditDistance", "[", 
                     RowBox[{
                     RowBox[{"FileBaseName", "@", "dest"}], ",", 
                     RowBox[{"FileBaseName", "@", "#"}]}], "]"}], "&"}]}], 
-                 "]"}]}]}]}], "\n", "\t", "\t\t\t\t\t", "}"}]}], "]"}]}]}], 
-        "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
-    "]"}]}], ";"}]}], "CodeInput",
+                   "]"}]}]}], "\n", "\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", 
+             "\t\t\t\t\t\t", "}"}]}], "]"}]}]}], "\n", "\t\t\t\t", "]"}]}], 
+      "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
  CellChangeTimes->{{3.702731029659607*^9, 3.702731111924505*^9}, {
    3.703469785443849*^9, 3.703469821543401*^9}, {3.7034706071369047`*^9, 
    3.7034706098812037`*^9}, 3.703470702999569*^9, {3.703470733925055*^9, 
    3.703470736892271*^9}, 3.70347117860063*^9, {3.728883502792647*^9, 
-   3.728883529989396*^9}, 
-   3.728883757322356*^9},ExpressionUUID->"47e8e143-0f4a-4099-b26c-\
+   3.728883529989396*^9}, 3.728883757322356*^9, {3.7306432459605207`*^9, 
+   3.730643354993*^9}, {3.730654101864439*^9, 3.7306541679166613`*^9}, {
+   3.730655447170596*^9, 
+   3.73065545421684*^9}},ExpressionUUID->"47e8e143-0f4a-4099-b26c-\
 fc33aef7cc21"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell["\[LeftCeiling]PacletExtensionData\[RightFloor]", "CodeSubsubsection",
  Evaluatable->True,
- CellChangeTimes->{{3.703450897443469*^9, 
-  3.703450900273913*^9}},ExpressionUUID->"580297df-b36b-458f-8a55-\
+ CellChangeTimes->{{3.703450897443469*^9, 3.703450900273913*^9}, {
+  3.730654184004548*^9, 
+  3.730654184272793*^9}},ExpressionUUID->"580297df-b36b-458f-8a55-\
 682e4f863e19"],
+
+Cell[CellGroupData[{
+
+Cell["Docs", "CodeSubsubsubsection",
+ CellChangeTimes->{{3.730643078520897*^9, 3.7306431051747503`*^9}, {
+  3.7306431848643007`*^9, 3.7306431854062233`*^9}, {3.7306541854366293`*^9, 
+  3.730654186096768*^9}},ExpressionUUID->"224454d8-e15f-479a-8320-\
+ae1b43f6b25c"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"extractPacletExtensionDocsInfo", "[", 
+   RowBox[{"base_", ",", " ", "dest_"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Replace", "[", 
+   RowBox[{"base", ",", "\n", "\t\t", 
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"Automatic", ":>", "\n", "\t\t\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Length", "@", "\n", "\t", "\t\t\t\t\t", 
+           RowBox[{"FileNames", "[", 
+            RowBox[{"\"\<*.nb\>\"", ",", "\n", "\t", "\t\t\t\t\t\t\t", 
+             RowBox[{"FileNameJoin", "@", 
+              RowBox[{"{", 
+               RowBox[{"dest", ",", "\"\<Documentation\>\""}], "}"}]}], ",", 
+             "\n", "\t", "\t\t\t\t\t\t\t", "\[Infinity]"}], "]"}]}], ">", 
+          "0"}], ",", "\n", "\t", "\t\t\t\t", 
+         RowBox[{"\"\<Documentation\>\"", "->", "\n", "\t", "\t\t\t\t\t", 
+          RowBox[{"PacletDocsInfo", "[", "dest", "]"}]}], ",", "\n", "\t", 
+         "\t\t\t\t", "Nothing"}], "\n", "\t", "\t\t\t\t", "]"}]}], ",", "\n", 
+      "\t", "\t\t", 
+      RowBox[{
+       RowBox[{"r", ":", 
+        RowBox[{"_Rule", "|", 
+         RowBox[{"{", "___Rule", "}"}]}]}], ":>", "\n", "\t", "\t\t\t", 
+       RowBox[{"\"\<Documentation\>\"", "\[Rule]", 
+        RowBox[{"Association", "@", 
+         RowBox[{"Flatten", "@", 
+          RowBox[{"{", "r", "}"}]}]}]}]}], ",", "\n", "\t\t\t", 
+      RowBox[{"a_Association", ":>", "\n", "\t\t\t\t", 
+       RowBox[{"\"\<Documentation\>\"", "\[Rule]", "a"}]}], ",", "\n", 
+      "\t\t\t", 
+      RowBox[{"_", "\[Rule]", "Nothing"}]}], "\n", "\t\t\t", "}"}]}], "\n", 
+   "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.7306429936073103`*^9, 3.730643030938426*^9}, {
+  3.730643196844549*^9, 3.730643207609358*^9}, {3.730643576508953*^9, 
+  3.730643592639308*^9}},ExpressionUUID->"a955fd93-1046-45d7-889a-\
+cd091dbebf82"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Kernel", "CodeSubsubsubsection",
+ CellChangeTimes->{{3.730643078520897*^9, 3.7306431051747503`*^9}, {
+  3.7306431808895807`*^9, 
+  3.7306431814553537`*^9}},ExpressionUUID->"8cf2904e-33a7-4a28-944c-\
+55fbce85a9a1"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"extractPacletExtensionKernelInfo", "[", 
+   RowBox[{"base_", ",", " ", "dest_"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Replace", "[", 
+   RowBox[{"base", ",", 
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Automatic", ":>", "\n", "\t\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"AnyTrue", "[", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{
+             RowBox[{"FileNameJoin", "@", 
+              RowBox[{"Flatten", "@", 
+               RowBox[{"{", 
+                RowBox[{"dest", ",", "#"}], "}"}]}]}], "&"}], "/@", "\n", 
+            "\t\t\t\t\t\t", 
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"FileBaseName", "[", "dest", "]"}], "<>", 
+               "\"\<.wl\>\""}], ",", 
+              RowBox[{
+               RowBox[{"FileBaseName", "[", "dest", "]"}], "<>", 
+               "\"\<.m\>\""}], ",", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"{", 
+               RowBox[{"\"\<Kernel\>\"", ",", "\"\<init.m\>\""}], "}"}]}], 
+             "}"}]}], ",", "\n", "\t\t\t\t\t", "FileExistsQ"}], "\n", 
+          "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"\"\<Kernel\>\"", "->", "\n", "\t\t\t\t\t", 
+          RowBox[{"<|", "\n", "\t\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"Root", " ", "->", " ", "\"\<.\>\""}], ",", " ", "\n", 
+            "\t", "\t\t\t\t\t\t", 
+            RowBox[{"Context", " ", "->", " ", 
+             RowBox[{
+              RowBox[{"FileBaseName", "@", "dest"}], "<>", "\"\<`\>\""}]}]}], 
+           "\n", "\t\t\t\t\t\t\t", "|>"}]}], ",", "\n", "\t\t\t\t", 
+         "Nothing"}], "\n", "\t\t\t\t", "]"}]}], ",", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"r", ":", 
+        RowBox[{"_Rule", "|", 
+         RowBox[{"{", "___Rule", "}"}]}]}], ":>", "\n", "\t\t\t", 
+       RowBox[{"\"\<Kernel\>\"", "\[Rule]", 
+        RowBox[{"Association", "@", 
+         RowBox[{"Flatten", "@", 
+          RowBox[{"{", "r", "}"}]}]}]}]}], ",", "\n", "\t\t", 
+      RowBox[{"a_Association", ":>", "\n", "\t\t\t", 
+       RowBox[{"\"\<Kernel\>\"", "\[Rule]", "a"}]}], ",", "\n", "\t\t", 
+      RowBox[{"_", "\[Rule]", "Nothing"}]}], "\n", "\t\t", "}"}]}], 
+   "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.730643044276369*^9, 3.7306430621607656`*^9}, {
+  3.730643603680191*^9, 
+  3.730643607959565*^9}},ExpressionUUID->"80176c65-eae0-4e66-bd6e-\
+77d1961a40b7"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["FrontEnd", "CodeSubsubsubsection",
+ CellChangeTimes->{{3.730643078520897*^9, 
+  3.7306431051747503`*^9}},ExpressionUUID->"721cfd74-8d75-471f-8112-\
+ec543c708ad8"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"extractPacletExtensionFrontEndInfo", "[", 
+   RowBox[{"base_", ",", " ", "dest_"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Replace", "[", 
+   RowBox[{
+    RowBox[{"OptionValue", "[", "\"\<FrontEnd\>\"", "]"}], ",", 
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Automatic", ":>", "\n", "\t\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Length", "@", 
+           RowBox[{
+            RowBox[{"Select", "[", 
+             RowBox[{"Not", "@*", "DirectoryQ"}], "]"}], "@", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"Flatten", "@", 
+             RowBox[{"Join", "[", "\n", "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Map", "[", "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"FileNames", "[", 
+                   RowBox[{"\"\<*.nb\>\"", ",", "\n", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{"FileNameJoin", "@", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    "dest", ",", "\"\<FrontEnd\>\"", ",", 
+                    "\"\<Documentation\>\"", ",", "#"}], "}"}]}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t", "\[Infinity]"}], "]"}], "&"}], ",", 
+                 RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+                  RowBox[{
+                  "\"\<ReferencePages\>\"", ",", "\n", "\t\t\t\t\t\t\t", 
+                   "\"\<Guides\>\"", ",", "\n", "\t\t\t\t\t\t\t", 
+                   "\"\<Tutorials\>\""}], "\n", "\t\t\t\t\t\t\t", "}"}]}], 
+                "]"}], ",", "\n", "\t\t\t\t\t\t", 
+               RowBox[{"Map", "[", "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"FileNames", "[", 
+                   RowBox[{"\"\<*\>\"", ",", "\n", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{"FileNameJoin", "@", 
+                    RowBox[{"{", 
+                    RowBox[{"dest", ",", "\"\<FrontEnd\>\"", ",", "#"}], 
+                    "}"}]}], ",", "\n", "\t\t\t\t\t\t\t\t", "\[Infinity]"}], 
+                   "\n", "\t\t\t\t\t\t\t\t", "]"}], "&"}], ",", 
+                 RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+                  RowBox[{
+                  "\"\<TextResources\>\"", ",", "\n", "\t\t\t\t\t\t\t", 
+                   "\"\<SystemResources\>\"", ",", "\n", "\t\t\t\t\t\t\t", 
+                   "\"\<StyleSheets\>\"", ",", "\n", "\t\t\t\t\t\t\t", 
+                   "\"\<Palettes\>\""}], "\n", "\t\t\t\t\t\t\t", "}"}]}], 
+                "]"}]}], "\n", "\t\t\t\t\t\t", "]"}]}]}]}], ">", "0"}], ",", 
+         "\n", "\t\t\t\t\t", 
+         RowBox[{"\"\<FrontEnd\>\"", "\[Rule]", "\n", "\t\t\t\t\t\t", 
+          RowBox[{"If", "[", "\n", "\t\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"DirectoryQ", "@", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{"FileNameJoin", "@", 
+               RowBox[{"{", 
+                RowBox[{
+                "dest", ",", "\n", "\t\t\t\t\t\t\t\t\t", "\"\<FrontEnd\>\"", 
+                 ",", "\n", "\t\t\t\t\t\t\t\t\t", "\"\<TextResources\>\""}], 
+                "\n", "\t\t\t\t\t\t\t\t\t", "}"}]}]}], "||", "\n", 
+             "\t\t\t\t\t\t\t", 
+             RowBox[{"DirectoryQ", "@", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{"FileNameJoin", "@", 
+               RowBox[{"{", 
+                RowBox[{
+                "dest", ",", "\n", "\t\t\t\t\t\t\t\t\t", "\"\<FrontEnd\>\"", 
+                 ",", "\n", "\t\t\t\t\t\t\t\t\t", "\"\<SystemResources\>\""}],
+                 "\n", "\t\t\t\t\t\t\t\t\t", "}"}]}]}]}], ",", "\n", 
+            "\t\t\t\t\t\t\t", 
+            RowBox[{"<|", 
+             RowBox[{"Prepend", "\[Rule]", "True"}], "|>"}], ",", "\n", 
+            "\t\t\t\t\t\t\t", 
+            RowBox[{"<|", "|>"}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}], ",", 
+         "\n", "\t\t\t\t\t", "Nothing"}], "\n", "\t\t\t\t\t", "]"}]}], ",", 
+      "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"r", ":", 
+        RowBox[{"_Rule", "|", 
+         RowBox[{"{", "___Rule", "}"}]}]}], ":>", "\n", "\t\t\t", 
+       RowBox[{"\"\<FrontEnd\>\"", "\[Rule]", 
+        RowBox[{"Association", "@", 
+         RowBox[{"Flatten", "@", 
+          RowBox[{"{", "r", "}"}]}]}]}]}], ",", "\n", "\t\t", 
+      RowBox[{"a_Association", ":>", "\n", "\t\t\t", 
+       RowBox[{"\"\<FrontEnd\>\"", "\[Rule]", "a"}]}], ",", "\n", "\t\t", 
+      RowBox[{"_", "\[Rule]", "Nothing"}]}], "\n", "\t\t", "}"}]}], 
+   "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.730643088655199*^9, 3.730643107562086*^9}, {
+  3.730643616574235*^9, 
+  3.7306436190441437`*^9}},ExpressionUUID->"95bf3008-f15d-45a5-ae87-\
+2d37df21e401"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Resources", "CodeSubsubsubsection",
+ CellChangeTimes->{{3.730643456943709*^9, 
+  3.730643459255198*^9}},ExpressionUUID->"2645c34f-f81f-4f96-9b90-\
+c85b3949435e"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"extractPacletExtensionResourceInfo", "[", 
+   RowBox[{"base_", ",", " ", "dest_"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Replace", "[", 
+   RowBox[{"base", ",", 
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Automatic", ":>", "\n", "\t\t\t", 
+       RowBox[{"Which", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Length", "@", "\n", "\t\t\t\t\t", 
+           RowBox[{"Select", "[", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"FileNames", "[", 
+              RowBox[{"\"\<*\>\"", ",", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"FileNameJoin", "@", 
+                RowBox[{"{", 
+                 RowBox[{"dest", ",", "\"\<Data\>\""}], "}"}]}], ",", "\n", 
+               "\t\t\t\t\t\t\t", "\[Infinity]"}], "]"}], ",", "\n", 
+             "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Not", "@", 
+                RowBox[{"DirectoryQ", "@", "#"}]}], "&&", "\n", 
+               "\t\t\t\t\t\t\t", 
+               RowBox[{"Not", "@", 
+                RowBox[{"StringMatchQ", "[", 
+                 RowBox[{
+                  RowBox[{"FileNameTake", "@", "#"}], ",", " ", 
+                  "\"\<.DS_Store\>\""}], "]"}]}]}], "&"}]}], "\n", 
+            "\t\t\t\t\t\t", "]"}]}], ">", "0"}], ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"\"\<Resource\>\"", "->", "\n", "\t\t\t\t\t\t", 
+          RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+           RowBox[{"<|", "\n", "\t\t\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"\"\<Root\>\"", " ", "->", " ", "\"\<Data\>\""}], ",", 
+             "\n", "\t", "\t\t\t\t\t\t\t", 
+             RowBox[{"\"\<SystemID\>\"", " ", "\[Rule]", " ", "\"\<*\>\""}], 
+             ",", "\n", "\t", "\t\t\t\t\t\t\t", 
+             RowBox[{
+             "\"\<Resources\>\"", " ", "->", " ", "\n", "\t", 
+              "\t\t\t\t\t\t\t\t", 
+              RowBox[{"Map", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"FileNameDrop", "[", 
+                  RowBox[{"#", ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"FileNameDepth", "[", "dest", "]"}], "+", "1"}]}],
+                   "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", "]"}], "&"}], ",", 
+                "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{"Select", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"FileNames", "[", 
+                   RowBox[{
+                   "\"\<*\>\"", ",", "\n", "\t", "\t", "\t", 
+                    "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"FileNameJoin", "@", 
+                    RowBox[{"{", 
+                    RowBox[{"dest", ",", "\"\<Data\>\""}], "}"}]}], ",", "\n",
+                     "\t", "\t\t\t\t\t\t\t\t\t\t\t", "\[Infinity]"}], "]"}], 
+                  ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{
+                    RowBox[{"Not", "@", 
+                    RowBox[{"DirectoryQ", "@", "#"}]}], "&&", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Not", "@", 
+                    RowBox[{"StringMatchQ", "[", 
+                    RowBox[{
+                    RowBox[{"FileNameTake", "@", "#"}], ",", " ", 
+                    "\"\<.DS_Store\>\""}], "]"}]}]}], "&"}]}], "\n", "\t", 
+                 "\t\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", 
+               "\t\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t\t\t", 
+            "|>"}], "\n", "\t\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Length", "@", "\n", "\t\t\t\t\t", 
+           RowBox[{"Select", "[", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"FileNames", "[", 
+              RowBox[{"\"\<*\>\"", ",", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"FileNameJoin", "@", 
+                RowBox[{"{", 
+                 RowBox[{"dest", ",", "\"\<Resources\>\""}], "}"}]}], ",", 
+               "\n", "\t\t\t\t\t\t\t", "\[Infinity]"}], "]"}], ",", "\n", 
+             "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Not", "@", 
+                RowBox[{"DirectoryQ", "@", "#"}]}], "&&", "\n", 
+               "\t\t\t\t\t\t\t", 
+               RowBox[{"Not", "@", 
+                RowBox[{"StringMatchQ", "[", 
+                 RowBox[{
+                  RowBox[{"FileNameTake", "@", "#"}], ",", 
+                  "\"\<.DS_Store\>\""}], "]"}]}]}], "&"}]}], "\n", 
+            "\t\t\t\t\t\t", "]"}]}], ">", "0"}], ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"\"\<Resource\>\"", "->", "\n", "\t\t\t\t\t\t", 
+          RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+           RowBox[{"<|", "\n", "\t\t\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"\"\<Root\>\"", " ", "->", " ", "\"\<Resources\>\""}], 
+             ",", "\n", "\t", "\t\t\t\t\t\t\t", 
+             RowBox[{"\"\<SystemID\>\"", " ", "\[Rule]", " ", "\"\<*\>\""}], 
+             ",", "\n", "\t", "\t\t\t\t\t\t\t", 
+             RowBox[{
+             "\"\<Resources\>\"", " ", "->", " ", "\n", "\t", 
+              "\t\t\t\t\t\t\t\t", 
+              RowBox[{"Map", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"FileNameDrop", "[", 
+                  RowBox[{"#", ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"FileNameDepth", "[", "dest", "]"}], "+", "1"}]}],
+                   "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", "]"}], "&"}], ",", 
+                "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{"Select", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"FileNames", "[", 
+                   RowBox[{
+                   "\"\<*\>\"", ",", "\n", "\t", "\t", "\t", 
+                    "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"FileNameJoin", "@", 
+                    RowBox[{"{", 
+                    RowBox[{"dest", ",", "\"\<Resources\>\""}], "}"}]}]}], 
+                   "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+                  "\t", "\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"Not", "@", 
+                    RowBox[{"StringMatchQ", "[", 
+                    RowBox[{
+                    RowBox[{"FileNameTake", "@", "#"}], ",", 
+                    "\"\<.DS_Store\>\""}], "]"}]}], "&"}]}], "\n", "\t", 
+                 "\t\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", 
+               "\t\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t\t\t", 
+            "|>"}], "\n", "\t\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t\t\t\t", 
+         "True", ",", "\n", "\t\t\t\t\t", "Nothing"}], "\n", "\t\t\t\t\t", 
+        "]"}]}], ",", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"r", ":", 
+        RowBox[{"_Rule", "|", 
+         RowBox[{"{", "___Rule", "}"}]}]}], ":>", "\n", "\t\t\t", 
+       RowBox[{"\"\<Resource\>\"", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{"Association", "@", 
+          RowBox[{"Flatten", "@", 
+           RowBox[{"{", "r", "}"}]}]}], "}"}]}]}], ",", "\n", "\t\t", 
+      RowBox[{"a_Association", ":>", "\n", "\t\t\t", 
+       RowBox[{"\"\<Resource\>\"", "\[Rule]", 
+        RowBox[{"{", "a", "}"}]}]}], ",", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"r", ":", 
+        RowBox[{"{", "__Association", "}"}]}], ":>", "\n", "\t\t\t", 
+       RowBox[{"\"\<Resource\>\"", "\[Rule]", "r"}]}], ",", "\n", "\t\t", 
+      RowBox[{"_", "\[Rule]", "Nothing"}]}], "\n", "\t\t", "}"}]}], 
+   "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.7306434621353407`*^9, 
+  3.7306435654021397`*^9}},ExpressionUUID->"f350232e-9aae-47ee-bfce-\
+69521e04d099"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["AutoCompletionData", "CodeSubsubsubsection",
+ CellChangeTimes->{
+  3.730643677913518*^9},ExpressionUUID->"69676523-96cb-4ded-92a5-\
+ed5d85670241"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"extractPacletExtensionAutoCompletionDataInfo", "[", 
+   RowBox[{"base_", ",", " ", "dest_"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Replace", "[", 
+   RowBox[{"base", ",", 
+    RowBox[{"{", "\n", "\t\t\t\t", 
+     RowBox[{
+      RowBox[{"Automatic", ":>", "\n", "\t\t\t\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Length", "@", "\n", "\t", "\t\t\t\t\t\t", 
+           RowBox[{"FileNames", "[", 
+            RowBox[{"\"\<*.tr\>\"", ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+             RowBox[{"FileNameJoin", "@", 
+              RowBox[{"{", 
+               RowBox[{"dest", ",", "\"\<AutoCompletionData\>\""}], "}"}]}], 
+             ",", "\n", "\t", "\t\t\t\t\t\t\t\t", "\[Infinity]"}], "]"}]}], 
+          ">", "0"}], ",", "\n", "\t\t\t\t\t\t", 
+         RowBox[{"\"\<AutoCompletionData\>\"", "->", "\n", "\t\t\t\t\t\t\t", 
+          RowBox[{"<|", "\n", "\t\t\t\t\t\t\t\t", 
+           RowBox[{
+           "\"\<Root\>\"", " ", "->", " ", "\"\<AutoCompletionData\>\""}], 
+           "\n", "\t\t\t\t\t\t\t\t", "|>"}]}], ",", "\n", "\t\t\t\t\t\t", 
+         "Nothing"}], "\n", "\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t", 
+      "\t\t\t", 
+      RowBox[{
+       RowBox[{"r", ":", 
+        RowBox[{"_Rule", "|", 
+         RowBox[{"{", "___Rule", "}"}]}]}], ":>", "\n", "\t\t\t\t\t", 
+       RowBox[{"\"\<AutoCompletionData\>\"", "\[Rule]", 
+        RowBox[{"Association", "@", 
+         RowBox[{"Flatten", "@", 
+          RowBox[{"{", "r", "}"}]}]}]}]}], ",", "\n", "\t", "\t\t\t", 
+      RowBox[{
+       RowBox[{"Except", "[", "_Association", "]"}], "\[Rule]", "Nothing"}]}],
+      "\n", "\t\t\t\t", "}"}]}], "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.730643672444272*^9, 
+  3.730643684993537*^9}},ExpressionUUID->"fd30ab7b-b041-4f7f-9ff0-\
+7a8ad6305b87"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["JLink", "CodeSubsubsubsection",
+ CellChangeTimes->{
+  3.730643677913518*^9, {3.7306437391425457`*^9, 
+   3.730643739868465*^9}},ExpressionUUID->"0ce1d1f3-df25-4f86-b8a3-\
+39a0f9584ae7"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"extractPacletExtensionJLinkInfo", "[", 
+   RowBox[{"base_", ",", " ", "dest_"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Replace", "[", 
+   RowBox[{"base", ",", " ", 
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Automatic", ":>", "\n", "\t\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Length", "@", "\n", "\t\t\t\t\t", 
+           RowBox[{"FileNames", "[", 
+            RowBox[{"\"\<*.jar\>\"", ",", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"FileNameJoin", "@", 
+              RowBox[{"{", 
+               RowBox[{"dest", ",", " ", "\"\<Java\>\""}], "}"}]}], ",", "\n",
+              "\t\t\t\t\t\t", "\[Infinity]"}], "]"}]}], ">", "0"}], ",", "\n",
+          "\t\t\t\t", 
+         RowBox[{"\"\<JLink\>\"", "->", "\n", "\t\t\t\t\t", 
+          RowBox[{"<|", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"\"\<Root\>\"", " ", "->", " ", "\"\<Java\>\""}], "\n", 
+           "\t\t\t\t\t\t", "|>"}]}], ",", "\n", "\t\t\t\t", "Nothing"}], "\n",
+         "\t\t\t\t", "]"}]}], ",", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"r", ":", 
+        RowBox[{"_Rule", "|", 
+         RowBox[{"{", "___Rule", "}"}]}]}], ":>", "\n", "\t\t\t", 
+       RowBox[{"\"\<JLink\>\"", "\[Rule]", 
+        RowBox[{"Association", "@", 
+         RowBox[{"Flatten", "@", 
+          RowBox[{"{", "r", "}"}]}]}]}]}], ",", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"Except", "[", "_Association", "]"}], "\[Rule]", "Nothing"}]}],
+      "\n", "\t\t", "}"}]}], "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.730643672444272*^9, 3.730643684993537*^9}, 
+   3.730643745661386*^9, {3.73064378349158*^9, 
+   3.730643820443104*^9}},ExpressionUUID->"33032962-05ed-4b5b-83c7-\
+1d9e6d0d368a"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["LibraryLink", "CodeSubsubsubsection",
+ CellChangeTimes->{
+  3.730643677913518*^9, {3.7306438343749533`*^9, 
+   3.730643836059264*^9}},ExpressionUUID->"fb84e897-3f69-4bb0-88cc-\
+930d001103a3"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"extractPacletExtensionLibraryLinkInfo", "[", 
+   RowBox[{"base_", ",", " ", "dest_"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Replace", "[", 
+   RowBox[{"base", ",", " ", 
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Automatic", ":>", "\n", "\t\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Length", "@", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"Select", "[", 
+             RowBox[{"Not", "@*", "DirectoryQ"}], "]"}], "@", "\n", 
+            "\t\t\t\t\t\t", 
+            RowBox[{"FileNames", "[", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Except", "[", "\"\<.DS_Store\>\"", "]"}], ",", "\n", 
+              "\t", "\t\t\t\t\t\t", 
+              RowBox[{"FileNameJoin", "@", 
+               RowBox[{"{", 
+                RowBox[{"dest", ",", " ", "\"\<LibraryResources\>\""}], 
+                "}"}]}], ",", "\n", "\t", "\t\t\t\t\t\t", "\[Infinity]"}], 
+             "]"}]}]}], ">", "0"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"\"\<LibraryLink\>\"", "->", "\n", "\t\t\t\t\t", 
+          RowBox[{"<|", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+           "\"\<Root\>\"", " ", "->", " ", "\"\<LibraryResources\>\""}], "\n",
+            "\t\t\t\t\t\t", "|>"}]}], ",", "\n", "\t\t\t\t", "Nothing"}], 
+        "\n", "\t\t\t\t", "]"}]}], ",", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"r", ":", 
+        RowBox[{"_Rule", "|", 
+         RowBox[{"{", "___Rule", "}"}]}]}], ":>", "\n", "\t\t\t", 
+       RowBox[{"\"\<LibraryLink\>\"", "\[Rule]", 
+        RowBox[{"Association", "@", 
+         RowBox[{"Flatten", "@", 
+          RowBox[{"{", "r", "}"}]}]}]}]}], ",", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"Except", "[", "_Association", "]"}], "\[Rule]", "Nothing"}]}],
+      "\n", "\t\t", "}"}]}], "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.730643672444272*^9, 3.730643684993537*^9}, {
+  3.7306438393141327`*^9, 
+  3.7306438940306387`*^9}},ExpressionUUID->"fdeb49af-f17d-4c4a-b4d6-\
+0fca7b302746"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Main", "CodeSubsubsubsection",
+ CellChangeTimes->{{3.730643078520897*^9, 
+  3.730643078998859*^9}},ExpressionUUID->"56fb4f94-0779-4470-b1f3-\
+c6be98888e9a"],
 
 Cell[BoxData[{
  RowBox[{
@@ -1185,8 +1774,13 @@ Cell[BoxData[{
      RowBox[{"\"\<Kernel\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t", 
      RowBox[{"\"\<FrontEnd\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t", 
      RowBox[{"\"\<Resource\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t", 
-     RowBox[{"\"\<AutoCompletionData\>\"", "\[Rule]", "Automatic"}]}], "\n", 
-    "\t", "}"}]}], ";"}], "\n", 
+     RowBox[{"\"\<AutoCompletionData\>\"", "\[Rule]", "Automatic"}], ",", 
+     "\n", "\t", 
+     RowBox[{"\"\<ChannelFramework\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
+     "\t", 
+     RowBox[{"\"\<JLink\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t", 
+     RowBox[{"\"\<LibraryLink\>\"", "\[Rule]", "Automatic"}]}], "\n", "\t", 
+    "}"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"PacletExtensionData", "[", 
@@ -1210,390 +1804,43 @@ Cell[BoxData[{
          RowBox[{"<|", "|>"}]}]}], "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
       RowBox[{"{", "\n", "\t\t\t", 
        RowBox[{
-        RowBox[{"Replace", "[", 
+        RowBox[{"extractPacletExtensionKernelInfo", "[", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"OptionValue", "[", "\"\<Kernel\>\"", "]"}], ",", "\n", 
+          "\t\t\t\t", "dest"}], "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
+        
+        RowBox[{"extractPacletExtensionFrontEndInfo", "[", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"OptionValue", "[", "\"\<FrontEnd\>\"", "]"}], ",", "\n", 
+          "\t\t\t\t", "dest"}], "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
+        
+        RowBox[{"extractPacletExtensionDocsInfo", "[", "\n", "\t\t\t\t", 
          RowBox[{
           RowBox[{"OptionValue", "[", "\"\<Documentation\>\"", "]"}], ",", 
-          RowBox[{"{", "\n", "\t", "\t\t\t", 
-           RowBox[{
-            RowBox[{"Automatic", ":>", "\n", "\t", "\t\t\t\t", 
-             RowBox[{"If", "[", 
-              RowBox[{
-               RowBox[{
-                RowBox[{"Length", "@", "\n", "\t", "\t\t\t\t\t\t", 
-                 RowBox[{"FileNames", "[", 
-                  RowBox[{"\"\<*.nb\>\"", ",", "\n", "\t", "\t\t\t\t\t\t\t\t", 
-                   RowBox[{"FileNameJoin", "@", 
-                    RowBox[{"{", 
-                    RowBox[{"dest", ",", "\"\<Documentation\>\""}], "}"}]}], 
-                   ",", "\n", "\t", "\t\t\t\t\t\t\t\t", "\[Infinity]"}], 
-                  "]"}]}], ">", "0"}], ",", "\n", "\t", "\t\t\t\t\t", 
-               RowBox[{
-               "\"\<Documentation\>\"", "->", "\n", "\t", "\t\t\t\t\t\t", 
-                RowBox[{"PacletDocsInfo", "[", "dest", "]"}]}], ",", "\n", 
-               "\t", "\t\t\t\t\t", "Nothing"}], "\n", "\t", "\t\t\t\t\t", 
-              "]"}]}], ",", "\n", "\t", "\t\t\t", 
-            RowBox[{
-             RowBox[{"r", ":", 
-              RowBox[{"_Rule", "|", 
-               RowBox[{"{", "___Rule", "}"}]}]}], ":>", "\n", "\t", 
-             "\t\t\t\t", 
-             RowBox[{"\"\<Documentation\>\"", "\[Rule]", 
-              RowBox[{"Association", "@", 
-               RowBox[{"Flatten", "@", 
-                RowBox[{"{", "r", "}"}]}]}]}]}], ",", "\n", "\t", "\t\t\t", 
-            RowBox[{
-             RowBox[{"Except", "[", "_Association", "]"}], "\[Rule]", 
-             "Nothing"}]}], "\n", "\t", "\t\t\t", "}"}]}], "]"}], ",", "\n", 
-        "\t", "\t\t", 
-        RowBox[{"Replace", "[", 
-         RowBox[{
-          RowBox[{"OptionValue", "[", "\"\<Kernel\>\"", "]"}], ",", 
-          RowBox[{"{", "\n", "\t\t\t\t", 
-           RowBox[{
-            RowBox[{"Automatic", ":>", "\n", "\t\t\t\t\t", 
-             RowBox[{"If", "[", 
-              RowBox[{
-               RowBox[{"AnyTrue", "[", "\n", "\t\t\t\t\t\t\t", 
-                RowBox[{
-                 RowBox[{
-                  RowBox[{
-                   RowBox[{"FileNameJoin", "@", 
-                    RowBox[{"Flatten", "@", 
-                    RowBox[{"{", 
-                    RowBox[{"dest", ",", "#"}], "}"}]}]}], "&"}], "/@", "\n", 
-                  "\t\t\t\t\t\t\t\t", 
-                  RowBox[{"{", 
-                   RowBox[{
-                    RowBox[{
-                    RowBox[{"FileBaseName", "[", "dest", "]"}], "<>", 
-                    "\"\<.wl\>\""}], ",", 
-                    RowBox[{
-                    RowBox[{"FileBaseName", "[", "dest", "]"}], "<>", 
-                    "\"\<.m\>\""}], ",", "\n", "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"{", 
-                    RowBox[{"\"\<Kernel\>\"", ",", "\"\<init.m\>\""}], 
-                    "}"}]}], "}"}]}], ",", "\n", "\t\t\t\t\t\t\t", 
-                 "FileExistsQ"}], "\n", "\t\t\t\t\t\t\t", "]"}], ",", "\n", 
-               "\t\t\t\t\t\t", 
-               RowBox[{"\"\<Kernel\>\"", "->", "\n", "\t", "\t", "\t\t\t\t\t", 
-                RowBox[{"<|", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
-                 RowBox[{
-                  RowBox[{"Root", " ", "->", " ", "\"\<.\>\""}], ",", " ", 
-                  "\n", "\t", "\t", "\t", "\t\t\t\t\t\t", 
-                  RowBox[{"Context", " ", "->", " ", 
-                   RowBox[{
-                    RowBox[{"FileBaseName", "@", "dest"}], "<>", 
-                    "\"\<`\>\""}]}]}], "\n", "\t\t\t\t\t\t\t\t\t", "|>"}]}], 
-               ",", "\n", "\t\t\t\t\t\t", "Nothing"}], "\n", "\t\t\t\t\t\t", 
-              "]"}]}], ",", "\n", "\t\t\t\t", 
-            RowBox[{
-             RowBox[{"r", ":", 
-              RowBox[{"_Rule", "|", 
-               RowBox[{"{", "___Rule", "}"}]}]}], ":>", "\n", "\t", 
-             "\t\t\t\t", 
-             RowBox[{"\"\<Kernel\>\"", "\[Rule]", 
-              RowBox[{"Association", "@", 
-               RowBox[{"Flatten", "@", 
-                RowBox[{"{", "r", "}"}]}]}]}]}], ",", "\n", "\t", "\t\t\t", 
-            RowBox[{
-             RowBox[{"Except", "[", "_Association", "]"}], "\[Rule]", 
-             "Nothing"}]}], "\n", "\t", "\t\t\t", "}"}]}], "]"}], ",", "\n", 
-        "\t", "\t\t", 
-        RowBox[{"Replace", "[", 
-         RowBox[{
-          RowBox[{"OptionValue", "[", "\"\<FrontEnd\>\"", "]"}], ",", 
-          RowBox[{"{", "\n", "\t", "\t\t\t", 
-           RowBox[{
-            RowBox[{"Automatic", ":>", "\n", "\t", "\t\t\t\t", 
-             RowBox[{"If", "[", 
-              RowBox[{
-               RowBox[{
-                RowBox[{"Length", "@", 
-                 RowBox[{
-                  RowBox[{"Select", "[", 
-                   RowBox[{"Not", "@*", "DirectoryQ"}], "]"}], "@", "\n", 
-                  "\t\t\t\t\t\t\t", 
-                  RowBox[{"Flatten", "@", 
-                   RowBox[{"Join", "[", "\n", "\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"Map", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{"FileNames", "[", 
-                    RowBox[{
-                    "\"\<*.nb\>\"", ",", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
-                    RowBox[{"FileNameJoin", "@", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "dest", ",", "\"\<FrontEnd\>\"", ",", 
-                    "\"\<Documentation\>\"", ",", "#"}], "}"}]}], ",", "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t", "\[Infinity]"}], "]"}], "&"}], 
-                    ",", 
-                    RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "\"\<ReferencePages\>\"", ",", "\n", 
-                    "\t\t\t\t\t\t\t\t\t", "\"\<Guides\>\"", ",", "\n", 
-                    "\t\t\t\t\t\t\t\t\t", "\"\<Tutorials\>\""}], "\n", 
-                    "\t\t\t\t\t\t\t\t\t", "}"}]}], "]"}], ",", "\n", 
-                    "\t\t\t\t\t\t\t\t", 
-                    RowBox[{"Map", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{"FileNames", "[", 
-                    RowBox[{"\"\<*\>\"", ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"FileNameJoin", "@", 
-                    RowBox[{"{", 
-                    RowBox[{"dest", ",", "\"\<FrontEnd\>\"", ",", "#"}], 
-                    "}"}]}], ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                    "\[Infinity]"}], "\n", "\t\t\t\t\t\t\t\t\t\t", "]"}], 
-                    "&"}], ",", 
-                    RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "\"\<TextResources\>\"", ",", "\n", "\t\t\t\t\t\t\t\t\t", 
-                    "\"\<SystemResources\>\"", ",", "\n", 
-                    "\t\t\t\t\t\t\t\t\t", "\"\<StyleSheets\>\"", ",", "\n", 
-                    "\t\t\t\t\t\t\t\t\t", "\"\<Palettes\>\""}], "\n", 
-                    "\t\t\t\t\t\t\t\t\t", "}"}]}], "]"}]}], "\n", 
-                    "\t\t\t\t\t\t\t\t", "]"}]}]}]}], ">", "0"}], ",", "\n", 
-               "\t\t\t\t\t\t\t", 
-               RowBox[{
-               "\"\<FrontEnd\>\"", "\[Rule]", "\n", "\t", "\t\t\t\t\t\t\t", 
-                RowBox[{"If", "[", "\n", "\t", "\t\t\t\t\t\t\t\t", 
-                 RowBox[{
-                  RowBox[{
-                   RowBox[{
-                   "DirectoryQ", "@", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"FileNameJoin", "@", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "dest", ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    "\"\<FrontEnd\>\"", ",", "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t", "\"\<TextResources\>\""}], "\n", 
-                    "\t", "\t\t\t\t\t\t\t\t\t\t", "}"}]}]}], "||", "\n", "\t",
-                    "\t\t\t\t\t\t\t\t", 
-                   RowBox[{
-                   "DirectoryQ", "@", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"FileNameJoin", "@", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "dest", ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    "\"\<FrontEnd\>\"", ",", "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t", "\"\<SystemResources\>\""}], "\n",
-                     "\t", "\t\t\t\t\t\t\t\t\t\t", "}"}]}]}]}], ",", "\n", 
-                  "\t", "\t\t\t\t\t\t\t\t", 
-                  RowBox[{"<|", 
-                   RowBox[{"Prepend", "\[Rule]", "True"}], "|>"}], ",", "\n", 
-                  "\t", "\t\t\t\t\t\t\t\t", 
-                  RowBox[{"<|", "|>"}]}], "\n", "\t", "\t\t\t\t\t\t\t\t", 
-                 "]"}]}], ",", "\n", "\t", "\t\t\t\t\t\t", "Nothing"}], "\n", 
-              "\t", "\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t", "\t\t\t", 
-            RowBox[{
-             RowBox[{"r", ":", 
-              RowBox[{"_Rule", "|", 
-               RowBox[{"{", "___Rule", "}"}]}]}], ":>", "\n", "\t", 
-             "\t\t\t\t", 
-             RowBox[{"\"\<FrontEnd\>\"", "\[Rule]", 
-              RowBox[{"Association", "@", 
-               RowBox[{"Flatten", "@", 
-                RowBox[{"{", "r", "}"}]}]}]}]}], ",", "\n", "\t", "\t\t\t", 
-            RowBox[{
-             RowBox[{"Except", "[", "_Association", "]"}], "\[Rule]", 
-             "Nothing"}]}], "\n", "\t", "\t\t\t", "}"}]}], "]"}], ",", "\n", 
-        "\t", "\t\t", 
-        RowBox[{"Replace", "[", 
-         RowBox[{
-          RowBox[{"OptionValue", "[", "\"\<Resource\>\"", "]"}], ",", 
-          RowBox[{"{", "\n", "\t\t\t\t", 
-           RowBox[{
-            RowBox[{"Automatic", ":>", "\n", "\t\t\t\t\t", 
-             RowBox[{"Which", "[", 
-              RowBox[{
-               RowBox[{
-                RowBox[{"Length", "@", "\n", "\t\t\t\t\t\t\t", 
-                 RowBox[{"Select", "[", "\n", "\t\t\t\t\t\t\t\t", 
-                  RowBox[{
-                   RowBox[{"FileNames", "[", 
-                    RowBox[{
-                    "\"\<*\>\"", ",", "\n", "\t", "\t\t\t\t\t\t\t\t", 
-                    RowBox[{"FileNameJoin", "@", 
-                    RowBox[{"{", 
-                    RowBox[{"dest", ",", "\"\<Data\>\""}], "}"}]}], ",", "\n",
-                     "\t\t\t\t\t\t\t\t\t", "\[Infinity]"}], "]"}], ",", "\n", 
-                   "\t\t\t\t\t\t\t\t", 
-                   RowBox[{
-                    RowBox[{
-                    RowBox[{"Not", "@", 
-                    RowBox[{"DirectoryQ", "@", "#"}]}], "&&", "\n", 
-                    "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"Not", "@", 
-                    RowBox[{"StringMatchQ", "[", 
-                    RowBox[{
-                    RowBox[{"FileNameTake", "@", "#"}], ",", " ", 
-                    "\"\<.DS_Store\>\""}], "]"}]}]}], "&"}]}], "\n", 
-                  "\t\t\t\t\t\t\t\t", "]"}]}], ">", "0"}], ",", "\n", 
-               "\t\t\t\t\t\t\t", 
-               RowBox[{"\"\<Resource\>\"", "->", "\n", "\t", "\t\t\t\t\t\t\t", 
-                RowBox[{"<|", "\n", "\t", "\t\t\t\t\t\t\t\t", 
-                 RowBox[{
-                  RowBox[{"\"\<Root\>\"", " ", "->", " ", "\"\<Data\>\""}], 
-                  ",", "\n", "\t", "\t\t\t\t\t\t\t\t", 
-                  RowBox[{
-                  "\"\<Resources\>\"", " ", "->", " ", "\n", "\t", 
-                   "\t\t\t\t\t\t\t\t\t", 
-                   RowBox[{"Map", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{"FileNameDrop", "[", 
-                    RowBox[{
-                    "#", ",", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"FileNameDepth", "[", "dest", "]"}], "+", "1"}]}],
-                     "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t", "]"}], "&"}], ",", 
-                    "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "Select", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"FileNames", "[", 
-                    RowBox[{
-                    "\"\<*\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
-                    "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"FileNameJoin", "@", 
-                    RowBox[{"{", 
-                    RowBox[{"dest", ",", "\"\<Data\>\""}], "}"}]}], ",", "\n",
-                     "\t\t\t\t\t\t\t\t\t\t\t\t\t", "\[Infinity]"}], "]"}], 
-                    ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{"Not", "@", 
-                    RowBox[{"DirectoryQ", "@", "#"}]}], "&&", "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"Not", "@", 
-                    RowBox[{"StringMatchQ", "[", 
-                    RowBox[{
-                    RowBox[{"FileNameTake", "@", "#"}], ",", " ", 
-                    "\"\<.DS_Store\>\""}], "]"}]}]}], "&"}]}], "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", 
-                 "\t\t\t\t\t\t\t\t\t", "|>"}]}], ",", "\n", "\t\t\t\t\t\t", 
-               RowBox[{
-                RowBox[{"Length", "@", "\n", "\t\t\t\t\t\t\t", 
-                 RowBox[{"Select", "[", "\n", "\t\t\t\t\t\t\t\t", 
-                  RowBox[{
-                   RowBox[{"FileNames", "[", 
-                    RowBox[{
-                    "\"\<*\>\"", ",", "\n", "\t", "\t\t\t\t\t\t\t\t", 
-                    RowBox[{"FileNameJoin", "@", 
-                    RowBox[{"{", 
-                    RowBox[{"dest", ",", "\"\<Resources\>\""}], "}"}]}], ",", 
-                    "\n", "\t\t\t\t\t\t\t\t\t", "\[Infinity]"}], "]"}], ",", 
-                   "\n", "\t\t\t\t\t\t\t\t", 
-                   RowBox[{
-                    RowBox[{
-                    RowBox[{"Not", "@", 
-                    RowBox[{"DirectoryQ", "@", "#"}]}], "&&", "\n", 
-                    "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"Not", "@", 
-                    RowBox[{"StringMatchQ", "[", 
-                    RowBox[{
-                    RowBox[{"FileNameTake", "@", "#"}], ",", 
-                    "\"\<.DS_Store\>\""}], "]"}]}]}], "&"}]}], "\n", 
-                  "\t\t\t\t\t\t\t\t", "]"}]}], ">", "0"}], ",", "\n", 
-               "\t\t\t\t\t\t\t", 
-               RowBox[{"\"\<Resource\>\"", "->", "\n", "\t", "\t\t\t\t\t\t\t", 
-                RowBox[{"<|", "\n", "\t", "\t\t\t\t\t\t\t\t", 
-                 RowBox[{
-                  RowBox[{
-                  "\"\<Root\>\"", " ", "->", " ", "\"\<Resources\>\""}], ",", 
-                  "\n", "\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{
-                  "\"\<Resources\>\"", " ", "->", " ", "\n", "\t", 
-                   "\t\t\t\t\t\t\t\t\t", 
-                   RowBox[{"Map", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{"FileNameDrop", "[", 
-                    RowBox[{
-                    "#", ",", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"FileNameDepth", "[", "dest", "]"}], "+", "1"}]}],
-                     "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t", "]"}], "&"}], ",", 
-                    "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "Select", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"FileNames", "[", 
-                    RowBox[{
-                    "\"\<*\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
-                    "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"FileNameJoin", "@", 
-                    RowBox[{"{", 
-                    RowBox[{"dest", ",", "\"\<Resources\>\""}], "}"}]}]}], 
-                    "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"Not", "@", 
-                    RowBox[{"StringMatchQ", "[", 
-                    RowBox[{
-                    RowBox[{"FileNameTake", "@", "#"}], ",", 
-                    "\"\<.DS_Store\>\""}], "]"}]}], "&"}]}], "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", 
-                 "\t\t\t\t\t\t\t\t\t", "|>"}]}], ",", "\n", "\t\t\t\t\t\t", 
-               "True", ",", "\n", "\t\t\t\t\t\t\t", "Nothing"}], "\n", 
-              "\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t", 
-            RowBox[{
-             RowBox[{"r", ":", 
-              RowBox[{"_Rule", "|", 
-               RowBox[{"{", "___Rule", "}"}]}]}], ":>", "\n", "\t", 
-             "\t\t\t\t", 
-             RowBox[{"\"\<Resource\>\"", "\[Rule]", 
-              RowBox[{"Association", "@", 
-               RowBox[{"Flatten", "@", 
-                RowBox[{"{", "r", "}"}]}]}]}]}], ",", "\n", "\t", "\t\t\t", 
-            RowBox[{
-             RowBox[{"Except", "[", "_Association", "]"}], "\[Rule]", 
-             "Nothing"}]}], "\n", "\t\t\t\t", "}"}]}], "]"}], ",", "\n", 
+          "\n", "\t\t\t\t", "dest"}], "\n", "\t\t\t\t", "]"}], ",", "\n", 
         "\t\t\t", 
-        RowBox[{"Replace", "[", 
+        RowBox[{"extractPacletExtensionResourceInfo", "[", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"OptionValue", "[", "\"\<Resource\>\"", "]"}], ",", "\n", 
+          "\t\t\t\t", "dest"}], "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
+        
+        RowBox[{
+        "extractPacletExtensionAutoCompletionDataInfo", "[", "\n", "\t\t\t\t", 
          RowBox[{
           RowBox[{"OptionValue", "[", "\"\<AutoCompletionData\>\"", "]"}], 
-          ",", 
-          RowBox[{"{", "\n", "\t\t\t\t", 
-           RowBox[{
-            RowBox[{"Automatic", ":>", "\n", "\t\t\t\t\t", 
-             RowBox[{"If", "[", 
-              RowBox[{
-               RowBox[{
-                RowBox[{"Length", "@", "\n", "\t", "\t\t\t\t\t\t", 
-                 RowBox[{"FileNames", "[", 
-                  RowBox[{"\"\<*.tr\>\"", ",", "\n", "\t\t\t\t\t\t\t\t\t", 
-                   RowBox[{"FileNameJoin", "@", 
-                    RowBox[{"{", 
-                    RowBox[{"dest", ",", "\"\<AutoCompletionData\>\""}], 
-                    "}"}]}], ",", "\n", "\t", "\t\t\t\t\t\t\t\t", 
-                   "\[Infinity]"}], "]"}]}], ">", "0"}], ",", "\n", 
-               "\t\t\t\t\t\t", 
-               RowBox[{
-               "\"\<AutoCompletionData\>\"", "->", "\n", "\t\t\t\t\t\t\t", 
-                RowBox[{"<|", "\n", "\t\t\t\t\t\t\t\t", 
-                 RowBox[{
-                 "\"\<Root\>\"", " ", "->", " ", 
-                  "\"\<AutoCompletionData\>\""}], "\n", "\t\t\t\t\t\t\t\t", 
-                 "|>"}]}], ",", "\n", "\t\t\t\t\t\t", "Nothing"}], "\n", 
-              "\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t", "\t\t\t", 
-            RowBox[{
-             RowBox[{"r", ":", 
-              RowBox[{"_Rule", "|", 
-               RowBox[{"{", "___Rule", "}"}]}]}], ":>", "\n", "\t", 
-             "\t\t\t\t", 
-             RowBox[{"\"\<Documentation\>\"", "\[Rule]", 
-              RowBox[{"Association", "@", 
-               RowBox[{"Flatten", "@", 
-                RowBox[{"{", "r", "}"}]}]}]}]}], ",", "\n", "\t", "\t\t\t", 
-            RowBox[{
-             RowBox[{"Except", "[", "_Association", "]"}], "\[Rule]", 
-             "Nothing"}]}], "\n", "\t\t\t\t", "}"}]}], "]"}]}], "\n", 
-       "\t\t\t", "}"}]}], "\n", "\t\t", "}"}]}]}], ";"}]}], "CodeInput",
+          ",", "\n", "\t\t\t\t", "dest"}], "\n", "\t\t\t\t", "]"}], ",", "\n",
+         "\t\t\t", 
+        RowBox[{"extractPacletExtensionJLinkInfo", "[", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"OptionValue", "[", "\"\<JLink\>\"", "]"}], ",", "\n", 
+          "\t\t\t\t", "dest"}], "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
+        
+        RowBox[{
+        "extractPacletExtensionLibraryLinkInfo", "[", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"OptionValue", "[", "\"\<LibraryLink\>\"", "]"}], ",", "\n",
+           "\t\t\t\t", "dest"}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", 
+       "}"}]}], "\n", "\t\t", "}"}]}]}], ";"}]}], "CodeInput",
  CellChangeTimes->{{3.703450904465002*^9, 3.70345097650543*^9}, {
    3.7034510552736397`*^9, 3.703451060631516*^9}, {3.703451185218995*^9, 
    3.7034511876643963`*^9}, {3.703467950958033*^9, 3.703468104304346*^9}, {
@@ -1619,9 +1866,16 @@ Cell[BoxData[{
    3.7131126210245647`*^9, 3.713112636391203*^9}, {3.713116244648767*^9, 
    3.71311630340198*^9}, {3.713116385015133*^9, 3.713116403553726*^9}, {
    3.7131176044620037`*^9, 3.713117611543644*^9}, {3.7289641093827677`*^9, 
-   3.728964113036725*^9}},ExpressionUUID->"89c7319f-2fbc-4d11-9bd8-\
+   3.728964113036725*^9}, {3.7305846235623827`*^9, 3.730584637977415*^9}, {
+   3.730642901106854*^9, 3.73064290257613*^9}, {3.730642940757742*^9, 
+   3.730642989950313*^9}, {3.73064302883427*^9, 3.730643071041198*^9}, {
+   3.730643112226557*^9, 3.730643136016562*^9}, {3.730643387256484*^9, 
+   3.73064342601195*^9}, {3.730643656756617*^9, 3.730643730489942*^9}, {
+   3.730644055337351*^9, 
+   3.730644092263999*^9}},ExpressionUUID->"89c7319f-2fbc-4d11-9bd8-\
 b47b4935fd98"]
-}, Closed]],
+}, Open  ]]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1693,8 +1947,8 @@ Cell[BoxData[{
     RowBox[{
      RowBox[{"{", "\n", "\t\t\t", 
       RowBox[{
-       RowBox[{"\"\<Name\>\"", "\[Rule]", "\"\<MyPaclet\>\""}], ",", "\n", 
-       "\t", "\t", "\t", 
+       RowBox[{"\"\<Name\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t\t\t", 
+       
        RowBox[{"\"\<Version\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t", 
        "\t", "\t", 
        RowBox[{"\"\<Creator\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
@@ -1800,8 +2054,8 @@ Cell[BoxData[{
    3.725186583433201*^9}, {3.725187221132365*^9, 3.725187226165021*^9}, {
    3.72788004464824*^9, 3.727880044660783*^9}, {3.728883431071999*^9, 
    3.728883486804628*^9}, {3.728883746818771*^9, 3.728883747808159*^9}, {
-   3.728884453618305*^9, 
-   3.728884458472608*^9}},ExpressionUUID->"4ec5ebfd-177e-4002-bcab-\
+   3.728884453618305*^9, 3.728884458472608*^9}, {3.7306420954892483`*^9, 
+   3.7306420964123497`*^9}},ExpressionUUID->"4ec5ebfd-177e-4002-bcab-\
 b041c07d1b0a"],
 
 Cell[BoxData[
@@ -2173,7 +2427,7 @@ Cell[BoxData[{
   3.72789389234583*^9, 
   3.727893892350543*^9}},ExpressionUUID->"89dc3829-2454-49ae-a388-\
 a820bdef8ad5"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -3467,10 +3721,10 @@ Cell[BoxData[{
                     RowBox[{"URLBuild", "@", 
                     RowBox[{"Flatten", "@", 
                     RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"ext", ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    "p"}], "}"}]}]}]}], "\n", "\t", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t", "}"}]}]}], ",", "\n", "\t", "\t", 
-                    "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "ext", ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", "p"}], 
+                    "}"}]}]}]}], "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t\t", 
+                    "}"}]}]}], ",", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
                     RowBox[{
                     RowBox[{"{", "r_", "}"}], ":>", "\n", "\t", "\t", 
                     "\t\t\t\t\t\t\t\t\t", 
@@ -9679,16 +9933,22 @@ Cell[BoxData[
 Cell[BoxData[
  RowBox[{
   RowBox[{"pacletGetDocsLink", "[", "a_", "]"}], ":=", "\n", "\t", 
-  RowBox[{"\"\<paclet:\>\"", "<>", 
+  RowBox[{"\"\<paclet:\>\"", "<>", "\n", "\t\t", 
    RowBox[{"StringReplace", "[", 
     RowBox[{
-     RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", 
-     RowBox[{
-     "\"\<ServiceConnection_\>\"", "\[Rule]", "\"\<ref/service\>\""}]}], 
-    "]"}]}]}]], "CodeInput",
+     RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", "\n", "\t\t\t", 
+     RowBox[{"{", "\n", "\t\t\t\t", 
+      RowBox[{
+       RowBox[{
+       "\"\<ServiceConnection_\>\"", "\[Rule]", "\"\<ref/service\>\""}], ",", 
+       "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"\"\<Documentation_\>\"", "~~", "n__"}], ":>", "n"}]}], "\n", 
+      "\t\t\t\t", "}"}]}], "\n", "\t\t\t", "]"}]}]}]], "CodeInput",
  CellChangeTimes->{{3.7251865173721437`*^9, 3.725186522093802*^9}, {
-  3.7251866220811167`*^9, 
-  3.7251866679919043`*^9}},ExpressionUUID->"e83ce7ed-5830-43bb-bf89-\
+  3.7251866220811167`*^9, 3.7251866679919043`*^9}, {3.73065403559732*^9, 
+  3.730654072139571*^9}, {3.730655461096396*^9, 
+  3.730655466150161*^9}},ExpressionUUID->"e83ce7ed-5830-43bb-bf89-\
 643ed40ec0a2"],
 
 Cell[BoxData[

@@ -53,8 +53,11 @@ $WebSitePath=
 	{
 		$WebSiteDirectory
 		};
-$WebThemesURLBase=
-	CloudObject["user:b3m2a1.paclets/PacletServer/Resources/SiteBuilder"][[1]];
+If[Length@OwnValues[$WebThemesURLBase]===0,
+	$WebThemesURLBase:=
+		$WebThemesURLBase=
+			CloudObject["user:b3m2a1.paclets/PacletServer/Resources/SiteBuilder"][[1]]
+	];
 $WebSiteTempThemeDir=
 	FileNameJoin@{$TemporaryDirectory, "SiteBuilder_tmp", "Themes"};
 $WebSiteThemePath=

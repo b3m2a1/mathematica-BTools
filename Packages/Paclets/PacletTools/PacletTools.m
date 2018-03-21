@@ -381,7 +381,7 @@ PacletInfo[l:{$pacletInfoSpec..}, ops:OptionsPattern[]]:=
 Options[PacletDocsInfo]={
 	"Language"->"English",
 	"Root"->None,
-	"LinkBase"->None,
+	"LinkBase"->Automatic,
 	"MainPage"->None(*,
 	"Resources"\[Rule]None*)
 	};
@@ -405,6 +405,11 @@ PacletDocsInfo[dest_String?DirectoryQ,ops:OptionsPattern[]]:=
 			PacletDocsInfo[ops,
 				"Language"->
 					lang,
+				If[OptionValue["LinkBase"]===Automatic&&
+					StringMatchQ[FileBaseName[dest], "Documentation_*"],
+					"LinkBase"->StringSplit[FileBaseName[dest], "_"][[2]],
+					Sequence@@{}
+					],
 				"MainPage"->
 					Replace[
 						Map[
@@ -420,9 +425,12 @@ PacletDocsInfo[dest_String?DirectoryQ,ops:OptionsPattern[]]:=
 							],{
 						{}->None,
 						p:{__}:>
-							First@
-								SortBy[StringTrim[p,".nb"],
-									EditDistance[FileBaseName@dest,FileBaseName@#]&]
+							If[MemberQ[p, "Guides/Overview.nb"],
+								"Guides/Overview.nb",
+								First@
+									SortBy[StringTrim[p, ".nb"],
+										EditDistance[FileBaseName@dest,FileBaseName@#]&]
+								]
 						}]
 				]
 			]
@@ -434,156 +442,173 @@ PacletDocsInfo[dest_String?DirectoryQ,ops:OptionsPattern[]]:=
 
 
 
-Options[PacletExtensionData]={
-	"Documentation"->Automatic,
-	"Kernel"->Automatic,
-	"FrontEnd"->Automatic,
-	"Resource"->Automatic,
-	"AutoCompletionData"->Automatic
-	};
-PacletExtensionData[pacletInfo_Association,dest_,ops:OptionsPattern[]]:=
-	Merge[Merge[Last]]@{
-		Replace[Lookup[pacletInfo,"Extensions"],
-			Except[_Association?AssociationQ]:>
-				<||>
-			],
+extractPacletExtensionDocsInfo[base_, dest_]:=
+	Replace[base,
 		{
-			Replace[OptionValue["Documentation"],{
-				Automatic:>
-					If[Length@
+			Automatic:>
+				If[Length@
+						FileNames["*.nb",
+								FileNameJoin@{dest,"Documentation"},
+								\[Infinity]]>0,
+					"Documentation"->
+						PacletDocsInfo[dest],
+					Nothing
+					],
+			r:_Rule|{___Rule}:>
+				"Documentation"->Association@Flatten@{r},
+			a_Association:>
+				"Documentation"->a,
+			_->Nothing
+			}
+		]
+
+
+extractPacletExtensionKernelInfo[base_, dest_]:=
+	Replace[base,{
+		Automatic:>
+			If[AnyTrue[
+					FileNameJoin@Flatten@{dest,#}&/@
+						{FileBaseName[dest]<>".wl",FileBaseName[dest]<>".m",
+							{"Kernel","init.m"}},
+					FileExistsQ
+					],
+				"Kernel"->
+					<|
+							Root -> ".", 
+							Context -> FileBaseName@dest<>"`"
+							|>,
+				Nothing
+				],
+		r:_Rule|{___Rule}:>
+			"Kernel"->Association@Flatten@{r},
+		a_Association:>
+			"Kernel"->a,
+		_->Nothing
+		}]
+
+
+extractPacletExtensionFrontEndInfo[base_, dest_]:=
+	Replace[OptionValue["FrontEnd"],{
+		Automatic:>
+			If[Length@Select[Not@*DirectoryQ]@
+					Flatten@Join[
+						Map[
 							FileNames["*.nb",
-									FileNameJoin@{dest,"Documentation"},
-									\[Infinity]]>0,
-						"Documentation"->
-							PacletDocsInfo[dest],
-						Nothing
-						],
-				r:_Rule|{___Rule}:>
-					"Documentation"->Association@Flatten@{r},
-				Except[_Association]->Nothing
-				}],
-			Replace[OptionValue["Kernel"],{
-				Automatic:>
-					If[AnyTrue[
-							FileNameJoin@Flatten@{dest,#}&/@
-								{FileBaseName[dest]<>".wl",FileBaseName[dest]<>".m",
-									{"Kernel","init.m"}},
-							FileExistsQ
+								FileNameJoin@{dest,"FrontEnd","Documentation",#},
+								\[Infinity]]&,{
+							"ReferencePages",
+							"Guides",
+							"Tutorials"
+							}],
+						Map[
+							FileNames["*",
+								FileNameJoin@{dest,"FrontEnd",#},
+								\[Infinity]
+								]&,{
+							"TextResources",
+							"SystemResources",
+							"StyleSheets",
+							"Palettes"
+							}]
+						]>0,
+					"FrontEnd"->
+						If[
+							DirectoryQ@
+								FileNameJoin@{dest,
+									"FrontEnd",
+									"TextResources"
+									}||
+							DirectoryQ@
+								FileNameJoin@{dest,
+									"FrontEnd",
+									"SystemResources"
+									},
+							<|Prepend->True|>,
+							<||>
 							],
-						"Kernel"->
+					Nothing
+					],
+		r:_Rule|{___Rule}:>
+			"FrontEnd"->Association@Flatten@{r},
+		a_Association:>
+			"FrontEnd"->a,
+		_->Nothing
+		}]
+
+
+extractPacletExtensionResourceInfo[base_, dest_]:=
+	Replace[base,{
+		Automatic:>
+			Which[Length@
+					Select[
+						FileNames["*",
+							FileNameJoin@{dest,"Data"},
+							\[Infinity]],
+						Not@DirectoryQ@#&&
+							Not@StringMatchQ[FileNameTake@#, ".DS_Store"]&
+						]>0,
+					"Resource"->
+						{
 							<|
-									Root -> ".", 
-									Context -> FileBaseName@dest<>"`"
-									|>,
-						Nothing
-						],
-				r:_Rule|{___Rule}:>
-					"Kernel"->Association@Flatten@{r},
-				Except[_Association]->Nothing
-				}],
-			Replace[OptionValue["FrontEnd"],{
-				Automatic:>
-					If[Length@Select[Not@*DirectoryQ]@
-							Flatten@Join[
-								Map[
-									FileNames["*.nb",
-										FileNameJoin@{dest,"FrontEnd","Documentation",#},
-										\[Infinity]]&,{
-									"ReferencePages",
-									"Guides",
-									"Tutorials"
-									}],
-								Map[
-									FileNames["*",
-										FileNameJoin@{dest,"FrontEnd",#},
-										\[Infinity]
-										]&,{
-									"TextResources",
-									"SystemResources",
-									"StyleSheets",
-									"Palettes"
-									}]
-								]>0,
-							"FrontEnd"->
-								If[
-									DirectoryQ@
-										FileNameJoin@{dest,
-											"FrontEnd",
-											"TextResources"
-											}||
-									DirectoryQ@
-										FileNameJoin@{dest,
-											"FrontEnd",
-											"SystemResources"
-											},
-									<|Prepend->True|>,
-									<||>
-									],
-							Nothing
-							],
-				r:_Rule|{___Rule}:>
-					"FrontEnd"->Association@Flatten@{r},
-				Except[_Association]->Nothing
-				}],
-			Replace[OptionValue["Resource"],{
-				Automatic:>
-					Which[Length@
-							Select[
-								FileNames["*",
-									FileNameJoin@{dest,"Data"},
-									\[Infinity]],
-								Not@DirectoryQ@#&&
-									Not@StringMatchQ[FileNameTake@#, ".DS_Store"]&
-								]>0,
-							"Resource"->
-								<|
-									"Root" -> "Data",
-									"Resources" -> 
-										Map[
-											FileNameDrop[#,
-												FileNameDepth[dest]+1
-												]&,
-											Select[
-												FileNames["*",
-													FileNameJoin@{dest,"Data"},
-													\[Infinity]],
-												Not@DirectoryQ@#&&
-													Not@StringMatchQ[FileNameTake@#, ".DS_Store"]&
-												]
+								"Root" -> "Data",
+								"SystemID" -> "*",
+								"Resources" -> 
+									Map[
+										FileNameDrop[#,
+											FileNameDepth[dest]+1
+											]&,
+										Select[
+											FileNames["*",
+												FileNameJoin@{dest,"Data"},
+												\[Infinity]],
+											Not@DirectoryQ@#&&
+												Not@StringMatchQ[FileNameTake@#, ".DS_Store"]&
 											]
-									|>,
-						Length@
-							Select[
-								FileNames["*",
-									FileNameJoin@{dest,"Resources"},
-									\[Infinity]],
-								Not@DirectoryQ@#&&
-									Not@StringMatchQ[FileNameTake@#,".DS_Store"]&
-								]>0,
-							"Resource"->
-								<|
-									"Root" -> "Resources",
-									"Resources" -> 
-										Map[
-											FileNameDrop[#,
-												FileNameDepth[dest]+1
-												]&,
-											Select[
-												FileNames["*",
-													FileNameJoin@{dest,"Resources"}
-													],
-												Not@StringMatchQ[FileNameTake@#,".DS_Store"]&
-												]
+										]
+								|>
+							},
+				Length@
+					Select[
+						FileNames["*",
+							FileNameJoin@{dest,"Resources"},
+							\[Infinity]],
+						Not@DirectoryQ@#&&
+							Not@StringMatchQ[FileNameTake@#,".DS_Store"]&
+						]>0,
+					"Resource"->
+						{
+							<|
+								"Root" -> "Resources",
+								"SystemID" -> "*",
+								"Resources" -> 
+									Map[
+										FileNameDrop[#,
+											FileNameDepth[dest]+1
+											]&,
+										Select[
+											FileNames["*",
+												FileNameJoin@{dest,"Resources"}
+												],
+											Not@StringMatchQ[FileNameTake@#,".DS_Store"]&
 											]
-									|>,
-						True,
-							Nothing
-							],
-				r:_Rule|{___Rule}:>
-					"Resource"->Association@Flatten@{r},
-				Except[_Association]->Nothing
-				}],
-			Replace[OptionValue["AutoCompletionData"],{
+										]
+								|>
+							},
+				True,
+					Nothing
+					],
+		r:_Rule|{___Rule}:>
+			"Resource"->{Association@Flatten@{r}},
+		a_Association:>
+			"Resource"->{a},
+		r:{__Association}:>
+			"Resource"->r,
+		_->Nothing
+		}]
+
+
+extractPacletExtensionAutoCompletionDataInfo[base_, dest_]:=
+	Replace[base,{
 				Automatic:>
 					If[Length@
 							FileNames["*.tr",
@@ -596,9 +621,96 @@ PacletExtensionData[pacletInfo_Association,dest_,ops:OptionsPattern[]]:=
 						Nothing
 						],
 				r:_Rule|{___Rule}:>
-					"Documentation"->Association@Flatten@{r},
+					"AutoCompletionData"->Association@Flatten@{r},
 				Except[_Association]->Nothing
 				}]
+
+
+extractPacletExtensionJLinkInfo[base_, dest_]:=
+	Replace[base, {
+		Automatic:>
+			If[Length@
+					FileNames["*.jar",
+						FileNameJoin@{dest, "Java"},
+						\[Infinity]]>0,
+				"JLink"->
+					<|
+						"Root" -> "Java"
+						|>,
+				Nothing
+				],
+		r:_Rule|{___Rule}:>
+			"JLink"->Association@Flatten@{r},
+		Except[_Association]->Nothing
+		}]
+
+
+extractPacletExtensionLibraryLinkInfo[base_, dest_]:=
+	Replace[base, {
+		Automatic:>
+			If[Length@
+					Select[Not@*DirectoryQ]@
+						FileNames[
+							Except[".DS_Store"],
+							FileNameJoin@{dest, "LibraryResources"},
+							\[Infinity]]>0,
+				"LibraryLink"->
+					<|
+						"Root" -> "LibraryResources"
+						|>,
+				Nothing
+				],
+		r:_Rule|{___Rule}:>
+			"LibraryLink"->Association@Flatten@{r},
+		Except[_Association]->Nothing
+		}]
+
+
+Options[PacletExtensionData]={
+	"Documentation"->Automatic,
+	"Kernel"->Automatic,
+	"FrontEnd"->Automatic,
+	"Resource"->Automatic,
+	"AutoCompletionData"->Automatic,
+	"ChannelFramework"->Automatic,
+	"JLink"->Automatic,
+	"LibraryLink"->Automatic
+	};
+PacletExtensionData[pacletInfo_Association,dest_,ops:OptionsPattern[]]:=
+	Merge[Merge[Last]]@{
+		Replace[Lookup[pacletInfo,"Extensions"],
+			Except[_Association?AssociationQ]:>
+				<||>
+			],
+		{
+			extractPacletExtensionKernelInfo[
+				OptionValue["Kernel"],
+				dest
+				],
+			extractPacletExtensionFrontEndInfo[
+				OptionValue["FrontEnd"],
+				dest
+				],
+			extractPacletExtensionDocsInfo[
+				OptionValue["Documentation"],
+				dest
+				],
+			extractPacletExtensionResourceInfo[
+				OptionValue["Resource"],
+				dest
+				],
+			extractPacletExtensionAutoCompletionDataInfo[
+				OptionValue["AutoCompletionData"],
+				dest
+				],
+			extractPacletExtensionJLinkInfo[
+				OptionValue["JLink"],
+				dest
+				],
+			extractPacletExtensionLibraryLinkInfo[
+				OptionValue["LibraryLink"],
+				dest
+				]
 			}
 		};
 
@@ -647,7 +759,7 @@ $ValidPacletKeys=
 Options[PacletInfoExpression]=
 	Join[
 		{
-			"Name"->"MyPaclet",
+			"Name"->Automatic,
 			"Version"->Automatic,
 			"Creator"->Automatic,
 			"URL"->Automatic,
@@ -3566,7 +3678,13 @@ pacletSiteIcon[_]:=
 
 
 pacletGetDocsLink[a_]:=
-	"paclet:"<>StringReplace[a["Name"], "ServiceConnection_"->"ref/service"]
+	"paclet:"<>
+		StringReplace[a["Name"], 
+			{
+				"ServiceConnection_"->"ref/service",
+				"Documentation_"~~n__:>n
+				}
+			]
 
 
 pacletMakeSummaryItem[k_, v_]:=

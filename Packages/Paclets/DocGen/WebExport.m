@@ -19,6 +19,19 @@
 
 
 
+$DocGenURLBase::usage=
+	"The default URL base for web docs";
+$DocGenWebDocsDirectory::usage=
+	"";
+
+
+DocGenGenerateHTMLDocumentation::usage=
+	"Exports doc pages as HTML";
+
+
+Begin["`Private`"];
+
+
 $DocGenWebResourceBase=
 	URLBuild@
 		<|
@@ -26,6 +39,11 @@ $DocGenWebResourceBase=
 			"Domain"->"www.wolframcloud.com",
 			"Path"->{"objects","b3m2a1.docs","reference"}
 			|>;
+
+
+(* ::Subsubsection::Closed:: *)
+(*webExportApplicationsInstall*)
+
 
 
 webExportApplicationsInstall[
@@ -86,6 +104,11 @@ webExportApplicationsInstall[
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*webExportDocumentationBuildLoad*)
+
+
+
 webExportDocumentationBuildLoad[]:=
 	If[!ListQ@$webExportDocumentationBuildContexts,
 		Block[{
@@ -130,6 +153,11 @@ webExportDocumentationBuildRemove[]:=
 		Protect[$Packages];
 		$webExportDocumentationBuildContexts=.
 		)
+
+
+(* ::Subsubsection::Closed:: *)
+(*webExportTransformAndLayout*)
+
 
 
 webExportTransformAndLayout[entityType_String]:=
@@ -236,6 +264,11 @@ webExportTransformAndLayout[entityType_String]:=
 			];
 
 
+(* ::Subsubsection::Closed:: *)
+(*webExportGatherParameters*)
+
+
+
 $webExportParameters=
 	{
 		"title"->"Title",
@@ -269,6 +302,11 @@ webExportGatherParameters[nb_,ops___?OptionQ]:=
 					Alternatives@@Flatten[Through@{Keys,Values}[$webExportParameters]]
 					]
 			];
+
+
+(* ::Subsubsection::Closed:: *)
+(*webExportDefaultParametersFormat*)
+
 
 
 webExportDefaultParametersFormat[gathered_]:=
@@ -318,6 +356,11 @@ webExportDefaultParametersFormat[gathered_]:=
 				Options[DocumentationBuild`Export`ExportWebPage]
 				]
 	]
+
+
+(* ::Subsubsection::Closed:: *)
+(*webExportNotebookPrep*)
+
 
 
 $webExportGuideReferenceCell=
@@ -878,6 +921,11 @@ webExportNotebookPrep[nb_]:=
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*webExportNotebook*)
+
+
+
 If[!MatchQ[OwnValues[$DocGenFE],{_:>_LinkObject?LinkReadyQ}],
 	$DocGenFE:=
 		With[{fe=
@@ -994,6 +1042,11 @@ webExportNotebook[file_,nb_,ops___?OptionQ]:=
 				]
 			]
 		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*webExportAssetsCopy*)
+
 
 
 $webExportAssets:=
@@ -1245,6 +1298,11 @@ webExportAssetsCopy[dir:(_String|_File)?DirectoryQ]:=
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*webExportPostProcess*)
+
+
+
 webExportPostProcessSingleReplacements//Clear;
 webExportPostProcessMultiReplacements//Clear;
 
@@ -1388,7 +1446,8 @@ webExportPostProcessSingleReplacements["html",strip_,res_,base_,uri_]:=
 				"src=\""<>src<>"\""<>w<>"data-src=\""<>src<>"\"",
 			"data-big=\""~~data:Except["\""]..~~"\"":>
 				"data-big=\""<>data<>"\" "<>
-					"width="<>StringSplit[data][[1]]<>"px "
+					"width="<>StringSplit[data][[1]]<>"px ",
+			Shortest["<!--"~~"#include"|"[if IE]>"~~__~~"-->"]->""
 			}
 		];
 
@@ -1511,6 +1570,11 @@ webExportPostProcess[file_String?FileExistsQ,ops:OptionsPattern[]]:=
 webExportPostProcess[___]:=$Failed
 
 
+(* ::Subsubsection::Closed:: *)
+(*webExportAssetsDeploy*)
+
+
+
 Options[webExportAssetsDeploy]=
 	DeleteDuplicatesBy[First]@
 		Join[
@@ -1570,6 +1634,11 @@ webExportAssetsDeploy[
 				]
 			]
 		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*webExportCloudDeploy*)
+
 
 
 Options[webExportCloudDeploy]=
@@ -1638,6 +1707,11 @@ webExportCloudDeploy[
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*webExportGetURLBase*)
+
+
+
 webExportGetURLBase[url_,doc:"Docs"|"Resource":"Docs",deploy:True|False:False]:=
 	Replace[
 		Replace[
@@ -1667,29 +1741,36 @@ webExportGetURLBase[url_,doc:"Docs"|"Resource":"Docs",deploy:True|False:False]:=
 		}];
 
 
+(* ::Subsubsection::Closed:: *)
+(*DocGenGenerateHTMLDocumentation*)
+
+
+
 DocGenGenerateHTMLDocumentation::nopkg=
 	"DocumentationBuild and/or Transmogrify missing";
-
-
 DocGenGenerateHTMLDocumentation::fail=
 	"Failed to build HTML documentation. Check Message stack.";
+DocGenGenerateHTMLDocumentation::baddir=
+	"Couldn't build into directory ``";
 
 
 Options[DocGenGenerateHTMLDocumentation]=
 	Join[
+		{
+			Directory->Automatic
+			},
 		Options[DocGenGenerateSymbolPages],
 		Options[webExportPostProcess],
 		Options[DocumentationBuild`Export`ExportWebPage],
-		Options[webExportAssetsDeploy],{
-			CloudConnect->Automatic,
-			CloudDeploy->False,
-			"DeployAssets"->False,
-			"CopyAssets"->True
-		}];
-Options[DocGenGenerateHTMLDocumentation]=
-	Options[DocGenGenerateHTMLDocumentation];
+		Options[webExportAssetsDeploy],
+		{
+				CloudConnect->Automatic,
+				CloudDeploy->False,
+				"DeployAssets"->False,
+				"CopyAssets"->True
+			}
+		];
 DocGenGenerateHTMLDocumentation[
-	dir_String?DirectoryQ,
 	nb:{__Notebook}|None,
 	ops:OptionsPattern[]
 	]:=
@@ -1699,8 +1780,19 @@ DocGenGenerateHTMLDocumentation[
 		highlight=
 			CurrentValue[$FrontEndSession,
 				{AutoStyleOptions,"HighlightUndefinedSymbols"}
+				],
+		dir=
+			Replace[OptionValue[Directory], 
+				Automatic:>$DocGenWebDocsDirectory
 				]
 		},
+		If[MatchQ[dir, $DocGenWebDocsDirectory]&&!DirectoryQ[$DocGenWebDocsDirectory],
+				CreateDirectory[$DocGenWebDocsDirectory]
+				];
+		If[!MatchQ[dir, (_String|_File)?DirectoryQ|_FileName?(DirectoryQ@*ToFileName)],
+			Message[DocGenGenerateHTMLDocumentation::baddir, dir];
+			Throw[$Failed]
+			];
 		If[
 			TrueQ@OptionValue["CopyAssets"]||
 				TrueQ@OptionValue["DeployAssets"],
@@ -1846,13 +1938,11 @@ DocGenGenerateHTMLDocumentation::notnb=
 
 
 DocGenGenerateHTMLDocumentation[
-	dir_String?DirectoryQ,
 	nb:{__NotebookObject},
 	ops___?OptionQ
 	]:=
-	DocGenGenerateHTMLDocumentation[dir,NotebookGet/@nb,ops];
+	DocGenGenerateHTMLDocumentation[NotebookGet/@nb,ops];
 DocGenGenerateHTMLDocumentation[
-	dir_String?DirectoryQ,
 	f:{__String?FileExistsQ},
 	ops___?OptionQ
 	]:=
@@ -1861,7 +1951,7 @@ DocGenGenerateHTMLDocumentation[
 			Table[
 				With[{nb=Import[file]},
 					If[MatchQ[nb,_Notebook],
-						DocGenGenerateHTMLDocumentation[dir,nb,ops],
+						DocGenGenerateHTMLDocumentation[nb,ops],
 						Message[DocGenGenerateHTMLDocumentation::nonb,nb];
 						$Failed
 						]
@@ -1874,7 +1964,7 @@ DocGenGenerateHTMLDocumentation[
 				]
 			]
 		];
-DocGenGenerateHTMLDocumentation[dir_String?DirectoryQ,
+DocGenGenerateHTMLDocumentation[
 	nb:_Notebook|_NotebookObject|(_String|_File)?(FileExistsQ@#&&Not@DirectoryQ@#&),
 	ops___?OptionQ
 	]:=
@@ -1883,11 +1973,10 @@ DocGenGenerateHTMLDocumentation[dir_String?DirectoryQ,
 		{l_}:>l
 		];
 DocGenGenerateHTMLDocumentation[
-	dir_String?DirectoryQ,
 	d_String?DirectoryQ,
 	ops___?OptionQ
 	]:=	
-	DocGenGenerateHTMLDocumentation[dir,
+	DocGenGenerateHTMLDocumentation[
 		FileNames["*.nb",
 			If[DirectoryQ@FileNameJoin@{d,"Documentation","English"},
 				FileNameJoin@{d,"Documentation","English"},
@@ -1903,23 +1992,21 @@ DocGenGenerateHTMLDocumentation::nopac=
 
 
 DocGenGenerateHTMLDocumentation[
-	dir_String?DirectoryQ,
 	p_PacletManager`Paclet,
 	ops___?OptionQ
 	]:=
 	With[{d=PacletLookup[p,"Location"]},
 		If[DirectoryQ[d],
-			DocGenGenerateHTMLDocumentation[dir,d,ops],
+			DocGenGenerateHTMLDocumentation[d,ops],
 			Message[DocGenGenerateHTMLDocumentation::nopac,p,d];
 			$Failed
 			]
 		];
 DocGenGenerateHTMLDocumentation[
-	dir_String?DirectoryQ,
 	p:{__PacletManager`Paclet},
 	ops___?OptionQ
 	]:=
-	DocGenGenerateHTMLDocumentation[dir,#,ops]&/@p
+	DocGenGenerateHTMLDocumentation[#,ops]&/@p
 
 
 DocGenGenerateHTMLDocumentation::ambig=
@@ -1927,7 +2014,6 @@ DocGenGenerateHTMLDocumentation::ambig=
 
 
 DocGenGenerateHTMLDocumentation[
-	dir:(_String|_File)?DirectoryQ|_FileName?(DirectoryQ@*ToFileName),
 	pattern:_String?(Not@*FileExistsQ)|_Symbol,
 	ops___?OptionQ
 	]:=
@@ -1956,23 +2042,7 @@ DocGenGenerateHTMLDocumentation[
 		];
 
 
-DocGenGenerateHTMLDocumentation[
-	Optional[Automatic,Automatic],
-	s:Except[_?OptionQ],
-	e:Except[(_String|_File)?DirectoryQ|_PacletManager`Paclet]...
-	]:=
-	With[{dir=
-		Quiet[
-			(*DeleteDirectory[$DocGenWebDocsDirectory,DeleteContents\[Rule]True];*)
-			CreateDirectory[$DocGenWebDocsDirectory];
-			$DocGenWebDocsDirectory
-			]},
-		DocGenGenerateHTMLDocumentation[
-			dir,
-			s,
-			e
-			]
-		];
+End[];
 
 
 

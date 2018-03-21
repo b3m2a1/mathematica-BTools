@@ -19,6 +19,28 @@
 
 
 
+TutorialNotebook::usage=
+	"Formats a tutorial notebook from a spec";
+
+
+DocGenGenerateTutorial::usage=
+	"Generates a tutorial from a spec or from a template";
+
+
+TutorialContextTemplate::usage=
+	"Generates a template that autofills with all the function in a context";
+TutorialTemplate::usage=
+	"Generates a template to build a tutorial from";
+
+
+Begin["`Private`"];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Items*)
+
+
+
 tutorialChunk["Section",text_,ops___]:=
 	Cell[text,"Section",ops];
 tutorialChunk["Emphasis",text_,ops___]:=
@@ -132,6 +154,11 @@ iTutorialSections[subsections_]:=
 		]];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Anchor bar*)
+
+
+
 iTutorialAnchorBar[name_,fs_,guides_,tuts_]:=
 	Cell[
 		BoxData@
@@ -201,6 +228,11 @@ iTutorialAnchorBar[name_,fs_,guides_,tuts_]:=
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*iTutorialMain*)
+
+
+
 iTutorialMain[title_,linkblock_:{}]:=
 	Cell[CellGroupData@Flatten@{
 		Cell[title,"Title"],
@@ -209,6 +241,11 @@ iTutorialMain[title_,linkblock_:{}]:=
 				Thread[links->links]
 			}]
 		}]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Related*)
+
 
 
 iTutorialRelatedSection[guides_,tuts_,links_]:=
@@ -255,6 +292,11 @@ iTutorialRelatedSection[guides_,tuts_,links_]:=
 	 	];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Metadata*)
+
+
+
 iTutorialMetadata[guideName_,guideLink_,abstract_,ops___]:=
 	docMetadata@
 		{
@@ -267,6 +309,11 @@ iTutorialMetadata[guideName_,guideLink_,abstract_,ops___]:=
 			"Type"->"Tutorial",
 			"URI"->StringTrim[pacletLinkBuild[guideLink,"tutorial"],"paclet:"]
 			} 
+
+
+(* ::Subsubsection::Closed:: *)
+(*Generate*)
+
 
 
 tutorialPostProcessJumpLinks[nb_]:=
@@ -369,6 +416,11 @@ iDocGenGenerateTutorial[guideName_,guideLink_,abstract_,sections_,
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*TutorialNotebook*)
+
+
+
 Options[TutorialNotebook]=
 	{
 		"Title"->None,
@@ -412,6 +464,11 @@ TutorialNotebook[ops:OptionsPattern[]]:=
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*DocGenGenerateTutorial*)
+
+
+
 Options[DocGenGenerateTutorial]=
 	Join[
 		Options[TutorialNotebook],
@@ -437,9 +494,14 @@ DocGenGenerateTutorial[nb_NotebookObject]:=
 		]&/@scrapeTutorialTemplate@nb
 
 
-Options[DocGenSaveTutorial]=
+(* ::Subsubsection::Closed:: *)
+(*DocGenSaveTutorial*)
+
+
+
+Options[docGenSaveTutorial]=
 	Options[DocGenGenerateTutorial];
-DocGenSaveTutorial[
+docGenSaveTutorial[
 	guide:_String|None|{__String}|
 		_NotebookObject|_EvaluationNotebook|_InputNotebook:None,
 	dir_String?DirectoryQ,
@@ -484,6 +546,40 @@ DocGenSaveTutorial[
 			]),
 		_->$Failed
 		}];
+
+
+Options[DocGenSaveTutorial]=
+	Join[
+		{
+			Directory->Automatic,
+			Extension->True
+			},
+		Options[docGenSaveTutorial]
+		];
+DocGenSaveTutorial[
+	guide:_String|None|{__String}|
+		_NotebookObject|_EvaluationNotebook|_InputNotebook:None,
+	ops:OptionsPattern[]
+	]:=
+	With[{
+			dir=Replace[OptionValue[Directory], Automatic:>$DocGenDirectory],
+			extension=OptionValue[Extension]},
+		With[
+			{
+				res=
+					docGenSaveTutorial[guide,
+						dir,
+						extension
+						]
+				},
+			res/;Head[res]=!=docGenSaveTutorial
+			]
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*TutorialTemplate*)
+
 
 
 Options[TutorialTemplate]=
@@ -707,10 +803,20 @@ TutorialTemplate[s:{__String},ops:OptionsPattern[]]:=
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*TutorialContextTemplate*)
+
+
+
 TutorialContextTemplate[pat_, o:OptionsPattern[TutorialTemplate]]:=
 	TutorialTemplate[pat<>" Tutorial", contextNames[pat<>"*"],
 	 o
 	 ]
+
+
+(* ::Subsubsection::Closed:: *)
+(*scrapeTutorialTemplate*)
+
 
 
 scrapeTutorialChunk[c:{__Cell}]:=
@@ -845,6 +951,9 @@ scrapeTutorialTemplate[nb_NotebookObject]:=
 			_:>
 				Cells@nb
 			}];
+
+
+End[];
 
 
 

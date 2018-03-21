@@ -75,10 +75,12 @@ PelicanInitializedQ[]:=
 
 
 PelicanInitialize[]:=
-	PyVenvRun["pelican",
-	{"pip","install","pelican","Markdown","typogrify"},
-	"Delay"->1
-	]
+	PyVenvRun[
+		"pelican",
+		{"pip","install","pelican","Markdown","typogrify"},
+		TimeConstraint->10,
+		"PollTime"->1
+		]
 
 
 $PelicanSitesDirectory=

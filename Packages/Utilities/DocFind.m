@@ -29,17 +29,13 @@ OpsFind::usage=
 MsgFind::usage="Finds all the messages for a given object and MessageName pattern";
 
 
-PackageFEHiddenBlock[
+PackageScopeBlock[
 	GetUsage::usage=
 		"Finds the uses of a symbol";
 	FormattedUsage::usage=
 		"Formats a GetUsage call";
 	FormattedDefs::usage=
-		"FormattedUsage with Full"; 
-	]
-
-
-PackageScopeBlock[
+		"FormattedUsage with Full";
 	DocFile::usage="Returns the doc file for a given symbol";
 	OpenDocs::usage="Opens a documentation notebook for the symbol name";
 	ContextOrdering::usage="The ordering function for context notebooks";

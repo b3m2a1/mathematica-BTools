@@ -19,8 +19,40 @@
 
 
 
+GuideNotebook::usage=
+	"Formats a guide notebook from a spec";
+
+
+DocGenGenerateGuide::usage=
+	"Generates a guide from a spec or from a template";
+DocGenSaveGuide::usage=
+	"Saves a guide in a directory";
+
+
+GuideTemplate::usage=
+	"Generates a template to build a guide from";
+GuideContextTemplate::usage=
+	"Generates a template that autofills with all the function in a context";
+
+
+MultiPackageOverviewNotebook::usage=
+	"Generates a multipackage documentation overview notebook";
+GenerateMultiPackageOverview::usage=
+	"Generates the notebook";
+SaveMultiPackageOverview::usage=
+	"Saves the notebook";
+
+
+Begin["`Private`"];
+
+
 (* ::Subsection:: *)
 (*SetUp*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*guideRefBox*)
 
 
 
@@ -67,6 +99,11 @@ guideRefBox[s_String,styling_:"InlineFunctionSans"]:=
 	guideRefBox[s->s,styling];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Subsections*)
+
+
+
 guideSubsection[Delimiter]=
 	guideFunctionCell[Delimiter,___];
 guideSubsection[
@@ -86,6 +123,11 @@ guideSubsection[name_->fs_]:=
 	guideSubsection[name,fs];
 
 
+(* ::Subsubsection::Closed:: *)
+(*guideSubsectionHead*)
+
+
+
 guideSubsectionHead[name_]:=
 	Cell[
 		Replace[name,{
@@ -94,6 +136,11 @@ guideSubsectionHead[name_]:=
 			}],
 		"GuideFunctionsSubsection"
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*guideFunctionCell*)
+
 
 
 guideFunctionCell//ClearAll
@@ -170,12 +217,22 @@ iGuideSubsections[subsections_]:=
 		]];
 
 
+(* ::Subsubsection::Closed:: *)
+(*iGuideMain*)
+
+
+
 iGuideMain[title_,abstract_]:=
 	Cell[CellGroupData@Flatten@{
 		Cell[title,"GuideTitle"],
 		Cell[#,"GuideAbstract"]&/@abstract,
 		Cell["\t", "GuideDelimiterSubsection"]
 		}]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Anchor bar*)
+
 
 
 $GuideAnchorTitle="GUIDE"
@@ -207,6 +264,11 @@ iGuideAnchorBar[name_,fs_,relatedGuides_]:=
 				_:>Sequence@@{}
 				}]
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*RelatedGuides*)
+
 
 
 iGuideRelatedSection[guides_,tuts_,links_]:=
@@ -253,6 +315,11 @@ iGuideRelatedSection[guides_,tuts_,links_]:=
 	 	];
 
 
+(* ::Subsubsection::Closed:: *)
+(*guideAutoSubsections*)
+
+
+
 guideAutoSubsections[types_]:=
 	Riffle[
 		KeyValueMap[
@@ -263,6 +330,11 @@ guideAutoSubsections[types_]:=
 			],
 		Delimiter
 		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*guideAbstractSection*)
+
 
 
 guideAutoAbstractContextName[namePattern_]:=
@@ -323,6 +395,11 @@ guideAutoAbstract[inwhat_,names_,types_]:=
 		"\n"]
 
 
+(* ::Subsubsection::Closed:: *)
+(*Metadata*)
+
+
+
 iGuideMetadata[guideName_,guideLink_,abstract_,ops___]:=
 	docMetadata@{
 		ops,
@@ -333,6 +410,11 @@ iGuideMetadata[guideName_,guideLink_,abstract_,ops___]:=
 		"Type"->"Guide",
 		"URI"->StringTrim[pacletLinkBuild[guideLink,"guide"],"paclet:"]
 		} 
+
+
+(* ::Subsubsection::Closed:: *)
+(*Generate*)
+
 
 
 iDocGenGenerateGuide[guideName_,guideLink_,abstract_,functions_,subsections_,
@@ -376,6 +458,11 @@ iDocGenGenerateGuide[guideName_,guideLink_,abstract_,functions_,subsections_,
 					}
 			]
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GuideNotebook*)
+
 
 
 Options[GuideNotebook]={
@@ -575,17 +662,9 @@ saveGuidePages[
 		)
 
 
-	(
-			(
-				saveSymbolPages[#,dir,extension,ops];
-				NotebookClose[#]
-				)&
-			)
-
-
-Options[DocGenSaveGuide]=
+Options[docGenSaveGuide]=
 	Options[DocGenGenerateGuide];
-DocGenSaveGuide[
+docGenSaveGuide[
 	guide:_String|None|{__String}|
 		_NotebookObject|_EvaluationNotebook|_InputNotebook:None,
 	dir_String?DirectoryQ,
@@ -634,6 +713,35 @@ DocGenSaveGuide[
 		_:>
 			(Message[DocGenGenerateGuide::gfail,If[guide=!=None,guide,{ops}]];$Failed)
 		}];
+Options[DocGenSaveGuide]=
+	Join[
+		{
+			Directory->Automatic,
+			Extension->True
+			},
+		Options[docGenSaveGuide]
+		];
+DocGenSaveGuide[
+	guide:_String|None|{__String}|
+		_NotebookObject|_EvaluationNotebook|_InputNotebook:None,
+	ops:OptionsPattern[]
+	]:=
+	With[
+		{
+			dir=Replace[OptionValue[Directory], Automatic:>$DocGenDirectory], 
+			extension=OptionValue[Extension]
+			},
+		With[
+			{
+				res=
+					docGenSaveGuide[guide,
+						dir,
+						extension
+						]
+				},
+			res/;Head[res]=!=docGenSaveGuide
+			]
+		];
 
 
 (* ::Subsection:: *)
@@ -1007,7 +1115,7 @@ scrapeGuideTemplate[nb_NotebookObject]:=
 
 
 
-DocumentationMultiPackageOverviewNotebook//ClearAll
+MultiPackageOverviewNotebook//ClearAll
 
 
 extractPackageOverviewSections[
@@ -1159,17 +1267,28 @@ formatPackageOverview[
 			}
 
 
-Options[DocumentationMultiPackageOverviewNotebook]=
-	Options[GuideNotebook]
-DocumentationMultiPackageOverviewNotebook[
+Options[MultiPackageOverviewNotebook]=
+	Join[
+		{
+			"NamePattern"->"*",
+			"LinkBase"->"System",
+			"OverviewHeading"->"Overview",
+			"OverviewTitle"->"Documentation Overview",
+			"OverviewTemplate"->"This is a documentation overview for ``"
+			},
+		Options[GuideNotebook]
+		];
+MultiPackageOverviewNotebook[
 	pkgs:{__Rule},
 	ops:OptionsPattern[]
 	]:=
 	Block[{
-		$DocGenActive="System",
-		$GuideAnchorTitle="Documentation Overview",
+		$DocGenActive=OptionValue["LinkBase"],
+		$GuideAnchorTitle=OptionValue["OverviewHeading"],
 		data=formatPackageOverview@*extractPackageOverviewSections/@pkgs,
-		relguides
+		relguides,
+		pkgnames=
+			StringTrim[First/@pkgs, "Documentation_"]
 		},
 		relguides=
 			Map[
@@ -1216,28 +1335,35 @@ DocumentationMultiPackageOverviewNotebook[
 						Delimiter
 						]
 					],
-			ops,
-			"Title"->"Documentation Overview",
-			"Abstract"->
-				"This is a documentation overview for ``"~TemplateApply~
-					StringJoin@
-						Switch[Length[pkgs],
-							1,
-								First/@pkgs,
-							2,
-								Riffle[First/@pkgs," and "],
-							_,
-								Insert[
-									Riffle[First/@pkgs,", "],
-									" and ",
-									-2
+			FilterRules[
+				{
+					ops,
+					"Title"->OptionValue["OverviewTitle"],
+					"Abstract"->
+						TemplateApply[
+							OptionValue["OverviewTemplate"],
+							StringJoin@
+								Switch[Length[pkgs],
+									1,
+										pkgnames,
+									2,
+										Riffle[pkgnames," and "],
+									_,
+										Insert[
+											Riffle[pkgnames,", "],
+											" and ",
+											-2
+											]
 									]
 							],
-			"RelatedGuides"->
-				Join[
-					Replace[Except[_List]->{}]@OptionValue["Subsections"],
-					relguides
-					]
+					"RelatedGuides"->
+						Join[
+							Replace[Except[_List]->{}]@OptionValue["Subsections"],
+							relguides
+							]
+					},
+				Options[GuideNotebook]
+				]
 			]
 		];
 
@@ -1325,9 +1451,9 @@ extractDirectoryDocs[d_]:=
 		];
 
 
-DocumentationMultiPackageOverviewNotebook[
+documentationMultiPackageOverviewNotebook[
 	d:_String?DirectoryQ|{__String?DirectoryQ},
-	pattern_:"*",
+	pattern_,
 	ops:OptionsPattern[]
 	]:=
 	With[{d2=
@@ -1335,16 +1461,17 @@ DocumentationMultiPackageOverviewNotebook[
 			Flatten[extractDirectoryDocs/@Flatten@{d}],
 			If[StringQ[pattern],StringMatchQ,MatchQ][First[#],pattern]&
 			]},
-		DocumentationMultiPackageOverviewNotebook[d2,
+		MultiPackageOverviewNotebook[
+			d2,
 			ops
 			]
 		];
-DocumentationMultiPackageOverviewNotebook[
+documentationMultiPackageOverviewNotebook[
 	co_CloudObject,
-	pattern_:"*",
+	pattern_,
 	ops:OptionsPattern[]
 	]:=
-	DocumentationMultiPackageOverviewNotebook[
+	MultiPackageOverviewNotebook[
 		Select[If[StringQ[pattern],StringMatchQ,MatchQ][First[#],pattern]&]@
 		Flatten@CloudEvaluate@
 			With[{
@@ -1362,6 +1489,79 @@ DocumentationMultiPackageOverviewNotebook[
 				],
 		ops
 		];
+MultiPackageOverviewNotebook[
+	obj:_CloudObject|_String?DirectoryQ|{__String?DirectoryQ},
+	ops:OptionsPattern[]
+	]:=
+	documentationMultiPackageOverviewNotebook[obj,
+		OptionValue["NamePattern"],
+		ops
+		]
+
+
+Options[GenerateMultiPackageOverview]=
+	Options[MultiPackageOverviewNotebook];
+GenerateMultiPackageOverview[
+	obj:{__Rule}|_CloudObject|
+		_String?DirectoryQ|{__String?DirectoryQ},
+	ops:OptionsPattern[]
+	]:=
+	CreateDocument[
+		MultiPackageOverviewNotebook[obj, ops],
+		FilterRules[{ops}, Options[CreateDocument]]
+		]
+
+
+Options[SaveMultiPackageOverviewNotebook]=
+	Join[
+		{
+			Directory->Automatic,
+			Extension->True
+			},
+		Options[GenerateMultiPackageOverview]
+		];
+SaveMultiPackageOverviewNotebook[
+	obj:
+		{__Rule}|_CloudObject|
+		_String?DirectoryQ|{__String?DirectoryQ}|
+		_NotebookObject,
+	ops:OptionsPattern[]
+	]:=
+	With[
+		{
+			nb=
+				If[!MatchQ[obj, _NotebookObject], 
+					GenerateMultiPackageOverview[obj, 
+						FilterRules[
+							{
+								Visible->False,
+								ops
+								}, 
+							Options[MultiPackageOverviewNotebook]
+							]
+						]
+					],
+			dir=Replace[OptionValue[Directory], Automatic:>$DocGenDirectory], 
+			extension=OptionValue[Extension]
+			},
+		With[
+			{
+				res=
+					docGenSaveGuide[
+						nb,
+						dir,
+						extension
+						]
+				},
+			If[!MatchQ[obj, _NotebookObject],
+				NotebookClose[nb]
+				];
+			res/;Head[res]=!=docGenSaveGuide
+			];
+		]
+
+
+End[];
 
 
 

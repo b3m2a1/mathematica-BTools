@@ -123,86 +123,57 @@ $DocGenMethodRouter=
 	<|
 		"SymbolPage"->
 			<|
-				Automatic->
+				Automatic:>
 					DocGenGenerateSymbolPages,
-				"Save"->
+				"Save":>
 					DocGenSaveSymbolPages,
-				"Template"->
+				"Template":>
 					SymbolPageTemplate,
-				"Notebook"->
+				"Notebook":>
 					SymbolPageNotebook
 				|>,
 		"Guide"->
 			<|
-				Automatic->
+				Automatic:>
 					DocGenGenerateGuide,
-				"Save"->
+				"Save":>
 					DocGenSaveGuide,
-				"Template"->
+				"Template":>
 					GuideTemplate,
-				"Notebook"->
-					GuideNotebook,
-				"MultiPackageOverview"->
-					DocumentationMultiPackageOverviewNotebook
+				"Notebook":>
+					GuideNotebook
+				|>,
+		"MultiPackageOverview"->
+			<|
+				Automatic:>
+					GenerateMultiPackageOverview,
+				"Save":>
+					SaveMultiPackageOverview,
+				"Notebook":>
+					MultiPackageOverviewNotebook
 				|>,
 		"Tutorial"->
 			<|
-				Automatic->
+				Automatic:>
 					DocGenGenerateTutorial,
-				"Save"->
+				"Save":>
 					DocGenGenerateTutorial,
-				"Template"->
+				"Template":>
 					TutorialTemplate,
-				"Notebook"->
+				"Notebook":>
 					TutorialNotebook
 				|>,
-		"Paclet"->
+		"Paclet":>
 			DocGenGenerateDocumentation,
-		"HTML"->
+		"HTML":>
 			DocGenGenerateHTMLDocumentation,
-		"Index"->
+		"Index":>
 			DocGenIndexDocumentation
 		|>;
 
 
 docGenDefault[docObj_, type_, fun_, meth_, methOps_, ops___]:=
-	Which[
-		fun===DocGenGenerateDocumentation,
-			fun[docObj,
-				Lookup[methOps, 
-					Directory,
-					Automatic
-					],
-				Lookup[methOps,
-				 "OpenOnBuild",
-				 True
-				 ],
-				Evaluate@FilterRules[{ops}, Options@fun]
-				],
-		fun===DocGenGenerateHTMLDocumentation,
-			fun[
-				Lookup[methOps, 
-					Directory,
-					Automatic
-					],
-				docObj,
-				Evaluate@FilterRules[{ops}, Options@fun]
-				],
-		meth==="Save",
-			fun[docObj, 
-				Lookup[methOps, 
-					Directory,
-					$DocGenDirectory
-					],
-				Lookup[methOps,
-				 Extension,
-				 True
-				 ],
-				Evaluate@FilterRules[{ops}, Options@fun]
-				],
-		True,
-			fun[docObj, Evaluate@FilterRules[{ops}, Options@fun]]
-		];
+	fun[docObj, Evaluate@FilterRules[{ops}, Options@fun]];
 docGenDefault~SetAttributes~HoldFirst
 
 
@@ -218,8 +189,57 @@ DocGen::badmeth=
 DocGen::nogen=
 	"Couldn't generate documentation of type `` for object ``";
 DocGen[
-	type:_?(KeyExistsQ[$DocGenMethodRouter, #]&):"SymbolPage",
-	docObj:Except[_Rule|_RuleDelayed|{(_Rule|_RuleDelayed), ___}],
+	type:_String?(KeyExistsQ[$DocGenMethodRouter, #]&)|Automatic:Automatic,
+	docObj:
+		Except[
+			"Function"|"Options"|"Methods"|
+			_Rule|_RuleDelayed|{(_Rule|_RuleDelayed), ___}
+			],
+	ops:OptionsPattern[]
+	]:=
+	Module[
+		{
+			typ=
+				Replace[type,
+					Automatic:>
+						If[MatchQ[Unevaluated[docObj], {__String}],
+							"Paclet",
+							"SymbolPage"
+							]
+					],
+			meth=Lookup[{ops}, Method, Automatic],
+			methOps={},
+			fun,
+			res
+			},
+		If[ListQ@meth, 
+			methOps=Select[meth, OptionQ];
+			meth=SelectFirst[meth, Not@*OptionQ]
+			];
+		fun=$DocGenMethodRouter[typ];
+		If[AssociationQ@fun,
+			fun=fun[meth]
+			];
+		If[MissingQ@fun,
+			Message[DocGen::badmeth,
+				meth,
+				typ,
+				Keys@$DocGenMethodRouter[typ]
+				];
+			res=None,
+			res=$DocGenFunction[docObj, typ, fun, meth, methOps, ops];
+			If[Head[res]===fun, 
+				Message[DocGen::nogen,
+					typ,
+					HoldForm[docObj]
+					]
+				];
+			];
+		res/;res=!=None&&Head[res]=!=fun
+		];
+DocGen[
+	type:_String?(KeyExistsQ[$DocGenMethodRouter, #]&),
+	"Function",
 	ops:OptionsPattern[]
 	]:=
 	Module[
@@ -237,29 +257,35 @@ DocGen[
 		If[AssociationQ@fun,
 			fun=fun[meth]
 			];
-		If[MissingQ@fun,
-			Message[DocGen::badmeth,
-				meth,
-				type,
-				Keys@$DocGenMethodRouter[type]
-				];
-			res=None,
-			res=$DocGenFunction[docObj, type, fun, meth, methOps, ops];
-			If[Head[res]===fun, 
-				Message[DocGen::nogen,
-					type,
-					HoldForm[docObj]
-					]
-				];
-			];
-		res/;res=!=None&&Head[res]=!=fun
+		fun
 		];
-DocGen~SetAttributes~HoldRest
+DocGen[
+	type:_String?(KeyExistsQ[$DocGenMethodRouter, #]&),
+	"Methods",
+	ops:OptionsPattern[]
+	]:=
+	Module[
+		{
+			fun
+			},
+		fun=$DocGenMethodRouter[type];
+		If[AssociationQ@fun,
+			Keys@fun,
+			Automatic
+			]
+		];
+DocGen[
+	type:_String?(KeyExistsQ[$DocGenMethodRouter, #]&),
+	"Options",
+	ops:OptionsPattern[]
+	]:=
+	Options@DocGen[type, "Function"];
+DocGen~SetAttributes~HoldAll
 
 
 PackageAddAutocompletions[
 	"DocGen",
-	{Keys@$DocGenMethodRouter}
+	{Keys@$DocGenMethodRouter, {"Function", "Options", "Methods"}}
 	]
 
 

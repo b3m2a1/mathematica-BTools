@@ -9,6 +9,7 @@ Map[
   {
     "Paclets",
     "Utilities",
+    "Formatting",
     "FrontEnd",
     "Frameworks",
     "External",

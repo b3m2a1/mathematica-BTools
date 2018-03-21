@@ -95,6 +95,17 @@ Begin["`Private`"];
 
 
 (* ::Subsubsection::Closed:: *)
+(*patternHack*)
+
+
+
+pacletUploadPat=((_String|_URL|_File|{_String,_String}|_Paclet)|
+	(_String|_Paclet->_String|_URL|_File|{_String,_String}|_Paclet))|
+	{((_String|_URL|_File|{_String,_String}|_Paclet)|
+			(_String|_Paclet->_String|_URL|_File|{_String,_String}|_Paclet))..};
+
+
+(* ::Subsubsection::Closed:: *)
 (*File*)
 
 
@@ -165,10 +176,13 @@ ImportPacletServers[_]:=
 
 
 
-$PacletServersIndexes=
-	<|
-		"b3m2a1"->CloudObject["user:b3m2a1.paclets/PacletIndex.m"]
-		|>;
+If[Length@OwnValues[$PacletServersIndexes]==0,
+	$PacletServersIndexes:=
+		$PacletServersIndexes=
+			<|
+				"b3m2a1"->CloudObject["user:b3m2a1.paclets/PacletIndex.m"]
+				|>
+	];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1207,7 +1221,7 @@ Options[PacletServerAdd]=
 	Options@PacletUpload;
 PacletServerAdd[
 	server:localPacletServerPat,
-	pacletSpecs:$PacletUploadPatterns,
+	pacletSpecs:pacletUploadPat,
 	ops:OptionsPattern[]
 	]:=
 	PacletUpload[
@@ -1223,7 +1237,7 @@ PacletServerAdd[
 		];
 PacletServerAdd[
 	k_?(KeyMemberQ[$PacletServers, #]&),
-	pacletSpecs:$PacletUploadPatterns,
+	pacletSpecs:pacletUploadPat,
 	ops:OptionsPattern[]
 	]:=
 	With[{s=
@@ -1648,7 +1662,11 @@ PacletServerBuild[
 	server:localPacletServerPatOrDir,
 	ops:OptionsPattern[]
 	]:=
-	With[{siteData=PacletServerExposedPaclets[server]},
+	With[
+		{
+			siteData=
+				PacletServerExposedPaclets[server]
+			},
 		PacletServerInitialize[server];
 		If[MatchQ[OptionValue["RegenerateContent"], True|Automatic],
 			If[OptionValue[Monitor],
