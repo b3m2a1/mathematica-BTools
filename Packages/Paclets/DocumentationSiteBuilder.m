@@ -41,20 +41,31 @@ $DocSiteDirectory:=
 			};
 
 
+Clear@DocSiteInitializedQ;
+DocSiteInitializedQ[dir_String?DirectoryQ]:=
+	AllTrue[{dir,FileNameJoin@{dir,"content"},FileNameJoin@{dir,"SiteConfig.wl"}},
+		FileExistsQ
+		];
+DocSiteInitializedQ[___]:=False
+
+
 $DocSiteInitialized:=
-	With[{d=$DocSiteDirectory},
-		AllTrue[{d,FileNameJoin@{d,"content"},FileNameJoin@{d,"SiteConfig.wl"}},
-			FileExistsQ
-			]
-		]
+	DocSiteInitializedQ[$DocSiteDirectory];
 
 
-DocumentationSiteInitialize[]:=
-	If[!$DocSiteInitialized,
-		With[{d=$DocSiteDirectory},
+possibleDocSiteQ=(DirectoryQ[#]||DirectoryQ[DirectoryName[#]]&);
+
+
+DocumentationSiteInitialize//Clear
+DocumentationSiteInitialize[
+	dir:_String?possibleDocSiteQ|Automatic:Automatic
+	]:=
+	With[{d=Replace[dir, Automatic:>$DocSiteDirectory]},
+		If[!DocSiteInitializedQ[d],	
 			If[!DirectoryQ@d,	
 				CreateDirectory[d,CreateIntermediateDirectories->True]
-				];
+				]
+			];
 			With[{tempDir=PackageFilePath["Resources","Templates","DocumentationSite"]},
 				Map[
 					With[{
@@ -71,7 +82,9 @@ DocumentationSiteInitialize[]:=
 					];
 				]
 			]
-		]
+
+
+DocumentationSiteBuild//Clear
 
 
 Options[DocumentationSiteBuild]=
@@ -81,46 +94,45 @@ Options[DocumentationSiteBuild]=
 			},
 		Options[WebSiteBuild]
 		];
-DocumentationSiteBuild[ops:OptionsPattern[]]:=
-	With[{buildOverview=TrueQ@OptionValue["BuildOverview"]},
-		DocumentationSiteInitialize[];
-		If[buildOverview,
-			Export[
-				FileNameJoin@{
-					BTools`Private`$DocPacletsDirectory,
-					"Documentation",
-					"English",
-					"Guides",
-					"DocumentationOverview.nb"
-					},
-				BTools`Private`Hidden`DocumentationMultiPackageOverviewNotebook[
-					BTools`Private`$DocPacletsDirectory,
-					Except["DocPaclets"]
+DocumentationSiteBuild[
+	dir:_String?possibleDocSiteQ|Automatic:Automatic,
+	ops:OptionsPattern[]
+	]:=
+	With[{d=Replace[dir, Automatic:>$DocSiteDirectory]},
+		With[{buildOverview=TrueQ@OptionValue["BuildOverview"]},
+			DocumentationSiteInitialize[d];
+			If[buildOverview,
+				DocGen[
+					"HTML",
+					Evaluate@DocGen[
+						"MultiPackageOverview",
+						Evaluate@$DocGenDirectory,
+						Method->"Save"
+						],
+					CloudDeploy->True
 					]
 				];
-			GenerateHTMLDocumentation[
-				FileNameJoin@{
-					BTools`Private`$DocPacletsDirectory,
-					"Documentation",
-					"English",
-					"Guides",
-					"DocumentationOverview.nb"
-					},
-				CloudDeploy->True
+			WebSiteBuild[d,
+				Sequence@@FilterRules[{ops},Options[WebSiteBuild]]
 				]
-			];
-		WebSiteBuild[$DocSiteDirectory,
-			Sequence@@FilterRules[{ops},Options[WebSiteBuild]]
 			]
 		];
+
+
+DocumentationSiteDeploy//Clear
 Options[DocumentationSiteDeploy]=
 	Options[WebSiteDeploy];
-DocumentationSiteDeploy[ops:OptionsPattern[]]:=
-	WebSiteDeploy[
-		$DocSiteDirectory,
-		"/",
-		Sequence@@
-			FilterRules[{ops},Options[WebSiteDeploy]]
+DocumentationSiteDeploy[
+	dir:_String?possibleDocSiteQ|Automatic:Automatic,
+	ops:OptionsPattern[]
+	]:=
+	With[{d=Replace[dir, Automatic:>$DocSiteDirectory]},
+		WebSiteDeploy[
+			d,
+			"/",
+			Sequence@@
+				FilterRules[{ops},Options[WebSiteDeploy]]
+			]
 		]
 
 

@@ -19,14 +19,14 @@
 
 
 
-PackageFEHiddenBlock[
+(*PackageFEHiddenBlock[*)
 	$CompressionIcon::usage=
 		"The icon to use when creating compressed expressions";
 	SummarizedForm::usage="Summarizes an expression in a summary box";
 	IconForm::usage="Formats an expression inside an interpretation frame";
 	CompressedForm::usage=
 		"Compresses an expression in either a summarized form or icon form";
-	]
+	(*]*)
 
 
 StoreExpression::usage=

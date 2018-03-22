@@ -13,22 +13,28 @@ Cell[BoxData[{
    "\"\<The default URL base for web docs\>\""}], ";"}], "\n", 
  RowBox[{
   RowBox[{
-   RowBox[{"$DocGenWebDocsDirectory", "::", "usage"}], "=", "\n", "\t", 
+   RowBox[{"$DocGenWebResourceBase", "::", "usage"}], "=", "\n", "\t", 
    "\"\<\>\""}], ";"}]}], "CodeInput",
  CellChangeTimes->{{3.712094186687291*^9, 3.712094225051469*^9}, 
-   3.723734746101925*^9, 
-   3.7237360515833178`*^9},ExpressionUUID->"a52e8d1d-71d9-4050-ac25-\
+   3.723734746101925*^9, 3.7237360515833178`*^9, {3.730672258713737*^9, 
+   3.730672262594324*^9}, {3.730674946349813*^9, 
+   3.7306749467126207`*^9}},ExpressionUUID->"a52e8d1d-71d9-4050-ac25-\
 1f2d88aa9a39"],
 
-Cell[BoxData[
+Cell[BoxData[{
  RowBox[{
   RowBox[{
    RowBox[{"DocGenGenerateHTMLDocumentation", "::", "usage"}], "=", "\n", 
-   "\t", "\"\<Exports doc pages as HTML\>\""}], ";"}]], "CodeInput",
+   "\t", "\"\<Exports doc pages as HTML\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"DocGenHTMLCloudDeploy", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Cloud deploys the docs\>\""}], ";"}]}], "CodeInput",
  CellChangeTimes->{{3.707569664068248*^9, 3.707569673354382*^9}, {
    3.7079136081231833`*^9, 3.707913614592553*^9}, {3.712315800692683*^9, 
-   3.712315825871694*^9}, 
-   3.723734734419383*^9},ExpressionUUID->"db231f28-aeb8-4a06-9634-\
+   3.712315825871694*^9}, 3.723734734419383*^9, {3.730668590318385*^9, 
+   3.730668603326332*^9}, {3.73066881968417*^9, 
+   3.730668829564228*^9}},ExpressionUUID->"db231f28-aeb8-4a06-9634-\
 cb831faaec0b"],
 
 Cell[CellGroupData[{
@@ -4274,6 +4280,412 @@ bec4195afb41"]
 
 Cell[CellGroupData[{
 
+Cell["\[LeftCeiling]webExportNotebookDoExport\[RightFloor]", \
+"CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.730669506133546*^9, 
+  3.730669537365687*^9}},ExpressionUUID->"2cdff35c-5bab-411e-9736-\
+403f7f9ce623"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"webExportNotebookDoExport", "[", "\n", "\t", 
+   RowBox[{
+   "dir_", ",", "\n", "\t", "nb_", ",", "\n", "\t", "deploy_", ",", " ", "\n",
+     "\t", "urlBase_", ",", "\n", "\t", "resBase_", ",", "\n", "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"With", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{"params", "=", 
+      RowBox[{"webExportGatherParameters", "[", 
+       RowBox[{"nb", ",", " ", "ops"}], "]"}]}], "\n", "\t\t\t", "}"}], ",", 
+    "\n", "\t\t", 
+    RowBox[{"Replace", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"webExportNotebook", "[", 
+       RowBox[{"dir", ",", " ", "nb", " ", ",", "params"}], "]"}], ",", 
+      RowBox[{"{", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Except", "[", 
+          RowBox[{"_String", "?", "FileExistsQ"}], "]"}], ":>", "\n", 
+         "\t\t\t\t", 
+         RowBox[{"(", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Message", "[", 
+            RowBox[{"DocGenGenerateHTMLDocumentation", "::", "fail"}], "]"}], 
+           ";", "\n", "\t\t\t\t\t", 
+           RowBox[{"Throw", "[", "$Failed", "]"}]}], "\n", "\t\t\t\t\t", 
+          ")"}]}], ",", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"f_String", "?", "FileExistsQ"}], ":>", "\n", "\t\t\t\t", 
+         RowBox[{"With", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"fns", "=", "\n", "\t\t\t\t\t", 
+             RowBox[{"FileNames", "[", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"ToLowerCase", "[", 
+                 RowBox[{"FileBaseName", "[", "f", "]"}], "]"}], "<>", 
+                "\"\<*.html\>\""}], ",", "\n", "\t\t\t\t\t\t", 
+               RowBox[{"FileNameJoin", "@", 
+                RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"DirectoryName", "[", "f", "]"}], ",", "\n", 
+                  "\t\t\t\t\t\t\t", "\"\<Files\>\"", ",", "\n", 
+                  "\t\t\t\t\t\t\t", 
+                  RowBox[{"FileBaseName", "[", "f", "]"}]}], "\n", 
+                 "\t\t\t\t\t\t\t", "}"}]}]}], "\n", "\t\t\t\t\t\t", "]"}]}], 
+            "\n", "\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{"webExportPostProcess", "[", "\n", "\t\t\t\t\t\t", 
+               RowBox[{"#", ",", "\n", "\t\t\t\t\t\t", 
+                RowBox[{"FilterRules", "[", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"Flatten", "@", 
+                   RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{"(*", " ", 
+                    RowBox[{
+                    "Link", " ", "URL", " ", "base", " ", "and", " ", 
+                    "Resources"}], " ", "*)"}], "\n", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{
+                    "\"\<URLBase\>\"", "->", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "webExportGetURLBase", "[", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    
+                    RowBox[{
+                    "urlBase", ",", "\n", "\t\t\t\t\t\t\t\t\t\t", "deploy"}], 
+                    "\n", "\t\t\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<ResourceBase\>\"", "->", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    
+                    RowBox[{
+                    "webExportGetURLBase", "[", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    
+                    RowBox[{
+                    "resBase", ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    "\"\<Resource\>\"", ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    "deploy"}], "\n", "\t\t\t\t\t\t\t\t\t\t", "]"}]}], ",", 
+                    "\n", "\t\t\t\t\t\t\t\t", "params"}], "\n", 
+                    "\t\t\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t", 
+                  "\t\t\t\t\t\t", 
+                  RowBox[{"Options", "[", "webExportPostProcess", "]"}]}], 
+                 "\n", "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t", "]"}],
+               "&"}], "/@", 
+             RowBox[{"Prepend", "[", 
+              RowBox[{"fns", ",", "f"}], "]"}]}], ";", "\n", "\t\t\t\t\t", 
+            "f"}]}], "\n", "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", "}"}]}],
+      "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.7306695387787533`*^9, 
+  3.730669620902893*^9}},ExpressionUUID->"baa76386-5a59-467e-844b-\
+dd3c2a5d2175"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]DocGenHTMLPostProcess\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7306682907412357`*^9, 3.730668321361658*^9}, 
+   3.730668682417268*^9},ExpressionUUID->"344945df-d86b-4c69-8e19-\
+2934fe8efea9"],
+
+Cell[BoxData[
+ RowBox[{"DocGenHTMLPostProcess", "//", "Clear"}]], "CodeInput",
+ CellChangeTimes->{{3.7306698131855717`*^9, 
+  3.730669813895007*^9}},ExpressionUUID->"a603626c-bc8a-463c-98d6-\
+c7ef350fc0a1"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "DocGenHTMLPostProcess", "]"}], "=", "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"\"\<Highlighting\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"CloudConnect", "\[Rule]", "Automatic"}], ",", "\n", "\t\t", 
+     RowBox[{"CloudDeploy", "\[Rule]", "False"}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<DeployAssets\>\"", "\[Rule]", "False"}], ",", "\n", "\t\t", 
+     
+     RowBox[{"\"\<CopyAssets\>\"", "\[Rule]", "True"}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<URLBase\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t\t", 
+     RowBox[{"Directory", "\[Rule]", "Automatic"}]}], "\n", "\t\t", "}"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"DocGenHTMLPostProcess", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"html", ":", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"_String", "|", "$Failed"}], ")"}], ".."}], "}"}], "|", 
+      "None"}]}], ",", "\n", "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"With", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"highlight", "=", "\n", "\t\t\t\t", 
+       RowBox[{"OptionValue", "[", "\"\<Highlighting\>\"", "]"}]}], ",", "\n",
+       "\t\t\t", 
+      RowBox[{"deploy", "=", "\n", "\t\t\t\t", 
+       RowBox[{"TrueQ", "@", 
+        RowBox[{"OptionValue", "[", "CloudDeploy", "]"}]}]}], ",", "\n", 
+      "\t\t\t", 
+      RowBox[{"dir", "=", "\n", "\t\t\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{
+         RowBox[{"OptionValue", "[", "Directory", "]"}], ",", " ", "\n", 
+         "\t\t\t\t\t", 
+         RowBox[{"Automatic", "\[RuleDelayed]", "$DocGenWebDocsDirectory"}]}],
+         "\n", "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "}"}], ",", "\n", 
+    "\t\t", 
+    RowBox[{
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"MatchQ", "[", 
+        RowBox[{"highlight", ",", " ", 
+         RowBox[{"True", "|", "False"}]}], "]"}], ",", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"CurrentValue", "[", 
+         RowBox[{"$FrontEndSession", ",", "\n", "\t\t\t\t", 
+          RowBox[{"{", 
+           RowBox[{
+           "AutoStyleOptions", ",", "\"\<HighlightUndefinedSymbols\>\""}], 
+           "}"}]}], "\n", "\t\t\t\t", "]"}], "=", "\n", "\t\t\t\t", 
+        "highlight"}]}], "\n", "\t\t\t", "]"}], ";", "\n", "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{"deploy", ",", "\n", "\t\t\t", 
+       RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"Replace", "[", 
+          RowBox[{
+           RowBox[{"OptionValue", "[", "CloudConnect", "]"}], ",", "\n", 
+           "\t\t\t\t\t", 
+           RowBox[{"Automatic", "->", 
+            RowBox[{"Key", "[", "\"\<DocumentationAccount\>\"", "]"}]}]}], 
+          "\n", "\t\t\t\t\t", "]"}], ",", 
+         RowBox[{"{", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"a", ":", "$KeyChainCloudAccounts"}], ":>", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"KeyChainConnect", "[", "a", "]"}]}], ",", "\n", 
+           "\t\t\t\t", 
+           RowBox[{"s_String", ":>", "\n", "\t\t\t\t\t", 
+            RowBox[{"If", "[", 
+             RowBox[{
+              RowBox[{"$WolframID", "=!=", "s"}], ",", "\n", "\t\t\t\t\t\t", 
+              RowBox[{"CloudConnect", "[", "s", "]"}]}], "\n", "\t\t\t\t\t\t",
+              "]"}]}], ",", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"{", "s__String", "}"}], ":>", "\n", "\t\t\t\t\t", 
+            RowBox[{"CloudConnect", "[", "s", "]"}]}], ",", "\n", "\t\t\t\t", 
+           
+           RowBox[{"k_Key", ":>", "\n", "\t\t\t\t\t", 
+            RowBox[{"KeyChainConnect", "[", "k", "]"}]}]}], "\n", "\t\t\t\t", 
+          "}"}]}], "]"}]}], "\n", "\t\t\t", "]"}], ";", "\n", "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"deploy", "&&", 
+        RowBox[{"OptionValue", "[", "\"\<DeployAssets\>\"", "]"}]}], ",", 
+       "\n", "\t\t\t", 
+       RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"webExportGetURLBase", "[", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"OptionValue", "[", "\"\<ResourceBase\>\"", "]"}], ",", 
+           "\n", "\t\t\t\t\t", "\"\<Resource\>\"", ",", "\n", "\t\t\t\t\t", 
+           "deploy"}], "\n", "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"s_String", ":>", "\n", "\t\t\t\t\t", 
+          RowBox[{"webExportAssetsDeploy", "[", 
+           RowBox[{"dir", ",", "s", ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"FilterRules", "[", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{
+              "{", "\n", "\t\t\t\t\t\t\t\t", "ops", "\n", "\t\t\t\t\t\t\t\t", 
+               "}"}], ",", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"Options", "@", "webExportAssetsDeploy"}]}], "\n", 
+             "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t", "]"}]}]}], "\n",
+         "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}], ";", "\n", "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"deploy", "&&", 
+        RowBox[{"AllTrue", "[", 
+         RowBox[{"html", ",", " ", "FileExistsQ"}], "]"}]}], ",", "\n", 
+       "\t\t\t", 
+       RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"webExportGetURLBase", "[", 
+          RowBox[{
+           RowBox[{"OptionValue", "[", "\"\<URLBase\>\"", "]"}], ",", " ", 
+           "deploy"}], "]"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"s_String", ":>", "\n", "\t\t\t\t\t", 
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{"html", "=!=", "None"}], ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"webExportCloudDeploy", "[", 
+             RowBox[{
+             "dir", ",", " ", "\n", "\t\t\t\t\t\t\t", "html", ",", "\n", 
+              "\t\t\t\t\t\t\t", "s", ",", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"FilterRules", "[", "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                "{", "\n", "\t\t\t\t\t\t\t\t\t", "ops", "\n", 
+                 "\t\t\t\t\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                RowBox[{"Options", "@", "webExportCloudDeploy"}]}], "\n", 
+               "\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}], 
+           "\n", "\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", "]"}], ",", 
+       "\n", "\t\t\t", "html"}], "\n", "\t\t\t", "]"}]}]}], "\n", "\t\t", 
+   "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.730668324598084*^9, 3.730668633355633*^9}, {
+   3.73066874763124*^9, 3.730668782976081*^9}, {3.7306690573680677`*^9, 
+   3.730669057860002*^9}, {3.730669261159762*^9, 3.730669282245305*^9}, {
+   3.730669340519227*^9, 3.7306693444946613`*^9}, {3.730669375161152*^9, 
+   3.73066941698403*^9}, {3.730669790654669*^9, 3.730669817853435*^9}, 
+   3.730669859212596*^9},ExpressionUUID->"fc436bb1-59db-405b-9f2e-\
+c6ccb0906efe"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]DocGenHTMLCloudDeploy\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.730668811861499*^9, 3.730668816604374*^9}, 
+   3.7306689717532587`*^9},ExpressionUUID->"9e9cc3e5-15b1-47b0-99a9-\
+ad778e02583e"],
+
+Cell[BoxData[
+ RowBox[{"DocGenHTMLCloudDeploy", "//", "Clear"}]], "CodeInput",
+ CellChangeTimes->{{3.730669401899819*^9, 
+  3.7306694027949467`*^9}},ExpressionUUID->"fb68111a-f621-4e5a-98cb-\
+2b7fdb7c94c3"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Options", "[", "DocGenHTMLCloudDeploy", "]"}], "=", "\n", "\t", 
+  RowBox[{"Options", "[", "DocGenHTMLPostProcess", "]"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"DocGenHTMLCloudDeploy", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"html", ":", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"_String", "?", 
+           RowBox[{"(", 
+            RowBox[{"Not", "@*", "DirectoryQ"}], ")"}]}], "|", "$Failed"}], 
+         ")"}], ".."}], "}"}]}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"DocGenHTMLPostProcess", "[", "\n", "\t\t", 
+    RowBox[{"html", ",", "\n", "\t\t", 
+     RowBox[{"CloudDeploy", "\[Rule]", "True"}], ",", "\n", "\t\t", "ops"}], 
+    "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"DocGenHTMLCloudDeploy", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"htmls", ":", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"_String", "?", 
+             RowBox[{"(", 
+              RowBox[{"Not", "@*", "DirectoryQ"}], ")"}]}], "|", "$Failed"}], 
+           ")"}], ".."}], "}"}], ".."}], "}"}]}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"DocGenHTMLCloudDeploy", "[", 
+      RowBox[{"#", ",", " ", "ops"}], "]"}], "&"}], "/@", "htmls"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"DocGenHTMLCloudDeploy", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"dir", ":", 
+      RowBox[{"_String", "?", "DirectoryQ"}]}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"DocGenHTMLCloudDeploy", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"FileNames", "[", 
+      RowBox[{
+       RowBox[{"__", "~~", 
+        RowBox[{"(", 
+         RowBox[{"\"\<.html\>\"", "|", "\"\<.txt\>\"", "|", "\"\<.png\>\""}], 
+         ")"}]}], ",", " ", "dir", ",", " ", "\[Infinity]"}], "]"}], ",", 
+     "\n", "\t\t", "ops"}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"DocGenHTMLCloudDeploy", "[", "\n", "\t", 
+    RowBox[{"p_PacletManager`Paclet", ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"DocGenHTMLCloudDeploy", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"FileNameJoin", "@", 
+      RowBox[{"{", 
+       RowBox[{"$DocGenWebDocsDirectory", ",", " ", 
+        RowBox[{"StringTrim", "[", 
+         RowBox[{
+          RowBox[{"p", "[", "\"\<Name\>\"", "]"}], ",", " ", 
+          "\"\<Documentation_\>\""}], "]"}]}], "}"}]}], ",", "\n", "\t\t", 
+     "ops"}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"DocGenHTMLCloudDeploy", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"dir", ":", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"_String", "?", "DirectoryQ"}], "|", 
+          "_PacletManager`Paclet"}], ")"}], ".."}], "}"}]}], ",", "\n", "\t", 
+     
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"DocGenHTMLCloudDeploy", "[", "\n", "\t\t", 
+      RowBox[{"#", ",", "\n", "\t\t", "ops"}], "\n", "\t\t", "]"}], "&"}], "/@",
+     "dir"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.730668833263899*^9, 3.730668854844206*^9}, {
+  3.730668917964336*^9, 3.7306689734466867`*^9}, {3.730669060936063*^9, 
+  3.7306690646143923`*^9}, {3.730669397126388*^9, 3.730669398778551*^9}, {
+  3.7306698334199867`*^9, 3.7306698426353416`*^9}, {3.730670132095793*^9, 
+  3.730670291017433*^9}, {3.730670375322723*^9, 3.730670397039875*^9}, {
+  3.7306704727308064`*^9, 3.730670485646153*^9}, {3.730670547811048*^9, 
+  3.7306705695618143`*^9}},ExpressionUUID->"233331b4-f9a7-44c1-ab89-\
+339b02fcec37"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
 Cell["\[LeftCeiling]DocGenGenerateHTMLDocumentation\[RightFloor]", \
 "CodeSubsubsection",
  Evaluatable->True,
@@ -4421,271 +4833,68 @@ Cell[BoxData[{
          RowBox[{"CheckAbort", "[", "\n", "\t\t\t\t", 
           RowBox[{
            RowBox[{
-            RowBox[{"Function", "[", "\n", "\t\t\t\t\t", 
-             RowBox[{
-              RowBox[{
-               RowBox[{"CurrentValue", "[", 
-                RowBox[{"$FrontEndSession", ",", "\n", "\t", "\t", "\t\t\t\t", 
-                 RowBox[{"{", 
+            RowBox[{
+             RowBox[{"DocGenHTMLPostProcess", "[", "\n", "\t\t\t\t\t", 
+              RowBox[{"#", ",", "\n", "\t\t\t\t\t", 
+               RowBox[{"FilterRules", "[", "\n", "\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
                   RowBox[{
-                  "AutoStyleOptions", ",", 
-                   "\"\<HighlightUndefinedSymbols\>\""}], "}"}]}], "\n", "\t",
-                 "\t", "\t\t\t\t", "]"}], "=", "\n", "\t", "\t\t\t\t\t", 
-               "highlight"}], ";", "\n", "\t", "\t\t\t\t", 
-              RowBox[{"If", "[", 
-               RowBox[{"deploy", ",", "\n", "\t", "\t\t\t\t\t", 
-                RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t\t\t", 
-                 RowBox[{
-                  RowBox[{"Replace", "[", 
-                   RowBox[{
-                    RowBox[{"OptionValue", "[", "CloudConnect", "]"}], ",", 
-                    "\n", "\t", "\t\t\t\t\t\t\t", 
-                    RowBox[{"Automatic", "->", 
-                    RowBox[{
-                    "Key", "[", "\"\<DocumentationAccount\>\"", "]"}]}]}], 
-                   "\n", "\t", "\t\t\t\t\t\t\t", "]"}], ",", 
-                  RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
-                   RowBox[{
-                    RowBox[{
-                    RowBox[{"a", ":", "$KeyChainCloudAccounts"}], ":>", "\n", 
-                    "\t\t\t\t\t\t\t\t", 
-                    RowBox[{"KeyChainConnect", "[", "a", "]"}]}], ",", "\n", 
-                    "\t\t\t\t\t\t\t", 
-                    RowBox[{"s_String", ":>", "\n", "\t\t\t\t\t\t\t\t", 
-                    RowBox[{"If", "[", 
-                    RowBox[{
-                    RowBox[{"$WolframID", "=!=", "s"}], ",", "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t", 
-                    RowBox[{"CloudConnect", "[", "s", "]"}]}], "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t", 
-                    "\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"{", "s__String", "}"}], ":>", "\n", "\t", 
-                    "\t\t\t\t\t\t\t", 
-                    RowBox[{"CloudConnect", "[", "s", "]"}]}], ",", "\n", 
-                    "\t", "\t\t\t\t\t\t", 
-                    RowBox[{"k_Key", ":>", "\n", "\t", "\t\t\t\t\t\t\t", 
-                    RowBox[{"KeyChainConnect", "[", "k", "]"}]}]}], "\n", 
-                   "\t", "\t\t\t\t\t\t", "}"}]}], "]"}]}], "\n", "\t", 
-               "\t\t\t\t\t", "]"}], ";", "\n", "\t", "\t\t\t\t", 
-              RowBox[{"If", "[", 
-               RowBox[{
-                RowBox[{"deploy", "&&", 
-                 RowBox[{"OptionValue", "[", "\"\<DeployAssets\>\"", "]"}]}], 
-                ",", "\n", "\t\t\t\t\t\t", 
-                RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t\t", 
-                 RowBox[{
-                  RowBox[{
-                  "webExportGetURLBase", "[", "\n", "\t\t\t\t\t\t\t\t", 
-                   RowBox[{
-                    RowBox[{"OptionValue", "[", "\"\<ResourceBase\>\"", "]"}],
-                     ",", "\n", "\t\t\t\t\t\t\t\t", "\"\<Resource\>\"", ",", 
-                    "\n", "\t\t\t\t\t\t\t\t", "deploy"}], "\n", 
-                   "\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t", 
-                  RowBox[{"s_String", ":>", "\n", "\t", "\t\t\t\t\t\t\t", 
-                   RowBox[{"webExportAssetsDeploy", "[", 
-                    RowBox[{
-                    "dir", ",", "s", ",", "\n", "\t", "\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "FilterRules", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{
-                    "{", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", "ops", "\n", 
-                    "\t", "\t\t\t\t\t\t\t\t\t\t", "}"}], ",", "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"Options", "@", "webExportAssetsDeploy"}]}], "\n",
-                     "\t", "\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t", "\t\t\t\t\t\t",
-                  "]"}]}], "\n", "\t", "\t\t\t\t\t", "]"}], ";", "\n", "\t", 
-              "\t\t\t\t", 
-              RowBox[{"If", "[", 
-               RowBox[{
-                RowBox[{"deploy", "&&", 
-                 RowBox[{"AllTrue", "[", 
-                  RowBox[{"#", ",", "FileExistsQ"}], "]"}]}], ",", "\n", 
-                "\t\t\t\t\t\t", 
-                RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t\t", 
-                 RowBox[{
-                  RowBox[{"webExportGetURLBase", "[", 
-                   RowBox[{
-                    RowBox[{"OptionValue", "[", "\"\<URLBase\>\"", "]"}], ",",
-                     "deploy"}], "]"}], ",", "\n", "\t\t\t\t\t\t\t", 
-                  RowBox[{"s_String", ":>", "\n", "\t\t\t\t\t\t\t\t", 
-                   RowBox[{"If", "[", 
-                    RowBox[{
-                    RowBox[{"#", "=!=", "None"}], ",", "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t", 
-                    RowBox[{"webExportCloudDeploy", "[", 
-                    RowBox[{
-                    "dir", ",", "#", ",", "s", ",", "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "FilterRules", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{
-                    "{", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t", "ops", "\n", 
-                    "\t", "\t\t\t\t\t\t\t\t\t\t\t", "}"}], ",", "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"Options", "@", "webExportCloudDeploy"}]}], "\n", 
-                    "\t", "\t\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t", "\t\t\t\t\t\t",
-                  "]"}], ",", "\n", "\t", "\t\t\t\t\t", "#"}], "\n", "\t", 
-               "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "]"}], "@", "\n", 
-            "\t", "\t\t\t", 
+                   RowBox[{"\"\<Higlighting\>\"", "\[Rule]", "highlight"}], 
+                   ",", "\n", "\t\t\t\t\t\t\t", "ops"}], "\n", 
+                  "\t\t\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t\t", 
+                 RowBox[{"Options", "[", "DocGenHTMLPostProcess", "]"}]}], 
+                "\n", "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "]"}], 
+             "&"}], "@", "\n", "\t\t\t\t", 
             RowBox[{"If", "[", 
              RowBox[{
               RowBox[{"nb", "===", "None"}], ",", "\n", "\t", "\t\t\t\t", 
-              "None", ",", "\n", "\t", "\t\t\t\t\t", 
+              "None", ",", "\n", "\t\t\t\t\t", 
               RowBox[{
                RowBox[{
                 RowBox[{"If", "[", 
                  RowBox[{
                   RowBox[{
-                   RowBox[{"Length", "@", "nb"}], ">", "1"}], ",", "\n", "\t",
-                   "\t\t\t\t\t\t", 
-                  RowBox[{"Monitor", "[", 
+                   RowBox[{"Length", "@", "nb"}], ">", "1"}], ",", "\n", 
+                  "\t\t\t\t\t\t", 
+                  RowBox[{"Monitor", "[", "\n", "\t\t\t\t\t\t\t", 
                    RowBox[{
-                    RowBox[{"ReleaseHold", "[", "#", "]"}], ",", "\n", "\t", 
+                    RowBox[{"ReleaseHold", "[", "#", "]"}], ",", "\n", 
                     "\t\t\t\t\t\t\t", 
                     RowBox[{
-                    "Internal`LoadingPanel", "[", "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t", 
+                    "Internal`LoadingPanel", "[", "\n", "\t\t\t\t\t\t\t\t", 
                     RowBox[{
-                    "\"\<Generating HTML page `` of ``\>\"", "\n", "\t", 
+                    "\"\<Generating HTML page `` of ``\>\"", "\n", 
                     "\t\t\t\t\t\t\t\t\t", "~", "TemplateApply", "~", "\n", 
-                    "\t", "\t\t\t\t\t\t\t\t", 
+                    "\t\t\t\t\t\t\t\t", 
                     RowBox[{"{", 
                     RowBox[{"i", ",", 
-                    RowBox[{"Length", "@", "nb"}]}], "}"}]}], "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t", "\t\t\t\t\t\t\t",
-                    "]"}], ",", "\n", "\t", "\t\t\t\t\t\t", 
-                  RowBox[{"ReleaseHold", "@", "#"}]}], "\n", "\t", 
-                 "\t\t\t\t\t\t", "]"}], "&"}], "@", "\n", "\t", 
-               "\t\t\t\t\t\t", 
-               RowBox[{"Hold", "@", "\n", "\t", "\t\t\t\t\t\t", 
-                RowBox[{"Table", "[", "\n", "\t", "\t\t\t\t\t\t\t", 
+                    RowBox[{"Length", "@", "nb"}]}], "}"}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t", 
+                   "]"}], ",", "\n", "\t\t\t\t\t\t", 
+                  RowBox[{"ReleaseHold", "@", "#"}]}], "\n", "\t\t\t\t\t\t", 
+                 "]"}], "&"}], "@", "\n", "\t\t\t\t\t\t", 
+               RowBox[{"Hold", "@", "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{"Table", "[", "\n", "\t\t\t\t\t\t\t\t", 
                  RowBox[{
-                  RowBox[{"With", "[", 
-                   RowBox[{
-                    RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t\t", 
-                    RowBox[{"params", "=", 
-                    RowBox[{"webExportGatherParameters", "[", 
-                    RowBox[{
+                  RowBox[{
+                  "webExportNotebookDoExport", "[", "\n", 
+                   "\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"dir", ",", " ", "\n", "\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"nb", "[", 
-                    RowBox[{"[", "i", "]"}], "]"}], ",", "ops"}], "]"}]}], 
-                    "\n", "\t\t\t\t\t\t\t\t\t", "}"}], ",", "\n", 
+                    RowBox[{"[", "i", "]"}], "]"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t", "deploy", ",", " ", "\n", 
                     "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"webExportNotebook", "[", 
-                    RowBox[{"dir", ",", 
-                    RowBox[{"nb", "[", 
-                    RowBox[{"[", "i", "]"}], "]"}], ",", "params"}], "]"}], 
-                    ",", 
-                    RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{"Except", "[", 
-                    RowBox[{"_String", "?", "FileExistsQ"}], "]"}], ":>", 
-                    "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"(", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"Message", "[", 
-                    RowBox[{"DocGenGenerateHTMLDocumentation", "::", "fail"}],
-                     "]"}], ";", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"Throw", "[", "$Failed", "]"}]}], "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t", ")"}]}], ",", "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"f_String", "?", "FileExistsQ"}], ":>", "\n", 
-                    "\t", "\t", "\t", "\t", "\t\t\t\t\t\t\t", 
-                    RowBox[{"With", "[", 
-                    RowBox[{
-                    RowBox[{"{", 
-                    RowBox[{"fns", "=", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"FileNames", "[", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{"ToLowerCase", "[", 
-                    RowBox[{"FileBaseName", "[", "f", "]"}], "]"}], "<>", 
-                    "\"\<*.html\>\""}], ",", "\n", "\t", "\t", "\t", "\t", 
-                    "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"FileNameJoin", "@", 
-                    RowBox[{
-                    "{", "\n", "\t", "\t", "\t", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"DirectoryName", "[", "f", "]"}], ",", "\n", "\t",
-                     "\t", "\t", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    "\"\<Files\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"FileBaseName", "[", "f", "]"}]}], "\n", "\t", 
-                    "\t", "\t", "\t", "\t\t\t\t\t\t\t\t\t\t", "}"}]}]}], "\n",
-                     "\t", "\t", "\t", "\t", "\t\t\t\t\t\t\t\t\t", "]"}]}], 
-                    "\n", "\t", "\t", "\t", "\t", "\t\t\t\t\t\t\t\t", "}"}], 
-                    ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{"webExportPostProcess", "[", 
-                    RowBox[{"#", ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "FilterRules", "[", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    
-                    RowBox[{
-                    RowBox[{"Flatten", "@", 
-                    RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"(*", " ", 
-                    RowBox[{
-                    "Link", " ", "URL", " ", "base", " ", "and", " ", 
-                    "Resources"}], " ", "*)"}], "\n", "\t", "\t", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{
-                    "\"\<URLBase\>\"", "->", "\n", "\t", "\t", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "webExportGetURLBase", "[", "\n", "\t", "\t", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
                     RowBox[{"OptionValue", "[", "\"\<URLBase\>\"", "]"}], ",",
-                     "\n", "\t", "\t", "\t", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    "deploy"}], "\n", "\t", "\t", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t", 
-                    "\t", "\t", "\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "\"\<ResourceBase\>\"", "->", "\n", "\t", "\t", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "webExportGetURLBase", "[", "\n", "\t", "\t", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
+                     "\n", "\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"OptionValue", "[", "\"\<ResourceBase\>\"", "]"}],
-                     ",", "\n", "\t", "\t", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "\"\<Resource\>\"", ",", 
-                    "\n", "\t", "\t", "\t", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    "deploy"}], "\n", "\t", "\t", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t", 
-                    "\t", "\t", "\t\t\t\t\t\t\t\t\t\t\t\t", "params"}], "\n", 
-                    "\t", "\t", "\t", "\t\t\t\t\t\t\t\t\t\t\t\t", "}"}]}], 
-                    ",", "\n", "\t", "\t", "\t", "\t", "\t", "\t", "\t", "\t",
-                     "\t\t\t\t\t\t", 
-                    RowBox[{"Options", "[", "webExportPostProcess", "]"}]}], 
-                    "\n", "\t", "\t", "\t", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    "]"}]}], "\n", "\t", "\t", "\t", "\t", 
-                    "\t\t\t\t\t\t\t\t\t", "]"}], "&"}], "/@", 
-                    RowBox[{"Prepend", "[", 
-                    RowBox[{"fns", ",", "f"}], "]"}]}], ";", "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t", "f"}]}], "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t\t", "}"}]}], "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", 
+                     ",", "\n", "\t\t\t\t\t\t\t\t\t", "ops"}], "\n", 
                    "\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
                   RowBox[{"{", 
-                   RowBox[{"i", ",", 
-                    RowBox[{"Length", "@", "nb"}]}], "}"}]}], "\n", "\t", 
-                 "\t\t\t\t\t\t\t", "]"}]}]}]}], "\n", "\t", "\t\t\t\t\t\t", 
-             "\n", "\t", "\t\t\t\t", "]"}]}], ",", "\n", "\t", "\t\t\t", 
+                   RowBox[{"i", ",", " ", 
+                    RowBox[{"Length", "@", "nb"}]}], "}"}]}], "\n", 
+                 "\t\t\t\t\t\t\t\t", "]"}]}]}]}], "\n", "\t\t\t\t\t", "]"}]}],
+            ",", "\n", "\t\t\t\t", 
            RowBox[{
             RowBox[{
              RowBox[{"CurrentValue", "[", 
@@ -4768,8 +4977,10 @@ Cell[BoxData[{
    3.713582375324815*^9, 3.713582382243795*^9}, {3.723734655591248*^9, 
    3.72373466834466*^9}, {3.7306464871505957`*^9, 3.7306465647754*^9}, {
    3.730646647736865*^9, 3.7306466797605467`*^9}, {3.730646711349738*^9, 
-   3.7306468105645647`*^9}, {3.7306490507600517`*^9, 
-   3.730649051075913*^9}},ExpressionUUID->"01bcde93-2ae1-4eef-8940-\
+   3.7306468105645647`*^9}, {3.7306490507600517`*^9, 3.730649051075913*^9}, 
+   3.7306682817473173`*^9, {3.730668667506055*^9, 3.730668726741098*^9}, {
+   3.730669457019454*^9, 3.730669496990058*^9}, {3.730669632432172*^9, 
+   3.730669682071403*^9}},ExpressionUUID->"01bcde93-2ae1-4eef-8940-\
 f508e00b1cfc"],
 
 Cell[BoxData[
@@ -4860,7 +5071,7 @@ Cell[BoxData[{
    RowBox[{"Replace", "[", "\n", "\t\t", 
     RowBox[{
      RowBox[{"DocGenGenerateHTMLDocumentation", "[", 
-      RowBox[{"dir", ",", 
+      RowBox[{
        RowBox[{"{", "nb", "}"}], ",", "ops"}], "]"}], ",", "\n", "\t\t", 
      RowBox[{
       RowBox[{"{", "l_", "}"}], "\[RuleDelayed]", "l"}]}], "\n", "\t\t", 
@@ -4924,8 +5135,8 @@ Cell[BoxData[{
    3.7093962135664787`*^9, 3.709396296540802*^9}, {3.7123157466751833`*^9, 
    3.712315749725007*^9}, {3.7123157874656773`*^9, 3.7123158006098967`*^9}, {
    3.7123158484405327`*^9, 3.712315883454638*^9}, {3.723734668355219*^9, 
-   3.723734668396784*^9}, {3.73064657550216*^9, 
-   3.730646596242414*^9}},ExpressionUUID->"d0e2fb00-4c18-47b4-9ff5-\
+   3.723734668396784*^9}, {3.73064657550216*^9, 3.730646596242414*^9}, 
+   3.730666436067479*^9},ExpressionUUID->"d0e2fb00-4c18-47b4-9ff5-\
 bc1413c38f59"],
 
 Cell[BoxData[
@@ -5080,12 +5291,7 @@ Cell[BoxData[
                 "\t", "\t\t\t\t\t\t", "]"}]}]}]}]}]}], "\n", "\t", "\t\t\t\t",
            "}"}], ",", "\n", "\t\t\t\t\t", 
          RowBox[{"DocGenGenerateHTMLDocumentation", "[", "\n", "\t\t\t\t\t\t", 
-          RowBox[{
-           RowBox[{"Replace", "[", 
-            RowBox[{"dir", ",", 
-             RowBox[{"f_FileName", "\[RuleDelayed]", 
-              RowBox[{"ToFileName", "[", "f", "]"}]}]}], "]"}], ",", "\n", 
-           "\t\t\t\t\t\t", "nb", ",", "\n", "\t\t\t\t\t\t", "ops"}], "\n", 
+          RowBox[{"nb", ",", "\n", "\t\t\t\t\t\t", "ops"}], "\n", 
           "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", 
       "]"}]}], "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
  CellChangeTimes->{{3.707569807478424*^9, 3.707570210742063*^9}, {
@@ -5100,8 +5306,9 @@ Cell[BoxData[
    3.7093187242110767`*^9, 3.7093187545514383`*^9}, {3.712315800655098*^9, 
    3.712315800663446*^9}, 3.712315838712921*^9, {3.712315883492298*^9, 
    3.71231588349776*^9}, {3.72373466844766*^9, 3.723734668460661*^9}, {
-   3.723735091066464*^9, 3.723735094152899*^9}, 
-   3.730646627898733*^9},ExpressionUUID->"23d0ed9f-2345-4024-b0e4-\
+   3.723735091066464*^9, 3.723735094152899*^9}, 3.730646627898733*^9, {
+   3.730666474081809*^9, 
+   3.730666476351162*^9}},ExpressionUUID->"23d0ed9f-2345-4024-b0e4-\
 340cc05be502"]
 }, Open  ]]
 }, Open  ]],
@@ -5109,15 +5316,15 @@ Cell[BoxData[
 Cell[BoxData[
  RowBox[{
   RowBox[{"End", "[", "]"}], 
-  ";"}]], "InputSection",ExpressionUUID->"e2353f74-da75-461e-856f-\
-fa9a887a7004"]
+  ";"}]], \
+"InputSection",ExpressionUUID->"e2353f74-da75-461e-856f-fa9a887a7004"]
 }, Open  ]],
 
 Cell["", "SectionSeparator",ExpressionUUID->"6b2dd78a-77d6-4e57-b22b-\
 295bcc3f812c"]
 },
 WindowSize->{808, 755},
-WindowMargins->{{130, Automatic}, {15, Automatic}},
+WindowMargins->{{Automatic, 202}, {41, Automatic}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

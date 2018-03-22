@@ -166,7 +166,10 @@ $DocGenMethodRouter=
 		"Paclet":>
 			DocGenGenerateDocumentation,
 		"HTML":>
-			DocGenGenerateHTMLDocumentation,
+			<|
+				Automatic:>DocGenGenerateHTMLDocumentation,
+				"Deploy":>DocGenHTMLCloudDeploy
+				|>,
 		"Index":>
 			DocGenIndexDocumentation
 		|>;

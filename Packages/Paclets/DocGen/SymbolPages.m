@@ -50,6 +50,9 @@ SymbolPageContextTemplate::usage=
 Begin["`Private`"];
 
 
+$DocGenDirectory (* To invoke the autoloader *)
+
+
 (* ::Subsubsection::Closed:: *)
 (*SymbolPageSeeAlsoRefLink*)
 

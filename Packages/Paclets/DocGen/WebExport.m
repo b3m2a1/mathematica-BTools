@@ -21,12 +21,14 @@
 
 $DocGenURLBase::usage=
 	"The default URL base for web docs";
-$DocGenWebDocsDirectory::usage=
+$DocGenWebResourceBase::usage=
 	"";
 
 
 DocGenGenerateHTMLDocumentation::usage=
 	"Exports doc pages as HTML";
+DocGenHTMLCloudDeploy::usage=
+	"Cloud deploys the docs";
 
 
 Begin["`Private`"];
@@ -1742,6 +1744,214 @@ webExportGetURLBase[url_,doc:"Docs"|"Resource":"Docs",deploy:True|False:False]:=
 
 
 (* ::Subsubsection::Closed:: *)
+(*webExportNotebookDoExport*)
+
+
+
+webExportNotebookDoExport[
+	dir_,
+	nb_,
+	deploy_, 
+	urlBase_,
+	resBase_,
+	ops:OptionsPattern[]
+	]:=
+	With[
+		{
+			params=webExportGatherParameters[nb, ops]
+			},
+		Replace[
+			webExportNotebook[dir, nb ,params],{
+			Except[_String?FileExistsQ]:>
+				(
+					Message[DocGenGenerateHTMLDocumentation::fail];
+					Throw[$Failed]
+					),
+			f_String?FileExistsQ:>
+				With[{fns=
+					FileNames[ToLowerCase[FileBaseName[f]]<>"*.html",
+						FileNameJoin@{
+							DirectoryName[f],
+							"Files",
+							FileBaseName[f]
+							}
+						]
+					},
+					webExportPostProcess[
+						#,
+						FilterRules[
+							Flatten@{
+								(* Link URL base and Resources *)
+								"URLBase"->
+									webExportGetURLBase[
+										urlBase,
+										deploy
+										],
+								"ResourceBase"->
+									webExportGetURLBase[
+										resBase,
+										"Resource",
+										deploy
+										],
+								params
+								},
+							Options[webExportPostProcess]
+							]
+						]&/@Prepend[fns,f];
+					f
+					]
+				}
+			]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*DocGenHTMLPostProcess*)
+
+
+
+DocGenHTMLPostProcess//Clear
+
+
+Options[DocGenHTMLPostProcess]=
+	{
+		"Highlighting"->Automatic,
+		CloudConnect->Automatic,
+		CloudDeploy->False,
+		"DeployAssets"->False,
+		"CopyAssets"->True,
+		"URLBase"->Automatic,
+		Directory->Automatic
+		};
+DocGenHTMLPostProcess[
+	html:{(_String|$Failed)..}|None,
+	ops:OptionsPattern[]
+	]:=
+	With[
+		{
+			highlight=
+				OptionValue["Highlighting"],
+			deploy=
+				TrueQ@OptionValue[CloudDeploy],
+			dir=
+				Replace[OptionValue[Directory], 
+					Automatic:>$DocGenWebDocsDirectory
+					]
+			},
+		If[MatchQ[highlight, True|False],
+			CurrentValue[$FrontEndSession,
+				{AutoStyleOptions,"HighlightUndefinedSymbols"}
+				]=
+				highlight
+			];
+		If[deploy,
+			Replace[
+				Replace[OptionValue[CloudConnect],
+					Automatic->Key["DocumentationAccount"]
+					],{
+				a:$KeyChainCloudAccounts:>
+					KeyChainConnect[a],
+				s_String:>
+					If[$WolframID=!=s,
+						CloudConnect[s]
+						],
+				{s__String}:>
+					CloudConnect[s],
+				k_Key:>
+					KeyChainConnect[k]
+				}]
+			];
+		If[deploy&&OptionValue["DeployAssets"],
+			Replace[
+				webExportGetURLBase[
+					OptionValue["ResourceBase"],
+					"Resource",
+					deploy
+					],
+				s_String:>
+					webExportAssetsDeploy[dir,s,
+						FilterRules[
+							{
+								ops
+								},
+							Options@webExportAssetsDeploy
+							]
+						]
+				]
+			];
+		If[deploy&&AllTrue[html, FileExistsQ],
+			Replace[
+				webExportGetURLBase[OptionValue["URLBase"], deploy],
+				s_String:>
+					If[html=!=None,
+						webExportCloudDeploy[dir, 
+							html,
+							s,
+							FilterRules[
+								{
+									ops
+									},
+								Options@webExportCloudDeploy
+								]
+							]
+						]
+				],
+			html
+			]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*DocGenHTMLCloudDeploy*)
+
+
+
+DocGenHTMLCloudDeploy//Clear
+
+
+Options[DocGenHTMLCloudDeploy]=
+	Options[DocGenHTMLPostProcess]
+DocGenHTMLCloudDeploy[
+	html:{(_String?(Not@*DirectoryQ)|$Failed)..},
+	ops:OptionsPattern[]
+	]:=
+	DocGenHTMLPostProcess[
+		html,
+		CloudDeploy->True,
+		ops
+		];
+DocGenHTMLCloudDeploy[
+	htmls:{{(_String?(Not@*DirectoryQ)|$Failed)..}..},
+	ops:OptionsPattern[]
+	]:=
+	DocGenHTMLCloudDeploy[#, ops]&/@htmls;
+DocGenHTMLCloudDeploy[
+	dir:_String?DirectoryQ,
+	ops:OptionsPattern[]
+	]:=
+	DocGenHTMLCloudDeploy[
+		FileNames[__~~(".html"|".txt"|".png"), dir, \[Infinity]],
+		ops
+		];
+DocGenHTMLCloudDeploy[
+	p_PacletManager`Paclet,
+	ops:OptionsPattern[]
+	]:=
+	DocGenHTMLCloudDeploy[
+		FileNameJoin@{$DocGenWebDocsDirectory, StringTrim[p["Name"], "Documentation_"]},
+		ops
+		];
+DocGenHTMLCloudDeploy[
+	dir:{(_String?DirectoryQ|_PacletManager`Paclet)..},
+	ops:OptionsPattern[]
+	]:=
+	DocGenHTMLCloudDeploy[
+		#,
+		ops
+		]&/@dir;
+
+
+(* ::Subsubsection::Closed:: *)
 (*DocGenGenerateHTMLDocumentation*)
 
 
@@ -1802,126 +2012,41 @@ DocGenGenerateHTMLDocumentation[
 			Message[DocGenGenerateHTMLDocumentation::nopkg];
 			$Failed,
 			CheckAbort[
-				Function[
-					CurrentValue[$FrontEndSession,
-						{AutoStyleOptions,"HighlightUndefinedSymbols"}
-						]=
-						highlight;
-					If[deploy,
-						Replace[
-							Replace[OptionValue[CloudConnect],
-								Automatic->Key["DocumentationAccount"]
-								],{
-							a:$KeyChainCloudAccounts:>
-								KeyChainConnect[a],
-							s_String:>
-								If[$WolframID=!=s,
-									CloudConnect[s]
-									],
-							{s__String}:>
-								CloudConnect[s],
-							k_Key:>
-								KeyChainConnect[k]
-							}]
-						];
-					If[deploy&&OptionValue["DeployAssets"],
-						Replace[
-							webExportGetURLBase[
-								OptionValue["ResourceBase"],
-								"Resource",
-								deploy
-								],
-							s_String:>
-								webExportAssetsDeploy[dir,s,
-									FilterRules[
-										{
-											ops
-											},
-										Options@webExportAssetsDeploy
-										]
-									]
-							]
-						];
-					If[deploy&&AllTrue[#,FileExistsQ],
-						Replace[
-							webExportGetURLBase[OptionValue["URLBase"],deploy],
-							s_String:>
-								If[#=!=None,
-									webExportCloudDeploy[dir,#,s,
-										FilterRules[
-											{
-												ops
-												},
-											Options@webExportCloudDeploy
-											]
-										]
-									]
-							],
-						#
+				DocGenHTMLPostProcess[
+					#,
+					FilterRules[
+						{
+							"Higlighting"->highlight,
+							ops
+							},
+						Options[DocGenHTMLPostProcess]
 						]
-					]@
+					]&@
 				If[nb===None,
 					None,
-						If[Length@nb>1,
-							Monitor[ReleaseHold[#],
-								Internal`LoadingPanel[
-									"Generating HTML page `` of ``"
-										~TemplateApply~
-									{i,Length@nb}
-									]
-								],
-							ReleaseHold@#
-							]&@
-							Hold@
-							Table[
-								With[{
-									params=webExportGatherParameters[nb[[i]],ops]
-									},
-									Replace[
-										webExportNotebook[dir,nb[[i]],params],{
-										Except[_String?FileExistsQ]:>
-											(
-												Message[DocGenGenerateHTMLDocumentation::fail];
-												Throw[$Failed]
-												),
-										f_String?FileExistsQ:>
-											With[{fns=
-												FileNames[ToLowerCase[FileBaseName[f]]<>"*.html",
-													FileNameJoin@{
-														DirectoryName[f],
-														"Files",
-														FileBaseName[f]
-														}
-													]
-												},
-												webExportPostProcess[#,
-													FilterRules[
-														Flatten@{
-															(* Link URL base and Resources *)
-															"URLBase"->
-																webExportGetURLBase[
-																	OptionValue["URLBase"],
-																	deploy
-																	],
-															"ResourceBase"->
-																webExportGetURLBase[
-																	OptionValue["ResourceBase"],
-																	"Resource",
-																	deploy
-																	],
-															params
-															},
-														Options[webExportPostProcess]
-														]
-													]&/@Prepend[fns,f];
-												f
-												]
-											}
-										]
-									],
+					If[Length@nb>1,
+						Monitor[
+							ReleaseHold[#],
+							Internal`LoadingPanel[
+								"Generating HTML page `` of ``"
+									~TemplateApply~
 								{i,Length@nb}
 								]
-							
+							],
+						ReleaseHold@#
+						]&@
+						Hold@
+							Table[
+								webExportNotebookDoExport[
+									dir, 
+									nb[[i]],
+									deploy, 
+									OptionValue["URLBase"],
+									OptionValue["ResourceBase"],
+									ops
+									],
+								{i, Length@nb}
+								]
 					],
 				CurrentValue[$FrontEndSession,
 					{AutoStyleOptions,"HighlightUndefinedSymbols"}
@@ -1969,7 +2094,7 @@ DocGenGenerateHTMLDocumentation[
 	ops___?OptionQ
 	]:=
 	Replace[
-		DocGenGenerateHTMLDocumentation[dir,{nb},ops],
+		DocGenGenerateHTMLDocumentation[{nb},ops],
 		{l_}:>l
 		];
 DocGenGenerateHTMLDocumentation[
@@ -2033,7 +2158,6 @@ DocGenGenerateHTMLDocumentation[
 									]
 					},
 					DocGenGenerateHTMLDocumentation[
-						Replace[dir,f_FileName:>ToFileName[f]],
 						nb,
 						ops
 						]

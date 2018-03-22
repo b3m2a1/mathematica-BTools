@@ -135,7 +135,7 @@ With[{
 		names = AssociationMap[Null &, {}(*Names[]*)],
 		conts = 
 		Alternatives @@ {
-			"System`", "Function`", 
+			"System`", "FrontEnd`", 
 			"PacletManager`", "Internal`"
 			},
 		repTypes=Alternatives@@Map[Blank, Keys@$usageTypeReplacements]

@@ -30,6 +30,10 @@ Cell[BoxData[{
    "\"\<The build directory for DocGen\>\""}], ";"}], "\n", 
  RowBox[{
   RowBox[{
+   RowBox[{"$DocGenWebDocsDirectory", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
    RowBox[{"$DocGenLine", "::", "usage"}], "=", "\n", "\t", 
    "\"\<The $Line for writing docs\>\""}], ";"}], "\n", 
  RowBox[{
@@ -43,8 +47,9 @@ Cell[BoxData[{
    "\"\<The ref link base for docs\>\""}], ";"}]}], "CodeInput",
  CellChangeTimes->{{3.723735656230258*^9, 3.72373566717169*^9}, {
   3.7240759240172787`*^9, 3.7240759242288647`*^9}, {3.728093068980225*^9, 
-  3.72809307084121*^9}, {3.728093558066875*^9, 
-  3.7280935740232162`*^9}},ExpressionUUID->"2ad69635-0474-4acc-949a-\
+  3.72809307084121*^9}, {3.728093558066875*^9, 3.7280935740232162`*^9}, {
+  3.7306749501049957`*^9, 
+  3.730674955415344*^9}},ExpressionUUID->"2ad69635-0474-4acc-949a-\
 5e9fed8fd466"],
 
 Cell[BoxData[
@@ -76,7 +81,7 @@ Cell[BoxData[
    3.700005314189981*^9}, {3.704469306097993*^9, 3.704469317782192*^9}, 
    3.723733899910136*^9},ExpressionUUID->"b3865ffe-03d4-4b9d-9b14-\
 262af85f322a"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -3189,159 +3194,163 @@ Cell[BoxData[{
 
 Cell[CellGroupData[{
 
-Cell["\[LeftCeiling]usagePatternReplace\[RightFloor]", "CodeSubsubsection",
- Evaluatable->True,
+Cell["usagePatternReplace", "CodeSubsubsection",
+ Evaluatable->False,
  CellChangeTimes->{{3.701346788614253*^9, 3.701346790541667*^9}, 
-   3.7013783388530416`*^9},ExpressionUUID->"00c44e0a-3e6f-41b2-be76-\
-c88bb7e99b7c"],
+   3.7013783388530416`*^9, {3.73066408671833*^9, 
+   3.730664090199016*^9}},ExpressionUUID->"15d8a1df-e339-467a-8f6b-\
+f19bcbc61822"],
 
 Cell[BoxData[
- RowBox[{
-  RowBox[{"$knownUsageReplaceableSymbols", "=", "\n", "\t", 
-   RowBox[{"Alternatives", "@@", 
-    RowBox[{"{", "\n", "\t\t", 
-     RowBox[{
-     "Symbol", ",", "\n", "\t\t", "Integer", ",", "\n", "\t\t", "Real", ",", 
-      "\n", "\t\t", "String", ",", "\n", "\t\t", "List", ",", "\n", "\t\t", 
-      "Association"}], "\n", "\t\t", "}"}]}]}], ";"}]], "CodeInput",
+ RowBox[{"(*", 
+  RowBox[{
+   RowBox[{"$knownUsageReplaceableSymbols", "=", "\n", "\t", 
+    RowBox[{"Alternatives", "@@", 
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+      "Symbol", ",", "\n", "\t\t", "Integer", ",", "\n", "\t\t", "Real", ",", 
+       "\n", "\t\t", "String", ",", "\n", "\t\t", "List", ",", "\n", "\t\t", 
+       "Association"}], "\n", "\t\t", "}"}]}]}], ";"}], "*)"}]], "CodeInput",
  CellChangeTimes->{{3.708291564360075*^9, 3.708291616487781*^9}, {
   3.708291881134873*^9, 
-  3.7082918818755283`*^9}},ExpressionUUID->"5910e6bc-fd84-402a-9e58-\
-a52ba6e0c9a9"],
+  3.7082918818755283`*^9}},ExpressionUUID->"b6a59ac2-7c36-4d6f-acd8-\
+02bae543d223"],
 
 Cell[BoxData[
- RowBox[{
-  RowBox[{"usagePatternReplace", "[", "\n", "\t", 
-   RowBox[{"vals_", ",", "\n", "\t", 
-    RowBox[{"reps_:", 
-     RowBox[{"{", "}"}]}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
-  RowBox[{"With", "[", 
-   RowBox[{
-    RowBox[{"{", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{"names", "=", 
-       RowBox[{"AssociationMap", "[", 
-        RowBox[{
-         RowBox[{"Null", "&"}], ",", 
-         RowBox[{"{", "}"}]}], 
-        RowBox[{"(*", 
-         RowBox[{"Names", "[", "]"}], "*)"}], "]"}]}], ",", "\n", "\t\t", 
-      RowBox[{"conts", "=", 
-       RowBox[{"Alternatives", "@@", 
-        RowBox[{"{", 
+ RowBox[{"(*", 
+  RowBox[{
+   RowBox[{"usagePatternReplace", "[", "\n", "\t", 
+    RowBox[{"vals_", ",", "\n", "\t", 
+     RowBox[{"reps_:", 
+      RowBox[{"{", "}"}]}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"names", "=", 
+        RowBox[{"AssociationMap", "[", 
          RowBox[{
-         "\"\<System`\>\"", ",", "\"\<FrontEnd`\>\"", ",", 
-          "\"\<PacletManager`\>\"", ",", "\"\<Internal`\>\""}], "}"}]}]}]}], 
-     "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
-    RowBox[{"ReplaceRepeated", "[", "\n", "\t\t\t", 
-     RowBox[{
-      RowBox[{"FixedPoint", "[", "\n", "\t\t\t\t", 
-       RowBox[{
+          RowBox[{"Null", "&"}], ",", 
+          RowBox[{"{", "}"}]}], 
+         RowBox[{"(*", 
+          RowBox[{"Names", "[", "]"}], "*)"}], "]"}]}], ",", "\n", "\t\t", 
+       RowBox[{"conts", "=", 
+        RowBox[{"Alternatives", "@@", 
+         RowBox[{"{", 
+          RowBox[{
+          "\"\<System`\>\"", ",", "\"\<FrontEnd`\>\"", ",", 
+           "\"\<PacletManager`\>\"", ",", "\"\<Internal`\>\""}], "}"}]}]}]}], 
+      "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{"ReplaceRepeated", "[", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"FixedPoint", "[", "\n", "\t\t\t\t", 
         RowBox[{
-         RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
-          RowBox[{"#", ",", 
-           RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
-            RowBox[{
+         RowBox[{
+          RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
+           RowBox[{"#", ",", 
+            RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
              RowBox[{
               RowBox[{
-               RowBox[{"Verbatim", "[", "Pattern", "]"}], "[", 
-               RowBox[{"_", ",", "e_"}], "]"}], "\[RuleDelayed]", "\n", "\t", 
-              "\t\t\t\t\t\t", "e"}], ",", "\n", "\t", "\t\t\t\t\t", 
-             RowBox[{
-              RowBox[{
-               RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", 
                RowBox[{
                 RowBox[{"Verbatim", "[", "Pattern", "]"}], "[", 
-                RowBox[{"_", ",", "e_"}], "]"}], "]"}], ":>", "\n", "\t", 
-              "\t\t\t\t\t\t", 
-              RowBox[{"HoldPattern", "[", "e", "]"}]}], ",", "\n", 
-             "\t\t\t\t\t\t", 
-             RowBox[{
+                RowBox[{"_", ",", "e_"}], "]"}], "\[RuleDelayed]", "\n", "\t",
+                "\t\t\t\t\t\t", "e"}], ",", "\n", "\t", "\t\t\t\t\t", 
               RowBox[{
-               RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", 
                RowBox[{
-                RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", "e_", 
-                "]"}], "]"}], ":>", "\n", "\t", "\t\t\t\t\t\t", 
-              RowBox[{"HoldPattern", "[", "e", "]"}]}]}], "\n", 
-            "\t\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t", "1"}], "\n", 
-          "\t\t\t\t\t", "]"}], "&"}], ",", "\n", "\t\t\t\t", "vals"}], "\n", 
-       "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
-      RowBox[{"Flatten", "@", 
-       RowBox[{"{", "\n", "\t", "\t\t\t", 
-        RowBox[{"reps", ",", "\n", "\t", "\t\t\t", 
-         RowBox[{
+                RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", 
+                RowBox[{
+                 RowBox[{"Verbatim", "[", "Pattern", "]"}], "[", 
+                 RowBox[{"_", ",", "e_"}], "]"}], "]"}], ":>", "\n", "\t", 
+               "\t\t\t\t\t\t", 
+               RowBox[{"HoldPattern", "[", "e", "]"}]}], ",", "\n", 
+              "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", 
+                RowBox[{
+                 RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", "e_", 
+                 "]"}], "]"}], ":>", "\n", "\t", "\t\t\t\t\t\t", 
+               RowBox[{"HoldPattern", "[", "e", "]"}]}]}], "\n", 
+             "\t\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t", "1"}], "\n", 
+           "\t\t\t\t\t", "]"}], "&"}], ",", "\n", "\t\t\t\t", "vals"}], "\n", 
+        "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
+       RowBox[{"Flatten", "@", 
+        RowBox[{"{", "\n", "\t", "\t\t\t", 
+         RowBox[{"reps", ",", "\n", "\t", "\t\t\t", 
           RowBox[{
-           RowBox[{"Verbatim", "[", "Optional", "]"}], "[", 
-           RowBox[{"name_", ",", "_"}], "]"}], "\[RuleDelayed]", "\n", "\t", 
-          "\t\t\t\t", "name"}], ",", "\n", "\t", "\t\t\t", 
-         RowBox[{
-          RowBox[{
-           RowBox[{"Verbatim", "[", "Pattern", "]"}], "[", 
-           RowBox[{"name_", ",", "_"}], "]"}], "\[RuleDelayed]", "\n", "\t", 
-          "\t\t\t\t", "name"}], ",", "\n", "\t", "\t\t\t", 
-         RowBox[{
-          RowBox[{
-           RowBox[{"Verbatim", "[", "PatternTest", "]"}], "[", 
-           RowBox[{"p_", ",", "_"}], "]"}], "\[RuleDelayed]", "\n", 
-          "\t\t\t\t\t", "p"}], ",", "\n", "\t\t\t\t", 
-         RowBox[{
-          RowBox[{
-           RowBox[{"Verbatim", "[", "Condition", "]"}], "[", 
-           RowBox[{"p_", ",", "_"}], "]"}], "\[RuleDelayed]", "\n", 
-          "\t\t\t\t\t", "p"}], ",", "\n", "\t\t\t\t", 
-         RowBox[{
-          RowBox[{
-           RowBox[{"Verbatim", "[", "Alternatives", "]"}], "[", 
-           RowBox[{"a_", ",", "___"}], "]"}], "\[RuleDelayed]", "\n", 
-          "\t\t\t\t\t", "a"}], ",", "\n", "\t\t\t\t", 
-         RowBox[{
-          RowBox[{
-           RowBox[{"Verbatim", "[", "Blank", "]"}], "[", "]"}], ":>", "\n", 
-          "\t\t\t\t\t", "expr"}], ",", "\n", "\t\t\t\t", 
-         RowBox[{
-          RowBox[{
-           RowBox[{"Verbatim", "[", "Blank", "]"}], "[", 
-           RowBox[{"t", ":", "$knownUsageReplaceableSymbols"}], "]"}], ":>", 
-          "\n", "\t\t\t\t\t", 
-          RowBox[{"RuleCondition", "[", "\n", "\t\t\t\t\t\t", 
            RowBox[{
-            RowBox[{"Replace", "[", 
-             RowBox[{"t", ",", 
-              RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
-               RowBox[{
-                RowBox[{"Integer", "\[RuleDelayed]", "int"}], ",", "\n", 
-                "\t\t\t\t\t\t\t", 
-                RowBox[{"Real", "\[RuleDelayed]", "float"}], ",", "\n", 
-                "\t\t\t\t\t\t\t", 
-                RowBox[{"String", "\[RuleDelayed]", "str"}], ",", "\n", 
-                "\t\t\t\t\t\t\t", 
-                RowBox[{"List", ":>", "list"}], ",", "\n", "\t\t\t\t\t\t\t", 
-                RowBox[{"Association", ":>", "assoc"}]}], "\n", 
-               "\t\t\t\t\t\t\t", "}"}]}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
-            "True"}], "\n", "\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t", 
-         RowBox[{
+            RowBox[{"Verbatim", "[", "Optional", "]"}], "[", 
+            RowBox[{"name_", ",", "_"}], "]"}], "\[RuleDelayed]", "\n", "\t", 
+           "\t\t\t\t", "name"}], ",", "\n", "\t", "\t\t\t", 
           RowBox[{
-           RowBox[{"Verbatim", "[", "Blank", "]"}], "[", "t_", "]"}], ":>", 
-          "\n", "\t\t\t\t\t", 
-          RowBox[{"t", "[", "]"}]}], ",", "\n", "\t\t\t\t", 
-         RowBox[{
+           RowBox[{
+            RowBox[{"Verbatim", "[", "Pattern", "]"}], "[", 
+            RowBox[{"name_", ",", "_"}], "]"}], "\[RuleDelayed]", "\n", "\t", 
+           "\t\t\t\t", "name"}], ",", "\n", "\t", "\t\t\t", 
           RowBox[{
-           RowBox[{"Verbatim", "[", "BlankSequence", "]"}], "[", "]"}], ":>", 
-          "\n", "\t\t\t\t\t", 
-          RowBox[{"Sequence", "@@", 
-           RowBox[{"ToExpression", "[", 
-            RowBox[{"{", 
-             RowBox[{"\"\<expr1\>\"", ",", "\"\<expr2\>\""}], "}"}], 
-            "]"}]}]}], ",", "\n", "\t\t\t\t", 
-         RowBox[{
+           RowBox[{
+            RowBox[{"Verbatim", "[", "PatternTest", "]"}], "[", 
+            RowBox[{"p_", ",", "_"}], "]"}], "\[RuleDelayed]", "\n", 
+           "\t\t\t\t\t", "p"}], ",", "\n", "\t\t\t\t", 
           RowBox[{
-           RowBox[{"Verbatim", "[", "BlankNullSequence", "]"}], "[", "]"}], ":>",
+           RowBox[{
+            RowBox[{"Verbatim", "[", "Condition", "]"}], "[", 
+            RowBox[{"p_", ",", "_"}], "]"}], "\[RuleDelayed]", "\n", 
+           "\t\t\t\t\t", "p"}], ",", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Verbatim", "[", "Alternatives", "]"}], "[", 
+            RowBox[{"a_", ",", "___"}], "]"}], "\[RuleDelayed]", "\n", 
+           "\t\t\t\t\t", "a"}], ",", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Verbatim", "[", "Blank", "]"}], "[", "]"}], ":>", "\n", 
+           "\t\t\t\t\t", "expr"}], ",", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Verbatim", "[", "Blank", "]"}], "[", 
+            RowBox[{"t", ":", "$knownUsageReplaceableSymbols"}], "]"}], ":>", 
            "\n", "\t\t\t\t\t", 
-          RowBox[{"Sequence", "[", "]"}]}], ",", "\n", "\t\t\t\t", 
-         RowBox[{"symbolUsageReplacementPattern", "[", 
-          RowBox[{"names", ",", "conts"}], "]"}]}], "\n", "\t\t\t\t", 
-        "}"}]}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
-   "]"}]}]], "CodeInput",
+           RowBox[{"RuleCondition", "[", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Replace", "[", 
+              RowBox[{"t", ",", 
+               RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"Integer", "\[RuleDelayed]", "int"}], ",", "\n", 
+                 "\t\t\t\t\t\t\t", 
+                 RowBox[{"Real", "\[RuleDelayed]", "float"}], ",", "\n", 
+                 "\t\t\t\t\t\t\t", 
+                 RowBox[{"String", "\[RuleDelayed]", "str"}], ",", "\n", 
+                 "\t\t\t\t\t\t\t", 
+                 RowBox[{"List", ":>", "list"}], ",", "\n", "\t\t\t\t\t\t\t", 
+                 
+                 RowBox[{"Association", ":>", "assoc"}]}], "\n", 
+                "\t\t\t\t\t\t\t", "}"}]}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
+             "True"}], "\n", "\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Verbatim", "[", "Blank", "]"}], "[", "t_", "]"}], ":>", 
+           "\n", "\t\t\t\t\t", 
+           RowBox[{"t", "[", "]"}]}], ",", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Verbatim", "[", "BlankSequence", "]"}], "[", "]"}], ":>",
+            "\n", "\t\t\t\t\t", 
+           RowBox[{"Sequence", "@@", 
+            RowBox[{"ToExpression", "[", 
+             RowBox[{"{", 
+              RowBox[{"\"\<expr1\>\"", ",", "\"\<expr2\>\""}], "}"}], 
+             "]"}]}]}], ",", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Verbatim", "[", "BlankNullSequence", "]"}], "[", "]"}], ":>",
+            "\n", "\t\t\t\t\t", 
+           RowBox[{"Sequence", "[", "]"}]}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"symbolUsageReplacementPattern", "[", 
+           RowBox[{"names", ",", "conts"}], "]"}]}], "\n", "\t\t\t\t", 
+         "}"}]}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], 
+  "*)"}]], "CodeInput",
  CellChangeTimes->{{3.701346857501677*^9, 3.70134690280982*^9}, {
    3.701347234349876*^9, 3.701347235214251*^9}, {3.701378843819737*^9, 
    3.701378859784919*^9}, {3.701385367145052*^9, 3.70138537748715*^9}, {
@@ -3362,76 +3371,486 @@ Cell[BoxData[
    3.704509743147375*^9}, {3.70829162075828*^9, 3.708291625553054*^9}, {
    3.708291658590328*^9, 3.708291683891028*^9}, {3.7082917998599586`*^9, 
    3.708291800720552*^9}, {3.713575292026882*^9, 
-   3.7135752953087187`*^9}},ExpressionUUID->"828c8d57-4c40-41b0-99cc-\
-8e775d4acbea"]
+   3.7135752953087187`*^9}},ExpressionUUID->"696a4f49-842f-4ef4-bc60-\
+f52e59f34046"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
-Cell["\[LeftCeiling]symbolUsageReplacementPattern\[RightFloor]", \
-"CodeSubsubsection",
- Evaluatable->True,
+Cell["symbolUsageReplacementPattern", "CodeSubsubsection",
+ Evaluatable->False,
  CellChangeTimes->{{3.7014357278365993`*^9, 3.701435731475491*^9}, 
-   3.701435912792708*^9},ExpressionUUID->"033a125c-6d20-4e0a-8000-\
-bab64e19de3a"],
+   3.701435912792708*^9, {3.730664094408267*^9, 
+   3.73066409624693*^9}},ExpressionUUID->"1a254f71-7c75-4823-b850-\
+f6866bbd257e"],
 
 Cell[BoxData[
- RowBox[{
-  RowBox[{"symbolUsageReplacementPattern", "[", 
-   RowBox[{"names_", ",", "conts_"}], "]"}], ":=", "\n", "\t", 
+ RowBox[{"(*", 
   RowBox[{
-   RowBox[{"s_Symbol", "?", 
-    RowBox[{"(", "\n", "\t\t", 
-     RowBox[{"GeneralUtilities`HoldFunction", "[", "\n", "\t\t\t", 
-      RowBox[{
-       RowBox[{"!", 
-        RowBox[{"MatchQ", "[", 
-         RowBox[{
-          RowBox[{"Context", "[", "#", "]"}], ",", "conts"}], "]"}]}], "&&", 
-       "\n", "\t\t\t", 
-       RowBox[{"!", 
-        RowBox[{"MemberQ", "[", 
-         RowBox[{"$ContextPath", ",", 
-          RowBox[{"Context", "[", "#", "]"}]}], "]"}]}], "&&", "\n", 
-       "\t\t\t\t", 
-       RowBox[{"!", 
-        RowBox[{"KeyMemberQ", "[", 
-         RowBox[{"names", ",", 
-          RowBox[{"SymbolName", "@", 
-           RowBox[{"Unevaluated", "[", "#", "]"}]}]}], "]"}]}]}], "\n", 
-      "\t\t\t", "]"}], "\n", "\t\t", ")"}]}], "\[RuleDelayed]", "\n", "\t\t", 
-   
-   RowBox[{"RuleCondition", "[", "\n", "\t\t\t", 
-    RowBox[{
-     RowBox[{"ToExpression", "@", "\n", "\t\t\t\t", 
-      RowBox[{"Evaluate", "[", 
-       RowBox[{"$Context", "<>", "\n", "\t\t\t\t\t", 
-        RowBox[{"With", "[", 
-         RowBox[{
-          RowBox[{"{", 
-           RowBox[{"name", "=", 
-            RowBox[{"SymbolName", "@", 
-             RowBox[{"Unevaluated", "[", "s", "]"}]}]}], "}"}], ",", "\n", 
-          "\t\t\t\t\t\t", 
-          RowBox[{"If", "[", 
-           RowBox[{
+   RowBox[{"symbolUsageReplacementPattern", "[", 
+    RowBox[{"names_", ",", "conts_"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"s_Symbol", "?", 
+     RowBox[{"(", "\n", "\t\t", 
+      RowBox[{"GeneralUtilities`HoldFunction", "[", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"!", 
+         RowBox[{"MatchQ", "[", 
+          RowBox[{
+           RowBox[{"Context", "[", "#", "]"}], ",", "conts"}], "]"}]}], "&&", 
+        "\n", "\t\t\t", 
+        RowBox[{"!", 
+         RowBox[{"MemberQ", "[", 
+          RowBox[{"$ContextPath", ",", 
+           RowBox[{"Context", "[", "#", "]"}]}], "]"}]}], "&&", "\n", 
+        "\t\t\t\t", 
+        RowBox[{"!", 
+         RowBox[{"KeyMemberQ", "[", 
+          RowBox[{"names", ",", 
+           RowBox[{"SymbolName", "@", 
+            RowBox[{"Unevaluated", "[", "#", "]"}]}]}], "]"}]}]}], "\n", 
+       "\t\t\t", "]"}], "\n", "\t\t", ")"}]}], "\[RuleDelayed]", "\n", "\t\t", 
+    RowBox[{"RuleCondition", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"ToExpression", "@", "\n", "\t\t\t\t", 
+       RowBox[{"Evaluate", "[", 
+        RowBox[{"$Context", "<>", "\n", "\t\t\t\t\t", 
+         RowBox[{"With", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"name", "=", 
+             RowBox[{"SymbolName", "@", 
+              RowBox[{"Unevaluated", "[", "s", "]"}]}]}], "}"}], ",", "\n", 
+           "\t\t\t\t\t\t", 
+           RowBox[{"If", "[", 
             RowBox[{
-             RowBox[{"StringLength", "@", 
-              RowBox[{"StringTrim", "[", 
-               RowBox[{"name", ",", "\"\<$\>\""}], "]"}]}], ">", "0"}], ",", 
-            "\n", "\t\t\t\t\t\t\t", 
-            RowBox[{"StringTrim", "[", 
-             RowBox[{"name", ",", "\"\<$\>\""}], "]"}], ",", "\n", 
-            "\t\t\t\t\t\t\t", "name"}], "\n", "\t\t\t\t\t\t\t", "]"}]}], "\n",
-          "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "]"}]}], ",", "\n", 
-     "\t\t\t", "True"}], "]"}]}]}]], "CodeInput",
+             RowBox[{
+              RowBox[{"StringLength", "@", 
+               RowBox[{"StringTrim", "[", 
+                RowBox[{"name", ",", "\"\<$\>\""}], "]"}]}], ">", "0"}], ",", 
+             "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{"StringTrim", "[", 
+              RowBox[{"name", ",", "\"\<$\>\""}], "]"}], ",", "\n", 
+             "\t\t\t\t\t\t\t", "name"}], "\n", "\t\t\t\t\t\t\t", "]"}]}], 
+          "\n", "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "]"}]}], ",", 
+      "\n", "\t\t\t", "True"}], "]"}]}]}], "*)"}]], "CodeInput",
  CellChangeTimes->{{3.701435734197339*^9, 3.701435756136022*^9}, {
    3.7014358586387453`*^9, 3.70143590027162*^9}, {3.7014360905206127`*^9, 
    3.701436091485608*^9}, {3.701436151155677*^9, 3.701436191395472*^9}, 
    3.704468514745895*^9, {3.7044685512269697`*^9, 
-   3.7044685595212173`*^9}},ExpressionUUID->"b3d66876-df57-43e0-b5bd-\
-6f3cc5ee07d6"]
+   3.7044685595212173`*^9}},ExpressionUUID->"0af807c4-b0f0-4ee1-b5f3-\
+b3fb097abba0"]
 }, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]usagePatternReplace\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{
+  3.7306641016554947`*^9},ExpressionUUID->"a0e30172-97d7-4cc5-9482-\
+a7007f0c2e7e"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$privateWorkingCont", " ", "=", " ", "\"\<DocGen`Private`\>\""}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.730664117768228*^9, 3.7306641289425917`*^9}, {
+  3.730664190856642*^9, 
+  3.730664191043735*^9}},ExpressionUUID->"6e5979c1-4c07-4e2d-8820-\
+3b044c6a0012"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"extractorLocalized", "[", "s_", "]"}], " ", ":=", "\n", "\t", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"$ContextPath", " ", "=", " ", 
+        RowBox[{"{", "\"\<System`\>\"", "}"}]}], ",", " ", 
+       RowBox[{"$Context", " ", "=", " ", "$privateWorkingCont"}]}], "}"}], 
+     ",", "\n", "\t\t", 
+     RowBox[{"Internal`WithLocalSettings", "[", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"BeginPackage", "[", "$privateWorkingCont", "]"}], ";", "\n", 
+        "\t\t\t", 
+        RowBox[{"Off", "[", 
+         RowBox[{"General", "::", "shdw"}], "]"}], ";"}], ",", "\n", "\t", 
+       "\t\t", 
+       RowBox[{"ToExpression", "[", "s", "]"}], ",", "\n", "\t", "\t\t", 
+       RowBox[{
+        RowBox[{"On", "[", 
+         RowBox[{"General", "::", "shdw"}], "]"}], ";", "\n", "\t", "\t\t", 
+        RowBox[{"EndPackage", "[", "]"}]}]}], "\n", "\t", "\t\t", "]"}]}], 
+    "\n", "\t", "\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"$usageTypeReplacements", " ", "=", "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Integer", " ", "->", " ", 
+      RowBox[{"extractorLocalized", "[", "\"\<int\>\"", "]"}]}], ",", "\n", 
+     "\t", "\t", 
+     RowBox[{"Real", " ", "->", " ", 
+      RowBox[{"extractorLocalized", "[", "\"\<float\>\"", "]"}]}], ",", "\n", 
+     "\t", "\t", 
+     RowBox[{"String", " ", "->", " ", 
+      RowBox[{"extractorLocalized", "[", "\"\<str\>\"", "]"}]}], ",", "\n", 
+     "\t", "\t", 
+     RowBox[{"List", " ", "->", " ", 
+      RowBox[{"extractorLocalized", "[", "\"\<list\>\"", "]"}]}], ",", "\n", 
+     "\t", "\t", 
+     RowBox[{"Association", " ", "->", " ", 
+      RowBox[{"extractorLocalized", "[", "\"\<assoc\>\"", "]"}]}], ",", "\n", 
+     "\t", "\t", 
+     RowBox[{"Symbol", " ", "->", " ", 
+      RowBox[{"extractorLocalized", "[", "\"\<sym\>\"", "]"}]}]}], "\n", "\t",
+     "\t", "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"$usageSymNames", " ", "=", "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Alternatives", " ", "->", " ", 
+      RowBox[{"extractorLocalized", "[", "\"\<alt\>\"", "]"}]}], ",", "\n", 
+     "\t", "\t", 
+     RowBox[{"PatternTest", " ", "->", " ", 
+      RowBox[{"extractorLocalized", "[", "\"\<test\>\"", "]"}]}], ",", "\n", 
+     "\t", "\t", 
+     RowBox[{"Condition", " ", "->", " ", 
+      RowBox[{"extractorLocalized", "[", "\"\<cond\>\"", "]"}]}], ",", "\n", 
+     "\t", "\t", 
+     RowBox[{"s_Symbol", " ", ":>", "\n", "\t", "\t", 
+      RowBox[{"RuleCondition", "[", "\n", "\t", "\t\t", 
+       RowBox[{
+        RowBox[{"extractorLocalized", "@", "\n", "\t", "\t\t", 
+         RowBox[{"ToLowerCase", "[", 
+          RowBox[{"StringTake", "[", 
+           RowBox[{
+            RowBox[{"SymbolName", "[", 
+             RowBox[{"Unevaluated", "@", "s"}], "]"}], ",", " ", 
+            RowBox[{"UpTo", "[", "3", "]"}]}], "]"}], "]"}]}], ",", "\n", 
+        "\t", "\t\t", "True"}], "\n", "\t", "\t\t", "]"}]}]}], "\n", "\t", 
+    "\t", "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"symbolUsageReplacementPattern", "[", 
+    RowBox[{"names_", ",", " ", "conts_"}], "]"}], " ", ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"s_Symbol", "?", 
+     RowBox[{"(", "\n", "\t\t", 
+      RowBox[{"GeneralUtilities`HoldFunction", "[", "\n", "\t", "\t\t", 
+       RowBox[{
+        RowBox[{"!", " ", 
+         RowBox[{"MatchQ", "[", 
+          RowBox[{
+           RowBox[{"Context", "[", "#", "]"}], ",", " ", "conts"}], "]"}]}], 
+        " ", "&&", "\n", "\t", "\t\t", 
+        RowBox[{"!", " ", "\n", "\t", "\t\t", 
+         RowBox[{"MemberQ", "[", 
+          RowBox[{"$ContextPath", ",", " ", 
+           RowBox[{"Context", "[", "#", "]"}]}], "]"}]}], " ", "&&", "\n", 
+        "\t", "\t\t", 
+        RowBox[{"!", " ", "\n", "\t", "\t\t", 
+         RowBox[{"KeyMemberQ", "[", 
+          RowBox[{"names", ",", " ", 
+           RowBox[{"SymbolName", "@", 
+            RowBox[{"Unevaluated", "[", "#", "]"}]}]}], "]"}]}]}], "\n", "\t",
+        "\t\t", "]"}], "\n", "\t", "\t", ")"}]}], " ", ":>", "\n", "\t", 
+    RowBox[{"RuleCondition", "[", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"ToExpression", "@", "\n", "\t\t\t", 
+       RowBox[{"Evaluate", "[", 
+        RowBox[{"$Context", " ", "<>", "\n", "\t", "\t\t\t", 
+         RowBox[{"With", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"name", " ", "=", " ", 
+             RowBox[{"SymbolName", "@", 
+              RowBox[{"Unevaluated", "[", "s", "]"}]}]}], "}"}], ",", "\n", 
+           "\t", "\t", "\t\t\t", 
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"StringLength", "@", 
+               RowBox[{"StringTrim", "[", 
+                RowBox[{"name", ",", " ", "\"\<$\>\""}], "]"}]}], " ", ">", 
+              " ", "0"}], ",", "\n", "\t", "\t", "\t\t\t\t", 
+             RowBox[{"StringTrim", "[", 
+              RowBox[{"name", ",", " ", "\"\<$\>\""}], "]"}], ",", "\n", "\t",
+              "\t", "\t\t\t\t", "name"}], "\n", "\t", "\t", "\t\t\t\t", 
+            "]"}]}], "\n", "\t", "\t", "\t\t\t", "]"}]}], "\n", "\t", 
+        "\t\t\t", "]"}]}], ",", "\n", "\t", "\t", "True"}], "]"}]}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"usagePatternReplace", "[", "\n", "\t", 
+    RowBox[{"vals_", ",", "\n", "\t", 
+     RowBox[{"reps_:", " ", 
+      RowBox[{"{", "}"}]}]}], "\n", "\t", "]"}], " ", ":=", "\n", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"names", " ", "=", " ", 
+        RowBox[{"AssociationMap", "[", 
+         RowBox[{
+          RowBox[{"Null", " ", "&"}], ",", " ", 
+          RowBox[{"{", "}"}]}], 
+         RowBox[{"(*", 
+          RowBox[{"Names", "[", "]"}], "*)"}], "]"}]}], ",", "\n", "\t\t", 
+       RowBox[{"conts", " ", "=", " ", "\n", "\t\t", 
+        RowBox[{"Alternatives", " ", "@@", " ", 
+         RowBox[{"{", "\n", "\t\t\t", 
+          RowBox[{
+          "\"\<System`\>\"", ",", " ", "\"\<FrontEnd`\>\"", ",", " ", "\n", 
+           "\t\t\t", "\"\<PacletManager`\>\"", ",", " ", 
+           "\"\<Internal`\>\""}], "\n", "\t\t\t", "}"}]}]}], ",", "\n", 
+       "\t\t", 
+       RowBox[{"repTypes", "=", 
+        RowBox[{"Alternatives", "@@", 
+         RowBox[{"Map", "[", 
+          RowBox[{"Blank", ",", " ", 
+           RowBox[{"Keys", "@", "$usageTypeReplacements"}]}], "]"}]}]}]}], 
+      "\n", "\t\t", "}"}], ",", "\n", "\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"Replace", "[", "\n", "\t\t", 
+        RowBox[{
+         RowBox[{"Replace", "[", "\n", "\t\t\t", 
+          RowBox[{"#", ",", "\n", "\t\t\t", 
+           RowBox[{"{", "\n", "\t\t\t\t", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", "a___", 
+              "]"}], " ", ":>", " ", "a"}], "\n", "\t\t\t\t", "}"}], ",", 
+           "\n", "\t\t\t", 
+           RowBox[{"{", 
+            RowBox[{"2", ",", " ", "10"}], "}"}]}], "\n", "\t\t\t", "]"}], 
+         ",", "\n", "\t\t", 
+         RowBox[{"Join", "[", 
+          RowBox[{"$usageTypeReplacements", ",", " ", "$usageSymNames"}], 
+          "]"}], ",", "\n", "\t\t", 
+         RowBox[{"Depth", "[", "#", "]"}]}], "\n", "\t\t", "]"}], " ", "&"}], 
+      "@", "\n", "\t", 
+      RowBox[{"ReplaceRepeated", "[", "\n", "\t\t", 
+       RowBox[{
+        RowBox[{"FixedPoint", "[", "\n", "\t\t\t", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
+            RowBox[{"#", ",", "\n", "\t\t\t\t", 
+             RowBox[{"{", "\n", "\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Verbatim", "[", "Pattern", "]"}], "[", 
+                 RowBox[{"_", ",", " ", "e_"}], "]"}], " ", ":>", "\n", 
+                "\t\t\t\t\t", "e"}], ",", "\n", "\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", 
+                 RowBox[{
+                  RowBox[{"Verbatim", "[", "Pattern", "]"}], "[", 
+                  RowBox[{"_", ",", " ", "e_"}], "]"}], "]"}], " ", ":>", 
+                "\n", "\t\t\t\t\t", 
+                RowBox[{"HoldPattern", "[", "e", "]"}]}], ",", "\n", 
+               "\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", 
+                 RowBox[{
+                  RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", "e_", 
+                  "]"}], "]"}], " ", ":>", "\n", "\t\t\t\t\t", 
+                RowBox[{"HoldPattern", "[", "e", "]"}]}]}], "\n", 
+              "\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t", "1"}], "\n", 
+            "\t\t\t\t", "]"}], " ", "&"}], ",", "\n", "\t\t\t", "vals"}], 
+         "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
+        RowBox[{"Flatten", "@", 
+         RowBox[{"{", "\n", "\t\t\t", 
+          RowBox[{"reps", ",", "\n", "\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Verbatim", "[", "PatternTest", "]"}], "[", 
+             RowBox[{"_", ",", " ", "ColorQ"}], "]"}], " ", ":>", "\n", 
+            "\t\t\t\t", 
+            RowBox[{"extractorLocalized", "@", "\"\<color\>\""}]}], ",", "\n",
+            "\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Verbatim", "[", "PatternTest", "]"}], "[", 
+             RowBox[{"_", ",", " ", "ImageQ"}], "]"}], " ", ":>", "\n", 
+            "\t\t\t\t", 
+            RowBox[{"extractorLocalized", "@", "\"\<img\>\""}]}], ",", "\n", 
+           "\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Verbatim", "[", "Optional", "]"}], "[", 
+             RowBox[{"name_", ",", " ", "_"}], "]"}], " ", ":>", "\n", 
+            "\t\t\t\t", "name"}], ",", "\n", "\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Verbatim", "[", "Pattern", "]"}], "[", 
+             RowBox[{"_", ",", " ", "_OptionsPattern"}], "]"}], " ", ":>", 
+            "\n", "\t\t\t\t", 
+            RowBox[{"Sequence", "[", "]"}]}], ",", "\n", "\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Verbatim", "[", "Pattern", "]"}], "[", 
+             RowBox[{"name_", ",", " ", "_"}], "]"}], " ", ":>", "\n", 
+            "\t\t\t\t", "name"}], ",", "\n", "\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Verbatim", "[", "PatternTest", "]"}], "[", 
+             RowBox[{"p_", ",", " ", "_"}], "]"}], " ", ":>", "\n", 
+            "\t\t\t\t", "p"}], ",", "\n", "\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Verbatim", "[", "Condition", "]"}], "[", 
+             RowBox[{"p_", ",", " ", "_"}], "]"}], " ", ":>", "\n", 
+            "\t\t\t\t", "p"}], ",", "\n", "\t\t\t", 
+           RowBox[{"(*", " ", 
+            RowBox[{
+            "for", " ", "dispatching", " ", "functions", " ", "by", " ", 
+             "Alternatives"}], " ", "*)"}], "\n", "\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{
+               RowBox[{"Verbatim", "[", "Alternatives", "]"}], "[", 
+               RowBox[{"a_", ",", " ", "___"}], "]"}], "[", "___", "]"}], " ",
+              "|", "\n", "\t\t\t", 
+             RowBox[{
+              RowBox[{
+               RowBox[{
+                RowBox[{"Verbatim", "[", "Alternatives", "]"}], "[", 
+                RowBox[{"a_", ",", " ", "___"}], "]"}], "[", "___", "]"}], 
+              "[", "___", "]"}], " ", "|", "\n", "\t\t\t", 
+             RowBox[{
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Verbatim", "[", "Alternatives", "]"}], "[", 
+                 RowBox[{"a_", ",", " ", "___"}], "]"}], "[", "___", "]"}], 
+               "[", "___", "]"}], "[", "___", "]"}], " ", "|", "\n", "\t\t\t", 
+             RowBox[{
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"Verbatim", "[", "Alternatives", "]"}], "[", 
+                  RowBox[{"a_", ",", " ", "___"}], "]"}], "[", "___", "]"}], 
+                "[", "___", "]"}], "[", "___", "]"}], "[", "___", "]"}], " ", 
+             "|", "\n", "\t\t\t", 
+             RowBox[{
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"Verbatim", "[", "Alternatives", "]"}], "[", 
+                   RowBox[{"a_", ",", " ", "___"}], "]"}], "[", "___", "]"}], 
+                 "[", "___", "]"}], "[", "___", "]"}], "[", "___", "]"}], "[",
+               "___", "]"}]}], " ", ":>", "\n", "\t\t\t\t", "a"}], ",", "\n", 
+           "\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Verbatim", "[", "Alternatives", "]"}], "[", 
+             RowBox[{"a_", ",", " ", "___"}], "]"}], " ", ":>", "\n", 
+            "\t\t\t\t", 
+            RowBox[{"RuleCondition", "[", "\n", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Blank", "[", "\n", "\t", "\t\t\t\t\t", 
+               RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"Hold", "@", "a"}], ",", "\n", "\t", "\t\t\t\t\t\t", 
+                 
+                 RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{
+                    RowBox[{"Hold", "[", 
+                    RowBox[{"p", " ", ":", " ", 
+                    RowBox[{
+                    RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", "_", 
+                    "]"}]}], "]"}], " ", ":>", "\n", "\t", "\t\t\t\t\t\t\t", 
+                    "p"}], ",", "\n", "\t", "\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"Hold", "[", "repTypes", "]"}], ":>", 
+                    RowBox[{"Head", "[", "a", "]"}]}], ",", "\n", "\t", 
+                   "\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"Hold", "[", 
+                    RowBox[{"e_", "[", "___", "]"}], "]"}], " ", ":>", " ", 
+                    "e"}], ",", "\n", "\t", "\t\t\t\t\t\t\t", 
+                   RowBox[{"_", " ", ":>", " ", "a"}]}], "\n", "\t", 
+                  "\t\t\t\t\t\t\t", "}"}]}], "\n", "\t", "\t\t\t\t\t\t", 
+                "]"}], "\n", "\t", "\t\t\t\t\t", "]"}], ",", "\n", "\t", 
+              "\t\t\t\t", "True"}], "\n", "\t", "\t\t\t\t", "]"}]}], ",", 
+           "\n", "\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{"Verbatim", "[", "Verbatim", "]"}], "[", "p_", "]"}], 
+             "[", "a___", "]"}], " ", ":>", "\n", "\t\t\t\t", "p"}], ",", 
+           "\n", "\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Verbatim", "[", "Blank", "]"}], "[", "]"}], " ", ":>", 
+            "\n", "\t\t\t\t", 
+            RowBox[{"extractorLocalized", "@", "\"\<expr\>\""}]}], ",", "\n", 
+           "\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Verbatim", "[", "Blank", "]"}], "[", "\n", "\t\t\t\t", 
+             RowBox[{"t", " ", ":", " ", 
+              RowBox[{"Alternatives", " ", "@@", " ", 
+               RowBox[{"Keys", "[", "$usageTypeReplacements", "]"}]}]}], 
+             "]"}], " ", ":>", "\n", "\t\t\t", "\n", "\t\t\t", 
+            RowBox[{"RuleCondition", "[", "\n", "\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Replace", "[", 
+               RowBox[{
+               "t", ",", "\n", "\t\t\t\t\t", "$usageTypeReplacements"}], "\n",
+                "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", "True"}], "\n", 
+             "\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Verbatim", "[", "Blank", "]"}], "[", "t_", "]"}], " ", ":>",
+             "\n", "\t\t\t", "t"}], ",", "\n", "\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Verbatim", "[", "BlankSequence", "]"}], "[", "]"}], " ",
+             ":>", "\n", "\t\t\t", "\n", "\t\t\t", 
+            RowBox[{"Sequence", " ", "@@", " ", 
+             RowBox[{"extractorLocalized", "[", 
+              RowBox[{"{", 
+               RowBox[{"\"\<expr1\>\"", ",", " ", "\"\<expr2\>\""}], "}"}], 
+              "]"}]}]}], ",", "\n", "\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Verbatim", "[", "BlankNullSequence", "]"}], "[", "]"}], 
+            " ", ":>", "\n", "\t\t\t", 
+            RowBox[{"Sequence", "[", "]"}]}], ",", "\n", "\t\t\t", 
+           RowBox[{"symbolUsageReplacementPattern", "[", 
+            RowBox[{"names", ",", " ", "conts"}], "]"}], ",", "\n", "\t\t\t", 
+           
+           RowBox[{
+            RowBox[{"h_", "[", 
+             RowBox[{"a___", ",", " ", 
+              RowBox[{
+               RowBox[{"Verbatim", "[", "Sequence", "]"}], "[", "b___", "]"}],
+               ",", " ", "c___"}], "]"}], " ", ":>", " ", 
+            RowBox[{"h", "[", 
+             RowBox[{"a", ",", " ", "b", ",", " ", "c"}], "]"}]}]}], "\n", 
+          "\t\t\t", "}"}]}]}], "\n", "\t\t", "]"}]}]}], "\n", "\t", "]"}]}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{
+  3.730482850871368*^9, {3.730483216587447*^9, 3.7304832538286057`*^9}, {
+   3.730483478153316*^9, 3.730483510262683*^9}, {3.7306639925869427`*^9, 
+   3.730663993777968*^9}, {3.730664202605418*^9, 
+   3.730664214968072*^9}},ExpressionUUID->"031b432c-07d4-4f71-8c20-\
+ab52ae99820a"]
+}, Open  ]],
 
 Cell[CellGroupData[{
 

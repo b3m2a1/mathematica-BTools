@@ -30,6 +30,8 @@ $DocGenActive::usage=
 	"The application actively being documented";
 $DocGenDirectory::usage=
 	"The build directory for DocGen";
+$DocGenWebDocsDirectory::usage=
+	"";
 $DocGenLine::usage=
 	"The $Line for writing docs";
 $DocGenColoring::usage=
@@ -1224,12 +1226,7 @@ containedFunctionOptions[s:Except[_Symbol]?(MatchQ[#,_Symbol]&)]:=
 containedFunctionOptions~SetAttributes~HoldFirst
 
 
-(* ::Subsubsection::Closed:: *)
-(*usagePatternReplace*)
-
-
-
-$knownUsageReplaceableSymbols=
+(*$knownUsageReplaceableSymbols=
 	Alternatives@@{
 		Symbol,
 		Integer,
@@ -1237,10 +1234,10 @@ $knownUsageReplaceableSymbols=
 		String,
 		List,
 		Association
-		};
+		};*)
 
 
-usagePatternReplace[
+(*usagePatternReplace[
 	vals_,
 	reps_:{}
 	]:=
@@ -1252,7 +1249,7 @@ usagePatternReplace[
 			FixedPoint[
 				Replace[
 					#,{
-						Verbatim[Pattern][_,e_]:>
+						Verbatim[Pattern][_,e_]\[RuleDelayed]
 							e,
 						Verbatim[HoldPattern][Verbatim[Pattern][_,e_]]:>
 							HoldPattern[e],
@@ -1265,24 +1262,24 @@ usagePatternReplace[
 				],
 			Flatten@{
 				reps,
-				Verbatim[Optional][name_,_]:>
+				Verbatim[Optional][name_,_]\[RuleDelayed]
 					name,
-				Verbatim[Pattern][name_,_]:>
+				Verbatim[Pattern][name_,_]\[RuleDelayed]
 					name,
-				Verbatim[PatternTest][p_,_]:>
+				Verbatim[PatternTest][p_,_]\[RuleDelayed]
 					p,
-				Verbatim[Condition][p_,_]:>
+				Verbatim[Condition][p_,_]\[RuleDelayed]
 					p,
-				Verbatim[Alternatives][a_,___]:>
+				Verbatim[Alternatives][a_,___]\[RuleDelayed]
 					a,
 				Verbatim[Blank][]:>
 					expr,
 				Verbatim[Blank][t:$knownUsageReplaceableSymbols]:>
 					RuleCondition[
 						Replace[t,{
-							Integer:>int,
-							Real:>float,
-							String:>str,
+							Integer\[RuleDelayed]int,
+							Real\[RuleDelayed]float,
+							String\[RuleDelayed]str,
 							List:>list,
 							Association:>assoc
 							}],
@@ -1297,22 +1294,17 @@ usagePatternReplace[
 				symbolUsageReplacementPattern[names,conts]
 				}
 			]
-		]
+		]*)
 
 
-(* ::Subsubsection::Closed:: *)
-(*symbolUsageReplacementPattern*)
-
-
-
-symbolUsageReplacementPattern[names_,conts_]:=
+(*symbolUsageReplacementPattern[names_,conts_]:=
 	s_Symbol?(
 		GeneralUtilities`HoldFunction[
 			!MatchQ[Context[#],conts]&&
 			!MemberQ[$ContextPath,Context[#]]&&
 				!KeyMemberQ[names,SymbolName@Unevaluated[#]]
 			]
-		):>
+		)\[RuleDelayed]
 		RuleCondition[
 			ToExpression@
 				Evaluate[$Context<>
@@ -1323,7 +1315,173 @@ symbolUsageReplacementPattern[names_,conts_]:=
 							]
 						]
 					],
-			True]
+			True]*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*usagePatternReplace*)
+
+
+
+$privateWorkingCont = "DocGen`Private`";
+
+
+extractorLocalized[s_] :=
+	Block[{$ContextPath = {"System`"}, $Context = $privateWorkingCont},
+		Internal`WithLocalSettings[
+			BeginPackage[$privateWorkingCont];
+			Off[General::shdw];,
+			ToExpression[s],
+			On[General::shdw];
+			EndPackage[]
+			]
+		];
+$usageTypeReplacements =
+	{
+		Integer -> extractorLocalized["int"],
+		Real -> extractorLocalized["float"],
+		String -> extractorLocalized["str"],
+		List -> extractorLocalized["list"],
+		Association -> extractorLocalized["assoc"],
+		Symbol -> extractorLocalized["sym"]
+		};
+$usageSymNames =
+	{
+		Alternatives -> extractorLocalized["alt"],
+		PatternTest -> extractorLocalized["test"],
+		Condition -> extractorLocalized["cond"],
+		s_Symbol :>
+		RuleCondition[
+			extractorLocalized@
+			ToLowerCase[StringTake[SymbolName[Unevaluated@s], UpTo[3]]],
+			True
+			]
+		};
+symbolUsageReplacementPattern[names_, conts_] :=
+	s_Symbol?(
+		GeneralUtilities`HoldFunction[
+			! MatchQ[Context[#], conts] &&
+			! 
+			MemberQ[$ContextPath, Context[#]] &&
+			! 
+			KeyMemberQ[names, SymbolName@Unevaluated[#]]
+			]
+		) :>
+	RuleCondition[
+		ToExpression@
+			Evaluate[$Context <>
+				With[{name = SymbolName@Unevaluated[s]},
+					If[StringLength@StringTrim[name, "$"] > 0,
+						StringTrim[name, "$"],
+						name
+						]
+					]
+				],
+		True];
+usagePatternReplace[
+	vals_,
+	reps_: {}
+	] :=
+With[{
+		names = AssociationMap[Null &, {}(*Names[]*)],
+		conts = 
+		Alternatives @@ {
+			"System`", "FrontEnd`", 
+			"PacletManager`", "Internal`"
+			},
+		repTypes=Alternatives@@Map[Blank, Keys@$usageTypeReplacements]
+		},
+	Replace[
+		Replace[
+			#,
+			{
+				Verbatim[HoldPattern][a___] :> a
+				},
+			{2, 10}
+			],
+		Join[$usageTypeReplacements, $usageSymNames],
+		Depth[#]
+		] &@
+	ReplaceRepeated[
+		FixedPoint[
+			Replace[
+				#,
+				{
+					Verbatim[Pattern][_, e_] :>
+					e,
+					Verbatim[HoldPattern][Verbatim[Pattern][_, e_]] :>
+					HoldPattern[e],
+					Verbatim[HoldPattern][Verbatim[HoldPattern][e_]] :>
+					HoldPattern[e]
+					},
+				1
+				] &,
+			vals
+			],
+		Flatten@{
+			reps,
+			Verbatim[PatternTest][_, ColorQ] :>
+				extractorLocalized@"color",
+			Verbatim[PatternTest][_, ImageQ] :>
+				extractorLocalized@"img",
+			Verbatim[Optional][name_, _] :>
+				name,
+			Verbatim[Pattern][_, _OptionsPattern] :>
+				Sequence[],
+			Verbatim[Pattern][name_, _] :>
+				name,
+			Verbatim[PatternTest][p_, _] :>
+				p,
+			Verbatim[Condition][p_, _] :>
+				p,
+			(* for dispatching functions by Alternatives *)
+			Verbatim[Alternatives][a_, ___][___] |
+			Verbatim[Alternatives][a_, ___][___][___] |
+			Verbatim[Alternatives][a_, ___][___][___][___] |
+			Verbatim[Alternatives][a_, ___][___][___][___][___] |
+			Verbatim[Alternatives][a_, ___][___][___][___][___][___] :>
+				a,
+			Verbatim[Alternatives][a_, ___] :>
+				RuleCondition[
+					Blank[
+						Replace[
+							Hold@a,
+							{
+								Hold[p : Verbatim[HoldPattern][_]] :>
+								p,
+								Hold[repTypes]:>Head[a],
+								Hold[e_[___]] :> e,
+								_ :> a
+								}
+							]
+						],
+					True
+					],
+			Verbatim[Verbatim][p_][a___] :>
+				p,
+			Verbatim[Blank][] :>
+				extractorLocalized@"expr",
+			Verbatim[Blank][
+				t : Alternatives @@ Keys[$usageTypeReplacements]] :>
+			
+			RuleCondition[
+				Replace[t,
+					$usageTypeReplacements
+					],
+				True
+				],
+			Verbatim[Blank][t_] :>
+			t,
+			Verbatim[BlankSequence][] :>
+			
+			Sequence @@ extractorLocalized[{"expr1", "expr2"}],
+			Verbatim[BlankNullSequence][] :>
+			Sequence[],
+			symbolUsageReplacementPattern[names, conts],
+			h_[a___, Verbatim[Sequence][b___], c___] :> h[a, b, c]
+			}
+		]
+	];
 
 
 (* ::Subsubsection::Closed:: *)

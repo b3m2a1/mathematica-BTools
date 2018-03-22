@@ -36,6 +36,9 @@ TutorialTemplate::usage=
 Begin["`Private`"];
 
 
+$DocGenDirectory (* To invoke the autoloader *)
+
+
 (* ::Subsubsection::Closed:: *)
 (*Items*)
 

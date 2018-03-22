@@ -46,6 +46,9 @@ SaveMultiPackageOverview::usage=
 Begin["`Private`"];
 
 
+$DocGenDirectory (* To invoke the autoloader *)
+
+
 (* ::Subsection:: *)
 (*SetUp*)
 
@@ -645,10 +648,7 @@ saveGuidePages[
 							FileNameJoin@{
 								dir,
 								If[extension,
-									Sequence@@{
-										"ReferencePages",
-										"Guides"
-										},
+									"Guides",
 									Nothing
 									],
 								Last@URLParse[s,"Path"]<>".nb"
@@ -658,7 +658,7 @@ saveGuidePages[
 						}
 				]&,
 			Flatten@{nb}
-		]
+			]
 		)
 
 
@@ -1115,9 +1115,6 @@ scrapeGuideTemplate[nb_NotebookObject]:=
 
 
 
-MultiPackageOverviewNotebook//ClearAll
-
-
 extractPackageOverviewSections[
 	pkgName_->ops_?OptionQ
 	]:=
@@ -1228,7 +1225,7 @@ formatPackageOverview[
 		"`name` has `symbols`, `guides`, `tutorials`"
 			~TemplateApply~
 			<|
-				"name"->pkgName,
+				"name"->StringTrim[pkgName, "Documentation_"],
 				"symbols"->
 					Replace[Length[syms],{
 						0->"no symbol pages",
@@ -1285,7 +1282,8 @@ MultiPackageOverviewNotebook[
 	Block[{
 		$DocGenActive=OptionValue["LinkBase"],
 		$GuideAnchorTitle=OptionValue["OverviewHeading"],
-		data=formatPackageOverview@*extractPackageOverviewSections/@pkgs,
+		data=formatPackageOverview@*extractPackageOverviewSections/@
+			Map[StringTrim[First@#, "Documentation_"]->Last[#]&, pkgs],
 		relguides,
 		pkgnames=
 			StringTrim[First/@pkgs, "Documentation_"]
@@ -1500,19 +1498,27 @@ MultiPackageOverviewNotebook[
 
 
 Options[GenerateMultiPackageOverview]=
-	Options[MultiPackageOverviewNotebook];
+	Join[
+		Options[MultiPackageOverviewNotebook],
+		Options[CreateDocument]
+		];
 GenerateMultiPackageOverview[
 	obj:{__Rule}|_CloudObject|
 		_String?DirectoryQ|{__String?DirectoryQ},
 	ops:OptionsPattern[]
 	]:=
 	CreateDocument[
-		MultiPackageOverviewNotebook[obj, ops],
+		MultiPackageOverviewNotebook[obj, 
+			FilterRules[{ops}, Options[MultiPackageOverviewNotebook]]
+			],
 		FilterRules[{ops}, Options[CreateDocument]]
 		]
 
 
-Options[SaveMultiPackageOverviewNotebook]=
+SaveMultiPackageOverview//Clear
+
+
+Options[SaveMultiPackageOverview]=
 	Join[
 		{
 			Directory->Automatic,
@@ -1520,7 +1526,7 @@ Options[SaveMultiPackageOverviewNotebook]=
 			},
 		Options[GenerateMultiPackageOverview]
 		];
-SaveMultiPackageOverviewNotebook[
+SaveMultiPackageOverview[
 	obj:
 		{__Rule}|_CloudObject|
 		_String?DirectoryQ|{__String?DirectoryQ}|
@@ -1531,13 +1537,14 @@ SaveMultiPackageOverviewNotebook[
 		{
 			nb=
 				If[!MatchQ[obj, _NotebookObject], 
-					GenerateMultiPackageOverview[obj, 
+					GenerateMultiPackageOverview[
+						obj, 
 						FilterRules[
 							{
 								Visible->False,
 								ops
 								}, 
-							Options[MultiPackageOverviewNotebook]
+							Options[GenerateMultiPackageOverview]
 							]
 						]
 					],
@@ -1547,17 +1554,20 @@ SaveMultiPackageOverviewNotebook[
 		With[
 			{
 				res=
-					docGenSaveGuide[
-						nb,
-						dir,
-						extension
+					Replace[
+						Flatten@saveGuidePages[
+							nb,
+							dir,
+							extension
+							],
+						{s_,___}:>s
 						]
 				},
 			If[!MatchQ[obj, _NotebookObject],
 				NotebookClose[nb]
 				];
-			res/;Head[res]=!=docGenSaveGuide
-			];
+			res/;MatchQ[res, _String?(FileExistsQ)]
+			]
 		]
 
 
