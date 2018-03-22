@@ -871,72 +871,113 @@ SymbolPageNotebook~SetAttributes~HoldFirst;
 
 
 
-AutoGenerateUsage[sym_Symbol]:=
-	With[{
-		vals=
-			Replace[
-				usagePatternReplace[
-					Map[First,
-						Join@@
-							Map[dgSymValues[sym,#]&,
-								{UpValues,DownValues,SubValues}
-								]
+autoGenerateUsageCallPatterns[sym_]:=
+	Replace[
+		usagePatternReplace[
+			Map[First,
+				Join@@
+					Map[dgSymValues[sym,#]&,
+						{UpValues,DownValues,SubValues}
 						]
-					],{
-				l:{__}:>
-					Map[
-						Cell[
-							Replace[#,{
-								None:>
-									BoxData@ToString@Unevaluated@sym,
-								Verbatim[HoldPattern][Verbatim[HoldPattern][e_]]:>
+				]
+			],{
+		l:{__}:>
+			Map[
+				Cell[
+					Replace[#,{
+						None:>
+							BoxData@ToString@Unevaluated@sym,
+						Verbatim[HoldPattern][Verbatim[HoldPattern][e_]]:>
+							Replace[
+								FixedPoint[
 									Replace[
-										FixedPoint[
-											Replace[
-												Verbatim[HoldPattern][Verbatim[HoldPattern][p_]]:>
-													HoldPattern[p]
-												],
-											HoldPattern[e]
-											],
-										Verbatim[HoldPattern][e2_]:>
-											BoxData@toSafeBoxes[Unevaluated[e2],StandardForm]
+										Verbatim[HoldPattern][Verbatim[HoldPattern][p_]]:>
+											HoldPattern[p]
 										],
-								Verbatim[HoldPattern][e_]:>
-									BoxData@toSafeBoxes[Unevaluated[e],StandardForm]
-								}],
-							"UsageInput"
-							]&,
-						l
-						],
-				{}->{
-						Cell[BoxData@toSafeBoxes[Unevaluated[sym],StandardForm],
-							"UsageInput"]
-						}
-				}]
+									HoldPattern[e]
+									],
+								Verbatim[HoldPattern][e2_]:>
+									BoxData@toSafeBoxes[Unevaluated[e2],StandardForm]
+								],
+						Verbatim[HoldPattern][e_]:>
+							BoxData@toSafeBoxes[Unevaluated[e],StandardForm]
+						}],
+					"UsageInput"
+					]&,
+				l
+				],
+		{}:>
+			{
+				Cell[BoxData@toSafeBoxes[Unevaluated[sym],StandardForm],
+					"UsageInput"]
+				}
+		}
+	];
+autoGenerateUsageCallPatterns~SetAttributes~HoldFirst
+
+
+autoGenerateUsage[sym_Symbol]:=
+	With[
+		{
+			vals=autoGenerateUsageCallPatterns[sym]
 			},
-			With[{s=
-				StringSplit[
-					StringTrim@
-						Replace[sym::usages,
-							_MessageName:>
-							Replace[sym::usage,
-								_MessageName:>"No usage message..."]
-							],
-					"\n"
-					]
-				},
-				If[Length@s>=Length@vals,
-					With[{u=Flatten@ConstantArray[vals,Length@s]~Take~Length@s},
-						Riffle[u,Cell[#,"UsageText"]&/@s]
-						],
-					Append[
-						Riffle[vals,
-							Cell[StringTrim@StringJoin@Riffle[s,"\n"],"UsageText"]
-							],
-						Cell[StringTrim@StringJoin@Riffle[s,"\n"],"UsageText"]
+		With[{s=
+			If[StringQ@sym::usages,
+				StringTrim@StringSplit[sym::usages, "\n"],
+				{
+					Replace[sym::usage,
+						Except[_String]:>
+							If[Length@vals>0, "No usage...", "Has no definitions..."]
 						]
+					}
+				]
+			},
+			If[Length@s>=Length@vals,
+				With[{u=Flatten@ConstantArray[vals,Length@s]~Take~Length@s},
+					Riffle[u, Cell[#,"UsageText"]&/@s]
+					],
+				Append[
+					Riffle[vals,
+						Cell[StringTrim@StringJoin@Riffle[s,"\n"],"UsageText"]
+						],
+					Cell[StringTrim@StringJoin@Riffle[s,"\n"],"UsageText"]
 					]
 				]
+			]
+		];
+autoGenerateUsage~SetAttributes~HoldFirst
+AutoGenerateUsage[sym_Symbol]:=
+	With[
+		{
+			u=sym::usage,
+			name=SymbolName[Unevaluated[sym]],
+			namePat=SymbolName[Unevaluated[sym]]~~"["~~__~~"]"
+			},
+		If[StringQ@u&&StringContainsQ[u, namePat],
+			With[{splits=StringSplit[u, p:namePat:>p]},
+				Flatten@Map[
+					{
+						Cell[BoxData@FE`reparseBoxStructure[#[[1]], name], "UsageInput"],
+						Cell[#[[2]], "UsageText"]
+						}&,
+					Block[{splitMe=True},
+						SplitBy[
+							If[StringContainsQ[splits[[1]], namePat],
+								splits,
+								Rest@splits
+								],
+							Function[
+								If[StringContainsQ[#, namePat],
+									splitMe=Not@splitMe
+									];
+								splitMe
+								]
+							]
+						]
+					]
+				],
+			autoGenerateUsage[sym]
+			]
 		];
 AutoGenerateUsage[s:Except[_Symbol]?(MatchQ[#,_Symbol]&)]:=
 	AutoGenerateUsage@System`Evaluate@s;
