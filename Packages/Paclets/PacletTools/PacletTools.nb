@@ -1191,7 +1191,7 @@ Cell[BoxData[{
    3.730655447170596*^9, 
    3.73065545421684*^9}},ExpressionUUID->"47e8e143-0f4a-4099-b26c-\
 fc33aef7cc21"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -1875,7 +1875,7 @@ Cell[BoxData[{
    3.730644092263999*^9}},ExpressionUUID->"89c7319f-2fbc-4d11-9bd8-\
 b47b4935fd98"]
 }, Open  ]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -2483,31 +2483,101 @@ Cell[BoxData[{
    RowBox[{"PacletLookup", "[", 
     RowBox[{
      RowBox[{"p", ":", 
-      RowBox[{"_String", "|", 
-       RowBox[{"{", 
-        RowBox[{"_String", ",", "_String"}], "}"}]}]}], ",", "props_"}], 
-    "]"}], ":=", "\n", "\t", 
-   RowBox[{"PacletLookup", "[", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"_String", "|", 
+          RowBox[{"{", 
+           RowBox[{"_String", ",", " ", "_String"}], "}"}]}], ")"}], ".."}], 
+       "}"}]}], ",", "props_"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"PacletLookup", "[", "\n", "\t\t", 
     RowBox[{
      RowBox[{
       RowBox[{
        RowBox[{"If", "[", 
         RowBox[{
          RowBox[{
-          RowBox[{"Length", "@", "#"}], "\[Equal]", "1"}], ",", " ", 
-         RowBox[{"#", "[", 
-          RowBox[{"[", "1", "]"}], "]"}], ",", " ", "#"}], "]"}], "&"}], "@", 
-      
-      RowBox[{"PacletManager`PacletFind", "[", "p", "]"}]}], ",", "props"}], 
-    "]"}]}], ";"}], "\n", 
+          RowBox[{"StringQ", "[", "#", "]"}], "&&", 
+          RowBox[{"DirectoryQ", "[", "#", "]"}]}], ",", "\n", "\t\t\t", 
+         RowBox[{"PacletInfo", "[", "#", "]"}], ",", "\n", "\t\t\t", 
+         RowBox[{
+          RowBox[{"Function", "[", 
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"Length", "@", "#"}], "\[Equal]", "1"}], ",", " ", 
+             RowBox[{"#", "[", 
+              RowBox[{"[", "1", "]"}], "]"}], ",", " ", "#"}], "]"}], "]"}], 
+          "@", "\n", "\t\t\t\t", 
+          RowBox[{"PacletManager`PacletFind", "[", "#", "]"}]}]}], "\n", 
+        "\t\t\t", "]"}], "&"}], "/@", "p"}], ",", "\n", "\t\t", "props"}], 
+    "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PacletLookup", "[", 
+    RowBox[{
+     RowBox[{"p", ":", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"_String", "|", 
+          RowBox[{"{", 
+           RowBox[{"_String", ",", " ", "_String"}], "}"}]}], ")"}], ".."}], 
+       "}"}]}], ",", " ", "props_", ",", " ", "def_"}], "]"}], ":=", "\n", 
+   "\t", 
+   RowBox[{"PacletLookup", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"StringQ", "[", "#", "]"}], "&&", 
+          RowBox[{"DirectoryQ", "[", "#", "]"}]}], ",", "\n", "\t\t\t", 
+         RowBox[{"PacletInfo", "[", "#", "]"}], ",", "\n", "\t\t\t", 
+         RowBox[{
+          RowBox[{"Function", "[", 
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"Length", "@", "#"}], "\[Equal]", "1"}], ",", " ", 
+             RowBox[{"#", "[", 
+              RowBox[{"[", "1", "]"}], "]"}], ",", " ", "#"}], "]"}], "]"}], 
+          "@", "\n", "\t\t\t\t", 
+          RowBox[{"PacletManager`PacletFind", "[", "#", "]"}]}]}], "\n", 
+        "\t\t\t", "]"}], "&"}], "/@", "p"}], ",", "\n", "\t\t", "props", ",", 
+     "\n", "\t\t", "def"}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PacletLookup", "[", 
+    RowBox[{
+     RowBox[{"p", ":", "_String"}], ",", " ", "props_"}], "]"}], ":=", "\n", 
+   "\t", 
+   RowBox[{"First", "@", 
+    RowBox[{"PacletLookup", "[", 
+     RowBox[{
+      RowBox[{"{", "p", "}"}], ",", " ", "props"}], "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PacletLookup", "[", 
+    RowBox[{
+     RowBox[{"p", ":", "_String"}], ",", " ", "props_", ",", " ", "def_"}], 
+    "]"}], ":=", "\n", "\t", 
+   RowBox[{"First", "@", 
+    RowBox[{"PacletLookup", "[", 
+     RowBox[{
+      RowBox[{"{", "p", "}"}], ",", " ", "props", ",", " ", "def"}], 
+     "]"}]}]}], ";"}], "\n", 
  RowBox[{"PacletLookup", "~", "SetAttributes", "~", 
   "HoldRest"}]}], "CodeInput",
  CellChangeTimes->{{3.703956045980041*^9, 3.703956158947846*^9}, 
    3.703956303628257*^9, {3.728711373122353*^9, 3.7287113788484898`*^9}, {
    3.728711622464723*^9, 3.728711661516108*^9}, {3.728940705532341*^9, 
-   3.728940713154488*^9}},ExpressionUUID->"28342398-0a44-43e3-a338-\
+   3.728940713154488*^9}, {3.73090751522952*^9, 3.7309076107713137`*^9}, {
+   3.730907648938962*^9, 3.7309076890049963`*^9}, {3.730907728972012*^9, 
+   3.7309078756543713`*^9}},ExpressionUUID->"28342398-0a44-43e3-a338-\
 7ed37cec0316"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 

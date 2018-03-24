@@ -14,11 +14,16 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{
    RowBox[{"$DocGenWebResourceBase", "::", "usage"}], "=", "\n", "\t", 
-   "\"\<\>\""}], ";"}]}], "CodeInput",
+   "\"\<\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"$DocGenFE", "::", "usage"}], "=", "\n", "\t", "\"\<\>\""}], 
+  ";"}]}], "CodeInput",
  CellChangeTimes->{{3.712094186687291*^9, 3.712094225051469*^9}, 
    3.723734746101925*^9, 3.7237360515833178`*^9, {3.730672258713737*^9, 
-   3.730672262594324*^9}, {3.730674946349813*^9, 
-   3.7306749467126207`*^9}},ExpressionUUID->"a52e8d1d-71d9-4050-ac25-\
+   3.730672262594324*^9}, {3.730674946349813*^9, 3.7306749467126207`*^9}, {
+   3.730908276241639*^9, 
+   3.730908284359871*^9}},ExpressionUUID->"a52e8d1d-71d9-4050-ac25-\
 1f2d88aa9a39"],
 
 Cell[BoxData[{
@@ -68,6 +73,60 @@ Cell[BoxData[
    3.712159725736758*^9}, 
    3.72373463825564*^9},ExpressionUUID->"b09ae2e0-0337-4084-a308-\
 73a8dbe5bd14"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{
+   RowBox[{"!", 
+    RowBox[{"MatchQ", "[", 
+     RowBox[{
+      RowBox[{"OwnValues", "[", "$DocGenFE", "]"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"_", "\[RuleDelayed]", 
+        RowBox[{"_LinkObject", "?", "LinkReadyQ"}]}], "}"}]}], "]"}]}], ",", 
+   "\n", "\t", 
+   RowBox[{"$DocGenFE", ":=", "\n", "\t\t", 
+    RowBox[{"Replace", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"DocGenSettingsLookup", "[", "\"\<DocGenFrontEnd\>\"", "]"}], 
+      ",", "\n", "\t", "\t\t", 
+      RowBox[{
+       RowBox[{"Except", "[", 
+        RowBox[{"_LinkObject", "?", "LinkReadyQ"}], "]"}], ":>", "\n", "\t", 
+       "\t", "\t\t", 
+       RowBox[{"With", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"fe", "=", "\n", "\t", "\t", "\t\t\t", 
+           RowBox[{"Block", "[", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"System`UseFrontEndDump`LocalFEQ", "=", 
+               RowBox[{"(", 
+                RowBox[{"False", "&"}], ")"}]}], "}"}], ",", "\n", "\t", "\t",
+              "\t\t\t\t", 
+             RowBox[{"Developer`InstallFrontEnd", "[", "]"}]}], "\n", "\t", 
+            "\t", "\t\t\t\t", "]"}]}], "\n", "\t", "\t", "\t\t\t", "}"}], ",",
+          "\n", "\t", "\t", "\t\t\t", 
+         RowBox[{
+          RowBox[{"MathLink`FrontEndBlock", "[", "\n", "\t", "\t", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"FrontEndResource", "[", "\"\<GetFEKernelInit\>\"", "]"}],
+             ",", "\n", "\t", "\t", "\t\t\t\t", "fe"}], "\n", "\t", "\t", 
+           "\t\t\t\t", "]"}], ";", "\n", "\t", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"$DocGenSettings", "[", 
+            RowBox[{"Default", ",", " ", "\"\<FrontEnd\>\""}], "]"}], "=", 
+           "fe"}]}]}], "\n", "\t", "\t\t\t\t", "]"}]}]}], "\n", "\t", "\t\t", 
+     "]"}]}]}], "\n", "\t", "]"}]], "CodeInput",
+ CellChangeTimes->{{3.7132006949601192`*^9, 3.713200734793742*^9}, {
+  3.713200784838653*^9, 3.713200785528927*^9}, {3.713202142939039*^9, 
+  3.7132021539106007`*^9}, {3.7132022245366983`*^9, 3.713202227408812*^9}, {
+  3.713215629205496*^9, 3.7132156336232843`*^9}, {3.7136228478526287`*^9, 
+  3.7136228481517076`*^9}, {3.713623643739992*^9, 3.7136237149920597`*^9}, {
+  3.7309083126602583`*^9, 3.730908418850412*^9}, {3.730908567714468*^9, 
+  3.730908574110806*^9}},ExpressionUUID->"f29b637b-c3c4-41c8-87d9-\
+149e2422c84f"],
 
 Cell[CellGroupData[{
 
@@ -2105,46 +2164,6 @@ Cell["\[LeftCeiling]webExportNotebook\[RightFloor]", "CodeSubsubsection",
   3.7095185463038197`*^9, 
   3.70951854657996*^9}},ExpressionUUID->"124d5253-e129-4643-a276-\
 41da08d9c03c"],
-
-Cell[BoxData[
- RowBox[{"If", "[", 
-  RowBox[{
-   RowBox[{"!", 
-    RowBox[{"MatchQ", "[", 
-     RowBox[{
-      RowBox[{"OwnValues", "[", "$DocGenFE", "]"}], ",", 
-      RowBox[{"{", 
-       RowBox[{"_", "\[RuleDelayed]", 
-        RowBox[{"_LinkObject", "?", "LinkReadyQ"}]}], "}"}]}], "]"}]}], ",", 
-   "\n", "\t", 
-   RowBox[{"$DocGenFE", ":=", "\n", "\t\t", 
-    RowBox[{"With", "[", 
-     RowBox[{
-      RowBox[{"{", 
-       RowBox[{"fe", "=", "\n", "\t\t\t", 
-        RowBox[{"Block", "[", 
-         RowBox[{
-          RowBox[{"{", 
-           RowBox[{"System`UseFrontEndDump`LocalFEQ", "=", 
-            RowBox[{"(", 
-             RowBox[{"False", "&"}], ")"}]}], "}"}], ",", "\n", "\t\t\t\t", 
-          RowBox[{"Developer`InstallFrontEnd", "[", "]"}]}], "\n", "\t\t\t\t",
-          "]"}]}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t\t", 
-      RowBox[{
-       RowBox[{"MathLink`FrontEndBlock", "[", "\n", "\t\t\t\t", 
-        RowBox[{
-         RowBox[{"FrontEndResource", "[", "\"\<GetFEKernelInit\>\"", "]"}], 
-         ",", "\n", "\t\t\t\t", "fe"}], "\n", "\t\t\t\t", "]"}], ";", "\n", 
-       "\t\t\t", 
-       RowBox[{"$DocGenFE", "=", "fe"}]}]}], "\n", "\t\t\t", "]"}]}]}], "\n", 
-  "\t", "]"}]], "CodeInput",
- CellChangeTimes->{{3.7132006949601192`*^9, 3.713200734793742*^9}, {
-  3.713200784838653*^9, 3.713200785528927*^9}, {3.713202142939039*^9, 
-  3.7132021539106007`*^9}, {3.7132022245366983`*^9, 3.713202227408812*^9}, {
-  3.713215629205496*^9, 3.7132156336232843`*^9}, {3.7136228478526287`*^9, 
-  3.7136228481517076`*^9}, {3.713623643739992*^9, 
-  3.7136237149920597`*^9}},ExpressionUUID->"f29b637b-c3c4-41c8-87d9-\
-149e2422c84f"],
 
 Cell[BoxData[
  RowBox[{
@@ -4556,7 +4575,7 @@ Cell[BoxData[{
    3.73066941698403*^9}, {3.730669790654669*^9, 3.730669817853435*^9}, 
    3.730669859212596*^9},ExpressionUUID->"fc436bb1-59db-405b-9f2e-\
 c6ccb0906efe"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -4682,7 +4701,7 @@ Cell[BoxData[{
   3.7306704727308064`*^9, 3.730670485646153*^9}, {3.730670547811048*^9, 
   3.7306705695618143`*^9}},ExpressionUUID->"233331b4-f9a7-44c1-ab89-\
 339b02fcec37"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -5310,14 +5329,14 @@ Cell[BoxData[
    3.730666474081809*^9, 
    3.730666476351162*^9}},ExpressionUUID->"23d0ed9f-2345-4024-b0e4-\
 340cc05be502"]
-}, Open  ]]
+}, Closed]]
 }, Open  ]],
 
 Cell[BoxData[
  RowBox[{
   RowBox[{"End", "[", "]"}], 
-  ";"}]], \
-"InputSection",ExpressionUUID->"e2353f74-da75-461e-856f-fa9a887a7004"]
+  ";"}]], "InputSection",ExpressionUUID->"e2353f74-da75-461e-856f-\
+fa9a887a7004"]
 }, Open  ]],
 
 Cell["", "SectionSeparator",ExpressionUUID->"6b2dd78a-77d6-4e57-b22b-\

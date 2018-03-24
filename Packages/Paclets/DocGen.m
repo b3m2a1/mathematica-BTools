@@ -45,7 +45,7 @@ Begin["`Private`"];
 
 If[!TrueQ@$docGenInitialized,
 	$DocGenBuildPermanent=
-		False;
+		True;
 	If[FileExistsQ@PackageFilePath["Private", "DocGenConfig.wl"],
 		Get@PackageFilePath["Private", "DocGenConfig.wl"]
 		];
@@ -58,26 +58,20 @@ If[!AssociationQ@$DocGenSettings,
 		<|
 			Default->
 				<|
-					"PacletsDirectory"->
-						If[$DocGenBuildPermanent//TrueQ,
-							FileNameJoin@{
-								$UserBaseDirectory,
-								"ApplicationData",
-								"DocGen",
-								"Paclets"
-								},
-							FileNameJoin@{$TemporaryDirectory, "doc_paclets"}
-							],
-					"WebDirectory"->
-						If[$DocGenBuildPermanent//TrueQ,
-							FileNameJoin@{
-								$UserBaseDirectory,
-								"ApplicationData",
-								"DocGen",
-								"Web"
-								},
-							FileNameJoin@{$TemporaryDirectory, "web_docs"}
-							],
+					"RootDirectory"->
+						FileNameJoin@{
+							$UserBaseDirectory,
+							"ApplicationData",
+							"DocGen"
+							},
+					"TemporaryDirectory"->
+						FileNameJoin@{$TemporaryDirectory, "DocGen_tmp"},
+					"PacletsExtension"->
+						"Paclets",
+					"WebExtension"->
+						"Web",
+					"BuildPermanent"->
+						$DocGenBuildPermanent,
 					"NameColoring"->
 						{
 							"BUILT-IN SYMBOL"->RGBColor[0.023529, 0.427451, 0.729412],
@@ -110,7 +104,8 @@ If[!AssociationQ@$DocGenSettings,
 							"System"->
 								Nothing
 							},
-					"Footer"->Automatic
+					"Footer"->Automatic,
+					"FrontEnd"->None
 					|>
 			|>
 	];

@@ -23,6 +23,8 @@ $DocGenURLBase::usage=
 	"The default URL base for web docs";
 $DocGenWebResourceBase::usage=
 	"";
+$DocGenFE::usage=
+	"";
 
 
 DocGenGenerateHTMLDocumentation::usage=
@@ -41,6 +43,26 @@ $DocGenWebResourceBase=
 			"Domain"->"www.wolframcloud.com",
 			"Path"->{"objects","b3m2a1.docs","reference"}
 			|>;
+
+
+If[!MatchQ[OwnValues[$DocGenFE],{_:>_LinkObject?LinkReadyQ}],
+	$DocGenFE:=
+		Replace[
+			DocGenSettingsLookup["DocGenFrontEnd"],
+			Except[_LinkObject?LinkReadyQ]:>
+				With[{fe=
+					Block[{System`UseFrontEndDump`LocalFEQ=(False&)},
+						Developer`InstallFrontEnd[]
+						]
+					},
+					MathLink`FrontEndBlock[
+						FrontEndResource["GetFEKernelInit"],
+						fe
+						];
+					$DocGenSettings[Default, "FrontEnd"]=fe
+					]
+			]
+	]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -926,22 +948,6 @@ webExportNotebookPrep[nb_]:=
 (* ::Subsubsection::Closed:: *)
 (*webExportNotebook*)
 
-
-
-If[!MatchQ[OwnValues[$DocGenFE],{_:>_LinkObject?LinkReadyQ}],
-	$DocGenFE:=
-		With[{fe=
-			Block[{System`UseFrontEndDump`LocalFEQ=(False&)},
-				Developer`InstallFrontEnd[]
-				]
-			},
-			MathLink`FrontEndBlock[
-				FrontEndResource["GetFEKernelInit"],
-				fe
-				];
-			$DocGenFE=fe
-			]
-	]
 
 
 webExportNotebook[file_,nb_,ops___?OptionQ]:=

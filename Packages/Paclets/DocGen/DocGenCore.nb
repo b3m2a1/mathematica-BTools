@@ -30,7 +30,15 @@ Cell[BoxData[{
    "\"\<The build directory for DocGen\>\""}], ";"}], "\n", 
  RowBox[{
   RowBox[{
+   RowBox[{"$DocGenTmpDirectory", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<The build directory for DocGen\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
    RowBox[{"$DocGenWebDocsDirectory", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"$DocGenWebDocsTmpDirectory", "::", "usage"}], "=", "\n", "\t", 
    "\"\<\>\""}], ";"}], "\n", 
  RowBox[{
   RowBox[{
@@ -49,8 +57,9 @@ Cell[BoxData[{
   3.7240759240172787`*^9, 3.7240759242288647`*^9}, {3.728093068980225*^9, 
   3.72809307084121*^9}, {3.728093558066875*^9, 3.7280935740232162`*^9}, {
   3.7306749501049957`*^9, 3.730674955415344*^9}, {3.730810334365162*^9, 
-  3.730810343755741*^9}, {3.730854948869714*^9, 
-  3.730854953486417*^9}},ExpressionUUID->"2ad69635-0474-4acc-949a-\
+  3.730810343755741*^9}, {3.730854948869714*^9, 3.730854953486417*^9}, {
+  3.730904173207061*^9, 
+  3.7309041835960293`*^9}},ExpressionUUID->"2ad69635-0474-4acc-949a-\
 5e9fed8fd466"],
 
 Cell[BoxData[
@@ -155,6 +164,14 @@ Cell["\[LeftCeiling]Config\[RightFloor]", "CodeSubsection",
   3.7128397245288553`*^9}},ExpressionUUID->"264f68d2-4776-461e-9e88-\
 5293013ce45e"],
 
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]DocGenSettingsLookup\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{
+  3.730904211994031*^9},ExpressionUUID->"bfd2c6d3-0389-4aad-b88f-\
+d9188a5e0a06"],
+
 Cell[BoxData[
  RowBox[{
   RowBox[{"If", "[", 
@@ -210,23 +227,42 @@ Cell[BoxData[
  CellChangeTimes->{{3.728093496676188*^9, 3.728093553101594*^9}, {
   3.730857171002922*^9, 
   3.730857222580194*^9}},ExpressionUUID->"3f667f04-bd93-4371-b533-\
-24f2fea13bf5"],
+24f2fea13bf5"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$DocGenRootDirectory\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{
+  3.730904501280478*^9},ExpressionUUID->"fd0e83b1-2ec0-435a-a14a-\
+5be0c8c04809"],
 
 Cell[BoxData[
- RowBox[{"If", "[", 
-  RowBox[{
-   RowBox[{"!", 
-    RowBox[{"StringQ", "@", "$DocGenWebDocsDirectory"}]}], ",", "\n", "\t", 
-   RowBox[{"$DocGenWebDocsDirectory", ":=", "\n", "\t\t", 
-    RowBox[{"DocGenSettingsLookup", "[", "\"\<WebDirectory\>\"", "]"}]}]}], 
-  "\n", "\t", "]"}]], "CodeInput",
- CellChangeTimes->{{3.7128397296441402`*^9, 3.712839731653998*^9}, {
-  3.712839769834874*^9, 3.7128397962407627`*^9}, {3.71283985947828*^9, 
-  3.712839903189361*^9}, {3.7128405721422243`*^9, 3.712840597994567*^9}, {
-  3.713621566853157*^9, 3.713621566857143*^9}, {3.7237361147224627`*^9, 
-  3.72373612498812*^9}, {3.7280937552661457`*^9, 
-  3.728093759893195*^9}},ExpressionUUID->"adb6b935-19a1-4513-b3fa-\
-87ad0125256a"],
+ RowBox[{
+  RowBox[{"$DocGenRootDirectory", ":=", "\t", "\n", "\t", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{"TrueQ", "@", 
+      RowBox[{"DocGenSettingsLookup", "[", "\"\<BuildPermanent\>\"", "]"}]}], 
+     ",", "\n", "\t\t", 
+     RowBox[{"DocGenSettingsLookup", "[", "\"\<RootDirectory\>\"", "]"}], ",",
+      "\n", "\t\t", 
+     RowBox[{
+     "DocGenSettingsLookup", "[", "\"\<TemporaryDirectory\>\"", "]"}]}], "\n",
+     "\t\t", "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7309045027593184`*^9, 3.7309045343546247`*^9}, 
+   3.730904892059066*^9},ExpressionUUID->"6dbd7362-0218-4363-9233-\
+35cf0acc416e"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$DocGenDirectory\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.730904215822048*^9, 
+  3.730904217657799*^9}},ExpressionUUID->"002dda7a-80ad-47df-a87b-\
+871c1b57e98d"],
 
 Cell[BoxData[
  RowBox[{"If", "[", 
@@ -235,8 +271,12 @@ Cell[BoxData[
     RowBox[{"StringQ", "@", "$DocGenDirectory"}]}], ",", "\n", "\t", 
    RowBox[{
     RowBox[{"$DocGenDirectory", ":=", "\t", "\n", "\t\t", 
-     RowBox[{"DocGenSettingsLookup", "[", "\"\<PacletsDirectory\>\"", "]"}]}],
-     ";", "\n", "\t", 
+     RowBox[{"FileNameJoin", "@", 
+      RowBox[{"{", "\n", "\t\t\t", 
+       RowBox[{"$DocGenRootDirectory", ",", "\n", "\t\t\t", 
+        RowBox[{
+        "DocGenSettingsLookup", "[", "\"\<PacletsExtension\>\"", "]"}]}], 
+       "\n", "\t\t\t", "}"}]}]}], ";", "\n", "\t", 
     RowBox[{"If", "[", 
      RowBox[{
       RowBox[{"DirectoryQ", "@", "$DocGenDirectory"}], ",", "\n", "\t\t", 
@@ -249,9 +289,111 @@ Cell[BoxData[
   3.713581433082931*^9, 3.713581446272902*^9}, {3.7237348173929853`*^9, 
   3.723734817409297*^9}, {3.7237361393796577`*^9, 3.723736140362801*^9}, {
   3.728093462482926*^9, 3.728093488571701*^9}, {3.728093695220532*^9, 
-  3.7280937096119843`*^9}},ExpressionUUID->"083de42c-8646-458e-9aa7-\
+  3.7280937096119843`*^9}, {3.730904538334046*^9, 
+  3.730904548897764*^9}},ExpressionUUID->"083de42c-8646-458e-9aa7-\
 020c1150f43c"]
 }, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$DocGenTmpDirectory\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.730904215822048*^9, 3.730904217657799*^9}, 
+   3.730904254277594*^9},ExpressionUUID->"c83ed8c0-268f-46a7-9a55-\
+78b1336762c3"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{
+   RowBox[{"!", 
+    RowBox[{"StringQ", "@", "$DocGenTmpDirectory"}]}], ",", "\n", "\t", 
+   RowBox[{
+    RowBox[{"$DocGenTmpDirectory", ":=", "\t", "\n", "\t\t", 
+     RowBox[{"FileNameJoin", "@", 
+      RowBox[{"{", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{
+        "DocGenSettingsLookup", "[", "\"\<TemporaryDirectory\>\"", "]"}], ",",
+         "\n", "\t\t\t", 
+        RowBox[{
+        "DocGenSettingsLookup", "[", "\"\<PacletsExtension\>\"", "]"}]}], 
+       "\n", "\t\t\t", "}"}]}]}], ";"}]}], "\n", "\t", "]"}]], "CodeInput",
+ CellChangeTimes->{{3.7128397296441402`*^9, 3.712839731653998*^9}, {
+  3.712839769834874*^9, 3.7128397962407627`*^9}, {3.71283985947828*^9, 
+  3.712839936149557*^9}, {3.7128405828790483`*^9, 3.712840616343979*^9}, {
+  3.713581433082931*^9, 3.713581446272902*^9}, {3.7237348173929853`*^9, 
+  3.723734817409297*^9}, {3.7237361393796577`*^9, 3.723736140362801*^9}, {
+  3.728093462482926*^9, 3.728093488571701*^9}, {3.728093695220532*^9, 
+  3.7280937096119843`*^9}, {3.730904557478757*^9, 3.730904577364799*^9}, {
+  3.730904619683017*^9, 
+  3.73090462035301*^9}},ExpressionUUID->"5d63da06-1ba1-4fcf-b727-d801079aa615"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$DocGenWebDocsDirectory\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.730904215822048*^9, 
+  3.730904223050065*^9}},ExpressionUUID->"3b50031c-acca-4034-8d09-\
+96603a5d3e97"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{
+   RowBox[{"!", 
+    RowBox[{"StringQ", "@", "$DocGenWebDocsDirectory"}]}], ",", "\n", "\t", 
+   RowBox[{
+    RowBox[{"$DocGenWebDocsDirectory", ":=", "\n", "\t\t", 
+     RowBox[{"FileNameJoin", "@", 
+      RowBox[{"{", "\n", "\t\t\t", 
+       RowBox[{"$DocGenRootDirectory", ",", "\n", "\t\t\t", 
+        RowBox[{"DocGenSettingsLookup", "[", "\"\<WebExtension\>\"", "]"}]}], 
+       "\n", "\t\t\t", "}"}]}]}], ";"}]}], "\n", "\t", "]"}]], "CodeInput",
+ CellChangeTimes->{{3.7128397296441402`*^9, 3.712839731653998*^9}, {
+  3.712839769834874*^9, 3.7128397962407627`*^9}, {3.71283985947828*^9, 
+  3.712839903189361*^9}, {3.7128405721422243`*^9, 3.712840597994567*^9}, {
+  3.713621566853157*^9, 3.713621566857143*^9}, {3.7237361147224627`*^9, 
+  3.72373612498812*^9}, {3.7280937552661457`*^9, 3.728093759893195*^9}, {
+  3.730904595662087*^9, 
+  3.7309045998574257`*^9}},ExpressionUUID->"adb6b935-19a1-4513-b3fa-\
+87ad0125256a"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$DocGenWebDocsTmpDirectory\[RightFloor]", \
+"CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.730904215822048*^9, 
+  3.7309042436912746`*^9}},ExpressionUUID->"a43d3db0-d774-469b-bd6f-\
+8af6e787c7df"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{
+   RowBox[{"!", 
+    RowBox[{"StringQ", "@", "$DocGenWebDocsTmpDirectory"}]}], ",", "\n", "\t", 
+   RowBox[{
+    RowBox[{"$DocGenWebDocsTmpDirectory", ":=", "\n", "\t\t", 
+     RowBox[{"FileNameJoin", "@", 
+      RowBox[{"{", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{
+        "DocGenSettingsLookup", "[", "\"\<TemporaryDirectory\>\"", "]"}], ",",
+         "\n", "\t\t\t", 
+        RowBox[{"DocGenSettingsLookup", "[", "\"\<WebExtension\>\"", "]"}]}], 
+       "\n", "\t\t\t", "}"}]}]}], ";"}]}], "\n", "\t", "]"}]], "CodeInput",
+ CellChangeTimes->{{3.7128397296441402`*^9, 3.712839731653998*^9}, {
+  3.712839769834874*^9, 3.7128397962407627`*^9}, {3.71283985947828*^9, 
+  3.712839903189361*^9}, {3.7128405721422243`*^9, 3.712840597994567*^9}, {
+  3.713621566853157*^9, 3.713621566857143*^9}, {3.7237361147224627`*^9, 
+  3.72373612498812*^9}, {3.7280937552661457`*^9, 3.728093759893195*^9}, {
+  3.7309044244737263`*^9, 3.7309044249479103`*^9}, {3.730904480374113*^9, 
+  3.730904498874442*^9}, {3.73090461302841*^9, 
+  3.730904625759054*^9}},ExpressionUUID->"d5e3a9b0-b4f9-48b2-b8c7-\
+c04ea29fae31"]
+}, Open  ]]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -666,7 +808,7 @@ Cell[BoxData[
  CellChangeTimes->{{3.730858659837678*^9, 
   3.7308587164034243`*^9}},ExpressionUUID->"15dbd3ad-b889-4dae-8142-\
 0c97afc4ac5b"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -3638,9 +3780,9 @@ Cell[BoxData[{
       RowBox[{"extractorLocalized", "[", "\"\<cond\>\"", "]"}]}], ",", "\n", 
      "\t", "\t", 
      RowBox[{"s_Symbol", " ", ":>", "\n", "\t", "\t", 
-      RowBox[{"RuleCondition", "[", "\n", "\t", "\t\t", 
+      RowBox[{"RuleCondition", "[", "\n", "\t\t\t", 
        RowBox[{
-        RowBox[{"extractorLocalized", "@", "\n", "\t", "\t\t", 
+        RowBox[{"extractorLocalized", "@", "\n", "\t\t\t\t", 
          RowBox[{"ToLowerCase", "[", 
           RowBox[{"StringTake", "[", 
            RowBox[{
@@ -3735,7 +3877,17 @@ Cell[BoxData[{
        RowBox[{"Replace", "[", "\n", "\t\t", 
         RowBox[{
          RowBox[{"Replace", "[", "\n", "\t\t\t", 
-          RowBox[{"#", ",", "\n", "\t\t\t", 
+          RowBox[{
+           RowBox[{"Replace", "[", 
+            RowBox[{"#", ",", "\n", "\t\t\t\t", 
+             RowBox[{
+              RowBox[{
+               RowBox[{
+                RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", "h_", 
+                "]"}], "[", "a___", "]"}], ":>", "\n", "\t\t\t\t\t", 
+              RowBox[{"HoldPattern", "[", 
+               RowBox[{"h", "[", "a", "]"}], "]"}]}]}], "\n", "\t\t\t\t", 
+            "]"}], ",", "\n", "\t\t\t", 
            RowBox[{"{", "\n", "\t\t\t\t", 
             RowBox[{
              RowBox[{
@@ -3763,14 +3915,22 @@ Cell[BoxData[{
                 RowBox[{
                  RowBox[{"Verbatim", "[", "Pattern", "]"}], "[", 
                  RowBox[{"_", ",", " ", "e_"}], "]"}], " ", ":>", "\n", 
-                "\t\t\t\t\t", "e"}], ",", "\n", "\t\t\t\t\t", 
+                "\t\t\t\t\t\t", "e"}], ",", "\n", "\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", "a___", 
+                  "]"}], "[", "b___", "]"}], ":>", "\n", "\t\t\t\t\t\t", 
+                RowBox[{"HoldPattern", "[", 
+                 RowBox[{"a", "[", "b", "]"}], "]"}]}], ",", "\n", 
+               "\t\t\t\t\t", 
                RowBox[{
                 RowBox[{
                  RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", 
                  RowBox[{
                   RowBox[{"Verbatim", "[", "Pattern", "]"}], "[", 
                   RowBox[{"_", ",", " ", "e_"}], "]"}], "]"}], " ", ":>", 
-                "\n", "\t\t\t\t\t", 
+                "\n", "\t\t\t\t\t\t", 
                 RowBox[{"HoldPattern", "[", "e", "]"}]}], ",", "\n", 
                "\t\t\t\t\t", 
                RowBox[{
@@ -3778,7 +3938,7 @@ Cell[BoxData[{
                  RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", 
                  RowBox[{
                   RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", "e_", 
-                  "]"}], "]"}], " ", ":>", "\n", "\t\t\t\t\t", 
+                  "]"}], "]"}], " ", ":>", "\n", "\t\t\t\t\t\t", 
                 RowBox[{"HoldPattern", "[", "e", "]"}]}]}], "\n", 
               "\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t", "1"}], "\n", 
             "\t\t\t\t", "]"}], " ", "&"}], ",", "\n", "\t\t\t", "vals"}], 
@@ -3826,6 +3986,13 @@ Cell[BoxData[{
              RowBox[{"Verbatim", "[", "Condition", "]"}], "[", 
              RowBox[{"p_", ",", " ", "_"}], "]"}], " ", ":>", "\n", 
             "\t\t\t\t", "p"}], ",", "\n", "\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", "a___", 
+              "]"}], "[", "b___", "]"}], ":>", "\n", "\t\t\t\t", 
+            RowBox[{"HoldPattern", "[", 
+             RowBox[{"a", "[", "b", "]"}], "]"}]}], ",", "\n", "\t\t\t", 
            RowBox[{"(*", " ", 
             RowBox[{
             "for", " ", "dispatching", " ", "functions", " ", "by", " ", 
@@ -3964,8 +4131,11 @@ Cell[BoxData[{
  CellChangeTimes->{
   3.730482850871368*^9, {3.730483216587447*^9, 3.7304832538286057`*^9}, {
    3.730483478153316*^9, 3.730483510262683*^9}, {3.7306639925869427`*^9, 
-   3.730663993777968*^9}, {3.730664202605418*^9, 
-   3.730664214968072*^9}},ExpressionUUID->"031b432c-07d4-4f71-8c20-\
+   3.730663993777968*^9}, {3.730664202605418*^9, 3.730664214968072*^9}, {
+   3.730859220415545*^9, 3.73085923404893*^9}, {3.7308592651314287`*^9, 
+   3.730859302357757*^9}, {3.730859373600691*^9, 3.730859422077491*^9}, {
+   3.730859500510765*^9, 3.730859527142317*^9}, 
+   3.7308596463554153`*^9},ExpressionUUID->"031b432c-07d4-4f71-8c20-\
 ab52ae99820a"]
 }, Closed]],
 
@@ -4008,11 +4178,31 @@ Cell[BoxData[
       RowBox[{
        RowBox[{"FE`reparseBoxStructure", "[", "\n", "\t\t\t", 
         RowBox[{
-         RowBox[{"ToString", "[", 
+         RowBox[{"StringDelete", "[", "\n", "\t\t\t\t", 
           RowBox[{
-           RowBox[{"Unevaluated", "@", "e"}], ",", "InputForm"}], "]"}], ",", 
-         "\n", "\t\t\t", "StandardForm"}], "\n", "\t\t\t", "]"}], ",", "\n", 
-       "\t\t", 
+           RowBox[{"StringReplace", "[", "\n", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"ToString", "[", 
+              RowBox[{
+               RowBox[{"Unevaluated", "@", "e"}], ",", " ", "InputForm"}], 
+              "]"}], ",", "\n", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Shortest", "[", "\n", "\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                "\"\<HoldPattern[\>\"", "~~", "innards__", "~~", 
+                 "\"\<]\>\""}], "/;", 
+                RowBox[{"(", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"Count", "[", 
+                   RowBox[{"innards", ",", " ", "\"\<]\>\""}], "]"}], "==", 
+                  RowBox[{"Count", "[", 
+                   RowBox[{"innards", ",", " ", "\"\<[\>\""}], "]"}]}], "\n", 
+                 "\t\t\t\t\t\t\t", ")"}]}], "\n", "\t\t\t\t\t\t", "]"}], 
+              "\[RuleDelayed]", "\n", "\t\t\t\t\t\t\t", "innards"}]}], "\n", 
+            "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+           "$privateWorkingCont"}], "\n", "\t\t\t\t", "]"}], ",", "\n", 
+         "\t\t\t", "StandardForm"}], "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
        RowBox[{
         RowBox[{"RowBox", "[", 
          RowBox[{"{", 
@@ -4024,8 +4214,10 @@ Cell[BoxData[
    RowBox[{
     RowBox[{"toSafeBoxes", "~", "SetAttributes", "~", "HoldFirst"}], 
     ";"}]}]}]], "CodeInput",
- CellChangeTimes->{{3.712925992231843*^9, 
-  3.7129260904463043`*^9}},ExpressionUUID->"b6f7202f-e629-4867-adf8-\
+ CellChangeTimes->{{3.712925992231843*^9, 3.7129260904463043`*^9}, {
+  3.730859673780426*^9, 3.73085968393498*^9}, {3.7308597207433567`*^9, 
+  3.730859780694471*^9}, {3.730859819857933*^9, 
+  3.730859837782283*^9}},ExpressionUUID->"b6f7202f-e629-4867-adf8-\
 254617ff08f9"]
 }, Closed]],
 
@@ -5262,6 +5454,7 @@ Cell[BoxData[{
      RowBox[{"{", "\n", "\t\t", 
       RowBox[{
        RowBox[{"\"\<Install\>\"", "\[Rule]", "False"}], ",", "\n", "\t\t", 
+       RowBox[{"\"\<Temporary\>\"", "\[Rule]", "False"}], ",", "\n", "\t\t", 
        RowBox[{"\"\<Upload\>\"", "\[Rule]", "False"}], ",", "\n", "\t\t", 
        RowBox[{"\"\<Index\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t\t", 
        RowBox[{"\"\<GenerateHTML\>\"", "\[Rule]", "False"}]}], "\n", "\t\t", 
@@ -5314,7 +5507,11 @@ Cell[BoxData[{
                 "]"}]}]}]}], "\n", "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", 
           "}"}]}]}], ",", "\n", "\t\t", "dir", ",", "linkbase", ",", "\n", 
        "\t\t", "paclet", ",", "\n", "\t\t", "bundle", ",", "\n", "\t\t", 
-       "html"}], "\n", "\t\t", "}"}], ",", "\n", "\t\t\t", 
+       "html", ",", "\n", "\t\t", 
+       RowBox[{"tmp", "=", 
+        RowBox[{"TrueQ", "@", 
+         RowBox[{"OptionValue", "[", "\"\<Temporary\>\"", "]"}]}]}]}], "\n", 
+      "\t\t", "}"}], ",", "\n", "\t\t\t", 
      RowBox[{
       RowBox[{"dir", "=", "\n", "\t\t\t\t", 
        RowBox[{"FileNameJoin", "@", 
@@ -5425,30 +5622,16 @@ Cell[BoxData[{
          RowBox[{"If", "[", 
           RowBox[{
            RowBox[{"!", 
-            RowBox[{"DirectoryQ", "@", "\n", "\t\t\t\t\t", 
-             RowBox[{"FileNameJoin", "@", 
-              RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
-               RowBox[{
-               "$DocGenDirectory", ",", "\n", "\t\t\t\t\t\t\t", 
-                "\"\<html\>\""}], "\n", "\t\t\t\t\t\t\t", "}"}]}]}]}], ",", 
+            RowBox[{"DirectoryQ", "@", "$DocGenWebDocsDirectory"}]}], ",", 
            "\n", "\t\t\t\t\t", 
-           RowBox[{"CreateDirectory", "@", "\n", "\t\t\t\t\t\t", 
-            RowBox[{"FileNameJoin", "@", 
-             RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
-              RowBox[{
-              "$DocGenDirectory", ",", "\n", "\t\t\t\t\t\t\t", 
-               "\"\<html\>\""}], "\n", "\t\t\t\t\t\t\t", "}"}]}]}]}], "\n", 
-          "\t\t\t\t\t", "]"}], ";", "\n", "\t\t\t\t", 
+           RowBox[{"CreateDirectory", "@", "$DocGenWebDocsDirectory"}]}], 
+          "\n", "\t\t\t\t\t", "]"}], ";", "\n", "\t\t\t\t", 
          RowBox[{"html", "=", "\n", "\t\t\t\t\t", 
           RowBox[{
           "DocGenGenerateHTMLDocumentation", "[", "\n", "\t\t\t\t\t\t", 
            RowBox[{
-            RowBox[{"FileNameJoin", "@", 
-             RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
-              RowBox[{
-              "$DocGenDirectory", ",", "\n", "\t\t\t\t\t\t\t", 
-               "\"\<html\>\""}], "\n", "\t\t\t\t\t\t\t", "}"}]}], ",", "\n", 
-            "\t\t\t\t\t\t", "dir", ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"FileNameJoin", "@", "$DocGenWebDocsDirectory"}], ",", 
+            "\n", "\t\t\t\t\t\t", "dir", ",", "\n", "\t\t\t\t\t\t", 
             RowBox[{"FilterRules", "[", 
              RowBox[{
               RowBox[{
@@ -5710,10 +5893,11 @@ Cell[BoxData[{
    3.7306498359291077`*^9}, {3.73065013034085*^9, 3.730650137641676*^9}, 
    3.730650929339272*^9, {3.73065380556444*^9, 3.730653833120779*^9}, {
    3.730653878864901*^9, 3.730653897054872*^9}, {3.7306557317061863`*^9, 
-   3.730655738723363*^9}, {3.730657238362052*^9, 
-   3.7306572507208233`*^9}},ExpressionUUID->"b8adc850-6f0f-4f51-a729-\
+   3.730655738723363*^9}, {3.730657238362052*^9, 3.7306572507208233`*^9}, {
+   3.730904033705246*^9, 
+   3.73090407791842*^9}},ExpressionUUID->"b8adc850-6f0f-4f51-a729-\
 5523fa0f6077"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 

@@ -30,7 +30,11 @@ $DocGenActive::usage=
 	"The thing actively being documented";
 $DocGenDirectory::usage=
 	"The build directory for DocGen";
+$DocGenTmpDirectory::usage=
+	"The build directory for DocGen";
 $DocGenWebDocsDirectory::usage=
+	"";
+$DocGenWebDocsTmpDirectory::usage=
 	"";
 $DocGenLine::usage=
 	"The $Line for writing docs";
@@ -78,6 +82,11 @@ $DocGenVersionNumber=$VersionNumber;
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*DocGenSettingsLookup*)
+
+
+
 If[!TrueQ@$docGenInitialized,
 	$DocGenBuildPermanent=
 		False;
@@ -101,18 +110,74 @@ DocGenSettingsLookup[key_]:=
 		]
 
 
-If[!StringQ@$DocGenWebDocsDirectory,
-	$DocGenWebDocsDirectory:=
-		DocGenSettingsLookup["WebDirectory"]
-	]
+(* ::Subsubsection::Closed:: *)
+(*$DocGenRootDirectory*)
+
+
+
+$DocGenRootDirectory:=	
+	If[TrueQ@DocGenSettingsLookup["BuildPermanent"],
+		DocGenSettingsLookup["RootDirectory"],
+		DocGenSettingsLookup["TemporaryDirectory"]
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*$DocGenDirectory*)
+
 
 
 If[!StringQ@$DocGenDirectory,
 	$DocGenDirectory:=	
-		DocGenSettingsLookup["PacletsDirectory"];
+		FileNameJoin@{
+			$DocGenRootDirectory,
+			DocGenSettingsLookup["PacletsExtension"]
+			};
 	If[DirectoryQ@$DocGenDirectory,
 		PacletManager`PacletDirectoryAdd[$DocGenDirectory]
 		];
+	]
+
+
+(* ::Subsubsection::Closed:: *)
+(*$DocGenTmpDirectory*)
+
+
+
+If[!StringQ@$DocGenTmpDirectory,
+	$DocGenTmpDirectory:=	
+		FileNameJoin@{
+			DocGenSettingsLookup["TemporaryDirectory"],
+			DocGenSettingsLookup["PacletsExtension"]
+			};
+	]
+
+
+(* ::Subsubsection::Closed:: *)
+(*$DocGenWebDocsDirectory*)
+
+
+
+If[!StringQ@$DocGenWebDocsDirectory,
+	$DocGenWebDocsDirectory:=
+		FileNameJoin@{
+			$DocGenRootDirectory,
+			DocGenSettingsLookup["WebExtension"]
+			};
+	]
+
+
+(* ::Subsubsection::Closed:: *)
+(*$DocGenWebDocsTmpDirectory*)
+
+
+
+If[!StringQ@$DocGenWebDocsTmpDirectory,
+	$DocGenWebDocsTmpDirectory:=
+		FileNameJoin@{
+			DocGenSettingsLookup["TemporaryDirectory"],
+			DocGenSettingsLookup["WebExtension"]
+			};
 	]
 
 
@@ -1405,7 +1470,7 @@ $usageSymNames =
 		s_Symbol :>
 		RuleCondition[
 			extractorLocalized@
-			ToLowerCase[StringTake[SymbolName[Unevaluated@s], UpTo[3]]],
+				ToLowerCase[StringTake[SymbolName[Unevaluated@s], UpTo[3]]],
 			True
 			]
 		};
@@ -1445,7 +1510,10 @@ With[{
 		},
 	Replace[
 		Replace[
-			#,
+			Replace[#,
+				Verbatim[HoldPattern][h_][a___]:>
+					HoldPattern[h[a]]
+				],
 			{
 				Verbatim[HoldPattern][a___] :> a
 				},
@@ -1460,11 +1528,13 @@ With[{
 				#,
 				{
 					Verbatim[Pattern][_, e_] :>
-					e,
+						e,
+					Verbatim[HoldPattern][a___][b___]:>
+						HoldPattern[a[b]],
 					Verbatim[HoldPattern][Verbatim[Pattern][_, e_]] :>
-					HoldPattern[e],
+						HoldPattern[e],
 					Verbatim[HoldPattern][Verbatim[HoldPattern][e_]] :>
-					HoldPattern[e]
+						HoldPattern[e]
 					},
 				1
 				] &,
@@ -1486,6 +1556,8 @@ With[{
 				p,
 			Verbatim[Condition][p_, _] :>
 				p,
+			Verbatim[HoldPattern][a___][b___]:>
+				HoldPattern[a[b]],
 			(* for dispatching functions by Alternatives *)
 			Verbatim[Alternatives][a_, ___][___] |
 			Verbatim[Alternatives][a_, ___][___][___] |
@@ -1551,7 +1623,18 @@ toSafeTagBoxesTag/;TrueQ[$eToSafeBoxes]:=
 toSafeBoxes[e_,___]:=
 	ReplaceAll[
 		FE`reparseBoxStructure[
-			ToString[Unevaluated@e,InputForm],
+			StringDelete[
+				StringReplace[
+					ToString[Unevaluated@e, InputForm],
+					Shortest[
+						"HoldPattern["~~innards__~~"]"/;(
+							Count[innards, "]"]==Count[innards, "["]
+							)
+						]:>
+							innards
+					],
+				$privateWorkingCont
+				],
 			StandardForm
 			],
 		RowBox[{"Removed","[",o_,"]"}]:>ToExpression@o
@@ -2025,6 +2108,7 @@ Options[generateDocumentation]:=
 		Options@DocGenGenerateSymbolPages,
 		Options@DocGenGenerateGuide,{
 		"Install"->False,
+		"Temporary"->False,
 		"Upload"->False,
 		"Index"->Automatic,
 		"GenerateHTML"->False
@@ -2056,7 +2140,8 @@ generateDocumentation[
 		dir,linkbase,
 		paclet,
 		bundle,
-		html
+		html,
+		tmp=TrueQ@OptionValue["Temporary"]
 		},
 			dir=
 				FileNameJoin@{
@@ -2110,23 +2195,12 @@ generateDocumentation[
 					]
 				];
 			If[OptionValue["GenerateHTML"]//TrueQ,
-				If[!DirectoryQ@
-					FileNameJoin@{
-							$DocGenDirectory,
-							"html"
-							},
-					CreateDirectory@
-						FileNameJoin@{
-							$DocGenDirectory,
-							"html"
-							}
+				If[!DirectoryQ@$DocGenWebDocsDirectory,
+					CreateDirectory@$DocGenWebDocsDirectory
 					];
 				html=
 					DocGenGenerateHTMLDocumentation[
-						FileNameJoin@{
-							$DocGenDirectory,
-							"html"
-							},
+						FileNameJoin@$DocGenWebDocsDirectory,
 						dir,
 						FilterRules[{
 							ops

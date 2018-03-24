@@ -939,8 +939,29 @@ PacletLookup[p_PacletManager`Paclet,props_]:=
 	Lookup[PacletInfoAssociation@p,props];
 PacletLookup[p_PacletManager`Paclet, props_, def_]:=
 	Lookup[PacletInfoAssociation@p, props, def];
-PacletLookup[p:_String|{_String,_String},props_]:=
-	PacletLookup[If[Length@#==1, #[[1]], #]&@PacletManager`PacletFind[p],props];
+PacletLookup[p:{(_String|{_String, _String})..},props_]:=
+	PacletLookup[
+		If[StringQ[#]&&DirectoryQ[#],
+			PacletInfo[#],
+			Function[If[Length@#==1, #[[1]], #]]@
+				PacletManager`PacletFind[#]
+			]&/@p,
+		props
+		];
+PacletLookup[p:{(_String|{_String, _String})..}, props_, def_]:=
+	PacletLookup[
+		If[StringQ[#]&&DirectoryQ[#],
+			PacletInfo[#],
+			Function[If[Length@#==1, #[[1]], #]]@
+				PacletManager`PacletFind[#]
+			]&/@p,
+		props,
+		def
+		];
+PacletLookup[p:_String, props_]:=
+	First@PacletLookup[{p}, props];
+PacletLookup[p:_String, props_, def_]:=
+	First@PacletLookup[{p}, props, def];
 PacletLookup~SetAttributes~HoldRest
 
 
