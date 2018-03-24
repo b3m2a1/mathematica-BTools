@@ -184,7 +184,7 @@ PackageDeclarePackage[pkgFile_->syms_]:=
 		];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*PackageLoadDeclare*)
 
 
@@ -192,40 +192,62 @@ PackageLoadDeclare[pkgFile_String]:=
 	If[!MemberQ[$LoadedPackages,pkgFile],
 		If[!KeyMemberQ[$DeclaredPackages,pkgFile],
 			PackageDeclarePackage@
-					PackagePullDeclarations[pkgFile]
+				PackagePullDeclarations[pkgFile]
 			],
 		PackageAppGet[pkgFile]
 		];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*PackageAppLoad*)
+
+
+packageAppLoad[dir_, listing_]:=
+	With[
+		{
+			fileNames=
+				Select[
+					FileNames["*", dir],
+					DirectoryQ@#||MatchQ[FileExtension[#], "m"|"wl"]&
+					]
+			},
+		Replace[
+			Select[fileNames, 
+				StringMatchQ[
+					ToLowerCase@FileNameTake[#],
+					"__pre__."~~("m"|"wl")
+					]&
+				],
+			{f_}:>Get[f]
+			];
+		PackageAppLoad[
+			$PackageListing[listing]=
+				Select[fileNames, StringFreeQ["__"]@*FileBaseName]
+			];
+		Replace[
+			Select[fileNames, 
+				StringMatchQ[
+					ToLowerCase@FileNameTake[#], 
+					"__Post__."~~("m"|"wl")
+					]&
+				],
+			{f_}:>Get[f]
+			];
+		];
 
 
 PackageAppLoad[dir_String?DirectoryQ]:=
 	If[StringMatchQ[FileBaseName@dir,(WordCharacter|"$")..],
 		Begin["`"<>FileBaseName[dir]<>"`"];
-		AppendTo[$PackageContexts,$Context];
-		PackageAppLoad[
-			$PackageListing[FileNameDrop[dir,FileNameDepth[$PackageDirectory]+1]]=
-				Select[
-					FileNames["*",dir],
-					DirectoryQ@#||MatchQ[FileExtension[#],"m"|"wl"]&
-					]
-			];
+		AppendTo[$PackageContexts, $Context];
+		packageAppLoad[dir, FileNameDrop[dir,FileNameDepth[$PackageDirectory]+1]];
 		End[];
 		];
 PackageAppLoad[file_String?FileExistsQ]:=
 	PackageLoadDeclare[file];
 PackageAppLoad[]:=
 	PackageExecute@
-	PackageAppLoad[
-		$PackageListing[$PackageName]=
-			Select[
-				FileNames["*",FileNameJoin@{$PackageDirectory,"Packages"}],
-				DirectoryQ@#||MatchQ[FileExtension[#],"m"|"wl"]&
-				]
-			];
+		packageAppLoad[FileNameJoin@{$PackageDirectory,"Packages"}, $PackageName];
 PackageAppLoad~SetAttributes~Listable;
 
 

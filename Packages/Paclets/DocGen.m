@@ -94,6 +94,8 @@ If[!AssociationQ@$DocGenSettings,
 									RGBColor[0., 0.173, 0.765]
 									]
 							},
+					"CurrentPaclet"->
+						None,
 					"LinkStyle"->
 						{
 							"System"->

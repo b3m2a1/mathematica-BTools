@@ -1600,19 +1600,21 @@ symPageTemplate[s_String,OptionsPattern[]]:=
 		Closed]
 		];
 SymbolPageTemplate[s:{__String},ops:OptionsPattern[]]:=
-	If[TrueQ@OptionValue["CreateDocument"], CreateDocument, Identity]@
-		Notebook[
-			Flatten@
-				{
-					OptionValue@"Headers",
-					symPageTemplate[#,ops]&/@s,
-					OptionValue@"Footers"
-					},
-			StyleDefinitions->
-				With[{p=$PackageName},
-					FrontEnd`FileName[{p}, "DocGen.nb"]
-					]
-			];
+	With[{syms=docPatternNames[s]},
+		If[TrueQ@OptionValue["CreateDocument"], CreateDocument, Identity]@
+			Notebook[
+				Flatten@
+					{
+						OptionValue@"Headers",
+						symPageTemplate[#, ops]&/@syms,
+						OptionValue@"Footers"
+						},
+				StyleDefinitions->
+					With[{p=$PackageName},
+						FrontEnd`FileName[{p}, "DocGen.nb"]
+						]
+				]
+		];
 SymbolPageTemplate[s_String,ops:OptionsPattern[]]:=
 	If[TrueQ@OptionValue["CreateDocument"], CreateDocument, Identity]@
 		Replace[SymbolPageTemplate[{s}, "CreateDocument"->False, ops],

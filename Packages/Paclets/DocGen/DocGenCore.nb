@@ -23,7 +23,7 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{
    RowBox[{"$DocGenActive", "::", "usage"}], "=", "\n", "\t", 
-   "\"\<The application actively being documented\>\""}], ";"}], "\n", 
+   "\"\<The thing actively being documented\>\""}], ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"$DocGenDirectory", "::", "usage"}], "=", "\n", "\t", 
@@ -48,8 +48,9 @@ Cell[BoxData[{
  CellChangeTimes->{{3.723735656230258*^9, 3.72373566717169*^9}, {
   3.7240759240172787`*^9, 3.7240759242288647`*^9}, {3.728093068980225*^9, 
   3.72809307084121*^9}, {3.728093558066875*^9, 3.7280935740232162`*^9}, {
-  3.7306749501049957`*^9, 
-  3.730674955415344*^9}},ExpressionUUID->"2ad69635-0474-4acc-949a-\
+  3.7306749501049957`*^9, 3.730674955415344*^9}, {3.730810334365162*^9, 
+  3.730810343755741*^9}, {3.730854948869714*^9, 
+  3.730854953486417*^9}},ExpressionUUID->"2ad69635-0474-4acc-949a-\
 5e9fed8fd466"],
 
 Cell[BoxData[
@@ -187,16 +188,28 @@ Cell[BoxData[
   RowBox[{"DocGenSettingsLookup", "[", "key_", "]"}], ":=", "\n", "\t", 
   RowBox[{"Lookup", "[", "\n", "\t\t", 
    RowBox[{
-    RowBox[{"Lookup", "[", 
-     RowBox[{"$DocGenSettings", ",", " ", "$DocGenActive", ",", " ", 
-      RowBox[{"<|", "|>"}]}], "]"}], ",", "\n", "\t\t", "key", ",", "\n", 
-    "\t\t", 
+    RowBox[{"Lookup", "[", "\n", "\t\t\t", 
+     RowBox[{"$DocGenSettings", ",", " ", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"Replace", "[", 
+        RowBox[{"s_String", "\[RuleDelayed]", 
+         RowBox[{"StringTrim", "[", 
+          RowBox[{
+           RowBox[{"FileBaseName", "[", "s", "]"}], ",", " ", 
+           "\"\<Documentation_\>\""}], "]"}]}], "]"}], "@", "\n", "\t\t\t\t", 
+       
+       RowBox[{"$DocGenSettings", "[", 
+        RowBox[{"Default", ",", " ", "\"\<CurrentPaclet\>\""}], "]"}]}], ",", 
+      " ", "\n", "\t\t\t", 
+      RowBox[{"<|", "|>"}]}], "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", "key",
+     ",", "\n", "\t\t", 
     RowBox[{"Lookup", "[", 
      RowBox[{
       RowBox[{"$DocGenSettings", "[", "Default", "]"}], ",", " ", "key"}], 
      "]"}]}], "\n", "\t\t", "]"}]}]], "CodeInput",
- CellChangeTimes->{{3.728093496676188*^9, 
-  3.728093553101594*^9}},ExpressionUUID->"3f667f04-bd93-4371-b533-\
+ CellChangeTimes->{{3.728093496676188*^9, 3.728093553101594*^9}, {
+  3.730857171002922*^9, 
+  3.730857222580194*^9}},ExpressionUUID->"3f667f04-bd93-4371-b533-\
 24f2fea13bf5"],
 
 Cell[BoxData[
@@ -238,7 +251,7 @@ Cell[BoxData[
   3.728093462482926*^9, 3.728093488571701*^9}, {3.728093695220532*^9, 
   3.7280937096119843`*^9}},ExpressionUUID->"083de42c-8646-458e-9aa7-\
 020c1150f43c"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -310,6 +323,48 @@ Cell["\[LeftCeiling]$DocGenActive\[RightFloor]", "CodeSubsubsection",
    3.7237338930031977`*^9},ExpressionUUID->"75613f1d-7ec2-40c6-84fd-\
 e0db3eab8e27"],
 
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"findPacletDirectory", "[", "f_String", "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{"d", "=", "\n", "\t\t\t\t", 
+       RowBox[{"NestWhile", "[", "\n", "\t", "\t", "\t\t\t", 
+        RowBox[{"DirectoryName", ",", "\n", "\t", "\t", "\t", "\t\t", 
+         RowBox[{"ExpandFileName", "@", "f"}], ",", "\n", "\t", "\t", "\t", 
+         "\t\t", 
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{"FileNameDepth", "[", "#", "]"}], ">", "0"}], "&&", "\n", 
+           "\t", "\t", "\t\t\t\t", 
+           RowBox[{"Not", "@", 
+            RowBox[{"FileExistsQ", "[", 
+             RowBox[{"FileNameJoin", "@", 
+              RowBox[{"{", 
+               RowBox[{"#", ",", " ", "\"\<PacletInfo.m\>\""}], "}"}]}], 
+             "]"}]}]}], "&"}]}], "\n", "\t", "\t", "\t\t\t", "]"}]}], "\n", 
+      "\t", "\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"Not", "@", 
+        RowBox[{"FileExistsQ", "[", 
+         RowBox[{"FileNameJoin", "@", 
+          RowBox[{"{", 
+           RowBox[{"d", ",", " ", "\"\<PacletInfo.m\>\""}], "}"}]}], "]"}]}], 
+       ",", "\n", "\t\t\t", "$Failed", ",", "\n", "\t\t\t", "d"}], "\n", 
+      "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{"\t", 
+  RowBox[{
+   RowBox[{"findPacletDirectory", "[", "___", "]"}], ":=", 
+   "$Failed"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.730810390803487*^9, 3.730810547506567*^9}, {
+  3.730810645366446*^9, 
+  3.730810652075078*^9}},ExpressionUUID->"236a2e41-4350-4655-ba97-\
+72a196f56a90"],
+
 Cell[BoxData[
  RowBox[{
   RowBox[{"If", "[", 
@@ -319,55 +374,83 @@ Cell[BoxData[
       RowBox[{"OwnValues", "@", "$DocGenActive"}]}], "\[Equal]", "0"}], ",", 
     "\n", "\t", 
     RowBox[{
-     RowBox[{"$docActive", "=", "None"}], ";", "\n", "\t", 
      RowBox[{"$DocGenActive", ":=", "\n", "\t\t", 
-      RowBox[{"Replace", "[", 
-       RowBox[{"$docActive", ",", "\n", "\t", "\t\t", 
-        RowBox[{
-         RowBox[{"Except", "[", "_String", "]"}], ":>", "\n", "\t\t\t\t", 
-         RowBox[{"Replace", "[", 
+      RowBox[{
+       RowBox[{"Replace", "[", "\n", "\t\t\t", 
+        RowBox[{"s_String", ":>", "\n", "\t\t\t\t", 
+         RowBox[{"Lookup", "[", "\n", "\t\t\t\t\t", 
           RowBox[{
-           RowBox[{"Quiet", "@", 
-            RowBox[{"NotebookFileName", "[", "]"}]}], ",", 
-           RowBox[{"{", "\n", "\t\t\t\t\t", 
+           RowBox[{"Lookup", "[", "\n", "\t", "\t\t\t\t\t", 
             RowBox[{
-             RowBox[{"f_String", ":>", "\n", "\t\t\t\t\t\t", 
-              RowBox[{"FileNameTake", "[", 
-               RowBox[{"f", ",", "\n", "\t\t\t\t\t\t\t", 
-                RowBox[{"{", 
-                 RowBox[{
-                  RowBox[{"FileNameDepth", "@", "$AppDirectory"}], "+", "1"}],
-                  "}"}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
-             "\t\t\t\t\t", 
-             RowBox[{"$Failed", "\[Rule]", "\"\<System\>\""}]}], "\n", 
-            "\t\t\t\t\t", "}"}]}], "]"}]}]}], "\n", "\t\t\t", "]"}]}], ";", 
-     "\n", "\t", 
+             RowBox[{"PacletExecute", "[", 
+              RowBox[{
+              "\"\<Lookup\>\"", ",", " ", "s", ",", " ", 
+               "\"\<Extensions\>\""}], "]"}], ",", "\n", "\t", "\t", 
+             "\t\t\t\t", "\"\<Documentation\>\"", ",", "\n", "\t", "\t", 
+             "\t\t\t\t", 
+             RowBox[{"<|", "|>"}]}], "\n", "\t", "\t", "\t\t\t\t", "]"}], ",",
+            "\n", "\t", "\t\t\t\t", "\"\<LinkBase\>\"", ",", "\n", "\t", 
+           "\t\t\t\t", 
+           RowBox[{"StringTrim", "[", 
+            RowBox[{
+             RowBox[{"FileBaseName", "[", "s", "]"}], ",", " ", 
+             "\"\<Documentation_\>\""}], "]"}]}], "\n", "\t", "\t\t\t\t", 
+          "]"}]}], "\n", "\t\t\t", "]"}], "@", "\n", "\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{
+         RowBox[{"DocGenSettingsLookup", "[", "\"\<CurrentPaclet\>\"", "]"}], 
+         ",", "\n", "\t\t\t", 
+         RowBox[{
+          RowBox[{"Except", "[", "_String", "]"}], ":>", "\n", "\t\t\t\t", 
+          RowBox[{"Replace", "[", 
+           RowBox[{
+            RowBox[{"findPacletDirectory", "@", 
+             RowBox[{"Quiet", "@", 
+              RowBox[{"NotebookFileName", "[", "]"}]}]}], ",", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"$Failed", "\[Rule]", "\"\<System\>\""}], "\n", 
+             "\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t", "]"}]}]}], "\n", 
+        "\t\t\t", "]"}]}]}], ";", "\n", "\t", 
      RowBox[{"$DocGenActive", "/:", "\n", "\t\t", 
       RowBox[{"HoldPattern", "[", 
        RowBox[{"Set", "[", 
-        RowBox[{"$DocGenActive", ",", "v_"}], "]"}], "]"}], ":=", "\n", "\t", 
-      "\t\t", 
+        RowBox[{"$DocGenActive", ",", "v_"}], "]"}], "]"}], ":=", "\n", 
+      "\t\t\t", 
       RowBox[{"Set", "[", 
-       RowBox[{"$docActive", ",", "v"}], "]"}]}], ";", "\n", "\t", 
+       RowBox[{
+        RowBox[{"$DocGenSettings", "[", 
+         RowBox[{"Default", ",", " ", "\"\<CurrentPaclet\>\""}], "]"}], ",", 
+        " ", "v"}], "]"}]}], ";", "\n", "\t", 
      RowBox[{"$DocGenActive", "/:", "\n", "\t\t", 
       RowBox[{"HoldPattern", "[", 
        RowBox[{"SetDelayed", "[", 
-        RowBox[{"$DocGenActive", ",", "v_"}], "]"}], "]"}], ":=", "\n", "\t", 
-      "\t\t", 
+        RowBox[{"$DocGenActive", ",", "v_"}], "]"}], "]"}], ":=", "\n", 
+      "\t\t\t", 
       RowBox[{"SetDelayed", "[", 
-       RowBox[{"$docActive", ",", "v"}], "]"}]}], ";", "\n", "\t", 
+       RowBox[{
+        RowBox[{"$DocGenSettings", "[", 
+         RowBox[{"Default", ",", " ", "\"\<CurrentPaclet\>\""}], "]"}], ",", 
+        " ", "v"}], "]"}]}], ";", "\n", "\t", 
      RowBox[{"$DocGenActive", "/:", "\n", "\t\t", 
       RowBox[{"HoldPattern", "[", 
        RowBox[{"Unset", "[", "$DocGenActive", "]"}], "]"}], ":=", "\n", 
       "\t\t\t", 
-      RowBox[{"$docActive", "=", "None"}]}], ";"}]}], "\n", "\t", "]"}], 
-  ";"}]], "CodeInput",
+      RowBox[{
+       RowBox[{"$DocGenSettings", "[", 
+        RowBox[{"Default", ",", " ", "\"\<CurrentPaclet\>\""}], "]"}], "=", 
+       "None"}]}], ";"}]}], "\n", "\t", "]"}], ";"}]], "CodeInput",
  CellChangeTimes->{{3.699937238597466*^9, 3.699937419061699*^9}, {
    3.699944007012129*^9, 3.699944025054946*^9}, {3.699990274833673*^9, 
    3.69999030411735*^9}, {3.701229067395933*^9, 3.701229067737582*^9}, {
    3.7038848388796787`*^9, 3.703884841587802*^9}, 3.7038848945133753`*^9, {
-   3.723733893034853*^9, 
-   3.723733893078249*^9}},ExpressionUUID->"734b7e0d-51e1-41a5-8e64-\
+   3.723733893034853*^9, 3.723733893078249*^9}, {3.73081037711764*^9, 
+   3.7308103890382547`*^9}, {3.730810573882386*^9, 3.730810642836681*^9}, {
+   3.7308542027444477`*^9, 3.730854243644018*^9}, {3.730854290308834*^9, 
+   3.73085432290383*^9}, {3.730854356093226*^9, 3.730854384109167*^9}, {
+   3.73085446732556*^9, 3.7308545044875507`*^9}, 3.7308545938955183`*^9, {
+   3.7308548860030622`*^9, 
+   3.73085490065767*^9}},ExpressionUUID->"734b7e0d-51e1-41a5-8e64-\
 e527c950e07f"]
 }, Closed]],
 
@@ -550,6 +633,40 @@ Cell[BoxData[{
    3.723733911239153*^9}},ExpressionUUID->"1dc0d470-9220-453b-b0bf-\
 8f4942eeed3b"]
 }, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]docPatternNames\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.730858632852791*^9, 
+  3.7308586393395348`*^9}},ExpressionUUID->"4ced40e7-61f9-4bde-b1fc-\
+0ccbf077abd2"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"docPatternNames", "[", 
+   RowBox[{"s", ":", 
+    RowBox[{"{", "__String", "}"}]}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Flatten", "@", 
+   RowBox[{"Map", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Which", "[", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"StringEndsQ", "[", 
+         RowBox[{"#", ",", " ", "\"\<`\>\""}], "]"}], ",", "\n", "\t", 
+        "\t\t\t", 
+        RowBox[{"Names", "[", 
+         RowBox[{"#", "<>", "\"\<*\>\""}], "]"}], ",", "\n", "\t\t\t", 
+        RowBox[{"Not", "@", 
+         RowBox[{"SyntaxQ", "[", "#", "]"}]}], ",", "\n", "\t\t\t\t", 
+        RowBox[{"Names", "[", "#", "]"}], ",", "\n", "\t\t\t", "True", ",", 
+        "\n", "\t\t\t\t", "#"}], "\n", "\t\t\t", "]"}], "&"}], ",", "\n", 
+     "\t\t", "s"}], "\n", "\t\t", "]"}]}]}]], "CodeInput",
+ CellChangeTimes->{{3.730858659837678*^9, 
+  3.7308587164034243`*^9}},ExpressionUUID->"15dbd3ad-b889-4dae-8142-\
+0c97afc4ac5b"]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -3850,7 +3967,7 @@ Cell[BoxData[{
    3.730663993777968*^9}, {3.730664202605418*^9, 
    3.730664214968072*^9}},ExpressionUUID->"031b432c-07d4-4f71-8c20-\
 ab52ae99820a"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -5596,7 +5713,7 @@ Cell[BoxData[{
    3.730655738723363*^9}, {3.730657238362052*^9, 
    3.7306572507208233`*^9}},ExpressionUUID->"b8adc850-6f0f-4f51-a729-\
 5523fa0f6077"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -5862,7 +5979,7 @@ Cell[BoxData[{
  CellChangeTimes->{{3.730645495809373*^9, 
   3.7306455946508303`*^9}},ExpressionUUID->"efccdee3-a785-4264-80c5-\
 0bcfc0514f1b"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -6460,7 +6577,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"9ab021fd-32c8-4218-8fb2-\
 ca6d068d55c2"]
 },
 WindowSize->{804, 758},
-WindowMargins->{{199, Automatic}, {Automatic, 25}},
+WindowMargins->{{262, Automatic}, {Automatic, 0}},
 TaggingRules->{
  "DocuToolsSettingsInternal" -> {"$CondensedBlogMenus" -> "True"}, 
   "SearchTextTranslated" -> "", "LinkTrails" -> "", 

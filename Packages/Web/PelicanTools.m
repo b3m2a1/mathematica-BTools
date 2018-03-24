@@ -271,12 +271,12 @@ pelicanNewSiteTestingNB[assoc_]:=
 						Cell[
 							BoxData@ToBoxes@
 								Unevaluated[
-									BTools`Formatting`openPage[BTools`Formatting`page_]:=
+									BTools`Formatting`Private`openPage[BTools`Formatting`Private`page_]:=
 										SystemOpen@
 											FileNameJoin@{
 												NotebookDirectory[],
 												"content",
-												BTools`Formatting`page
+												BTools`Formatting`Private`page
 												}
 									],
 							"Input"
@@ -290,8 +290,8 @@ pelicanNewSiteTestingNB[assoc_]:=
 							BoxData@ToBoxes@
 								Unevaluated[
 									PelicanNewFile[
-										BTools`Formatting`name,
-										BTools`Formatting`ops
+										BTools`Formatting`Private`name,
+										BTools`Formatting`Private`ops
 										]
 									],
 							"Input"
@@ -325,12 +325,12 @@ pelicanNewSiteTestingNB[assoc_]:=
 						Cell[
 							BoxData@ToBoxes@
 								Unevaluated[
-									BTools`Formatting`openImage[BTools`Formatting`img_]:=
+									BTools`Formatting`Private`openImage[BTools`Formatting`Private`img_]:=
 										SystemOpen@
 											FileNameJoin@{
 												NotebookDirectory[],
 												"img",
-												BTools`Formatting`img
+												BTools`Formatting`Private`img
 												}
 									],
 							"Input"
@@ -343,20 +343,20 @@ pelicanNewSiteTestingNB[assoc_]:=
 						Cell[
 							BoxData@ToBoxes@
 								Unevaluated[
-									BTools`Formatting`exportImage[
-										BTools`Formatting`name_,
-										BTools`Formatting`img_
+									BTools`Formatting`Private`exportImage[
+										BTools`Formatting`Private`name_,
+										BTools`Formatting`Private`img_
 										]:=
 										Export[
 											FileNameJoin@{
 												NotebookDirectory[],
 												"img",
-												If[FileExtension[BTools`Formatting`name]=="",
-													BTools`Formatting`name<>".png",
-													BTools`Formatting`name
+												If[FileExtension[BTools`Formatting`Private`name]=="",
+													BTools`Formatting`Private`name<>".png",
+													BTools`Formatting`Private`name
 													]
 												},
-											BTools`Formatting`img
+											BTools`Formatting`Private`img
 											]
 									],
 							"Input"
@@ -490,7 +490,7 @@ PelicanNewSite[
 			"Notebook"->
 				Export[
 					FileNameJoin@{contentDir,"edit.nb"},
-					Block[{$Context="BTools`Formatting`"},
+					Block[{$Context="BTools`Formatting`Private`"},
 						pelicanNewSiteTestingNB[op]
 						]
 					]

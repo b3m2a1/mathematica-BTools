@@ -27,7 +27,7 @@
 DocGenSettingsLookup::usage=
 	"Used to look up things in the $DocGenSettings";
 $DocGenActive::usage=
-	"The application actively being documented";
+	"The thing actively being documented";
 $DocGenDirectory::usage=
 	"The build directory for DocGen";
 $DocGenWebDocsDirectory::usage=
@@ -90,7 +90,12 @@ If[!TrueQ@$docGenInitialized,
 
 DocGenSettingsLookup[key_]:=
 	Lookup[
-		Lookup[$DocGenSettings, $DocGenActive, <||>],
+		Lookup[
+			$DocGenSettings, 
+			Replace[s_String:>StringTrim[FileBaseName[s], "Documentation_"]]@
+				$DocGenSettings[Default, "CurrentPaclet"], 
+			<||>
+			],
 		key,
 		Lookup[$DocGenSettings[Default], key]
 		]
@@ -139,28 +144,56 @@ docGenBlock~SetAttributes~HoldFirst
 
 
 
+findPacletDirectory[f_String]:=
+	With[
+		{
+			d=
+				NestWhile[
+					DirectoryName,
+					ExpandFileName@f,
+					FileNameDepth[#]>0&&
+						Not@FileExistsQ[FileNameJoin@{#, "PacletInfo.m"}]&
+					]
+			},
+		If[Not@FileExistsQ[FileNameJoin@{d, "PacletInfo.m"}],
+			$Failed,
+			d
+			]
+		];
+	findPacletDirectory[___]:=$Failed
+
+
 If[Length@OwnValues@$DocGenActive==0,
-	$docActive=None;
 	$DocGenActive:=
-		Replace[$docActive,
+		Replace[
+			s_String:>
+				Lookup[
+					Lookup[
+						PacletExecute["Lookup", s, "Extensions"],
+						"Documentation",
+						<||>
+						],
+					"LinkBase",
+					StringTrim[FileBaseName[s], "Documentation_"]
+					]
+			]@
+		Replace[DocGenSettingsLookup["CurrentPaclet"],
 			Except[_String]:>
-				Replace[Quiet@NotebookFileName[],{
-					f_String:>
-						FileNameTake[f,
-							{FileNameDepth@$AppDirectory+1}
-							],
-					$Failed->"System"
-					}]
+				Replace[findPacletDirectory@Quiet@NotebookFileName[],
+					{
+						$Failed->"System"
+						}
+					]
 			];
 	$DocGenActive/:
 		HoldPattern[Set[$DocGenActive,v_]]:=
-			Set[$docActive,v];
+			Set[$DocGenSettings[Default, "CurrentPaclet"], v];
 	$DocGenActive/:
 		HoldPattern[SetDelayed[$DocGenActive,v_]]:=
-			SetDelayed[$docActive,v];
+			SetDelayed[$DocGenSettings[Default, "CurrentPaclet"], v];
 	$DocGenActive/:
 		HoldPattern[Unset[$DocGenActive]]:=
-			$docActive=None;
+			$DocGenSettings[Default, "CurrentPaclet"]=None;
 	];
 
 
@@ -220,6 +253,25 @@ DocLinkBase[HoldPattern[MessageName[msgName_,_]]]:=
 DocLinkBase[e:Except[_Symbol|_String]]:=
 	DocLinkBase@Evaluate[e];
 DocLinkBase~SetAttributes~HoldFirst;
+
+
+(* ::Subsubsection::Closed:: *)
+(*docPatternNames*)
+
+
+
+docPatternNames[s:{__String}]:=
+	Flatten@Map[
+		Which[
+			StringEndsQ[#, "`"],
+				Names[#<>"*"],
+			Not@SyntaxQ[#],
+				Names[#],
+			True,
+				#
+			]&,
+		s
+		]
 
 
 (* ::Subsubsection::Closed:: *)
