@@ -271,25 +271,18 @@ DocFind[
 		searchName=
 			StringExpression@@{
 				#context,
-				Replace[
-					#context,
-					{
-						_String?(StringMatchQ[""|Whitespace])->"",
-						_->("`"|"")
-						}
-					],
 				If[#autocomp,"*",""],
 				#name,
 				If[#autocomp,"*",""]
 				}&@<|
 						"context"->
 							Replace[Except[_?StringPattern`StringPatternQ]->""]@
-							Replace[cont, 
-								{
-									s_String?(StringEndsQ["`"]):>StringTrim[s, "`"],
-									Automatic:>Alternatives@@$Packages
-									}
-								],
+								Replace[cont, 
+									{
+										s_String?(Not@*StringEndsQ["`"]):>s<>"`",
+										Automatic:>Alternatives@@$Packages
+										}
+									],
 						"name"->Replace[name,Verbatim[Verbatim][s_]:>s],
 						"autocomp"->
 							Replace[name,{_Verbatim->False,_:>TrueQ[OptionValue@Autocomplete]}]

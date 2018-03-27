@@ -31,6 +31,7 @@
 
 PackageScopeBlock[
 	GitRun::usage="processRunDupe wrapper for git";
+	GitRegisterFunction::usage="Registers a Git function";
 	]
 
 
@@ -71,6 +72,7 @@ PackageScopeBlock[
 	GitPull::usage="git pull";
 	GitPullOrigin::usage="git pull origin master";
 	GitBranch::usage="git branch";
+	GitShowBranch::usage="git show branch";
 	];
 
 
@@ -2238,7 +2240,7 @@ GitRegisterFunction[
 
 
 
-GitRegister[
+GitRegisterFunction[
 	RefLogShow,
 	{"reflog", "show"},
 	{
@@ -2330,7 +2332,7 @@ GitRegister[
 
 
 
-GitRegister[
+GitRegisterFunction[
 	RefLogExpire,
 	{"reflog", "expire"},
 	{
@@ -2441,7 +2443,7 @@ GitFilterTree[
 
 
 
-GitRegister[
+GitRegisterFunction[
 	GitPrune,
 	"Prune",
 	{
@@ -2457,7 +2459,7 @@ GitRegister[
 
 
 
-GitRegister[
+GitRegisterFunction[
 	GitBranch,
 	"Branch",
 	{
@@ -2500,7 +2502,7 @@ GitRegister[
 
 
 
-GitRegister[
+GitRegisterFunction[
 	GitShowBranch,
 	"show-branch",
 	{
