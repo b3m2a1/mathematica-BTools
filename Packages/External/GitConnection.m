@@ -313,7 +313,8 @@ GitRun[
 				Git::err, 
 				ProcessDirectory->ExpandFileName@d
 				],
-			processRunDupe[{"git",cmd1, cmd2}, 
+			processRunDupe[
+				{"git", cmd1, cmd2}, 
 				Git::err
 				]
 			]
@@ -413,9 +414,9 @@ GitPrepParams[ops_, map_]:=
 					Lookup[map, s, None],
 					{
 						p_String?(StringLength[#]==1&):>
-							"-"<>p,
+							Sequence@@{"-"<>p, v},
 						p_String:>
-							"--"<>p<>"="<>v,
+							"--"<>p->v,
 						{p_String, join_String}:>
 							"--"<>p<>join<>v,
 						_->Nothing
@@ -2531,14 +2532,93 @@ GitRegisterFunction[
 
 
 
+splitGitBranches[bstring_]:=
+	StringCases[
+		bstring,
+		(" "|StartOfString)~~name:WordCharacter..:>name
+		]
+
+
 Options[GitListBranches]=
-	Options[GitShowBranch];
+	Options[GitBranch];
 GitListBranches[
 	dir:_String?DirectoryQ|Automatic:Automatic,
-	args___String,
 	o___?OptionQ
 	]:=
-	GitShowBranch[dir, args, "All"->True]
+	splitGitBranches@GitBranch[dir]
+
+
+(* ::Subsubsection::Closed:: *)
+(*CurrentBranch*)
+
+
+
+getGitCurrentBranch[bstring_]:=
+	First@StringCases[
+		bstring,
+		"* "~~name:Except[WhitespaceCharacter]..:>name
+		]
+
+
+Options[GitCurrentBranch]=
+	Options[GitBranch];
+GitCurrentBranch[
+	dir:_String?DirectoryQ|Automatic:Automatic,
+	o___?OptionQ
+	]:=
+	getGitCurrentBranch@
+		GitBranch[dir]
+
+
+(* ::Subsubsection::Closed:: *)
+(*ListWithCurrentBranch*)
+
+
+
+Options[GitListWithCurrentBranch]=
+	Options[GitBranch];
+GitListWithCurrentBranch[
+	dir:_String?DirectoryQ|Automatic:Automatic,
+	o___?OptionQ
+	]:=
+	With[{brs=GitBranch[dir]},
+		With[
+			{curr=
+				getGitCurrentBranch@brs
+				},
+			Prepend[curr]@
+				DeleteCases[
+					splitGitBranches@brs,
+					curr
+					]
+			]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*SwitchBranch*)
+
+
+
+Options[GitSwitchBranch]=
+	Options[GitCheckout];
+GitSwitchBranch[
+	dir:_String?DirectoryQ|Automatic:Automatic,
+	newBranch_String,
+	o___?OptionQ
+	]:=
+	With[{bb=GitListWithCurrentBranch[dir]},
+		Which[
+			newBranch===First@bb,
+				bb,
+			MemberQ[bb, newBranch],
+				GitCheckout[dir, newBranch];
+				newBranch,
+			True,
+				GitCheckout[dir, "MakeBranch"->newBranch];
+				newBranch
+			]
+		]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2739,6 +2819,10 @@ $GitActions=
 			GitShowBranch,
 		"ListBranches"->
 			GitListBranches,
+		"CurrentBranch"->
+			GitCurrentBranch,
+		"SwitchBranch"->
+			GitSwitchBranch,
 		"ListRemotes"->
 			GitListRemotes,
 		"AddRemote"->
