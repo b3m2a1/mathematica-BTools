@@ -416,7 +416,7 @@ GitPrepParams[ops_, map_]:=
 						p_String?(StringLength[#]==1&):>
 							Sequence@@{"-"<>p, v},
 						p_String:>
-							"--"<>p->v,
+							"--"<>p<>"="<>v,
 						{p_String, join_String}:>
 							"--"<>p<>join<>v,
 						_->Nothing
