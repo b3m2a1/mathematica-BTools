@@ -129,7 +129,7 @@ MakeIndentable[
 									Names[pkg<>"*`IndentationEvent"]
 								 ],
 							 {
-								 {f_, ___}:>
+								 f:{__}:>
 								 	SelectFirst[ToExpression[f], Length@DownValues[#]>0&]["Dedent"],
 								 _:>SetAttributes[EvaluationCell[],CellEventActions->None]
 								 }
@@ -145,7 +145,7 @@ MakeIndentable[
 									Names[pkg<>"*`IndentationEvent"]
 								 ],
 							 {
-								 {f_, ___}:>
+								 f:{__}:>
 								 	SelectFirst[ToExpression[f], Length@DownValues[#]>0&]["Toggle"],
 								 _:>SetAttributes[EvaluationCell[], CellEventActions->None]
 								 }
@@ -331,6 +331,11 @@ IndentationToggle[nb:(_NotebookObject|Automatic):Automatic]:=
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*IndentationSelection*)
+
+
+
 IndentationSelection[inputNotebook_]:=
 	Replace[NotebookRead@inputNotebook,{
 		Cell[BoxData[d_]|d_String,___]:>
@@ -338,6 +343,11 @@ IndentationSelection[inputNotebook_]:=
 				SelectionMove[First@SelectedCells[],All,CellContents],
 				d]
 		}];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Indent	*)
+
 
 
 indentationAddTabsRecursiveCall//Clear
@@ -388,6 +398,11 @@ All],
 			]
 ]
 ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Dedent*)
+
 
 
 (* ::Text:: *)

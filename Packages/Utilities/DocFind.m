@@ -50,6 +50,11 @@ PackageScopeBlock[
 Begin["`Private`"];
 
 
+(* ::Subsubsection::Closed:: *)
+(*DocFile*)
+
+
+
 DocFile[symbolName_String,mode_:Automatic]:=TemplateApply[
 Switch[mode,
 "Web"|Hyperlink|URL,
@@ -63,6 +68,11 @@ FileNameJoin@{$InstallationDirectory, "Documentation", "English","System", "Refe
 symbolName]
 
 
+(* ::Subsubsection::Closed:: *)
+(*PrintDefinitionsNotebook*)
+
+
+
 PrintDefinitionsNotebook[nb_,symbolName_]:=
 	Block[{GeneralUtilities`PackageScope`$EmbedSymbolBoxStyles=True,
 		GeneralUtilities`Debugging`PackagePrivate`$PrintDefinitionsBackground=None,
@@ -73,6 +83,11 @@ PrintDefinitionsNotebook[nb_,symbolName_]:=
 		},
 	ToExpression[symbolName,StandardForm,GeneralUtilities`PrintDefinitions]
 	];
+
+
+(* ::Subsubsection::Closed:: *)
+(*OpenDocs*)
+
 
 
 OpenDocs[
@@ -149,6 +164,11 @@ OpenDocs[sym_Symbol,o___]:=OpenDocs[ToString@Unevaluated@sym,o];
 OpenDocs~SetAttributes~HoldFirst;
 
 
+(* ::Subsubsection::Closed:: *)
+(*SymbolNameMatchQ*)
+
+
+
 SymbolNameMatchQ[s_Symbol,pat_]:=
 	StringMatchQ[SymbolName@Unevaluated[s],pat];
 SymbolNameMatchQ[s_String,pat_]:=
@@ -158,6 +178,11 @@ SymbolNameMatchQ[e:Except[_Symbol],pat_]:=
 SymbolNameMatchQ[pat_][e_]:=
 	SymbolNameMatchQ[e,pat];
 SetAttributes[SymbolNameMatchQ,HoldFirst];
+
+
+(* ::Subsubsection::Closed:: *)
+(*SymbolDetermineType*)
+
 
 
 docFindValues[s_,type_]:=
@@ -232,6 +257,11 @@ SymbolDetermineType[s:{__String},e___]:=
 SymbolDetermineType[{},___]:=
 	<||>;
 SymbolDetermineType~SetAttributes~HoldFirst;
+
+
+(* ::Subsubsection::Closed:: *)
+(*DocFind*)
+
 
 
 Options@DocFind=
@@ -453,6 +483,11 @@ PackageAddAutocompletions[
 	]
 
 
+(* ::Subsubsection::Closed:: *)
+(*OpsFind*)
+
+
+
 Options@OpsFind:=
 	Append[Options@DocFind,Function:>Options];
 OpsFind[sym:Except@_List,stuff:(Except[_Rule|_RuleDelayed]...),ops:OptionsPattern[]]:=
@@ -533,6 +568,11 @@ OpsFind[options_List,
 			None]
 					]
 			]
+
+
+(* ::Subsubsection::Closed:: *)
+(*MsgFind*)
+
 
 
 MsgFind//Clear
@@ -648,6 +688,11 @@ MsgFind[
 		res/;Head[res]=!=MsgFind
 		];
 MsgFind~SetAttributes~HoldFirst
+
+
+(* ::Subsubsection::Closed:: *)
+(*GetUsage*)
+
 
 
 definitionPatternsSimplify[valueSpec_List]:=
@@ -767,6 +812,11 @@ FormattedDefs[
 FormattedDefs~SetAttributes~HoldFirst;
 
 
+(* ::Subsubsection::Closed:: *)
+(*ToolbarAdd*)
+
+
+
 ToolBarEdit[toolbar_,
 editFunction_:(Delete[#1,First/@#2]&),
 editObjects_:(_Grid|_Row|_Column)
@@ -791,6 +841,11 @@ b:Except[_BoxData]:>BoxData@ToBoxes@b
 ]
 ]
 ]
+
+
+(* ::Subsubsection::Closed:: *)
+(*ContextNotebook*)
+
 
 
 usageMSG[s_]:=MessageName[s,"usage"];
@@ -878,6 +933,11 @@ ContextNotebook[pkg_]:=With[{nb=OpenDocs[
 	SetOptions[nb,WindowTitle->"Context: "<>pkg<>"`",Visible->True];
 	nb
 	]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Documentation Dialog*)
+
 
 
 DocsDialog[dialog:Except[_Rule]:False,ops:OptionsPattern[CreateDialog]]:=
@@ -1007,6 +1067,11 @@ DynamicModule[{
 					True,CreateDialog[#,ops,WindowTitle->"Documentation Helper"]&,
 					_NotebookObject,CreateDialog[#,dialog,Sequence@@Join[{ops},Options@dialog]]&,
 					_,Identity];
+
+
+(* ::Subsubsection::Closed:: *)
+(*$DockDocDialog*)
+
 
 
 $DockDocDialog:=

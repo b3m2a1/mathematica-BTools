@@ -762,32 +762,32 @@ PelicanDeploy[
 		outDir=
 			PelicanSiteBase[Replace[site,Automatic:>NotebookDirectory[]]]
 		},
-		With[{
+		(*With[{
 			info=
-				If[FileExistsQ[FileNameJoin@{outDir,"deployInfo.m"}],
-					Import[FileNameJoin@{outDir,"deployInfo.m"}],
+				If[FileExistsQ[FileNameJoin@{outDir,"DeploymentInfo.m"}],
+					Import[FileNameJoin@{outDir,"DeploymentInfo.m"}],
 					{}
 					]
 			},
-			Export[FileNameJoin@{outDir,"deployInfo.m"},
+			Export[FileNameJoin@{outDir,"DeploymentInfo.m"},
 				KeyDrop[
 					Association@
 						Flatten@{
 							Normal@info,
 							ops,
-							"LastDeployment"->Now
+							"LastDeployment"\[Rule]Now
 							},
 					FileNameForms
 					]
-				];
+				];*)
 			WebSiteDeploy[
 				FileNameJoin@{outDir,"output"},
-				Replace[uri,Automatic:>FileBaseName[outDir]],
-				Flatten@{
-					ops,
+				Replace[uri,Automatic:>FileBaseName[outDir]],(*
+				Flatten@{*)
+					ops(*,
 					Normal@info
 					}
-				]
+				]*)
 			]
 		];
 PelicanDeploy[
