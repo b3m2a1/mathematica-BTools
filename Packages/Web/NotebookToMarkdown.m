@@ -80,6 +80,17 @@ $markdownnewmdfiletemplate=
 ";
 
 
+markdownNameToSlug[t_]:=
+	ToLowerCase@
+		StringReplace[
+			t,
+			{
+				Whitespace->"-",
+				Except[WordCharacter]->""
+				}
+			]
+
+
 markdownFileMetadataTitle[t_,name_,opsassoc_]:=
 	Replace[t,
 		{
@@ -91,17 +102,14 @@ markdownFileMetadataSlug[t_,name_,opsassoc_]:=
 	Replace[t,
 		{
 			Automatic:>
-				ToLowerCase@
-					StringReplace[
-						markdownFileMetadataTitle[
-							Lookup[opsassoc,"Title",t],
-							name,
-							opsassoc
-							],{
-						Whitespace->"-",
-						Except[WordCharacter]->""
-						}]
-			}];
+				markdownNameToSlug@
+					markdownFileMetadataTitle[
+						Lookup[opsassoc,"Title",t],
+						name,
+						opsassoc
+						]
+			}
+		]
 
 
 markdownFileMetadata[val_,opsassoc_]:=
@@ -217,7 +225,7 @@ $NotebookToMarkdownCellStyles["Section"]=
 		};
 $NotebookToMarkdownCellStyles["InputOutput"]=
 	{
-		"Code","Output",
+		"Code","Output","ExternalLanguage",
 		"FormattedOutput","FencedCode"
 		};
 $NotebookToMarkdownCellStyles["Text"]=
@@ -1608,59 +1616,135 @@ $NotebookToMarkdownLongToUnicodeReplacements=
 
 
 
-NotebookToMarkdown[nb_NotebookObject]:=
+NotebookToMarkdown//Clear
+
+
+Options[NotebookToMarkdown]=
+	{
+		"Directory"->Automatic,
+		"Path"->Automatic,
+		"Name"->Automatic,
+		"Metadata"->Automatic,
+		"ContentExtension"->Automatic,
+		"Notebook"->Automatic,
+		"Context"->Automatic,
+		"CellStyles"->Automatic
+		};
+NotebookToMarkdown[
+	nb_Notebook, ops:OptionsPattern[]]:=
+	Catch@
+	With[
+		{
+			dir=OptionValue["Directory"],
+			path=OptionValue["Path"],
+			name=Replace[Except[_String]->"Markdown"]@OptionValue["Name"],
+			cext=Replace[Except[_String]->"content"]@OptionValue["ContentExtension"],
+			meta=Replace[Except[_Association?AssociationQ]-><||>]@OptionValue["Metadata"],
+			cont=Replace[Except[_String]->"Global`"]@OptionValue["Context"]
+			},
+		If[!DirectoryQ@dir, Throw[$Failed]];
+		If[!StringQ@path, Throw[$Failed]];
+		Replace[
+			{
+				s_String:>
+					StringReplace[s,
+						Join[
+							Normal@
+								$NotebookToMarkdownLongToUnicodeReplacements,
+							Lookup[Options[nb], ExportAutoReplacements, {}]
+							]
+						],
+					_->$Failed
+					}
+			]@
+		StringRiffle[
+			ReplaceAll[
+				DeleteCases[""]@
+					iNotebookToMarkdown[
+						<|
+							"Root"->dir,
+							"Path"->path,
+							"Name"->name,
+							"ContentExtension"->cext,
+							"Meta"->meta,
+							"Notebook"->nb,
+							"Context"->cont
+							|>,
+						#
+						]&/@First@nb,
+				RawBoxes[s_]|
+					ExportPacket[s_, ___]:>s
+				],
+			"\n\n"
+			]
+		]
+
+
+NotebookToMarkdown[nb_NotebookObject, ops:OptionsPattern[]]:=
 	With[{meta=MarkdownNotebookMetadata[nb]},
 		With[{
-			dir=MarkdownNotebookDirectory[nb],
+			dir=
+				MarkdownNotebookDirectory[nb],
 			name=
-				Replace[
-					Lookup[meta,"Slug","Title"],
+				Replace[OptionValue["Name"],
 					Automatic:>
-						FileBaseName@MarkdownNotebookFileName[nb]
+						markdownNameToSlug@
+							Replace[
+								Lookup[meta, "Slug", Automatic],
+								Automatic:>
+									Replace[Quiet@FileBaseName@MarkdownNotebookFileName[nb],
+										Except[_String]->"Title"
+										]
+								]
 					]
 			},
 			If[!DirectoryQ[dir],
 				$Failed,
 				With[{
 					d2=
-						MarkdownSiteBase[dir],
+						MarkdownSiteBase@
+							Replace[OptionValue["Directory"],
+								Automatic:>MarkdownSiteBase[dir]
+								],
 					cext=
-						MarkdownContentExtension[MarkdownSiteBase@dir]
-					},
-					StringReplace[
-						Join[
-							Normal@
-								$NotebookToMarkdownLongToUnicodeReplacements,
-							CurrentValue[nb,ExportAutoReplacements]
-							]
-						]@
-					StringRiffle[
-						ReplaceAll[
-							DeleteCases[""]@
-								iNotebookToMarkdown[
-									<|
-										"Root"->d2,
-										"Path"->
-											If[StringMatchQ[dir, MarkdownContentPath[dir]~~___],
-												"",
-												URLBuild@ConstantArray["..",
-													1+FileNameDepth[MarkdownContentPath[dir]]]
-												],
-										"Name"->name,
-										"ContentExtension"->cext,
-										"Meta"->meta,
-										"Notebook"->nb,
-										"Context"->MarkdownNotebookContext@nb
-										|>,
-									#
-									]&/@NotebookRead@
-									Cells[nb,
-										CellStyle->$NotebookToMarkdownStyles
-										],
-							RawBoxes[s_]|
-								ExportPacket[s_, ___]:>s
+						Replace[OptionValue["ContentExtension"],
+							Automatic:>MarkdownContentExtension[MarkdownSiteBase@dir]
 							],
-						"\n\n"
+					path=
+						Replace[OptionValue["Path"],
+							Automatic:>
+								If[StringMatchQ[dir, MarkdownContentPath[dir]~~___],
+									"",
+									URLBuild@ConstantArray["..",
+										1+FileNameDepth[MarkdownContentPath[dir]]]
+									]
+							],
+					cont=
+						Replace[OptionValue["Context"],
+							Automatic:>MarkdownNotebookContext@nb
+							]
+					},
+					NotebookToMarkdown[
+						Notebook[
+							NotebookRead@
+								Cells[nb,
+									CellStyle->
+										Replace[OptionValue["CellStyles"],
+										 Automatic:>$NotebookToMarkdownStyles
+										 ]
+									],
+							ExportAutoReplacements->
+								CurrentValue[nb, ExportAutoReplacements]
+							],
+						{
+							"Directory"->d2,
+							"Path"->path,
+							"Name"->name,
+							"ContentExtension"->cext,
+							"Notebook"->nb,
+							"Metadata"->meta,
+							"Context"->cont
+							}
 						]
 					]
 				]
@@ -2262,6 +2346,25 @@ markdownIDHook[id_]:=
 
 
 iNotebookToMarkdownRegister[pathInfo_, 
+	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "ExternalLanguage", o___]]:=
+	With[{cl=Lookup[{o}, CellEvaluationLanguage, "Python"]},
+		markdownCodeCellIOReformat[
+			pathInfo,
+			ReplaceAll[e, BoxData->TextData],
+			"PlainText",
+			Which[
+				StringContainsQ[cl, "Python", IgnoreCase->True],
+					"```python\n"<>#<>"\n"<>"```",
+				StringContainsQ[cl, "NodeJS", IgnoreCase->True],
+					"```javascript\n"<>#<>"\n"<>"```",
+				True,
+					"```"<>ToLowerCase[cl]<>"\n"<>#<>"\n"<>"```"
+				]&
+			]
+		];
+
+
+iNotebookToMarkdownRegister[pathInfo_, 
 	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "FencedCode",___]]:=
 	markdownCodeCellIOReformat[
 		pathInfo,
@@ -2830,6 +2933,24 @@ iNotebookToMarkdownRegister[pathInfo_, RowBox[g_, ___]]:=
 
 
 
+formatDownloadLink[pathInfo_, t_, s_]:=
+	With[{parse=URLParse[s]},
+		If[MatchQ[Lookup[parse["Query"],"_download",False],True|"True"],
+			(*Download links*)
+			"<a href=\""<>
+				URLBuild@
+					ReplacePart[parse,
+						"Query"->
+							Normal@
+								KeyDrop[Association@parse["Query"],"_download"]
+						]<>"\" download>"<>t<>"</a>",
+			"["<>t<>"]("<>iNotebookToMarkdown[pathInfo,s]<>")"
+			]
+		];
+formatStandardLink[pathInfo_, t_, e_]:=
+	"["<>t<>"]("<>URLBuild@URLParse[iNotebookToMarkdown[pathInfo,e]]<>")"
+
+
 iNotebookToMarkdownRegister[
 	pathInfo_,
 	ButtonBox[d_,
@@ -2849,31 +2970,68 @@ iNotebookToMarkdownRegister[
 				t
 				],{
 			URL[s_String?(StringContainsQ["_download=True"])]:>
-				With[{parse=URLParse[s]},
-					If[MatchQ[Lookup[parse["Query"],"_download",False],True|"True"],
-						(*Download links*)
-						"<a href=\""<>
-							URLBuild@
-								ReplacePart[parse,
-									"Query"->
-										Normal@
-											KeyDrop[Association@parse["Query"],"_download"]
-									]<>"\" download>"<>t<>"</a>",
-						"["<>t<>"]("<>
-							iNotebookToMarkdown[pathInfo,s]<>")"
-						]
-					],
+				formatDownloadLink[pathInfo, t, s],
 			e_:>
-				"["<>t<>"]("<>
-					iNotebookToMarkdown[pathInfo,e]<>")"
+				formatStandardLink[pathInfo, t, e]
 			}]
 		
 		];
 
 
 (* ::Subsubsubsection::Closed:: *)
-(*Links*)
+(*Paclet Links*)
 
+
+
+notebookToMarkdownResolvePacletURL[s_String]:=
+	If[StringStartsQ[s,"paclet:"],
+		With[{page=Documentation`ResolveLink[s]},
+			URLBuild@
+				Flatten@{
+					If[StringQ[page]&&StringStartsQ[page,$InstallationDirectory],
+						"https://reference.wolfram.com/language",
+						"https://www.wolframcloud.com/objects/b3m2a1.paclets/reference"
+						],
+					URLParse[s,"Path"]
+					}<>".html"
+			],
+		With[{page=
+			Replace[Documentation`ResolveLink[s],{
+				Null:>
+					If[StringStartsQ[s,"paclet:"],
+						FileNameJoin@URLParse[s,"Path"],
+						FileNameJoin@{"ref",s}
+						]
+				}]
+			},
+			URLBuild@
+				Flatten@{
+					If[StringStartsQ[page,$InstallationDirectory],
+						"https://reference.wolfram.com/language",
+						"https://www.wolframcloud.com/objects/b3m2a1.paclets/reference"
+						],
+					ReplacePart[#,
+						If[Length[#]==2,1,2]->
+							ToLowerCase@
+								StringReplace[
+									#[[If[Length[#]==2,1,2]]],
+									"ReferencePages"->"ref"
+									]
+						]&@DeleteCases["System"]@
+					FileNameSplit@
+						(StringTrim[#,"."~~FileExtension[#]]<>".html")&@
+							Replace[
+								Replace[FileNameSplit[page],{a___,"Symbols",b_}:>{a,b}],{
+								{___,p_,"Documentation","English",e___}:>
+									FileNameJoin@{p,e},
+								{___,a_,b_,c_}:>
+									FileNameJoin@{a,b,c},
+								_:>
+									page
+								}]
+				}
+			]
+		]
 
 
 iNotebookToMarkdownRegister[
@@ -2892,54 +3050,7 @@ iNotebookToMarkdownRegister[
 					t
 					],
 				s_String:>
-					If[StringStartsQ[s,"paclet:"],
-						With[{page=Documentation`ResolveLink[s]},
-							URLBuild@
-								Flatten@{
-									If[StringQ[page]&&StringStartsQ[page,$InstallationDirectory],
-										"https://reference.wolfram.com/language",
-										"https://www.wolframcloud.com/objects/b3m2a1.paclets/reference"
-										],
-									URLParse[s,"Path"]
-									}<>".html"
-							],
-						With[{page=
-							Replace[Documentation`ResolveLink[s],{
-								Null:>
-									If[StringStartsQ[s,"paclet:"],
-										FileNameJoin@URLParse[s,"Path"],
-										FileNameJoin@{"ref",s}
-										]
-								}]
-							},
-							URLBuild@
-								Flatten@{
-									If[StringStartsQ[page,$InstallationDirectory],
-										"https://reference.wolfram.com/language",
-										"https://www.wolframcloud.com/objects/b3m2a1.paclets/reference"
-										],
-									ReplacePart[#,
-										If[Length[#]==2,1,2]->
-											ToLowerCase@
-												StringReplace[
-													#[[If[Length[#]==2,1,2]]],
-													"ReferencePages"->"ref"
-													]
-										]&@DeleteCases["System"]@
-									FileNameSplit@
-										(StringTrim[#,"."~~FileExtension[#]]<>".html")&@
-											Replace[
-												Replace[FileNameSplit[page],{a___,"Symbols",b_}:>{a,b}],{
-												{___,p_,"Documentation","English",e___}:>
-													FileNameJoin@{p,e},
-												{___,a_,b_,c_}:>
-													FileNameJoin@{a,b,c},
-												_:>
-													page
-												}]
-								}
-							]
-						]
+					notebookToMarkdownResolvePacletURL[s]
 				]
 			<>")"
 		];
@@ -2987,15 +3098,17 @@ markdownNotebookHashExport[
 				Automatic:>StringTrim[fname,"."<>ext]
 				]<>"]("<>
 			StringRiffle[{
-				Switch[pathInfo["ContentExtension"],
-					"content",
-						"{filename}",
-					_String,
-						pathInfo["Path"]<>
-							If[StringLength[pathInfo["Path"]]>0, "/", ""]<>
-							pathInfo["ContentExtension"],
-					_,
-						Nothing
+				Lookup[pathInfo, "FileExtension",
+					Switch[pathInfo["ContentExtension"],
+						"content",
+							"{filename}",
+						_String,
+							pathInfo["Path"]<>
+								If[StringLength[pathInfo["Path"]]>0, "/", ""]<>
+								pathInfo["ContentExtension"],
+						_,
+							Nothing
+						]
 					],
 				"img",
 				fname
