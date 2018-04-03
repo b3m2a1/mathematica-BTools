@@ -4,8 +4,11 @@ BeginPackage[
    FileBaseName[DirectoryName@$InputFileName],
    "-"
    ][[1]]<>"`"<>
-  FileBaseName[$InputFileName]<>"`",
-  FileBaseName[DirectoryName@$InputFileName]<>"`"
+   FileBaseName[$InputFileName]<>"`",
+  StringSplit[
+   FileBaseName[DirectoryName@$InputFileName],
+   "-"
+   ][[1]]<>"`"
   ];
 EndPackage[]
 
