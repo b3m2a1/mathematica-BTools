@@ -32,6 +32,7 @@
 $AppDirectoryRoot::usage="The directory root for finding apps";
 $AppDirectoryName::usage="The basic extension to a directory for locating apps";
 $AppDirectory::usage="Joins the root and name";
+$AppDirectories::usage="Set of directories in which to look for apps";
 AppPath::usage=
 	"A path parser for a given app name";
 
