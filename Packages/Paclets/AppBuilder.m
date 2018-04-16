@@ -1085,19 +1085,7 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 					],
 			"PushToCloud"->
 				If[pacletCloudPush,
-					(*<|
-						"Upload"->
-							AppPacletUpload[app,
-								"ServerBase"\[Rule]Default,
-								"ServerName"\[Rule]Default
-								],
-						"ServerPage"->
-							PacletServerPage[]
-					|>*)
-					AppPacletUpload[app,
-						"ServerBase"->Default,
-						"ServerName"->Default
-						]
+					AppPacletUpload[app]
 					],
 			"PushToServer"->
 				Association@{

@@ -1910,127 +1910,6 @@ AppPackageGenerateHTMLDocumentation[
 
 
 (* ::Subsection:: *)
-(*Publish*)
-
-
-
-(* ::Subsubsection::Closed:: *)
-(*AppPublish*)
-
-
-
-Options[AppPublish]=
-	{
-		"PacletBackup"->True,
-		"UpdatePaclet"->True,
-		"GitCommit"->Automatic,
-		"ConfigureGitHub"->Automatic,
-		"PushToGitHub"->True,
-		"PushToCloud"->False,
-		"PushToServer"->True,
-		"PublishServer"->Automatic,
-		"MakeSite"->True,
-		Verbose->True
-		};
-AppPublish[app_,ops:OptionsPattern[]]:=
-	With[{
-		updatePac=TrueQ[OptionValue["UpdatePaclet"]],
-		gitCommit=OptionValue["GitCommit"],
-		gitHubConfigure=OptionValue["ConfigureGitHub"],
-		gitHubPush=TrueQ[OptionValue["PushToGitHub"]],
-		pacletCloudPush=TrueQ[OptionValue["PushToCloud"]],
-		pacletServerPush=TrueQ[OptionValue["PushToServer"]],
-		pacletBackup=TrueQ[OptionValue["PacletBackup"]],
-		verb=TrueQ@OptionValue[Verbose]
-		},
-		<|
-			"PacletBackup"->
-				If[pacletBackup,
-					AppPacletBackup[app]
-					],
-			"UpdatePaclet"->
-				If[updatePac,
-					AppRegeneratePacletInfo[app]
-					],
-			"GitCommit"->
-				If[TrueQ[gitCommit]||(gitHubPush&&gitCommit=!=False),
-					AppGitSafeCommit[app]
-					],
-			"ConfigureGitHub"->
-				If[TrueQ[gitHubConfigure]||(gitHubPush&&gitHubConfigure=!=Automatic),
-					AppGitHubConfigure[app]
-					],
-			"PushToGitHub"->
-				If[gitHubPush,
-					Quiet[AppGitHubPush[app], Git::err];
-					AppGitHubRepo[app]
-					],
-			"PushToCloud"->
-				If[pacletCloudPush,
-					(*<|
-						"Upload"->
-							AppPacletUpload[app,
-								"ServerBase"\[Rule]Default,
-								"ServerName"\[Rule]Default
-								],
-						"ServerPage"->
-							PacletServerPage[]
-					|>*)
-					AppPacletUpload[app,
-						"ServerBase"->Default,
-						"ServerName"->Default
-						]
-					],
-			"PushToServer"->
-				Association@{
-					If[TrueQ@pacletServerPush,
-						"ServerPaclet"->
-							PacletServerAdd[$PacletServer, app],
-						Nothing
-						],
-					If[TrueQ@OptionValue["PublishServer"]||
-						TrueQ[pacletServerPush]&&OptionValue["PublishServer"]===Automatic,
-						"ServerURL"->
-							With[{mf=TrueQ@OptionValue["MakeSite"]},
-								Replace[
-									MinimalBy[
-										Select[
-											Cases[
-												PacletServerBuild[$PacletServer, 
-													"AutoDeploy"->True,
-													"RegenerateContent"->mf,
-													"BuildSite"->mf,
-													"DeployOptions"->
-														{
-															Monitor->False,
-															"DeployPages"->mf
-															}
-													],
-												CloudObject[c_,___]:>c
-												],
-											StringEndsQ["/index.html"]
-											],
-										Length@URLParse[#,"Path"]&
-										],
-									{m_, ___}:>
-										Function[
-											URLBuild@
-												ReplacePart[#,
-													"Path"->
-														Append[Most[#Path],"main.html"]
-													]&@
-												URLParse[m]
-											]
-									]
-								],
-							Nothing
-							]
-						}
-			|>
-		]
-
-
-(* ::Subsection:: *)
 (*Git*)
 
 
@@ -3594,11 +3473,12 @@ AppPacletSiteBundle[apps__String,ops:OptionsPattern[]]:=
 
 Options[AppPacletBundle]=
 	DeleteDuplicatesBy[First]@
-		Join[{
-			"BuildRoot":>$AppDirectory,
-			"BundleInfo"->Automatic,
-			"AppRegeneratePacletInfo"->False
-			},
+		Join[
+			{
+				"BuildRoot":>$AppDirectory,
+				"BundleInfo"->Automatic,
+				"AppRegeneratePacletInfo"->False
+				},
 			Options[PacletBundle]
 			];
 AppPacletBundle[app_String?(FileExistsQ[AppDirectory[#]]&),
@@ -3690,6 +3570,13 @@ AppPacletUploadUninstaller[app_,ops:OptionsPattern[]]:=
 
 
 
+(* ::Text:: *)
+(*
+	This is pretty much deprecated now, but it shows up in too many spots to kill just yet
+*)
+
+
+
 Options[AppPacletUpload]=
 	DeleteDuplicatesBy[First]@
 		Join[
@@ -3705,8 +3592,8 @@ Options[AppPacletUpload]=
 			Options[PacletUpload],
 			Options[AppPacletBundle]
 			];
-AppPacletUpload[apps__String,ops:OptionsPattern[]]:=
-	Replace[OptionValue["UploadInfo"],{
+AppPacletUpload[apps__String, ops:OptionsPattern[]]:=
+	Replace[OptionValue["UploadInfo"], {
 			Automatic:>
 				AppPacletUpload[apps,
 					"UploadInfo"->

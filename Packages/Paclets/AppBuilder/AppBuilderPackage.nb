@@ -91,7 +91,7 @@ Cell[BoxData[
    3.7286906015905323`*^9, 3.7286906075563917`*^9}, {3.7301355048148327`*^9, 
    3.730135512309113*^9}},ExpressionUUID->"21da47d9-4206-4e34-9958-\
 4de1cbb04541"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -4714,280 +4714,6 @@ Cell[BoxData[
 
 Cell[CellGroupData[{
 
-Cell["\[LeftCeiling]Publish\[RightFloor]", "CodeSubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.712193689718075*^9, 
-  3.712193692518394*^9}},ExpressionUUID->"4cb06744-f24e-4234-ba1e-\
-9dd168c2e927"],
-
-Cell[CellGroupData[{
-
-Cell["\[LeftCeiling]AppPublish\[RightFloor]", "CodeSubsubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.72895071816193*^9, 
-  3.728950721752306*^9}},ExpressionUUID->"ba1954a4-241f-4c98-ae21-\
-894274e30492"],
-
-Cell[BoxData[{
- RowBox[{
-  RowBox[{
-   RowBox[{"Options", "[", "AppPublish", "]"}], "=", "\n", "\t", 
-   RowBox[{"{", "\n", "\t\t", 
-    RowBox[{
-     RowBox[{"\"\<PacletBackup\>\"", "\[Rule]", "True"}], ",", "\n", "\t\t", 
-     RowBox[{"\"\<UpdatePaclet\>\"", "\[Rule]", "True"}], ",", "\n", "\t\t", 
-     RowBox[{"\"\<GitCommit\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t\t", 
-     RowBox[{"\"\<ConfigureGitHub\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
-     "\t\t", 
-     RowBox[{"\"\<PushToGitHub\>\"", "\[Rule]", "True"}], ",", "\n", "\t\t", 
-     RowBox[{"\"\<PushToCloud\>\"", "\[Rule]", "False"}], ",", "\n", "\t\t", 
-     RowBox[{"\"\<PushToServer\>\"", "\[Rule]", "True"}], ",", "\n", "\t\t", 
-     RowBox[{"\"\<PublishServer\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
-     "\t\t", 
-     RowBox[{"\"\<MakeSite\>\"", "\[Rule]", "True"}], ",", "\n", "\t\t", 
-     RowBox[{"Verbose", "\[Rule]", "True"}]}], "\n", "\t\t", "}"}]}], 
-  ";"}], "\n", 
- RowBox[{
-  RowBox[{"AppPublish", "[", 
-   RowBox[{"app_", ",", 
-    RowBox[{"ops", ":", 
-     RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
-  RowBox[{"With", "[", 
-   RowBox[{
-    RowBox[{"{", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{"updatePac", "=", 
-       RowBox[{"TrueQ", "[", 
-        RowBox[{"OptionValue", "[", "\"\<UpdatePaclet\>\"", "]"}], "]"}]}], 
-      ",", "\n", "\t\t", 
-      RowBox[{"gitCommit", "=", 
-       RowBox[{"OptionValue", "[", "\"\<GitCommit\>\"", "]"}]}], ",", "\n", 
-      "\t\t", 
-      RowBox[{"gitHubConfigure", "=", 
-       RowBox[{"OptionValue", "[", "\"\<ConfigureGitHub\>\"", "]"}]}], ",", 
-      "\n", "\t\t", 
-      RowBox[{"gitHubPush", "=", 
-       RowBox[{"TrueQ", "[", 
-        RowBox[{"OptionValue", "[", "\"\<PushToGitHub\>\"", "]"}], "]"}]}], 
-      ",", "\n", "\t\t", 
-      RowBox[{"pacletCloudPush", "=", 
-       RowBox[{"TrueQ", "[", 
-        RowBox[{"OptionValue", "[", "\"\<PushToCloud\>\"", "]"}], "]"}]}], 
-      ",", "\n", "\t\t", 
-      RowBox[{"pacletServerPush", "=", 
-       RowBox[{"TrueQ", "[", 
-        RowBox[{"OptionValue", "[", "\"\<PushToServer\>\"", "]"}], "]"}]}], 
-      ",", "\n", "\t\t", 
-      RowBox[{"pacletBackup", "=", 
-       RowBox[{"TrueQ", "[", 
-        RowBox[{"OptionValue", "[", "\"\<PacletBackup\>\"", "]"}], "]"}]}], 
-      ",", "\n", "\t\t", 
-      RowBox[{"verb", "=", 
-       RowBox[{"TrueQ", "@", 
-        RowBox[{"OptionValue", "[", "Verbose", "]"}]}]}]}], "\n", "\t\t", 
-     "}"}], ",", "\n", "\t\t", 
-    RowBox[{"<|", "\n", "\t\t\t", 
-     RowBox[{
-      RowBox[{"\"\<PacletBackup\>\"", "->", "\n", "\t\t\t\t", 
-       RowBox[{"If", "[", 
-        RowBox[{"pacletBackup", ",", "\n", "\t\t\t\t\t", 
-         RowBox[{"AppPacletBackup", "[", "app", "]"}]}], "\n", "\t\t\t\t\t", 
-        "]"}]}], ",", "\n", "\t\t\t", 
-      RowBox[{"\"\<UpdatePaclet\>\"", "->", "\n", "\t\t\t\t", 
-       RowBox[{"If", "[", 
-        RowBox[{"updatePac", ",", "\n", "\t", "\t", "\t\t\t", 
-         RowBox[{"AppRegeneratePacletInfo", "[", "app", "]"}]}], "\n", 
-        "\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t", 
-      RowBox[{"\"\<GitCommit\>\"", "->", "\n", "\t\t\t\t", 
-       RowBox[{"If", "[", 
-        RowBox[{
-         RowBox[{
-          RowBox[{"TrueQ", "[", "gitCommit", "]"}], "||", 
-          RowBox[{"(", 
-           RowBox[{"gitHubPush", "&&", 
-            RowBox[{"gitCommit", "=!=", "False"}]}], ")"}]}], ",", "\n", "\t",
-          "\t", "\t\t\t", 
-         RowBox[{"AppGitSafeCommit", "[", "app", "]"}]}], "\n", "\t\t\t\t\t", 
-        "]"}]}], ",", "\n", "\t\t\t", 
-      RowBox[{"\"\<ConfigureGitHub\>\"", "->", "\n", "\t\t\t\t", 
-       RowBox[{"If", "[", 
-        RowBox[{
-         RowBox[{
-          RowBox[{"TrueQ", "[", "gitHubConfigure", "]"}], "||", 
-          RowBox[{"(", 
-           RowBox[{"gitHubPush", "&&", 
-            RowBox[{"gitHubConfigure", "=!=", "Automatic"}]}], ")"}]}], ",", 
-         "\n", "\t", "\t", "\t\t\t", 
-         RowBox[{"AppGitHubConfigure", "[", "app", "]"}]}], "\n", 
-        "\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t", 
-      RowBox[{"\"\<PushToGitHub\>\"", "->", "\n", "\t\t\t\t", 
-       RowBox[{"If", "[", 
-        RowBox[{"gitHubPush", ",", "\n", "\t\t\t\t\t", 
-         RowBox[{
-          RowBox[{"Quiet", "[", 
-           RowBox[{
-            RowBox[{"AppGitHubPush", "[", "app", "]"}], ",", " ", 
-            RowBox[{"Git", "::", "err"}]}], "]"}], ";", "\n", "\t\t\t\t\t", 
-          RowBox[{"AppGitHubRepo", "[", "app", "]"}]}]}], "\n", "\t\t\t\t\t", 
-        "]"}]}], ",", "\n", "\t\t\t", 
-      RowBox[{"\"\<PushToCloud\>\"", "->", "\n", "\t\t\t\t", 
-       RowBox[{"If", "[", 
-        RowBox[{"pacletCloudPush", ",", "\n", "\t\t\t\t\t", 
-         RowBox[{"(*", 
-          RowBox[{"<|", "\n", "\t\t\t\t\t\t", 
-           RowBox[{
-            RowBox[{"\"\<Upload\>\"", "->", "\n", "\t\t\t\t\t\t\t", 
-             RowBox[{"AppPacletUpload", "[", 
-              RowBox[{"app", ",", "\n", "\t", "\t", "\t", "\t", "\t\t\t\t", 
-               RowBox[{"\"\<ServerBase\>\"", "\[Rule]", "Default"}], ",", 
-               "\n", "\t", "\t", "\t", "\t", "\t\t\t\t", 
-               RowBox[{"\"\<ServerName\>\"", "\[Rule]", "Default"}]}], "\n", 
-              "\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t\t\t", 
-            RowBox[{"\"\<ServerPage\>\"", "->", "\n", "\t\t\t\t\t\t\t", 
-             RowBox[{"PacletServerPage", "[", "]"}]}]}], "\n", "\t\t\t\t\t", 
-           "|>"}], "*)"}], "\n", "\t\t\t\t\t", 
-         RowBox[{"AppPacletUpload", "[", 
-          RowBox[{"app", ",", "\n", "\t\t\t\t\t\t", 
-           RowBox[{"\"\<ServerBase\>\"", "\[Rule]", "Default"}], ",", "\n", 
-           "\t", "\t", "\t\t\t\t", 
-           RowBox[{"\"\<ServerName\>\"", "\[Rule]", "Default"}]}], "\n", 
-          "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "]"}]}], ",", "\n", 
-      "\t\t\t", 
-      RowBox[{"\"\<PushToServer\>\"", "->", "\n", "\t\t\t\t", 
-       RowBox[{"Association", "@", 
-        RowBox[{"{", "\n", "\t\t\t\t\t", 
-         RowBox[{
-          RowBox[{"If", "[", 
-           RowBox[{
-            RowBox[{"TrueQ", "@", "pacletServerPush"}], ",", "\n", 
-            "\t\t\t\t\t\t", 
-            RowBox[{"\"\<ServerPaclet\>\"", "->", "\n", "\t\t\t\t\t\t\t", 
-             RowBox[{"PacletServerAdd", "[", 
-              RowBox[{"$PacletServer", ",", " ", "app"}], "]"}]}], ",", "\n", 
-            "\t\t\t\t\t\t", "Nothing"}], "\n", "\t\t\t\t\t\t", "]"}], ",", 
-          "\n", "\t\t\t\t\t", 
-          RowBox[{"If", "[", 
-           RowBox[{
-            RowBox[{
-             RowBox[{"TrueQ", "@", 
-              RowBox[{"OptionValue", "[", "\"\<PublishServer\>\"", "]"}]}], "||",
-              "\n", "\t\t\t\t\t\t", 
-             RowBox[{
-              RowBox[{"TrueQ", "[", "pacletServerPush", "]"}], "&&", 
-              RowBox[{
-               RowBox[{"OptionValue", "[", "\"\<PublishServer\>\"", "]"}], "===",
-                "Automatic"}]}]}], ",", "\n", "\t\t\t\t\t\t", 
-            RowBox[{"\"\<ServerURL\>\"", "->", "\n", "\t\t\t\t\t\t\t", 
-             RowBox[{"With", "[", 
-              RowBox[{
-               RowBox[{"{", 
-                RowBox[{"mf", "=", 
-                 RowBox[{"TrueQ", "@", 
-                  RowBox[{"OptionValue", "[", "\"\<MakeSite\>\"", "]"}]}]}], 
-                "}"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
-               RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
-                RowBox[{
-                 RowBox[{"MinimalBy", "[", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{
-                   RowBox[{
-                   "Select", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{
-                    "Cases", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"PacletServerBuild", "[", 
-                    RowBox[{
-                    "$PacletServer", ",", " ", "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"\"\<AutoDeploy\>\"", "\[Rule]", "True"}], ",", 
-                    "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"\"\<RegenerateContent\>\"", "->", "mf"}], ",", 
-                    "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"\"\<BuildSite\>\"", "\[Rule]", "mf"}], ",", "\n",
-                     "\t", "\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "\"\<DeployOptions\>\"", "\[Rule]", "\n", "\t", "\t", 
-                    "\t", "\t", "\t", "\t", "\t", "\t", "\t", "\t", 
-                    "\t\t\t\t", 
-                    RowBox[{
-                    "{", "\n", "\t", "\t", "\t", "\t", "\t", "\t", "\t", "\t",
-                     "\t", "\t", "\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"Monitor", "\[Rule]", "False"}], ",", "\n", "\t", 
-                    "\t", "\t", "\t", "\t", "\t", "\t", "\t", "\t", "\t", 
-                    "\t\t\t\t\t", 
-                    RowBox[{"\"\<DeployPages\>\"", "\[Rule]", "mf"}]}], "\n", 
-                    "\t", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "}"}]}]}], "\n", 
-                    "\t", "\t\t\t\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"CloudObject", "[", 
-                    RowBox[{"c_", ",", "___"}], "]"}], "\[RuleDelayed]", 
-                    "c"}]}], "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t", "]"}], ",",
-                     "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "StringEndsQ", "[", "\"\</index.html\>\"", "]"}]}], "\n", 
-                    "\t", "\t\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t", 
-                   "\t\t\t\t\t\t\t\t\t", 
-                   RowBox[{
-                    RowBox[{"Length", "@", 
-                    RowBox[{"URLParse", "[", 
-                    RowBox[{"#", ",", "\"\<Path\>\""}], "]"}]}], "&"}]}], 
-                  "\n", "\t\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
-                 "\t\t\t\t\t\t\t\t\t", 
-                 RowBox[{
-                  RowBox[{"{", 
-                   RowBox[{"m_", ",", " ", "___"}], "}"}], ":>", "\n", "\t", 
-                  "\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{"Function", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                   RowBox[{
-                    RowBox[{
-                    RowBox[{
-                    "URLBuild", "@", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"ReplacePart", "[", 
-                    RowBox[{
-                    "#", ",", "\n", "\t", "\t", "\t", "\t", "\t", "\t", 
-                    "\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "\"\<Path\>\"", "->", "\n", "\t", "\t", "\t", "\t", "\t", 
-                    "\t", "\t\t\t\t\t\t\t\t", 
-                    RowBox[{"Append", "[", 
-                    RowBox[{
-                    RowBox[{"Most", "[", "#Path", "]"}], ",", 
-                    "\"\<main.html\>\""}], "]"}]}]}], "\n", "\t", "\t", "\t", 
-                    "\t", "\t", "\t", "\t\t\t\t\t\t\t", "]"}]}], "&"}], "@", 
-                    "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"URLParse", "[", "m", "]"}]}], "\n", "\t", 
-                   "\t\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", 
-                "\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t\t", 
-              "]"}]}], ",", "\n", "\t\t\t\t\t\t\t", "Nothing"}], "\n", 
-           "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t", "}"}]}]}]}], "\n",
-      "\t\t\t", "|>"}]}], "\n", "\t\t", "]"}]}]}], "CodeInput",
- CellChangeTimes->{{3.712193695143124*^9, 3.712193742133087*^9}, {
-   3.712193772591467*^9, 3.712193863810549*^9}, {3.712194202562036*^9, 
-   3.712194248961176*^9}, {3.712194283282329*^9, 3.712194300279726*^9}, {
-   3.712194519065042*^9, 3.7121945250709867`*^9}, {3.7121964343602*^9, 
-   3.712196523254537*^9}, {3.712196578286775*^9, 3.712196639542232*^9}, {
-   3.712196671907836*^9, 3.712196673872313*^9}, {3.712196765897999*^9, 
-   3.7121968056250963`*^9}, {3.712197335582303*^9, 3.712197359437853*^9}, {
-   3.7121974278106003`*^9, 3.712197495995256*^9}, {3.712197545500572*^9, 
-   3.712197569527945*^9}, {3.712197600275585*^9, 3.712197861187769*^9}, {
-   3.7121979270574017`*^9, 3.712197955680608*^9}, {3.712198981387435*^9, 
-   3.71219898863172*^9}, {3.712199191736981*^9, 3.7121992140337267`*^9}, {
-   3.712838706367653*^9, 3.712838923539569*^9}, {3.7128391421095963`*^9, 
-   3.712839190186255*^9}, {3.7128745787463284`*^9, 3.7128747530521193`*^9}, {
-   3.712874794535502*^9, 3.712874848875965*^9}, {3.720677765675291*^9, 
-   3.720677781665194*^9}, {3.721060665620164*^9, 3.721060716235621*^9}, {
-   3.721061211818861*^9, 3.721061286741953*^9}, {3.721062693328466*^9, 
-   3.7210627774519453`*^9}, {3.726336602742736*^9, 3.7263366034776707`*^9}, 
-   3.728949744988743*^9, {3.728952078621648*^9, 
-   3.7289520854494247`*^9}},ExpressionUUID->"8c336370-3e1c-4a30-9ae1-\
-8b8f269dea99"]
-}, Open  ]]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
 Cell["\[LeftCeiling]Git\[RightFloor]", "CodeSubsection",
  Evaluatable->True,
  CellChangeTimes->{{3.701552118951703*^9, 
@@ -5359,7 +5085,7 @@ Cell[BoxData[{
    3.706805598306897*^9, 3.706805598311111*^9}, {3.73283037084202*^9, 
    3.732830370963211*^9}},ExpressionUUID->"aa9d07d8-1c18-443d-b311-\
 94370bb371e0"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -7165,8 +6891,8 @@ Cell[BoxData[{
             RowBox[{
              RowBox[{"StringJoin", "@", 
               RowBox[{"{", 
-               RowBox[{"a", ",", "\"\<`\>\"", ",", "#"}], "}"}]}], "&"}], "/@", \
-"\n", "\t", "\t\t\t\t\t", 
+               RowBox[{"a", ",", "\"\<`\>\"", ",", "#"}], "}"}]}], "&"}], "/@",
+             "\n", "\t", "\t\t\t\t\t", 
             RowBox[{"Flatten", "@", 
              RowBox[{"Apply", "[", 
               RowBox[{"List", ",", " ", 
@@ -9074,16 +8800,16 @@ Cell[BoxData[{
    RowBox[{"Options", "[", "AppPacletBundle", "]"}], "=", "\n", "\t", 
    RowBox[{
     RowBox[{"DeleteDuplicatesBy", "[", "First", "]"}], "@", "\n", "\t\t", 
-    RowBox[{"Join", "[", 
+    RowBox[{"Join", "[", "\n", "\t\t\t", 
      RowBox[{
-      RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
        RowBox[{
         RowBox[{"\"\<BuildRoot\>\"", "\[RuleDelayed]", "$AppDirectory"}], ",",
-         "\n", "\t\t\t", 
+         "\n", "\t", "\t\t\t", 
         RowBox[{"\"\<BundleInfo\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
-        "\t\t\t", 
+        "\t", "\t\t\t", 
         RowBox[{"\"\<AppRegeneratePacletInfo\>\"", "\[Rule]", "False"}]}], 
-       "\n", "\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+       "\n", "\t", "\t\t\t", "}"}], ",", "\n", "\t\t\t", 
       RowBox[{"Options", "[", "PacletBundle", "]"}]}], "\n", "\t\t\t", 
      "]"}]}]}], ";"}], "\n", 
  RowBox[{
@@ -9187,10 +8913,10 @@ Cell[BoxData[{
    3.702676533605948*^9}, {3.702677268420308*^9, 3.702677280451673*^9}, {
    3.702677786793818*^9, 3.702677791350938*^9}, 3.708006003614738*^9, {
    3.708006086683235*^9, 3.708006105726721*^9}, 3.708040576947028*^9, {
-   3.7126148167196836`*^9, 
-   3.712614818150403*^9}},ExpressionUUID->"3e0be53e-cc9d-4df6-b0c9-\
+   3.7126148167196836`*^9, 3.712614818150403*^9}, {3.732845621839706*^9, 
+   3.7328456237858686`*^9}},ExpressionUUID->"3e0be53e-cc9d-4df6-b0c9-\
 985df57bda76"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -9391,6 +9117,17 @@ Cell["\[LeftCeiling]AppPacletUpload\[RightFloor]", "CodeSubsubsection",
    3.730136055940034*^9}},ExpressionUUID->"da1d14b0-4022-4db7-a364-\
 1e1549ff343d"],
 
+Cell["\<\
+\[LeftCeiling]
+\tThis is pretty much deprecated now, but it shows up in too many spots to \
+kill just yet
+\[RightFloor]\
+\>", "Text",
+ Evaluatable->True,
+ CellChangeTimes->{{3.732845474096615*^9, 
+  3.732845490616766*^9}},ExpressionUUID->"7c2a00b1-77ea-4101-876f-\
+08970281f9d0"],
+
 Cell[BoxData[{
  RowBox[{
   RowBox[{
@@ -9421,12 +9158,12 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{
    RowBox[{"AppPacletUpload", "[", 
-    RowBox[{"apps__String", ",", 
+    RowBox[{"apps__String", ",", " ", 
      RowBox[{"ops", ":", 
       RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
    RowBox[{"Replace", "[", 
     RowBox[{
-     RowBox[{"OptionValue", "[", "\"\<UploadInfo\>\"", "]"}], ",", 
+     RowBox[{"OptionValue", "[", "\"\<UploadInfo\>\"", "]"}], ",", " ", 
      RowBox[{"{", "\n", "\t\t\t", 
       RowBox[{
        RowBox[{"Automatic", ":>", "\n", "\t\t\t\t", 
@@ -9688,10 +9425,10 @@ Cell[BoxData[{
    3.708001501041794*^9, 3.708001505439631*^9}, 3.708005390395842*^9, {
    3.708005431571438*^9, 3.708005433362582*^9}, 3.708005989416987*^9, {
    3.712197012751603*^9, 3.71219703100848*^9}, {3.712614821723477*^9, 
-   3.712614823016245*^9}, {3.727895381809764*^9, 
-   3.7278953829617147`*^9}},ExpressionUUID->"060ec933-baa2-43dc-a5ee-\
-17487e618b3a"]
-}, Closed]],
+   3.712614823016245*^9}, {3.727895381809764*^9, 3.7278953829617147`*^9}, 
+   3.7328454594004908`*^9, 
+   3.73284553342914*^9},ExpressionUUID->"060ec933-baa2-43dc-a5ee-17487e618b3a"]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -9903,7 +9640,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"51af92ef-62b7-4e37-bdaf-\
 538e35eb72a6"]
 },
 WindowSize->{798, 764},
-WindowMargins->{{299, Automatic}, {24, Automatic}},
+WindowMargins->{{249, Automatic}, {Automatic, 29}},
 Visible->True,
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
