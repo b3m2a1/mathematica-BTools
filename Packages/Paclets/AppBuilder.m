@@ -1209,6 +1209,9 @@ AppGit[
 
 
 
+AppGet::nopkg="Couldn't find package `` in app ``";
+
+
 AppGet[appName_,pkgName_String]:=
 	With[{
 		app=AppFromFile[appName],
@@ -1218,12 +1221,16 @@ AppGet[appName_,pkgName_String]:=
 			Names[app<>"`*`PackageAppGet"],{
 				{n_, ___}:>
 					Replace[
-						FileNames[pkgName~~".wl"|".m",
-							AppPath[app,"Packages"],
+						FileNames[
+							pkgName~~".wl"|".m",
+							AppPath[app, "Packages"],
 							\[Infinity]
 							],
-						{f_,___}:>
-							ToExpression[n][ExpandFileName@f]
+						{
+							{f_,___}:>
+								ToExpression[n][pkgName],
+							_:>(Message[AppGet::nopkg, pkgName, app];$Failed)
+							}
 						],
 			_:>(
 				If[DirectoryQ@AppPath[app,"Packages",pkgName],

@@ -2,6 +2,12 @@
 
 # BTools
 
+[![release](http://img.shields.io/badge/release-v1.0.0-green.svg)](https://github.com/user/repo/releases/latest)
+
+![version](http://img.shields.io/badge/version-2.0.32-orange.svg)  
+
+[![license](http://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
 The BTools application is a multi-use Mathematica application, largely devoted to simplifying the development process. The application has an autoloader primary file that exposed package-scoped helper functions and loads all of the packages in the  [Packages](Packages)  directory into the main context.
 
 ---
@@ -109,7 +115,7 @@ Install a paclet from GitHub:
 
 	(*Out:*)
 	
-![title-7434877519484664965](project/img/title-7434877519484664965.png)
+![readme-7434877519484664965](project/img/readme-7434877519484664965.png)
 
 Autogenerate documentation:
 
@@ -119,9 +125,9 @@ Autogenerate documentation:
 
 	(*Out:*)
 	
-![title-3555623215494686127](project/img/title-3555623215494686127.png)
+![readme-3555623215494686127](project/img/readme-3555623215494686127.png)
 
-![title-2335057591968686920](project/img/title-2335057591968686920.png)
+![readme-2335057591968686920](project/img/readme-2335057591968686920.png)
 
 More info can be found in the  [Paclet examples](project/examples/Paclets.md) .
 
@@ -165,7 +171,7 @@ More info can be found in the  [Paclet examples](project/examples/Paclets.md) .
 
 	(*Out:*)
 	
-![title-9046101401840380990](project/img/title-9046101401840380990.png)
+![readme-9046101401840380990](project/img/readme-9046101401840380990.png)
 
 * ```NinePatchCreate```  turns anything into a nine-patch to be used as an  ```Appearance``` . It's used, for example, in  ```NinePatchNameTag```  to make a nice name-tag appearances.
 
@@ -183,7 +189,7 @@ More info can be found in the  [Paclet examples](project/examples/Paclets.md) .
 
 	(*Out:*)
 	
-![title-2260547031847133199](project/img/title-2260547031847133199.png)
+![readme-2260547031847133199](project/img/readme-2260547031847133199.png)
 
 * ```StoreExpression```  generates a compressed form of a variable (only  ```OwnValues```  are currently supported) and writes a cell to restore that variable:
 
@@ -194,7 +200,7 @@ More info can be found in the  [Paclet examples](project/examples/Paclets.md) .
 
 	(*Out:*)
 	
-![title-1601186910705832175](project/img/title-1601186910705832175.png)
+![readme-1601186910705832175](project/img/readme-1601186910705832175.png)
 
 More info can be found in the  [FrontEnd examples](project/examples/FrontEnd.md) .
 
@@ -266,7 +272,7 @@ Search for functions with  ```"Do"```  in them anywhere in a context starting wi
 
 	(*Out:*)
 	
-![title-2281886144100136916](project/img/title-2281886144100136916.png)
+![readme-2281886144100136916](project/img/readme-2281886144100136916.png)
 
 Search a directory for a regex pattern:
 
@@ -292,7 +298,7 @@ Search a directory for a regex pattern:
 
 	(*Out:*)
 	
-![title-5436828446961647922](project/img/title-5436828446961647922.png)
+![readme-5436828446961647922](project/img/readme-5436828446961647922.png)
 
 Add an attached cell to the evaluation cell:
 
@@ -302,7 +308,7 @@ Add an attached cell to the evaluation cell:
 
 	(*Out:*)
 	
-![title-4499149176453005575](project/img/title-4499149176453005575.png)
+![readme-4499149176453005575](project/img/readme-4499149176453005575.png)
 
 ---
 
@@ -361,6 +367,6 @@ Create a repository in GitHub
 
 	(*Out:*)
 	
-![title-1488024117533531756](project/img/title-1488024117533531756.png)
+![readme-1488024117533531756](project/img/readme-1488024117533531756.png)
 
 More info can be found in the  [External examples](project/examples/External.md) .

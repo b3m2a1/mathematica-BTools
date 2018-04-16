@@ -932,6 +932,8 @@ AppRegenerateBundleInfo[app_String,ops:OptionsPattern[]]:=
 				ops,
 				"RemovePaths"->{
 					"Private",
+					"project",
+					"GitHub",
 					".git"
 					},
 				"RemovePatterns"->{
@@ -2112,7 +2114,7 @@ AppRegenerateGitExclude[appName_:Automatic,
 appREADMETemplate:=
 	StringReplace[
 		Import[
-			PackageAppPath["Resources","Templates","README.md"],
+			PackageAppPath["Resources", "Templates", "README.md"],
 			"Text"
 			],{
 		"`"->"`tick`",
@@ -2126,7 +2128,8 @@ Options[AppRegenerateReadme]={
 	};
 AppRegenerateReadme[appName:_String|Automatic:Automatic]:=
 	With[{app=AppFromFile[appName]},
-		GitHubCreateReadme[AppDirectory[app],
+		GitHubCreateReadme[
+			AppDirectory[app],
 			TemplateApply[appREADMETemplate,<|
 				"tick"->"`",
 				"Name"->
