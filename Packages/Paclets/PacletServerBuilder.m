@@ -905,7 +905,7 @@ PacletServerAdd//Clear
 Options[PacletServerAdd]=
 	Options@PacletUpload;
 PacletServerAdd[
-	server:localPacletServerPat,
+	server:LocalPacletServerPattern,
 	pacletSpecs:pacletUploadPat,
 	ops:OptionsPattern[]
 	]:=
@@ -947,7 +947,7 @@ PacletServerRemove//Clear
 Options[PacletServerRemove]=
 	Options@PacletRemove;
 PacletServerRemove[
-	server:localPacletServerPat,
+	server:LocalPacletServerPattern,
 	pacletSpecs:$PacletRemovePatterns,
 	ops:OptionsPattern[]
 	]:=
@@ -991,7 +991,7 @@ Options[PacletServerDelete]=
 		"DeleteCloud"->False
 		};
 PacletServerDelete[
-	server:localPacletServerPat,
+	server:LocalPacletServerPattern,
 	ops:OptionsPattern[]
 	]:=
 	(
@@ -1516,7 +1516,7 @@ Options[PacletServerDeploy]=
 			}
 		];
 PacletServerDeploy[
-	server:localPacletServerPat,
+	server:LocalPacletServerPattern,
 	ops:OptionsPattern[]
 	]:=
 	With[
