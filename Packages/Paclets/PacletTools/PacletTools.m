@@ -892,7 +892,8 @@ cleanPacletForExport[pac_PacletManager`Paclet]:=
 	Map[
 		If[StringQ[#[[1]]], ToExpression[#[[1]]], #[[1]]]->#[[2]]&, 
 		Select[
-			DeleteCases[pac, "Location"->_|"Resources"->_], 
+			DeleteCases[pac, 
+				("Location"->_|"Resources"->_|PacletManager`Location->_|PacletManager`Resources->_)], 
 			MatchQ[_String|_Symbol->_]
 			]
 		]
