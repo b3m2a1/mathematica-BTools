@@ -1556,11 +1556,15 @@ WebSiteExtractFileData[content_, config_]:=
 					Merge[
 						{
 							config,
-							Replace[fileContent,{
-								(XMLObject[___][___]|XMLElement["html",___]):>
-									WebSiteImportMeta[fileContent],
-								_->{}
-								}],
+							Replace[fileContent,
+								{
+									(XMLObject[___][___]|XMLElement["html",___]):>
+										KeyDrop[WebSiteImportMeta[fileContent],
+											"URL"
+											],
+									_->{}
+									}
+								],
 							"SourceFile"->content
 							},
 						Last
@@ -1953,7 +1957,7 @@ WebSiteGenerateContent[
 									Fold[
 										Lookup[#,#2,<||>]&,
 										$WebSiteBuildContentStack,
-										{fname, "Attributes", "ExportURI"}
+										{fname, "Attributes", "URL"}
 										],{
 										u_String:>
 											FileNameJoin@
@@ -1997,7 +2001,7 @@ WebSiteGenerateContent[
 							Merge[
 								{
 									config,
-									"ExportURI"->
+									"URL"->
 										WebSiteBuildURL@
 											FileNameDrop[fout, FileNameDepth@outDir]
 									},

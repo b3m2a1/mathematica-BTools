@@ -1191,6 +1191,16 @@ PacletMarkdownNotebook[f_String, a_, regen_:Automatic]:=
 
 
 
+$killFields=
+	{
+		"Name","Version","BuildNumber",
+		"Qualifier","WolframVersion",
+		"SystemID","Description","Category",
+		"Creator","Publisher","Support",
+		"Internal","Location"
+		};
+
+
 PacletMarkdownNotebookUpdate//Clear
 
 
@@ -1201,7 +1211,7 @@ PacletMarkdownNotebookUpdate[notebook_Notebook,a_]:=
 				Cell[BoxData[e_],"Metadata",___]:>
 					Cell[
 						BoxData@ToBoxes@
-							Merge[{ToExpression[e],a},Last],
+							Merge[{KeyDrop[ToExpression[e], $killFields], a},Last],
 						"Metadata"
 						]
 				];
