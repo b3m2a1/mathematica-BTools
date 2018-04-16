@@ -70,6 +70,17 @@ pacletUploadPat=((_String|_URL|_File|{_String,_String}|_Paclet)|
 			(_String|_Paclet->_String|_URL|_File|{_String,_String}|_Paclet))..};
 
 
+LocalPacletServerPattern=
+	KeyValuePattern[{
+		"ServerBase"->
+			(
+				_String?DirectoryQ|
+				_String?(MatchQ[URLParse[#, "Scheme"], "file"|"http"]&)
+				),
+		"ServerName"->_
+		}];
+
+
 localPacletServerPatOrDir=
 	LocalPacletServerPattern|_String?DirectoryQ;
 localPacletServer=
