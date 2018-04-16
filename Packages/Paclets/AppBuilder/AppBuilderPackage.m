@@ -2243,6 +2243,7 @@ AppGitHubConfigure[appName_:Automatic]:=
 AppGitHubPush[appName_:Automatic]:=
 	With[{app=AppFromFile[appName]},
 		If[GitRepoQ@AppDirectory[app],
+			Git["PullOrigin", AppPath@app];
 			Block[{$GitHubEncodePassword=True},
 				GitHub["Push", AppDirectory[app]]
 				]

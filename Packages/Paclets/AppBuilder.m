@@ -1080,7 +1080,7 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 					],
 			"PushToGitHub"->
 				If[gitHubPush,
-					(*Quiet[*)AppGitHubPush[app](*, Git::err]*);
+					Quiet[AppGitHubPush[app], Git::err];
 					AppGitHubRepo[app]
 					],
 			"PushToCloud"->
