@@ -1953,13 +1953,13 @@ WebSiteGenerateContent[
 									Fold[
 										Lookup[#,#2,<||>]&,
 										$WebSiteBuildContentStack,
-										{fname,"Attributes","URL"}
+										{fname, "Attributes", "ExportURI"}
 										],{
 										u_String:>
 											FileNameJoin@
 												Flatten@{
 													outDir,
-													URLParse[u,"Path"]
+													URLParse[u, "Path"]
 													},
 										_:>
 											Function[
@@ -1997,9 +1997,9 @@ WebSiteGenerateContent[
 							Merge[
 								{
 									config,
-									"URL"->
+									"ExportURI"->
 										WebSiteBuildURL@
-											FileNameDrop[fout,FileNameDepth@outDir]
+											FileNameDrop[fout, FileNameDepth@outDir]
 									},
 								Last
 								]
