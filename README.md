@@ -2,11 +2,7 @@
 
 # BTools
 
-[![release](http://img.shields.io/badge/release-v1.0.0-green.svg)](https://github.com/user/repo/releases/latest)
-
-![version](http://img.shields.io/badge/version-2.0.32-orange.svg)  
-
-[![license](http://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![release](http://img.shields.io/badge/release-v1.0.0-green.svg)](https://github.com/user/repo/releases/latest) ![version](http://img.shields.io/badge/version-2.0.32-orange.svg)   [![license](http://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 The BTools application is a multi-use Mathematica application, largely devoted to simplifying the development process. The application has an autoloader primary file that exposed package-scoped helper functions and loads all of the packages in the  [Packages](Packages)  directory into the main context.
 
