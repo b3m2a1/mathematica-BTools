@@ -28,15 +28,12 @@ LocalPacletServerPattern::usage=
 	"The patterns that a local server can take";
 
 
-PacletServerPage::usage=
-	"Generates a page laying out the available paclets on that server";
-PacletMarkdownNotebook::usage=
-	"Generates a markdown notebook for the paclet";
-PacletMarkdownNotebookUpdate::usage=
-	"Updates a markdown notebook for a paclet";
+PacletServer::usage="";
 LoadPacletServers::usage="";
 $DefaultPacletServer::usage=
 	"The key of the default paclet server";
+
+
 PacletServerURL::usage=
 	"";
 PacletServerDeploymentURL::usage=
@@ -54,6 +51,16 @@ PacletServerExposedPaclets::usage=
 PacletServerInitialize::usage="";
 PacletServerDelete::usage=
 	"Deletes a paclet server";
+
+
+PacletServerPage::usage=
+	"Generates a page laying out the available paclets on that server";
+PacletMarkdownNotebook::usage=
+	"Generates a markdown notebook for the paclet";
+PacletMarkdownNotebookUpdate::usage=
+	"Updates a markdown notebook for a paclet";
+
+
 PacletServerGitInitialize::usage=
 	"Initializes a git repo for a server";
 PacletServerGitHubPush::usage=
