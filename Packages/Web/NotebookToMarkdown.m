@@ -289,6 +289,17 @@ $NotebookToMarkdownStyles:=
 
 
 (* ::Subsubsubsection::Closed:: *)
+(*Global Options*)
+
+
+
+$MarkdownIncludeStyleDefinitions=
+	False;
+$MarkdownIncludeLinkAnchors=
+	{ "Section", "Subsection" };
+
+
+(* ::Subsubsubsection::Closed:: *)
 (*CharCleaner*)
 
 
@@ -1656,13 +1667,32 @@ Options[NotebookToMarkdown]=
 		"Name"->Automatic,
 		"Metadata"->Automatic,
 		"ContentExtension"->Automatic,
-		"Notebook"->Automatic,
+		"NotebookObject"->Automatic,
+		"CellObjects"->Automatic,
 		"Context"->Automatic,
-		"CellStyles"->Automatic
+		"CellStyles"->Automatic,
+		"IncludeStyleDefinitions"->Automatic,
+		"IncludeLinkAnchors"->Automatic
 		};
 NotebookToMarkdown[
-	nb_Notebook, ops:OptionsPattern[]]:=
+	nb_Notebook,
+	ops:OptionsPattern[]
+	]:=
 	Catch@
+	Block[
+		{
+			$MarkdownIncludeStyleDefinitions=
+				Replace[OptionValue["IncludeStyleDefinitions"],
+					Automatic:>$MarkdownIncludeStyleDefinitions
+					],
+			$MarkdownIncludeLinkAnchors=
+				Replace[OptionValue["IncludeLinkAnchors"],
+					Automatic:>$MarkdownIncludeLinkAnchors
+					],
+			exportStrings,
+			exportPick,
+			exportRiffle
+			},
 	With[
 		{
 			dir=OptionValue["Directory"],
@@ -1670,44 +1700,76 @@ NotebookToMarkdown[
 			name=Replace[Except[_String]->"Markdown"]@OptionValue["Name"],
 			cext=Replace[Except[_String]->"content"]@OptionValue["ContentExtension"],
 			meta=Replace[Except[_Association?AssociationQ]-><||>]@OptionValue["Metadata"],
-			cont=Replace[Except[_String]->"Global`"]@OptionValue["Context"]
+			cont=Replace[Except[_String]->"Global`"]@OptionValue["Context"],
+			nbo=OptionValue["NotebookObject"],
+			cells=OptionValue["CellObjects"]
 			},
 		If[!DirectoryQ@dir, Throw[$Failed]];
 		If[!StringQ@path, Throw[$Failed]];
+		exportStrings=
+			iNotebookToMarkdown[
+				<|
+					"Root"->dir,
+					"Path"->path,
+					"Name"->name,
+					"ContentExtension"->cext,
+					"Meta"->meta,
+					"NotebookObject"->nbo,
+					"CellObjects"->cells,
+					"Context"->cont
+					|>,
+				#
+				]&/@First@nb;
+		exportPick=
+			Map[#=!=""&, exportStrings];
+		exportStrings=
+			If[$MarkdownIncludeStyleDefinitions===All&&
+				MatchQ[cells, {__CellObject}]&&Length[cells]==Length[exportStrings],
+				MapThread[
+					TemplateApply[
+						"<style>body {``}</style>\n",
+						CSSGenerate[Options[#2], "RiffleCharacter"->""]
+						]<>#&,
+					{
+						Pick[exportStrings, exportPick],
+						Pick[cells, exportPick]
+						}
+					],
+				Pick[exportStrings, exportPick]
+				];
+		exportRiffle=
+			StringRiffle[
+				ReplaceAll[
+					Pick[exportStrings, exportPick],
+					RawBoxes[s_]|
+						ExportPacket[s_, ___]:>s
+					],
+				"\n\n"
+				];
 		Replace[
+			exportRiffle,
 			{
 				s_String:>
+					If[MatchQ[$MarkdownIncludeStyleDefinitions, All|True]&&
+						MatchQ[nbo, _NotebookObject?(NotebookInformation[#]=!=$Failed&)],
+						"<style>"<>CSSGenerate[nbo, "RiffleCharacter"->{"", " "}]<>"</style>\n\n",
+						""
+						]<>
 					StringReplace[s,
 						Join[
 							Normal@
 								$NotebookToMarkdownLongToUnicodeReplacements,
-							Lookup[Options[nb], ExportAutoReplacements, {}]
+							Lookup[Options[nb], ExportAutoReplacements, {}],
+							{
+								"\t"->" "
+								}
 							]
 						],
 					_->$Failed
 					}
-			]@
-		StringRiffle[
-			ReplaceAll[
-				DeleteCases[""]@
-					iNotebookToMarkdown[
-						<|
-							"Root"->dir,
-							"Path"->path,
-							"Name"->name,
-							"ContentExtension"->cext,
-							"Meta"->meta,
-							"Notebook"->nb,
-							"Context"->cont
-							|>,
-						#
-						]&/@First@nb,
-				RawBoxes[s_]|
-					ExportPacket[s_, ___]:>s
-				],
-			"\n\n"
 			]
 		]
+	];
 
 
 NotebookToMarkdown[nb_NotebookObject, ops:OptionsPattern[]]:=
@@ -1752,17 +1814,19 @@ NotebookToMarkdown[nb_NotebookObject, ops:OptionsPattern[]]:=
 					cont=
 						Replace[OptionValue["Context"],
 							Automatic:>MarkdownNotebookContext@nb
+							],
+					cells=
+						Cells[nb,
+							CellStyle->
+								Replace[OptionValue["CellStyles"],
+								 Automatic:>$NotebookToMarkdownStyles
+								 ]
 							]
 					},
 					NotebookToMarkdown[
 						Notebook[
 							NotebookRead@
-								Cells[nb,
-									CellStyle->
-										Replace[OptionValue["CellStyles"],
-										 Automatic:>$NotebookToMarkdownStyles
-										 ]
-									],
+								cells,
 							ExportAutoReplacements->
 								CurrentValue[nb, ExportAutoReplacements]
 							],
@@ -1771,18 +1835,22 @@ NotebookToMarkdown[nb_NotebookObject, ops:OptionsPattern[]]:=
 							"Path"->path,
 							"Name"->name,
 							"ContentExtension"->cext,
-							"Notebook"->nb,
+							"NotebookObject"->nb,
+							"CellObjects"->cells,
 							"Metadata"->meta,
-							"Context"->cont
+							"Context"->cont,
+							ops
 							}
 						]
 					]
 				]
 			]
 		];
-NotebookToMarkdown[nb_Notebook]:=
+
+
+(*NotebookToMarkdown[nb_Notebook]:=
 	With[{
-		nb2=CreateDocument@Insert[nb,Visible->False,2]
+		nb2=CreateDocument@Insert[nb, Visible\[Rule]False,2]
 		},
 		CheckAbort[
 			(NotebookClose[nb2];#)&@
@@ -1790,7 +1858,7 @@ NotebookToMarkdown[nb_Notebook]:=
 			NotebookClose[nb2];
 			$Aborted
 			]
-		]
+		]*)
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2169,7 +2237,7 @@ markdownCodeCellIOReformatPreClean[pathInfo_, e_, style_]:=
 			Converts tabs into spaces because it looks better		
 			*)
 			s_String?(StringMatchQ["\t"..]):>
-				StringReplace[s,"\t"->" "]
+				StringReplace[s, "\t"->" "]
 			}
 		];
 
@@ -2365,14 +2433,29 @@ markdownCodeCellIOReformat[
 
 
 
-markdownIDHook[id_]:=
+markdownIDHook[id_String]:=
 	TemplateApply[
 		"<a id=\"``\" style=\"width:0;height:0;margin:0;padding:0;\">&zwnj;</a>",
 		ToLowerCase@
-			StringReplace[StringTrim@id,
-				{Whitespace->"-",Except[WordCharacter]->""}
+			StringReplace[
+				StringTrim@id,
+				{Whitespace->"-", Except[WordCharacter]->""}
 				]
 		];
+markdownLinkAnchor[t_, style_]:=
+	If[TrueQ@$MarkdownIncludeLinkAnchors||
+			MemberQ[$MarkdownIncludeLinkAnchors, style],
+		Replace[
+			FrontEndExecute@
+				ExportPacket[Cell[t], "PlainText"],
+			{
+				{id_String,___}:>
+					markdownIDHook[id]<>"\n\n",
+					_->""
+				}
+			],
+		""
+		]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -2433,7 +2516,7 @@ iNotebookToMarkdownRegister[pathInfo_,
 	markdownCodeCellIOReformat[pathInfo,
 		e,
 		"InputText",
-		StringReplace[#,StartOfLine->"\t"]&
+		StringReplace[#,StartOfLine->"    "]&
 		];
 iNotebookToMarkdownRegister[pathInfo_,
 	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms],"InlineInput",___]]:=
@@ -2442,7 +2525,7 @@ iNotebookToMarkdownRegister[pathInfo_,
 			BoxData@FormBox[expr_, _]:>BoxData@expr
 			],
 		"InputText",
-		"```"<>#<>If[StringEndsQ[#,"`"]," ",""]<>"```"&
+		"```"<>#<>If[StringEndsQ[#,"`"], " ", ""]<>"```"&
 		];
 iNotebookToMarkdownRegister[pathInfo_,
 	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms],"InlineText",___]]:=
@@ -2463,7 +2546,7 @@ iNotebookToMarkdownRegister[pathInfo_,
 		{"InputText", "Output"},
 		StringReplace["(*Out:*)\n\n"<>#,
 			{
-				StartOfLine->"\t"
+				StartOfLine->"    "
 				}
 			]&
 		];
@@ -2522,87 +2605,61 @@ $iNotebookToMarkdownSectionStyleRanking=
 		|>;
 
 
-iNotebookToMarkdownRegister[pathInfo_,Cell[t_, "Title", ___]]:=
+iNotebookToMarkdownRegister[pathInfo_, Cell[t_, "Title", ___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
-		s:Except[""]:>
-			Replace[
-				FrontEndExecute@
-					ExportPacket[Cell[t],"PlainText"],{
-				{id_String,___}:>
-					markdownIDHook[id]<>"\n\n",
-				_->""
-				}]<>
-			"# **"<>s<>"**"
+		s:Except["", _String]:>
+			markdownLinkAnchor[t, "Section"]<>
+				"# **"<>s<>"**"
 		];
 iNotebookToMarkdownRegister[pathInfo_,Cell[t_, "Chapter", ___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
-		s:Except[""]:>
-			Replace[
-				FrontEndExecute@
-					ExportPacket[Cell[t],"PlainText"],{
-				{id_String,___}:>
-					markdownIDHook[id]<>"\n\n",
-				_->""
-				}]<>
-			"# ***"<>s<>"***"
+		s:Except["", _String]:>
+			markdownLinkAnchor[t, "Section"]<>
+				"# ***"<>s<>"***"
 		];
 iNotebookToMarkdownRegister[pathInfo_,Cell[t_, "Subchapter", ___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
-		s:Except[""]:>
-			Replace[
-				FrontEndExecute@
-					ExportPacket[Cell[t],"PlainText"],{
-				{id_String,___}:>
-					markdownIDHook[id]<>"\n\n",
-				_->""
-				}]<>
-			"# *"<>s<>"*"
+		s:Except["", _String]:>
+			markdownLinkAnchor[t, "Section"]<>
+				"# *"<>s<>"*"
 		];
 
 
 iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Section",___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
-		s:Except[""]:>
-			Replace[
-				FrontEndExecute@
-					ExportPacket[Cell[t],"PlainText"],{
-				{id_String,___}:>
-					markdownIDHook[id]<>"\n\n",
-				_->""
-				}]<>
-			"# "<>s
+		s:Except["", _String]:>
+			markdownLinkAnchor[t, "Section"]<>
+				"# "<>s
 		];
 iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Subsection",___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>
-			Replace[
-				FrontEndExecute@
-					ExportPacket[Cell[t],"PlainText"],{
-				{id_String,___}:>
-					markdownIDHook[id]<>"\n\n",
-				_->""
-				}]<>
-			"## "<>s
+			markdownLinkAnchor[t, "Subsection"]<>
+				"## "<>s
 		];
 iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Subsubsection",___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>
-			"### "<>s
+			markdownLinkAnchor[t, "Subsubsection"]<>
+				"### "<>s
 		];
-iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Subsububsection",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Subsubsubsection",___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>
-			"#### "<>s
+			markdownLinkAnchor[t, "Subsubsubsection"]<>
+				"#### "<>s
 		];
-iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Subsububsubsection",___]]:=
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Subsubsubsubsection",___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>
-			"##### "<>s
+			markdownLinkAnchor[t, "Subsubsubsubsection"]<>
+				"##### "<>s
 		];
 iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Subsububsubsubsection",___]]:=
 	Replace[iNotebookToMarkdown[pathInfo,t],
 		s:Except[""]:>
-			"###### "<>s
+			markdownLinkAnchor[t, "Subsububsubsubsection"]<>
+				"###### "<>s
 		];
 
 
@@ -3576,7 +3633,9 @@ NotebookMarkdownSave[
 				Throw[Null]
 				];
 			md=
-				Reap[NotebookToMarkdown[nb, Normal@expOps],
+				Reap[
+					NotebookToMarkdown[nb, 
+						FilterRules[Normal@expOps, Options[NotebookToMarkdown]]],
 					"MarkdownExport"
 					];
 			If[!StringQ@md[[1]]||StringLength@StringTrim@md[[1]]==0, Throw[Null]];

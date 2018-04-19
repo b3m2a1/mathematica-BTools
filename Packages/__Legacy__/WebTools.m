@@ -45,18 +45,16 @@ SSHConnect::usage=
 	"Connects to a server via SSH and returns the ProcessObject";
 
 
-PackageScopeBlock[
-	XMLGenerate::usage=
-		"Generates an XMLObject from data";
-	XMLDeploy::usage=
-		"CloudExports an XMLObject";
-	XMLExport::usage=
-		"Exports an XMLObject";
-	$CSStylesheets::usage=
-		"A cache of named stylesheets";
-	MarkdownGenerate::usage=
-		"Generates an XMLObject from a markdown string";
-	];
+XMLGenerate::usage=
+	"Generates an XMLObject from data";
+XMLDeploy::usage=
+	"CloudExports an XMLObject";
+XMLExport::usage=
+	"Exports an XMLObject";
+$CSStylesheets::usage=
+	"A cache of named stylesheets";
+MarkdownGenerate::usage=
+	"Generates an XMLObject from a markdown string";
 
 
 Begin["`Private`"];

@@ -465,10 +465,22 @@ markdownToXMLFormat[t_,text_String]:=
 
 
 
-markdownToXMLValidateXMLBlock[s_]:=
-	Quiet[
-		Length@ImportString[s, {"HTML", "XMLObject"}][[2, 3, 1, 3]]===1
-		]
+markdownToXMLValidateXMLBlock[block_, start_, end_]:=
+	start==end&&
+		With[{
+			splits=
+				StringCases[block,
+					{
+						("<"~~(Whitespace|"")~~(Whitespace|"")~~start)->
+							"Open",
+						("<"~~(Whitespace|"")~~"/"~~(Whitespace|"")~~end)->
+							"Close"
+						}
+					]
+			},
+			Count[splits, "Open"]==Count[splits, "Close"]&&
+				Length[splits]==2||(Count[splits[[3;;]], "Open"]!=Count[splits[[3;;]], "Close"])
+			]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -481,12 +493,18 @@ markdownToXMLValidateXMLBlock[s_]:=
 
 
 
+(* ::Text:: *)
+(*For stripping meta info as used by pelican and things*)
+
+
+
 $markdownToXMLMeta=
 	meta:(
 		StartOfString~~
-			((StartOfLine~~
-					(Whitespace|"")~~
-					Except[WhitespaceCharacter]..~~
+			(
+				(
+					StartOfLine~~(Whitespace|"")~~
+					Except[WhitespaceCharacter, WordCharacter]..~~
 					(Whitespace|"")~~":"~~Except["\n"]...~~"\n")..)
 		):>
 			{
@@ -750,11 +768,7 @@ $markdownToXMLXMLBlock=
 	cont:(
 		"<"~~t:WordCharacter..~~__~~
 			"<"~~(Whitespace|"")~~"/"~~t2:WordCharacter..~~(Whitespace|"")~~">"
-		)/;t==t2&&
-			StringCount[cont,
-				"<"~~(Whitespace|"")~~(Whitespace|"")~~t]==
-				StringCount[cont,"<"~~(Whitespace|"")~~"/"~~(Whitespace|"")~~t]&&
-					markdownToXMLValidateXMLBlock[cont]:>
+		)/;markdownToXMLValidateXMLBlock[cont, t, t2]:>
 		("XMLBlock"->cont);
 
 
@@ -767,17 +781,7 @@ $markdownToXMLRawXMLBlock=
 	cont:(
 		(StartOfLine|StartOfString)~~"<"~~t:WordCharacter..~~__~~
 			"<"~~(Whitespace|"")~~"/"~~t__~~(Whitespace|"")~~">"
-		)/;(*
-			StringCount[cont, "<"]>2&&
-			StringCount[cont, ">"]>2&&*)
-			StringCount[
-				cont,
-				"<"~~(Whitespace|"")~~t
-				]==
-				StringCount[
-					cont,
-					"<"~~(Whitespace|"")~~"/"~~(Whitespace|"")~~t
-					]&&markdownToXMLValidateXMLBlock[cont]:>
+		)/;markdownToXMLValidateXMLBlock[cont, t, t]:>
 		("XMLBlock"->cont)
 
 
@@ -843,7 +847,7 @@ $markdownToXMLNewLineElements=
 
 
 
-markdownToXMLPrep[text_String,rules:_List|Automatic:Automatic]:=
+markdownToXMLPrep[text_String, rules:_List|Automatic:Automatic]:=
 	With[{baseData=
 		Fold[
 			Flatten@
@@ -877,7 +881,7 @@ markdownToXMLPrep[text_String,rules:_List|Automatic:Automatic]:=
 					]@
 				ReplaceRepeated[
 					Flatten[List@@baseData],
-					{a___,t_String,"Orphan"->o_,b___}:>
+					{a___, t_ String, "Orphan"->o_, b___}:>
 						{a,markdownToXMLPrep[t<>o],b}
 					]
 			]
@@ -913,9 +917,9 @@ markdownToXML[
 	]:=
 	Block[{
 		$markdownToXMLBlockRules=
-			Join[extraBlockRules,$markdownToXMLBlockRules],
+			Join[extraBlockRules, $markdownToXMLBlockRules],
 		$markdownToXMLElementRules=
-			Join[extraElementRules,$markdownToXMLElementRules]
+			Join[extraElementRules, $markdownToXMLElementRules]
 		},
 		Flatten@
 			Replace[
@@ -1010,32 +1014,33 @@ MarkdownToXML[
 		br=Replace[OptionValue["BlockRules"],Except[_?OptionQ]:>{}]
 		},
 		Replace[
-			GatherBy[
-				markdownToXMLReinsertRefs@
-				Reap@
-				markdownToXML[
-					markdownToXMLPreProcess[s],
-					Automatic,
-					Join[
-						br,
-						If[sm,
-							{
-								$markdownToXMLMeta
-								},
-							{}
-							]
-						],
-					er
+			Map[DeleteDuplicates]@
+				GatherBy[
+					markdownToXMLReinsertRefs@
+						Reap@
+							markdownToXML[
+								markdownToXMLPreProcess[s],
+								Automatic,
+								Join[
+									br,
+									If[sm,
+										{
+											$markdownToXMLMeta
+											},
+										{}
+										]
+									],
+								er
+								],
+					StringMatchQ[Alternatives@@he]@*First
 					],
-				StringMatchQ[Alternatives@@he]@*First
-				],
 		{
 			{h_,b_}:>
 				XMLElement["html",
 					{},
 					{
-						XMLElement["head",{}, h],
-						XMLElement["body",{}, b]
+						XMLElement["head", {}, h],
+						XMLElement["body", {}, b]
 						}
 					],
 			{b_}:>

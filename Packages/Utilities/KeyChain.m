@@ -334,7 +334,8 @@ KeyChainGet[
 	lookup:True|False:False
 	]:=
 	KeyChainGet[
-		site->{None, username, subparts}
+		site->{None, username, subparts},
+		lookup
 		]
 
 
@@ -358,7 +359,7 @@ $KeyChainCloudAccounts=
 	"TestingAccount"|"DeploymentsAccount"|
 		"PacletsAccount"|"DatasetsAccount"|
 		"ServiceConnectionsAccount"|"DocumentationAccount"|
-		"PaidAccount"|"FreeAccount";
+		"PaidAccount"|"FreeAccount"|"PacletServer";
 
 
 PackageAddAutocompletions[

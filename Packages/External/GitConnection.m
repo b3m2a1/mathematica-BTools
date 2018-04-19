@@ -450,11 +450,12 @@ GitRegisterFunction[
 			},
 		$GitParamMap[big]=map;
 		Options[sym]=
-			DeleteDuplicates[
+			DeleteDuplicatesBy[
 				Join[
 					joinOps,
 					Thread[Keys@$GitParamMap[big]->Automatic]
-					]
+					],
+				First
 				];
 		sym[
 			dir:_String?DirectoryQ|Automatic:Automatic,

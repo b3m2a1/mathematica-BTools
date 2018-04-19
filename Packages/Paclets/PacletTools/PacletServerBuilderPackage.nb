@@ -16,14 +16,21 @@ Cell["\<\
   3.732845264352396*^9}},ExpressionUUID->"2b923506-080a-4ede-88ed-\
 bc7eb93640c6"],
 
-Cell[BoxData[
+Cell[BoxData[{
  RowBox[{
   RowBox[{
    RowBox[{"LocalPacletServerPattern", "::", "usage"}], "=", "\n", "\t", 
-   "\"\<The patterns that a local server can take\>\""}], ";"}]], "CodeInput",
- 
- CellChangeTimes->{{3.732845301696657*^9, 
-  3.732845310222665*^9}},ExpressionUUID->"e1d684a0-258c-4f57-ac48-\
+   "\"\<The patterns that a local server can take\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"CloudPacletServerPattern", "::", "usage"}], "=", "\n", "\t", 
+     "\"\<The patterns that a cloud server can take\>\""}], ";"}], 
+   "*)"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.732845301696657*^9, 3.732845310222665*^9}, {
+   3.733107102517507*^9, 3.7331071087051687`*^9}, 
+   3.733108836493043*^9},ExpressionUUID->"e1d684a0-258c-4f57-ac48-\
 614e6ed05a1f"],
 
 Cell[BoxData[{
@@ -258,39 +265,85 @@ a64e248ae24a"],
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"LoadPacletServers", "[", "]"}], ":=", "\n", "\t", 
-  RowBox[{"(", "\n", "\t\t", 
-   RowBox[{
-    RowBox[{"If", "[", 
-     RowBox[{
-      RowBox[{"FileExistsQ", "@", "$PacletServersFile"}], ",", "\n", "\t", 
-      "\t\t", 
-      RowBox[{"$PacletServers", "=", "\n", "\t", "\t\t\t", 
-       RowBox[{"Import", "[", "$PacletServersFile", "]"}]}]}], "\n", "\t", 
-     "\t\t", "]"}], ";", "\n", "\t\t", 
-    RowBox[{"If", "[", 
-     RowBox[{
+  RowBox[{"$PacletServersDefault", "=", "\n", "\t\t", 
+   RowBox[{"<|", "\n", "\t\t\t", 
+    RowBox[{
+     RowBox[{"\"\<Default\>\"", "->", "\n", "\t\t\t\t", 
       RowBox[{
-       RowBox[{"!", 
-        RowBox[{"AssociationQ", "@", "$PacletServers"}]}], "||", 
+      "$PacletExecuteSettings", "[", "\"\<ServerDefaults\>\"", "]"}]}], ",", 
+     "\n", "\t\t\t", 
+     RowBox[{"\"\<Shared\>\"", "->", "\n", "\t\t\t\t", 
+      RowBox[{"<|", "\n", "\t\t\t\t\t", 
        RowBox[{
-        RowBox[{"Length", "@", "$PacletServers"}], "==", "0"}]}], ",", "\n", 
-      "\t\t\t", 
-      RowBox[{"$PacletServers", "=", "\n", "\t\t\t\t", 
-       RowBox[{"<|", "\n", "\t\t\t\t\t", 
-        RowBox[{"\"\<Default\>\"", "->", "\n", "\t\t\t\t\t\t", 
-         RowBox[{
-         "$PacletExecuteSettings", "[", "\"\<ServerDefaults\>\"", "]"}]}], 
-        "\n", "\t\t\t\t\t", "|>"}]}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t",
-    ")"}]}]], "CodeInput",
+        RowBox[{"\"\<ServerBase\>\"", "->", "\n", "\t\t\t\t\t\t", 
+         RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t\t", 
+          RowBox[{"(*", " ", 
+           RowBox[{
+            RowBox[{
+            "This", " ", "serves", " ", "my", " ", "local", " ", "purposes", 
+             " ", "only"}], "..."}], " ", "*)"}], "\n", "\t\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"FileNameJoin", "@", "\n", "\t\t\t\t\t\t\t\t", 
+            RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+             RowBox[{
+             "$UserDocumentsDirectory", ",", " ", "\n", "\t\t\t\t\t\t\t\t\t", 
+              "\"\<GitHub\>\"", ",", " ", "\n", "\t\t\t\t\t\t\t\t\t", 
+              "\"\<MathematicaPacletServer\>\""}], "\n", "\t\t\t\t\t\t\t\t\t",
+              "}"}]}], ",", "\n", "\t\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"Except", "[", 
+             RowBox[{"_", "?", "DirectoryQ"}], "]"}], ":>", "\n", 
+            "\t\t\t\t\t\t\t\t", 
+            "\"\<https://www.wolframcloud.com/objects/PacletServer\>\""}]}], 
+          "\n", "\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t\t", 
+        RowBox[{
+        "\"\<ServerExtension\>\"", "\[Rule]", "\n", "\t", "\t", "\t\t\t\t", 
+         "Nothing"}], ",", "\n", "\t", "\t", "\t\t\t", 
+        RowBox[{"\"\<ServerName\>\"", "->", "\n", "\t\t\t\t\t\t", "Nothing"}],
+         ",", "\n", "\t\t\t\t\t", 
+        RowBox[{"Permissions", "->", "\n", "\t\t\t\t\t\t", "\"\<Public\>\""}],
+         ",", "\n", "\t\t\t\t\t", 
+        RowBox[{
+        "CloudConnect", "->", "\n", "\t\t\t\t\t\t", 
+         "\"\<PacletServer\>\""}]}], "\n", "\t\t\t\t\t", "|>"}]}]}], "\n", 
+    "\t\t\t", "|>"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7331089097694387`*^9, 
+  3.733108929787079*^9}},ExpressionUUID->"572a377e-cc0a-4ba3-9af0-\
+bd49d056f205"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"LoadPacletServers", "[", "]"}], ":=", "\n", "\t", 
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{"!", 
+     RowBox[{"AssociationQ", "@", "$PacletServers"}]}], ",", "\n", "\t\t", 
+    RowBox[{"$PacletServers", "=", "\n", "\t\t\t", 
+     RowBox[{"Merge", "[", "\n", "\t", "\t\t\t", 
+      RowBox[{
+       RowBox[{"{", "\n", "\t", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{"FileExistsQ", "@", "$PacletServersFile"}], ",", "\n", 
+           "\t", "\t", "\t\t\t\t", 
+           RowBox[{"Import", "[", "$PacletServersFile", "]"}], ",", "\n", 
+           "\t\t\t\t\t\t", 
+           RowBox[{"<|", "|>"}]}], "\n", "\t\t\t\t\t\t", "]"}], ",", "\n", 
+         "\t\t\t\t\t", "$PacletServersDefault"}], "\n", "\t\t\t\t\t", "}"}], 
+       ",", "\n", "\t\t\t\t", "First"}], "\n", "\t\t\t\t", "]"}]}]}], "\n", 
+   "\t\t", "]"}]}]], "CodeInput",
  CellChangeTimes->{{3.720405127197996*^9, 3.720405131047371*^9}, {
    3.720487970192408*^9, 3.7204879727323713`*^9}, {3.720490778025939*^9, 
    3.720490826754312*^9}, {3.7206371154415693`*^9, 3.7206371408950253`*^9}, {
    3.720637171594747*^9, 3.7206371950003233`*^9}, 3.720637275533474*^9, {
-   3.728935326668642*^9, 
-   3.728935330444479*^9}},ExpressionUUID->"95d20a1a-c594-4d23-9ace-\
+   3.728935326668642*^9, 3.728935330444479*^9}, {3.733106752690625*^9, 
+   3.7331067584148397`*^9}, {3.73310679133037*^9, 3.733106845113202*^9}, {
+   3.733106903316327*^9, 3.7331069068697567`*^9}, {3.733107794060433*^9, 
+   3.733107865939013*^9}, {3.733108907883057*^9, 
+   3.733108982706521*^9}},ExpressionUUID->"95d20a1a-c594-4d23-9ace-\
 f800c9b0dac1"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -470,7 +523,7 @@ Cell[BoxData[{
    3.7328453566352158`*^9, 
    3.732845380524057*^9}},ExpressionUUID->"d07e88bf-5955-4445-b715-\
 47c1b2bcad38"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 

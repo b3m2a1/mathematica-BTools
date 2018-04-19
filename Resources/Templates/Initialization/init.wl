@@ -16,6 +16,10 @@ $Name`PackageScope`Private`$TopLevelLoad=
 BeginPackage["$Name`"];
 
 
+$Name::usage=
+	"$Name is an inert head for the $Name package";
+
+
 (* ::Subsubsection::Closed:: *)
 (*$ContextPath*)
 

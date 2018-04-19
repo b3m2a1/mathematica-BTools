@@ -26,6 +26,8 @@
 
 LocalPacletServerPattern::usage=
 	"The patterns that a local server can take";
+(*CloudPacletServerPattern::usage=
+	"The patterns that a cloud server can take";*)
 
 
 PacletServer::usage="";
@@ -101,20 +103,50 @@ $PacletServersFile=
 
 
 
-LoadPacletServers[]:=
-	(
-		If[FileExistsQ@$PacletServersFile,
-			$PacletServers=
-				Import[$PacletServersFile]
-			];
-		If[!AssociationQ@$PacletServers||Length@$PacletServers==0,
-			$PacletServers=
+$PacletServersDefault=
+		<|
+			"Default"->
+				$PacletExecuteSettings["ServerDefaults"],
+			"Shared"->
 				<|
-					"Default"->
-						$PacletExecuteSettings["ServerDefaults"]
+					"ServerBase"->
+						Replace[
+							(* This serves my local purposes only... *)
+							FileNameJoin@
+								{
+									$UserDocumentsDirectory, 
+									"GitHub", 
+									"MathematicaPacletServer"
+									},
+							Except[_?DirectoryQ]:>
+								"https://www.wolframcloud.com/objects/PacletServer"
+							],
+					"ServerExtension"->
+						Nothing,
+					"ServerName"->
+						Nothing,
+					Permissions->
+						"Public",
+					CloudConnect->
+						"PacletServer"
 					|>
-			]
-		)
+			|>;
+
+
+LoadPacletServers[]:=
+	If[!AssociationQ@$PacletServers,
+		$PacletServers=
+			Merge[
+				{
+					If[FileExistsQ@$PacletServersFile,
+						Import[$PacletServersFile],
+						<||>
+						],
+					$PacletServersDefault
+					},
+				First
+				]
+		]
 
 
 (* ::Subsubsection::Closed:: *)
