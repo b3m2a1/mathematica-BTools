@@ -431,7 +431,8 @@ WebSiteFindTheme[dir_String?DirectoryQ, theme_String,
 		Join[
 			{
 				theme,
-				FileNameJoin@{dir, "themes", theme}
+				FileNameJoin@{dir, "themes", theme},
+				FileNameJoin@{dir, "theme"}
 				},
 			Map[
 				FileNameJoin@{#, theme}&,
@@ -629,6 +630,33 @@ WebSiteBuildFilePath[fname_,dir_]:=
 				]&@
 				FileNameDrop[fname,FileNameDepth@dir],
 		FileNameTake[fname]
+		]
+
+
+$WebSiteBuildSafeExportXMLElements=
+	Alternatives@@{
+		"script",
+		"style"
+		};
+$WebSiteBuildSafeExportXMLMap=
+	{
+		"\""->"safeXMLExportProtectedCharacterQuot",
+		"<"->"safeXMLExportProtectedCharacterLt",
+		">"->"safeXMLExportProtectedCharacterGt",
+		"&"->"safeXMLExportProtectedCharacterAmp",
+		"'"->"safeXMLExportProtectedCharacterApos"
+		};
+
+
+WebSiteBuildSafeExportXML[xml_]:=
+	StringReplace[
+		ExportString[
+			xml/.
+				el:XMLElement[$WebSiteBuildSafeExportXMLElements, __]:>
+				(el/.s_String:>StringReplace[s, $WebSiteBuildSafeExportXMLMap]),
+			"XML"
+			],
+		Reverse/@$WebSiteBuildSafeExportXMLMap
 		]
 
 
@@ -950,11 +978,11 @@ WebSiteTemplateGatherArgs[fileContent_, args_]:=
 					{
 							l:{__XMLElement}:>
 								StringRiffle[
-									ExportString[#,"XML"]&/@l,
+									WebSiteBuildSafeExportXML/@l,
 									"\n"
 									],
 							x_XMLElement:>
-								ExportString[x,"XML"],
+								WebSiteBuildSafeExportXML[x],
 							None->
 								"",
 							e:Except[_String]:>

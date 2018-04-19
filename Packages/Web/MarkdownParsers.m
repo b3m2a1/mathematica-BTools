@@ -328,7 +328,7 @@ markdownToXMLFormat[
 
 
 (* ::Subsubsection::Closed:: *)
-(*XMLLine*)
+(*XML*)
 
 
 
@@ -337,8 +337,8 @@ markdownToXMLFormat[
 	text_
 	]:=
 	FirstCase[
-		ImportString[text,{"HTML","XMLObject"}],
-		XMLElement["body"|"head",_,b_]:>b,
+		ImportString[text, {"HTML", "XMLObject"}],
+		XMLElement["body"|"head", _, b_]|b:XMLElement["script", __]:>b,
 		"",
 		\[Infinity]
 		]
@@ -479,7 +479,8 @@ markdownToXMLValidateXMLBlock[block_, start_, end_]:=
 					]
 			},
 			Count[splits, "Open"]==Count[splits, "Close"]&&
-				Length[splits]==2||(Count[splits[[3;;]], "Open"]!=Count[splits[[3;;]], "Close"])
+				((Length[splits]==2)||
+					(Count[splits[[3;;]], "Open"]!=Count[splits[[3;;]], "Close"]))
 			]
 
 
@@ -755,7 +756,9 @@ $markdownToXMLCodeLine=
 
 
 $markdownToXMLXMLLine=
-	xml:("<"~~Except["<"]..~~"/>")|("<link"~~Except["<"]..~~">"):>
+	xml:
+		("<"~~tag:WordCharacter..~~Except["<"]..~~"/>")|
+		("<link"~~Except["<"]..~~">"):>
 		("XMLLine"->xml)
 
 
@@ -767,7 +770,7 @@ $markdownToXMLXMLLine=
 $markdownToXMLXMLBlock=
 	cont:(
 		"<"~~t:WordCharacter..~~__~~
-			"<"~~(Whitespace|"")~~"/"~~t2:WordCharacter..~~(Whitespace|"")~~">"
+			"</"~~(Whitespace|"")~~t2:WordCharacter..~~(Whitespace|"")~~">"
 		)/;markdownToXMLValidateXMLBlock[cont, t, t2]:>
 		("XMLBlock"->cont);
 
@@ -780,7 +783,7 @@ $markdownToXMLXMLBlock=
 $markdownToXMLRawXMLBlock=
 	cont:(
 		(StartOfLine|StartOfString)~~"<"~~t:WordCharacter..~~__~~
-			"<"~~(Whitespace|"")~~"/"~~t__~~(Whitespace|"")~~">"
+			"</"~~(Whitespace|"")~~t__~~(Whitespace|"")~~">"
 		)/;markdownToXMLValidateXMLBlock[cont, t, t]:>
 		("XMLBlock"->cont)
 
@@ -1032,7 +1035,9 @@ MarkdownToXML[
 									],
 								er
 								],
-					StringMatchQ[Alternatives@@he]@*First
+					With[{base=StringMatchQ[Alternatives@@he]},
+						Head[#]==XMLElement&&Length[#]>0&&base@First[#]&
+						]
 					],
 		{
 			{h_,b_}:>

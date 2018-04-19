@@ -944,6 +944,16 @@ PacletServerAdd[
 			]
 		},
 		s/;Head[s]=!=PacletServerAdd
+		];
+PacletServerAdd[
+	s_String?DirectoryQ,
+	pacletSpecs:pacletUploadPat,
+	ops:OptionsPattern[]
+	]:=
+	PacletServerAdd[
+		{"ServerBase"->s, "ServerName"->Nothing},
+		pacletSpecs,
+		ops
 		]
 
 
@@ -988,6 +998,16 @@ PacletServerRemove[
 			]
 		},
 		s/;Head[s]=!=PacletServerRemove
+		];
+PacletServerRemove[
+	s_String?DirectoryQ,
+	pacletSpecs:pacletUploadPat,
+	ops:OptionsPattern[]
+	]:=
+	PacletServerRemove[
+		{"ServerBase"->s, "ServerName"->Nothing},
+		pacletSpecs,
+		ops
 		]
 
 
