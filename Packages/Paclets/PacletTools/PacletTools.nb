@@ -827,7 +827,7 @@ Cell[BoxData[{
    3.729731021584388*^9}, {3.731004233953917*^9, 
    3.731004276496203*^9}},ExpressionUUID->"ca3af5cb-2248-4467-a704-\
 9de97960ca3f"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -1024,7 +1024,7 @@ Cell[BoxData[{
    3.729731096097151*^9, 
    3.72973110516203*^9}},ExpressionUUID->"20a6dee5-1cf6-44c6-aca2-\
 37038f17ee42"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -2458,7 +2458,7 @@ Cell[BoxData[{
   3.72789389234583*^9, 
   3.727893892350543*^9}},ExpressionUUID->"89dc3829-2454-49ae-a388-\
 a820bdef8ad5"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -2716,9 +2716,11 @@ Cell[BoxData[{
      RowBox[{"{", "\n", "\t\t\t", 
       RowBox[{
        RowBox[{"\"\<RemovePaths\>\"", "\[Rule]", 
-        RowBox[{"{", "}"}]}], ",", "\n", "\t", "\t", "\t", 
+        RowBox[{"{", "}"}]}], ",", "\n", "\t\t\t", 
        RowBox[{"\"\<RemovePatterns\>\"", "\[Rule]", 
-        RowBox[{"{", "}"}]}], ",", "\n", "\t", "\t", "\t", 
+        RowBox[{"{", "}"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"\"\<ConfigFile\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
+       "\t\t\t", 
        RowBox[{"\"\<BuildRoot\>\"", "\[RuleDelayed]", "$PacletBuildRoot"}]}], 
       "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
      RowBox[{"Options", "[", "PacletInfoExpressionBundle", "]"}]}], "\n", 
@@ -2773,7 +2775,50 @@ Cell[BoxData[{
            RowBox[{"OptionValue", "[", "\"\<BuildRoot\>\"", "]"}], ",", "\n", 
            "\t\t\t\t", "$PacletBuildExtension", ",", "\n", "\t\t\t\t", 
            RowBox[{"FileBaseName", "@", "dir"}]}], "\n", "\t\t\t\t", 
-          "}"}]}]}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+          "}"}]}]}], ",", "\n", "\t\t", 
+       RowBox[{"extraData", "=", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"Replace", "[", 
+          RowBox[{
+           RowBox[{"Except", "[", 
+            RowBox[{"_", "?", "OptionQ"}], "]"}], "\[RuleDelayed]", "None"}], 
+          "]"}], "@", "\n", "\t\t\t\t", 
+         RowBox[{"Replace", "[", 
+          RowBox[{
+           RowBox[{"OptionValue", "[", "\"\<ConfigFile\>\"", "]"}], ",", "\n",
+            "\t", "\t\t\t\t", 
+           RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Automatic", "\[RuleDelayed]", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"With", "[", 
+               RowBox[{
+                RowBox[{"{", 
+                 RowBox[{"test", "=", 
+                  RowBox[{"FileNameJoin", "@", 
+                   RowBox[{"{", 
+                    RowBox[{
+                    "dir", ",", " ", "\"\<Config\>\"", ",", " ", 
+                    "\"\<BundleInfo.m\>\""}], "}"}]}]}], "}"}], ",", "\n", 
+                "\t\t\t\t\t\t\t\t", 
+                RowBox[{"If", "[", 
+                 RowBox[{
+                  RowBox[{"FileExistsQ", "[", "test", "]"}], ",", "\n", 
+                  "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"Import", "[", "test", "]"}], ",", "\n", 
+                  "\t\t\t\t\t\t\t\t\t", "None"}], "\n", "\t\t\t\t\t\t\t\t\t", 
+                 "]"}]}], "\n", "\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+             "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"f_String", "?", "FileExistsQ"}], ":>", "\n", "\t", 
+              "\t\t\t\t\t\t", 
+              RowBox[{"Import", "[", "f", "]"}]}], ",", "\n", "\t", 
+             "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Except", "[", 
+               RowBox[{"_String", "?", "FileExistsQ"}], "]"}], ":>", "\n", 
+              "\t", "\t\t\t\t\t\t", "None"}]}], "\n", "\t", "\t\t\t\t\t", 
+            "}"}]}], "\n", "\t", "\t\t\t\t", "]"}]}]}]}], "\n", "\t\t", "}"}],
+      ",", "\n", "\t\t", 
      RowBox[{
       RowBox[{"If", "[", 
        RowBox[{
@@ -2784,118 +2829,154 @@ Cell[BoxData[{
         RowBox[{"CreateDirectory", "@", 
          RowBox[{"DirectoryName", "[", "pacletDir", "]"}]}]}], "\n", "\t\t\t",
         "]"}], ";", "\n", "\t\t", 
-      RowBox[{"If", "[", 
+      RowBox[{"With", "[", "\n", "\t\t\t", 
        RowBox[{
-        RowBox[{
-         RowBox[{"Length", "@", 
-          RowBox[{"Join", "[", 
-           RowBox[{"rmpaths", ",", "rmpatterns"}], "]"}]}], "===", "0"}], ",",
-         "\n", "\t\t\t", 
-        RowBox[{"(*", " ", 
+        RowBox[{"{", "\n", "\t\t\t\t", 
          RowBox[{
-         "just", " ", "do", " ", "a", " ", "simple", " ", "PackPaclet", " ", 
-          "and", " ", "move", " ", "the", " ", "paclet"}], " ", "*)"}], "\n", 
-        "\t\t\t", 
-        RowBox[{"With", "[", 
-         RowBox[{
-          RowBox[{"{", 
-           RowBox[{"p", "=", 
-            RowBox[{"PacletManager`PackPaclet", "[", "dir", "]"}]}], "}"}], 
-          ",", "\n", "\t\t\t\t", 
-          RowBox[{
-           RowBox[{"RenameFile", "[", "\n", "\t\t\t\t\t", 
-            RowBox[{"p", ",", "\n", "\t\t\t\t\t", 
-             RowBox[{"FileNameJoin", "@", 
-              RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
-               RowBox[{
-                RowBox[{"DirectoryName", "[", "pacletDir", "]"}], ",", "\n", 
-                "\t\t\t\t\t\t", 
-                RowBox[{"FileNameTake", "[", "p", "]"}]}], "\n", 
-               "\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t", "\t\t\t\t", 
-             RowBox[{"OverwriteTarget", "\[Rule]", "True"}]}], "\n", 
-            "\t\t\t\t\t", "]"}], ";", "\n", "\t\t\t\t", 
-           RowBox[{"FileNameJoin", "@", 
-            RowBox[{"{", "\n", "\t\t\t\t\t", 
-             RowBox[{
-              RowBox[{"DirectoryName", "[", "pacletDir", "]"}], ",", "\n", 
-              "\t\t\t\t\t", 
-              RowBox[{"FileNameTake", "[", "p", "]"}]}], "\n", "\t\t\t\t\t", 
-             "}"}]}]}]}], "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
-        RowBox[{"(*", " ", 
-         RowBox[{
-          RowBox[{"copy", " ", "the", " ", "dir"}], ",", " ", 
-          RowBox[{"remove", " ", "the", " ", "dangerous", " ", "junk"}], ",", 
-          " ", 
-          RowBox[{"etc", "."}]}], " ", "*)"}], "\n", "\t\t\t", 
+          RowBox[{"fullPathSpec", "=", "\n", "\t\t\t\t\t", 
+           RowBox[{"Join", "[", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Flatten", "[", 
+              RowBox[{
+               RowBox[{"{", "rmpaths", "}"}], ",", " ", "1"}], "]"}], ",", 
+             " ", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"Flatten", "[", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"Lookup", "[", 
+                 RowBox[{
+                 "extraData", ",", " ", "\"\<RemovePaths\>\"", ",", " ", 
+                  RowBox[{"{", "}"}]}], "]"}], "}"}], ",", " ", "1"}], 
+              "]"}]}], "\n", "\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"fullPatternSpec", "=", "\n", "\t\t\t\t\t", 
+           RowBox[{"Join", "[", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Flatten", "[", 
+              RowBox[{
+               RowBox[{"{", "rmpatterns", "}"}], ",", " ", "1"}], "]"}], ",", 
+             " ", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"Flatten", "[", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"Lookup", "[", 
+                 RowBox[{
+                 "extraData", ",", " ", "\"\<RemovePatterns\>\"", ",", " ", 
+                  RowBox[{"{", "}"}]}], "]"}], "}"}], ",", " ", "1"}], 
+              "]"}]}], "\n", "\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", 
+         "}"}], ",", "\n", "\t\t", 
         RowBox[{
          RowBox[{"If", "[", 
           RowBox[{
-           RowBox[{"!", 
-            RowBox[{"FileExistsQ", "@", 
-             RowBox[{"DirectoryName", "[", "pacletDir", "]"}]}]}], ",", "\n", 
-           "\t", "\t\t\t", 
-           RowBox[{"CreateDirectory", "@", 
-            RowBox[{"DirectoryName", "[", "pacletDir", "]"}]}]}], "\n", "\t", 
-          "\t\t\t", "]"}], ";", "\n", "\t", "\t\t", 
-         RowBox[{"If", "[", 
-          RowBox[{
-           RowBox[{"FileExistsQ", "@", "pacletDir"}], ",", "\n", "\t", 
-           "\t\t\t", 
-           RowBox[{"DeleteDirectory", "[", 
-            RowBox[{"pacletDir", ",", 
-             RowBox[{"DeleteContents", "\[Rule]", "True"}]}], "]"}]}], "\n", 
-          "\t", "\t\t\t", "]"}], ";", "\n", "\t", "\t\t", 
-         RowBox[{"CopyDirectory", "[", 
-          RowBox[{"dir", ",", "pacletDir"}], "]"}], ";", "\n", "\t", "\t\t", 
-         RowBox[{"Do", "[", "\n", "\t", "\t\t\t", 
-          RowBox[{
+           RowBox[{
+            RowBox[{"Length", "@", 
+             RowBox[{"Join", "[", 
+              RowBox[{"fullPathSpec", ",", " ", "fullPatternSpec"}], "]"}]}], 
+            "===", "0"}], ",", "\n", "\t\t\t", 
+           RowBox[{"(*", " ", 
+            RowBox[{
+            "just", " ", "do", " ", "a", " ", "simple", " ", "PackPaclet", 
+             " ", "and", " ", "move", " ", "the", " ", "paclet"}], " ", 
+            "*)"}], "\n", "\t\t\t", 
            RowBox[{"With", "[", 
             RowBox[{
              RowBox[{"{", 
               RowBox[{"p", "=", 
-               RowBox[{"If", "[", 
+               RowBox[{"PacletManager`PackPaclet", "[", "dir", "]"}]}], "}"}],
+              ",", "\n", "\t\t\t\t", 
+             RowBox[{
+              RowBox[{"RenameFile", "[", "\n", "\t\t\t\t\t", 
+               RowBox[{"p", ",", "\n", "\t\t\t\t\t", 
+                RowBox[{"FileNameJoin", "@", 
+                 RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"DirectoryName", "[", "pacletDir", "]"}], ",", 
+                   "\n", "\t\t\t\t\t\t", 
+                   RowBox[{"FileNameTake", "[", "p", "]"}]}], "\n", 
+                  "\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t", "\t\t\t\t", 
+                RowBox[{"OverwriteTarget", "\[Rule]", "True"}]}], "\n", 
+               "\t\t\t\t\t", "]"}], ";", "\n", "\t\t\t\t", 
+              RowBox[{"FileNameJoin", "@", 
+               RowBox[{"{", "\n", "\t\t\t\t\t", 
                 RowBox[{
-                 RowBox[{"Not", "@", 
-                  RowBox[{"FileExistsQ", "@", "path"}]}], ",", 
-                 RowBox[{"FileNameJoin", "@", 
-                  RowBox[{"{", 
-                   RowBox[{"pacletDir", ",", "path"}], "}"}]}], ",", "path"}],
-                 "]"}]}], "}"}], ",", "\n", "\t", "\t\t\t\t", 
-             RowBox[{"If", "[", 
-              RowBox[{
-               RowBox[{"DirectoryQ", "@", "p"}], ",", "\n", "\t", 
-               "\t\t\t\t\t", 
-               RowBox[{"DeleteDirectory", "[", 
-                RowBox[{"p", ",", "\n", "\t", "\t\t\t\t\t\t", 
-                 RowBox[{"DeleteContents", "\[Rule]", "True"}]}], "\n", "\t", 
-                "\t\t\t\t\t\t", "]"}], ",", "\n", "\t", "\t\t\t\t\t", 
-               RowBox[{"If", "[", 
-                RowBox[{
-                 RowBox[{"FileExistsQ", "@", "p"}], ",", 
-                 RowBox[{"DeleteFile", "[", "p", "]"}]}], "]"}]}], "\n", "\t",
-               "\t\t\t\t\t", "]"}]}], "\n", "\t", "\t\t\t\t", "]"}], ",", 
-           "\n", "\t", "\t\t\t", 
-           RowBox[{"{", 
-            RowBox[{"path", ",", "\n", "\t", "\t\t\t\t", 
-             RowBox[{"Join", "[", "\n", "\t", "\t\t\t\t\t", 
-              RowBox[{
-               RowBox[{"Flatten", "[", 
-                RowBox[{
-                 RowBox[{"{", 
-                  RowBox[{"OptionValue", "[", "\"\<RemovePaths\>\"", "]"}], 
-                  "}"}], ",", "1"}], "]"}], ",", "\n", "\t", "\t\t\t\t\t", 
+                 RowBox[{"DirectoryName", "[", "pacletDir", "]"}], ",", "\n", 
+                 "\t\t\t\t\t", 
+                 RowBox[{"FileNameTake", "[", "p", "]"}]}], "\n", 
+                "\t\t\t\t\t", "}"}]}]}]}], "\n", "\t\t\t\t", "]"}], ",", "\n",
+            "\t\t\t\t", 
+           RowBox[{"(*", " ", 
+            RowBox[{
+             RowBox[{"copy", " ", "the", " ", "dir"}], ",", " ", 
+             RowBox[{"remove", " ", "the", " ", "dangerous", " ", "junk"}], 
+             ",", " ", 
+             RowBox[{"etc", "."}]}], " ", "*)"}], "\n", "\t", "\t\t\t", 
+           RowBox[{
+            RowBox[{"If", "[", 
+             RowBox[{
+              RowBox[{"!", 
+               RowBox[{"FileExistsQ", "@", 
+                RowBox[{"DirectoryName", "[", "pacletDir", "]"}]}]}], ",", 
+              "\n", "\t", "\t", "\t\t\t", 
+              RowBox[{"CreateDirectory", "@", 
+               RowBox[{"DirectoryName", "[", "pacletDir", "]"}]}]}], "\n", 
+             "\t", "\t", "\t\t\t", "]"}], ";", "\n", "\t", "\t", "\t\t", 
+            RowBox[{"If", "[", 
+             RowBox[{
+              RowBox[{"FileExistsQ", "@", "pacletDir"}], ",", "\n", "\t", 
+              "\t", "\t\t\t", 
+              RowBox[{"DeleteDirectory", "[", 
+               RowBox[{"pacletDir", ",", 
+                RowBox[{"DeleteContents", "\[Rule]", "True"}]}], "]"}]}], 
+             "\n", "\t", "\t", "\t\t\t", "]"}], ";", "\n", "\t", "\t", "\t\t", 
+            RowBox[{"CopyDirectory", "[", 
+             RowBox[{"dir", ",", "pacletDir"}], "]"}], ";", "\n", "\t", "\t", 
+            "\t\t", 
+            RowBox[{"Do", "[", "\n", "\t", "\t", "\t\t\t", 
+             RowBox[{
+              RowBox[{"With", "[", 
                RowBox[{
-                RowBox[{
-                 RowBox[{"FileNameDrop", "[", 
-                  RowBox[{"#", ",", 
-                   RowBox[{"FileNameDepth", "@", "pacletDir"}]}], "]"}], 
-                 "&"}], "/@", "\n", "\t", "\t\t\t\t\t\t", 
-                RowBox[{"FileNames", "[", 
+                RowBox[{"{", 
+                 RowBox[{"p", "=", 
+                  RowBox[{"If", "[", 
+                   RowBox[{
+                    RowBox[{"Not", "@", 
+                    RowBox[{"FileExistsQ", "@", "path"}]}], ",", 
+                    RowBox[{"FileNameJoin", "@", 
+                    RowBox[{"{", 
+                    RowBox[{"pacletDir", ",", "path"}], "}"}]}], ",", 
+                    "path"}], "]"}]}], "}"}], ",", "\n", "\t", "\t", 
+                "\t\t\t\t", 
+                RowBox[{"If", "[", 
                  RowBox[{
-                  RowBox[{"OptionValue", "[", "\"\<RemovePatterns\>\"", "]"}],
-                   ",", "pacletDir", ",", "\[Infinity]"}], "]"}]}]}], "\n", 
-              "\t", "\t\t\t\t\t", "]"}]}], "}"}]}], "\n", "\t", "\t\t\t", 
-          "]"}], ";", "\n", "\t", "\t\t", 
+                  RowBox[{"DirectoryQ", "@", "p"}], ",", "\n", "\t", "\t", 
+                  "\t\t\t\t\t", 
+                  RowBox[{"DeleteDirectory", "[", 
+                   RowBox[{"p", ",", "\n", "\t", "\t", "\t\t\t\t\t\t", 
+                    RowBox[{"DeleteContents", "\[Rule]", "True"}]}], "\n", 
+                   "\t", "\t", "\t\t\t\t\t\t", "]"}], ",", "\n", "\t", "\t", 
+                  "\t\t\t\t\t", 
+                  RowBox[{"If", "[", 
+                   RowBox[{
+                    RowBox[{"FileExistsQ", "@", "p"}], ",", 
+                    RowBox[{"DeleteFile", "[", "p", "]"}]}], "]"}]}], "\n", 
+                 "\t", "\t", "\t\t\t\t\t", "]"}]}], "\n", "\t", "\t", 
+               "\t\t\t\t", "]"}], ",", "\n", "\t", "\t", "\t\t\t", 
+              RowBox[{"{", 
+               RowBox[{"path", ",", " ", "\n", "\t", "\t\t\t\t\t", 
+                RowBox[{"Join", "[", "\n", "\t", "\t\t\t\t\t\t", 
+                 RowBox[{"fullPathSpec", ",", "\n", "\t", "\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{
+                    RowBox[{"FileNameDrop", "[", 
+                    RowBox[{"#", ",", 
+                    RowBox[{"FileNameDepth", "@", "pacletDir"}]}], "]"}], 
+                    "&"}], "/@", "\n", "\t", "\t\t\t\t\t\t\t", 
+                   RowBox[{"FileNames", "[", 
+                    RowBox[{
+                    "fullPatternSpec", ",", " ", "pacletDir", ",", " ", 
+                    "\[Infinity]"}], "]"}]}]}], "\n", "\t", "\t\t\t\t\t\t", 
+                 "]"}]}], "\n", "\t", "\t\t\t\t\t", "}"}]}], "\n", "\t", 
+             "\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", "]"}], ";", "\n", 
+         "\t\t\t", 
          RowBox[{"With", "[", 
           RowBox[{
            RowBox[{"{", 
@@ -2936,7 +3017,10 @@ Cell[BoxData[{
    3.720555021087652*^9, 3.7205550536669397`*^9}, {3.720557455725532*^9, 
    3.7205574577393513`*^9}, {3.720560333976111*^9, 3.720560346477337*^9}, 
    3.7269416599483747`*^9, 3.7278938923968763`*^9, {3.728934591973792*^9, 
-   3.728934592690584*^9}},ExpressionUUID->"7c6e701d-f8b9-4051-9c97-\
+   3.728934592690584*^9}, {3.7331956905879993`*^9, 3.733195696241036*^9}, {
+   3.73319575918532*^9, 3.73319587251716*^9}, {3.7331959867094297`*^9, 
+   3.733196065596691*^9}, {3.7331961761560917`*^9, 
+   3.733196396741877*^9}},ExpressionUUID->"7c6e701d-f8b9-4051-9c97-\
 1a658cdff142"],
 
 Cell[BoxData[
@@ -3030,7 +3114,7 @@ Cell[BoxData[
    3.720560394189996*^9}, {3.720568999818665*^9, 3.720569008582397*^9}, 
    3.727893892411069*^9},ExpressionUUID->"ee381599-39bf-420e-b1b2-\
 8467c09d622e"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 

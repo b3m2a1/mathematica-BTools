@@ -2405,7 +2405,7 @@ markdownCodeCellIOReformat[
 				s:Except["", _String]:>
 					StringReplace[postFormat@s,
 						{
-							("\t"...)~~$iNotebookToMarkdownUnIndentedLine->
+							("    "...)~~$iNotebookToMarkdownUnIndentedLine->
 								"",
 							" \\\n"->
 								"\n",

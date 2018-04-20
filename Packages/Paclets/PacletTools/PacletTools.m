@@ -1034,6 +1034,7 @@ Options[PacletBundle]=
 		{
 			"RemovePaths"->{},
 			"RemovePatterns"->{},
+			"ConfigFile"->Automatic,
 			"BuildRoot":>$PacletBuildRoot
 			},
 		Options[PacletInfoExpressionBundle]
@@ -1055,12 +1056,42 @@ PacletBundle[dir:(_String|_File)?DirectoryQ, ops:OptionsPattern[]]:=
 				OptionValue["BuildRoot"],
 				$PacletBuildExtension,
 				FileBaseName@dir
-				}
+				},
+		extraData=
+			Replace[Except[_?OptionQ]:>None]@
+				Replace[OptionValue["ConfigFile"],
+					{
+						Automatic:>
+							With[{test=FileNameJoin@{dir, "Config", "BundleInfo.m"}},
+								If[FileExistsQ[test],
+									Import[test],
+									None
+									]
+								],
+						f_String?FileExistsQ:>
+							Import[f],
+						Except[_String?FileExistsQ]:>
+							None
+						}
+					]
 		},
 		If[!FileExistsQ@DirectoryName[pacletDir],
 			CreateDirectory@DirectoryName[pacletDir]
 			];
-		If[Length@Join[rmpaths,rmpatterns]===0,
+		With[
+			{
+				fullPathSpec=
+					Join[
+						Flatten[{rmpaths}, 1], 
+						Flatten[{Lookup[extraData, "RemovePaths", {}]}, 1]
+						],
+				fullPatternSpec=
+					Join[
+						Flatten[{rmpatterns}, 1], 
+						Flatten[{Lookup[extraData, "RemovePatterns", {}]}, 1]
+						]
+				},
+		If[Length@Join[fullPathSpec, fullPatternSpec]===0,
 			(* just do a simple PackPaclet and move the paclet *)
 			With[{p=PacletManager`PackPaclet[dir]},
 				RenameFile[
@@ -1076,29 +1107,31 @@ PacletBundle[dir:(_String|_File)?DirectoryQ, ops:OptionsPattern[]]:=
 					FileNameTake[p]
 					}
 				],
-			(* copy the dir, remove the dangerous junk, etc. *)
-			If[!FileExistsQ@DirectoryName[pacletDir],
-				CreateDirectory@DirectoryName[pacletDir]
-				];
-			If[FileExistsQ@pacletDir,
-				DeleteDirectory[pacletDir,DeleteContents->True]
-				];
-			CopyDirectory[dir,pacletDir];
-			Do[
-				With[{p=If[Not@FileExistsQ@path,FileNameJoin@{pacletDir,path},path]},
-					If[DirectoryQ@p,
-						DeleteDirectory[p,
-							DeleteContents->True
-							],
-						If[FileExistsQ@p,DeleteFile[p]]
-						]
-					],
-				{path,
-					Join[
-						Flatten[{OptionValue["RemovePaths"]},1],
-						FileNameDrop[#,FileNameDepth@pacletDir]&/@
-							FileNames[OptionValue["RemovePatterns"],pacletDir,\[Infinity]]
-						]}
+				(* copy the dir, remove the dangerous junk, etc. *)
+				If[!FileExistsQ@DirectoryName[pacletDir],
+					CreateDirectory@DirectoryName[pacletDir]
+					];
+				If[FileExistsQ@pacletDir,
+					DeleteDirectory[pacletDir,DeleteContents->True]
+					];
+				CopyDirectory[dir,pacletDir];
+				Do[
+					With[{p=If[Not@FileExistsQ@path,FileNameJoin@{pacletDir,path},path]},
+						If[DirectoryQ@p,
+							DeleteDirectory[p,
+								DeleteContents->True
+								],
+							If[FileExistsQ@p,DeleteFile[p]]
+							]
+						],
+					{path, 
+						Join[
+							fullPathSpec,
+							FileNameDrop[#,FileNameDepth@pacletDir]&/@
+								FileNames[fullPatternSpec, pacletDir, \[Infinity]]
+							]
+						}
+					]
 				];
 			With[{pacletFile=PacletManager`PackPaclet[pacletDir]},
 				pacletFile
