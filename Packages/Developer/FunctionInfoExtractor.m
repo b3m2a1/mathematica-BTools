@@ -486,59 +486,63 @@ SetAttributes[generateAutocompletions, HoldFirst];
 
 
 
+ClearAttributes[AddFunctionAutocompletions, HoldFirst]
+
+
 (* ::Subsubsection::Closed:: *)
 (*Formats*)
 
 
 
 $FEAutoCompletionFormats=
-	Alternatives@@Join@@{
-		Range[0,9],
-		{
-			_String?(FileExtension[#]==="trie"&),
+	Alternatives@@
+		Join[
 			{
-				_String|(Alternatives@@Range[0,9])|{__String},
-				(("URI"|"DependsOnArgument")->_)...
+				_String?(FileExtension[#]==="trie"&),
+				{
+					_String|(Alternatives@@Range[0,9])|{__String},
+					(("URI"|"DependsOnArgument")->_)...
+					},
+				{
+					_String|(Alternatives@@Range[0,9])|{__String},
+					(("URI"|"DependsOnArgument")->_)...,
+					(_String|(Alternatives@@Range[0,9])|{__String})
+					},
+				{
+					__String
+					}
 				},
+			Range[0,9],
 			{
-				_String|(Alternatives@@Range[0,9])|{__String},
-				(("URI"|"DependsOnArgument")->_)...,
-				(_String|(Alternatives@@Range[0,9])|{__String})
-				},
-			{
-				__String
+				"codingNoteFontCom",
+				"ConvertersPath",
+				"ExternalDataCharacterEncoding",
+				"MenuListCellTags",
+				"MenuListConvertFormatTypes",
+				"MenuListDisplayAsFormatTypes",
+				"MenuListFonts",
+				"MenuListGlobalEvaluators",
+				"MenuListHelpWindows",
+				"MenuListNotebookEvaluators",
+				"MenuListNotebooksMenu",
+				"MenuListPackageWindows",
+				"MenuListPalettesMenu",
+				"MenuListPaletteWindows",
+				"MenuListPlayerWindows",
+				"MenuListPrintingStyleEnvironments",
+				"MenuListQuitEvaluators",
+				"MenuListScreenStyleEnvironments",
+				"MenuListStartEvaluators",
+				"MenuListStyleDefinitions",
+				"MenuListStyles",
+				"MenuListStylesheetWindows",
+				"MenuListTextWindows",
+				"MenuListWindows",
+				"PrintingStyleEnvironment",
+				"ScreenStyleEnvironment",
+				"Style"
 				}
-			},
-		{
-			"codingNoteFontCom",
-			"ConvertersPath",
-			"ExternalDataCharacterEncoding",
-			"MenuListCellTags",
-			"MenuListConvertFormatTypes",
-			"MenuListDisplayAsFormatTypes",
-			"MenuListFonts",
-			"MenuListGlobalEvaluators",
-			"MenuListHelpWindows",
-			"MenuListNotebookEvaluators",
-			"MenuListNotebooksMenu",
-			"MenuListPackageWindows",
-			"MenuListPalettesMenu",
-			"MenuListPaletteWindows",
-			"MenuListPlayerWindows",
-			"MenuListPrintingStyleEnvironments",
-			"MenuListQuitEvaluators",
-			"MenuListScreenStyleEnvironments",
-			"MenuListStartEvaluators",
-			"MenuListStyleDefinitions",
-			"MenuListStyles",
-			"MenuListStylesheetWindows",
-			"MenuListTextWindows",
-			"MenuListWindows",
-			"PrintingStyleEnvironment",
-			"ScreenStyleEnvironment",
-			"Style"
-			}
-		};
+			];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -548,10 +552,10 @@ $FEAutoCompletionFormats=
 
 AddFunctionAutocompletions[
 	pats:{(_String->{$FEAutoCompletionFormats..})..},
-	head:_Identity
+	head_:Identity
 	]:=
 	head@If[$Notebooks&&
-		Internal`CachedSystemInformation["Function","VersionNumber"]>10.0,
+		Internal`CachedSystemInformation["FrontEnd","VersionNumber"]>10.0,
 		FrontEndExecute@FrontEnd`Value@
 			Map[
 				FEPrivate`AddSpecialArgCompletion[#]&,
@@ -670,7 +674,7 @@ AddFunctionAutocompletions[
 	Block[{$recursionProtect=True},
 		Replace[
 			AddFunctionAutocompletions[
-				AutocompletionPreCompile[o],
+				AutocompletionPreCompile[o]//Evaluate,
 				head
 				],
 			HoldPattern[AddFunctionAutocompletions[l_, _]]:>
@@ -684,22 +688,24 @@ AddFunctionAutocompletions[
 
 AddFunctionAutocompletions[l:_String|{__String}, v_, head_:Identity]:=
 	AddFunctionAutocompletions[
-		AutocompletionPreCompile[l, v],
+		AutocompletionPreCompile[l, v]//Evaluate,
 		head
 		];
 
 
 AddFunctionAutocompletions[l_Symbol, v_, head_:Identity]:=
-	AddFunctionAutocompletions[SymbolName[Unevaluated@l], v, head];
+	AddFunctionAutocompletions[SymbolName[Unevaluated@l]//Evaluate, v, head];
 AddFunctionAutocompletions[{l__Symbol}, v_, head_:Identity]:=
 	AddFunctionAutocompletions[
-		List@@Function[Null,SymbolName@Unevaluated[#], HoldFirst]/@Hold[l], 
+		List@@Function[Null,SymbolName@Unevaluated[#], HoldFirst]/@Hold[l]//Evaluate, 
 		v, 
 		head
 		];
-AddFunctionAutocompletions[e__]:=
+AddFunctionAutocompletions[e__]/;(!TrueQ@$eTrueProtection):=
 	With[{eTrue={e}},
-		AddFunctionAutocompletions@@eTrue
+		Block[{$eTrueProtection=True},
+			AddFunctionAutocompletions@@eTrue
+			]
 		];
 
 
@@ -1405,8 +1411,8 @@ AutoFunctionInfo[f_Symbol, o : OptionsPattern[]] :=
 										Function[Null,
 											If[Length@#2>0,
 												If[$Notebooks &&
-													Internal`CachedSystemInformation["Function", 
-														"VersionNumber"] > 10.0,
+													Internal`CachedSystemInformation[
+														"FrontEnd", "VersionNumber"] > 10.0,
 													FE`Evaluate[
 														FEPrivate`AddSpecialArgCompletion[
 															ToString[Unevaluated[#]] -> #2]

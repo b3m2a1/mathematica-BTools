@@ -480,10 +480,10 @@ extractPacletExtensionKernelInfo[base_, dest_]:=
 					FileExistsQ
 					],
 				"Kernel"->
-					<|
-							Root -> ".", 
-							Context -> FileBaseName@dest<>"`"
-							|>,
+						<|
+								"Root" -> ".", 
+								"Context" -> FileBaseName@dest<>"`"
+								|>,
 				Nothing
 				],
 		r:_Rule|{___Rule}:>
@@ -902,6 +902,42 @@ cleanPacletForExport[pac_PacletManager`Paclet]:=
 		]
 
 
+prettyFormatPacletElement[elm_]:=
+	StringReplace[
+		StringDelete[
+			FrontEndExecute[
+				FrontEnd`ExportPacket[
+					Cell[
+						BoxData@
+							GeneralUtilities`PrettyFormBoxes[elm, 1]/.
+								TemplateBox[
+									{_, StyleBox[sym_, _], ___},
+									"DefinitionSymbol", 
+									___
+									]:>sym, 
+						"Code",
+						PageWidth->Infinity
+						], 
+					"InputText"
+					]
+				][[1]],
+			"\\"~~"\n"
+			],
+		{
+			StartOfLine->"  ",
+			"\\n"->"\n"
+			}
+		]
+
+
+prettyFormatPacletString[
+	pac_
+	]:=
+	With[{bits=prettyFormatPacletElement/@List@@pac},
+		"Paclet[\n"<>StringRiffle[bits, ",\n"]<>"\n ]"
+		]
+
+
 Options[PacletInfoExpressionBundle]=
 	Options[PacletInfoExpression];(*
 PacletInfoExpressionBundle[paclet,dest]~~PackageAddUsage~~
@@ -911,11 +947,16 @@ PacletInfoExpressionBundle[
 	dest_String?DirectoryQ
 	]:=
 	With[{pacletFile=FileNameJoin@{dest,"PacletInfo.m"}},
-		Begin["PacletManager`"];
-		Block[{$ContextPath={"System`","PacletManager`"}},
-			Export[pacletFile, cleanPacletForExport[paclet]]
+		Block[
+			{
+				$Context="PacletManager`Private`",
+				$ContextPath={"System`", "PacletManager`", "PacletManager`Private`"}
+				},
+			Export[pacletFile, 
+				prettyFormatPacletString[cleanPacletForExport[paclet]],
+				"Text"
+				]
 			];
-		End[];
 		pacletFile
 		];
 PacletInfoExpressionBundle[
@@ -1657,38 +1698,42 @@ PacletSiteInfo[infoFiles:Except[_?OptionQ]|All|{}:All,ops:OptionsPattern[]]:=
 						Nothing
 				]&/@PacletSiteFiles[Flatten@{infoFiles},ops]//Flatten
 		},
-		Begin["PacletManager`"];
-		With[{pacletsite=
-			PacletManager`PacletSite@@
-				Flatten@
-					Map[
-						With[{imp=
-							Replace[If[MatchQ[#,(_String|_File)?FileExistsQ],Import[#],#],
-								{
-									PacletManager`PacletSite[p___]:>p,
-									e:Except[_PacletManager`Paclet|{__PacletManager`Paclet}]:>
-										(Nothing)
-									}
+		Block[
+			{
+				$Context="PacletManager`Private`", 
+				$ContextPath={"System`", "PacletManager`", "PacletManager`Private`"}
+				},
+			With[{pacletsite=
+				PacletManager`PacletSite@@
+					Flatten@
+						Map[
+							With[{imp=
+								Replace[If[MatchQ[#,(_String|_File)?FileExistsQ],Import[#],#],
+									{
+										PacletManager`PacletSite[p___]:>p,
+										e:Except[_PacletManager`Paclet|{__PacletManager`Paclet}]:>
+											(Nothing)
+										}
+									]
+								},
+								Replace[#,
+									{
+										(s_Symbol->v_):>
+											(SymbolName[s](*s*)->v),
+										(s_String->v_):>
+											(*ToExpression[s]*)s->v,
+										_:>
+											Sequence@@{}
+										},
+									1]&/@Flatten@{imp}
+								]&,
+							pacletInfos
+							]//DeleteDuplicatesBy[
+								Lookup[Association@@#,{"Name","Version"}]&
 								]
-							},
-							Replace[#,
-								{
-									(s_Symbol->v_):>
-										(SymbolName[s](*s*)->v),
-									(s_String->v_):>
-										(*ToExpression[s]*)s->v,
-									_:>
-										Sequence@@{}
-									},
-								1]&/@Flatten@{imp}
-							]&,
-						pacletInfos
-						]//DeleteDuplicatesBy[
-							Lookup[Association@@#,{"Name","Version"}]&
-							]
-			},
-			End[];
-			DeleteCases[pacletsite,Except[_PacletManager`Paclet]]
+				},
+				DeleteCases[pacletsite,Except[_PacletManager`Paclet]]
+				]
 			]
 		];
 

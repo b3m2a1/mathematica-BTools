@@ -331,6 +331,10 @@ Thread[
 EndPackage[];
 
 
-If[(Clear@$Name`PackageScope`Private`$loadAbort;!#)&@$Name`PackageScope`Private`$loadAbort,
+If[
+	(Clear@$Name`PackageScope`Private`$loadAbort;!#)&@
+		$Name`PackageScope`Private`$loadAbort,
+	Unprotect[$Name`PackageScope`Private`$LoadCompleted];
+	$Name`PackageScope`Private`$LoadCompleted=True;
 	$Name`PackageScope`Private`PackagePostProcessContextPathReassign[]
 	]

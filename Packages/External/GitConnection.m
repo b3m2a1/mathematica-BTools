@@ -1814,6 +1814,8 @@ GitRegisterFunction[
 		"DeleteURL"->"delete"
 		}
 	];
+Options[GitSetRemoteURL]=
+	Options[iGitRemoteSetURL];
 GitSetRemoteURL[
 	dir:_String?DirectoryQ|Automatic:Automatic,
 	remoteName:_String?((StringLength[#]==0||Not@DirectoryQ[#]&)):"origin",

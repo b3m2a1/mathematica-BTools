@@ -653,19 +653,21 @@ appInitTemplate[pkg_]:=
 
 
 
-AppRegenerateInit[name]~PackageAddUsage~
-	"regenerates the main package .m file for the application name";
+(*AppRegenerateInit[name]~PackageAddUsage~
+	"regenerates the main package .m file for the application name";*)
 AppRegenerateInit[name_String]:=
 	With[{
 		packageGet=name<>"`"<>name<>"`",
-		loaderGet=name<>"`"<>name<>"Loader`",
+		loaderGet=
+			"If[!TrueQ["<>name<>"`PackageScope`Private`$LoadCompleted],\n  <<"<>
+				name<>"`"<>name<>"Loader`\n  ]",
 		loader=AppDirectory[name,name<>"Loader.m"],
 		pkg=AppDirectory[name,name<>".wl"],
 		init=AppDirectory[name,"Kernel","init.m"]
 		},
 		Export[loader,appInitTemplate[name],"Text"];
 		Put[Unevaluated[Get[packageGet];],init];
-		Put[Unevaluated[Get[loaderGet];],pkg]
+		Export[pkg, loaderGet, "Text"]
 		];
 
 

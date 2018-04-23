@@ -14,6 +14,10 @@ BTools`PackageScope`Private`$TopLevelLoad=
 BeginPackage["BTools`"];
 
 
+BTools::usage=
+	"BTools is an inert head for the BTools package";
+
+
 (* ::Subsubsection::Closed:: *)
 (*$ContextPath*)
 
@@ -1341,6 +1345,10 @@ Thread[
 EndPackage[];
 
 
-If[(Clear@BTools`PackageScope`Private`$loadAbort;!#)&@BTools`PackageScope`Private`$loadAbort,
+If[
+	(Clear@BTools`PackageScope`Private`$loadAbort;!#)&@
+		BTools`PackageScope`Private`$loadAbort,
+	Unprotect[BTools`PackageScope`Private`$LoadCompleted];
+	BTools`PackageScope`Private`$LoadCompleted=True;
 	BTools`PackageScope`Private`PackagePostProcessContextPathReassign[]
 	]

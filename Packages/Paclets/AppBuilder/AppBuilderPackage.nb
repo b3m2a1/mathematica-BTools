@@ -1565,58 +1565,61 @@ Cell["\[LeftCeiling]AppRegenerateInit\[RightFloor]", "CodeSubsubsection",
   3.702831317144186*^9}},ExpressionUUID->"460bda3d-1d15-4146-9605-\
 48abe76bc5d1"],
 
-Cell[BoxData[{
+Cell[BoxData[
  RowBox[{
-  RowBox[{
-   RowBox[{"AppRegenerateInit", "[", "name", "]"}], "~", "PackageAddUsage", 
-   "~", "\n", "\t", 
-   "\"\<regenerates the main package .m file for the application name\>\""}], 
-  ";"}], "\n", 
- RowBox[{
-  RowBox[{
-   RowBox[{"AppRegenerateInit", "[", "name_String", "]"}], ":=", "\n", "\t", 
-   RowBox[{"With", "[", 
+  RowBox[{"(*", 
+   RowBox[{
     RowBox[{
-     RowBox[{"{", "\n", "\t\t", 
-      RowBox[{
-       RowBox[{"packageGet", "=", 
-        RowBox[{
-        "name", "<>", "\"\<`\>\"", "<>", "name", "<>", "\"\<`\>\""}]}], ",", 
-       "\n", "\t\t", 
-       RowBox[{"loaderGet", "=", 
-        RowBox[{
-        "name", "<>", "\"\<`\>\"", "<>", "name", "<>", "\"\<Loader`\>\""}]}], 
-       ",", "\n", "\t\t", 
-       RowBox[{"loader", "=", 
-        RowBox[{"AppDirectory", "[", 
-         RowBox[{"name", ",", 
-          RowBox[{"name", "<>", "\"\<Loader.m\>\""}]}], "]"}]}], ",", "\n", 
-       "\t\t", 
-       RowBox[{"pkg", "=", 
-        RowBox[{"AppDirectory", "[", 
-         RowBox[{"name", ",", 
-          RowBox[{"name", "<>", "\"\<.wl\>\""}]}], "]"}]}], ",", "\n", "\t\t", 
-       RowBox[{"init", "=", 
-        RowBox[{"AppDirectory", "[", 
-         RowBox[{"name", ",", "\"\<Kernel\>\"", ",", "\"\<init.m\>\""}], 
-         "]"}]}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{"AppRegenerateInit", "[", "name", "]"}], "~", "PackageAddUsage", 
+     "~", "\n", "\t", 
+     "\"\<regenerates the main package .m file for the application \
+name\>\""}], ";"}], "*)"}], "\n", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"AppRegenerateInit", "[", "name_String", "]"}], ":=", "\n", "\t", 
+    
+    RowBox[{"With", "[", 
      RowBox[{
-      RowBox[{"Export", "[", 
-       RowBox[{"loader", ",", 
-        RowBox[{"appInitTemplate", "[", "name", "]"}], ",", "\"\<Text\>\""}], 
-       "]"}], ";", "\n", "\t\t", 
-      RowBox[{"Put", "[", 
+      RowBox[{"{", "\n", "\t\t", 
        RowBox[{
-        RowBox[{"Unevaluated", "[", 
+        RowBox[{"packageGet", "=", 
          RowBox[{
-          RowBox[{"Get", "[", "packageGet", "]"}], ";"}], "]"}], ",", 
-        "init"}], "]"}], ";", "\n", "\t\t", 
-      RowBox[{"Put", "[", 
-       RowBox[{
-        RowBox[{"Unevaluated", "[", 
+         "name", "<>", "\"\<`\>\"", "<>", "name", "<>", "\"\<`\>\""}]}], ",", 
+        "\n", "\t\t", 
+        RowBox[{"loaderGet", "=", "\n", "\t\t\t", 
          RowBox[{
-          RowBox[{"Get", "[", "loaderGet", "]"}], ";"}], "]"}], ",", "pkg"}], 
-       "]"}]}]}], "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
+         "\"\<If[!TrueQ[\>\"", "<>", "name", "<>", 
+          "\"\<`PackageScope`Private`$LoadCompleted],\\n  <<\>\"", "<>", "\n",
+           "\t\t\t\t", "name", "<>", "\"\<`\>\"", "<>", "name", "<>", 
+          "\"\<Loader`\\n  ]\>\""}]}], ",", "\n", "\t\t", 
+        RowBox[{"loader", "=", 
+         RowBox[{"AppDirectory", "[", 
+          RowBox[{"name", ",", 
+           RowBox[{"name", "<>", "\"\<Loader.m\>\""}]}], "]"}]}], ",", "\n", 
+        "\t\t", 
+        RowBox[{"pkg", "=", 
+         RowBox[{"AppDirectory", "[", 
+          RowBox[{"name", ",", 
+           RowBox[{"name", "<>", "\"\<.wl\>\""}]}], "]"}]}], ",", "\n", 
+        "\t\t", 
+        RowBox[{"init", "=", 
+         RowBox[{"AppDirectory", "[", 
+          RowBox[{"name", ",", "\"\<Kernel\>\"", ",", "\"\<init.m\>\""}], 
+          "]"}]}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"Export", "[", 
+        RowBox[{"loader", ",", 
+         RowBox[{"appInitTemplate", "[", "name", "]"}], ",", "\"\<Text\>\""}],
+         "]"}], ";", "\n", "\t\t", 
+       RowBox[{"Put", "[", 
+        RowBox[{
+         RowBox[{"Unevaluated", "[", 
+          RowBox[{
+           RowBox[{"Get", "[", "packageGet", "]"}], ";"}], "]"}], ",", 
+         "init"}], "]"}], ";", "\n", "\t\t", 
+       RowBox[{"Export", "[", 
+        RowBox[{"pkg", ",", " ", "loaderGet", ",", " ", "\"\<Text\>\""}], 
+        "]"}]}]}], "\n", "\t\t", "]"}]}], ";"}]}]], "CodeInput",
  CellChangeTimes->{{3.68503276490137*^9, 3.685032816404204*^9}, {
    3.6850328649009438`*^9, 3.685033158577992*^9}, {3.68503318952013*^9, 
    3.6850332279615517`*^9}, {3.6850333794220257`*^9, 
@@ -1650,10 +1653,12 @@ Cell[BoxData[{
    3.713185660405761*^9}, 3.71318602781456*^9, {3.713190648250361*^9, 
    3.713190649624054*^9}, {3.713190755217784*^9, 3.7131907745524197`*^9}, {
    3.7131911686520844`*^9, 3.713191169192725*^9}, 3.726941715971551*^9, {
-   3.7301357749891853`*^9, 
-   3.730135776025174*^9}},ExpressionUUID->"a8761c98-4177-4a2c-8928-\
+   3.7301357749891853`*^9, 3.730135776025174*^9}, 3.7333587926991253`*^9, {
+   3.733358838834507*^9, 3.733358873488709*^9}, {3.733358930645656*^9, 
+   3.7333589317468233`*^9}, {3.733359028680825*^9, 
+   3.7333591132854843`*^9}},ExpressionUUID->"a8761c98-4177-4a2c-8928-\
 c3454178c3e2"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 

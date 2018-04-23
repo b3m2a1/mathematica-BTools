@@ -3082,7 +3082,7 @@ notebookToMarkdownResolvePacletURL[s_String]:=
 				Flatten@{
 					If[StringQ[page]&&StringStartsQ[page,$InstallationDirectory],
 						"https://reference.wolfram.com/language",
-						"https://www.wolframcloud.com/objects/b3m2a1.paclets/reference"
+						"https://www.wolframcloud.com/objects/b3m2a1.docs/reference"
 						],
 					URLParse[s,"Path"]
 					}<>".html"

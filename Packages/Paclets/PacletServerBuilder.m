@@ -1113,19 +1113,46 @@ pacletMarkdownNotebookExtensionSection[extensionData_]:=
 	Cell[
 		CellGroupData@
 			Flatten@{
-				Cell["Extensions","Subsection"],
+				Cell["Extensions", "Subsection"],
 				KeyValueMap[
 					Cell@
 						CellGroupData[Flatten@{
 							Cell[#,"Subsubsection"],
-							Replace[Normal@#2,{
-								((Prepend|Append)->_):>Nothing,
-								(k_->v_):>
-									Cell[ToString[k]<>": "<>ToString[v],"Item"]
-								},
-								1]
+							Replace[
+								Replace[Normal@#2,{
+									((Prepend|Append)->_):>Nothing,
+									{
+										(k_->v:Except[{__String}, _List]):>
+											Cell[
+												CellGroupData[
+													Prepend[Cell[ToString[k], "Item"]]@
+														Map[
+															Cell[
+																Replace[#, 
+																	{
+																		(sk_->sv_):>
+																			ToString[sk]<>": "<>ToString[sv],
+																		e_:>ToString[e]
+																		}
+																	], 
+																"Subitem"]&,
+															v
+															]
+													]
+												],
+										(k_->v_):>
+											Cell[ToString[k]<>": "<>
+												ToString[Replace[v, {str__String}:>StringRiffle[str, ", "]]], "Item"]
+										}
+									},
+									1],
+								{}:>Cell["This extension has no extra parameters", "Item"]
+								]
 							}]&,
-					extensionData
+					KeyDrop[
+						extensionData,
+						{"PacletServer"}
+						]
 					]
 				},
 		CellTags->"Extensions"
@@ -1140,9 +1167,7 @@ pacletMarkdownNotebookExtensionSection[extensionData_]:=
 PacletMarkdownNotebook//Clear
 
 
-PacletMarkdownNotebook[
-	a_Association
-	]:=
+PacletMarkdownNotebook[a_Association]:=
 	Notebook[
 		{
 			Cell[
@@ -1152,7 +1177,7 @@ PacletMarkdownNotebook[
 				],
 			Cell@CellGroupData@
 				Flatten@{
-					Cell[Lookup[a,"Name","Unnamed Paclet"],"Section"],
+					Cell[Lookup[a, "Name", "Unnamed Paclet"],"Section"],
 					pacletMarkdownNotebookDownloadLink[a],
 					pacletMarkdownNotebookDescriptionText[a],
 					Prepend[Cell["","PageBreak"]]@
@@ -1168,7 +1193,7 @@ PacletMarkdownNotebook[
 									}],
 								CellTags->"BasicInformation"
 								],
-							If[KeyMemberQ[a,"Extensions"],
+							If[KeyMemberQ[a, "Extensions"],
 								pacletMarkdownNotebookExtensionSection[a["Extensions"]],
 								Nothing
 								]
@@ -1180,8 +1205,18 @@ PacletMarkdownNotebook[
 		StyleDefinitions->FrontEnd`FileName[Evaluate@{$PackageName,"MarkdownNotebook.nb"}]
 		];
 PacletMarkdownNotebook[p_PacletManager`Paclet]:=
-	PacletMarkdownNotebook[
-		PacletInfoAssociation@p
+	With[{a=PacletInfoAssociation@p},
+		PacletMarkdownNotebook[
+			Join[
+				a, 
+				Association@
+					Fold[
+						Lookup[#, #2, <||>]&,
+						a,
+						{"Extensions", "PacletServer"}
+						]
+				]
+			]
 		];
 PacletMarkdownNotebook[f_String?FileExistsQ,a_,regen_:Automatic]:=
 	PacletMarkdownNotebookUpdate[f,a,regen];
@@ -1417,8 +1452,8 @@ PacletServerBuild[
 									"Authors"->
 										StringTrim@
 											Map[
-												StringSplit[#,"@"][[1]]&,
-												StringSplit[Lookup[#,"Creator",""],","]
+												StringSplit[#, "@"|"<"][[1]]&,
+												StringSplit[Lookup[#,"Creator",""], ","]
 												],
 									"Tags"->StringSplit[Lookup[#,"Keywords",""],","]
 									|>,

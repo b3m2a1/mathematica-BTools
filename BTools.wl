@@ -1,1 +1,5 @@
-Get["BTools`BToolsLoader`"]; 
+(* ::Package:: *)
+
+If[!TrueQ[BTools`PackageScope`Private`$LoadCompleted],
+  <<BTools`BToolsLoader`
+  ]
