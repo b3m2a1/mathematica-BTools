@@ -1100,7 +1100,7 @@ pacletMarkdownNotebookBasicInfoSection[a_,thing_]:=
 		If[StringQ@d,
 			Cell[
 				CellGroupData[{
-					Cell[thing," Subsubsection", CellTags->thing],
+					Cell[thing,"Subsubsection", CellTags->thing],
 					Cell[d, "Text"]
 					}]
 				],
@@ -1201,7 +1201,6 @@ PacletMarkdownNotebook[infAss_Association]:=
 										Cell["Basic Information","Subsection"],
 										pacletMarkdownNotebookBasicInfoSection[a,"Name"],
 										pacletMarkdownNotebookBasicInfoSection[a,"Version"],
-										pacletMarkdownNotebookBasicInfoSection[a,"Description"],
 										pacletMarkdownNotebookBasicInfoSection[a,"Creator"]
 										}],
 									CellTags->"BasicInformation"
