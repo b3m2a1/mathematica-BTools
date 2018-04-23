@@ -1119,7 +1119,7 @@ pacletMarkdownNotebookExtensionSection[extensionData_]:=
 						CellGroupData[Flatten@{
 							Cell[#,"Subsubsection"],
 							Replace[
-								Replace[Normal@#2,{
+								Replace[Echo@Normal@#2,{
 									((Prepend|Append)->_):>Nothing,
 									{
 										(k_->v:Except[{__String}, _List]):>
@@ -1131,18 +1131,24 @@ pacletMarkdownNotebookExtensionSection[extensionData_]:=
 																Replace[#, 
 																	{
 																		(sk_->sv_):>
-																			ToString[sk]<>": "<>ToString[sv],
+																			ToString[sk]<>": "<>
+																				ToString@
+																					Replace[sv, str:{__String}:>StringRiffle[str, ", "]],
 																		e_:>ToString[e]
 																		}
 																	], 
-																"Subitem"]&,
+																"Subitem"
+																]&,
 															v
 															]
 													]
 												],
 										(k_->v_):>
-											Cell[ToString[k]<>": "<>
-												ToString[Replace[v, {str__String}:>StringRiffle[str, ", "]]], "Item"]
+											Cell[
+												ToString[k]<>": "<>
+												ToString[Replace[v, str:{__String}:>StringRiffle[str, ", "]]], 
+												"Item"
+												]
 										}
 									},
 									1],
