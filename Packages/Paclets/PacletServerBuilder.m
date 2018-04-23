@@ -1167,56 +1167,60 @@ pacletMarkdownNotebookExtensionSection[extensionData_]:=
 PacletMarkdownNotebook//Clear
 
 
-PacletMarkdownNotebook[a_Association]:=
-	Notebook[
+PacletMarkdownNotebook[infAss_Association]:=
+	With[
 		{
-			Cell[
-				BoxData@ToBoxes@
-					KeyDrop[a, "URL"],
-				"Metadata"
-				],
-			Cell@CellGroupData@
-				Flatten@{
-					Cell[Lookup[a, "Name", "Unnamed Paclet"],"Section"],
-					pacletMarkdownNotebookDownloadLink[a],
-					pacletMarkdownNotebookDescriptionText[a],
-					Prepend[Cell["","PageBreak"]]@
-					Riffle[
-						{
-							Cell[
-								CellGroupData[{
-									Cell["Basic Information","Subsection"],
-									pacletMarkdownNotebookBasicInfoSection[a,"Name"],
-									pacletMarkdownNotebookBasicInfoSection[a,"Version"],
-									pacletMarkdownNotebookBasicInfoSection[a,"Description"],
-									pacletMarkdownNotebookBasicInfoSection[a,"Creator"]
-									}],
-								CellTags->"BasicInformation"
-								],
-							If[KeyMemberQ[a, "Extensions"],
-								pacletMarkdownNotebookExtensionSection[a["Extensions"]],
-								Nothing
-								]
-							},
-					Cell["","PageBreak"]
+			a=
+				Join[
+					infAss,
+					Association@
+						Fold[
+							Lookup[#, #2, <||>]&,
+							infAss,
+							{"Extensions", "PacletServer"}
+							]
 					]
-				}
 			},
-		StyleDefinitions->FrontEnd`FileName[Evaluate@{$PackageName,"MarkdownNotebook.nb"}]
+		Notebook[
+			{
+				Cell[
+					BoxData@ToBoxes@
+						KeyDrop[a, "URL"],
+					"Metadata"
+					],
+				Cell@CellGroupData@
+					Flatten@{
+						Cell[Lookup[a, "Name", "Unnamed Paclet"],"Section"],
+						pacletMarkdownNotebookDownloadLink[a],
+						pacletMarkdownNotebookDescriptionText[a],
+						Prepend[Cell["","PageBreak"]]@
+						Riffle[
+							{
+								Cell[
+									CellGroupData[{
+										Cell["Basic Information","Subsection"],
+										pacletMarkdownNotebookBasicInfoSection[a,"Name"],
+										pacletMarkdownNotebookBasicInfoSection[a,"Version"],
+										pacletMarkdownNotebookBasicInfoSection[a,"Description"],
+										pacletMarkdownNotebookBasicInfoSection[a,"Creator"]
+										}],
+									CellTags->"BasicInformation"
+									],
+								If[KeyMemberQ[a, "Extensions"],
+									pacletMarkdownNotebookExtensionSection[a["Extensions"]],
+									Nothing
+									]
+								},
+						Cell["","PageBreak"]
+						]
+					}
+				},
+			StyleDefinitions->FrontEnd`FileName[Evaluate@{$PackageName,"MarkdownNotebook.nb"}]
+			]
 		];
 PacletMarkdownNotebook[p_PacletManager`Paclet]:=
 	With[{a=PacletInfoAssociation@p},
-		PacletMarkdownNotebook[
-			Join[
-				a, 
-				Association@
-					Fold[
-						Lookup[#, #2, <||>]&,
-						a,
-						{"Extensions", "PacletServer"}
-						]
-				]
-			]
+		PacletMarkdownNotebook[a]
 		];
 PacletMarkdownNotebook[f_String?FileExistsQ,a_,regen_:Automatic]:=
 	PacletMarkdownNotebookUpdate[f,a,regen];
@@ -1259,8 +1263,21 @@ $killFields=
 PacletMarkdownNotebookUpdate//Clear
 
 
-PacletMarkdownNotebookUpdate[notebook_Notebook,a_]:=
-	Module[{nb=notebook},
+PacletMarkdownNotebookUpdate[notebook_Notebook,infAss_]:=
+	Module[
+		{
+			nb=notebook,
+			a=
+				Join[
+					infAss,
+					Association@
+						Fold[
+							Lookup[#, #2, <||>]&,
+							infAss,
+							{"Extensions", "PacletServer"}
+							]
+					]
+			},
 		nb=
 			ReplaceAll[nb,
 				Cell[BoxData[e_],"Metadata",___]:>
