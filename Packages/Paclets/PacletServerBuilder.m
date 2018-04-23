@@ -1096,12 +1096,12 @@ pacletMarkdownNotebookDescriptionText[a_]:=
 
 
 pacletMarkdownNotebookBasicInfoSection[a_,thing_]:=
-	With[{d=Lookup[a,thing]},
+	With[{d=Lookup[a, thing]},
 		If[StringQ@d,
 			Cell[
 				CellGroupData[{
-					Cell[thing,"Subsubsection",CellTags->thing],
-					Cell[d,"Text"]
+					Cell[thing," Subsubsection", CellTags->thing],
+					Cell[d, "Text"]
 					}]
 				],
 			Nothing

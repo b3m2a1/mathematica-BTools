@@ -1017,34 +1017,33 @@ MarkdownToXML[
 		br=Replace[OptionValue["BlockRules"],Except[_?OptionQ]:>{}]
 		},
 		Replace[
-			Map[DeleteDuplicates]@
-				GatherBy[
-					markdownToXMLReinsertRefs@
-						Reap@
-							markdownToXML[
-								markdownToXMLPreProcess[s],
-								Automatic,
-								Join[
-									br,
-									If[sm,
-										{
-											$markdownToXMLMeta
-											},
-										{}
-										]
-									],
-								er
+			GatherBy[
+				markdownToXMLReinsertRefs@
+					Reap@
+						markdownToXML[
+							markdownToXMLPreProcess[s],
+							Automatic,
+							Join[
+								br,
+								If[sm,
+									{
+										$markdownToXMLMeta
+										},
+									{}
+									]
 								],
-					With[{base=StringMatchQ[Alternatives@@he]},
-						Head[#]==XMLElement&&Length[#]>0&&base@First[#]&
-						]
-					],
+							er
+							],
+				With[{base=StringMatchQ[Alternatives@@he]},
+					Head[#]==XMLElement&&Length[#]>0&&base@First[#]&
+					]
+				],
 		{
 			{h_,b_}:>
 				XMLElement["html",
 					{},
 					{
-						XMLElement["head", {}, h],
+						XMLElement["head", {}, DeleteDuplicates@h],
 						XMLElement["body", {}, b]
 						}
 					],

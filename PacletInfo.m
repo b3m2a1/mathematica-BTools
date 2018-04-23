@@ -1,8 +1,6 @@
-(* ::Package:: *)
-
 Paclet[
   Name -> "BTools",
-  Version -> "2.1.3",
+  Version -> "2.1.4",
   Creator -> "b3m2a1@gmail.com",
   URL -> "https://www.wolframcloud.com/objects/b3m2a1.paclets/PacletServer/btools.html",
   Description -> "A suite of development tools",
@@ -10,7 +8,9 @@ Paclet[
     	{
      		"Kernel",
      		"Root" -> ".",
-     		"Context" -> {"BTools`"}
+     		"Context" -> {"BTools`"},
+     		Root -> ".",
+     		Context -> {"BTools`"}
      	},
     	{
      		"Resource",
