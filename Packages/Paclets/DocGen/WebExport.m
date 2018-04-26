@@ -1855,8 +1855,8 @@ DocGenHTMLPostProcess[
 				Replace[OptionValue[CloudConnect],
 					Automatic->Key["DocumentationAccount"]
 					],{
-				a:$KeyChainCloudAccounts:>
-					KeyChainConnect[a],
+				a:$KeychainCloudAccounts:>
+					KeychainConnect[a],
 				s_String:>
 					If[$WolframID=!=s,
 						CloudConnect[s]
@@ -1864,7 +1864,7 @@ DocGenHTMLPostProcess[
 				{s__String}:>
 					CloudConnect[s],
 				k_Key:>
-					KeyChainConnect[k]
+					KeychainConnect[k]
 				}]
 			];
 		If[deploy&&OptionValue["DeployAssets"],

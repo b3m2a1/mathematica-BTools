@@ -2,7 +2,7 @@ Replace[
   #@
     Replace[#[#2],
       t_TemplateObject:>
-        TemplateApply[t,#]
+        TemplateApply[t, #]
       ],
   {
     TemplateObject[{

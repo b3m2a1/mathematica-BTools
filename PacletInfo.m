@@ -1,9 +1,10 @@
 Paclet[
   Name -> "BTools",
-  Version -> "2.1.4",
+  Version -> "2.1.7",
   Creator -> "b3m2a1@gmail.com",
-  URL -> "https://www.wolframcloud.com/objects/b3m2a1.paclets/PacletServer/btools.html",
+  URL -> "https://github.com/b3m2a1/mathematica-BTools",
   Description -> "A suite of development tools",
+  Thumbnail -> "PacletIcon.png",
   Extensions -> {
     	{
      		"Kernel",
@@ -38,11 +39,7 @@ Paclet[
      		"Categories" -> {"Development"},
      		"Description" -> 
       "A general purpose package that implements useful functionality for application development.
-Features include: 
-  * distribution tools,
-  * documentation generation, 
-  * front-end manipulation,
-  * application editing
+Features include: distribution tools, documentation generation, front-end manipulation, and application editing
   ",
      		"License" -> "MIT"
      	}

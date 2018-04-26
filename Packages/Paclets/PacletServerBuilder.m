@@ -1068,6 +1068,157 @@ PacletServerDelete[
 
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*pacletMarkdownNotebookMetadataSection*)
+
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*pacletMarkdownNotebookMetadataAddCategory*)
+
+
+
+pacletMarkdownNotebookMetadataAddCategory[a_, key_]:=
+	If[KeyExistsQ[a, "Categories"],
+		ReplacePart[a,
+			"Categories":>
+				DeleteCases["misc"]@DeleteDuplicates@
+					Append[
+						Flatten@StringSplit[Lookup[a, "Categories", {}], ","], 
+						key
+						]
+			],
+		Append[a, "Categories"->{key}]
+		]
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*pacletMarkdownNotebookMetadataGetFileModificationDate*)
+
+
+
+pacletMarkdownNotebookMetadataGetFileModificationDate[
+	{name_, version_, old_}
+	]:=
+	If[DateObjectQ[old],
+		Max[{#, old}],
+		#
+		]&@
+		Quiet@
+			Check[
+				FileDate[
+					FileNameJoin@{
+						$BuildingPacletServerDirectory, 
+						"Paclets", 
+						name<>"-"<>version<>".paclet"
+						}
+					],
+				old
+				]
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*pacletMarkdownNotebookMetadataSection*)
+
+
+
+pacletMarkdownNotebookMetadataSection[a_]:=
+	Cell[
+		BoxData@ToBoxes@Association@Normal@
+			Join[
+				Which[
+					StringStartsQ[a["Name"], "ServiceConnection_"],
+						pacletMarkdownNotebookMetadataAddCategory[a, "ServiceConnections"],
+					StringStartsQ[a["Name"], "Documentation_"],
+						pacletMarkdownNotebookMetadataAddCategory[a, "Documentation"],
+					StringStartsQ[a["Name"], "DeviceDriver_"],
+						pacletMarkdownNotebookMetadataAddCategory[a, "DeviceDriver"],
+					StringStartsQ[a["Name"], "ExampleData_"],
+						pacletMarkdownNotebookMetadataAddCategory[a, "ExampleData"],
+					StringStartsQ[a["Name"], "WordData_"],
+						pacletMarkdownNotebookMetadataAddCategory[a, "WordData"],
+					StringEndsQ[a["Name"], "_Index"],
+						pacletMarkdownNotebookMetadataAddCategory[a, "DataIndices"],
+					StringEndsQ[a["Name"], "_Part"~~NumberString],
+						pacletMarkdownNotebookMetadataAddCategory[a, "DataParts"],
+					StringContainsQ[a["Name"], "_"],
+						pacletMarkdownNotebookMetadataAddCategory[a, 
+							Quiet@Check[Pluralize@#, #<>"s"]&@
+								StringSplit[a["Name"], "_"][[1]]],
+					StringEndsQ[a["Name"], "Data"],
+						pacletMarkdownNotebookMetadataAddCategory[a, "DataPaclets"],
+					True,
+						a
+					],
+			<|
+				"DisplayName"->
+					pacletMarkdownNotebookMakeName[a["Name"]],
+				"LastModified"->
+					pacletMarkdownNotebookMetadataGetFileModificationDate[
+						Lookup[a, {"Name", "Version", "LastModified"}, Missing["NotAvailable"]]
+						]
+				|>
+			],
+		"Metadata"
+		]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*pacletMarkdownNotebookNameCell*)
+
+
+
+pacletMarkdownNotebookMakeName[s_String]:=
+	Replace[StringSplit[s, "_"],
+		{
+			{n_}:>n,
+			{
+				k:"ServiceConnection"|"Documentation"|"DeviceDriver"|"ExampleData"|"WordData", 
+				p_
+				}:>
+				p<>" ("<>k<>")",
+			{p_, k:"Index"|_String?(StringStartsQ["Part"])}:>
+				p<>" ("<>k<>")"
+			}
+		];
+
+
+pacletMarkdownNotebookNameCell[a_]:=
+	Cell[pacletMarkdownNotebookMakeName@
+		Lookup[a, "Name", "Unnamed Paclet"], "Section"]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*pacletMarkdownNotebookIcon*)
+
+
+
+pacletMarkdownNotebookIcon[a_]:=
+	Replace[
+		Lookup[a, "Thumbnail", Lookup[a, "Icon"]],
+		{
+			s_String:>
+				With[
+					{
+						nm=Lookup[a, "Name"],
+						fp=URLParse[s]
+						},
+					Cell["!["<>nm<>"]("<>
+						If[fp["Domain"]===None,
+							"{filename}/img/"<>URLBuild[Prepend[URLParse[s, "Path"], nm]],
+							s
+							]<>")", "RawMarkdown"]
+					],
+			_->Nothing
+			}
+		];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*pacletMarkdownNotebookDownloadLink*)
+
+
+
 pacletMarkdownNotebookDownloadLink[a_]:=
 	Cell[
 		TextData[
@@ -1089,18 +1240,57 @@ pacletMarkdownNotebookDownloadLink[a_]:=
 		]
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*pacletMarkdownNotebookDescriptionText*)
+
+
+
 pacletMarkdownNotebookDescriptionText[a_]:=
 	Cell[Lookup[a,"Description",""],"Text",
 		CellTags->"DescriptionText"
 		]
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*pacletMarkdownNotebookBasicInfoSection*)
+
+
+
+pacletMarkdownNotebookBasicInfoSectionValue[v_String]:=
+	Which[
+		With[{p=URLParse[v]},
+			StringQ@p["Scheme"]&&
+				StringQ@p["Domain"]
+			],
+			With[{p=URLParse[v]},
+				"["<>
+					Replace[
+						p["Path"], 
+						{
+							{___, l_}:>StringSplit[l, "."][[1]], 
+							{}:>
+								Replace[StringSplit[p["Domain"], "."], 
+									{{a_, b_}:>a, {e_, f_, ___}:>f}
+									]
+							}
+						]
+					<>"]("<>v<>")"
+				], 
+		StringQ@Interpreter["EmailAddress"][v],
+			With[{e=Interpreter["EmailAddress"][v]},
+				"["<>StringTrim[StringSplit[v, "<"][[1]]]<>"]("<>"mailto:"<>e<>")"
+				],
+		True,
+			v
+		];
+
+
 pacletMarkdownNotebookBasicInfoSection[a_,thing_]:=
-	With[{d=Lookup[a, thing]},
+	With[{d=pacletMarkdownNotebookBasicInfoSectionValue@Lookup[a, thing]},
 		If[StringQ@d,
 			Cell[
 				CellGroupData[{
-					Cell[thing,"Subsubsection", CellTags->thing],
+					Cell[thing, "Subsubsection", CellTags->{"Info", thing}],
 					Cell[d, "Text"]
 					}]
 				],
@@ -1109,59 +1299,150 @@ pacletMarkdownNotebookBasicInfoSection[a_,thing_]:=
 		]
 
 
-pacletMarkdownNotebookExtensionSection[extensionData_]:=
+pacletMarkdownNotebookBasicInfoSection[a_]:=
 	Cell[
-		CellGroupData@
-			Flatten@{
-				Cell["Extensions", "Subsection"],
-				KeyValueMap[
-					Cell@
-						CellGroupData[Flatten@{
-							Cell[#,"Subsubsection"],
-							Replace[
-								Replace[Echo@Normal@#2,{
-									((Prepend|Append)->_):>Nothing,
-									{
-										(k_->v:Except[{__String}, _List]):>
-											Cell[
-												CellGroupData[
-													Prepend[Cell[ToString[k], "Item"]]@
-														Map[
-															Cell[
-																Replace[#, 
-																	{
-																		(sk_->sv_):>
-																			ToString[sk]<>": "<>
-																				ToString@
-																					Replace[sv, str:{__String}:>StringRiffle[str, ", "]],
-																		e_:>ToString[e]
-																		}
-																	], 
-																"Subitem"
-																]&,
-															v
-															]
-													]
-												],
-										(k_->v_):>
-											Cell[
-												ToString[k]<>": "<>
-												ToString[Replace[v, str:{__String}:>StringRiffle[str, ", "]]], 
-												"Item"
-												]
-										}
-									},
-									1],
-								{}:>Cell["This extension has no extra parameters", "Item"]
-								]
-							}]&,
-					KeyDrop[
-						extensionData,
-						{"PacletServer"}
+		CellGroupData[Flatten@{
+			Cell["Basic Information","Subsection"],
+			Map[
+				pacletMarkdownNotebookBasicInfoSection[a, #]&,
+				{
+					"Name", 
+					"Version", 
+					"Creator",
+					"URL",
+					"Publisher",
+					"Support",
+					"License",
+					"GitHub"
+					}
+				]
+			}],
+		CellTags->"BasicInformation"
+		]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*pacletMarkdownNotebookExtraInfoSection*)
+
+
+
+pacletMarkdownNotebookExtraInfoSection[a_]:=
+	If[
+		Length@
+			Lookup[a, 
+				{
+					"WolframVersion", "MathematicaVersion", "SystemID",
+					"Internal", "BuildNumber",
+					"Qualifier", "Category"
+					}, 
+				Nothing
+				]>0,
+		Cell[
+			CellGroupData[{
+				Cell["Extra Information","Subsection"],
+				Sequence@@
+					Map[
+						pacletMarkdownNotebookBasicInfoSection[a, #]&,
+						{
+							"WolframVersion", "MathematicaVersion", "SystemID",
+							"Internal", "BuildNumber",
+							"Qualifier", "Category"
+							}
 						]
-					]
-				},
-		CellTags->"Extensions"
+				}],
+			CellTags->"ExtraInformation"
+			],
+		Cell[
+			CellGroupData[
+				{
+					Cell["Extra Information","Subsection"],
+					Cell["This package provides no extra information", "Text"]
+					}],
+			CellTags->"ExtraInformation"
+			]
+		]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*pacletMarkdownNotebookExtensionSection*)
+
+
+
+pacletMarkdownNotebookExtensionGroup[a_?(KeyExistsQ[#, "Extensions"]&)]:=
+		If[KeyMemberQ[a, "Extensions"],
+			pacletMarkdownNotebookExtensionSection[a["Extensions"]],
+			Cell[
+				CellGroupData[
+					{
+						Cell["Extensions", "Subsection"],
+						Cell["This package has no extensions", "Item"]
+						}
+					],
+				CellTags->"Extensions"
+				]
+			]
+
+
+pacletMarkdownNotebookExtensionSection[extensionData_]:=
+	Block[{Internal`$ContextMarks=False},
+		Cell[
+			CellGroupData@
+				Flatten@{
+					Cell["Extensions", "Subsection"],
+					KeyValueMap[
+						Cell@
+							CellGroupData[Flatten@{
+								Cell[#,"Subsubsection"],
+								Replace[
+									Replace[Normal@#2,
+										{
+											((Prepend|Append)->_):>Nothing,
+											(k_->v:Except[{__String}, _List]):>
+												Cell[
+													CellGroupData[
+														Prepend[
+															Cell[
+																If[MatchQ[k, _Symbol], SymbolName[k], ToString[k]], 
+																"Item"
+																]
+															]@
+															Map[
+																Cell[
+																	Replace[#, 
+																		{
+																			(sk_->sv_):>
+																				If[MatchQ[sk, _Symbol], 
+																					SymbolName[sk], ToString[sk]]<>": "<>
+																					ToString@
+																						Replace[sv, str:{__String}:>StringRiffle[str, ", "]],
+																			e_:>ToString[e]
+																			}
+																		], 
+																	"Subitem"
+																	]&,
+																v
+																]
+														]
+													],
+											(k_->v_):>
+												Cell[
+													If[MatchQ[k, _Symbol], SymbolName[k], ToString[k]]<>": "<>
+													ToString[Replace[v, str:{__String}:>StringRiffle[str, ", "]]], 
+													"Item"
+													]
+											},
+										1],
+									{}:>Cell["This extension has no extra parameters", "Item"]
+									]
+								}]&,
+						KeyDrop[
+							extensionData,
+							{"PacletServer"}
+							]
+						]
+					},
+			CellTags->"Extensions"
+			]
 		]
 
 
@@ -1189,32 +1470,20 @@ PacletMarkdownNotebook[infAss_Association]:=
 			},
 		Notebook[
 			{
-				Cell[
-					BoxData@ToBoxes@
-						KeyDrop[a, "URL"],
-					"Metadata"
-					],
+				pacletMarkdownNotebookMetadataSection@
+					KeyDrop[a, "URL"],
 				Cell@CellGroupData@
 					Flatten@{
-						Cell[Lookup[a, "Name", "Unnamed Paclet"],"Section"],
+						pacletMarkdownNotebookNameCell[a],
+						pacletMarkdownNotebookIcon[a],
 						pacletMarkdownNotebookDownloadLink[a],
 						pacletMarkdownNotebookDescriptionText[a],
 						Prepend[Cell["","PageBreak"]]@
 						Riffle[
 							{
-								Cell[
-									CellGroupData[{
-										Cell["Basic Information","Subsection"],
-										pacletMarkdownNotebookBasicInfoSection[a,"Name"],
-										pacletMarkdownNotebookBasicInfoSection[a,"Version"],
-										pacletMarkdownNotebookBasicInfoSection[a,"Creator"]
-										}],
-									CellTags->"BasicInformation"
-									],
-								If[KeyMemberQ[a, "Extensions"],
-									pacletMarkdownNotebookExtensionSection[a["Extensions"]],
-									Nothing
-									]
+								pacletMarkdownNotebookBasicInfoSection[a],
+								pacletMarkdownNotebookExtraInfoSection[a],
+								pacletMarkdownNotebookExtensionGroup[a]
 								},
 						Cell["","PageBreak"]
 						]
@@ -1261,7 +1530,7 @@ $killFields=
 		"Qualifier","WolframVersion",
 		"SystemID","Description","Category",
 		"Creator","Publisher","Support",
-		"Internal","Location"
+		"Internal","Location","Thumbnail"
 		};
 
 
@@ -1283,14 +1552,18 @@ PacletMarkdownNotebookUpdate[notebook_Notebook,infAss_]:=
 							]
 					]
 			},
+		nb=DeleteCases[nb, Cell[___, CellTags->{"Info", ___}, ___], \[Infinity]];
 		nb=
 			ReplaceAll[nb,
 				Cell[BoxData[e_],"Metadata",___]:>
-					Cell[
-						BoxData@ToBoxes@
-							Merge[{KeyDrop[ToExpression[e], $killFields], a},Last],
-						"Metadata"
-						]
+					pacletMarkdownNotebookMetadataSection@
+						Merge[
+							{
+								KeyDrop[ToExpression[e], $killFields], 
+								a
+								},
+							Last
+							]
 				];
 		nb=
 			ReplaceAll[nb,
@@ -1302,28 +1575,31 @@ PacletMarkdownNotebookUpdate[notebook_Notebook,infAss_]:=
 				Cell[___,CellTags->"DescriptionText",___]:>
 					pacletMarkdownNotebookDescriptionText[a]
 				];
-		Map[
-			Function[
-				nb=	
-					ReplaceAll[nb,
-						Cell[
-							CellGroupData[{
-								Cell[___,
-									CellTags->#,
-									___
-									],
-								___
-								},
-								___],
+		nb=
+			ReplaceAll[nb,
+				Cell[
+					CellGroupData[
+						{
+							Cell[___,CellTags->"BasicInformation",___],
 							___
-							]:>
-								pacletMarkdownNotebookBasicInfoSection[a,#]
-						]
-				],
-			DeleteCases[Keys[a],
-				"Extensions"|"Tags"|"Categories"|"Authors"
-				]
-			];
+							}, 
+						___
+						],
+					___	
+					]|Cell[___, CellTags->"BasicInformation", ___]:>
+					pacletMarkdownNotebookBasicInfoSection[a]
+				];
+		nb=
+			ReplaceAll[nb,
+				Cell[
+					CellGroupData[{
+						Cell[___,CellTags->"ExtraInformation",___],
+						___
+						}, ___],
+					___	
+					]|Cell[___,CellTags->"ExtraInformation",___]:>
+					pacletMarkdownNotebookExtraInfoSection[a]
+				];
 		nb=
 			DeleteCases[nb,
 				Cell[
@@ -1331,14 +1607,19 @@ PacletMarkdownNotebookUpdate[notebook_Notebook,infAss_]:=
 						Cell[___,
 							CellTags->
 								Except[
-									Alternatives@@
-										Join[{
-											"DescriptionText",
-											"DownloadLink",
-											"BasicInformation"
-											},
-											Keys[a]
-											]
+									#|{#..}&[
+										Alternatives@@
+											Join[
+												{
+													"DescriptionText",
+													"DownloadLink",
+													"BasicInformation",
+													"ExtraInformation",
+													"Info"
+													},
+												Keys[a]
+												]
+										]
 									],
 							___
 							],
@@ -1369,10 +1650,7 @@ PacletMarkdownNotebookUpdate[f_String?FileExistsQ,a_,regen_:Automatic]:=
 			_Notebook,
 				With[{new=PacletMarkdownNotebookUpdate[nb,a]},
 					If[TrueQ[regen]||new=!=nb,
-						Export[
-							f,
-							PacletMarkdownNotebookUpdate[nb,a]
-							]
+						Export[f,new]
 						]
 					],
 			_,
@@ -1445,145 +1723,190 @@ PacletServerBuild[
 	server:localPacletServerPatOrDir,
 	ops:OptionsPattern[]
 	]:=
-	With[
+	Block[
 		{
-			siteData=
-				PacletServerExposedPaclets[server]
+			$BuildingPacletServerDirectory=
+				PacletServerDirectory[server]
 			},
-		PacletServerInitialize[server];
-		If[MatchQ[OptionValue["RegenerateContent"], True|Automatic],
-			If[OptionValue[Monitor],
-				Function[Null,
-					Monitor[#, 
-						Internal`LoadingPanel[TemplateApply["Generating ``", md]]
-						],
-					HoldAll
-					],
-				Identity
-				]@
-				Block[{md},
-					With[{nbout=PacletServerFile[server, {"content","posts",#Name<>".nb"}]},
-						md=nbout;
-						PacletMarkdownNotebook[
-							nbout,
-							Join[
-								<|
-									"Title"->Lookup[#,"Name","Unnamed Paclet"],
-									"Categories"->"misc",
-									"Slug"->Automatic,
-									"Authors"->
-										StringTrim@
-											Map[
-												StringSplit[#, "@"|"<"][[1]]&,
-												StringSplit[Lookup[#,"Creator",""], ","]
-												],
-									"Tags"->StringSplit[Lookup[#,"Keywords",""],","]
-									|>,
-								#
+		With[
+			{
+				siteData=
+					PacletServerExposedPaclets[server]
+				},
+			PacletServerInitialize[server];
+			If[MatchQ[OptionValue["RegenerateContent"], True|Automatic],
+				If[OptionValue[Monitor],
+					Function[Null,
+						Monitor[#, 
+							If[StringQ@md,
+								Internal`LoadingPanel[TemplateApply["Generating ``", md]],
+								""
 								]
-							];
-							Function[NotebookMarkdownSave[#];NotebookClose[#]]@
-								NotebookOpen[nbout,Visible->False];
-							]&/@Association/@siteData
-						]
-			];
-		With[{s=
-			If[TrueQ@OptionValue["BuildSite"],
-				WebSiteBuild[
-					PacletServerDirectory[server],
-					"AutoDeploy"->False,	
-					"Configuration"->
+							],
+						HoldAll
+						],
+					Identity
+					]@
+					Block[{md},
 						With[
 							{
-								conf=
-									Replace[
-										Quiet@Import@
-											If[FileExistsQ@PacletServerFile[server, "SiteConfig.m"],
-												PacletServerFile[server, "SiteConfig.m"],
-												PacletServerFile[server, "SiteConfig.wl"]
-												],
-										{
-											o_?OptionQ:>
-												Association[o],
-											_-><||>
-											}
-										]
+								nbout=PacletServerFile[server, {"content","posts",#Name<>".nb"}],
+								pacF=PacletServerFile[server, {"Paclets",#Name<>"-"<>#Version<>".paclet"}],
+								ico=Lookup[#, "Thumbnail", Lookup[#, "Icon"]],
+								imgDir=PacletServerFile[server, {"content", "img", #Name}]
 								},
-							If[StringQ@server,
-								conf,
+							If[FileExistsQ[pacF]&&StringQ@ico,
+								If[!DirectoryQ@imgDir,
+									CreateDirectory[imgDir,
+										CreateIntermediateDirectories->True
+										]
+									];
+								With[{tmp=CreateDirectory[]},
+									Replace[
+										ExtractArchive[
+											pacF,
+											tmp,
+											FileNameJoin@Prepend[URLParse[ico, "Path"], "*"],
+											CreateIntermediateDirectories->True
+											],
+										{f_, ___}:>
+											With[{exp=FileNameJoin@Flatten@{imgDir, URLParse[ico, "Path"]}},
+												If[!DirectoryQ@DirectoryName@exp,
+													CreateDirectory[DirectoryName@exp, 
+														CreateIntermediateDirectories->True]
+													];
+												CopyFile[
+													f, 
+													FileNameJoin@Flatten@{imgDir, URLParse[ico, "Path"]},
+													OverwriteTarget->True
+													]
+												]
+										];
+									DeleteDirectory[tmp, DeleteContents->True]
+									];
+								];
+							md=nbout;
+							PacletMarkdownNotebook[
+								nbout,
 								Join[
 									<|
-										"SiteName"->
-											Lookup[server, "ServerName"],
-										"SiteURL"->
-											With[
-												{
-													cc=
-														PacletServerDeploymentURL[server]
-													},
-												cc
-												],
-										"Theme"->
-											"PacletServer",
-										CloudConnect->
-											server[CloudConnect],
-										Permissions->
-											server[Permissions]
+										"Title"->Lookup[#,"Name","Unnamed Paclet"],
+										"Categories"->"misc",
+										"Slug"->Automatic,
+										"Authors"->
+											StringTrim@
+												Map[
+													StringSplit[#, "@"|"<"][[1]]&,
+													StringSplit[Lookup[#,"Creator",""], ","]
+													],
+										"Tags"->StringSplit[Lookup[#,"Keywords",""],","]
 										|>,
-									conf
+									#
 									]
-								]
-							],
-					Sequence@@
-						FilterRules[
-							FilterRules[
-							{
-								ops,
-								"OutputDirectory"->
-									If[GitRepoQ@PacletServerDirectory[server],
-										"docs",
-										Automatic
-										]
-								},
-								Options@WebSiteBuild
-								],
-							Except["AutoDeploy"]
+								];
+								Function[NotebookMarkdownSave[#];NotebookClose[#]]@
+									NotebookOpen[nbout,Visible->False];
+								]&/@Association/@siteData
 							]
-					],
-				Quiet@CreateDirectory@
-					PacletServerFile[
-						server,
-						If[GitRepoQ@PacletServerDirectory[server],
-							 "output",
-							 "docs"
-								]
-						];
-				PacletServerFile[
-						server,
-						If[GitRepoQ@PacletServerDirectory[server],
-							 "output",
-							 "docs"
-								]
-						]
-				]
-			},
-			If[TrueQ[OptionValue["AutoDeploy"]]||
-				TrueQ@
-					OptionValue["AutoDeploy"]===Automatic&&
-						Lookup[
-							Replace[Quiet@Import[PacletServerFile[server, "SiteConfig.wl"]],
-								Except[_Association]:>{}
+				];
+			With[{s=
+				If[TrueQ@OptionValue["BuildSite"],
+					WebSiteBuild[
+						PacletServerDirectory[server],
+						"AutoDeploy"->False,	
+						"Configuration"->
+							With[
+								{
+									conf=
+										Replace[
+											Quiet@Import@
+												If[FileExistsQ@PacletServerFile[server, "SiteConfig.m"],
+													PacletServerFile[server, "SiteConfig.m"],
+													PacletServerFile[server, "SiteConfig.wl"]
+													],
+											{
+												o_?OptionQ:>
+													Association[o],
+												_-><||>
+												}
+											]
+									},
+								If[StringQ@server,
+									conf,
+									Join[
+										<|
+											"SiteName"->
+												Lookup[server, "ServerName"],
+											"SiteURL"->
+												With[
+													{
+														cc=
+															PacletServerDeploymentURL[server]
+														},
+													cc
+													],
+											"Theme"->
+												"PacletServer",
+											CloudConnect->
+												server[CloudConnect],
+											Permissions->
+												server[Permissions]
+											|>,
+										conf
+										]
+									]
 								],
-							"AutoDeploy"
-							],
-				PacletServerDeploy[
-					server,
-					Replace[
-						OptionValue["DeployOptions"],
-						Except[_?OptionQ]->{}
-						]
-					],
-				s
+						Sequence@@
+							FilterRules[
+								FilterRules[
+									{
+										ops,
+										"OutputDirectory"->
+											If[GitRepoQ@PacletServerDirectory[server],
+												"docs",
+												Automatic
+												]
+										},
+									Options@WebSiteBuild
+									],
+								Except["AutoDeploy"]
+								]
+						],
+					Quiet@CreateDirectory@
+						PacletServerFile[
+							server,
+							If[GitRepoQ@PacletServerDirectory[server],
+								 "output",
+								 "docs"
+									]
+							];
+					PacletServerFile[
+							server,
+							If[GitRepoQ@PacletServerDirectory[server],
+								 "output",
+								 "docs"
+									]
+							]
+					]
+				},
+				If[TrueQ[OptionValue["AutoDeploy"]]||
+					TrueQ@
+						OptionValue["AutoDeploy"]===Automatic&&
+							Lookup[
+								Replace[Quiet@Import[PacletServerFile[server, "SiteConfig.wl"]],
+									Except[_Association]:>{}
+									],
+								"AutoDeploy"
+								],
+					PacletServerDeploy[
+						server,
+						Replace[
+							OptionValue["DeployOptions"],
+							Except[_?OptionQ]->{}
+							]
+						],
+					s
+					]
 				]
 			]
 		];

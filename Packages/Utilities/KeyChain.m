@@ -19,171 +19,171 @@
 
 
 
-KeyChainConnect::usage="Uses the keychain to cloud connect";
+KeychainConnect::usage="Uses the keychain to cloud connect";
 
 
-KeyChainAdd::usage=
-	"Adds auth data to the KeyChain";
-KeyChainRemove::usage=
-	"Removes auth data from the KeyChain";
-KeyChainGet::usage=
-	"Gets auth data from the KeyChain";
+KeychainAdd::usage=
+	"Adds auth data to the Keychain";
+KeychainRemove::usage=
+	"Removes auth data from the Keychain";
+KeychainGet::usage=
+	"Gets auth data from the Keychain";
 
 
-$KeyChain::usage=
+$Keychain::usage=
 	"An interface object to a password keychain";
-$KeyChainSettings::usage=
+$KeychainSettings::usage=
 	"An interface object for the options of the keychain";
-$KeyChainPassword::usage=
+$KeychainPassword::usage=
 	"An interface object for the password of the keychain";
-$KeyChainDirectory::usage=
-	"A settable directory to change where the $KeyChain loads from";
+$KeychainDirectory::usage=
+	"A settable directory to change where the $Keychain loads from";
 
 
-$KeyChainCloudAccounts::usage=
-	"A collection of known accounts for KeyChainConnect";
+$KeychainCloudAccounts::usage=
+	"A collection of known accounts for KeychainConnect";
 
 
-(*KeyChainGenerateWord::usage="Futurized password-management function for building secure passwords"*)
+(*KeychainGenerateWord::usage="Futurized password-management function for building secure passwords"*)
 
 
 Begin["`Private`"];
 
 
 (* ::Subsection:: *)
-(*KeyChain*)
+(*Keychain*)
 
 
 
-If[!ValueQ@$KeyChainKey,
-	$KeyChainKey:=
+If[!ValueQ@$KeychainKey,
+	$KeychainKey:=
 		(
-			$KeyChainDirectory=Automatic;
-			$KeyChainKey="KeyChain"
+			$KeychainDirectory=Automatic;
+			$KeychainKey="Keychain"
 			)
 	];
-If[!ValueQ@$KeyChainDirectory,
-	$KeyChainDirectory:=
+If[!ValueQ@$KeychainDirectory,
+	$KeychainDirectory:=
 		(
-			$KeyChainKey="KeyChain";
-			$KeyChainDirectory=Automatic
+			$KeychainKey="Keychain";
+			$KeychainDirectory=Automatic
 			)
 	];
 
 
 (* ::Subsubsection::Closed:: *)
-(*$KeyChain*)
+(*$Keychain*)
 
 
 
-HoldPattern[$KeyChain[k__]]:=
-	EncodedCache[$KeyChainKey][k];
-$KeyChain/:
-	Set[$KeyChain[k__],v_]:=
-		Set[EncodedCache[$KeyChainKey][k],v];
-$KeyChain/:
-	SetDelayed[$KeyChain[k__],v_]:=
-		SetDelayed[EncodedCache[$KeyChainKey][k],v];
-$KeyChain/:
-	Unset[$KeyChain[k__]]:=
-		Unset[EncodedCache[$KeyChainKey][k]];
+HoldPattern[$Keychain[k__]]:=
+	EncodedCache[$KeychainKey][k];
+$Keychain/:
+	Set[$Keychain[k__],v_]:=
+		Set[EncodedCache[$KeychainKey][k],v];
+$Keychain/:
+	SetDelayed[$Keychain[k__],v_]:=
+		SetDelayed[EncodedCache[$KeychainKey][k],v];
+$Keychain/:
+	Unset[$Keychain[k__]]:=
+		Unset[EncodedCache[$KeychainKey][k]];
 
 
-$KeyChain/:
-	File@$KeyChain:=
-		EncodedCacheFile[$KeyChainKey];
-$KeyChain/:
-	DeleteFile[$KeyChain]:=
-		DeleteFile@File@$KeyChain;
+$Keychain/:
+	File@$Keychain:=
+		EncodedCacheFile[$KeychainKey];
+$Keychain/:
+	DeleteFile[$Keychain]:=
+		DeleteFile@File@$Keychain;
 
 
-$KeyChain/:
-	Set[$KeyChain,a_Association]:=
-		Set[EncodedCache[$KeyChainKey],a];
-$KeyChain/:
-	Unset[$KeyChain]:=
-		Unset[EncodedCache[$KeyChainKey]];
-
-
-(* ::Subsubsection::Closed:: *)
-(*$KeyChainSettings*)
-
-
-
-$KeyChainSettings[k__]:=
-	EncodedCache[$KeyChainKey,"Options"][k];
-$KeyChainSettings/:
-	Set[$KeyChainSettings[k__],v_]:=
-		Set[EncodedCache[$KeyChainKey,"Options"][k],v];
-$KeyChainSettings/:
-	Unset[$KeyChainSettings[k__]]:=
-		Unset[EncodedCache[$KeyChainKey,"Options"][k]];
-
-
-$KeyChainSettings/:
-	File@$KeyChainSettings:=
-		EncodedCacheOptionsFile[$KeyChainKey];
-$KeyChainSettings/:
-	DeleteFile@$KeyChainSettings:=
-		DeleteFile@File@$KeyChainSettings;
+$Keychain/:
+	Set[$Keychain,a_Association]:=
+		Set[EncodedCache[$KeychainKey],a];
+$Keychain/:
+	Unset[$Keychain]:=
+		Unset[EncodedCache[$KeychainKey]];
 
 
 (* ::Subsubsection::Closed:: *)
-(*$KeyChainPassword*)
+(*$KeychainSettings*)
 
 
 
-$KeyChainPassword[]:=
-	EncodedCache[$KeyChainKey,"Password"];
-$KeyChainPassword/:
-	Set[$KeyChainPassword[],v_]:=
+$KeychainSettings[k__]:=
+	EncodedCache[$KeychainKey,"Options"][k];
+$KeychainSettings/:
+	Set[$KeychainSettings[k__],v_]:=
+		Set[EncodedCache[$KeychainKey,"Options"][k],v];
+$KeychainSettings/:
+	Unset[$KeychainSettings[k__]]:=
+		Unset[EncodedCache[$KeychainKey,"Options"][k]];
+
+
+$KeychainSettings/:
+	File@$KeychainSettings:=
+		EncodedCacheOptionsFile[$KeychainKey];
+$KeychainSettings/:
+	DeleteFile@$KeychainSettings:=
+		DeleteFile@File@$KeychainSettings;
+
+
+(* ::Subsubsection::Closed:: *)
+(*$KeychainPassword*)
+
+
+
+$KeychainPassword[]:=
+	EncodedCache[$KeychainKey,"Password"];
+$KeychainPassword/:
+	Set[$KeychainPassword[],v_]:=
 		Set[
-			EncodedCache[$KeyChainKey,"Password"],
+			EncodedCache[$KeychainKey,"Password"],
 			v
 			];
-$KeyChainPassword/:
-	Unset[$KeyChainPassword[]]:=
-		Unset[EncodedCache[$KeyChainKey,"Password"]];
+$KeychainPassword/:
+	Unset[$KeychainPassword[]]:=
+		Unset[EncodedCache[$KeychainKey,"Password"]];
 
 
-$KeyChainPassword/:
-	File@$KeyChainPassword:=
-		EncodedCachePasswordFile[$KeyChainKey];
-$KeyChainPassword/:
-	DeleteFile@$KeyChainPassword:=
-		DeleteFile@File@$KeyChainPassword;
+$KeychainPassword/:
+	File@$KeychainPassword:=
+		EncodedCachePasswordFile[$KeychainKey];
+$KeychainPassword/:
+	DeleteFile@$KeychainPassword:=
+		DeleteFile@File@$KeychainPassword;
 
 
 (* ::Subsubsection::Closed:: *)
-(*$KeyChainDirectory*)
+(*$KeychainDirectory*)
 
 
 
-$KeyChainDirectory/:
-	Set[$KeyChainDirectory,dir_]/;(!TrueQ@$inEncodedCacheDirectoryOverload):=
+$KeychainDirectory/:
+	Set[$KeychainDirectory,dir_]/;(!TrueQ@$inEncodedCacheDirectoryOverload):=
 		Block[{$inEncodedCacheDirectoryOverload=True},
-			If[dir=!=$KeyChainDirectory,
+			If[dir=!=$KeychainDirectory,
 				Replace[dir,{
 					Automatic:>
 						(
-							$KeyChainKey="KeyChain";
-							EncodedCacheOptionsLoad[$KeyChainKey];
-							EncodedCacheLoad[$KeyChainKey];
-							$KeyChainDirectory=Automatic
+							$KeychainKey="Keychain";
+							EncodedCacheOptionsLoad[$KeychainKey];
+							EncodedCacheLoad[$KeychainKey];
+							$KeychainDirectory=Automatic
 							),
 					f:FileName[{p___,n_}]:>
 						(
 							EncodedCacheLoad[FileNameJoin[{p,n}]];
-							$KeyChainKey=FileBaseName@n;
-							$KeyChainDirectory=f;
+							$KeychainKey=FileBaseName@n;
+							$KeychainDirectory=f;
 							),
 					d:(_String|_File)?DirectoryQ:>
 						Replace[EncodedCacheLoad[d],
 							a_Association:>
 								(
 									EncodedCacheLoad[d];
-									$KeyChainKey=FileBaseName@d;
-									$KeyChainDirectory=d;
+									$KeychainKey=FileBaseName@d;
+									$KeychainDirectory=d;
 									)
 							]
 					}],
@@ -193,45 +193,45 @@ $KeyChainDirectory/:
 
 
 (* ::Subsubsection::Closed:: *)
-(*KeyChainAdd*)
+(*KeychainAdd*)
 
 
 
 $keyChainFailureForms=""|$Failed|$Canceled|_Missing;
 
 
-KeyChainAdd[site_->{username:Except[None],password:Except[$keyChainFailureForms]}]:=
-	$KeyChain[{site,username}]=password;
-KeyChainAdd[{site_->{username:Except[None],password:Except[$keyChainFailureForms]}}]:=
-	$KeyChain[{site,username}]=password;
-KeyChainAdd[sites:{(_->{Except[None],_}),(_->{Except[None],_})..}]:=
+KeychainAdd[site_->{username:Except[None],password:Except[$keyChainFailureForms]}]:=
+	$Keychain[{site,username}]=password;
+KeychainAdd[{site_->{username:Except[None],password:Except[$keyChainFailureForms]}}]:=
+	$Keychain[{site,username}]=password;
+KeychainAdd[sites:{(_->{Except[None],_}),(_->{Except[None],_})..}]:=
 	With[{
-		saveOps=$KeyChainSettings["SaveOptionsToDisk"],
-		saveDisk=$KeyChainSettings["SaveToDisk"],
-		storeLocal=$KeyChainSettings["StoreInMemory"]
+		saveOps=$KeychainSettings["SaveOptionsToDisk"],
+		saveDisk=$KeychainSettings["SaveToDisk"],
+		storeLocal=$KeychainSettings["StoreInMemory"]
 		},
-		$KeyChainSettings["SaveOptionsToDisk"]=False;
+		$KeychainSettings["SaveOptionsToDisk"]=False;
 		If[storeLocal,
-			$KeyChainSettings["SaveToDisk"]=False
+			$KeychainSettings["SaveToDisk"]=False
 			];
-		With[{s=KeyChainAdd/@Most@sites},
+		With[{s=KeychainAdd/@Most@sites},
 			If[storeLocal,
-				$KeyChainSettings["SaveToDisk"]=saveDisk
+				$KeychainSettings["SaveToDisk"]=saveDisk
 				];
-			$KeyChainSettings["SaveOptionsToDisk"]=saveOps;
+			$KeychainSettings["SaveOptionsToDisk"]=saveOps;
 			Append[s,
-				KeyChainAdd@Last@sites
+				KeychainAdd@Last@sites
 				]
 			]
 		];
-KeyChainAdd[
+KeychainAdd[
 	sites:(
 		_String|(_String->_String)|
 			{(_String|(_String->_String))..}
 		)
 	]:=
-	(Clear@$keyChainAuth;Replace[#,_KeyChainAdd->$Failed])&@
-		KeyChainAdd@
+	(Clear@$keyChainAuth;Replace[#,_KeychainAdd->$Failed])&@
+		KeychainAdd@
 			Normal@
 				AuthDialog[
 					Dynamic@$keyChainAuth,
@@ -244,11 +244,11 @@ KeyChainAdd[
 							1
 							]
 					];
-KeyChainAdd[
+KeychainAdd[
 	site_->{None,s_String}
 	]:=
-	(Clear@$keyChainAuth;Replace[#,_KeyChainAdd->$Failed])&@
-		KeyChainAdd[
+	(Clear@$keyChainAuth;Replace[#,_KeychainAdd->$Failed])&@
+		KeychainAdd[
 			site->
 				{
 					s,
@@ -266,32 +266,32 @@ KeyChainAdd[
 
 
 (* ::Subsubsection::Closed:: *)
-(*KeyChainRemove*)
+(*KeychainRemove*)
 
 
 
-KeyChainRemove[site_->username:Except[None]]:=
-	$KeyChain[{site,username}]=.;
+KeychainRemove[site_->username:Except[None]]:=
+	$Keychain[{site,username}]=.;
 
 
 (* ::Subsubsection::Closed:: *)
-(*KeyChainGet*)
+(*KeychainGet*)
 
 
 
-$KeyChainGetAccountKeys=
+$KeychainGetAccountKeys=
 	{"AccountData", "WolframCloud"};
 
 
-KeyChainGet[site_String,lookup:True|False:False]:=
+KeychainGet[site_String,lookup:True|False:False]:=
 	If[lookup,
 		FirstCase[#,_String?(StringLength@#>0&),
-			KeyChainAdd[site]
+			KeychainAdd[site]
 			],
 		FirstCase[#,_String?(StringLength@#>0&)]
 		]&@
-		$KeyChain[{site,Key@{site,""}}];
-iKeyChainGet[
+		$Keychain[{site,Key@{site,""}}];
+iKeychainGet[
 	{
 		site_String, 
 		username_String,
@@ -301,61 +301,61 @@ iKeyChainGet[
 	]:=
 	If[lookup,
 		FirstCase[#,Except[$keyChainFailureForms],
-			KeyChainAdd[site->StringJoin[username, subparts]]
+			KeychainAdd[site->StringJoin[username, subparts]]
 			],
 		FirstCase[#,Except[$keyChainFailureForms]]
-		]&@$KeyChain[{Key@{site,StringJoin[username, subparts]}}];
-KeyChainGet[
+		]&@$Keychain[{Key@{site,StringJoin[username, subparts]}}];
+KeychainGet[
 	{
-		site:Except[Alternatives@@Append[$KeyChainGetAccountKeys, ""], _String], 
+		site:Except[Alternatives@@Append[$KeychainGetAccountKeys, ""], _String], 
 		username_String,
 		subparts___String
 		},
 	lookup:True|False:False
 	]:=
-	iKeyChainGet[{site, username, subparts}, lookup];
-KeyChainGet[
+	iKeychainGet[{site, username, subparts}, lookup];
+KeychainGet[
 	site_->{None, username_String, subparts___String},
 	lookup:True|False:False
 	]:=
 	With[{key=StringJoin[username, subparts]},
 		Replace[
-			iKeyChainGet[{site,key}],
+			iKeychainGet[{site,key}],
 			e:$keyChainFailureForms:>
-				If[lookup, KeyChainAdd[site->{None,key}], e]
+				If[lookup, KeychainAdd[site->{None,key}], e]
 			]
 		];
-KeyChainGet[
+KeychainGet[
 	{
-		site:Alternatives@@$KeyChainGetAccountKeys, 
+		site:Alternatives@@$KeychainGetAccountKeys, 
 		username_String,
 		subparts___String
 		},
 	lookup:True|False:False
 	]:=
-	KeyChainGet[
+	KeychainGet[
 		site->{None, username, subparts},
 		lookup
 		]
 
 
 PackageAddAutocompletions[
-	"KeyChainGet",
+	"KeychainGet",
 	{
 		Map[
 			ToString[{"\""<>#<>"\"", "accountName"}]&,
-			$KeyChainGetAccountKeys
+			$KeychainGetAccountKeys
 			]
 		}
 	]
 
 
 (* ::Subsubsection::Closed:: *)
-(*KeyChainConnect*)
+(*KeychainConnect*)
 
 
 
-$KeyChainCloudAccounts=
+$KeychainCloudAccounts=
 	"TestingAccount"|"DeploymentsAccount"|
 		"PacletsAccount"|"DatasetsAccount"|
 		"ServiceConnectionsAccount"|"DocumentationAccount"|
@@ -363,45 +363,45 @@ $KeyChainCloudAccounts=
 
 
 PackageAddAutocompletions[
-	"KeyChainConnect",
-	{List@@$KeyChainCloudAccounts}
+	"KeychainConnect",
+	{List@@$KeychainCloudAccounts}
 	]
 
 
-Options[KeyChainConnect]=
+Options[KeychainConnect]=
 	Options[CloudConnect];
-KeyChainConnect[
-	acc:$KeyChainCloudAccounts,
+KeychainConnect[
+	acc:$KeychainCloudAccounts,
 	ops:OptionsPattern[]
 	]:=
-	KeyChainConnect[Key[acc],ops];
-KeyChainConnect[
+	KeychainConnect[Key[acc],ops];
+KeychainConnect[
 	acct:_String|Key[_String]:Key["TestingAccount"],
 	ops:OptionsPattern[]
 	]:=
 	With[
 		{
 			user=
-				Replace[acct,Key[a_]:>KeyChainGet[{"WolframCloud", a},True]],
+				Replace[acct,Key[a_]:>KeychainGet[{"WolframCloud", a},True]],
 			base=
 				Replace[OptionValue[CloudBase],Automatic:>$CloudBase]
 			},
 		If[$WolframID=!=user||$CloudBase=!=base,
 			CloudConnect[user,
-				KeyChainGet[{base,user},True],
+				KeychainGet[{base,user},True],
 				ops
 				],
 			$WolframID	
 			]
 		];
-KeyChainConnect[
+KeychainConnect[
 	acct:_String|Key[_String],
 	pass_String,
 	ops:OptionsPattern[]
 	]:=
 	With[{
 		user=
-			Replace[acct,Key[a_]:>KeyChainGet[{"WolframCloud", a}, True]],
+			Replace[acct,Key[a_]:>KeychainGet[{"WolframCloud", a}, True]],
 		base=Replace[OptionValue[CloudBase],Automatic:>$CloudBase]
 		},
 		If[$WolframID=!=user||$CloudBase=!=base,

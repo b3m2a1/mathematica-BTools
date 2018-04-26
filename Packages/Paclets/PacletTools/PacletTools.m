@@ -34,7 +34,7 @@ $PacletBuildExtension::usage="The directory extension for building paclets";
 $PacletBuildDirectory::usage="Joins the root and extension";
 $PacletExtension::usage="The default ServerExtension";
 $PacletServerBase::usage="The default ServerBase";
-$PacletUseKeyChain::usage="Whether to use the KeyChain or not";
+$PacletUseKeychain::usage="Whether to use the Keychain or not";
 $FormatPaclets::usage="Specifies whether or not to use new paclet formatting";
 
 
@@ -181,8 +181,8 @@ $PacletBuildRoot:=
 	PacletExecuteSettingsLookup["BuildRoot"];
 $PacletBuildExtension:=
 	PacletExecuteSettingsLookup["BuildExtension"];
-$PacletUseKeyChain:=
-	PacletExecuteSettingsLookup["UseKeyChain"];
+$PacletUseKeychain:=
+	PacletExecuteSettingsLookup["UseKeychain"];
 
 
 $FormatPaclets:=
@@ -310,6 +310,7 @@ iPacletInfoAssociation[p:PacletManager`Paclet[k__]]:=
 			validatePacletAssociationField,
 			makePacletInfoAssociation[p]
 			];
+iPacletInfoAssociation[PacletManager`Paclet[]]:=<||>
 
 
 $pacletInfoSpec=
@@ -653,24 +654,26 @@ extractPacletExtensionJLinkInfo[base_, dest_]:=
 
 
 extractPacletExtensionLibraryLinkInfo[base_, dest_]:=
-	Replace[base, {
-		Automatic:>
-			If[Length@
-					Select[Not@*DirectoryQ]@
-						FileNames[
-							Except[".DS_Store"],
-							FileNameJoin@{dest, "LibraryResources"},
-							\[Infinity]]>0,
-				"LibraryLink"->
-					<|
-						"Root" -> "LibraryResources"
-						|>,
-				Nothing
-				],
-		r:_Rule|{___Rule}:>
-			"LibraryLink"->Association@Flatten@{r},
-		Except[_Association]->Nothing
-		}]
+	Replace[base,
+		{
+			Automatic:>
+				If[Length@
+						Select[Not@*DirectoryQ]@
+							FileNames[
+								Except[".DS_Store"],
+								FileNameJoin@{dest, "LibraryResources"},
+								\[Infinity]]>0,
+					"LibraryLink"->
+						<|
+							"Root" -> "LibraryResources"
+							|>,
+					Nothing
+					],
+			r:_Rule|{___Rule}:>
+				"LibraryLink"->Association@Flatten@{r},
+			Except[_Association]->Nothing
+			}
+		]
 
 
 Options[PacletExtensionData]={
@@ -889,15 +892,23 @@ PacletInfoExpression[
 
 
 cleanPacletForExport[pac_PacletManager`Paclet]:=
-	Map[
-		If[StringQ[#[[1]]], ToExpression[#[[1]]], #[[1]]]->#[[2]]&, 
-		Select[
-			DeleteCases[pac, 
-				(
-					"Location"->_|"Resources"->_|
-					_Symbol?(SymbolName[#]=="Location"&)->_|
-					_Symbol?(SymbolName[#]=="Resources"&)->_)], 
-			MatchQ[_String|_Symbol->_]
+	DeleteDuplicatesBy[
+		Map[
+			If[StringQ[#[[1]]], ToExpression[#[[1]]], #[[1]]]->#[[2]]&, 
+			Select[
+				DeleteCases[pac, 
+					(
+						"Location"->_|"Resources"->_|
+						_Symbol?(SymbolName[#]=="Location"&)->_|
+						_Symbol?(SymbolName[#]=="Resources"&)->_)], 
+				MatchQ[_String|_Symbol->_]
+				]
+			],
+		Replace[
+			{
+				(s_Symbol->_):>SymbolName[s],
+				(s_->_):>s
+				}
 			]
 		]
 
@@ -933,8 +944,10 @@ prettyFormatPacletElement[elm_]:=
 prettyFormatPacletString[
 	pac_
 	]:=
-	With[{bits=prettyFormatPacletElement/@List@@pac},
-		"Paclet[\n"<>StringRiffle[bits, ",\n"]<>"\n ]"
+	Block[{Internal`$ContextMarks=False},
+		With[{bits=prettyFormatPacletElement/@List@@pac},
+			"Paclet[\n"<>StringRiffle[bits, ",\n"]<>"\n ]"
+			]
 		]
 
 
@@ -1348,14 +1361,14 @@ $PacletUploadDomains=
 		|>
 
 
-pacletCloudConnect[base_, cc_, useKeyChain_]:=
+pacletCloudConnect[base_, cc_, useKeychain_]:=
 	(
 		With[
 			{
 				kc=
-					Replace[useKeyChain,
+					Replace[useKeychain,
 						Automatic:>
-							$PacletUseKeyChain
+							$PacletUseKeychain
 						],
 				ccReal=
 					Replace[
@@ -1370,29 +1383,29 @@ pacletCloudConnect[base_, cc_, useKeyChain_]:=
 			Replace[
 				ccReal,
 				{
-					a:$KeyChainCloudAccounts?(kc&):>
-						KeyChainConnect[a],
+					a:$KeychainCloudAccounts?(kc&):>
+						KeychainConnect[a],
 					k_Key:>
-						KeyChainConnect[k],
+						KeychainConnect[k],
 					s_String:>
 						If[$WolframID=!=s||
 							(StringQ[$WolframID]&&StringSplit[$WolframID, "@"][[1]]=!=s),
 							If[kc, 
-								KeyChainConnect,
+								KeychainConnect,
 								CloudConnect
 								][If[!StringContainsQ[s, "@"], s<>"@gmail.com", s]]
 							],
 					{s_String,p_String}:>
 						If[$WolframID=!=s, 
 							If[kc, 
-								KeyChainConnect,
+								KeychainConnect,
 								CloudConnect
 								][s,p]
 							],
 					{s_String,e___,CloudBase->b_,r___}:>
 						If[$CloudBase=!=b||$WolframID=!=s,
 							If[kc, 
-								KeyChainConnect,
+								KeychainConnect,
 								CloudConnect
 								][s,e,CloudBase->b,r]
 							],
@@ -1420,7 +1433,7 @@ Options[PacletSiteURL]=
 			Automatic,
 		CloudConnect->
 			Automatic,
-		"UseKeyChain"->
+		"UseKeychain"->
 			Automatic
 		};
 PacletSiteURL::nowid="$WolframID isn't a string. Try cloud connecting";
@@ -1434,7 +1447,7 @@ PacletSiteURL[ops:OptionsPattern[]]:=
 					pacletStandardServerBase[
 						OptionValue["ServerBase"],
 						OptionValue@CloudConnect, 
-						OptionValue@"UseKeyChain"
+						OptionValue@"UseKeychain"
 						],
 				name=
 					pacletStandardServerName@OptionValue["ServerName"]
@@ -1445,7 +1458,7 @@ PacletSiteURL[ops:OptionsPattern[]]:=
 					pacletCloudConnect[
 						base, 
 						OptionValue@CloudConnect, 
-						OptionValue@"UseKeyChain"
+						OptionValue@"UseKeychain"
 						];
 					URLBuild@
 						<|
@@ -1812,7 +1825,12 @@ PacletSiteBundle[
 	infoFiles:$PacletFilePatterns|{$PacletFilePatterns...},
 	ops:OptionsPattern[]
 	]:=
-	Block[{$ContextPath={"System`","PacletManager`"}, $Context="PacletManager`"},
+	Block[
+		{
+			$ContextPath={"System`", "PacletManager`Private`", "PacletManager`"}, 
+			$Context="PacletManager`Private`",
+			Internal`$ContextMarks=False
+			},
 		Export[
 			pacletSiteFileName[
 				OptionValue["BuildRoot"], 

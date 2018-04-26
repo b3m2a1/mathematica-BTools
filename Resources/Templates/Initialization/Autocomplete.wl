@@ -62,7 +62,8 @@ $PackageAutoCompletionFormats=
 (*AddAutocompletions Base*)
 
 
-PackageAddAutocompletions[pats:{(_String->{$PackageAutoCompletionFormats..})..}]:=
+PackageAddAutocompletions[pats:{(_String->{$PackageAutoCompletionFormats..})..}]/;
+	TrueQ[$PackageAllowAutocompletions]:=
 	If[$Notebooks&&
 		Internal`CachedSystemInformation["FrontEnd","VersionNumber"]>10.0,
 		FrontEndExecute@FrontEnd`Value@
@@ -72,7 +73,8 @@ PackageAddAutocompletions[pats:{(_String->{$PackageAutoCompletionFormats..})..}]
 				],
 		$Failed
 		];
-PackageAddAutocompletions[pat:(_String->{$PackageAutoCompletionFormats..})]:=
+PackageAddAutocompletions[pat:(_String->{$PackageAutoCompletionFormats..})]/;
+	TrueQ[$PackageAllowAutocompletions]:=
 	PackageAddAutocompletions[{pat}];
 
 
@@ -117,7 +119,7 @@ $PackageAutocompletionAliases=
 		};
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*AddAutocompletions Convenience*)
 
 
@@ -128,7 +130,9 @@ $PackageAutocompletionTable={
 	};
 
 
-PackageAddAutocompletions[o:{__Rule}]/;(!TrueQ@$recursionProtect):=
+PackageAddAutocompletions[o:{__Rule}]/;(
+	TrueQ[$PackageAllowAutocompletions]&&!TrueQ@$recursionProtect
+	):=
 	Block[{$recursionProtect=True},
 		Replace[
 			PackageAddAutocompletions@
@@ -145,9 +149,9 @@ PackageAddAutocompletions[o:{__Rule}]/;(!TrueQ@$recursionProtect):=
 			_PackageAddAutocompletions->$Failed
 			]
 		];
-PackageAddAutocompletions[s:Except[_List],v_]:=
+PackageAddAutocompletions[s:Except[_List],v_]/;TrueQ[$PackageAllowAutocompletions]:=
 	PackageAddAutocompletions[{s->v}];
-PackageAddAutocompletions[l_,v_]:=
+PackageAddAutocompletions[l_,v_]/;TrueQ[$PackageAllowAutocompletions]:=
 	PackageAddAutocompletions@
 		Flatten@{
 			Quiet@

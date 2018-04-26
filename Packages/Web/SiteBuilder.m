@@ -1283,6 +1283,11 @@ WebSiteTemplateExport[
 									}]
 							},
 					If[!FileExistsQ[fil]||(html=!=Import[fil, "Text"]),
+						If[!DirectoryQ@DirectoryName[fil],
+							CreateDirectory[DirectoryName[fil], 
+								CreateIntermediateDirectories->True
+								]
+							];
 						Export[fil, html, "Text"]
 						]
 					],
@@ -1444,8 +1449,7 @@ WebSiteImportMeta[
 			],{
 		{n_,c_}:>
 			n->
-				If[MemberQ[$WebSiteAggregationTypes,n]||
-						StringMatchQ[c,Repeated[Except[","]..~~","]],
+				If[MemberQ[$WebSiteAggregationTypes, n],
 					StringTrim@StringSplit[c,","],
 					c
 					],
@@ -1675,7 +1679,7 @@ WebSiteExtractPageData[rootDir_,files_,config_, ops:OptionsPattern[]]:=
 WebSiteGenerateAggregationPages//ClearAll;
 
 
-$WebSiteAggregationTypes=
+$DefaultWebSiteAggregationTypes=
 	{
 			"Authors",
 			"Categories",
@@ -1683,7 +1687,7 @@ $WebSiteAggregationTypes=
 			};
 
 
-$WebSiteGenerateAggregationPages=
+$WebSiteGenerateAggregationPages:=
 	AssociationMap[
 		With[{
 			singular=
@@ -1699,11 +1703,41 @@ $WebSiteGenerateAggregationPages=
 				"AggregationTemplates"->plural<>".html",
 				"AggregationFile"->plural<>".html",
 				"Templates"->singular<>".html",
-				"File"->Function@{plural,ToLowerCase[#]<>".html"}
+				"File"->Function@{plural, ToLowerCase[#]<>".html"}
 				|>
 			]&,
 		$WebSiteAggregationTypes
 		];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*WebSiteCollectAggPages*)
+
+
+
+WebSiteCollectAggPages[aggthing_]:=
+	KeySort@Map[Flatten@*List]@
+		GroupBy[First->Last]@
+			Flatten[
+				Thread@*Reverse/@
+					Normal@
+						DeleteCases[
+							Lookup[
+								Lookup[#, "Attributes", <||>],
+								aggthing,
+								{}
+								]&/@$WebSiteBuildContentStack,
+							{}
+							]
+				]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*WebSiteGenerateAggregationPages*)
+
+
+
+WebSiteBuild::badagg="Can't deal with aggregation type ``";
 
 
 Options[WebSiteGenerateAggregationPages]=
@@ -1726,7 +1760,24 @@ WebSiteGenerateAggregationPages[
 			},
 		Block[{
 			aggbit,
-			outfile
+			outfile,
+			$WebSiteAggregationTypes=
+				Join[
+					$DefaultWebSiteAggregationTypes, 
+					(*
+				Include custom aggregation types from templates dir:
+					TODO: link to custom agg pages in later bit and check metainfo for key		
+				*)
+					FileNameJoin@{"aggregations", FileBaseName[#]}&/@
+						FileNames[
+							"*.html",
+							FileNameJoin@{
+								thm,
+								"templates",
+								"aggregations"
+								}
+							]
+					]
 			},
 			KeyValueMap[(*Map over aggregation types and templates*)
 				With[{
@@ -1736,144 +1787,141 @@ WebSiteGenerateAggregationPages[
 						Switch[#,
 							"Categories",
 								"Category",
+							Alternatives@@
+								$DefaultWebSiteAggregationTypes,
+								StringTrim[#,"s"],
 							_,
-								StringTrim[#,"s"]
+								If[MemberQ[$WebSiteAggregationTypes, StringTrim[#,"s"]],
+									StringTrim[#,"s"],
+									None
+									]
 							]
 					},
-					Block[{
-						(* Files to be collected and passed to combined aggregation *)
-						$aggregationFiles=<||>,
-						(*Collect type name and templates*)
-						agglist=
-							KeySort@Map[Flatten@*List]@
-								GroupBy[First->Last]@
-									Flatten[
-										Thread@*Reverse/@
-											Normal@
-												DeleteCases[
-													Lookup[
-														Lookup[#,"Attributes",<||>],
-														aggthing,
-														{}
-														]&/@$WebSiteBuildContentStack,
-													{}
-													]
-										]
-						(*Gather elements in the content stack  by type in the aggregation*)
-						},
-						KeyValueMap[
-							(*Map over aggregated elements, e.g., over each tag or category*)
-							With[{
-								fout=
-									(*The file to export the aggregation file to*)
-									WebSiteBuildSlug@
+					If[aggsingular===None,
+						(* Dunno what to do here ..... *)
+						Message[WebSiteBuild::badagg, aggthing];,
+						Block[{
+							(* Files to be collected and passed to combined aggregation *)
+							$aggregationFiles=<||>,
+							(*Collect type name and templates*)
+							agglist=
+								WebSiteCollectAggPages[aggthing]
+							(*Gather elements in the content stack  by type in the aggregation*)
+							},
+							KeyValueMap[
+								(*Map over aggregated elements, e.g., over each tag or category*)
+								With[{
+									fout=
+										(*The file to export the aggregation file to*)
+										WebSiteBuildSlug@
+											FileNameJoin@Flatten@{
+												outDir,
+												aggdata["File"]@#
+												},
+									templates=
+										(*The template file to use*)
+										Flatten@List@
+											aggdata["Templates"]
+									},
+									$aggregationFiles[#]=
+										<|
+											aggsingular->#,
+											"File"->fout,
+											"Articles"->#2,
+											"URL"->
+												WebSiteBuildURL@
+													FileNameDrop[fout, FileNameDepth@outDir]
+											|>;
+									aggbit=ToLowerCase[aggthing<>"/"<>#];
+									(* Make sure directory exists *)
+									If[!DirectoryQ@DirectoryName@fout,
+										CreateDirectory@DirectoryName@fout
+										];
+									(* 
+								Export aggregation file, e.g. tags/mathematica.html passing the 
+								list of file URLs as the aggregation name, e.g. Tags
+								*)
+									WebSiteTemplateExportPaginated[
+										aggbit,
+										FileBaseName[fout],
+										FileNameTake[fout, {1, -2}],
+										outDir,
+										{FileNameJoin@{thm,"templates"},longDir},
+										None,
+										templates, 
+										Append[
+											config,
+											aggsingular->#
+											],
+										Lookup[
+											Lookup[$WebSiteBuildContentStack,#2,<||>],
+											"Attributes",
+											<||>
+											],
+										FilterRules[{ops}, 
+											Options@WebSiteTemplateExportPaginated
+											]
+										];
+									aggbit=.;
+									]&,
+								agglist
+								];
+							If[(* If there's a overall aggregation to use, e.g. all tags or categories*)
+								AllTrue[{"AggregationFile","AggregationTemplates"},
+									KeyMemberQ[aggdata,#]&
+									],
+								With[{
+									fout=
+										WebSiteBuildSlug@
 										FileNameJoin@Flatten@{
 											outDir,
-											aggdata["File"]@#
+											aggdata["AggregationFile"]
 											},
-								templates=
-									(*The template file to use*)
-									Flatten@List@
-										aggdata["Templates"]
-								},
-								$aggregationFiles[#]=
-									<|
-										aggsingular->#,
-										"File"->fout,
-										"Articles"->#2,
-										"URL"->
-											WebSiteBuildURL@
-												FileNameDrop[fout, FileNameDepth@outDir]
-										|>;
-								aggbit=ToLowerCase[aggthing<>"/"<>#];
-								(* Make sure directory exists *)
-								If[!DirectoryQ@DirectoryName@fout,
-									CreateDirectory@DirectoryName@fout
-									];
-								(* 
-							Export aggregation file, e.g. tags/mathematica.html passing the 
-							list of file URLs as the aggregation name, e.g. Tags
-							*)
-								WebSiteTemplateExportPaginated[
-									aggbit,
-									FileBaseName[fout],
-									FileNameTake[fout, {1, -2}],
-									outDir,
-									{FileNameJoin@{thm,"templates"},longDir},
-									None,
-									templates, 
-									Append[
-										config,
-										aggsingular->#
-										],
-									Lookup[
-										Lookup[$WebSiteBuildContentStack,#2,<||>],
-										"Attributes",
-										<||>
-										],
-									FilterRules[{ops}, 
-										Options@WebSiteTemplateExportPaginated
-										]
-									];
-								aggbit=.;
-								]&,
-							agglist
-							];
-						If[(* If there's a overall aggregation to use, e.g. all tags or categories*)
-							AllTrue[{"AggregationFile","AggregationTemplates"},
-								KeyMemberQ[aggdata,#]&
-								],
-							With[{
-								fout=
-									WebSiteBuildSlug@
-									FileNameJoin@Flatten@{
-										outDir,
-										aggdata["AggregationFile"]
-										},
-								templates=
-									Flatten@List@
-										aggdata["AggregationTemplates"]
-								},
-								aggbit=ToLowerCase@aggthing;
-								If[!DirectoryQ@DirectoryName@fout,
-									CreateDirectory@DirectoryName@fout
-									];
-								If[TrueQ@OptionValue[Monitor],
-									Function[Null,
-										Monitor[#, 
-											Internal`LoadingPanel@
-												TemplateApply[
-													"Generating ``",
-													WebSiteBuildURL@
-														FileNameDrop[fout,FileNameDepth@outDir]
-													]
+									templates=
+										Flatten@List@
+											aggdata["AggregationTemplates"]
+									},
+									aggbit=ToLowerCase@aggthing;
+									If[!DirectoryQ@DirectoryName@fout,
+										CreateDirectory@DirectoryName@fout
+										];
+									If[TrueQ@OptionValue[Monitor],
+										Function[Null,
+											Monitor[#, 
+												Internal`LoadingPanel@
+													TemplateApply[
+														"Generating ``",
+														WebSiteBuildURL@
+															FileNameDrop[fout,FileNameDepth@outDir]
+														]
+												],
+											HoldAllComplete
 											],
-										HoldAllComplete
-										],
-									Identity
-									]@
-								WebSiteTemplateExport[
-									aggbit,
-									fout,
-									{FileNameJoin@{thm,"templates"},longDir},
-									None,
-									templates,
-									Merge[
-										{
-											config,
-											aggthing->
-												Values@$aggregationFiles,
-											"URL"->
-												Set[
-													aggbit,
-													WebSiteBuildURL@
-														FileNameDrop[fout,FileNameDepth@outDir]
-													]
-											},
-										Last
-										]
-									];
-								aggbit=.;
+										Identity
+										]@
+									WebSiteTemplateExport[
+										aggbit,
+										fout,
+										{FileNameJoin@{thm,"templates"},longDir},
+										None,
+										templates,
+										Merge[
+											{
+												config,
+												aggthing->
+													Values@$aggregationFiles,
+												"URL"->
+													Set[
+														aggbit,
+														WebSiteBuildURL@
+															FileNameDrop[fout,FileNameDepth@outDir]
+														]
+												},
+											Last
+											]
+										];
+									aggbit=.;
+									]
 								]
 							]
 						]
@@ -1885,37 +1933,54 @@ WebSiteGenerateAggregationPages[
 
 
 (* ::Subsubsection::Closed:: *)
-(*GenerateIndexPage*)
+(*GenerateIndexPages*)
 
 
 
-WebSiteGenerateIndexPage//ClearAll
+WebSiteGenerateIndexPages//ClearAll
 
 
-Options[WebSiteGenerateIndexPage]=
+(* ::Text:: *)
+(*
+	Need support for multiple indexes, rather than just the global one
+*)
+
+
+
+WebSiteGatherIndexTemplates[thm_]:=
+	FileNameDrop[#, 1+FileNameDepth[thm]]&/@
+		Join[
+			{
+				FileNameJoin[{thm, "templates", "index.html"}]
+				},
+			FileNames["*.html", FileNameJoin@{thm, "templates", "indexes"}]
+			]
+
+
+Options[WebSiteGenerateIndexPages]=
 	{
 		"PageSize"->0,
 		Monitor->True
 		};
-WebSiteGenerateIndexPage[dir_,outDir_,theme_,config_, ops:OptionsPattern[]]:=
+WebSiteGenerateIndexPages[dir_,outDir_,theme_,config_, ops:OptionsPattern[]]:=
 	With[
 		{
 			longDir=ExpandFileName@dir,
 			thm=WebSiteFindTheme[dir, theme, "DownloadTheme"->True]
 			},
 			WebSiteTemplateExportPaginated[
-				"index.html",
-				FileBaseName["index"],
+				#,
+				StringReplace[StringTrim[#, ".html"], "indexes"->"index"],
 				outDir, outDir,
-				{FileNameJoin@{thm,"templates"},longDir},
+				{FileNameJoin@{thm, "templates"}, longDir},
 				None,
-				{"index.html"}, 
+				{#}, 
 				config,
 				$WebSiteBuildAggStack["Articles"],
 				FilterRules[{ops}, 
 					Options@WebSiteTemplateExportPaginated
 					]
-				]
+				]&/@WebSiteGatherIndexTemplates[thm]
 		];
 
 
@@ -2432,7 +2497,7 @@ WebSiteBuild[
 						];
 					];
 				If[genInd,
-					WebSiteGenerateIndexPage[
+					WebSiteGenerateIndexPages[
 						dir,outDir,
 						Lookup[config,"Theme",OptionValue["DefaultTheme"]],
 						newconf,
@@ -2446,7 +2511,7 @@ WebSiteBuild[
 								buildOps,
 								Monitor->OptionValue[Monitor]
 								},
-							Options[WebSiteGenerateIndexPage]
+							Options[WebSiteGenerateIndexPages]
 							]
 						];
 					];
@@ -2480,6 +2545,11 @@ WebSiteBuild[
 
 
 WebSiteDeploy::depfail="Failed to deploy `` to ``";
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*webSiteDeploySelectFiles*)
+
 
 
 webSiteDeploySelectFiles[
@@ -2685,7 +2755,7 @@ webSiteDeploy[
 	last_, select_,
 	ops:OptionsPattern[WebSiteDeploy]]:= 
 	(
-		KeyChainConnect[OptionValue[CloudConnect]];
+		KeychainConnect[OptionValue[CloudConnect]];
 		Block[{file},
 			If[TrueQ@OptionValue[Monitor],
 				Function[Null, 

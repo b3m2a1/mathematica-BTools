@@ -32,7 +32,14 @@
 PackageScopeBlock[
 	GitRun::usage="processRunDupe wrapper for git";
 	GitRegisterFunction::usage="Registers a Git function";
+	$GitLogCommands::usage="";
+	$GitCommandLog::usage="";
 	]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Create*)
+
 
 
 PackageScopeBlock[
@@ -42,11 +49,21 @@ PackageScopeBlock[
 	];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Edit*)
+
+
+
 PackageScopeBlock[
 	GitIgnore::usage="Adds to the .gitignore file for a directory";
 	GitAdd::usage="Adds a file to the staging area of a  git repository";
 	GitCommit::usage="Runs the commit command, using -a by default";
 	]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Config/Status*)
+
 
 
 PackageScopeBlock[
@@ -57,6 +74,11 @@ PackageScopeBlock[
 	GitConfig::usage="Sugar on the GitConfig tool";
 	GitHelp::usage="Gets help from the git man pages";
 	];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Remotes and branching*)
+
 
 
 PackageScopeBlock[
@@ -76,6 +98,11 @@ PackageScopeBlock[
 	];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Repo finding*)
+
+
+
 PackageScopeBlock[
 	GitRepositories::usage="Finds all the directories that support a git repo";
 	$GitRepo::usage="The current git repo";
@@ -87,6 +114,11 @@ else None";
 	GitRepoQ::usage=
 		"Returns true if the thing is a directory with a .git file";
 	]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Git*)
+
 
 
 $GitActions::usage=
@@ -120,7 +152,7 @@ SVN::usage=
 
 
 PackageScopeBlock[
-	$GitHubUserName::usage=
+	$GitHubUsername::usage=
 		"The user's github username";
 	$GitHubPassword::usage=
 		"The user's github password";
@@ -272,6 +304,10 @@ processRunDupe[s_String,
 
 
 
+If[!ValueQ@$GitLogCommands, $GitLogCommands=False];
+If[!ListQ@$GitCommandLog, $GitCommandLog={}];
+
+
 gitDoInDir[dir_String?DirectoryQ,cmd_]:=
 	With[{d=ExpandFileName@dir},
 			SetDirectory@d;
@@ -302,20 +338,29 @@ GitRun[
 				(Git::err=processRunDupe::err)
 			];
 		If[MatchQ[d,_String],
-			processRunDupe[
-				{
-					"git",
-					Sequence@@Replace[$GitBaseOptionArgs, Except[_?OptionQ]->{}],
-					cmd1, 
-					cmd2
-					}//
-					Map[If[FileExistsQ@#, ExpandFileName@#, #]&],
-				Git::err, 
-				ProcessDirectory->ExpandFileName@d
+			With[{
+				cmd=
+					{
+						"git",
+						Sequence@@Replace[$GitBaseOptionArgs, Except[_?OptionQ]->{}],
+						cmd1, 
+						cmd2
+						}//
+						Map[If[FileExistsQ@#, ExpandFileName@#, #]&]
+				},
+				If[$GitLogCommands, AppendTo[$GitCommandLog, cmd]];
+				processRunDupe[
+					cmd,
+					Git::err, 
+					ProcessDirectory->ExpandFileName@d
+					]
 				],
-			processRunDupe[
-				{"git", cmd1, cmd2}, 
-				Git::err
+			With[{cmd={"git", cmd1, cmd2}},
+				If[$GitLogCommands, AppendTo[$GitCommandLog, cmd]];
+				processRunDupe[
+					cmd, 
+					Git::err
+					]
 				]
 			]
 		];
@@ -342,6 +387,7 @@ GitRun[
 			_MessageName:>
 				(Git::err=processRunDupe::err)
 			];
+		If[$GitLogCommands, AppendTo[$GitCommandLog, cmdBits]];
 		If[MatchQ[d,_String],
 			processRunDupe[
 				cmdBits,
@@ -427,7 +473,12 @@ GitPrepParams[ops_, map_]:=
 		1
 		];
 GitPrepParams[fn_, ops_, map_]:=
-	GitPrepParams[Flatten[{Options@fn, ops}], map]
+	With[{baseOps=Flatten@{ops}},
+		GitPrepParams[
+			Flatten[{baseOps, Select[Options@fn, FreeQ[baseOps, #[[1]]]&]}], 
+			map
+			]
+		]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -440,7 +491,8 @@ GitRegisterFunction[
 	sym_Symbol, 
 	cmd:{__String},
 	map_?OptionQ,
-	joinOps:_List?OptionQ:{}
+	joinOps:_List?OptionQ:{},
+	fn:_Symbol:GitRun
 	]:=
 	With[
 		{
@@ -462,7 +514,8 @@ GitRegisterFunction[
 			args___String,
 			ops:OptionsPattern[]
 			]:=
-			GitRun[dir,
+			fn[
+				dir,
 				main,
 				rest,
 				Sequence@@
@@ -478,19 +531,21 @@ GitRegisterFunction[
 	sym_Symbol, 
 	cmd_String,
 	map_?OptionQ,
-	joinOps:_List?OptionQ:{}
+	joinOps:_List?OptionQ:{},
+	fn:_Symbol:GitRun
 	]:=
 	GitRegisterFunction[sym, {cmd}, map, joinOps]
 GitRegisterFunction[
 	sym_Symbol, 
 	map_?OptionQ,
-	joinOps:_List?OptionQ:{}
+	joinOps:_List?OptionQ:{},
+	fn:_Symbol:GitRun
 	]:=
 	GitRegisterFunction[
 		sym,
-		StringTrim[SymbolName[sym], "Git"],
+		ToLowerCase@StringTrim[SymbolName[sym], "Git"],
 		map,
-		joinops
+		joinOps
 		]
 
 
@@ -879,9 +934,13 @@ GitRegisterFunction[
 
 
 
+GitLog//Clear
+
+
 GitRegisterFunction[
 	GitLog,
 	"log",
+	SortBy[First]@
 	{
 		"Follow"->"follow",
 		"Decorate"->"decorate",
@@ -908,6 +967,8 @@ GitRegisterFunction[
 		"Merges"->"merges",
 		"NoMerges"->"no-merges",
 		"MinParents"->"min-parents",
+		"MaxParents"->"max-parents",
+		"NoMinParents"->"no-max-parents",
 		"NoMaxParents"->"no-max-parents",
 		"FirstParent"->"first-parent",
 		"Bisect"->"bisect",
@@ -961,9 +1022,137 @@ GitRegisterFunction[
 		"CompressComplete"->"cc",
 		"ShowMergeDiffs"->"m",
 		"Recursive"->"r",
-		"ShowTree"->"t"
+		"ShowTree"->"t",
+		"Stat"->"stat"
 		}
 	]
+
+
+(* ::Subsubsection::Closed:: *)
+(*GitLogDataset*)
+
+
+
+(* ::Text:: *)
+(*Assumes commit has already been stripped*)
+
+
+
+GitLogPostProcess[ass_]:=
+	With[
+		{
+			date=
+				With[{dateBits=StringSplit[StringTrim@ass["Date"]]},
+					DateObject[
+						StringRiffle[Most[dateBits]],
+						TimeZone->
+							(ToExpression[Last@dateBits]/100)
+						]
+					]
+			},
+		ReplacePart[ass,
+			"Date"->date
+			]
+		]
+
+
+GitLogParsePiece[str_String]:=
+	Module[
+		{
+			commit,
+			body,
+			head,
+			headParams,
+			message,
+			messageBits,
+			files=None
+			},
+		{commit, body}=
+			StringSplit[str, "\n", 2];
+		{head, message}=
+			StringSplit[body, "\n\n", 2];
+		If[StringContainsQ[message, StartOfLine~~" "~~WordCharacter],
+			messageBits=StringSplit[message, "\n\n"];
+			files=
+				StringCases[
+					Last@messageBits, 
+					StartOfLine~~" "~~fil:Except[WhitespaceCharacter]..~~Whitespace~~"|":>
+						fil
+					];
+			message=StringRiffle[Most@messageBits, "\n\n"]
+			];
+		headParams=
+			StringCases[
+					head,
+					StartOfLine~~tag:WordCharacter..~~":"~~val:Except["\n"]..:>
+						(tag->val)
+					];
+		GitLogPostProcess@Association@
+			{
+				"Commit"->commit,
+				"Message"->StringTrim@message,
+				headParams,
+				"Files"->
+					If[files===None, 
+						Missing["NotAvailable"],
+						files
+						]
+				}
+		];
+
+
+Options[GitLogDataset]=
+	Options[GitLog];
+GitLogDataset[args___]:=
+	With[{str=Replace[GitLog[args], Null->""]},
+		Dataset[
+			GitLogParsePiece/@
+				StringSplit[str, StartOfLine~~"commit "]
+			]/;StringQ@str
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*GitFileHistory*)
+
+
+
+GitFileHistory//Clear
+
+
+Options[GitFileHistory]=
+	Options[GitLogDataset]
+GitFileHistory[
+	args__,
+	fpat:_?StringPattern`StringPatternQ:"*",
+	ops:OptionsPattern[]
+	]:=
+	With[
+		{
+			ds=
+				Normal@
+					GitLogDataset[
+						args,
+						If[!StringQ@fpat, 
+							First@StringPattern`PatternConvert[fpat], 
+							fpat
+							],
+						ops,
+						"Stat"->True
+						]
+			},
+		Dataset@GroupBy[
+			Flatten@
+				Map[
+					With[{files=#Files, rest=KeyDrop[#, "Files"]}, 
+						Map[#->rest&, files]
+						]&,
+					ds
+					],
+			First->Last,
+			GroupBy[#Commit&]
+			]/;ListQ@ds
+		]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2864,6 +3053,10 @@ $GitActions=
 			GitRepositories,
 		"Log"->
 			GitLog,
+		"LogDataset"->
+			GitLogDataset,
+		"FileHistory"->
+			GitFileHistory,
 		"Status"->
 			GitStatus,
 		"ListTree"->
@@ -3208,6 +3401,12 @@ SVN[
 
 
 
+If[Length@OwnValues[$GitHubUseKeychain]==0,
+	$GitHubUseKeychain:=
+		TrueQ@Lookup[$GitHubConfig, "UseKeychain", False]
+	];
+
+
 (* ::Subsubsection::Closed:: *)
 (*$GitHubConfig*)
 
@@ -3217,14 +3416,16 @@ If[Not@ValueQ@$GitHubConfig,
 	$GitHubConfig:=
 		Replace[
 			Do[
-				With[{f=PackageFilePath["Private", d]},
+				With[{f=PackageFilePath["Private", "Config", d]},
 					If[FileExistsQ@f,
-						$GitHubConfig=
-							Replace[Import@f,
-								{ 
-									o_?OptionQ:>Association@o,
-									_-><||>
-									}
+						Return[
+							$GitHubConfig=
+								Replace[Quiet@Import@f,
+									{ 
+										o_?OptionQ:>Association@o,
+										_-><||>
+										}
+									]
 								];
 						Break[]
 						]
@@ -3242,18 +3443,27 @@ If[Not@ValueQ@$GitHubConfig,
 
 
 (* ::Subsubsection::Closed:: *)
-(*$GitHubUserName*)
+(*$GitHubUsername*)
 
 
 
-If[Length[DownValues@$GitHubUserName]===0,
-	$GitHubUserName:=
+If[Length[OwnValues@$GitHubUsername]===0,
+	$GitHubUsername:=
 		Replace[
-			$KeyChain["$GitHubUserName"],
-			_Missing:>
+			If[$GitHubUseKeychain, $Keychain["$GitHubUsername"], None],
+			Except[_String]:>
 				$GitHubConfig["Username"]
 			]
 	];
+
+
+(* ::Subsubsection::Closed:: *)
+(*$GitHubEncodePassword*)
+
+
+
+$GitHubEncodePassword:=
+	TrueQ@$GitHubConfig["EncodePassword"];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -3270,13 +3480,13 @@ GitHubPassword[s_String]:=
 		{
 			base=
 				Replace[gitHubPasswordCache[s],
-					Except[_String]:>KeyChainGet[{"github.com",	s}, False]
+					Except[_String]:>KeychainGet[{"github.com",	s}, False]
 					]
 			},
 		If[StringQ@base,
 			base,
 			If[$GitHubStorePassword,
-				KeyChainGet[{"github.com",	s}, True],
+				KeychainGet[{"github.com",	s}, True],
 				AuthDialog[
 					Dynamic@$ghauth,
 					"",
@@ -3294,14 +3504,14 @@ GitHubPassword[s_String]:=
 			]
 		];
 GitHubPassword[Optional[Automatic,Automatic]]:=
-	GitHubPassword[$GitHubUserName];
+	GitHubPassword[$GitHubUsername];
 Clear@$GitHubPassword;
 $GitHubPassword:=
 	GitHubPassword[Automatic];
 
 
-(*If[ValueQ@$GitHubUserName&&!KeyMemberQ[$gitHubPassCache,$GitHubUserName],
-	$gitHubPassCache[$GitHubUserName]:=
+(*If[ValueQ@$GitHubUsername&&!KeyMemberQ[$gitHubPassCache,$GitHubUsername],
+	$gitHubPassCache[$GitHubUsername]:=
 		Do[
 			With[{f=
 				FileNameJoin@{
@@ -3312,7 +3522,7 @@ $GitHubPassword:=
 				If[FileExistsQ@f,
 					Replace[Import@f,
 						s_String:>
-							($gitHubPassCache[$GitHubUserName]=s);
+							($gitHubPassCache[$GitHubUsername]=s);
 						];
 					Return[True]
 					]
@@ -3345,10 +3555,6 @@ $GitHubSSHConnected:=
 
 
 
-$GitHubEncodePassword:=
-	TrueQ@$GitHubConfig["EncodePassword"];
-
-
 ClearAll[GitHubPath, FormatGitHubPath]
 
 
@@ -3374,7 +3580,7 @@ FormatGitHubPath[path___String,ops:OptionsPattern[]]:=
 					{
 						Automatic:>
 							Replace[OptionValue@"Password",
-								Automatic|_String:>$GitHubUserName
+								Automatic|_String:>$GitHubUsername
 								],
 						Except[_String]->None
 						}
@@ -3386,7 +3592,7 @@ FormatGitHubPath[path___String,ops:OptionsPattern[]]:=
 			"Password"->
 				Replace[
 					Replace[OptionValue["Username"],{
-						Automatic:>$GitHubUserName,
+						Automatic:>$GitHubUsername,
 						Except[_String]->None
 						}],
 					s_String:>
@@ -3399,7 +3605,7 @@ FormatGitHubPath[path___String,ops:OptionsPattern[]]:=
 		"Path"->
 			{
 				Replace[OptionValue@"Username",
-					Automatic:>$GitHubUserName
+					Automatic:>$GitHubUsername
 					],
 				If[Length@{path}>1,
 					Sequence@@Flatten@
@@ -3454,7 +3660,7 @@ GitHubPath/:
 		{
 			FirstCase[{ops},
 				("Username"->u_):>u,
-				$GitHubUserName
+				$GitHubUsername
 				],
 			repos
 			};
@@ -3598,15 +3804,59 @@ GitHubQuery[
 	path:_?(MatchQ[Flatten@{#},{___String}]&):{},
 	query:(_String->_)|{(_String->_)...}:{},
 	headers:_Association:<||>]:=
-	HTTPRequest[
-		URLBuild@<|
-			"Scheme"->"https",
-			"Domain"->"api.github.com",
-			"Path"->Flatten@{path},
-			"Query"->{query}
-			|>,
-		headers
-		];
+	Block[
+		{
+			$GitHubUsername=$GitHubUsername,
+			$GitHubPassword=$GitHubPassword
+			},
+		Catch@
+			HTTPRequest[
+				URLBuild@<|
+					"Scheme"->"https",
+					"Domain"->"api.github.com",
+					"Path"->Flatten@{path},
+					"Query"->{query}
+					|>,
+				Association@Normal@
+					ReplacePart[headers,
+						{
+							"Headers":>
+								ReplaceAll[headers["Headers"],
+									{
+										("Authorization"->Automatic):>
+											("Authorization"->GitHubAuthHeader[] ),
+										("Authorization"->{u__}):>
+											("Authorization"->GitHubAuthHeader[u])
+										}
+									],
+							"Username":>
+								Replace[
+									headers["Username"],
+									Automatic:>
+										Replace[$GitHubUsername,
+											Except[_String?(StringLength[#]>0&)]:>
+												GitHubSetUsernameAndPassword[
+													Automatic, 
+													Lookup[headers, "Password", $GitHubPassword]
+													]
+											]
+									],
+							"Password":>
+								Replace[
+									headers["Password"],
+									Automatic:>
+										Replace[$GitHubPassword,
+											Except[_String?(StringLength[#]>0&)]:>
+												GitHubSetUsernameAndPassword[
+													Lookup[headers, "Username", $GitHubPassword], 
+													Automatic
+													]
+											]
+									]
+							}
+						]
+				]
+			];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -3646,7 +3896,7 @@ GitHubQueryParamFilter[s_Symbol, ops_?OptionQ]:=
 	user:_String|Automatic:Automatic,
 	scopes:_String|{__String}:{"public_repo"}]:=
 	GitHubQuery[
-		Replace[user,Automatic:>$GitHubUserName],
+		Replace[user,Automatic:>$GitHubUsername],
 		<|
 			"Headers"\[Rule]{
 				"Authorization"\[Rule]"token OAUTH-TOKEN",
@@ -3661,25 +3911,65 @@ GitHubQueryParamFilter[s_Symbol, ops_?OptionQ]:=
 
 
 
+GitHubGetUsernameAndPassword[u_, p_]:=
+	Block[
+		{
+			username=Replace[u, Automatic:>$GitHubUsername], 
+			password=Replace[u, Automatic:>$GitHubPassword]
+			},
+		If[
+			Not[
+				StringQ@username&&StringQ@password&&
+				StringLength[username]>0&&StringLength[password]>0
+				],
+			If[StringQ@username&&$GitHubUseKeychain,
+				password=
+					KeychainGet[{"github.com", username}]
+				]
+			];
+		If[
+			Not[
+				StringQ@username&&StringQ@password&&
+				StringLength[username]>0&&StringLength[password]>0
+				],
+				Replace[
+					AuthDialog[
+						{
+							"GitHub", 
+							If[StringQ[username], username, ""], 
+							If[StringQ[password], password, ""]
+							}],
+					a_Association?AssociationQ:>
+						(
+							Set[username, a[["GitHub", 1]]];
+							Set[password, a[["GitHub", 2]]];
+							)
+					]
+				];
+		{username, password}
+		];
+
+
+GitHubSetUsernameAndPassword[u_, p_]:=
+	{$GitHubUsername, $GitHubPassword}=
+		GitHubGetUsernameAndPassword[u, p];
+
+
 GitHubAuthHeader[
 	user:_String|Automatic:Automatic,
 	password:_String|Automatic:Automatic
 	]:=
-	StringJoin@{
-		"Basic ",
-		Developer`EncodeBase64@
+	With[{up=GitHubGetUsernameAndPassword[user, password]},
+		If[Not[AllTrue[up, StringQ[#]&&StringLength[#]>0&]],
+			Message[GitHub::noauth];
+			Throw@$Failed,
 			StringJoin@{
-				Replace[user,
-					Automatic:>
-						$GitHubUserName
-					],
-				":",
-				Replace[password,
-					Automatic:>
-						GitHubPassword[user]
-					]
+				"Basic ",
+				Developer`EncodeBase64@
+					StringJoin@{up[[1]],":",up[[2]]}
 				}
-		};
+			]
+		];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -3696,7 +3986,7 @@ GitHubUserAPI[
 	]:=
 	GitHubQuery[{
 		type,
-		Replace[user,Automatic:>$GitHubUserName],
+		Replace[user,Automatic:>$GitHubUsername],
 		Flatten@path
 		},
 		query,
@@ -3743,13 +4033,16 @@ GitHubReposAPI[
 
 
 
+GitHubRepositories//Clear
+
+
 GitHubRepositories[
-	type:"user"|"org":"user",
+	type:"users"|"org":"users",
 	user:_String|Automatic:Automatic,
 	query:(_String->_)|{(_String->_)...}:{},
 	headers:_Association:<||>
 	]:=
-	GitHubUserAPI[type,user,"repos",query,headers];
+	GitHubUserAPI[type, user, {"repos"}, query,headers];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -3797,7 +4090,7 @@ GitHubCreate[
 	repo_String,
 	ops:OptionsPattern[]
 	]:=
-	With[{u=Replace[OptionValue["Username"],Automatic:>$GitHubUserName]},
+	With[{u=Replace[OptionValue["Username"],Automatic:>$GitHubUsername]},
 		GitHubQuery[
 			{
 				"user",
@@ -3886,6 +4179,70 @@ GitHubDelete[
 
 
 (* ::Subsubsection::Closed:: *)
+(*ListForks *)
+
+
+
+Options[GitHubListForks]=
+	{
+		"Sort"->None
+		};
+GitHubListForks[
+	repo:(_GitHubPath|_String)?GitHubRepoQ,
+	ops:OptionsPattern[]
+	]:=
+	GitHubReposAPI[
+		repo,
+		{"forks"},
+		Replace[OptionValue["Sort"],
+			{
+				Except[_String]:>Sequence@@{},
+				s_String:>("sort"->s)
+				}
+			]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Fork *)
+
+
+
+GitHubFork//Clear
+
+
+Options[GitHubFork]=
+	{
+		"Organization"->None,
+		"Username"->Automatic,
+		"Password"->Automatic
+		};
+GitHubFork[
+	repo:(_GitHubPath|_String)?GitHubRepoQ,
+	ops:OptionsPattern[]
+	]:=
+	GitHubReposAPI[
+		repo,
+		{"forks"},
+		Replace[OptionValue["Organization"],
+			{
+				Except[_String]:>Sequence@@{},
+				s_String:>("organization"->s)
+				}
+			],
+		<|
+			"Method"->"POST",
+			"Headers"->
+				{
+					"Authorization"->
+						OptionValue[{"Username", "Password"}]
+					}
+			|>
+		]
+			
+
+
+(* ::Subsubsection::Closed:: *)
 (*CreateReadme*)
 
 
@@ -3965,7 +4322,7 @@ GitHubCreateRelease[
 	tagName_String,
 	ops:OptionsPattern[]
 	]:=
-	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUserName]},
+	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUsername]},
 		GitHubQuery[
 			{
 				"repos",
@@ -4030,7 +4387,7 @@ GitHubEditRelease[
 	id_String,
 	ops:OptionsPattern[]
 	]:=
-	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUserName]},
+	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUsername]},
 		GitHubQuery[
 			{
 				"repos",
@@ -4078,7 +4435,7 @@ GitHubDeleteRelease[
 	id_String,
 	ops:OptionsPattern[]
 	]:=
-	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUserName]},
+	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUsername]},
 		GitHubQuery[
 			{
 				"repos",
@@ -4116,7 +4473,7 @@ GitHubListReleaseAssets[
 	id_String,
 	ops:OptionsPattern[]
 	]:=
-	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUserName]},
+	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUsername]},
 		GitHubQuery[
 			{
 				"repos",
@@ -4166,7 +4523,7 @@ GitHubUploadReleaseAsset[
 	asset:(_String|_File)?FileExistsQ,
 	ops:OptionsPattern[]
 	]:=
-	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUserName]},
+	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUsername]},
 		GitHubQuery[
 			{
 				"repos",
@@ -4232,7 +4589,7 @@ GitHubGetReleaseAsset[
 	id_String,
 	ops:OptionsPattern[]
 	]:=
-	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUserName]},
+	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUsername]},
 		GitHubQuery[
 			{
 				"repos",
@@ -4282,7 +4639,7 @@ GitHubEditReleaseAsset[
 	asset:(_String|_File)?FileExistsQ|None:None,
 	ops:OptionsPattern[]
 	]:=
-	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUserName]},
+	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUsername]},
 		GitHubQuery[
 			{
 				"repos",
@@ -4361,7 +4718,7 @@ GitHubEditReleaseAsset[
 	id_String,
 	ops:OptionsPattern[]
 	]:=
-	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUserName]},
+	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUsername]},
 		GitHubQuery[
 			{
 				"repos",
@@ -4610,6 +4967,10 @@ $GitHubActions=
 			GitHubCreate,
 		"Delete"->
 			GitHubDelete,
+		"Fork"->
+			GitHubFork,
+		"ListForks"->
+			GitHubListForks,
 		"CreateReadme"->
 			GitHubCreateReadme,
 		"Releases"->

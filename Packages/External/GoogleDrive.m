@@ -55,10 +55,10 @@ $GAClientSecretName="GoogleAPIClientSecret";
 If[!MatchQ[OwnValues[$GoogleAPIUsername],{_:>(_String?(StringLength@#>0&))}],
 	$GoogleAPIUsername:=
 		$GoogleAPIUsername=
-			Replace[$KeyChain[$GoogleAPIUsernameName],
+			Replace[$Keychain[$GoogleAPIUsernameName],
 				Except[_String?(StringLength@#>0&)]:>
 					(
-					$KeyChain[$GoogleAPIUsernameName]=
+					$Keychain[$GoogleAPIUsernameName]=
 						Replace[
 							SelectFirst[
 								PackageFilePath["Private",#]&/@
@@ -78,10 +78,10 @@ If[!MatchQ[OwnValues[$GoogleAPIUsername],{_:>(_String?(StringLength@#>0&))}],
 If[!MatchQ[OwnValues[$GAClientID],{_:>(_String?(StringLength@#>0&))}],
 	$GAClientID:=
 		$GAClientID=
-			Replace[$KeyChain[$GAClientIDName],
+			Replace[$Keychain[$GAClientIDName],
 				Except[_String?(StringLength@#>0&)]:>
 					(
-					$KeyChain[$GAClientIDName]=
+					$Keychain[$GAClientIDName]=
 						Replace[
 							SelectFirst[
 								PackageFilePath["Private",#]&/@
@@ -101,10 +101,10 @@ If[!MatchQ[OwnValues[$GAClientID],{_:>(_String?(StringLength@#>0&))}],
 If[!MatchQ[OwnValues[$GAClientSecret],{_:>(_String?(StringLength@#>0&))}],
 	$GAClientSecret:=
 		$GAClientSecret=
-			Replace[$KeyChain[$GAClientSecretName],
+			Replace[$Keychain[$GAClientSecretName],
 				Except[_String?(StringLength@#>0&)]:>
 					(
-					$KeyChain[$GAClientSecretName]=
+					$Keychain[$GAClientSecretName]=
 						Replace[
 							SelectFirst[
 								PackageFilePath["Private",#]&/@
@@ -218,8 +218,8 @@ GoogleAPIClearAuth[
 		cid=
 			Replace[clientID,Automatic:>$GAClientID]
 			},
-		$KeyChain[{u,cid,scope,"token"}]=.;
-		$KeyChain[{u,cid,scope,"code"}]=.;
+		$Keychain[{u,cid,scope,"token"}]=.;
+		$Keychain[{u,cid,scope,"code"}]=.;
 		];
 
 
@@ -328,7 +328,7 @@ GAOAuthenticate[
 							Replace[Import[GAOAuthRefreshRequest@a["refresh_token"],"RawJSON"],{
 								r_Association:>
 									(
-										$KeyChain[{u,cid,scope,"token"}]=
+										$Keychain[{u,cid,scope,"token"}]=
 											Append[r,"LastUpdated"->Now];
 										GAOAuthenticate[u,cid,scope]
 										),
@@ -920,10 +920,10 @@ GAOAuthTokenData[
 				cid=
 					Replace[clientID,Automatic:>$GAClientID]
 					},
-				Replace[$KeyChain[Key@{u,cid,scope,"token"}],
+				Replace[$Keychain[Key@{u,cid,scope,"token"}],
 					Except[_Association?(KeyMemberQ["access_token"])]:>
 						Replace[
-							Replace[$KeyChain[Key@{u,clientID,scope,"code"}],
+							Replace[$Keychain[Key@{u,clientID,scope,"code"}],
 								Except[_String?(StringLength@#>0&)]:>
 									Replace[
 										OAuthDialog[
@@ -935,14 +935,14 @@ GAOAuthTokenData[
 											$GAParameters["Root","Domain"]
 											],
 										s_String?(StringLength@#>0&):>
-											($KeyChain[{u,cid,scope,"code"}]=s)
+											($Keychain[{u,cid,scope,"code"}]=s)
 										]
 								],{
 							code_String?(StringLength@#>0&):>
 								Replace[Import[GAOAuthTokenRequest[code],"RawJSON"],
 									r_Association?(KeyMemberQ["access_token"]):>
 										(
-											$KeyChain[{u,cid,scope,"token"}]=
+											$Keychain[{u,cid,scope,"token"}]=
 												Append[r,"LastUpdated"->Now]
 											)
 									]

@@ -8,8 +8,14 @@
 (*Naming*)
 
 
+$Name["Directory"]:=
+	$PackageDirectory;
 $PackageDirectory=
 	DirectoryName@$InputFileName;
+
+
+$Name["Name"]:=
+	$PackageName;
 $PackageName=
 	"$Name";
 
@@ -18,7 +24,9 @@ $PackageName=
 (*Loading*)
 
 
+$Name["PackageListing"]:=$PackageListing;
 $PackageListing=<||>;
+$Name["Contexts"]:=$PackageContexts;
 $PackageContexts={
 		"$Name`",
 		"$Name`PackageScope`Private`",
@@ -28,12 +36,15 @@ $PackageDeclared=
 	TrueQ[$PackageDeclared];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Scoping*)
 
 
+$Name["FEScopedSymbols"]:=$PackageFEHiddenSymbols;
 $PackageFEHiddenSymbols={};
+$Name["PackageScopedSymbols"]:=$PackageScopedSymbols;
 $PackageScopedSymbols={};
+$Name["LoadingParameters"]:=$PackageLoadSpecs
 $PackageLoadSpecs=
 	Merge[
 		{
@@ -85,14 +96,27 @@ $PackageLoadSpecs=
 			},
 		Last
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Allow flags*)
+
+
+$Name["AllowRescoping"]:=$AllowPackageRescoping;
 $AllowPackageRescoping=
 	Replace[
 		Lookup[$PackageLoadSpecs, "AllowRescoping"],
 		Except[True|False]->$TopLevelLoad
 		];
+$Name["AllowRecoloring"]:=$AllowPackageRecoloring;
 $AllowPackageRecoloring=
 	Replace[
 		Lookup[$PackageLoadSpecs, "AllowRecoloring"],
-		Except[True|False]->
-			$TopLevelLoad
+		Except[True|False]->$TopLevelLoad
+		];
+$Name["AllowAutocompletions"]:=$AllowPackageAutocompletions;
+$AllowPackageAutocompletions=
+	Replace[
+		Lookup[$PackageLoadSpecs, "AllowAutocompletions"],
+		Except[True|False]->$TopLevelLoad
 		];

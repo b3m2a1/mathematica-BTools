@@ -4,22 +4,25 @@
 (*Loading*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Constants*)
 
 
+$Name["FileContexts"]:=$PackageFileContexts;
 If[Not@AssociationQ@$PackageFileContexts,
 	$PackageFileContexts=
 		<||>
 	];
 
 
+$Name["DeclaredPackages"]:=$DeclaredPackages;
 If[Not@AssociationQ@$DeclaredPackages,
 	$DeclaredPackages=
 		<||>
 	];
 
 
+$Name["LoadedPackages"]:=$LoadedPackages;
 If[Not@ListQ@$LoadedPackages,
 	$LoadedPackages={}
 	];
@@ -202,6 +205,10 @@ PackageLoadDeclare[pkgFile_String]:=
 (*PackageAppLoad*)
 
 
+$Name["Load", args___]:=
+	PackageAppLoad[args]
+
+
 packageAppLoad[dir_, listing_]:=
 	With[
 		{
@@ -255,6 +262,8 @@ PackageAppLoad~SetAttributes~Listable;
 (*PackageAppGet*)
 
 
+$Name["Get", f__]:=
+	PackageAppGet[f];
 PackageAppGet[f_]:=
 	PackageExecute@
 		With[{fBase = 
@@ -290,6 +299,10 @@ PackageAppGet[c_,f_]:=
 (*PackageAppNeeds*)
 
 
+$Name["Needs", f___]:=
+	PackageAppNeeds[f];
+
+
 PackageAppNeeds[pkgFile_String?FileExistsQ]:=
 	If[!MemberQ[$LoadedPackages,pkgFile],
 		If[KeyMemberQ[$DeclaredPackages,pkgFile],
@@ -306,7 +319,7 @@ PackageAppNeeds[pkg_String]:=
 		];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*PackageScopeBlock*)
 
 

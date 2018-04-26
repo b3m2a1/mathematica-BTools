@@ -677,7 +677,7 @@ markdownToXMLValidateLink[o_]:=
 
 
 $markdownToXMLLink=
-	l:(o:Except["!"]|StartOfLine|StartOfString)~~
+	l:(o:Except["!"|"*"|"_"]|StartOfLine|StartOfString)~~
 		link:("["~~Except["\n"]..~~"]("~~Except[WhitespaceCharacter]..~~")")/;
 			markdownToXMLValidateLink[link]:>
 		{

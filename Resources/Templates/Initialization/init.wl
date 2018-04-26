@@ -17,7 +17,7 @@ BeginPackage["$Name`"];
 
 
 $Name::usage=
-	"$Name is an inert head for the $Name package";
+	"$Name is a manager head for the $Name package";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -57,6 +57,9 @@ $ContextPath=
 
 Unprotect["`PackageScope`Private`*"];
 Begin["`PackageScope`Private`"];
+
+
+Clear[$Name];
 
 
 $InitCode
@@ -247,6 +250,30 @@ PackagePostProcessContextPathReassign[]:=
 		]
 
 
+(* ::Subsubsection:: *)
+(*AttachMainAutocomplete*)
+
+
+PackageAttachMainAutocomplete[]:=
+	PackageAddAutocompletions[$Name, 
+		Table[
+			Replace[{}->None]@
+				Cases[
+					DownValues[$Name],
+					Nest[
+						Insert[#, _, {1, 1, 1}]&,
+						(HoldPattern[Verbatim[HoldPattern]][
+							$Name[s_String, ___]
+							]:>_),
+						n-1
+						]:>s,
+					Infinity
+					],
+			{n, 5}
+			]
+		]
+
+
 (* ::Subsection:: *)
 (*End*)
 
@@ -290,6 +317,7 @@ If[!`PackageScope`Private`$loadAbort,
 	`PackageScope`Private`PackagePostProcessExposePackages[];
 	`PackageScope`Private`PackagePostProcessRehidePackages[];
 	`PackageScope`Private`PackagePostProcessDecontextPackages[];
+	`PackageScope`Private`PackageAttachMainAutocomplete[];
 	]
 
 
