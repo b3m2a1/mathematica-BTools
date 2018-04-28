@@ -102,6 +102,11 @@ $PackageLoadSpecs=
 (*Allow flags*)
 
 
+$AllowPackageSymbolDefinitions=
+	Replace[
+		Lookup[$PackageLoadSpecs, "PackageSymbolDefinitions"],
+		Except[True|False|None]->True
+		];
 $Name["AllowRescoping"]:=$AllowPackageRescoping;
 $AllowPackageRescoping=
 	Replace[

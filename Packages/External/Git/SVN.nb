@@ -1,0 +1,389 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["SVN Calls", "CodeSection",
+ Evaluatable->False,
+ CellChangeTimes->{{3.6883876076236773`*^9, 3.688387617606349*^9}, 
+   3.6883901088961697`*^9, {3.733856640052491*^9, 
+   3.733856642625642*^9}},ExpressionUUID->"f1532e5a-503d-4c56-810d-\
+d30b3106336a"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]SVN\[RightFloor]", "CodeSubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.6948087935892353`*^9, 
+  3.694808794237159*^9}},ExpressionUUID->"71c01353-ea66-429a-bc7b-\
+40cbf8823262"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"SVNRun", "::", "usage"}], "=", "\"\<Runs SVN\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SVNFileNames", "::", "usage"}], "=", "\"\<svn ls\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SVNCheckOut", "::", "usage"}], "=", 
+   "\"\<Uses SVN to clone from a server\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SVNExport", "::", "usage"}], "=", 
+   "\"\<Uses SVN to pull a single file from a server\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"$SVNActions", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Known actions for SVN\>\""}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.694808796625352*^9, 3.694808822804577*^9}, {
+  3.694809072936795*^9, 3.694809073118505*^9}, {3.711983190335845*^9, 
+  3.7119832026756144`*^9}, {3.727880266238493*^9, 3.727880268662156*^9}, {
+  3.733853751298086*^9, 
+  3.733853755154591*^9}},ExpressionUUID->"74dd2dbd-4740-4fb0-9922-\
+33686a062ea4"]
+}, Closed]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"8efeecd5-58ca-4e9b-96af-\
+50efb0db3a99"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]SVN\[RightFloor]", "CodeSubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.694808183789734*^9, 
+  3.694808185333522*^9}},ExpressionUUID->"3f418e86-eff4-40fb-89f1-\
+f697d666df32"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Run\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.6948149144184027`*^9, 
+  3.6948149160491877`*^9}},ExpressionUUID->"3ba2fcfa-f281-4248-baff-\
+0f44605e9196"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "SVNRun", "]"}], "=", "\n", "\t", 
+   RowBox[{"Normal", "@", 
+    RowBox[{"Merge", "[", 
+     RowBox[{
+      RowBox[{"{", "\n", "\t\t", 
+       RowBox[{
+        RowBox[{"Options", "@", "processRunDupe"}], ",", "\n", "\t\t", 
+        RowBox[{"\"\<TrustServer\>\"", "\[Rule]", "False"}]}], "\n", "\t", 
+       "\t", "}"}], ",", "\n", "\t", "\t", "First"}], "\n", "\t", "\t", 
+     "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SVNRun", "[", 
+    RowBox[{"cmd_", ",", "\n", "\t", 
+     RowBox[{"kwargs", ":", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"_Rule", "|", "_RuleDelayed", "|", "_String"}], ")"}], 
+       "..."}]}], ",", "\n", "\t", "repo_String", ",", "\n", "\t", 
+     RowBox[{"others", ":", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"_Rule", "|", "_RuleDelayed", "|", "_String"}], ")"}], 
+       "..."}]}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"processRunDupe", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{
+      "\"\<svn\>\"", ",", "\n", "\t\t\t", "cmd", ",", "\n", "\t\t\t", 
+       "kwargs", ",", "\n", "\t", "\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"OptionValue", "@", "\"\<TrustServer\>\""}], ",", 
+         "\"\<--trust-server-cert\>\"", ",", "Nothing"}], "]"}], ",", "\n", 
+       "\t", "\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"FileExistsQ", "@", "repo"}], ",", 
+         RowBox[{"ExpandFileName", "@", "repo"}], ",", "repo"}], "]"}], ",", 
+       "\n", "\t", "\t\t", "others"}], "\n", "\t", "\t\t", "}"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"Evaluate", "[", "\n", "\t\t\t", 
+      RowBox[{"Sequence", "@@", "\n", "\t", "\t\t", 
+       RowBox[{"FilterRules", "[", 
+        RowBox[{
+         RowBox[{"{", "ops", "}"}], ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"Options", "@", "processRunDupe"}]}], "\n", "\t\t\t\t\t", 
+        "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.6948087867858152`*^9, 3.694808788069646*^9}, {
+   3.694809076143955*^9, 3.694809207729165*^9}, {3.694809309400795*^9, 
+   3.6948093437265873`*^9}, {3.694809388774472*^9, 3.694809393521535*^9}, {
+   3.694809427156069*^9, 3.694809472303104*^9}, {3.694809504590622*^9, 
+   3.6948095094689283`*^9}, {3.69480975156774*^9, 3.69480976806082*^9}, {
+   3.69481075173234*^9, 3.694810758818082*^9}, {3.694813042435561*^9, 
+   3.694813045001482*^9}, {3.720201982788929*^9, 3.720201996122222*^9}, 
+   3.720202305183605*^9, {3.720202868840755*^9, 3.720202883745092*^9}, {
+   3.728310577252488*^9, 
+   3.728310577268157*^9}},ExpressionUUID->"61f296fd-83eb-4f95-a9ac-\
+ce0479a3601e"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]FileNames\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.694814918240925*^9, 
+  3.6948149196490183`*^9}},ExpressionUUID->"17cd734c-ef1a-4bcc-ae93-\
+6ba451fee4a7"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "SVNFileNames", "]"}], "=", "\n", "\t", 
+   RowBox[{"Options", "@", "SVNRun"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SVNFileNames", "[", 
+    RowBox[{"repo_", ",", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Replace", "[", 
+    RowBox[{
+     RowBox[{"SVNRun", "[", 
+      RowBox[{"\"\<ls\>\"", ",", "repo", ",", "ops"}], "]"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"fn_String", ":>", "\n", "\t\t\t", 
+      RowBox[{"With", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"lines", "=", 
+          RowBox[{"StringSplit", "[", 
+           RowBox[{"fn", ",", "\"\<\\n\>\""}], "]"}]}], "}"}], ",", "\n", 
+        "\t", "\t", "\t\t", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"FileExistsQ", "@", "repo"}], ",", "\n", "\t", "\t", 
+          "\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"FileNameJoin", "@", 
+             RowBox[{"{", 
+              RowBox[{"repo", ",", "#"}], "}"}]}], "&"}], "/@", "lines"}], 
+          ",", "\n", "\t", "\t", "\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"URLBuild", "@", 
+             RowBox[{"{", 
+              RowBox[{"repo", ",", "#"}], "}"}]}], "&"}], "/@", "lines"}]}], 
+         "\n", "\t\t\t\t\t", "]"}]}], " ", "\n", "\t\t\t\t", "]"}]}]}], "\n", 
+    "\t\t", "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.694809478021626*^9, 3.694809518568968*^9}, {
+  3.694809712948892*^9, 3.694809831446727*^9}, {3.6948112141617937`*^9, 
+  3.694811238101659*^9}},ExpressionUUID->"737ed4ca-caf4-450d-b117-\
+9bc0d01a1479"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]CheckOut\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.694814923896729*^9, 
+  3.694814924976956*^9}},ExpressionUUID->"b0d4c54f-4403-4508-a541-\
+3fc8a381fd92"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "SVNCheckOut", "]"}], "=", "\n", "\t", 
+   RowBox[{"Options", "@", "SVNRun"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"SVNCheckOut", "[", "\n", "\t", 
+   RowBox[{"repo_", ",", "\n", "\t", 
+    RowBox[{"dir", ":", 
+     RowBox[{"_String", "|", "Automatic"}], ":", "Automatic"}], ",", "\n", 
+    "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"pulldir", "=", "\n", "\t\t", 
+      RowBox[{"Replace", "[", 
+       RowBox[{"dir", ",", 
+        RowBox[{"{", "\n", "\t\t\t", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"s_String", "?", 
+            RowBox[{"(", 
+             RowBox[{"Not", "@*", "FileExistsQ"}], ")"}]}], "\[RuleDelayed]", 
+           "\n", "\t\t\t\t", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"If", "[", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"FileExtension", "@", "s"}], "==", "\"\<\>\""}], ",", 
+               "\n", "\t\t\t\t\t", 
+               RowBox[{"CreateDirectory", "@", "s"}]}], "\n", "\t\t\t\t\t", 
+              "]"}], ";", "\n", "\t\t\t\t\t", "s"}], ")"}]}], ",", "\n", 
+          "\t\t\t", 
+          RowBox[{"Automatic", "\[RuleDelayed]", "\n", "\t\t\t\t", 
+           RowBox[{"With", "[", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"d", "=", 
+               RowBox[{"FileNameJoin", "@", 
+                RowBox[{"{", 
+                 RowBox[{"$TemporaryDirectory", ",", 
+                  RowBox[{"FileNameTake", "@", "repo"}]}], "}"}]}]}], "}"}], 
+             ",", "\n", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"If", "[", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"FileExtension", "@", "d"}], "==", "\"\<\>\""}], ",",
+                 "\n", "\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"Quiet", "@", 
+                  RowBox[{"DeleteDirectory", "[", 
+                   RowBox[{"d", ",", 
+                    RowBox[{"DeleteContents", "\[Rule]", "True"}]}], "]"}]}], 
+                 ";", "\n", "\t\t\t\t\t\t", 
+                 RowBox[{"CreateDirectory", "@", "d"}]}]}], "\n", 
+               "\t\t\t\t\t\t", "]"}], ";", "\n", "\t\t\t\t\t", "d"}]}], "\n", 
+            "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "}"}]}], "]"}]}], "}"}], 
+    ",", "\n", "\t", 
+    RowBox[{
+     RowBox[{"SVNRun", "[", 
+      RowBox[{
+      "\"\<checkout\>\"", ",", "\n", "\t\t", "repo", ",", "\n", "\t\t", 
+       RowBox[{"ExpandFileName", "@", "pulldir"}], ",", "\n", "\t\t", "ops"}],
+       "\n", "\t\t", "]"}], ";", "\n", "\t", "pulldir"}]}], "\n", "\t", 
+   "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.694813785367174*^9, 3.69481407349988*^9}, {
+  3.694814119073917*^9, 3.694814121218751*^9}, {3.695147257479239*^9, 
+  3.695147282443782*^9}, {3.720202317653812*^9, 3.720202342630913*^9}, {
+  3.720202845739215*^9, 
+  3.720202866873798*^9}},ExpressionUUID->"9ac90314-ee9e-41c4-803e-\
+85d525bcf848"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Export\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.695147005549806*^9, 
+  3.695147006964834*^9}},ExpressionUUID->"e0f2bcd1-8880-482e-b97f-\
+f6bf649fac3e"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "SVNExport", "]"}], "=", "\n", "\t", 
+   RowBox[{"Normal", "@", 
+    RowBox[{"Merge", "[", 
+     RowBox[{
+      RowBox[{"{", "\n", "\t\t", 
+       RowBox[{
+        RowBox[{"Options", "@", "SVNRun"}], ",", "\n", "\t\t", 
+        RowBox[{"OverwriteTarget", "\[Rule]", "False"}]}], "\n", "\t\t", 
+       "}"}], ",", "\n", "\t\t", "Last"}], "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"SVNExport", "[", 
+   RowBox[{"repo_", ",", 
+    RowBox[{"file", ":", 
+     RowBox[{"_String", "|", "Automatic"}], ":", "Automatic"}], ",", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"f", "=", "\n", "\t\t", 
+      RowBox[{"Replace", "[", 
+       RowBox[{"file", ",", 
+        RowBox[{"{", "\n", "\t", "\t\t\t", 
+         RowBox[{"Automatic", "\[RuleDelayed]", "\n", "\t", "\t\t\t\t", 
+          RowBox[{"FileNameJoin", "@", 
+           RowBox[{"{", 
+            RowBox[{"$TemporaryDirectory", ",", 
+             RowBox[{"FileNameTake", "@", "repo"}]}], "}"}]}]}], "\n", 
+         "\t\t\t\t", "}"}]}], "]"}]}], "}"}], ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"OptionValue", "@", "OverwriteTarget"}], ",", 
+       RowBox[{"Quiet", "@", 
+        RowBox[{"DeleteFile", "@", "f"}]}]}], "]"}], ";", "\n", "\t\t", 
+     RowBox[{"SVNRun", "[", 
+      RowBox[{
+      "\"\<export\>\"", ",", "\n", "\t", "\t\t", "repo", ",", "\n", "\t\t\t", 
+       
+       RowBox[{"ExpandFileName", "@", "f"}], ",", "\n", "\t\t\t", 
+       RowBox[{"FilterRules", "[", 
+        RowBox[{
+         RowBox[{"{", "ops", "}"}], ",", 
+         RowBox[{"Options", "@", "SVNRun"}]}], "]"}]}], "\n", "\t\t\t", "]"}],
+      ";", "\n", "\t\t", "f"}]}], "\n", "\t\t", "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.694813785367174*^9, 3.69481407349988*^9}, {
+  3.694814119073917*^9, 3.694814121218751*^9}, {3.695147011191537*^9, 
+  3.695147012054226*^9}, {3.6951470489681273`*^9, 3.695147155896845*^9}, {
+  3.695147186008368*^9, 3.695147249260119*^9}, {3.69514729755085*^9, 
+  3.6951474058166437`*^9}},ExpressionUUID->"05824f5d-300c-4c99-9cdf-\
+3dbf435cfb44"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]SVN\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7037582699465733`*^9, 3.7037582702568502`*^9}, {
+  3.711983245575305*^9, 
+  3.711983246238027*^9}},ExpressionUUID->"9d955eeb-ab38-412d-94d3-\
+c38569cdcd81"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$SVNActions", "=", "\n", "\t", 
+   RowBox[{"<|", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"\"\<FileNames\>\"", "->", "\n", "\t\t\t", "SVNFileNames"}], ",",
+      "\n", "\t\t", 
+     RowBox[{"\"\<CheckOut\>\"", "->", "\n", "\t\t\t", "SVNCheckOut"}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"\"\<Export\>\"", "->", "\n", "\t\t\t", "SVNExport"}]}], "\n", 
+    "\t\t", "|>"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.703758272168008*^9, 3.703758329940995*^9}, {
+  3.70375910012045*^9, 3.703759152286354*^9}, {3.711982340258581*^9, 
+  3.711982353805984*^9}, {3.7119825091124363`*^9, 3.7119825221518393`*^9}, {
+  3.7119825552072487`*^9, 3.711982572909012*^9}, {3.711982633466607*^9, 
+  3.7119826606236486`*^9}, {3.7119827651033783`*^9, 3.711982787287839*^9}, {
+  3.711983250199463*^9, 
+  3.7119833020341053`*^9}},ExpressionUUID->"2dbf58bf-07ba-4176-bd8a-\
+4e7a5172c4bb"]
+}, Closed]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"End", "[", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"9739fc14-e7e6-405b-bf37-\
+98cf1ac28213"]
+}, Open  ]],
+
+Cell["", "SectionSeparator",ExpressionUUID->"67594041-6749-4a9a-8160-\
+1874e8aa2c18"]
+},
+WindowSize->{782, 796},
+WindowMargins->{{209, Automatic}, {0, Automatic}},
+FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
+2018)",
+StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+

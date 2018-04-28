@@ -100,34 +100,32 @@ PackagePostProcessPrepSpecs[]:=
 			$PackageExposedContexts,
 			$PackageDecontextedPackages
 			];
-		If[FileExistsQ@PackageFilePath["Config","LoadInfo.m"],
-			Replace[
-				$PackageLoadSpecs,
-				specs:{__Rule}|_Association:>
-					CompoundExpression[
-						$PackagePreloadedPackages=
-							Replace[
-								Lookup[specs,"PreLoad"],
-								Except[{__String}]->{}
-								],
-						$PackageHiddenPackages=
-							Replace[
-								Lookup[specs,"FEHidden"],
-								Except[{__String}]->{}
-								],
-						$PackageDecontextedPackages=
-							Replace[
-								Lookup[specs,"PackageScope"],
-								Except[{__String}]->{}
-								],
-						$PackageExposedContexts=
-							Replace[
-								Lookup[specs,"ExposedContexts"],
-								Except[{__String}]->{}
-								]
-						]
+		Replace[
+			$PackageLoadSpecs,
+			specs:{__Rule}|_Association:>
+				CompoundExpression[
+					$PackagePreloadedPackages=
+						Replace[
+							Lookup[specs, "PreLoad"],
+							Except[{__String}]->{}
+							],
+					$PackageHiddenPackages=
+						Replace[
+							Lookup[specs,"FEHidden"],
+							Except[{__String}]->{}
+							],
+					$PackageDecontextedPackages=
+						Replace[
+							Lookup[specs,"PackageScope"],
+							Except[{__String}]->{}
+							],
+					$PackageExposedContexts=
+						Replace[
+							Lookup[specs,"ExposedContexts"],
+							Except[{__String}]->{}
+							]
+					]
 				]
-			]
 		);
 
 
@@ -250,7 +248,7 @@ PackagePostProcessContextPathReassign[]:=
 		]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*AttachMainAutocomplete*)
 
 
@@ -271,6 +269,21 @@ PackageAttachMainAutocomplete[]:=
 					],
 			{n, 5}
 			]
+		];
+
+
+(* ::Subsubsection:: *)
+(*PackagePrepPackageSymbol*)
+
+
+PackagePrepPackageSymbol[]:=
+	Switch[$AllowPackageSymbolDefinitions,
+		None,
+			Remove[$Name],
+		False,
+			Clear[$Name],
+		_,
+			PackageAttachMainAutocomplete[]
 		]
 
 
@@ -290,7 +303,7 @@ If[`PackageScope`Private`$AllowPackageRecoloring,
 	];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Basic Load*)
 
 
@@ -314,10 +327,10 @@ Unprotect[`PackageScope`Private`$loadAbort];
 
 If[!`PackageScope`Private`$loadAbort,
 	`PackageScope`Private`PackagePostProcessPrepSpecs[];
+	`PackageScope`Private`PackagePrepPackageSymbol[];
 	`PackageScope`Private`PackagePostProcessExposePackages[];
 	`PackageScope`Private`PackagePostProcessRehidePackages[];
 	`PackageScope`Private`PackagePostProcessDecontextPackages[];
-	`PackageScope`Private`PackageAttachMainAutocomplete[];
 	]
 
 
@@ -327,7 +340,7 @@ Unprotect[`PackageScope`Private`$PackageScopedSymbols];
 Clear[`PackageScope`Private`$PackageScopedSymbols];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Preempt Shadowing*)
 
 

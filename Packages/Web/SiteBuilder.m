@@ -1449,7 +1449,18 @@ WebSiteImportMeta[
 			],{
 		{n_,c_}:>
 			n->
-				If[MemberQ[$WebSiteAggregationTypes, n],
+				If[MemberQ[$DefaultWebSiteAggregationTypes, n]||
+					StringContainsQ[c, 
+						Repeated[
+							__~~Except[WhitespaceCharacter|","]~~","~~
+								Except[WhitespaceCharacter|","],
+							{2}
+							]
+						]||
+					StringMatchQ[c, 
+						WordCharacter..~~Except[WhitespaceCharacter|","]~~","~~
+							Except[WhitespaceCharacter|","]~~WordCharacter..
+						],
 					StringTrim@StringSplit[c,","],
 					c
 					],

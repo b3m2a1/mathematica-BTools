@@ -1263,18 +1263,7 @@ pacletMarkdownNotebookBasicInfoSectionValue[v_String]:=
 				StringQ@p["Domain"]
 			],
 			With[{p=URLParse[v]},
-				"["<>
-					Replace[
-						p["Path"], 
-						{
-							{___, l_}:>StringSplit[l, "."][[1]], 
-							{}:>
-								Replace[StringSplit[p["Domain"], "."], 
-									{{a_, b_}:>a, {e_, f_, ___}:>f}
-									]
-							}
-						]
-					<>"]("<>v<>")"
+				"["<>v<>"]("<>v<>")"
 				], 
 		StringQ@Interpreter["EmailAddress"][v],
 			With[{e=Interpreter["EmailAddress"][v]},

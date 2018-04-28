@@ -5,6 +5,7 @@
 
 
 $Name::nodep="Couldn't load dependency `` of type ``";
+$Name::nodup="Couldn't update dependency `` of type ``";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -13,11 +14,11 @@ $Name::nodep="Couldn't load dependency `` of type ``";
 
 PackageExtendContextPath[cp:{__String}]:=
 	(
-		Unprotect[$PackageContextPath];
-		$PackageContextPath=
+		Unprotect[$PackageContexts];
+		$PackageContexts=
 			DeleteCases[
 				DeleteDuplicates@
-					Join[$PackageContextPath, cp],
+					Join[$PackageContexts, cp],
 				"System`"|"Global`"
 				];
 		(* Should I protect it again? *)
@@ -111,53 +112,85 @@ PackageLoadPackageDependency[dep_String, ops:OptionsPattern[]]:=
 
 
 (* ::Subsubsection::Closed:: *)
+(*PackageCheckPacletDependency*)
+
+
+PackageCheckPacletDependency[dep_]:=
+	Length@PacletManager`PacletFind[StringDelete[dep, "`"]]>0
+
+
+(* ::Subsubsection::Closed:: *)
 (*PackageInstallPacletDependency*)
 
 
 Options[PackageInstallPacletDependency]=
 	Options[PacletInstall];
-PackageInstallPacletDependency[dep_String, ops:OptionsPattern[]]:=
-	Check[
-		Block[{site, pac},
-			pac=
-				StringTrim[dep, "`"];
-			site=
-				Replace[OptionValue["Site"],
-					{
-						s_String?(
-							URLParse[#, "Domain"]==="github.com"&
-							):>
-						URLBuild@
-							<|
-								"Scheme"->"http",
-								"Domain"->"raw.githubusercontent.com",
-								"Path"->
-									Function[If[Length[#]==2, Append[#, "master"], #]]@
-										DeleteCases[""]@URLParse[s, "Path"]
-								|>,
-						None->
-							Automatic,
-						_->
-							"http://raw.githubusercontent.com/paclets/PacletServer/master"
-						}
-					];
-				Monitor[
+PackageInstallPacletDependency[
+	deps:{__String?(
+		StringMatchQ[
+			(LetterCharacter|"_"|"`")~~(WordCharacter|"_"|"`")..
+			]
+		)}, 
+	ops:OptionsPattern[]
+	]:=
+	Block[{site, pacs, pac},
+		pacs=
+			StringDelete[deps, "`"];
+		site=
+			Replace[OptionValue["Site"],
+				{
+					s_String?(
+						URLParse[#, "Domain"]==="github.com"&
+						):>
+					URLBuild@
+						<|
+							"Scheme"->"http",
+							"Domain"->"raw.githubusercontent.com",
+							"Path"->
+								Function[If[Length[#]==2, Append[#, "master"], #]]@
+									DeleteCases[""]@URLParse[s, "Path"]
+							|>,
+					None->
+						Automatic,
+					_->
+						"http://raw.githubusercontent.com/paclets/PacletServer/master"
+					}
+				];
+		pac=First@pacs;
+		Monitor[
+			MapThread[
+				Check[
 					PacletInstall[
-						pac,
+						pac=#,
 						"Site"->site,
 						ops
 						],
-					Internal`LoadingPanel[
-						TemplateApply[
-							"Loading paclet `` from site ``",
-							{pac, site}
-							]
-						]
-					]
+					Message[$Name::nodep, #2, "Paclet"];
+					$Failed
+					]&,
+				{
+					pacs,
+					deps
+					}
 				],
-		Message[$Name::nodep, dep, "Paclet"];
-		$Failed
+			Internal`LoadingPanel[
+				TemplateApply[
+					"Loading paclet `` from site ``",
+					{pac, site}
+					]
+				]
+			]
 		]
+
+
+PackageInstallPacletDependency[
+	dep:_String?(
+		StringMatchQ[
+			(LetterCharacter|"_"|"`")~~(WordCharacter|"_"|"`")..
+			]
+		), 
+	ops:OptionsPattern[]
+	]:=First@PackageInstallPacletDependency[{dep}, ops]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -165,20 +198,93 @@ PackageInstallPacletDependency[dep_String, ops:OptionsPattern[]]:=
 
 
 Options[PackageLoadPacletDependency]=
-	Options[PackageInstallPacletDependency];
+	Join[
+		Options[PackageInstallPacletDependency],
+		{
+			"Update"->False
+			}
+		];
 PackageLoadPacletDependency[dep_String?StringEndsQ["`"], ops:OptionsPattern[]]:=
 	Internal`WithLocalSettings[
 		BeginPackage[dep];,
-		Quiet@
-			If[Check[Needs[dep], $Failed]===$Failed,
-				Replace[PackageInstallPacletDependency[dep, ops],
-					_PacletManager`Paclet:>Needs[dep]
+		If[PackageCheckPacletDependency[dep],
+			If[TrueQ@OptionValue["Update"],
+				PackageUpdatePacletDependency[dep,
+					"Sites"->Replace[OptionValue["Site"], s_String:>{s}]
 					]
-				];
+				],
+			PackageInstallPacletDependency[dep, ops]
+			];
+		Needs[dep];
 		PackageExtendContextPath@
 			Select[$Packages, StringStartsQ[dep]];,
 		EndPackage[];
 		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*PackageUpdatePacletDependency*)
+
+
+Options[PackageUpdatePacletDependency]=
+	{
+		"Sites"->Automatic
+		};
+PackageUpdatePacletDependency[
+	deps:{__String?(StringMatchQ[(LetterCharacter|"_")~~(WordCharacter|"_")..])}, 
+	ops:OptionsPattern[]
+	]:=
+	Block[
+		{
+			added=<||>,
+			ps=PacletManager`PacletSites[],
+			pac
+			},
+		Replace[
+			Replace[OptionValue["Sites"], 
+				Automatic:>"http://raw.githubusercontent.com/paclets/PacletServer/master"
+				],
+			{
+				s_String:>
+					If[!MemberQ[ps, PacletManager`PacletSite[s, ___]],
+						added[s]=True
+						],
+				p:PacletManager`PacletSite[__]:>
+					If[!MemberQ[ps, p],
+						added[p]=True
+						]
+				},
+			1
+			];
+		pac=StringDelete[deps[[1]], "`"];
+		Internal`WithLocalSettings[
+			KeyMap[PacletManager`PacletSiteAdd, added],
+			Monitor[
+				MapThread[
+					Check[
+						PacletManager`PacletCheckUpdate[pac=#],
+						Message[$Name::nodup, #2, "Paclet"];
+						$Failed
+						]&,
+					{
+						StringDelete[deps, "`"],
+						deps
+						}
+					],
+				Internal`LoadingPanel[
+					"Updating paclet ``"~TemplateApply~pac
+					]
+				],
+			KeyMap[PacletManager`PacletSiteRemove, added]
+			]
+		];
+
+
+PackageUpdatePacletDependency[
+	dep:_String?(StringMatchQ[(LetterCharacter|"_")~~(WordCharacter|"_")..]), 
+	ops:OptionsPattern[]
+	]:=
+	First@PackageUpdatePacletDependency[{dep}, ops]
 
 
 (* ::Subsubsection::Closed:: *)
