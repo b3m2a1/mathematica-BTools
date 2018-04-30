@@ -1383,39 +1383,53 @@ Options[GitHubAddFile]=
 GitHubAddFile[
 	repo:(_String|_GitHubPath)?GitHubRepoQ,
 	file_String?FileExistsQ,
-	path:_String|Automatic:Automatic,
+	pathy:_String|Automatic:Automatic,
 	ops:OptionsPattern[]
 	]:=
-	GitHubReposAPI[
-		repo,
+	With[
 		{
-			"contents", 
-			Replace[path,
-				{
-					Except[_String]:>FileNameTake[file]
-					}
-				]
-			},
-		<|
-			Method->"PUT",
-			"Body"->
-				Prepend[
-					GitHubQueryParamFilter[
-						GitHubAddFile,
-						{
-							ops,
-							"Message"->TemplateApply["Added ``", file]
-							}
-						],
-					"content"->
-						File[file]
-					],
-			"Headers"->
-				{
-					"Authorization"->
-						OptionValue[{"Username", "Password"}]
+			path=
+				Replace[pathy,
+					{
+						Except[_String]:>FileNameTake[file]
 						}
-			|>
+					]
+			},
+		GitHubReposAPI[
+			repo,
+			{
+				"contents", 
+				Replace[path,
+					{
+						Except[_String]:>FileNameTake[file]
+						}
+					]
+				},
+			<|
+				Method->"PUT",
+				"Body"->
+					Prepend[
+						GitHubQueryParamFilter[
+							GitHubAddFile,
+							DeleteDuplicatesBy[First]@
+								{
+									"Message"->
+											Replace[OptionValue["Message"], 
+												Automatic:>TemplateApply["Added ``", path]
+												],
+									ops
+									}
+							],
+						"content"->
+							File[file]
+						],
+				"Headers"->
+					{
+						"Authorization"->
+							OptionValue[{"Username", "Password"}]
+							}
+				|>
+			]
 		];
 
 

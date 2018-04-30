@@ -55,21 +55,6 @@ PacletServerDelete::usage=
 	"Deletes a paclet server";
 
 
-PacletServerPage::usage=
-	"Generates a page laying out the available paclets on that server";
-PacletMarkdownNotebook::usage=
-	"Generates a markdown notebook for the paclet";
-PacletMarkdownNotebookUpdate::usage=
-	"Updates a markdown notebook for a paclet";
-
-
-PacletServerGitInitialize::usage=
-	"Initializes a git repo for a server";
-PacletServerGitHubPush::usage=
-	"Pushes a Git repo server to GitHub";
-PacletServerGitHubRepoExistsQ::usage="";
-
-
 Begin["`Private`"];
 
 

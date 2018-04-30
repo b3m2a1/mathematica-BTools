@@ -1184,8 +1184,12 @@ pacletMarkdownNotebookMakeName[s_String]:=
 
 
 pacletMarkdownNotebookNameCell[a_]:=
-	Cell[pacletMarkdownNotebookMakeName@
-		Lookup[a, "Name", "Unnamed Paclet"], "Section"]
+	Cell[
+		pacletMarkdownNotebookMakeName@
+			Lookup[a, "Name", "Unnamed Paclet"], 
+		"Section",
+		CellTags->"PacletName"
+		]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -1207,7 +1211,10 @@ pacletMarkdownNotebookIcon[a_]:=
 						If[fp["Domain"]===None,
 							"{filename}/img/"<>URLBuild[Prepend[URLParse[s, "Path"], nm]],
 							s
-							]<>")", "RawMarkdown"]
+							]<>")", 
+						"RawMarkdown",
+						CellTags->"PacletIcon"
+						]
 					],
 			_->Nothing
 			}
@@ -1440,6 +1447,11 @@ pacletMarkdownNotebookExtensionSection[extensionData_]:=
 
 
 
+(* ::Text:: *)
+(*Generates a basic notebook for creating a paclet page*)
+
+
+
 PacletMarkdownNotebook//Clear
 
 
@@ -1513,13 +1525,19 @@ PacletMarkdownNotebook[f_String, a_, regen_:Automatic]:=
 
 
 
+(* ::Text:: *)
+(*Updates the previous notebook*)
+
+
+
 $killFields=
 	{
 		"Name","Version","BuildNumber",
 		"Qualifier","WolframVersion",
 		"SystemID","Description","Category",
 		"Creator","Publisher","Support",
-		"Internal","Location","Thumbnail"
+		"Internal","Location","Thumbnail",
+		"ExportOptions"
 		};
 
 
@@ -1542,6 +1560,41 @@ PacletMarkdownNotebookUpdate[notebook_Notebook,infAss_]:=
 					]
 			},
 		nb=DeleteCases[nb, Cell[___, CellTags->{"Info", ___}, ___], \[Infinity]];
+		nb=
+			ReplaceAll[nb,
+				c:Cell[__, CellTags->"PacletName", ___]:>
+					With[{baseCell=pacletMarkdownNotebookNameCell[a]},
+						If[StringQ@c[[2]],
+							ReplacePart[baseCell, 2->c[[2]]],
+							Delete[baseCell, 2]
+							]
+						]
+				];
+		nb=
+			ReplaceAll[nb,
+				c:Cell[__, CellTags->"PacletNameString", ___]:>
+					With[
+						{
+							baseCell=
+								ReplacePart[#, 1->BoxData@ToBoxes[#[[1]]]]&@
+									pacletMarkdownNotebookNameCell[a]
+							},
+						If[StringQ@c[[2]],
+							ReplacePart[baseCell, 2->c[[2]]],
+							Delete[baseCell, 2]
+							]
+						]
+				];
+		nb=
+			ReplaceAll[nb,
+				c:Cell[__, CellTags->"PacletIcon", ___]:>
+					With[{baseCell=pacletMarkdownNotebookIcon[a]},
+						If[StringQ@c[[2]],
+							ReplacePart[baseCell, 2->c[[2]]],
+							Delete[baseCell, 2]
+							]
+						]
+				];
 		nb=
 			ReplaceAll[nb,
 				Cell[BoxData[e_],"Metadata",___]:>
@@ -1589,12 +1642,12 @@ PacletMarkdownNotebookUpdate[notebook_Notebook,infAss_]:=
 					]|Cell[___,CellTags->"ExtraInformation",___]:>
 					pacletMarkdownNotebookExtraInfoSection[a]
 				];
-		nb=
+		(*nb=
 			DeleteCases[nb,
 				Cell[
 					CellGroupData[{
 						Cell[___,
-							CellTags->
+							CellTags\[Rule]
 								Except[
 									#|{#..}&[
 										Alternatives@@
@@ -1604,7 +1657,8 @@ PacletMarkdownNotebookUpdate[notebook_Notebook,infAss_]:=
 													"DownloadLink",
 													"BasicInformation",
 													"ExtraInformation",
-													"Info"
+													"Info",
+	
 													},
 												Keys[a]
 												]
@@ -1617,7 +1671,7 @@ PacletMarkdownNotebookUpdate[notebook_Notebook,infAss_]:=
 					___
 					],
 				\[Infinity]
-				];
+				];*)
 		nb=
 			ReplaceAll[nb,
 				Cell[
@@ -1724,80 +1778,100 @@ PacletServerBuild[
 				},
 			PacletServerInitialize[server];
 			If[MatchQ[OptionValue["RegenerateContent"], True|Automatic],
+				With[{thm=WebSiteFindTheme[server, "DownloadTheme"->True]},
 				If[OptionValue[Monitor],
-					Function[Null,
-						Monitor[#, 
-							If[StringQ@md,
-								Internal`LoadingPanel[TemplateApply["Generating ``", md]],
-								""
-								]
+						Function[Null,
+							Monitor[#, 
+								If[StringQ@md,
+									Internal`LoadingPanel[TemplateApply["Generating ``", md]],
+									""
+									]
+								],
+							HoldAll
 							],
-						HoldAll
-						],
-					Identity
-					]@
-					Block[{md},
-						With[
-							{
-								nbout=PacletServerFile[server, {"content","posts",#Name<>".nb"}],
-								pacF=PacletServerFile[server, {"Paclets",#Name<>"-"<>#Version<>".paclet"}],
-								ico=Lookup[#, "Thumbnail", Lookup[#, "Icon"]],
-								imgDir=PacletServerFile[server, {"content", "img", #Name}]
-								},
-							If[FileExistsQ[pacF]&&StringQ@ico,
-								If[!DirectoryQ@imgDir,
-									CreateDirectory[imgDir,
-										CreateIntermediateDirectories->True
+						Identity
+						]@
+						Block[{md},
+							With[
+								{
+									nbout=PacletServerFile[server, {"content","posts",#Name<>".nb"}],
+									pacF=PacletServerFile[server, {"Paclets",#Name<>"-"<>#Version<>".paclet"}],
+									ico=Lookup[#, "Thumbnail", Lookup[#, "Icon"]],
+									imgDir=PacletServerFile[server, {"content", "img", #Name}]
+									},
+								(* Copy in Thumbnail file *)
+								If[FileExistsQ[pacF]&&StringQ@ico,
+									If[!DirectoryQ@imgDir,
+										CreateDirectory[imgDir,
+											CreateIntermediateDirectories->True
+											]
+										];
+									With[{tmp=CreateDirectory[]},
+										Replace[
+											ExtractArchive[
+												pacF,
+												tmp,
+												FileNameJoin@Prepend[URLParse[ico, "Path"], "*"],
+												CreateIntermediateDirectories->True
+												],
+											{f_, ___}:>
+												With[{exp=FileNameJoin@Flatten@{imgDir, URLParse[ico, "Path"]}},
+													If[!DirectoryQ@DirectoryName@exp,
+														CreateDirectory[DirectoryName@exp, 
+															CreateIntermediateDirectories->True]
+														];
+													CopyFile[
+														f, 
+														FileNameJoin@Flatten@{imgDir, URLParse[ico, "Path"]},
+														OverwriteTarget->True
+														]
+													]
+											];
+										DeleteDirectory[tmp, DeleteContents->True]
+										];
+									];
+								(* Copy in Thumbnail file *)
+								md=nbout;
+								(* Ensure directory *)
+								If[!DirectoryQ@DirectoryName@nbout,
+									CreateDirectory[DirectoryName@nbout, 
+										CreateIntermediateDirectories->True]
+									];
+								(* Copy in potential template *)
+								If[
+									!FileExistsQ@nbout&&
+										FileExistsQ@FileNameJoin@{thm, "templates", "PacletPage.nb"},
+									CopyFile[
+										FileNameJoin@{thm, "templates", "PacletPage.nb"},
+										nbout
 										]
 									];
-								With[{tmp=CreateDirectory[]},
-									Replace[
-										ExtractArchive[
-											pacF,
-											tmp,
-											FileNameJoin@Prepend[URLParse[ico, "Path"], "*"],
-											CreateIntermediateDirectories->True
-											],
-										{f_, ___}:>
-											With[{exp=FileNameJoin@Flatten@{imgDir, URLParse[ico, "Path"]}},
-												If[!DirectoryQ@DirectoryName@exp,
-													CreateDirectory[DirectoryName@exp, 
-														CreateIntermediateDirectories->True]
-													];
-												CopyFile[
-													f, 
-													FileNameJoin@Flatten@{imgDir, URLParse[ico, "Path"]},
-													OverwriteTarget->True
-													]
-												]
-										];
-									DeleteDirectory[tmp, DeleteContents->True]
+								(* Create notebook and export *)
+								PacletMarkdownNotebook[
+									nbout,
+									Join[
+										<|
+											"Title"->Lookup[#,"Name","Unnamed Paclet"],
+											"Categories"->"misc",
+											"Slug"->Automatic,
+											"Authors"->
+												StringTrim@
+													Map[
+														StringSplit[#, "@"|"<"][[1]]&,
+														StringSplit[Lookup[#,"Creator",""], ","]
+														],
+											"Tags"->StringSplit[Lookup[#,"Keywords",""],","]
+											|>,
+										#
+										]
 									];
-								];
-							md=nbout;
-							PacletMarkdownNotebook[
-								nbout,
-								Join[
-									<|
-										"Title"->Lookup[#,"Name","Unnamed Paclet"],
-										"Categories"->"misc",
-										"Slug"->Automatic,
-										"Authors"->
-											StringTrim@
-												Map[
-													StringSplit[#, "@"|"<"][[1]]&,
-													StringSplit[Lookup[#,"Creator",""], ","]
-													],
-										"Tags"->StringSplit[Lookup[#,"Keywords",""],","]
-										|>,
-									#
-									]
-								];
 								Function[NotebookMarkdownSave[#];NotebookClose[#]]@
 									NotebookOpen[nbout,Visible->False];
 								]&/@Association/@siteData
 							]
+						]
 				];
+			(* Basic site building procedure *)
 			With[{s=
 				If[TrueQ@OptionValue["BuildSite"],
 					WebSiteBuild[
