@@ -2237,7 +2237,7 @@ markdownCodeCellIOReformatPreClean[pathInfo_, e_, style_]:=
 			Converts tabs into spaces because it looks better		
 			*)
 			s_String?(StringMatchQ["\t"..]):>
-				StringReplace[s, "\t"->" "]
+				StringReplace[s, "\t"->"  "]
 			}
 		];
 
@@ -2334,7 +2334,8 @@ markdownCodeCellIOReformatReinsertStack[Hold[stack_]][s_]:=
 markdownCodeCellIOReformatStripIndents[s_]:=
 	StringReplace[s,
 		{
-			$iNotebookToMarkdownUnIndentedLine~~" \\\n"~~(Whitespace|"")->
+			(* The replacement for \t is two spaces *)
+			$iNotebookToMarkdownUnIndentedLine~~"  \\\n"~~(Whitespace|"")->
 				$iNotebookToMarkdownUnIndentedLine,
 			$iNotebookToMarkdownToStripStart~~
 				inner:Shortest[__]~~
@@ -2407,7 +2408,8 @@ markdownCodeCellIOReformat[
 						{
 							("    "...)~~$iNotebookToMarkdownUnIndentedLine->
 								"",
-							" \\\n"->
+							(* Clean up the replacements for \t *)
+							"  \\\n"->
 								"\n",
 							"\\\n"~~(Whitespace|"")->
 								""

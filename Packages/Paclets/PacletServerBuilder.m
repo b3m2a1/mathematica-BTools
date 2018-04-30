@@ -1193,6 +1193,20 @@ pacletMarkdownNotebookNameCell[a_]:=
 
 
 (* ::Subsubsubsection::Closed:: *)
+(*pacletMarkdownNotebookNameStringCell*)
+
+
+
+pacletMarkdownNotebookNameStringCell[a_]:=
+	Cell[
+		BoxData@ToBoxes@pacletMarkdownNotebookMakeName@
+			Lookup[a, "Name", "Unnamed Paclet"], 
+		"Text",
+		CellTags->"PacletNameString"
+		]
+
+
+(* ::Subsubsubsection::Closed:: *)
 (*pacletMarkdownNotebookIcon*)
 
 
@@ -1576,8 +1590,7 @@ PacletMarkdownNotebookUpdate[notebook_Notebook,infAss_]:=
 					With[
 						{
 							baseCell=
-								ReplacePart[#, 1->BoxData@ToBoxes[#[[1]]]]&@
-									pacletMarkdownNotebookNameCell[a]
+								pacletMarkdownNotebookNameStringCell[a]
 							},
 						If[StringQ@c[[2]],
 							ReplacePart[baseCell, 2->c[[2]]],
