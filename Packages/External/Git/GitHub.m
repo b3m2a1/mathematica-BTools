@@ -1040,6 +1040,45 @@ GitHubRepositoryContributors[
 
 
 (* ::Subsection:: *)
+(*GitDataAPI*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*GitDataAPI*)
+
+
+
+GitHubGitDataAPI[
+	repo_GitHubPath?GitHubRepoQ,
+	part:"blobs"|"commits"|"refs"|"tags"|"trees",
+	path:{___String}|_String:{},
+	query:(_String->_)|{(_String->_)...}:{},
+	headers:_Association:<||>
+	]:=
+	GitHubReposAPI[
+		repo,
+		Flatten[{"git", part, path}],
+		query,
+		headers
+		];
+GitHubGitDataAPI[
+	s_String?GitHubRepoQ,
+	part:"blobs"|"commits"|"refs"|"tags"|"trees",
+	path:{___String}|_String:{},
+	query:(_String->_)|{(_String->_)...}:{},
+	headers:_Association:<||>
+	]:=
+	GitHubGitDataAPI[
+		GitHubPathParse[If[URLParse[s, "Scheme"]===None, "github:"<>s, s]],
+		part,
+		path,
+		query,
+		headers
+		];
+
+
+(* ::Subsection:: *)
 (*Branches*)
 
 
@@ -1132,6 +1171,471 @@ GitHubFork[
 			],
 		<|
 			"Method"->"POST",
+			"Headers"->
+				{
+					"Authorization"->
+						OptionValue[{"Username", "Password"}]
+					}
+			|>
+		]
+			
+
+
+(* ::Subsection:: *)
+(*Blobs*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*GetBlob*)
+
+
+
+$GitHubActions["GetBlob"]=GitHubGetBlob;
+
+
+GitHubGetBlob[
+	repo:(_GitHubPath|_String)?GitHubRepoQ,
+	sha:_String?(StringMatchQ[Repeated[WordCharacter, {30, Infinity}]])
+	]:=
+	GitHubGitDataAPI[
+		repo,
+		"blobs",
+		{sha},
+		<|
+			|>
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*CreateBlob*)
+
+
+
+$GitHubActions["CreateBlob"]=GitHubCreateBlob;
+
+
+Options[GitHubCreateBlob]=
+	{
+		"Username"->Automatic,
+		"Password"->Automatic
+		};
+GitHubCreateBlob[
+	repo:(_GitHubPath|_String)?GitHubRepoQ,
+	blob:_String|_File,
+	ops:OptionsPattern[]
+	]:=
+	GitHubGitDataAPI[
+		repo,
+		"blobs",
+		{},
+		<|
+			"Method"->"POST",
+			"Body"->
+				ExportString[
+					{
+						"content"->
+							If[StringQ@blob,
+								If[StringLength[blob]>10^6,
+									With[{f=CreateFile[]}, 
+										WriteString[f, blob];
+										Close@f;
+										File[f]
+										],
+									Developer`EncodeBase64[blob]
+									],
+								blob
+								],
+						"encoding"->"base64"
+						},
+					"JSON"
+					],
+			"Headers"->
+				{
+					"Authorization"->
+						OptionValue[{"Username", "Password"}]
+					}
+			|>
+		]
+			
+
+
+(* ::Subsection:: *)
+(*Commits*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*GetCommit*)
+
+
+
+$GitHubActions["GetCommit"]=GitHubGetCommit;
+
+
+GitHubGetCommit[
+	repo:(_GitHubPath|_String)?GitHubRepoQ,
+	sha:_String?(StringMatchQ[Repeated[WordCharacter, {30, Infinity}]])
+	]:=
+	GitHubGitDataAPI[
+		repo,
+		"commits",
+		{sha},
+		<|
+			|>
+		]
+
+
+(* ::Subsection:: *)
+(*References*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*GetReference*)
+
+
+
+$GitHubActions["GetReference"]=GitHubGetReference;
+
+
+GitHubGetReference[
+	repo:(_GitHubPath|_String)?GitHubRepoQ,
+	which:_String:"master"
+	]:=
+	GitHubGitDataAPI[
+		repo,
+		"refs",
+		{"heads/"<>StringTrim[which, "heads/"]},
+		<|
+			|>
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*GetAllReferences*)
+
+
+
+$GitHubActions["GetAllReferences"]=GitHubGetAllReferences;
+
+
+GitHubGetAllReferences[
+	repo:(_GitHubPath|_String)?GitHubRepoQ,
+	which:_String|None:None
+	]:=
+	GitHubGitDataAPI[
+		repo,
+		"refs",
+		{If[which===None, Nothing, which]},
+		<|
+			|>
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*CreateReference*)
+
+
+
+$GitHubActions["CreateReference"]=GitHubCreateReference;
+
+
+Options[GitHubCreateReference]=
+	{
+		"Username"->Automatic,
+		"Password"->Automatic
+		};
+GitHubCreateReference[
+	repo:(_GitHubPath|_String)?GitHubRepoQ,
+	ref:_String,
+	sha:_String?(StringMatchQ[Repeated[WordCharacter, {30, Infinity}]]),
+	ops:OptionsPattern[]
+	]:=
+	GitHubGitDataAPI[
+		repo,
+		"refs",
+		{},
+		<|
+			"Method"->"POST",
+			"Body"->
+				ExportString[
+					{
+						"ref"->
+							With[{s1=StringTrim[ref, "refs/"]},
+								If[StringContainsQ[s1, "/"],
+									"refs/"<>s1,
+									"refs/heads/"<>s1
+									]
+								],
+						"sha"->sha
+						},
+					"JSON"
+					],
+			"Headers"->
+				{
+					"Authorization"->
+						OptionValue[{"Username", "Password"}]
+					}
+			|>
+		]
+			
+
+
+(* ::Subsubsection::Closed:: *)
+(*UpdateReference*)
+
+
+
+$GitHubActions["UpdateReference"]=GitHubUpdateReference;
+
+
+$GitHubParamMap[GitHubUpdateReference]=
+	{
+		"ForceUpdate"->"force"
+		};
+Options[GitHubUpdateReference]=
+	Join[
+		$GitHubParamMap[GitHubUpdateReference],
+		{
+			"Username"->Automatic,
+			"Password"->Automatic
+			}
+		];
+GitHubUpdateReference[
+	repo:(_GitHubPath|_String)?GitHubRepoQ,
+	ref:_String,
+	sha:_String?(StringMatchQ[Repeated[WordCharacter, {30, Infinity}]]),
+	ops:OptionsPattern[]
+	]:=
+	GitHubGitDataAPI[
+		repo,
+		"refs",
+		{
+			With[{s1=StringTrim[ref, "refs/"]},
+				If[StringContainsQ[s1, "/"],
+					s1,
+					"heads/"<>s1
+					]
+				]
+			},
+		<|
+			"Method"->"PATCH",
+			"Body"->
+				ExportString[
+					{
+						"sha"->sha,
+						"force"->If[TrueQ@OptionValue["ForceUpdate"], "true", "false"]
+						},
+					"JSON"
+					],
+			"Headers"->
+				{
+					"Authorization"->
+						OptionValue[{"Username", "Password"}]
+					}
+			|>
+		]
+			
+
+
+(* ::Subsubsection::Closed:: *)
+(*DeleteReference*)
+
+
+
+$GitHubActions["DeleteReference"]=GitHubDeleteReference;
+
+
+Options[GitHubDeleteReference]=
+	{
+		"Username"->Automatic,
+		"Password"->Automatic
+		};
+GitHubDeleteReference[
+	repo:(_GitHubPath|_String)?GitHubRepoQ,
+	ref:_String,
+	ops:OptionsPattern[]
+	]:=
+	GitHubGitDataAPI[
+		repo,
+		"refs",
+		{
+			With[{s1=StringTrim[ref, "refs/"]},
+				If[StringContainsQ[s1, "/"],
+					s1,
+					"heads/"<>s1
+					]
+				]
+			},
+		<|
+			"Method"->"DELTE",
+			"Headers"->
+				{
+					"Authorization"->
+						OptionValue[{"Username", "Password"}]
+					}
+			|>
+		]
+
+
+(* ::Subsection:: *)
+(*Tags*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*GetTag*)
+
+
+
+$GitHubActions["GetTag"]=GitHubGetTag;
+
+
+GitHubGetTag[
+	repo:(_GitHubPath|_String)?GitHubRepoQ,
+	sha:_String?(StringMatchQ[Repeated[WordCharacter, {30, Infinity}]])
+	]:=
+	GitHubGitDataAPI[
+		repo,
+		"tags",
+		{sha},
+		<|
+			|>
+		]
+
+
+(* ::Subsection:: *)
+(*Trees*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*GetTree*)
+
+
+
+$GitHubActions["GetTree"]=GitHubGetTree;
+
+
+Options[GitHubGetTree]=
+	{
+		"Recursive"->False
+		};
+GitHubGetTree[
+	repo:(_GitHubPath|_String)?GitHubRepoQ,
+	sha:_String?(StringMatchQ[Repeated[WordCharacter, {30, Infinity}]])
+	]:=
+	GitHubGitDataAPI[
+		repo,
+		"trees",
+		{sha},
+		{
+			Replace[OptionValue["Recursive"], 
+				{
+					s:_String|_Integer:>("recursive"->ToString[s]),
+					True->("recursive"->"1"),
+					_->Nothing
+					}
+				]
+			},
+		<|
+			|>
+		]
+
+
+(* ::Subsection:: *)
+(*Merges*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*Merge*)
+
+
+
+(* ::Text:: *)
+(*
+	Need to fix this up so it can appropriately handle upstream merges
+*)
+
+
+
+$GitHubActions["Merge"]=GitHubMerge;
+
+
+$GitHubParamMap[GitHubMerge]=
+	{
+		"TargetBranch"->"base",
+		"Message"->"commit_message"
+		};
+
+
+Options[GitHubMerge]=
+	Join[
+		Thread[
+			DeleteCases[
+				Keys[$GitHubParamMap[GitHubMerge]], 
+				"SourceBranch"
+				]->Automatic
+			],
+		{
+			"Username"->Automatic,
+			"Password"->Automatic
+			}
+		];
+GitHubMerge[
+	repo:(_GitHubPath|_String)?GitHubRepoQ,
+	source:(_GitHubPath?GitHubRepoQ|_String),
+	ops:OptionsPattern[]
+	]:=
+	GitHubReposAPI[
+		repo,
+		{"merges"},
+		{},
+		<|
+			"Method"->"POST",
+			"Body"->
+				ExportString[
+					Prepend[
+						GitHubQueryParamFilter[
+							GitHubMerge,
+							DeleteDuplicatesBy[First]@{
+								ops,
+								"TargetBranch"->
+									"master",
+								"Message"->
+									TemplateApply[
+										"Merge `` into ``",
+										URLBuild@
+											Append[
+												URLParse[
+													If[StringQ@repo, repo, URL@repo], 
+													"Path"
+													],
+												Replace[source,
+													_GitHubPath:>StringRiffle[Normal[source], "/"]
+													]
+												]
+										]
+								}
+								],
+							"head"->
+								If[GitHubRepoQ@source,
+									Replace[
+										GitHub["GetReference", source, "master",
+											"ImportedResult"
+											]["Content"],
+										{
+											a_Association:>a["Object", "SHA"],
+											e_:>Throw[$Failed]
+											}
+										],
+									source
+									]
+							],
+					"JSON"
+					],
 			"Headers"->
 				{
 					"Authorization"->

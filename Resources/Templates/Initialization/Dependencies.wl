@@ -124,7 +124,7 @@ PackageCheckPacletDependency[dep_]:=
 
 
 Options[PackageInstallPacletDependency]=
-	Options[PacletInstall];
+	Options[PacletManager`PacletInstall];
 PackageInstallPacletDependency[
 	deps:{__String?(
 		StringMatchQ[
@@ -160,7 +160,7 @@ PackageInstallPacletDependency[
 		Monitor[
 			MapThread[
 				Check[
-					PacletInstall[
+					PacletManager`PacletInstall[
 						pac=#,
 						"Site"->site,
 						ops
@@ -204,7 +204,7 @@ Options[PackageLoadPacletDependency]=
 			"Update"->False
 			}
 		];
-PackageLoadPacletDependency[dep_String?StringEndsQ["`"], ops:OptionsPattern[]]:=
+PackageLoadPacletDependency[dep_String?(StringEndsQ["`"]), ops:OptionsPattern[]]:=
 	Internal`WithLocalSettings[
 		BeginPackage[dep];,
 		If[PackageCheckPacletDependency[dep],

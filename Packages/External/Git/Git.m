@@ -1104,7 +1104,7 @@ GitFileHistory[
 		Dataset@GroupBy[
 			Flatten@
 				Map[
-					With[{files=#Files, rest=KeyDrop[#, "Files"]}, 
+					With[{files=Replace[#Files, _Missing:>{}], rest=KeyDrop[#, "Files"]}, 
 						Map[#->rest&, files]
 						]&,
 					ds

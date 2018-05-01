@@ -1199,8 +1199,8 @@ pacletMarkdownNotebookNameCell[a_]:=
 
 pacletMarkdownNotebookNameStringCell[a_]:=
 	Cell[
-		BoxData@ToBoxes@pacletMarkdownNotebookMakeName@
-			Lookup[a, "Name", "Unnamed Paclet"], 
+		BoxData@ToBoxes@
+			Lookup[a, "Name", $Failed], 
 		"Text",
 		CellTags->"PacletNameString"
 		]

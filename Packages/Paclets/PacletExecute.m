@@ -166,7 +166,7 @@ $PacletExecuteUploadMethods=
 		"Install"->
 			PacletInstallPaclet,
 		"FindPacletFile"->
-			builtPacletFileFind
+			PacletFindBuiltFile
 		|>;
 
 
