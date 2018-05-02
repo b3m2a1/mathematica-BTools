@@ -1159,7 +1159,8 @@ pacletMarkdownNotebookMetadataSection[a_]:=
 						]
 				|>
 			],
-		"Metadata"
+		"Metadata",
+		CellTags->"Metadata"
 		]
 
 
@@ -1273,11 +1274,11 @@ pacletMarkdownNotebookDescriptionText[a_]:=
 
 
 (* ::Subsubsubsection::Closed:: *)
-(*pacletMarkdownNotebookBasicInfoSection*)
+(*pacletMarkdownNotebookInfoSection*)
 
 
 
-pacletMarkdownNotebookBasicInfoSectionValue[v_String]:=
+pacletMarkdownNotebookInfoSectionValue[v_String]:=
 	Which[
 		With[{p=URLParse[v]},
 			StringQ@p["Scheme"]&&
@@ -1293,10 +1294,12 @@ pacletMarkdownNotebookBasicInfoSectionValue[v_String]:=
 		True,
 			v
 		];
+pacletMarkdownNotebookInfoSectionValue[v:_List]:=
+	StringRiffle[v, ", "];
 
 
-pacletMarkdownNotebookBasicInfoSection[a_,thing_]:=
-	With[{d=pacletMarkdownNotebookBasicInfoSectionValue@Lookup[a, thing]},
+pacletMarkdownNotebookInfoSection[a_,thing_]:=
+	With[{d=pacletMarkdownNotebookInfoSectionValue@Lookup[a, thing]},
 		If[StringQ@d,
 			Cell[
 				CellGroupData[{
@@ -1309,22 +1312,31 @@ pacletMarkdownNotebookBasicInfoSection[a_,thing_]:=
 		]
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*pacletMarkdownNotebookBasicInfoSection*)
+
+
+
+$pacletMarkdownNotebookBasicInfoSectionKeys=
+	{
+		"Name", 
+		"Version", 
+		"Creator",
+		"URL",
+		"Publisher",
+		"Support",
+		"License",
+		"GitHub"
+		}
+
+
 pacletMarkdownNotebookBasicInfoSection[a_]:=
 	Cell[
 		CellGroupData[Flatten@{
 			Cell["Basic Information","Subsection"],
 			Map[
-				pacletMarkdownNotebookBasicInfoSection[a, #]&,
-				{
-					"Name", 
-					"Version", 
-					"Creator",
-					"URL",
-					"Publisher",
-					"Support",
-					"License",
-					"GitHub"
-					}
+				pacletMarkdownNotebookInfoSection[a, #]&,
+				$pacletMarkdownNotebookBasicInfoSectionKeys
 				]
 			}],
 		CellTags->"BasicInformation"
@@ -1336,15 +1348,20 @@ pacletMarkdownNotebookBasicInfoSection[a_]:=
 
 
 
+$pacletMarkdownNotebookExtraInfoSectionKeys=
+	{
+		"WolframVersion", "MathematicaVersion",
+		"SystemID",
+		"Internal", "BuildNumber",
+		"Qualifier", "Category"
+		};
+
+
 pacletMarkdownNotebookExtraInfoSection[a_]:=
 	If[
 		Length@
 			Lookup[a, 
-				{
-					"WolframVersion", "MathematicaVersion", "SystemID",
-					"Internal", "BuildNumber",
-					"Qualifier", "Category"
-					}, 
+				$pacletMarkdownNotebookExtraInfoSectionKeys,
 				Nothing
 				]>0,
 		Cell[
@@ -1352,12 +1369,8 @@ pacletMarkdownNotebookExtraInfoSection[a_]:=
 				Cell["Extra Information","Subsection"],
 				Sequence@@
 					Map[
-						pacletMarkdownNotebookBasicInfoSection[a, #]&,
-						{
-							"WolframVersion", "MathematicaVersion", "SystemID",
-							"Internal", "BuildNumber",
-							"Qualifier", "Category"
-							}
+						pacletMarkdownNotebookInfoSection[a, #]&,
+						$pacletMarkdownNotebookExtraInfoSectionKeys
 						]
 				}],
 			CellTags->"ExtraInformation"
@@ -1365,7 +1378,7 @@ pacletMarkdownNotebookExtraInfoSection[a_]:=
 		Cell[
 			CellGroupData[
 				{
-					Cell["Extra Information","Subsection"],
+					Cell["Extra Information", "Subsection"],
 					Cell["This package provides no extra information", "Text"]
 					}],
 			CellTags->"ExtraInformation"
@@ -1385,7 +1398,9 @@ pacletMarkdownNotebookExtensionGroup[a_?(KeyExistsQ[#, "Extensions"]&)]:=
 				CellGroupData[
 					{
 						Cell["Extensions", "Subsection"],
-						Cell["This package has no extensions", "Item"]
+						Cell["This package has no extensions", "Item", 
+							CellTags->{"Info", "NoExtensions"}
+							]
 						}
 					],
 				CellTags->"Extensions"
@@ -1402,7 +1417,7 @@ pacletMarkdownNotebookExtensionSection[extensionData_]:=
 					KeyValueMap[
 						Cell@
 							CellGroupData[Flatten@{
-								Cell[#,"Subsubsection"],
+								Cell[#, "Subsubsection", CellTags->{"Info", #}],
 								Replace[
 									Replace[Normal@#2,
 										{
@@ -1413,7 +1428,8 @@ pacletMarkdownNotebookExtensionSection[extensionData_]:=
 														Prepend[
 															Cell[
 																If[MatchQ[k, _Symbol], SymbolName[k], ToString[k]], 
-																"Item"
+																"Item",
+																CellTags->{"Info", "Line"}
 																]
 															]@
 															Map[
@@ -1428,7 +1444,8 @@ pacletMarkdownNotebookExtensionSection[extensionData_]:=
 																			e_:>ToString[e]
 																			}
 																		], 
-																	"Subitem"
+																	"Subitem",
+																	CellTags->{"Info", "Line"}
 																	]&,
 																v
 																]
@@ -1438,11 +1455,15 @@ pacletMarkdownNotebookExtensionSection[extensionData_]:=
 												Cell[
 													If[MatchQ[k, _Symbol], SymbolName[k], ToString[k]]<>": "<>
 													ToString[Replace[v, str:{__String}:>StringRiffle[str, ", "]]], 
-													"Item"
+													"Item",
+													CellTags->{"Info", "Line"}
 													]
 											},
 										1],
-									{}:>Cell["This extension has no extra parameters", "Item"]
+									{}:>
+										Cell["This extension has no extra parameters", "Item",
+											CellTags->{"Info", "Line"}
+											]
 									]
 								}]&,
 						KeyDrop[
@@ -1548,7 +1569,8 @@ $killFields=
 	{
 		"Name","Version","BuildNumber",
 		"Qualifier","WolframVersion",
-		"SystemID","Description","Category",
+		"SystemID", "SystemIDs",
+		"Description","Category",
 		"Creator","Publisher","Support",
 		"Internal","Location","Thumbnail",
 		"ExportOptions"
@@ -1573,7 +1595,9 @@ PacletMarkdownNotebookUpdate[notebook_Notebook,infAss_]:=
 							]
 					]
 			},
-		nb=DeleteCases[nb, Cell[___, CellTags->{"Info", ___}, ___], \[Infinity]];
+		nb=
+			DeleteCases[nb, 
+				Cell[___, CellTags->{"Info", ___}, ___], \[Infinity]];
 		nb=
 			ReplaceAll[nb,
 				c:Cell[__, CellTags->"PacletName", ___]:>
@@ -1695,7 +1719,7 @@ PacletMarkdownNotebookUpdate[notebook_Notebook,infAss_]:=
 						},___
 						],
 					___
-					]:>
+					]|Cell[___,CellTags->"Extensions",___]:>
 					pacletMarkdownNotebookExtensionSection[a["Extensions"]]
 				];
 		nb

@@ -1905,13 +1905,15 @@ AppGitHubSetRemote[appName_,remote_:Automatic]:=
 			r_String:>
 				Quiet@
 					Check[
-						GitAddRemote[AppDirectory[app],
+						Git["AddRemote", 
+							AppPath[app],
 							r
 							],
-						GitRemoveRemote[AppDirectory[app],
+						Git["RemoveRemote", AppPath[app],
 							r
 							];
-						GitAddRemote[AppDirectory[app],
+						Git["AddRemote", 
+							AppPath[app],
 							r
 							]
 						]
@@ -1923,12 +1925,12 @@ AppGitRealignRemotes[appName_]:=
 	With[{
 		app=AppFromFile[appName]
 		},
-		If[Git["ListRemotes", AppDirectory[app]]===Null,
+		If[Git["ListRemotes", AppPath[app]]===Null,
 			AppGitHubSetRemote[AppDirectory[app]]
 			];
-		Git["Fetch", AppDirectory[app]];
-		Git["Reset", AppDirectory[app], "origin/master"];
-		Git["Checkout", AppDirectory[app], "origin/master"];
+		Git["Fetch", AppPath[app]];
+		Git["Reset", AppPath[app], "origin/master"];
+		Git["Checkout", AppPath[app], "origin/master"];
 		];
 
 
@@ -1947,12 +1949,12 @@ AppGitHubConfigure[appName_:Automatic]:=
 					AppGitRealignRemotes[app]
 					]
 				];
-			If[GitRepoQ@AppDirectory[app],
+			If[Git["RepoQ", AppDirectory[app]],
 				If[!ValueQ[repoExistsQ],
 					repoExistsQ=Between[URLRead[repo,"StatusCode"],{200,299}]
 					];
 				If[!repoExistsQ,
-					GitHubImport["Create",$AppGitHubPrefix<>app];
+					GitHub["Create", $AppGitHubPrefix<>app, "ImportedResult"];
 					AppGitHubSetRemote[app,repo]
 					]
 				]

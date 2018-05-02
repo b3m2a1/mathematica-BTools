@@ -2625,7 +2625,7 @@ GitRegisterFunction[
 			"CreateReflog"->"create-reflog",
 			"Force"->"force",
 			"Move"->"move",
-			"ForceMOve"->"M",
+			"ForceMove"->"M",
 			"Color"->"color",
 			"NoColor"->"no-color",
 			"IgnoreCase"->"ignore-case",
@@ -2688,11 +2688,16 @@ GitRegisterFunction[
 
 
 
-splitGitBranches[bstring_]:=
+splitGitBranches//Clear
+
+
+splitGitBranches[bstring_String]:=
 	StringCases[
 		bstring,
 		(" "|StartOfString)~~name:WordCharacter..:>name
-		]
+		];
+splitGitBranches[bstring_]:=
+	{}
 
 
 Options[GitListBranches]=

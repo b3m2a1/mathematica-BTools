@@ -4595,27 +4595,28 @@ Cell[BoxData[
        "\t\t\t", 
       RowBox[{"r_String", ":>", "\n", "\t\t\t\t", 
        RowBox[{"Quiet", "@", "\n", "\t\t\t\t\t", 
-        RowBox[{"Check", "[", "\n", "\t", "\t", "\t\t\t\t", 
+        RowBox[{"Check", "[", "\n", "\t\t\t\t\t\t", 
          RowBox[{
-          RowBox[{"GitAddRemote", "[", 
-           RowBox[{
-            RowBox[{"AppDirectory", "[", "app", "]"}], ",", "\n", "\t", "\t", 
+          RowBox[{"Git", "[", 
+           RowBox[{"\"\<AddRemote\>\"", ",", " ", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{"AppPath", "[", "app", "]"}], ",", "\n", "\t", "\t", 
             "\t\t\t\t\t", "r"}], "\n", "\t", "\t", "\t\t\t\t\t", "]"}], ",", 
-          "\n", "\t", "\t", "\t\t\t\t", 
+          "\n", "\t\t\t\t\t\t", 
           RowBox[{
-           RowBox[{"GitRemoveRemote", "[", 
-            RowBox[{
-             RowBox[{"AppDirectory", "[", "app", "]"}], ",", "\n", "\t", "\t",
-              "\t\t\t\t\t", "r"}], "\n", "\t", "\t", "\t\t\t\t\t", "]"}], ";",
-            "\n", "\t", "\t", "\t\t\t\t", 
-           RowBox[{"GitAddRemote", "[", 
-            RowBox[{
-             RowBox[{"AppDirectory", "[", "app", "]"}], ",", "\n", "\t", 
+           RowBox[{"Git", "[", 
+            RowBox[{"\"\<RemoveRemote\>\"", ",", " ", 
+             RowBox[{"AppPath", "[", "app", "]"}], ",", "\n", "\t", "\t", 
+             "\t\t\t\t\t", "r"}], "\n", "\t", "\t", "\t\t\t\t\t", "]"}], ";", 
+           "\n", "\t\t\t\t\t\t", 
+           RowBox[{"Git", "[", 
+            RowBox[{"\"\<AddRemote\>\"", ",", " ", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{"AppPath", "[", "app", "]"}], ",", "\n", "\t", 
              "\t\t\t\t\t\t", "r"}], "\n", "\t\t\t\t\t\t\t", "]"}]}]}], "\n", 
          "\t\t\t\t\t\t", "]"}]}]}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
    "]"}]}]], "CodeInput",
- CellChangeTimes->{{3.712117245315074*^9, 
-  3.712117345720417*^9}},ExpressionUUID->"d9e1cc0c-cf8e-4e5b-9e23-\
+ CellChangeTimes->{{3.712117245315074*^9, 3.712117345720417*^9}, {
+  3.734232255196171*^9, 
+  3.734232300537672*^9}},ExpressionUUID->"d9e1cc0c-cf8e-4e5b-9e23-\
 84eaf1733ff0"],
 
 Cell[BoxData[
@@ -4634,27 +4635,28 @@ Cell[BoxData[
         RowBox[{
          RowBox[{"Git", "[", 
           RowBox[{"\"\<ListRemotes\>\"", ",", " ", 
-           RowBox[{"AppDirectory", "[", "app", "]"}]}], "]"}], "===", 
-         "Null"}], ",", "\n", "\t\t\t", 
+           RowBox[{"AppPath", "[", "app", "]"}]}], "]"}], "===", "Null"}], 
+        ",", "\n", "\t\t\t", 
         RowBox[{"AppGitHubSetRemote", "[", 
          RowBox[{"AppDirectory", "[", "app", "]"}], "]"}]}], "\n", "\t\t\t", 
        "]"}], ";", "\n", "\t\t", 
       RowBox[{"Git", "[", 
        RowBox[{"\"\<Fetch\>\"", ",", " ", 
-        RowBox[{"AppDirectory", "[", "app", "]"}]}], "]"}], ";", "\n", "\t\t", 
+        RowBox[{"AppPath", "[", "app", "]"}]}], "]"}], ";", "\n", "\t\t", 
       RowBox[{"Git", "[", 
        RowBox[{"\"\<Reset\>\"", ",", " ", 
-        RowBox[{"AppDirectory", "[", "app", "]"}], ",", " ", 
+        RowBox[{"AppPath", "[", "app", "]"}], ",", " ", 
         "\"\<origin/master\>\""}], "]"}], ";", "\n", "\t\t", 
       RowBox[{"Git", "[", 
        RowBox[{"\"\<Checkout\>\"", ",", " ", 
-        RowBox[{"AppDirectory", "[", "app", "]"}], ",", " ", 
+        RowBox[{"AppPath", "[", "app", "]"}], ",", " ", 
         "\"\<origin/master\>\""}], "]"}], ";"}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",
  CellChangeTimes->{{3.71219580666306*^9, 3.712195809182283*^9}, {
   3.712196104456525*^9, 3.712196193317711*^9}, {3.7121962708329697`*^9, 
-  3.712196292874421*^9}, {3.72306903972795*^9, 
-  3.7230690984111767`*^9}},ExpressionUUID->"e2e75614-fd67-4c1a-bb34-\
+  3.712196292874421*^9}, {3.72306903972795*^9, 3.7230690984111767`*^9}, {
+  3.734232305227789*^9, 
+  3.7342323073459253`*^9}},ExpressionUUID->"e2e75614-fd67-4c1a-bb34-\
 65d12e448d47"],
 
 Cell[BoxData[
@@ -4703,9 +4705,10 @@ Cell[BoxData[
        "\t\t\t", 
        RowBox[{"If", "[", 
         RowBox[{
-         RowBox[{"GitRepoQ", "@", 
-          RowBox[{"AppDirectory", "[", "app", "]"}]}], ",", "\n", "\t\t\t\t", 
-         
+         RowBox[{"Git", "[", 
+          RowBox[{"\"\<RepoQ\>\"", ",", " ", 
+           RowBox[{"AppDirectory", "[", "app", "]"}]}], "]"}], ",", "\n", 
+         "\t\t\t\t", 
          RowBox[{
           RowBox[{"If", "[", 
            RowBox[{
@@ -4724,10 +4727,10 @@ Cell[BoxData[
            RowBox[{
             RowBox[{"!", "repoExistsQ"}], ",", "\n", "\t\t\t\t\t", 
             RowBox[{
-             RowBox[{"GitHubImport", "[", 
-              RowBox[{"\"\<Create\>\"", ",", 
-               RowBox[{"$AppGitHubPrefix", "<>", "app"}]}], "]"}], ";", "\n", 
-             "\t\t\t\t\t", 
+             RowBox[{"GitHub", "[", 
+              RowBox[{"\"\<Create\>\"", ",", " ", 
+               RowBox[{"$AppGitHubPrefix", "<>", "app"}], ",", " ", 
+               "\"\<ImportedResult\>\""}], "]"}], ";", "\n", "\t\t\t\t\t", 
              RowBox[{"AppGitHubSetRemote", "[", 
               RowBox[{"app", ",", "repo"}], "]"}]}]}], "\n", "\t\t\t\t\t", 
            "]"}]}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "]"}]}]}], 
@@ -4755,9 +4758,12 @@ Cell[BoxData[
    3.712195746299601*^9, 3.712195803972289*^9}, {3.712195963950428*^9, 
    3.712195994755096*^9}, 3.712196091285736*^9, {3.71219629856022*^9, 
    3.7121963539756327`*^9}, {3.7121963934833517`*^9, 
-   3.7121964178108253`*^9}},ExpressionUUID->"68f09049-d707-4e1f-99b0-\
+   3.7121964178108253`*^9}, {3.734232317871708*^9, 3.734232334332286*^9}, {
+   3.734232371787261*^9, 3.7342323731442966`*^9}, {3.734232476999996*^9, 
+   3.734232480563614*^9}, {3.734233182499133*^9, 
+   3.734233185940053*^9}},ExpressionUUID->"68f09049-d707-4e1f-99b0-\
 a45cbb6f8647"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -4809,7 +4815,7 @@ Cell[BoxData[
    3.732846192326136*^9}, {3.732846433060725*^9, 
    3.732846437345233*^9}},ExpressionUUID->"8ebe2b60-2be9-4dc2-a44f-\
 462f24293315"]
-}, Open  ]],
+}, Closed]],
 
 Cell["\[LeftCeiling]GitHubDelete\[RightFloor]", "CodeSubsubsection",
  Evaluatable->True,

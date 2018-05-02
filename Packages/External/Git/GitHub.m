@@ -787,6 +787,27 @@ GitHubReposAPI[
 
 
 (* ::Subsubsection::Closed:: *)
+(*UserReposAPI*)
+
+
+
+GitHubUserReposAPI[
+	path:{___String}|_String:{},
+	query:(_String->_)|{(_String->_)...}:{},
+	headers:_Association:<||>
+	]:=
+	GitHubQuery[
+		Flatten@{
+			"user",
+			"repos",
+			path
+			},
+		query,
+		headers
+		];
+
+
+(* ::Subsubsection::Closed:: *)
 (*Repositories*)
 
 
@@ -812,18 +833,38 @@ GitHubRepositories[
 
 
 
-Options[GitHubListMyRepositories]=
+$GitHubActions["ListMyRepositories"]=GitHubListMyRepositories;
+
+
+$GitHubParamMap[GitHubListMyRepositories]=
 	{
-		"Username"->Automatic,
-		"Password"->Automatic
+		"Visibility"->"visibility",
+		"Affiliation"->"affiliation",
+		"Type"->"type",
+		"Sort"->"sort",
+		"SortDirection"->"direction"
 		};
+
+
+Options[GitHubListMyRepositories]=
+	Join[
+		Thread[Keys[$GitHubParamMap[GitHubListMyRepositories]]->Automatic],
+		{
+			"Username"->Automatic,
+			"Password"->Automatic
+			}
+		];
 GitHubListMyRepositories[
-	type:"users"|"org":"users",
 	ops:OptionsPattern[]
 	]:=
-	GitHubUserAPI[type, 
-		{"repos"}, 
-		{},
+	GitHubUserReposAPI[
+		{}, 
+		GitHubQueryParamFilter[
+			GitHubListMyRepositories,
+			{
+				ops
+				}
+			],
 		<|
 			"Headers"->
 				{	
@@ -890,8 +931,7 @@ GitHubCreate[
 	repo:_String,
 	ops:OptionsPattern[]
 	]:=
-	GitHubReposAPI[
-		repo,
+	GitHubUserReposAPI[
 		<|
 			"Method"->"POST",
 			"Body"->

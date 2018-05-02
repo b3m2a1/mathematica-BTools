@@ -452,13 +452,18 @@ PacletDocsInfo[dest_String?DirectoryQ,ops:OptionsPattern[]]:=
 
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*Docs*)
+
+
+
 extractPacletExtensionDocsInfo[base_, dest_]:=
 	Replace[base,
 		{
 			Automatic:>
 				If[Length@
-						FileNames["*.nb",
-								FileNameJoin@{dest,"Documentation"},
+							FileNames["*.nb",
+								FileNameJoin@{dest,"FrontEnd","Documentation"},
 								\[Infinity]]>0,
 					"Documentation"->
 						PacletDocsInfo[dest],
@@ -473,13 +478,21 @@ extractPacletExtensionDocsInfo[base_, dest_]:=
 		]
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*Kernel*)
+
+
+
 extractPacletExtensionKernelInfo[base_, dest_]:=
 	Replace[base,{
 		Automatic:>
 			If[AnyTrue[
 					FileNameJoin@Flatten@{dest,#}&/@
-						{FileBaseName[dest]<>".wl",FileBaseName[dest]<>".m",
-							{"Kernel","init.m"}},
+						{
+							FileBaseName[dest]<>".wl",
+							FileBaseName[dest]<>".m",
+							{"Kernel","init.m"}
+							},
 					FileExistsQ
 					],
 				"Kernel"->
@@ -497,30 +510,31 @@ extractPacletExtensionKernelInfo[base_, dest_]:=
 		}]
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*FrontEnd*)
+
+
+
 extractPacletExtensionFrontEndInfo[base_, dest_]:=
-	Replace[OptionValue["FrontEnd"],{
+	Replace[base,{
 		Automatic:>
-			If[Length@Select[Not@*DirectoryQ]@
-					Flatten@Join[
-						Map[
-							FileNames["*.nb",
-								FileNameJoin@{dest,"FrontEnd","Documentation",#},
-								\[Infinity]]&,{
-							"ReferencePages",
-							"Guides",
-							"Tutorials"
-							}],
-						Map[
-							FileNames["*",
-								FileNameJoin@{dest,"FrontEnd",#},
-								\[Infinity]
-								]&,{
-							"TextResources",
-							"SystemResources",
-							"StyleSheets",
-							"Palettes"
-							}]
-						]>0,
+			With[
+				{
+					resources=
+						Flatten@{
+							Map[
+								FileNames["*",
+									FileNameJoin@{dest,"FrontEnd",#},
+									\[Infinity]
+									]&,{
+								"TextResources",
+								"SystemResources",
+								"StyleSheets",
+								"Palettes"
+								}]
+							}
+					},
+				If[Length@Select[Not@*DirectoryQ]@resources>0,
 					"FrontEnd"->
 						If[
 							DirectoryQ@
@@ -537,13 +551,19 @@ extractPacletExtensionFrontEndInfo[base_, dest_]:=
 							<||>
 							],
 					Nothing
-					],
+					]
+				],
 		r:_Rule|{___Rule}:>
 			"FrontEnd"->Association@Flatten@{r},
 		a_Association:>
 			"FrontEnd"->a,
 		_->Nothing
 		}]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Resources*)
+
 
 
 extractPacletExtensionResourceInfo[base_, dest_]:=
@@ -617,6 +637,11 @@ extractPacletExtensionResourceInfo[base_, dest_]:=
 		}]
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*AutoCompletionData*)
+
+
+
 extractPacletExtensionAutoCompletionDataInfo[base_, dest_]:=
 	Replace[base,{
 				Automatic:>
@@ -636,6 +661,11 @@ extractPacletExtensionAutoCompletionDataInfo[base_, dest_]:=
 				}]
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*JLink*)
+
+
+
 extractPacletExtensionJLinkInfo[base_, dest_]:=
 	Replace[base, {
 		Automatic:>
@@ -653,6 +683,11 @@ extractPacletExtensionJLinkInfo[base_, dest_]:=
 			"JLink"->Association@Flatten@{r},
 		Except[_Association]->Nothing
 		}]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*LibraryLink*)
+
 
 
 extractPacletExtensionLibraryLinkInfo[base_, dest_]:=
@@ -676,6 +711,11 @@ extractPacletExtensionLibraryLinkInfo[base_, dest_]:=
 			Except[_Association]->Nothing
 			}
 		]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Main*)
+
 
 
 Options[PacletExtensionData]={
