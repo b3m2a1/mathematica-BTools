@@ -35,10 +35,6 @@ DocGenSaveSymbolPages::usage=
 	"Saves the documentation pages to a directory";
 
 
-$DocGenWebResourceBase::usage=
-	"URL for web resources in documentation building";
-
-
 DocGenRefLink::usage=
 	"Generates RefLink boxes to a symbol";
 SymbolPageTemplate::usage=
