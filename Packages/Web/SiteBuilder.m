@@ -624,16 +624,16 @@ WebSiteBuildGetTemplates[content_,dir_]:=
 
 
 WebSiteBuildFilePath[fname_,dir_]:=
-	If[StringStartsQ[fname,dir],
+	If[StringStartsQ[fname, dir],
 		If[FileNameTake[#,1]=="posts",
-			FileNameDrop[#,1],
+			FileNameDrop[#, 1],
 			#
 			]&@
-			If[FileNameTake[#,1]=="content",
-				FileNameDrop[#,1],
+			If[FileNameTake[#, 1]=="content",
+				FileNameDrop[#, 1],
 				#
 				]&@
-				FileNameDrop[fname,FileNameDepth@dir],
+				FileNameDrop[fname, FileNameDepth@dir],
 		FileNameTake[fname]
 		]
 
@@ -2064,7 +2064,7 @@ WebSiteGenerateContent[
 							fout=
 								Replace[
 									Fold[
-										Lookup[#,#2,<||>]&,
+										Lookup[#, #2, <||>]&,
 										$WebSiteBuildContentStack,
 										{fname, "Attributes", "URL"}
 										],{
@@ -2104,7 +2104,7 @@ WebSiteGenerateContent[
 						WebSiteTemplateExport[
 							genfile,
 							fout,
-							{FileNameJoin@{thm,"templates"},longDir},
+							{FileNameJoin@{thm, "templates"},longDir},
 							fname,
 							path,
 							Merge[
@@ -2280,18 +2280,56 @@ WebSiteCopyContent[dir_,outDir_,
 
 
 (* ::Subsubsubsection::Closed:: *)
+(*iWebSiteBuildGetFiles*)
+
+
+
+iWebSiteBuildGetFiles[dir_, dirs_, templates_]:=
+	With[
+		{
+			temps=
+				Replace[
+					templates,
+					Except[_?AssociationQ|_?OptionQ]->
+						{
+							"posts"->"article.html",
+							_->"page.html"
+							}
+					]
+			},
+		Join@@
+			Map[
+				Thread[
+					FileNames["*.html"|"*.md",
+						FileNameJoin@{dir, "content", #},
+						\[Infinity]
+						]->
+						Lookup[temps, #, "page.html"]
+					]&,
+				Replace[
+					dirs,
+					Automatic:>
+						{"posts", "pages"}
+					]
+				]
+		]
+	
+
+
+(* ::Subsubsubsection::Closed:: *)
 (*iWebsiteBuild*)
 
 
 
-Options[iWebsiteBuild]=
+Options[iWebSiteBuild]=
 	{
-		"GenerateContent"->Automatic,
+		"GenerateContent"->True,
 		"GenerateIndex"->Automatic,
 		"GenerateAggregations"->Automatic,
+		"PageSize"->0,
 		Monitor->True
 		};
-iWebsiteBuild[
+iWebSiteBuild[
 	dir_,
 	outDir_,
 	thm_,
@@ -2313,12 +2351,12 @@ iWebsiteBuild[
 						Automatic:>
 							OptionValue["GenerateContent"]
 						],
-				genInd:=
+				genInd=
 					Replace[
 						OptionValue["GenerateIndex"],
 						Automatic:>
 							OptionValue["GenerateContent"]
-						];
+						],
 				newconf=
 					KeyDrop[
 						conf,
@@ -2446,24 +2484,22 @@ WebSiteBuild::ndcnt="Can't generate `` without generating content first";
 
 
 Options[WebSiteBuild]=
-{
-	"CopyContent"->True,
-	"CopyTheme"->True,
-	"GenerateContent"->True,
-	"GenerateIndex"->Automatic,
-	"GenerateAggregations"->Automatic,
-	"ConfigurationOptions"->Automatic,
-	"ConfigurationFile"->Automatic,
-	"OutputDirectory"->Automatic,
-	"DefaultTheme"->"minimal",
-	"AutoDeploy"->Automatic,
-	"DeployOptions"->Automatic,
-	"LastBuild"->Automatic,
-	"ContentDirectories"->Automatic,
-	"ContentDirectoryTemplates"->Automatic,
-	"PageSize"->0,
-	Monitor->True
-	};
+Join[
+	Options[iWebsiteBuild],
+	{
+		"CopyContent"->True,
+		"CopyTheme"->True,
+		"ConfigurationOptions"->Automatic,
+		"ConfigurationFile"->Automatic,
+		"OutputDirectory"->Automatic,
+		"DefaultTheme"->"minimal",
+		"AutoDeploy"->Automatic,
+		"DeployOptions"->Automatic,
+		"LastBuild"->Automatic,
+		"ContentDirectories"->Automatic,
+		"ContentDirectoryTemplates"->Automatic
+		}
+	];
 WebSiteBuild[
 	dir_String?DirectoryQ,
 	files:
@@ -2524,37 +2560,17 @@ WebSiteBuild[
 			Replace[files,
 				{
 					Automatic:>
-						Join@@
-							Map[
-								Thread[
-									FileNames["*.html"|"*.md",
-										FileNameJoin@{dir, "content", #},
-										\[Infinity]
-										]->
-										Lookup[
-											Replace[
-												Lookup[confOps, 
-													"ContentDirectoryTemplates", 
-													OptionValue["ContentDirectoryTemplates"]
-													],
-												Except[_?AssociationQ|_?OptionQ]->
-													{
-														"posts"->"article.html",
-														_->"page.html"
-														}
-												],
-											#
-											]
-									]&,
-								Replace[
-									Lookup[confOps, 
-										"ContentDirectories", 
-										OptionValue["ContentDirectories"]
-										],
-									Automatic:>
-										{"posts", "pages"}
-									]
+						iWebSiteBuildGetFiles[
+							dir,
+							Lookup[confOps, 
+								"ContentDirectories", 
+								OptionValue["ContentDirectories"]
+								],
+							Lookup[confOps, 
+								"ContentDirectoryTemplates", 
+								OptionValue["ContentDirectoryTemplates"]
 								]
+							]
 					}
 				];
 		buildOps=
@@ -2608,33 +2624,15 @@ WebSiteBuild[
 				OptionValue["CopyContent"]
 				],
 			{
-				True|Automatic:>
-					WebSiteCopyContent[
-						dir,
-						outDir,
-						Automatic,
-						FilterRules[
-							Normal@
-								Merge[
-									{
-										buildOps,
-										Monitor->OptionValue[Monitor]
-										},
-									First
-									],
-							Options[WebSiteCopyContent]
-							]
-						],
 				p:Except[False|None]:>
 					WebSiteCopyContent[
 						dir,
 						outDir,
-						p,
+						Replace[p, True->Automatic],
 						FilterRules[
 							Normal@
 								Merge[
 									{
-										confOps,
 										buildOps,
 										Monitor->OptionValue[Monitor]
 										},

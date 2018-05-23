@@ -607,8 +607,18 @@ When the server is built the Paclets and PacletSite.mz are copied to output for 
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*Config*)
+
+
+
 $PacletServerTitle="Paclet Server";
 $PacletServerDescription="";
+
+
+(* ::Subsubsection::Closed:: *)
+(*pacletDownloadLine*)
+
 
 
 pacletDownloadLine[
@@ -639,6 +649,11 @@ pacletDownloadLine[
 				]
 			}
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*pacletSectionXML*)
+
 
 
 Options[pacletSectionXML]=
@@ -709,6 +724,11 @@ pacletSectionXML[site_,ops:OptionsPattern[]]:=
 		];
 
 
+(* ::Subsubsection::Closed:: *)
+(*$pacletServerCSS*)
+
+
+
 $pacletServerCSS=
 "
 body { 
@@ -774,6 +794,11 @@ a:visited {
 	color: #8f3939;
 	}
 ";
+
+
+(* ::Subsubsection::Closed:: *)
+(*pacletServerXML*)
+
 
 
 Options[pacletServerXML]={
@@ -1816,11 +1841,16 @@ PacletServerBuild[
 		With[
 			{
 				siteData=
-					PacletServerExposedPaclets[server]
+					PacletServerExposedPaclets[server],
+				servDir=
+					Replace[server, 
+						Except[_String?DirectoryQ]:>
+							PacletServerDirectory[server]
+						]
 				},
 			PacletServerInitialize[server];
 			If[MatchQ[OptionValue["RegenerateContent"], True|Automatic],
-				With[{thm=WebSiteFindTheme[server, "DownloadTheme"->True]},
+				With[{thm=WebSiteFindTheme[servDir, "DownloadTheme"->True]},
 				If[OptionValue[Monitor],
 						Function[Null,
 							Monitor[#, 
