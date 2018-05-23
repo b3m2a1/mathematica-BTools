@@ -2279,6 +2279,169 @@ WebSiteCopyContent[dir_,outDir_,
 
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*iWebsiteBuild*)
+
+
+
+Options[iWebsiteBuild]=
+	{
+		"GenerateContent"->Automatic,
+		"GenerateIndex"->Automatic,
+		"GenerateAggregations"->Automatic,
+		Monitor->True
+		};
+iWebsiteBuild[
+	dir_,
+	outDir_,
+	thm_,
+	fileNames_,
+	conf_,
+	ops:OptionsPattern[]
+	]:=
+	Block[
+			{
+				$WebSiteBuildContentStack=
+					<||>,
+				$WebSiteBuildContentDataStack=
+					<||>,
+				genCont=
+					OptionValue["GenerateContent"],
+				genAggs=
+					Replace[
+						OptionValue["GenerateAggregations"],
+						Automatic:>
+							OptionValue["GenerateContent"]
+						],
+				genInd:=
+					Replace[
+						OptionValue["GenerateIndex"],
+						Automatic:>
+							OptionValue["GenerateContent"]
+						];
+				newconf=
+					KeyDrop[
+						conf,
+						{
+							"GenerateContent",
+							"GenerateAggregations",
+							"GenerateIndex"
+							}
+						]
+				},
+			If[AnyTrue[{genCont,genAggs,genInd},TrueQ],
+				WebSiteExtractPageData[
+					ExpandFileName@dir,
+					fileNames,
+					newconf,
+					FilterRules[
+						Normal@
+							Merge[
+								{
+									ops,
+									Monitor->OptionValue[Monitor]
+									},
+								First
+								],
+						Options[WebSiteExtractPageData]
+						]
+					]
+				];
+			WebSiteContentStackPrep[];
+			If[genCont,
+				WebSiteGenerateContent[
+					dir,
+					fileNames,
+					outDir,
+					thm,
+					Join[
+						<|
+							"SiteDirectory"->dir,
+							"OutputDirectory"->outDir
+							|>,
+						newconf
+						],
+					FilterRules[
+						Normal@
+							Merge[
+								{
+									If[OptionQ@OptionValue["PageSize"],
+										"PageSize"->
+											Lookup[OptionValue["PageSize"], "Content", 0],
+										Nothing
+										],
+									ops,
+									Monitor->OptionValue[Monitor]
+									},
+								First
+								],
+						Options[WebSiteGenerateContent]
+						]
+					];
+				Export[
+					FileNameJoin@{dir, "BuildInfo.m"},
+					{
+						"LastBuild"->Now
+						}
+					]
+				];
+			If[genAggs,
+				WebSiteGenerateAggregationPages[
+					dir,
+					Automatic,
+					outDir,
+					thm,
+					newconf,
+					FilterRules[
+						Normal@
+							Merge[
+								{
+									If[OptionQ@OptionValue["PageSize"],
+										"PageSize"->
+											Lookup[OptionValue["PageSize"], "Aggregations", 0],
+										Nothing
+										],
+									ops,
+									Monitor->OptionValue[Monitor]
+									},
+								First
+								],
+						Options[WebSiteGenerateAggregationPages]
+						]
+					];
+				];
+			If[genInd,
+				WebSiteGenerateIndexPages[
+					dir,
+					outDir,
+					thm,
+					newconf,
+					FilterRules[
+						Normal@
+							Merge[
+								{
+									If[OptionQ@OptionValue["PageSize"],
+										"PageSize"->
+											Lookup[OptionValue["PageSize"], "Index", 0],
+										Nothing
+										],
+									ops,
+									Monitor->OptionValue[Monitor]
+									},
+								First
+								],
+						Options[WebSiteGenerateIndexPages]
+						]
+					];
+				];
+			];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*WebSiteBuild*)
+
+
+
 WebSiteBuild::ndcnt="Can't generate `` without generating content first";
 
 
@@ -2296,6 +2459,8 @@ Options[WebSiteBuild]=
 	"AutoDeploy"->Automatic,
 	"DeployOptions"->Automatic,
 	"LastBuild"->Automatic,
+	"ContentDirectories"->Automatic,
+	"ContentDirectoryTemplates"->Automatic,
 	"PageSize"->0,
 	Monitor->True
 	};
@@ -2306,34 +2471,14 @@ WebSiteBuild[
 			s_?(StringPattern`StringPatternQ)|Automatic:Automatic,
 	ops:OptionsPattern[]
 	]:=
-	With[{
-		outDir=
-			Replace[
-				OptionValue["OutputDirectory"],
-				{
-					Automatic:>
-						FileNameJoin@{dir,"output"},
-					p_String?(Not@*DirectoryQ):>
-						FileNameJoin@{dir,p}
-					}
-				],
-		fileNames=
-			Replace[files,{
-				Automatic:>
-					Join@@
-						MapThread[
-							Thread[
-								FileNames["*.html"|"*.md",
-									FileNameJoin@{dir,"content",#},
-									\[Infinity]
-									]->#2
-								]&,
-							{
-								{"posts","pages"},
-								{"article.html","page.html"}
-								}
-							]
-				}],
+	Module[
+		{
+			outDir,
+			fileNames,
+			config,
+			confOps,
+			buildOps
+			},
 		config=
 			Join[
 				Replace[
@@ -2359,207 +2504,194 @@ WebSiteBuild[
 						_-><||>
 						}
 					]
-				]
-			},
-		With[
-			{
-				buildOps=
-					Flatten@
-						{
-							ops,
-							Replace[Except[_?OptionQ]->{}]@
-							Normal@Replace[
-								FileNameJoin@{dir, "BuildInfo.m"},
-								{
-									f_String?FileExistsQ:>
-										Import[f]
-									}
-								],
-							Normal@config
-							}
-					},
-			If[!DirectoryQ[outDir],
-				CreateDirectory@outDir
 				];
-			If[OptionValue["CopyTheme"],
-				WebSiteCopyTheme[
-					dir,
-					outDir,
-					Lookup[config,"Theme",OptionValue["DefaultTheme"]],
-					FilterRules[
-						Flatten@{
-							buildOps,
-							Monitor->OptionValue[Monitor]
-							},
-						Options[WebSiteCopyTheme]
-						]
-					]
-				];
+		confOps=
+			Lookup[config, "BuildOptions", {}];
+		outDir=
 			Replace[
-				OptionValue["CopyContent"],
+				Lookup[confOps, 
+					"OutputDirectory", 
+					OptionValue["OutputDirectory"]
+					],
 				{
-					True|Automatic:>
-						WebSiteCopyContent[
-							dir,
-							outDir,
-							Automatic,
-							FilterRules[
-								Flatten@{
-									buildOps,
-									Monitor->OptionValue[Monitor]
-									},
-								Options[WebSiteCopyContent]
-								]
-							],
-					p:Except[False|None]:>
-						WebSiteCopyContent[dir,outDir,p,
-							FilterRules[
-								Flatten@{
-									buildOps,
-									Monitor->OptionValue[Monitor]
-									},
-								Options[WebSiteCopyContent]
-								]
-							]
+					Automatic:>
+						FileNameJoin@{dir, "output"},
+					p_String?(Not@*DirectoryQ):>
+						FileNameJoin@{dir, p}
 					}
 				];
-			Block[
+		fileNames=
+			Replace[files,
 				{
-					$WebSiteBuildContentStack=
-						<||>,
-					$WebSiteBuildContentDataStack=
-						<||>,
-					genCont:=
-						Replace[OptionValue["GenerateContent"],
-							Automatic:>
-								Lookup[config,"GenerateContent", Automatic]
-							],
-					genAggs:=
-						Replace[OptionValue["GenerateAggregations"],
-							Automatic:>
-								Lookup[config, "GenerateAggregations", genCont]
-							],
-					genInd:=
-						Replace[OptionValue["GenerateIndex"],
-							Automatic:>
-								Lookup[config, "GenerateIndex", genCont]
-							],
-					newconf=
-						KeyDrop[config,
-							{
-								"GenerateContent",
-								"GenerateAggregations",
-								"GenerateIndex"
-								}
-							]
-					},
-				If[AnyTrue[{genCont,genAggs,genInd},TrueQ],
-					WebSiteExtractPageData[
-						ExpandFileName@dir,
-						fileNames,newconf,
-						FilterRules[
-							Flatten@{
-								buildOps,
-								Monitor->OptionValue[Monitor]
-								},
-							Options[WebSiteExtractPageData]
-							]
-						]
-					];
-				WebSiteContentStackPrep[];
-				If[genCont,
-					WebSiteGenerateContent[
-						dir,fileNames,outDir,
-						Lookup[config,"Theme",OptionValue["DefaultTheme"]],
-						Join[
-							<|
-								"SiteDirectory"->dir,
-								"OutputDirectory"->outDir
-								|>,
-							newconf
-							],
-						FilterRules[
-							Flatten@{
-								If[OptionQ@Lookup[buildOps, "PageSize"],
-									"PageSize"->
-										Lookup[Lookup[buildOps, "PageSize"], "GenerateContent", 0],
-									Nothing
-									],
-								buildOps,
-								Monitor->OptionValue[Monitor]
-								},
-							Options[WebSiteGenerateContent]
-							]
-						];
-					Export[
-						FileNameJoin@{dir, "BuildInfo.m"},
-						{
-							"LastBuild"->Now
-							}
-						]
-					];
-				If[genAggs,
-					WebSiteGenerateAggregationPages[
-						dir,
-						Automatic,
-						outDir,
-						Lookup[config,"Theme",OptionValue["DefaultTheme"]],
-						newconf,
-						FilterRules[
-							Flatten@{
-								If[OptionQ@Lookup[buildOps, "PageSize"],
-									"PageSize"->
-										Lookup[Lookup[buildOps, "PageSize"], "GenerateAggregations", 0],
-									Nothing
-									],
-								buildOps,
-								Monitor->OptionValue[Monitor]
-								},
-							Options[WebSiteGenerateAggregationPages]
-							]
-						];
-					];
-				If[genInd,
-					WebSiteGenerateIndexPages[
-						dir,outDir,
-						Lookup[config,"Theme",OptionValue["DefaultTheme"]],
-						newconf,
-						FilterRules[
-							Flatten@{
-								If[OptionQ@Lookup[buildOps, "PageSize"],
-									"PageSize"->
-										Lookup[Lookup[buildOps, "PageSize"], "GenerateIndex", 0],
-									Nothing
-									],
-								buildOps,
-								Monitor->OptionValue[Monitor]
-								},
-							Options[WebSiteGenerateIndexPages]
-							]
-						];
-					];
-				];
-			If[TrueQ[OptionValue["AutoDeploy"]]||
-				OptionValue["AutoDeploy"]===Automatic&&
-					OptionQ@OptionValue["DeployOptions"],
-				WebSiteDeploy[outDir,
-					Replace[
-						Lookup[config,"SiteURL"],
-						Except[_String]:>
-							Replace[FileBaseName[dir],
-								"output":>
-									FileBaseName@DirectoryName[dir]
+					Automatic:>
+						Join@@
+							Map[
+								Thread[
+									FileNames["*.html"|"*.md",
+										FileNameJoin@{dir, "content", #},
+										\[Infinity]
+										]->
+										Lookup[
+											Replace[
+												Lookup[confOps, 
+													"ContentDirectoryTemplates", 
+													OptionValue["ContentDirectoryTemplates"]
+													],
+												Except[_?AssociationQ|_?OptionQ]->
+													{
+														"posts"->"article.html",
+														_->"page.html"
+														}
+												],
+											#
+											]
+									]&,
+								Replace[
+									Lookup[confOps, 
+										"ContentDirectories", 
+										OptionValue["ContentDirectories"]
+										],
+									Automatic:>
+										{"posts", "pages"}
+									]
 								]
-						],
-					Replace[
-						Replace[OptionValue["DeployOptions"],
-							Automatic:>Lookup[config,"DeployOptions",{}]
+					}
+				];
+		buildOps=
+			Merge[
+				{
+					confOps,
+					ops,
+					Replace[Except[_?OptionQ]->{}]@
+					Normal@
+						Replace[
+							FileNameJoin@{dir, "BuildInfo.m"},
+							{
+								f_String?FileExistsQ:>
+									Import[f]
+								}
 							],
-						Except[_?OptionQ]->{}
-						]
+					Normal@config
+					},
+				First
+				];
+		If[!DirectoryQ[outDir],
+			CreateDirectory@outDir
+			];
+		If[
+			Lookup[confOps, 
+				"CopyTheme", 
+				OptionValue["CopyTheme"]
+				],
+			WebSiteCopyTheme[
+				dir,
+				outDir,
+				Lookup[config, "Theme", 
+					Lookup[confOps, "Theme", OptionValue["DefaultTheme"]]
 					],
-				outDir
+				FilterRules[
+					Normal@
+						Merge[
+							{
+								buildOps,
+								Monitor->OptionValue[Monitor]
+								},
+							First
+							],
+					Options[WebSiteCopyTheme]
+					]
 				]
+			];
+		Replace[
+			Lookup[confOps, 
+				"CopyContent", 
+				OptionValue["CopyContent"]
+				],
+			{
+				True|Automatic:>
+					WebSiteCopyContent[
+						dir,
+						outDir,
+						Automatic,
+						FilterRules[
+							Normal@
+								Merge[
+									{
+										buildOps,
+										Monitor->OptionValue[Monitor]
+										},
+									First
+									],
+							Options[WebSiteCopyContent]
+							]
+						],
+				p:Except[False|None]:>
+					WebSiteCopyContent[
+						dir,
+						outDir,
+						p,
+						FilterRules[
+							Normal@
+								Merge[
+									{
+										confOps,
+										buildOps,
+										Monitor->OptionValue[Monitor]
+										},
+									First
+									],
+							Options[WebSiteCopyContent]
+							]
+						]
+				}
+			];
+		iWebSiteBuild[
+			dir,
+			outDir,
+			Lookup[config,
+				"Theme",
+				Lookup[
+					confOps,
+					"DefaultTheme", 
+					OptionValue["DefaultTheme"]
+					]
+				],
+			fileNames,
+			config,
+			FilterRules[
+				Normal@
+					Merge[
+						{
+							confOps,
+							config,
+							buildOps
+							},
+						First
+						], 
+				Options@iWebSiteBuild
+				]
+			];
+		If[TrueQ[OptionValue["AutoDeploy"]]||
+			OptionValue["AutoDeploy"]===Automatic&&
+				OptionQ@OptionValue["DeployOptions"],
+			WebSiteDeploy[
+				outDir,
+				Replace[
+					Lookup[config, "SiteURL"],
+					Except[_String]:>
+						Replace[FileBaseName[dir],
+							"output":>
+								FileBaseName@DirectoryName[dir]
+							]
+					],
+				Replace[
+					Replace[OptionValue["DeployOptions"],
+						Automatic:>Lookup[config,"DeployOptions",{}]
+						],
+					Except[_?OptionQ]->{}
+					]
+				],
+			outDir
 			]
 		];
 
@@ -2687,6 +2819,11 @@ webSiteDeployFile[f_, uri_, outDir_, trueDir_, stripDirs_, ops___?OptionQ]:=
 					]
 				]
 		]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*WebSiteDeploy*)
+
 
 
 $WebFileFormats=
