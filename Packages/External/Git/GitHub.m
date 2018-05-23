@@ -1647,16 +1647,16 @@ GitHubMerge[
 								"Message"->
 									TemplateApply[
 										"Merge `` into ``",
-										URLBuild@
-											Append[
+										{
+											Replace[source,
+												_GitHubPath:>StringRiffle[Normal[source], "/"]
+												],
+											URLBuild@
 												URLParse[
 													If[StringQ@repo, repo, URL@repo], 
 													"Path"
-													],
-												Replace[source,
-													_GitHubPath:>StringRiffle[Normal[source], "/"]
 													]
-												]
+											}
 										]
 								}
 								],

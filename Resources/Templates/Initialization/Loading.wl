@@ -70,7 +70,7 @@ PackageExecute[expr_]:=
 PackageExecute~SetAttributes~HoldFirst
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*PackagePullDeclarations*)
 
 
@@ -90,7 +90,7 @@ PackagePullDeclarationsAction[
 				_PackageFEHiddenBlock|_PackageScopeBlock,
 				___]
 			]
-	]/;TrueQ[$AllowPackageRecoloring]:=
+	]/;TrueQ[$AllowPackageRescoping]:=
 	(
 		ReleaseHold[p];
 		Sow[p];

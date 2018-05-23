@@ -1,0 +1,2234 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Google APIs", "CodeSection",
+ CellChangeTimes->{{3.704148043325519*^9, 3.7041480459627943`*^9}, {
+  3.704148264721705*^9, 
+  3.704148294043994*^9}},ExpressionUUID->"a1b613ec-67ea-410c-ba14-\
+992bdc5920da"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"$GoogleDriveCalls", "::", "usage"}], "=", "\"\<\>\""}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.734834644228537*^9, 
+  3.734834645946527*^9}},ExpressionUUID->"8c32236c-7686-4e14-859c-\
+bad93af75399"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GADriveRequest", "::", "usage"}], "=", "\"\<\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GADriveCall", "::", "usage"}], "=", "\"\<\>\""}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.734834468029948*^9, 
+  3.734834476412181*^9}},ExpressionUUID->"0a16aabf-c7e4-4e25-9a1f-\
+3ab8644ac1f2"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileInfo", "::", "usage"}], "=", "\"\<\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileSearch", "::", "usage"}], "=", "\"\<\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileUpload", "::", "usage"}], "=", "\"\<\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileUpdate", "::", "usage"}], "=", "\"\<\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileDownload", "::", "usage"}], "=", "\"\<\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileDownloadURL", "::", "usage"}], "=", "\"\<\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileDelete", "::", "usage"}], "=", "\"\<\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFilePermissions", "::", "usage"}], "=", "\"\<\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileCreatePermissions", "::", "usage"}], "=", "\"\<\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileUpdatePermissions", "::", "usage"}], "=", "\"\<\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileDeletePermissions", "::", "usage"}], "=", "\"\<\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFilePublish", "::", "usage"}], "=", "\"\<\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFilePrivatize", "::", "usage"}], "=", "\"\<\>\""}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.7119843209838333`*^9, 3.7119843894737597`*^9}, {
+  3.711984841260851*^9, 3.711984844081197*^9}, {3.711993342697564*^9, 
+  3.711993361013174*^9}, {3.733853947010325*^9, 
+  3.7338539506037703`*^9}},ExpressionUUID->"a947eeef-0afd-475a-a097-\
+446b8a8667c9"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"7f191f15-9dd9-4039-b06f-\
+c4923eabfa12"],
+
+Cell[CellGroupData[{
+
+Cell["API Basics", "CodeSubsection",
+ CellChangeTimes->{{3.70414805890786*^9, 3.704148062441847*^9}, {
+   3.7041488201470547`*^9, 3.704148822096118*^9}, 
+   3.7042176589412127`*^9},ExpressionUUID->"2af1ce18-2954-4cc5-89e1-\
+774740f3093d"],
+
+Cell[CellGroupData[{
+
+Cell["Requests", "CodeSubsubsection",
+ CellChangeTimes->{{3.704152120208335*^9, 3.704152124590876*^9}, 
+   3.704152232959446*^9},ExpressionUUID->"501b8b18-bedc-4680-8c50-\
+6da5743ec2fa"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GADriveRequest", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"path", ":", 
+      RowBox[{"_String", "|", 
+       RowBox[{"{", "__String", "}"}], "|", "Nothing"}], ":", "Nothing"}], 
+     ",", "\n", "\t", 
+     RowBox[{"query", ":", 
+      RowBox[{"_Rule", "|", 
+       RowBox[{"{", "___Rule", "}"}]}], ":", 
+      RowBox[{"{", "}"}]}], ",", "\n", "\t", 
+     RowBox[{"assoc", ":", "_Association", ":", 
+      RowBox[{"<|", "|>"}]}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"GARequest", "[", "\n", "\t\t", 
+    RowBox[{
+    "\"\<Drive\>\"", ",", "\n", "\t\t", "path", ",", "\n", "\t\t", "query", 
+     ",", "\n", "\t\t", "assoc"}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GADriveCall", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"path", ":", 
+      RowBox[{"_String", "|", 
+       RowBox[{"{", "__String", "}"}], "|", "Nothing"}], ":", "Nothing"}], 
+     ",", "\n", "\t", 
+     RowBox[{"query", ":", 
+      RowBox[{"_Rule", "|", 
+       RowBox[{"{", "___Rule", "}"}]}], ":", 
+      RowBox[{"{", "}"}]}], ",", "\n", "\t", 
+     RowBox[{"assoc", ":", "_Association", ":", 
+      RowBox[{"<|", "|>"}]}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"GACall", "@", "\n", "\t\t", 
+    RowBox[{"GADriveRequest", "[", "\n", "\t\t\t", 
+     RowBox[{
+     "path", ",", "\n", "\t\t\t", "query", ",", "\n", "\t", "\t\t", "assoc"}],
+      "\n", "\t", "\t\t", "]"}]}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.704148278124859*^9, 3.704148288724184*^9}, {
+   3.704148321447947*^9, 3.7041484982251863`*^9}, {3.70414860403316*^9, 
+   3.704148615574959*^9}, {3.7041487619016857`*^9, 3.704148764450377*^9}, {
+   3.7041491216174383`*^9, 3.70414912331329*^9}, 3.704149957832692*^9, {
+   3.704152023955187*^9, 3.7041520547493067`*^9}, {3.704153992862854*^9, 
+   3.704154052697845*^9}, {3.704218170134103*^9, 3.70421818195651*^9}, {
+   3.704218253366704*^9, 3.704218270495734*^9}, {3.7043995539199963`*^9, 
+   3.7043995571537848`*^9}, {3.704400071048417*^9, 3.7044000934615602`*^9}, {
+   3.704409007872959*^9, 3.704409010140451*^9}, 3.704635972141776*^9, {
+   3.704646626471211*^9, 3.704646639463313*^9}, {3.704648352893055*^9, 
+   3.704648375445657*^9}},ExpressionUUID->"3a088f94-c1cb-4aad-a336-\
+934b49f13654"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"GoogleDrive", "::", "err"}], "=", "\"\<\\n``\>\""}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7046383089254007`*^9, 3.704638354161599*^9}, {
+  3.7046384220803328`*^9, 3.704638433502048*^9}, {3.7046386197822323`*^9, 
+  3.704638620131921*^9}},ExpressionUUID->"7285fc6d-b62f-4a3e-8d70-\
+41b313c36210"]
+}, Closed]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Calls", "CodeSubsection",
+ CellChangeTimes->{{3.734834651387059*^9, 
+  3.734834651906415*^9}},ExpressionUUID->"c8c7c876-4d6d-4db6-9ff9-\
+61f26a6c2c71"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{"!", 
+     RowBox[{"AssociationQ", "@", "$GoogleDriveCalls"}]}], ",", "\n", "\t", 
+    RowBox[{"$GoogleDriveCalls", "=", 
+     RowBox[{"<|", "|>"}]}]}], "\n", "\t", "]"}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7348346533799543`*^9, 3.734834655010367*^9}, {
+  3.734839289837307*^9, 
+  3.7348392950085793`*^9}},ExpressionUUID->"daa513cd-e935-4e1d-88dd-\
+21cb78d446d8"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Files", "CodeSubsection",
+ CellChangeTimes->{{3.7041488256731586`*^9, 3.704148827951879*^9}, {
+  3.704149997823243*^9, 
+  3.7041499993563757`*^9}},ExpressionUUID->"52e6f013-d3a2-46fc-aa9b-\
+33c298c1157b"],
+
+Cell[CellGroupData[{
+
+Cell["PullContent", "CodeSubsubsection",
+ CellChangeTimes->{{3.705181138416901*^9, 
+  3.705181140440002*^9}},ExpressionUUID->"4c3f9a63-3650-4862-819e-\
+b0a3c169a911"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"GAPullContent", "//", "Clear"}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.704653779917872*^9, 3.704653880510399*^9}, {
+   3.704654525707739*^9, 3.704654540983409*^9}, {3.7046545752726593`*^9, 
+   3.704654673812211*^9}, 3.704654725593115*^9, {3.704654885440178*^9, 
+   3.7046549305536222`*^9}, 3.704661234953298*^9, {3.704661324755211*^9, 
+   3.704661350921575*^9}},ExpressionUUID->"ec272001-e751-4be4-84c1-\
+9269cd6ac0c1"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAPullContent", "[", "a_Association", "]"}], ":=", "\n", "\t", 
+   RowBox[{"Replace", "[", 
+    RowBox[{
+     RowBox[{"a", "[", "\"\<Content\>\"", "]"}], ",", 
+     RowBox[{"\"\<\>\"", "\[Rule]", "Null"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"GAPullContent", "[", "params_", "]"}], "[", "a_Association", 
+    "]"}], ":=", "\n", "\t", 
+   RowBox[{"Fold", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Replace", "[", 
+       RowBox[{"#", ",", 
+        RowBox[{"{", "\n", "\t\t\t", 
+         RowBox[{
+          RowBox[{"assoc_Association", ":>", "\n", "\t\t\t\t", 
+           RowBox[{"Lookup", "[", 
+            RowBox[{"assoc", ",", "#2"}], "]"}]}], ",", "\n", "\t\t\t", 
+          RowBox[{"\"\<\>\"", "\[Rule]", "Null"}]}], "\n", "\t\t\t", "}"}]}], 
+       "]"}], "&"}], ",", "\n", "\t\t", "a", ",", "\n", "\t\t", 
+     RowBox[{"Flatten", "@", 
+      RowBox[{"{", 
+       RowBox[{"\"\<Content\>\"", ",", "params"}], "}"}]}]}], "\n", "\t\t", 
+    "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.704653779917872*^9, 3.704653880510399*^9}, {
+   3.704654525707739*^9, 3.704654540983409*^9}, {3.7046545752726593`*^9, 
+   3.704654673812211*^9}, 3.704654725593115*^9, {3.704654885440178*^9, 
+   3.7046549305536222`*^9}, 3.704661234953298*^9, {3.704661324755211*^9, 
+   3.704661350921575*^9}, {3.7046614212310953`*^9, 
+   3.704661450571784*^9}},ExpressionUUID->"0917c1b4-8fb3-4b75-acc2-\
+c5cb28f3088f"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$GAApplyRequests", "=", "True"}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.704661236706409*^9, 
+  3.704661278604212*^9}},ExpressionUUID->"0033a65e-b340-496c-a891-\
+c45d42ae34b5"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"GAPullContent", "[", 
+   RowBox[{"req_HTTPRequest", ",", "stuff___"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{"$GAApplyRequests", "=!=", "False"}], ",", "\n", "\t\t", 
+    RowBox[{"Replace", "[", 
+     RowBox[{
+      RowBox[{"GACall", "[", 
+       RowBox[{"req", ",", "stuff"}], "]"}], ",", "\n", "\t\t\t", 
+      RowBox[{"a_Association", "\[RuleDelayed]", 
+       RowBox[{"GAPullContent", "@", "a"}]}]}], "\n", "\t\t\t", "]"}], ",", 
+    "\n", "\t\t", "req"}], "\n", "\t\t", "]"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"GAPullContent", "[", "params_", "]"}], "[", 
+    RowBox[{"req_HTTPRequest", ",", "stuff___"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{"$GAApplyRequests", "=!=", "False"}], ",", "\n", "\t\t", 
+     RowBox[{"Replace", "[", 
+      RowBox[{
+       RowBox[{"GACall", "[", 
+        RowBox[{"req", ",", "stuff"}], "]"}], ",", "\n", "\t", "\t\t", 
+       RowBox[{"a_Association", "\[RuleDelayed]", "\n", "\t", "\t\t\t", 
+        RowBox[{
+         RowBox[{"GAPullContent", "[", "params", "]"}], "[", "a", "]"}]}]}], 
+      "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", "req"}], "\n", "\t\t", 
+    "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.704653779917872*^9, 3.704653880510399*^9}, {
+   3.704654525707739*^9, 3.704654540983409*^9}, {3.7046545752726593`*^9, 
+   3.704654673812211*^9}, 3.704654725593115*^9, {3.704654885440178*^9, 
+   3.7046549305536222`*^9}, {3.704661234953298*^9, 3.7046612727169313`*^9}, {
+   3.704661329976349*^9, 3.704661346647655*^9}, {3.7046615537525806`*^9, 
+   3.704661554943268*^9}},ExpressionUUID->"bc4f3b8d-84e3-4ce4-b611-\
+501514a59898"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Files", "CodeSubsubsection",
+ CellChangeTimes->{{3.704653078210723*^9, 
+  3.7046530792489653`*^9}},ExpressionUUID->"a77bbc66-7526-4847-943f-\
+450b1547d907"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFilesRequest", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"path", ":", 
+      RowBox[{"Nothing", "|", "_String", "|", "_Association", "|", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"_String", "|", "_Association"}], ")"}], ".."}], "}"}]}], 
+      ":", "Nothing"}], ",", "\n", "\t", 
+     RowBox[{"query", ":", 
+      RowBox[{"_Rule", "|", 
+       RowBox[{"{", "___Rule", "}"}]}], ":", 
+      RowBox[{"{", "}"}]}], ",", "\n", "\t", 
+     RowBox[{"assoc", ":", "_Association", ":", 
+      RowBox[{"<|", "|>"}]}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"$GAVersion", "=", "3"}], "}"}], ",", "\n", "\t\t", 
+     RowBox[{"GADriveRequest", "[", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"Flatten", "@", 
+          RowBox[{"{", 
+           RowBox[{"\"\<files\>\"", ",", "path"}], "}"}]}], ",", "\n", 
+         "\t\t\t\t", 
+         RowBox[{"a_Association", ":>", "\n", "\t\t\t\t\t", 
+          RowBox[{"Lookup", "[", 
+           RowBox[{"a", ",", "\"\<ID\>\"", ",", "Nothing"}], "]"}]}], ",", 
+         "\n", "\t\t\t\t", "1"}], "\n", "\t\t\t\t", "]"}], ",", "\n", 
+       "\t\t\t", "query", ",", "\n", "\t\t\t", "assoc"}], "\n", "\t\t\t", 
+      "]"}]}], "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.704148876485077*^9, 3.704148938981674*^9}, {
+   3.704149113451964*^9, 3.70414911738408*^9}, {3.70440353270714*^9, 
+   3.704403537821156*^9}, {3.704409188332767*^9, 3.704409195647715*^9}, {
+   3.704412034023223*^9, 3.704412055526176*^9}, 3.704592391546319*^9, 
+   3.7046316058862753`*^9, 3.704635948350904*^9, 3.70463723358969*^9, {
+   3.7046373463849*^9, 3.7046373542642612`*^9}, {3.704664570902052*^9, 
+   3.704664604804041*^9}},ExpressionUUID->"7901e1b9-074e-4624-8a40-\
+e4ae61b7d57c"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileIDQ", "[", "id_String", "]"}], ":=", "\n", "\t", 
+   RowBox[{"StringMatchQ", "[", "\n", "\t\t", 
+    RowBox[{"id", ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Repeated", "[", "\n", "\t\t\t", 
+       RowBox[{"WordCharacter", ",", "\n", "\t\t\t", 
+        RowBox[{"{", 
+         RowBox[{"20", ",", "28"}], "}"}]}], "\n", "\t\t\t", "]"}], "|", 
+      RowBox[{"(", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"Repeated", "[", "\n", "\t\t\t\t", 
+         RowBox[{"WordCharacter", ",", "\n", "\t\t\t\t", 
+          RowBox[{"{", 
+           RowBox[{"5", ",", "15"}], "}"}]}], "\n", "\t", "\t\t\t", "]"}], 
+        "~~", "\"\<-\>\"", "~~", "\n", "\t\t\t\t", 
+        RowBox[{"Repeated", "[", "\n", "\t\t\t\t\t", 
+         RowBox[{"WordCharacter", ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"{", 
+           RowBox[{"5", ",", "15"}], "}"}]}], "\n", "\t", "\t\t\t\t", "]"}]}],
+        "\n", "\t\t\t\t", ")"}]}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileIDQ", "[", "___", "]"}], ":=", "\n", "\t", "False"}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.704635664018268*^9, 3.7046357237345457`*^9}, {
+  3.704635756945599*^9, 3.704635769757951*^9}, {3.704635839245871*^9, 
+  3.704635843131617*^9}, {3.704639401151292*^9, 3.704639402749482*^9}, {
+  3.704659246398794*^9, 3.7046592599491568`*^9}, {3.704729380476531*^9, 
+  3.7047294051969748`*^9}},ExpressionUUID->"45d81f9f-2e23-4ec1-88c5-\
+c0b9fc75cd2c"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Info", "CodeSubsubsection",
+ CellChangeTimes->{{3.704635523556465*^9, 
+  3.704635528170774*^9}},ExpressionUUID->"20976967-0665-47b8-8bba-\
+e71760c392ac"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$GAFileInfoParams", "=", "\n", "\t", 
+   RowBox[{"{", "\n", "\t", 
+    RowBox[{
+    "\"\<action\>\"", ",", "\"\<appInstalled\>\"", ",", 
+     "\"\<capabilities.canComment\>\"", ",", "\n", "\t", 
+     "\"\<capabilities.canCopy\>\"", ",", "\"\<capabilities.canEdit\>\"", 
+     ",", "\"\<capabilities.canEdit\>\"", ",", "\n", "\t", 
+     "\"\<capabilities.canShare\>\"", ",", "\"\<changes\>\"", ",", 
+     "\"\<changes.getStartPageToken\>\"", ",", "\n", "\t", "\"\<comments\>\"",
+      ",", "\"\<contentHints.indexableText\>\"", ",", 
+     "\"\<contentHints.thumbnail.image\>\"", ",", "\n", "\t", 
+     "\"\<contentHints.thumbnail.mimeType\>\"", ",", "\"\<createdTime\>\"", 
+     ",", "\"\<createdTime\>\"", ",", "\n", "\t", "\"\<createdTime\>\"", ",", 
+     "\"\<displayName\>\"", ",", "\"\<domain\>\"", ",", "\n", "\t", 
+     "\"\<emailAddress\>\"", ",", "\"\<files\>\"", ",", 
+     "\"\<files.export\>\"", ",", "\n", "\t", "\"\<files.get\>\"", ",", 
+     "\"\<files.get\>\"", ",", "\"\<files.get\>\"", ",", "\n", "\t", 
+     "\"\<id\>\"", ",", "\"\<imageMediaMetadata.time\>\"", ",", 
+     "\"\<keepForever\>\"", ",", "\n", "\t", 
+     "\"\<lastModifyingUser.displayName\>\"", ",", 
+     "\"\<lastModifyingUser.displayName\>\"", ",", "\"\<maxImportSizes\>\"", 
+     ",", "\n", "\t", "\"\<maxUploadSize\>\"", ",", "\"\<me\>\"", ",", 
+     "\"\<modifiedByMeTime\>\"", ",", "\n", "\t", "\"\<modifiedTime\>\"", 
+     ",", "\"\<modifiedTime\>\"", ",", "\"\<modifiedTime\>\"", ",", "\n", 
+     "\t", "\"\<modifiedTime\>\"", ",", "\"\<name\>\"", ",", 
+     "\"\<newStartPageToken\>\"", ",", "\n", "\t", "\"\<nextPageToken\>\"", 
+     ",", "\"\<nextPageToken\>\"", ",", "\"\<nextPageToken\>\"", ",", "\n", 
+     "\t", "\"\<nextPageToken\>\"", ",", "\"\<ownedByMe\>\"", ",", 
+     "\"\<owners.displayName\>\"", ",", "\n", "\t", "\"\<permissions\>\"", 
+     ",", "\"\<photoLink\>\"", ",", "\"\<quotedFileContent.mimeType\>\"", ",",
+      "\n", "\t", "\"\<quotedFileContent.value\>\"", ",", "\"\<removed\>\"", 
+     ",", "\"\<replies\>\"", ",", "\n", "\t", "\"\<resolved\>\"", ",", 
+     "\"\<revisions\>\"", ",", "\"\<revisions.get\>\"", ",", "\n", "\t", 
+     "\"\<role\>\"", ",", "\"\<sharedWithMeTime\>\"", ",", "\"\<size\>\"", 
+     ",", "\n", "\t", "\"\<size\>\"", ",", "\"\<spaces\>\"", ",", 
+     "\"\<starred\>\"", ",", "\n", "\t", "\"\<storageQuota.limit\>\"", ",", 
+     "\"\<storageQuota.limit\>\"", ",", "\"\<storageQuota.usage\>\"", ",", 
+     "\n", "\t", "\"\<storageQuota.usageInDrive\>\"", ",", 
+     "\"\<storageQuota.usageInDriveTrash\>\"", ",", "\"\<time\>\"", ",", "\n",
+      "\t", "\"\<trashed\>\"", ",", "\"\<user.displayName\>\"", ",", 
+     "\"\<user.permissionId\>\"", ",", "\n", "\t", "\"\<viewedByMe\>\"", ",", 
+     "\"\<viewedByMeTime\>\"", ",", "\"\<viewersCanCopyContent\>\"", ",", 
+     "\n", "\t", "\"\<webViewLink\>\""}], "\n", "\t", "}"}]}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.704659831900436*^9, 3.704659843017469*^9}, 
+   3.7046599072591543`*^9},ExpressionUUID->"8c25567d-2485-4497-80da-\
+e92f4c32d2e8"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileInfo", "[", 
+    RowBox[{"Optional", "[", 
+     RowBox[{"Automatic", ",", "Automatic"}], "]"}], "]"}], ":=", "\n", "\t", 
+   
+   RowBox[{
+    RowBox[{"GAPullContent", "[", "\"\<Files\>\"", "]"}], "@", "\n", "\t\t", 
+    RowBox[{"GAFilesRequest", "[", "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileInfo", "[", "Full", "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"GAPullContent", "[", "\"\<Files\>\"", "]"}], "@", "\n", "\t\t", 
+    RowBox[{"GAFilesRequest", "[", 
+     RowBox[{"\"\<fields\>\"", "\[Rule]", "\"\<files\>\""}], "]"}]}]}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.704650793325625*^9, 3.7046508686671124`*^9}, {
+  3.70465388541059*^9, 
+  3.7046539025969887`*^9}},ExpressionUUID->"5a424519-f46c-4cb4-b76f-\
+806e1dc0ce39"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileInfo", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"fid", ":", 
+      RowBox[{"_String", "?", "GAFileIDQ"}]}], ",", "\n", "\t", 
+     RowBox[{"fields", ":", 
+      RowBox[{"_String", "|", 
+       RowBox[{"{", "___String", "}"}], "|", "None"}], ":", "None"}]}], "\n", 
+    "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"GAPullContent", "@", "\n", "\t\t", 
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{"fields", "===", "None"}], ",", "\n", "\t\t\t", 
+      RowBox[{"GAFilesRequest", "[", "fid", "]"}], ",", "\n", "\t\t\t", 
+      RowBox[{"GAFilesRequest", "[", "\n", "\t\t\t\t", 
+       RowBox[{"fid", ",", "\n", "\t\t\t\t", 
+        RowBox[{"\"\<fields\>\"", "\[Rule]", "\n", "\t\t\t\t\t", 
+         RowBox[{"StringRiffle", "[", "\n", "\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Map", "[", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"If", "[", 
+               RowBox[{
+                RowBox[{"!", 
+                 RowBox[{"LowerCaseQ", "@", 
+                  RowBox[{"StringTake", "[", 
+                   RowBox[{"#", ",", "1"}], "]"}]}]}], ",", "\n", "\t", 
+                "\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"ToLowerCase", "@", 
+                  RowBox[{"StringTake", "[", 
+                   RowBox[{"#", ",", "1"}], "]"}]}], "<>", 
+                 RowBox[{"StringTake", "[", 
+                  RowBox[{"#", ",", 
+                   RowBox[{"{", 
+                    RowBox[{"2", ",", 
+                    RowBox[{"-", "1"}]}], "}"}]}], "]"}]}], ",", "\n", "\t", 
+                "\t\t\t\t\t\t\t", "#"}], "\n", "\t", "\t\t\t\t\t\t\t", "]"}], 
+              "&"}], ",", "\n", "\t", "\t\t\t\t\t\t", 
+             RowBox[{"Flatten", "@", 
+              RowBox[{"{", "fields", "}"}]}]}], "\n", "\t\t\t\t\t\t\t", "]"}],
+            ",", "\n", "\t\t\t\t\t\t", "\"\<,\>\""}], "\n", "\t\t\t\t\t\t", 
+          "]"}]}]}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}]}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileInfo", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"a_Association", "?", 
+      RowBox[{"(", 
+       RowBox[{"KeyMemberQ", "[", "\"\<ID\>\"", "]"}], ")"}]}], ",", "\n", 
+     "\t", 
+     RowBox[{"fields", ":", 
+      RowBox[{"_String", "|", 
+       RowBox[{"{", "___String", "}"}], "|", "None"}], ":", "None"}]}], "\n", 
+    "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"GAFileInfo", "[", 
+    RowBox[{
+     RowBox[{"a", "[", "\"\<ID\>\"", "]"}], ",", "fields"}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileInfo", "[", "\n", "\t", 
+    RowBox[{"query_", ",", "\n", "\t", 
+     RowBox[{"fields", ":", 
+      RowBox[{"_String", "|", 
+       RowBox[{"{", "___String", "}"}], "|", "None"}], ":", "None"}]}], "\n", 
+    "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"fields", "=!=", "None"}], ",", "\n", "\t\t", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"GAFileInfo", "[", 
+          RowBox[{"#", ",", "fields"}], "]"}], "&"}], "/@", "#"}], ",", "\n", 
+       "\t\t", "#"}], "\n", "\t\t", "]"}], "&"}], "@", 
+    RowBox[{"GAFileSearch", "[", "query", "]"}]}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.704635544562586*^9, 3.704635659533551*^9}, {
+   3.70463575036899*^9, 3.704635752945249*^9}, {3.704635786927767*^9, 
+   3.704635832361783*^9}, 3.7046359176799517`*^9, {3.704638881332426*^9, 
+   3.7046389920263863`*^9}, {3.70463903149168*^9, 3.7046390616319036`*^9}, {
+   3.704640414216979*^9, 3.704640419838356*^9}, 3.704648211262113*^9, 
+   3.704648392823718*^9, 3.7046492891500273`*^9, 3.704649377844008*^9, {
+   3.704649649738552*^9, 3.7046496539755774`*^9}, {3.704650562361619*^9, 
+   3.704650608225532*^9}, {3.7046506774082603`*^9, 3.704650718034709*^9}, {
+   3.7046507814240627`*^9, 3.7046507910850143`*^9}, {3.704650859109591*^9, 
+   3.704650865428153*^9}, 3.704653909458156*^9, {3.70465911523947*^9, 
+   3.704659137248489*^9}, {3.704661688324644*^9, 3.704661725618927*^9}, {
+   3.704663816515435*^9, 
+   3.704663823761737*^9}},ExpressionUUID->"4ca53f96-161d-4fc0-ad9a-\
+25c0f4de5dad"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Search", "CodeSubsubsection",
+ CellChangeTimes->{{3.704631619273838*^9, 
+  3.704631620041691*^9}},ExpressionUUID->"b9c6e80e-1829-42bd-b391-\
+39d66d6d11fa"],
+
+Cell[CellGroupData[{
+
+Cell["Search Conversions", "CodeSubsubsubsection",
+ CellChangeTimes->{{3.7044117953782473`*^9, 
+  3.704411801218358*^9}},ExpressionUUID->"176a74de-ec26-44f4-9f01-\
+d5072e4f4885"],
+
+Cell[BoxData[{
+ RowBox[{"GAFileValueConvert", "//", "Clear"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileValueConvert", "[", "s_String", "]"}], ":=", "\n", "\t", 
+   RowBox[{"\"\<'\>\"", "<>", "s", "<>", "\"\<'\>\""}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileValueConvert", "[", 
+    RowBox[{"n_", "?", "NumberQ"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"ToString", "@", "n"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileValueConvert", "[", "l_List", "]"}], ":=", "\n", "\t", 
+   RowBox[{"\"\<[ \>\"", "<>", 
+    RowBox[{"StringRiffle", "[", 
+     RowBox[{
+      RowBox[{"GAFileValueConvert", "/@", "l"}], ",", "\"\<, \>\""}], "]"}], 
+    "<>", "\"\< ]\>\""}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"GAFileValueConvert", "[", 
+   RowBox[{"b", ":", 
+    RowBox[{"True", "|", "False"}]}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"ToLowerCase", "@", 
+   RowBox[{"ToString", "@", "b"}]}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileValueConvert", "[", 
+    RowBox[{"And", "[", "v__", "]"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"StringRiffle", "[", 
+    RowBox[{
+     RowBox[{"Flatten", "@", 
+      RowBox[{"{", 
+       RowBox[{"\"\<(\>\"", ",", 
+        RowBox[{"GAFileValueConvert", "/@", "v"}], ",", "\"\<)\>\""}], 
+       "}"}]}], ",", "\"\< and \>\""}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileValueConvert", "[", 
+    RowBox[{"Or", "[", "v__", "]"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"StringRiffle", "[", 
+    RowBox[{
+     RowBox[{"Flatten", "@", 
+      RowBox[{"{", 
+       RowBox[{"\"\<(\>\"", ",", 
+        RowBox[{"GAFileValueConvert", "/@", "v"}], ",", "\"\<)\>\""}], 
+       "}"}]}], ",", "\"\< or \>\""}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileValueConvert", "[", 
+    RowBox[{"Not", "[", "v_", "]"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"\"\<not \>\"", "<>", 
+    RowBox[{"GAFileValueConvert", "[", "v", "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileValueConvert", "[", 
+    RowBox[{"key_", "\[Rule]", "v_"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"GAFileSearchConvert", "[", 
+    RowBox[{"key", ",", "v"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileValueConvert", "[", "e_", "]"}], ":=", 
+   RowBox[{"ToString", "@", "e"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.704409480129484*^9, 3.7044094943976183`*^9}, {
+  3.704409576615355*^9, 3.704409600270418*^9}, {3.704409673399797*^9, 
+  3.704409842246622*^9}, {3.704409969227995*^9, 3.704410066891588*^9}, {
+  3.704410188236835*^9, 3.704410214560484*^9}, {3.704410388711123*^9, 
+  3.704410437400072*^9}, {3.704411102831098*^9, 3.704411106012747*^9}, {
+  3.704411144853426*^9, 3.7044111583711348`*^9}, {3.7044117585417423`*^9, 
+  3.704411773181316*^9}},ExpressionUUID->"5afe5644-35c2-4193-8a30-\
+d4a1a59da878"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileSearchConvert", "[", 
+    RowBox[{"key_", ",", "a_Association"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"StringRiffle", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{
+          RowBox[{"Lookup", "[", 
+           RowBox[{"a", ",", "\"\<Order\>\"", ",", "1"}], "]"}], "<", "0"}], "//",
+          "TrueQ"}], ",", "\n", "\t", "\t\t", "Reverse", ",", "\n", "\t", 
+        "\t\t", "Identity"}], "\n", "\t\t\t", "]"}], "@", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{"key", ",", "\n", "\t\t\t\t", 
+        RowBox[{"Lookup", "[", 
+         RowBox[{"a", ",", "\"\<Operator\>\"", ",", "\"\<=\>\""}], "]"}], ",",
+         "\n", "\t\t\t\t", 
+        RowBox[{"GAFileValueConvert", "@", 
+         RowBox[{"Lookup", "[", 
+          RowBox[{"a", ",", "\"\<Value\>\""}], "]"}]}]}], "\n", "\t\t\t\t", 
+       "}"}]}], ",", "\n", "\t\t\t", "\"\< \>\""}], "\n", "\t\t\t", "]"}]}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.704409480129484*^9, 3.7044094943976183`*^9}, {
+   3.704409576615355*^9, 3.704409600270418*^9}, {3.704409673399797*^9, 
+   3.704409842246622*^9}, {3.704409969227995*^9, 3.704410037847207*^9}, {
+   3.704410080362894*^9, 3.704410137868403*^9}, {3.7044102596766977`*^9, 
+   3.704410369364615*^9}, {3.704410597250348*^9, 3.704410615018343*^9}, 
+   3.704411367573841*^9, 
+   3.704411849763422*^9},ExpressionUUID->"ab2109d3-6c44-4f4f-a15e-\
+43fe1958bd3c"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileSearchConvert", "[", 
+    RowBox[{"key_", ",", 
+     RowBox[{"MemberQ", "[", "v_", "]"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"GAFileSearchConvert", "[", 
+    RowBox[{"key", ",", "\n", "\t\t", 
+     RowBox[{"<|", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"\"\<Operator\>\"", "\[Rule]", "\"\<in\>\""}], ",", "\n", 
+       "\t\t\t", 
+       RowBox[{"\"\<Value\>\"", "\[Rule]", "v"}], ",", "\n", "\t\t\t", 
+       RowBox[{"\"\<Order\>\"", "\[Rule]", 
+        RowBox[{"-", "1"}]}]}], "\n", "\t\t\t", "|>"}]}], "\n", "\t\t", 
+    "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileSearchConvert", "[", 
+    RowBox[{"key_", ",", 
+     RowBox[{"StringContainsQ", "[", "v_", "]"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"GAFileSearchConvert", "[", 
+    RowBox[{"key", ",", "\n", "\t\t", 
+     RowBox[{"<|", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"\"\<Operator\>\"", "\[Rule]", "\"\<contains\>\""}], ",", "\n",
+        "\t\t\t", 
+       RowBox[{"\"\<Value\>\"", "\[Rule]", "v"}]}], "\n", "\t\t\t", "|>"}]}], 
+    "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileSearchConvert", "[", 
+    RowBox[{"key_", ",", 
+     RowBox[{"o_String", "[", "v_", "]"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"GAFileSearchConvert", "[", 
+    RowBox[{"key", ",", "\n", "\t\t", 
+     RowBox[{"<|", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"\"\<Operator\>\"", "\[Rule]", "o"}], ",", "\n", "\t\t\t", 
+       RowBox[{"\"\<Value\>\"", "\[Rule]", "v"}]}], "\n", "\t\t\t", "|>"}]}], 
+    "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileSearchConvert", "[", 
+    RowBox[{"key_", ",", "v_"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"GAFileSearchConvert", "[", 
+    RowBox[{"key", ",", "\n", "\t\t", 
+     RowBox[{"<|", "\n", "\t\t\t", 
+      RowBox[{"\"\<Value\>\"", "\[Rule]", "v"}], "\n", "\t\t\t", "|>"}]}], 
+    "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.704409480129484*^9, 3.7044094943976183`*^9}, {
+  3.704409576615355*^9, 3.704409600270418*^9}, {3.704409673399797*^9, 
+  3.704409842246622*^9}, {3.704409969227995*^9, 3.704410037847207*^9}, {
+  3.704410080362894*^9, 3.704410137868403*^9}, {3.7044102596766977`*^9, 
+  3.704410369364615*^9}, {3.704410597250348*^9, 3.704410629056547*^9}, {
+  3.704410661736753*^9, 3.704410667210905*^9}, {3.7044107053567743`*^9, 
+  3.7044107466417522`*^9}, {3.704410777108864*^9, 3.7044107875479383`*^9}, {
+  3.704410858529911*^9, 3.704410863107785*^9}, {3.70441096975245*^9, 
+  3.704410992584366*^9}, {3.7045787846884127`*^9, 
+  3.704578801887973*^9}},ExpressionUUID->"1d74f78b-bd48-4213-ac00-\
+949656f27df0"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileSearchStrings", "[", "a_Association", "]"}], ":=", "\n", 
+   "\t", 
+   RowBox[{"KeyValueMap", "[", "\n", "\t\t", 
+    RowBox[{"GAFileSearchConvert", ",", "\n", "\t\t", "a"}], "\n", "\t\t", 
+    "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.704409480129484*^9, 3.7044094943976183`*^9}, {
+   3.704409576615355*^9, 3.704409600270418*^9}, {3.704409673399797*^9, 
+   3.704409842246622*^9}, {3.704409969227995*^9, 3.7044100293507442`*^9}, 
+   3.704410513758835*^9, 
+   3.7044105488706217`*^9},ExpressionUUID->"93bfa1f0-1380-4757-8d21-\
+b715f054b946"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["File Search", "CodeSubsubsubsection",
+ CellChangeTimes->{{3.7044117953782473`*^9, 
+  3.704411814129607*^9}},ExpressionUUID->"aa360029-81bf-40ca-89eb-\
+e853acbe648d"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileSearch", "[", 
+    RowBox[{
+     RowBox[{"Verbatim", "[", "Verbatim", "]"}], "[", "query_String", "]"}], 
+    "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"GAPullContent", "[", "\"\<Files\>\"", "]"}], "@", "\n", "\t\t", 
+    RowBox[{"GAFilesRequest", "[", 
+     RowBox[{"\"\<q\>\"", "\[Rule]", "query"}], "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileSearch", "[", 
+    RowBox[{"query", ":", 
+     RowBox[{"{", "__Rule", "}"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"GAFileSearch", "[", "\n", "\t\t", 
+    RowBox[{"Verbatim", "@", "\n", "\t\t\t", 
+     RowBox[{"StringRiffle", "[", 
+      RowBox[{
+       RowBox[{"GAFileSearchStrings", "@", 
+        RowBox[{"Association", "@", "query"}]}], ",", "\"\< and \>\""}], 
+      "]"}]}], "\n", "\t\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileSearch", "[", 
+    RowBox[{"Or", "[", "query__Rule", "]"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"GAFileSearch", "[", "\n", "\t\t", 
+    RowBox[{"Verbatim", "@", "\n", "\t\t\t", 
+     RowBox[{"StringRiffle", "[", 
+      RowBox[{
+       RowBox[{"GAFileSearchStrings", "@", 
+        RowBox[{"Association", "[", "query", "]"}]}], ",", "\"\< or \>\""}], 
+      "]"}]}], "\n", "\t\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileSearch", "[", "q_Rule", "]"}], ":=", "\n", "\t", 
+   RowBox[{"GAFileSearch", "[", 
+    RowBox[{"{", "q", "}"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"GAFileSearch", "[", 
+   RowBox[{
+    RowBox[{"Optional", "[", 
+     RowBox[{"\"\<Name\>\"", ",", "\"\<Name\>\""}], "]"}], ",", "\n", "\t", 
+    RowBox[{"t", ":", 
+     RowBox[{"Except", "[", "_Rule", "]"}]}], ",", "\n", "\t", "r___Rule"}], 
+   "]"}], ":=", "\n", "\t", 
+  RowBox[{"GAFileSearch", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"\"\<name\>\"", "\[Rule]", "t"}], ",", "\n", "\t\t", "r"}], 
+   "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.70414903945579*^9, 3.7041490516089783`*^9}, {
+   3.704149089554812*^9, 3.704149099200571*^9}, {3.7041491451163282`*^9, 
+   3.7041491608709393`*^9}, {3.704149973967255*^9, 3.704149975925016*^9}, {
+   3.7044092481247587`*^9, 3.704409403269546*^9}, {3.704409467663974*^9, 
+   3.704409503119421*^9}, {3.7044095594403267`*^9, 3.704409559909886*^9}, {
+   3.704409623583241*^9, 3.7044096616926203`*^9}, {3.704410551176753*^9, 
+   3.704410584465617*^9}, {3.704411396071411*^9, 3.704411403136457*^9}, {
+   3.704411569528913*^9, 3.704411586758629*^9}, {3.7044116338906918`*^9, 
+   3.704411639511035*^9}, {3.704411686212139*^9, 3.704411713882017*^9}, {
+   3.704578693560471*^9, 3.7045786988329268`*^9}, {3.704578730070306*^9, 
+   3.704578737988016*^9}, {3.704580745545265*^9, 3.704580771042865*^9}, {
+   3.704631591224008*^9, 3.704631599701846*^9}, 3.70463211414957*^9, {
+   3.704637367945355*^9, 3.704637373096003*^9}, {3.704637413952442*^9, 
+   3.704637415582101*^9}, {3.704637482537402*^9, 3.704637567755404*^9}, 
+   3.704648211235297*^9, 3.704648387609277*^9, {3.704650243487941*^9, 
+   3.704650254874758*^9}, {3.704653929066022*^9, 
+   3.704653933500763*^9}},ExpressionUUID->"f1f81b88-8597-4998-975f-\
+0b152d48bee0"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Upload", "CodeSubsubsection",
+ CellChangeTimes->{{3.704585943603663*^9, 
+  3.704585951858362*^9}},ExpressionUUID->"dbb9c5af-a9ad-4e71-ad60-\
+09c944a8eed6"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileUpload", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"file", ":", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"_String", "|", "_File"}], ")"}], "?", "FileExistsQ"}]}], ",",
+      "\n", "\t", 
+     RowBox[{"metaData", ":", 
+      RowBox[{
+       RowBox[{"_", "?", "OptionQ"}], "|", "Automatic", "|", "None"}], ":", 
+      "Automatic"}], ",", "\n", "\t", 
+     RowBox[{"mode", ":", "\n", "\t\t", 
+      RowBox[{"\"\<File\>\"", "|", "\n", "\t\t", 
+       RowBox[{"{", "\"\<File\>\"", "}"}], "|", "\n", "\t\t", 
+       RowBox[{"{", 
+        RowBox[{"\"\<File\>\"", ",", "\"\<Metadata\>\""}], "}"}], "|", "\n", 
+       "\t\t", 
+       RowBox[{"{", 
+        RowBox[{"\"\<Metadata\>\"", ",", "\"\<File\>\""}], "}"}], "|", "\n", 
+       "\t\t", "Automatic"}], ":", "\n", "\t\t", "Automatic"}], ",", "\n", 
+     "\t", 
+     RowBox[{"mimeType", ":", 
+      RowBox[{"_String", "|", "Automatic"}], ":", "Automatic"}], ",", "\n", 
+     "\t", 
+     RowBox[{"resumable", ":", 
+      RowBox[{"True", "|", "False", "|", "Automatic"}], ":", "False"}]}], 
+    "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"mD", "=", 
+        RowBox[{"Replace", "[", 
+         RowBox[{"metaData", ",", 
+          RowBox[{"Automatic", "\[RuleDelayed]", 
+           RowBox[{"{", 
+            RowBox[{"\"\<name\>\"", "\[Rule]", 
+             RowBox[{"FileNameTake", "@", "file"}]}], "}"}]}]}], "]"}]}], ",",
+        "\n", "\t\t", 
+       RowBox[{"ulMode", "=", "\n", "\t\t\t", 
+        RowBox[{"Switch", "[", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Replace", "[", 
+           RowBox[{"mode", ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"Automatic", "\[RuleDelayed]", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"If", "[", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"Length", "@", 
+                 RowBox[{"Replace", "[", 
+                  RowBox[{"metaData", ",", 
+                   RowBox[{"Automatic", "\[RuleDelayed]", 
+                    RowBox[{"{", 
+                    RowBox[{"\"\<name\>\"", "\[Rule]", 
+                    RowBox[{"FileNameTake", "@", "file"}]}], "}"}]}]}], 
+                  "]"}]}], "\[Equal]", "0"}], ",", "\n", "\t\t\t\t\t\t\t", 
+               "\"\<File\>\"", ",", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"{", 
+                RowBox[{"\"\<File\>\"", ",", "\"\<Metadata\>\""}], "}"}]}], 
+              "\n", "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t", "]"}], 
+          ",", "\n", "\t\t\t\t", 
+          RowBox[{"\"\<File\>\"", "|", 
+           RowBox[{"{", "\"\<File\>\"", "}"}]}], ",", "\n", "\t\t\t\t\t", 
+          "\"\<media\>\"", ",", "\n", "\t\t\t\t", "_", ",", "\n", 
+          "\t\t\t\t\t", "\"\<multipart\>\""}], "\n", "\t\t\t\t", "]"}]}], ",",
+        "\n", "\t\t", 
+       RowBox[{"mT", "=", 
+        RowBox[{"Replace", "[", 
+         RowBox[{"mimeType", ",", 
+          RowBox[{"Automatic", ":>", 
+           RowBox[{"ImportExport`GetMIMEType", "@", 
+            RowBox[{"FileFormat", "[", "file", "]"}]}]}]}], "]"}]}], ",", 
+       "\n", "\t\t", 
+       RowBox[{"bC", "=", 
+        RowBox[{"FileByteCount", "[", "file", "]"}]}]}], "\n", "\t\t", "}"}], 
+     ",", "\n", "\t\t", 
+     RowBox[{"Block", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"$GAVersion", "=", "3"}], "}"}], ",", "\n", "\t\t\t", 
+       RowBox[{"GAPullContent", "@", "\n", "\t\t\t", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"Not", "@", 
+           RowBox[{"Replace", "[", 
+            RowBox[{"resumable", ",", 
+             RowBox[{"Automatic", ":>", 
+              RowBox[{"bC", ">", 
+               RowBox[{"5", "*", 
+                RowBox[{"10", "^", "6"}]}]}]}]}], "]"}]}], ",", "\n", 
+          "\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"ReplacePart", "[", 
+             RowBox[{"#", ",", "\n", "\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"2", ",", "\"\<Headers\>\""}], "}"}], "->", "\n", 
+               "\t\t\t\t\t\t", 
+               RowBox[{"Append", "[", "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"#", "[", 
+                  RowBox[{"[", 
+                   RowBox[{"2", ",", "\"\<Headers\>\""}], "]"}], "]"}], ",", 
+                 "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                 "\"\<Content-Length\>\"", "->", "\n", "\t\t\t\t\t\t\t\t", 
+                  RowBox[{"Length", "@", 
+                   RowBox[{"#", "[", "\"\<BodyBytes\>\"", "]"}]}]}]}], "\n", 
+                "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t", "]"}], "&"}],
+            "@", "\n", "\t\t\t\t", 
+           RowBox[{"GARequest", "[", "\n", "\t\t\t\t\t", 
+            RowBox[{
+            "\"\<UploadFile\>\"", ",", "\n", "\t\t\t\t\t", "Nothing", ",", 
+             "\n", "\t\t\t\t\t", 
+             RowBox[{
+             "\"\<uploadType\>\"", "->", "\n", "\t\t\t\t\t\t", "ulMode"}], 
+             ",", "\n", "\t\t\t\t\t", 
+             RowBox[{"Switch", "[", 
+              RowBox[{
+              "ulMode", ",", "\n", "\t", "\t\t\t\t\t", "\"\<media\>\"", ",", 
+               "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"<|", "\n", "\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{
+                 "\"\<Headers\>\"", "\[Rule]", "\n", "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"<|", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"\"\<Content-Type\>\"", "\[Rule]", "mT"}], "\n", 
+                   "\t\t\t\t\t\t\t\t\t\t", "|>"}]}], ",", "\n", 
+                 "\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                 "\"\<Body\>\"", "\[Rule]", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"Import", "[", 
+                   RowBox[{
+                    RowBox[{"Flatten", "[", 
+                    RowBox[{
+                    RowBox[{"File", "@", "file"}], ",", "1", ",", "File"}], 
+                    "]"}], ",", "\"\<Byte\>\""}], "]"}]}]}], "\n", 
+                "\t\t\t\t\t\t\t\t", "|>"}], ",", "\n", "\t", "\t\t\t\t\t", 
+               "\"\<multipart\>\"", ",", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"With", "[", 
+                RowBox[{
+                 RowBox[{"{", 
+                  RowBox[{"break", "=", 
+                   RowBox[{"CreateUUID", "[", "\"\<divider-\>\"", "]"}]}], 
+                  "}"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"With", "[", 
+                  RowBox[{
+                   RowBox[{"{", 
+                    RowBox[{"bs", "=", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"StringRiffle", "[", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"\"\<--\>\"", "<>", "break"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    "\"\<Content-Type: application/json; charset=UTF-8\>\"", 
+                    ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t", "\"\<\>\"", 
+                    ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"ExportString", "[", 
+                    RowBox[{"mD", ",", "\"\<JSON\>\""}], "]"}], ",", "\n", 
+                    "\t", "\t\t\t\t\t\t\t\t\t\t\t", "\"\<\>\"", ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"\"\<--\>\"", "<>", "break"}], ",", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<Content-Type: \>\"", "<>", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"First", "[", 
+                    RowBox[{"ToLowerCase", "/@", 
+                    RowBox[{"Flatten", "@", 
+                    RowBox[{"{", "mT", "}"}]}]}], "]"}]}], ",", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", "\"\<\>\"", ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"ReadString", "[", "file", "]"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", "\"\<\>\"", ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<--\>\"", "<>", "break", "<>", "\"\<--\>\""}]}], "\n",
+                     "\t\t\t\t\t\t\t\t\t\t", "}"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t", "\"\<\\n\>\""}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t\t\t",
+                     "}"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                   RowBox[{"<|", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"\"\<Headers\>\"", "\[Rule]", 
+                    RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"\"\<Content-Type\>\"", "\[Rule]", 
+                    RowBox[{
+                    "\"\<multipart/related; boundary=\>\"", "<>", "break"}]}],
+                     "\n", "\t\t\t\t\t\t\t\t\t\t", "}"}]}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<Body\>\"", "\[Rule]", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    "bs"}]}], "\n", "\t\t\t\t\t\t\t\t\t", "|>"}]}], "\n", 
+                  "\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t", 
+                "]"}]}], "\n", "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", 
+            "]"}]}], ",", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"ReplacePart", "[", 
+             RowBox[{"#", ",", "\n", "\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"2", ",", "\"\<Headers\>\""}], "}"}], "->", "\n", 
+               "\t\t\t\t\t\t", 
+               RowBox[{"Append", "[", "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"#", "[", 
+                  RowBox[{"[", 
+                   RowBox[{"2", ",", "\"\<Headers\>\""}], "]"}], "]"}], ",", 
+                 "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                 "\"\<X-Upload-Content-Length\>\"", "->", "\n", 
+                  "\t\t\t\t\t\t\t\t", 
+                  RowBox[{"Length", "@", 
+                   RowBox[{"#", "[", "\"\<BodyBytes\>\"", "]"}]}]}]}], "\n", 
+                "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t", "]"}], "&"}],
+            "@", "\n", "\t\t\t\t", 
+           RowBox[{"GARequest", "[", "\n", "\t\t\t\t\t", 
+            RowBox[{
+            "\"\<UploadFile\>\"", ",", "\n", "\t\t\t\t\t", "Nothing", ",", 
+             "\n", "\t\t\t\t\t", 
+             RowBox[{
+             "\"\<uploadType\>\"", "->", "\n", "\t\t\t\t\t\t", 
+              "\"\<resumable\>\""}], ",", "\n", "\t\t\t\t\t", 
+             RowBox[{"Switch", "[", 
+              RowBox[{
+              "ulMode", ",", "\n", "\t", "\t\t\t\t\t", "\"\<media\>\"", ",", 
+               "\n", "\t", "\t\t\t\t\t\t", 
+               RowBox[{"<|", "\n", "\t", "\t\t\t\t\t\t\t", 
+                RowBox[{"\"\<Headers\>\"", "\[Rule]", 
+                 RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+                  RowBox[{"\"\<X-Upload-Content-Type\>\"", "\[Rule]", "mT"}], 
+                  "\n", "\t\t\t\t\t\t\t\t\t", "}"}]}], "\n", 
+                "\t\t\t\t\t\t\t\t", "|>"}], ",", "\n", "\t\t\t\t\t\t", 
+               "\"\<multipart\>\"", ",", "\n", "\t", "\t\t\t\t\t\t", 
+               RowBox[{"With", "[", 
+                RowBox[{
+                 RowBox[{"{", 
+                  RowBox[{"md", "=", "\n", "\t\t\t\t\t\t\t\t", 
+                   RowBox[{"ExportString", "[", 
+                    RowBox[{"mD", ",", "\"\<JSON\>\""}], "]"}]}], "\n", "\t", 
+                  "\t\t\t\t\t\t\t", "}"}], ",", "\n", "\t", "\t\t\t\t\t\t\t", 
+                 
+                 RowBox[{"<|", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"\"\<Headers\>\"", "->", 
+                    RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{
+                    "\"\<Content-Type\>\"", "\[Rule]", 
+                    "\"\<application/json; charset=UTF-8\>\""}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<X-Upload-Content-Type\>\"", "\[Rule]", "mT"}], ",", 
+                    "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<X-Upload-Content-Length\>\"", "\[Rule]", "bC"}]}], 
+                    "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", "}"}]}], ",", "\n", 
+                   "\t", "\t", "\t\t\t\t\t\t\t", 
+                   RowBox[{"\"\<Body\>\"", "\[Rule]", "md"}]}], "\n", "\t", 
+                  "\t\t\t\t\t\t\t\t", "|>"}]}], "\n", "\t", "\t\t\t\t\t\t\t", 
+                "]"}]}], "\n", "\t", "\t\t\t\t\t", "]"}]}], "\n", 
+            "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", 
+      "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.704585946541947*^9, 3.704585949002496*^9}, {
+   3.704587006370781*^9, 3.704587033676373*^9}, {3.704587122306719*^9, 
+   3.704587205718997*^9}, {3.704587256137348*^9, 3.704587259550173*^9}, {
+   3.704587302418828*^9, 3.704587334368782*^9}, {3.70458871928452*^9, 
+   3.70458873902696*^9}, {3.7045889157311983`*^9, 3.7045889162080593`*^9}, {
+   3.704588970905614*^9, 3.7045891674764977`*^9}, {3.7045893082704678`*^9, 
+   3.704589417770977*^9}, {3.704589526858452*^9, 3.7045895530161257`*^9}, {
+   3.704589593383306*^9, 3.70458962440434*^9}, {3.704589688610743*^9, 
+   3.704589759553831*^9}, {3.704589809876811*^9, 3.7045899712406883`*^9}, {
+   3.7045900072399178`*^9, 3.704590076428233*^9}, {3.704590135126047*^9, 
+   3.704590151604183*^9}, {3.7045901927679777`*^9, 3.704590243311359*^9}, {
+   3.7045903947774363`*^9, 3.704590410471765*^9}, {3.70459045070168*^9, 
+   3.704590455839758*^9}, {3.704590774997878*^9, 3.704590777604622*^9}, {
+   3.704590815889955*^9, 3.704590842867175*^9}, {3.704590883666048*^9, 
+   3.704590930684908*^9}, {3.704590979966539*^9, 3.70459102558568*^9}, {
+   3.7045910819524803`*^9, 3.704591128427266*^9}, {3.704591217116488*^9, 
+   3.704591259337852*^9}, {3.7045916297022123`*^9, 3.704591635255484*^9}, 
+   3.70459210377308*^9, {3.704592158318458*^9, 3.704592207380192*^9}, {
+   3.704592238647917*^9, 3.7045922539857407`*^9}, {3.704592318053649*^9, 
+   3.704592362515647*^9}, {3.704592395645719*^9, 3.704592402718738*^9}, 
+   3.704599353829937*^9, 3.704599413837351*^9, {3.7045995777630043`*^9, 
+   3.704599594533578*^9}, {3.704599630457582*^9, 3.704599635395913*^9}, {
+   3.704599672658237*^9, 3.70459969627203*^9}, {3.70459972966441*^9, 
+   3.7045997371244926`*^9}, {3.704599773105875*^9, 3.704599783362533*^9}, {
+   3.704599828835354*^9, 3.70459983972582*^9}, {3.704599878748229*^9, 
+   3.704600042982613*^9}, {3.704600092776945*^9, 3.704600185935563*^9}, {
+   3.70460025612401*^9, 3.704600329335697*^9}, {3.704600370056425*^9, 
+   3.704600373863387*^9}, {3.7046004658544397`*^9, 3.704600540073732*^9}, {
+   3.7046006892409782`*^9, 3.704600755402369*^9}, {3.704600805628622*^9, 
+   3.704600876080842*^9}, {3.704600926803927*^9, 3.704600998075618*^9}, {
+   3.704601052285602*^9, 3.704601122173102*^9}, {3.704601203796587*^9, 
+   3.7046012276678047`*^9}, {3.704601348271393*^9, 3.704601533921658*^9}, {
+   3.7046016841617537`*^9, 3.704601757487506*^9}, {3.704601844075259*^9, 
+   3.704601852499296*^9}, {3.704601896184236*^9, 3.7046019318969088`*^9}, {
+   3.704601974552311*^9, 3.704601979119129*^9}, {3.70460202005652*^9, 
+   3.704602025138247*^9}, {3.704602098915326*^9, 3.7046021625872993`*^9}, {
+   3.7046022102873907`*^9, 3.704602212069175*^9}, {3.704602262215785*^9, 
+   3.704602313159602*^9}, {3.7046023517969112`*^9, 3.704602354906665*^9}, {
+   3.704602408797141*^9, 3.704602466210527*^9}, {3.704637645392817*^9, 
+   3.70463764598135*^9}, {3.704637976850849*^9, 3.704637980342668*^9}, {
+   3.704638780607362*^9, 3.7046387975611467`*^9}, {3.7046467324195747`*^9, 
+   3.704646743986965*^9}, {3.7046482112473593`*^9, 3.704648211254936*^9}, {
+   3.704648389108542*^9, 3.704648391557035*^9}, 3.704649893662599*^9, {
+   3.704649928283813*^9, 3.7046499788700943`*^9}, {3.704653935769185*^9, 
+   3.7046539548242683`*^9}, 3.704664351805935*^9, 3.704664557552991*^9, {
+   3.705371805565647*^9, 3.7053718086768084`*^9}, {3.705495115276289*^9, 
+   3.705495115657547*^9}},ExpressionUUID->"880a4d52-d91a-4925-8b54-\
+650af30fe547"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Update", "CodeSubsubsection",
+ CellChangeTimes->{{3.7046312232068872`*^9, 
+  3.7046312261091757`*^9}},ExpressionUUID->"97ab8422-02a8-4467-af2f-\
+e5b382c865c1"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileUpdate", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"fid", ":", 
+      RowBox[{
+       RowBox[{"_String", "?", "GAFileIDQ"}], "|", 
+       RowBox[{"_Association", "?", 
+        RowBox[{"(", 
+         RowBox[{"KeyMemberQ", "[", "\"\<ID\>\"", "]"}], ")"}]}]}]}], ",", 
+     "\n", "\t", 
+     RowBox[{"file", ":", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"_File", "|", "_String"}], ")"}], "?", "FileExistsQ"}]}], ",",
+      "\n", "\t", 
+     RowBox[{"metaData", ":", 
+      RowBox[{
+       RowBox[{"_", "?", "OptionQ"}], "|", "None"}], ":", "None"}], ",", "\n",
+      "\t", 
+     RowBox[{"mimeType", ":", 
+      RowBox[{"_String", "|", "Automatic"}], ":", "Automatic"}], ",", "\n", 
+     "\t", 
+     RowBox[{"resumable", ":", 
+      RowBox[{"True", "|", "False", "|", "Automatic"}], ":", "False"}]}], 
+    "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"mD", "=", 
+        RowBox[{"Replace", "[", 
+         RowBox[{"metaData", ",", 
+          RowBox[{"Automatic", "\[RuleDelayed]", 
+           RowBox[{"{", 
+            RowBox[{"\"\<name\>\"", "\[Rule]", 
+             RowBox[{"FileNameTake", "@", "file"}]}], "}"}]}]}], "]"}]}], ",",
+        "\n", "\t\t", 
+       RowBox[{"ulMode", "=", "\n", "\t\t\t", 
+        RowBox[{"Switch", "[", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Length", "@", 
+              RowBox[{"Replace", "[", 
+               RowBox[{"metaData", ",", 
+                RowBox[{"Automatic", "\[RuleDelayed]", 
+                 RowBox[{"{", 
+                  RowBox[{"\"\<name\>\"", "\[Rule]", 
+                   RowBox[{"FileNameTake", "@", "file"}]}], "}"}]}]}], 
+               "]"}]}], "\[Equal]", "0"}], ",", "\n", "\t\t\t\t\t", 
+            "\"\<File\>\"", ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"{", 
+             RowBox[{"\"\<File\>\"", ",", "\"\<Metadata\>\""}], "}"}]}], "\n",
+            "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"\"\<File\>\"", "|", 
+           RowBox[{"{", "\"\<File\>\"", "}"}]}], ",", "\n", "\t\t\t\t\t", 
+          "\"\<media\>\"", ",", "\n", "\t\t\t\t", "_", ",", "\n", 
+          "\t\t\t\t\t", "\"\<multipart\>\""}], "\n", "\t\t\t\t", "]"}]}], ",",
+        "\n", "\t\t", 
+       RowBox[{"mT", "=", 
+        RowBox[{"Replace", "[", 
+         RowBox[{"mimeType", ",", 
+          RowBox[{"Automatic", ":>", 
+           RowBox[{"ImportExport`GetMIMEType", "@", 
+            RowBox[{"FileFormat", "[", "file", "]"}]}]}]}], "]"}]}], ",", 
+       "\n", "\t\t", 
+       RowBox[{"bC", "=", 
+        RowBox[{"FileByteCount", "[", "file", "]"}]}]}], "\n", "\t\t", "}"}], 
+     ",", "\n", "\t\t", 
+     RowBox[{"Block", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"$GAVersion", "=", "3"}], "}"}], ",", "\n", "\t\t\t", 
+       RowBox[{"GAPullContent", "@", "\n", "\t\t\t", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"Not", "@", 
+           RowBox[{"Replace", "[", 
+            RowBox[{"resumable", ",", 
+             RowBox[{"Automatic", ":>", 
+              RowBox[{"bC", ">", 
+               RowBox[{"5", "*", 
+                RowBox[{"10", "^", "6"}]}]}]}]}], "]"}]}], ",", "\n", 
+          "\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"ReplacePart", "[", 
+             RowBox[{"#", ",", "\n", "\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"2", ",", "\"\<Headers\>\""}], "}"}], "->", "\n", 
+               "\t\t\t\t\t\t", 
+               RowBox[{"Append", "[", "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"#", "[", 
+                  RowBox[{"[", 
+                   RowBox[{"2", ",", "\"\<Headers\>\""}], "]"}], "]"}], ",", 
+                 "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                 "\"\<Content-Length\>\"", "->", "\n", "\t\t\t\t\t\t\t\t", 
+                  RowBox[{"Length", "@", 
+                   RowBox[{"#", "[", "\"\<BodyBytes\>\"", "]"}]}]}]}], "\n", 
+                "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t", "]"}], "&"}],
+            "@", "\n", "\t\t\t\t", 
+           RowBox[{"GARequest", "[", "\n", "\t\t\t\t\t", 
+            RowBox[{"\"\<UploadFile\>\"", ",", "\n", "\t\t\t\t\t", 
+             RowBox[{"If", "[", 
+              RowBox[{
+               RowBox[{"AssociationQ", "@", "fid"}], ",", 
+               RowBox[{"fid", "[", "\"\<ID\>\"", "]"}], ",", "fid"}], "]"}], 
+             ",", "\n", "\t\t\t\t\t", 
+             RowBox[{
+             "\"\<uploadType\>\"", "->", "\n", "\t\t\t\t\t\t", "ulMode"}], 
+             ",", "\n", "\t\t\t\t\t", 
+             RowBox[{"Switch", "[", 
+              RowBox[{
+              "ulMode", ",", "\n", "\t", "\t\t\t\t\t", "\"\<media\>\"", ",", 
+               "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"<|", "\n", "\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"\"\<Method\>\"", "\[Rule]", "\"\<PATCH\>\""}], ",", 
+                 "\n", "\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                 "\"\<Headers\>\"", "\[Rule]", "\n", "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"<|", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"\"\<Content-Type\>\"", "\[Rule]", "mT"}], "\n", 
+                   "\t\t\t\t\t\t\t\t\t\t", "|>"}]}], ",", "\n", 
+                 "\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                 "\"\<Body\>\"", "\[Rule]", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"Import", "[", 
+                   RowBox[{
+                    RowBox[{"Flatten", "[", 
+                    RowBox[{
+                    RowBox[{"File", "@", "file"}], ",", "1", ",", "File"}], 
+                    "]"}], ",", "\"\<Byte\>\""}], "]"}]}]}], "\n", 
+                "\t\t\t\t\t\t\t\t", "|>"}], ",", "\n", "\t", "\t\t\t\t\t", 
+               "\"\<multipart\>\"", ",", "\n", "\t", "\t\t\t\t\t\t", 
+               RowBox[{"With", "[", 
+                RowBox[{
+                 RowBox[{"{", 
+                  RowBox[{"break", "=", 
+                   RowBox[{"CreateUUID", "[", "\"\<divider-\>\"", "]"}]}], 
+                  "}"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"With", "[", 
+                  RowBox[{
+                   RowBox[{"{", 
+                    RowBox[{"bs", "=", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"StringRiffle", "[", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"\"\<--\>\"", "<>", "break"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    "\"\<Content-Type: application/json; charset=UTF-8\>\"", 
+                    ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t", "\"\<\>\"", 
+                    ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"ExportString", "[", 
+                    RowBox[{"mD", ",", "\"\<JSON\>\""}], "]"}], ",", "\n", 
+                    "\t", "\t\t\t\t\t\t\t\t\t\t\t", "\"\<\>\"", ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"\"\<--\>\"", "<>", "break"}], ",", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<Content-Type: \>\"", "<>", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"First", "[", 
+                    RowBox[{"ToLowerCase", "/@", 
+                    RowBox[{"Flatten", "@", 
+                    RowBox[{"{", "mT", "}"}]}]}], "]"}]}], ",", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", "\"\<\>\"", ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"ReadString", "[", "file", "]"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", "\"\<\>\"", ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<--\>\"", "<>", "break", "<>", "\"\<--\>\""}]}], "\n",
+                     "\t\t\t\t\t\t\t\t\t\t", "}"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t", "\"\<\\n\>\""}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t\t\t",
+                     "}"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                   RowBox[{"<|", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"\"\<Method\>\"", "\[Rule]", "\"\<PATCH\>\""}], 
+                    ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"\"\<Headers\>\"", "\[Rule]", 
+                    RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"\"\<Content-Type\>\"", "\[Rule]", 
+                    RowBox[{
+                    "\"\<multipart/related; boundary=\>\"", "<>", "break"}]}],
+                     "\n", "\t\t\t\t\t\t\t\t\t\t", "}"}]}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<Body\>\"", "\[Rule]", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    "bs"}]}], "\n", "\t\t\t\t\t\t\t\t\t", "|>"}]}], "\n", 
+                  "\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t", 
+                "]"}]}], "\n", "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", 
+            "]"}]}], ",", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"ReplacePart", "[", 
+             RowBox[{"#", ",", "\n", "\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"2", ",", "\"\<Headers\>\""}], "}"}], "->", "\n", 
+               "\t\t\t\t\t\t", 
+               RowBox[{"Append", "[", "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"#", "[", 
+                  RowBox[{"[", 
+                   RowBox[{"2", ",", "\"\<Headers\>\""}], "]"}], "]"}], ",", 
+                 "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                 "\"\<X-Upload-Content-Length\>\"", "->", "\n", 
+                  "\t\t\t\t\t\t\t\t", 
+                  RowBox[{"Length", "@", 
+                   RowBox[{"#", "[", "\"\<BodyBytes\>\"", "]"}]}]}]}], "\n", 
+                "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t", "]"}], "&"}],
+            "@", "\n", "\t\t\t\t", 
+           RowBox[{"GARequest", "[", "\n", "\t\t\t\t\t", 
+            RowBox[{"\"\<UploadFile\>\"", ",", "\n", "\t\t\t\t\t", 
+             RowBox[{"If", "[", 
+              RowBox[{
+               RowBox[{"AssociationQ", "@", "fid"}], ",", 
+               RowBox[{"fid", "[", "\"\<ID\>\"", "]"}], ",", "fid"}], "]"}], 
+             ",", "\n", "\t\t\t\t\t", 
+             RowBox[{
+             "\"\<uploadType\>\"", "->", "\n", "\t\t\t\t\t\t", 
+              "\"\<resumable\>\""}], ",", "\n", "\t\t\t\t\t", 
+             RowBox[{"Switch", "[", 
+              RowBox[{
+              "ulMode", ",", "\n", "\t", "\t\t\t\t\t", "\"\<media\>\"", ",", 
+               "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"<|", "\n", "\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"\"\<Method\>\"", "\[Rule]", "\"\<PATCH\>\""}], ",", 
+                 "\n", "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"\"\<Headers\>\"", "\[Rule]", 
+                  RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+                   RowBox[{"\"\<X-Upload-Content-Type\>\"", "\[Rule]", "mT"}],
+                    "\n", "\t\t\t\t\t\t\t\t\t", "}"}]}]}], "\n", 
+                "\t\t\t\t\t\t\t\t", "|>"}], ",", "\n", "\t\t\t\t\t\t", 
+               "\"\<multipart\>\"", ",", "\n", "\t", "\t\t\t\t\t\t", 
+               RowBox[{"With", "[", 
+                RowBox[{
+                 RowBox[{"{", 
+                  RowBox[{"md", "=", "\n", "\t\t\t\t\t\t\t\t", 
+                   RowBox[{"ExportString", "[", 
+                    RowBox[{"mD", ",", "\"\<JSON\>\""}], "]"}]}], "\n", "\t", 
+                  "\t\t\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"<|", "\n", "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"\"\<Method\>\"", "\[Rule]", "\"\<PATCH\>\""}], 
+                   ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"\"\<Headers\>\"", "->", 
+                    RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{
+                    "\"\<Content-Type\>\"", "\[Rule]", 
+                    "\"\<application/json; charset=UTF-8\>\""}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<X-Upload-Content-Type\>\"", "\[Rule]", "mT"}], ",", 
+                    "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<X-Upload-Content-Length\>\"", "\[Rule]", "bC"}]}], 
+                    "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", "}"}]}], ",", "\n", 
+                   "\t", "\t", "\t\t\t\t\t\t\t", 
+                   RowBox[{"\"\<Body\>\"", "\[Rule]", "md"}]}], "\n", "\t", 
+                  "\t\t\t\t\t\t\t\t", "|>"}]}], "\n", "\t", "\t\t\t\t\t\t\t", 
+                "]"}]}], "\n", "\t", "\t\t\t\t\t", "]"}]}], "\n", 
+            "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", 
+      "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"GAFileUpdate", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"fid", ":", 
+     RowBox[{
+      RowBox[{"_String", "?", "GAFileIDQ"}], "|", 
+      RowBox[{"_Association", "?", 
+       RowBox[{"(", 
+        RowBox[{"KeyMemberQ", "[", "\"\<ID\>\"", "]"}], ")"}]}]}]}], ",", 
+    "\n", "\t", 
+    RowBox[{"file", ":", "None", ":", "None"}], ",", "\n", "\t", 
+    RowBox[{"params", ":", 
+     RowBox[{"_", "?", "OptionQ"}], ":", 
+     RowBox[{"{", "}"}]}], ",", "\n", "\t", 
+    RowBox[{"metaData", ":", 
+     RowBox[{"_", "?", "OptionQ"}]}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+  RowBox[{"GAPullContent", "@", "\n", "\t\t", 
+   RowBox[{"GAFilesRequest", "[", 
+    RowBox[{"fid", ",", "\n", "\t", "\t\t", "params", ",", "\n", "\t", "\t\t", 
+     RowBox[{"<|", "\n", "\t", "\t\t\t", 
+      RowBox[{
+       RowBox[{"\"\<Method\>\"", "->", "\"\<PATCH\>\""}], ",", "\n", "\t", 
+       "\t\t\t", 
+       RowBox[{"\"\<Body\>\"", "\[Rule]", "metaData"}]}], "\n", "\t", 
+      "\t\t\t", "|>"}]}], "\n", "\t", "\t\t", "]"}]}]}]}], "CodeInput",
+ CellChangeTimes->{{3.70463123143957*^9, 3.704631242574977*^9}, {
+  3.70463592005061*^9, 3.704635933606393*^9}, {3.704636173770953*^9, 
+  3.7046362099696093`*^9}, {3.704636265512148*^9, 3.7046363354961042`*^9}, {
+  3.704636492404757*^9, 3.704636545603948*^9}, {3.704636711234709*^9, 
+  3.704636780324984*^9}, {3.7046368348474293`*^9, 3.704636835598996*^9}, {
+  3.7046369083536997`*^9, 3.704636950256659*^9}, {3.704636994128203*^9, 
+  3.704637022036537*^9}, {3.704664274027248*^9, 3.704664312432989*^9}, {
+  3.704664366635523*^9, 3.704664403545794*^9}, {3.7046644368531218`*^9, 
+  3.704664494184413*^9}, {3.70466452704491*^9, 3.704664543911178*^9}, {
+  3.704664640856439*^9, 
+  3.704664652537847*^9}},ExpressionUUID->"263ad351-9ef0-466e-9319-\
+d87a10d0d740"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Download", "CodeSubsubsection",
+ CellChangeTimes->{{3.704631411666374*^9, 
+  3.7046314128167543`*^9}},ExpressionUUID->"faffd294-1927-4095-a0f4-\
+3c35296b605b"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileDownload", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"fid_String", "?", "GAFileIDQ"}], ",", "\n", "\t", 
+     RowBox[{"path", ":", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"_String", "|", "_File"}], ")"}], "?", 
+        RowBox[{"(", 
+         RowBox[{"DirectoryQ", "@*", "DirectoryName"}], ")"}]}], "|", 
+       "Automatic"}], ":", "Automatic"}]}], "\n", "\t", "]"}], ":=", "\n", 
+   "\t", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"Between", "[", 
+        RowBox[{"#StatusCode", ",", 
+         RowBox[{"{", 
+          RowBox[{"200", ",", "299"}], "}"}]}], "]"}], ",", "\n", "\t\t", 
+       RowBox[{"Export", "[", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"Replace", "[", 
+          RowBox[{"path", ",", 
+           RowBox[{"{", "\n", "\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Automatic", ":>", "\n", "\t\t\t\t\t", 
+              RowBox[{"FileNameJoin", "@", 
+               RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+                RowBox[{"$TemporaryDirectory", ",", "\n", "\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"Key", "[", "\"\<Name\>\"", "]"}], "@", 
+                  RowBox[{"GAFileInfo", "[", 
+                   RowBox[{"fid", ",", "\"\<Name\>\""}], "]"}]}]}], "\n", 
+                "\t\t\t\t\t\t", "}"}]}]}], ",", "\n", "\t\t\t\t", 
+             RowBox[{
+              RowBox[{"_", "?", "DirectoryQ"}], ":>", "\n", "\t\t\t\t\t", 
+              RowBox[{"FileNameJoin", "@", 
+               RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+                RowBox[{"path", ",", "\n", "\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"Key", "[", "\"\<Name\>\"", "]"}], "@", 
+                  RowBox[{"GAFileInfo", "[", 
+                   RowBox[{"fid", ",", "\"\<Name\>\""}], "]"}]}]}], "\n", 
+                "\t\t\t\t\t\t", "}"}]}]}]}], "\n", "\t\t\t\t", "}"}]}], "]"}],
+          ",", "\n", "\t\t\t", "#BodyBytesArray", ",", "\n", "\t\t\t", 
+         "\"\<Byte\>\""}], "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
+       "$Failed"}], "\n", "\t\t", "]"}], "&"}], "@", "\n", "\t\t", 
+    RowBox[{"GAPullContent", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"GAFilesRequest", "[", "\n", "\t\t\t\t", 
+       RowBox[{"fid", ",", "\n", "\t", "\t", "\t\t", 
+        RowBox[{"\"\<alt\>\"", "\[Rule]", "\"\<media\>\""}]}], "\n", "\t", 
+       "\t\t\t", "]"}], ",", "\n", "\t", "\t\t", "\"\<BodyByteArray\>\""}], 
+     "\n", "\t\t\t", "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileDownload", "[", "\n", "\t", 
+    RowBox[{"query_", ",", "\n", "\t", 
+     RowBox[{"path", ":", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"_String", "|", "_File"}], ")"}], "?", 
+        RowBox[{"(", 
+         RowBox[{"DirectoryQ", "@*", "DirectoryName"}], ")"}]}], "|", 
+       "Automatic"}], ":", "Automatic"}]}], "\n", "\t", "]"}], ":=", "\n", 
+   "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{"p", "=", 
+       RowBox[{"Replace", "[", 
+        RowBox[{"path", ",", 
+         RowBox[{"Automatic", "\[RuleDelayed]", "$TemporaryDirectory"}]}], 
+        "]"}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"DirectoryQ", "@", "p"}], ",", "\n", "\t\t\t", 
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Length", "@", "#"}], ">", "1"}], ",", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"GAFileDownload", "[", "\n", "\t\t\t\t\t", 
+              RowBox[{"#ID", ",", "\n", "\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"(", 
+                  RowBox[{
+                   RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{"!", 
+                    RowBox[{"DirectoryQ", "@", 
+                    RowBox[{"DirectoryName", "@", "#"}]}]}], ",", "\t", "\n", 
+                    "\t\t\t\t\t\t", 
+                    RowBox[{"CreateDirectory", "@", 
+                    RowBox[{"DirectoryName", "@", "#"}]}]}], "\n", 
+                    "\t\t\t\t\t\t", "]"}], ";", "#"}], ")"}], "&"}], "@", 
+                RowBox[{"FileNameJoin", "@", 
+                 RowBox[{"Flatten", "@", 
+                  RowBox[{"{", 
+                   RowBox[{"p", ",", 
+                    RowBox[{"GAFilePath", "@", "#ID"}]}], "}"}]}]}]}]}], "\n",
+               "\t\t\t\t\t", "]"}], "&"}], "/@", "#"}], ",", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"GAFileDownload", "[", 
+              RowBox[{"#ID", ",", "\n", "\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"(", 
+                  RowBox[{
+                   RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{"!", 
+                    RowBox[{"DirectoryQ", "@", 
+                    RowBox[{"DirectoryName", "@", "#"}]}]}], ",", "\t", "\n", 
+                    "\t\t\t\t\t\t", 
+                    RowBox[{"CreateDirectory", "@", 
+                    RowBox[{"DirectoryName", "@", "#"}]}]}], "\n", 
+                    "\t\t\t\t\t\t", "]"}], ";", "#"}], ")"}], "&"}], "@", 
+                RowBox[{"FileNameJoin", "@", 
+                 RowBox[{"{", 
+                  RowBox[{"p", ",", "#Name"}], "}"}]}]}]}], "\n", 
+              "\t\t\t\t\t", "]"}], "&"}], "@", 
+            RowBox[{"First", "@", "#"}]}]}], "\n", "\t\t\t\t", "]"}], ",", 
+         "\n", "\t\t\t", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"GAFileDownload", "[", "\n", "\t\t\t\t", 
+            RowBox[{"#ID", ",", "\n", "\t\t\t\t", "p"}], "\n", "\t\t\t\t", 
+            "]"}], "&"}], "@", 
+          RowBox[{"First", "@", "#"}]}]}], "\n", "\t\t\t", "]"}], "&"}], "@", 
+      "\n", "\t\t\t", 
+      RowBox[{"GAFileSearch", "[", "query", "]"}]}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.704631417082831*^9, 3.7046315195385942`*^9}, {
+   3.704631570294085*^9, 3.704631576925417*^9}, {3.704632182060161*^9, 
+   3.704632206818416*^9}, {3.704632242706091*^9, 3.704632251975773*^9}, {
+   3.704632338839121*^9, 3.704632469696603*^9}, {3.704632503576562*^9, 
+   3.704632506537731*^9}, {3.704633202715667*^9, 3.704633234529541*^9}, {
+   3.7046333564263887`*^9, 3.704633357335247*^9}, {3.704633558541245*^9, 
+   3.704633649598365*^9}, {3.704633846647934*^9, 3.7046339795158443`*^9}, {
+   3.70463497329907*^9, 3.7046349953124037`*^9}, {3.7046350267124777`*^9, 
+   3.704635240223473*^9}, {3.70464053893568*^9, 3.704640740628414*^9}, {
+   3.70464083743505*^9, 3.704640930832073*^9}, {3.7046491459552794`*^9, 
+   3.70464914711143*^9}, {3.704653964657361*^9, 3.704653972988762*^9}, 
+   3.7046613199190903`*^9},ExpressionUUID->"efa60ffb-00e2-4ada-a8fa-\
+251dac2865c7"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["DownloadURL", "CodeSubsubsection",
+ CellChangeTimes->{{3.704659976561286*^9, 
+  3.704659978377531*^9}},ExpressionUUID->"bf1089f4-72aa-4e56-ab0f-\
+3c2749aec507"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"GAFileDownloadURL", "[", "fid_", "]"}], ":=", "\n", "\t", 
+  RowBox[{
+   RowBox[{"GAFilesRequest", "[", "\n", "\t\t", 
+    RowBox[{"fid", ",", "\n", "\t\t", 
+     RowBox[{"\"\<alt\>\"", "\[Rule]", "\"\<media\>\""}]}], "\n", "\t\t", 
+    "]"}], "[", "\"\<URL\>\"", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.704660006138679*^9, 
+  3.7046600187843227`*^9}},ExpressionUUID->"7d3b42d8-6824-4a95-99e5-\
+ec18b0e60b10"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Delete", "CodeSubsubsection",
+ CellChangeTimes->{{3.704637991143214*^9, 
+  3.704637991733613*^9}},ExpressionUUID->"e22db0c2-0bdd-4522-a950-\
+1b5b23d5e930"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileDelete", "[", 
+    RowBox[{"fid_String", "?", "GAFileIDQ"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"GAPullContent", "@", "\n", "\t\t", 
+    RowBox[{"GAFilesRequest", "[", "\n", "\t\t\t", 
+     RowBox[{"fid", ",", "\n", "\t", "\t\t", 
+      RowBox[{"<|", "\n", "\t", "\t\t\t", 
+       RowBox[{"\"\<Method\>\"", "\[Rule]", "\"\<DELETE\>\""}], "\n", "\t", 
+       "\t\t\t", "|>"}]}], "\n", "\t", "\t\t", "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileDelete", "[", 
+    RowBox[{"a_Association", "?", 
+     RowBox[{"(", 
+      RowBox[{"KeyMemberQ", "[", "\"\<ID\>\"", "]"}], ")"}]}], "]"}], ":=", 
+   "\n", "\t", 
+   RowBox[{"GAFileDelete", "@", 
+    RowBox[{"a", "[", "\"\<ID\>\"", "]"}]}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.704637992419009*^9, 3.704638128657761*^9}, {
+   3.704638171716954*^9, 3.704638205868721*^9}, 3.704648211271687*^9, 
+   3.7046483941832123`*^9, {3.7046613582495623`*^9, 3.704661360679243*^9}, {
+   3.704669917265295*^9, 
+   3.704669919219768*^9}},ExpressionUUID->"e063e899-d95f-40a5-831a-\
+5f3cff6b77f5"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Parents", "CodeSubsubsection",
+ CellChangeTimes->{{3.7046355296506557`*^9, 
+  3.70463553049063*^9}},ExpressionUUID->"8d94453b-bcc9-4a3c-8870-\
+124ecd0250c2"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"GAFileParents", "[", 
+   RowBox[{"fid_String", "?", "GAFileIDQ"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Lookup", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"GAFileInfo", "[", 
+     RowBox[{"fid", ",", "\"\<parents\>\""}], "]"}], ",", "\n", "\t\t", 
+    "\"\<Parents\>\"", ",", "\n", "\t\t", "None"}], "\n", "\t\t", 
+   "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.704639124551547*^9, 3.704639146636718*^9}, {
+   3.70463927983423*^9, 3.704639280766748*^9}, 3.704639362979447*^9, {
+   3.704639415822784*^9, 
+   3.704639424614379*^9}},ExpressionUUID->"4a7afe85-2081-4297-93d4-\
+504a049e74ef"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Children", "CodeSubsubsection",
+ CellChangeTimes->{{3.7046355317465467`*^9, 
+  3.70463553302805*^9}},ExpressionUUID->"74ed4622-0b23-4e94-b8c6-\
+6055ea4a847d"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"GAFileChildren", "[", 
+   RowBox[{"fid_String", "?", "GAFileIDQ"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Lookup", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"GAFileInfo", "[", 
+     RowBox[{"fid", ",", "\"\<Children\>\""}], "]"}], ",", "\n", "\t\t", 
+    "\"\<Children\>\"", ",", "\n", "\t\t", "None"}], "\n", "\t\t", 
+   "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.704639124551547*^9, 3.704639157718437*^9}, {
+  3.704639364183928*^9, 3.7046393655025*^9}, {3.7046394277418823`*^9, 
+  3.704639436397871*^9}},ExpressionUUID->"2ae35a68-e3ce-4409-a31d-\
+7c6ed62ee395"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Path", "CodeSubsubsection",
+ CellChangeTimes->{{3.704639195708495*^9, 
+  3.704639202058429*^9}},ExpressionUUID->"babeb0a1-a987-4d74-80f7-\
+8d0efbb19a7c"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"GAFilePath", "[", 
+   RowBox[{"fid_String", "?", "GAFileIDQ"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"Key", "[", "\"\<Name\>\"", "]"}], "@", "\n", "\t\t", 
+     RowBox[{"GAFileInfo", "[", 
+      RowBox[{"#", ",", "\"\<Name\>\""}], "]"}]}], "&"}], "/@", "\n", 
+   "\t\t\t", 
+   RowBox[{"Rest", "@", 
+    RowBox[{
+     RowBox[{"Cases", "[", "_String", "]"}], "@", "\n", "\t", "\t\t\t", 
+     RowBox[{"Reverse", "@", "\n", "\t", "\t\t\t\t", 
+      RowBox[{"FixedPointList", "[", "\n", "\t", "\t\t\t\t\t", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{"StringQ", "@", "#"}], ",", "\n", "\t", "\t\t\t\t\t\t\t", 
+             RowBox[{"GAFileParents", "@", "#"}], ",", "\n", "\t", 
+             "\t\t\t\t\t\t\t", "None"}], "\n", "\t", "\t\t\t\t\t\t\t", "]"}], 
+           ",", 
+           RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"{", 
+               RowBox[{"f_", ",", "___"}], "}"}], "\[RuleDelayed]", "f"}], 
+             ",", "\n", "\t", "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"{", "}"}], "\[Rule]", "None"}]}], "\n", "\t", 
+            "\t\t\t\t\t\t", "}"}]}], "]"}], "&"}], ",", "\n", "\t", 
+        "\t\t\t\t\t", "fid"}], "\n", "\t", "\t\t\t\t\t", 
+       "]"}]}]}]}]}]}]], "CodeInput",
+ CellChangeTimes->{{3.704639204302287*^9, 3.704639374410569*^9}, {
+  3.7046394594367237`*^9, 3.704639463740471*^9}, {3.704639527608396*^9, 
+  3.70463952786801*^9}, {3.704639565615747*^9, 3.70463959165956*^9}, {
+  3.7046396842002*^9, 3.7046397117261553`*^9}, {3.704640355361607*^9, 
+  3.704640376751802*^9}, {3.704640438077455*^9, 
+  3.704640462095059*^9}},ExpressionUUID->"cc1d3a02-d983-4c6d-b6f2-\
+4585ff369224"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Permissions", "CodeSubsubsection",
+ CellChangeTimes->{{3.704637198037649*^9, 
+  3.704637219203741*^9}},ExpressionUUID->"53284e75-d366-48ba-ba8e-\
+73a2d4b7d4aa"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFilePermissions", "[", 
+    RowBox[{"fid_String", "?", "GAFileIDQ"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Fold", "[", "\n", "\t\t", 
+    RowBox[{"Lookup", ",", "\n", "\t\t", 
+     RowBox[{"GAPullContent", "@", "\n", "\t\t\t", 
+      RowBox[{"GAFilesRequest", "[", "\n", "\t\t\t\t", 
+       RowBox[{"{", 
+        RowBox[{"fid", ",", "\"\<permissions\>\""}], "}"}], "\n", "\t\t\t\t", 
+       "]"}]}], ",", "\n", "\t\t", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Content\>\"", ",", "\"\<Permissions\>\""}], "}"}]}], "\n", 
+    "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFilePermissionsInfo", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"fid_String", "?", "GAFileIDQ"}], ",", "\n", "\t", 
+     "pid_String"}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"GAPullContent", "@", "\n", "\t\t", 
+    RowBox[{"GAFilesRequest", "[", "\n", "\t\t\t", 
+     RowBox[{"{", 
+      RowBox[{"fid", ",", "\"\<permissions\>\"", ",", "pid"}], "}"}], "\n", 
+     "\t\t\t", "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFilePermissions", "[", "\n", "\t", 
+    RowBox[{"a_Association", "?", 
+     RowBox[{"(", 
+      RowBox[{"KeyMemberQ", "[", "\"\<ID\>\"", "]"}], ")"}]}], "\n", "\t", 
+    "]"}], ":=", "\n", "\t", 
+   RowBox[{"GAFilePermissions", "[", 
+    RowBox[{"a", "[", "\"\<ID\>\"", "]"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFilePermissions", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"a_Association", "?", 
+      RowBox[{"(", 
+       RowBox[{"KeyMemberQ", "[", "\"\<ID\>\"", "]"}], ")"}]}], ",", "\n", 
+     "\t", "pid_String"}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"GAFilePermissions", "[", 
+    RowBox[{
+     RowBox[{"a", "[", "\"\<ID\>\"", "]"}], ",", "pid"}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"GAFilePermissions", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"fid", ":", 
+     RowBox[{
+      RowBox[{"_String", "?", "GAFileIDQ"}], "|", 
+      RowBox[{"_Association", "?", 
+       RowBox[{"(", 
+        RowBox[{"KeyMemberQ", "[", "\"\<ID\>\"", "]"}], ")"}]}]}]}], ",", 
+    "\n", "\t", 
+    RowBox[{"pid_Association", "?", 
+     RowBox[{"(", 
+      RowBox[{"KeyMemberQ", "[", "\"\<ID\>\"", "]"}], ")"}]}]}], "\n", "\t", 
+   "]"}], ":=", "\n", "\t", 
+  RowBox[{"GAFilePermissions", "[", 
+   RowBox[{"fid", ",", 
+    RowBox[{"pid", "[", "\"\<ID\>\"", "]"}]}], "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.704637205909638*^9, 3.704637224208555*^9}, {
+   3.704641479938376*^9, 3.7046416036229477`*^9}, 3.70464821127857*^9, 
+   3.704648395262928*^9, {3.7046488639755793`*^9, 3.7046488882912083`*^9}, {
+   3.704660836664877*^9, 3.7046609100566463`*^9}, {3.7046613658515778`*^9, 
+   3.704661370441875*^9}},ExpressionUUID->"4cd70976-a34f-4d7e-944d-\
+b193f23d6ade"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["CreatePermissions", "CodeSubsubsection",
+ CellChangeTimes->{{3.7046416227625647`*^9, 
+  3.704641627080817*^9}},ExpressionUUID->"47e45bfa-4b00-4171-9c47-\
+c52c9c98b67c"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAPermissionsRoleQ", "[", "s_String", "]"}], ":=", "\n", "\t", 
+   RowBox[{"StringMatchQ", "[", 
+    RowBox[{
+     RowBox[{"ToLowerCase", "@", "s"}], ",", "\n", "\t\t", 
+     RowBox[{
+     "\"\<organizer\>\"", "|", "\"\<owner\>\"", "|", "\"\<writer\>\"", "|", 
+      "\n", "\t\t\t", "\"\<commentator\>\"", "|", "\"\<reader\>\""}]}], "\n", 
+    "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAPermissionsGrantQ", "[", "s_String", "]"}], ":=", "\n", "\t", 
+   RowBox[{"StringMatchQ", "[", 
+    RowBox[{
+     RowBox[{"ToLowerCase", "@", "s"}], ",", "\n", "\t\t", 
+     RowBox[{
+     "\"\<user\>\"", "|", "\"\<group\>\"", "|", "\"\<domain\>\"", "|", 
+      "\"\<anyone\>\""}]}], "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.704641767327066*^9, 3.704641817807294*^9}, 
+   3.7046425141271*^9},ExpressionUUID->"96453f6c-4b62-4065-872b-e7346b7e2e78"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileCreatePermissions", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"fid_String", "?", "GAFileIDQ"}], ",", "\n", "\t", 
+     RowBox[{"role", ":", 
+      RowBox[{"_", "?", "GAPermissionsRoleQ"}], ":", "\"\<reader\>\""}], ",", 
+     "\n", "\t", 
+     RowBox[{"grant", ":", 
+      RowBox[{"_", "?", "GAPermissionsGrantQ"}], ":", "\"\<user\>\""}], ",", 
+     "\n", "\t", 
+     RowBox[{"params", ":", 
+      RowBox[{"_", "?", "OptionQ"}], ":", 
+      RowBox[{"{", "}"}]}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"GAPullContent", "@", "\n", "\t", 
+    RowBox[{"GAFilesRequest", "[", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"fid", ",", "\"\<permissions\>\""}], "}"}], ",", "\n", "\t\t", 
+      
+      RowBox[{"FilterRules", "[", "\n", "\t\t\t", 
+       RowBox[{"params", ",", "\n", "\t\t\t", 
+        RowBox[{
+        "\"\<emailMessage\>\"", "|", "\"\<sendNotificationEmail\>\"", "|", 
+         "\n", "\t\t\t\t", "\"\<supportsTeamDrives\>\"", "|", 
+         "\"\<transferOwnership\>\""}]}], "\n", "\t\t\t", "]"}], ",", "\n", 
+      "\t\t", 
+      RowBox[{"<|", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"\"\<Method\>\"", "\[Rule]", "\"\<POST\>\""}], ",", "\n", 
+        "\t\t\t", 
+        RowBox[{"\"\<Headers\>\"", "\[Rule]", 
+         RowBox[{"{", "\n", "\t\t\t\t", 
+          RowBox[{
+          "\"\<Content-Type\>\"", "\[Rule]", "\"\<application/json\>\""}], 
+          "\n", "\t\t\t\t", "}"}]}], ",", "\n", "\t\t\t", 
+        RowBox[{"\"\<Body\>\"", "\[Rule]", "\n", "\t\t\t\t", 
+         RowBox[{"ExportString", "[", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"FilterRules", "[", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Flatten", "@", 
+              RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"\"\<role\>\"", "\[Rule]", "role"}], ",", "\n", "\t", 
+                "\t", "\t", "\t\t\t\t", 
+                RowBox[{"\"\<type\>\"", "\[Rule]", "grant"}], ",", "\n", "\t",
+                 "\t\t\t\t\t\t", "params"}], "\n", "\t", "\t\t\t\t\t\t", 
+               "}"}]}], ",", "\n", "\t", "\t\t\t\t\t", 
+             RowBox[{"Except", "[", "\n", "\t", "\t\t\t\t\t\t", 
+              RowBox[{
+              "\"\<emailMessage\>\"", "|", "\"\<sendNotificationEmail\>\"", 
+               "|", "\n", "\t", "\t", "\t", "\t", "\t\t\t\t", 
+               "\"\<supportsTeamDrives\>\"", "|", 
+               "\"\<transferOwnership\>\""}], "\n", "\t\t\t\t\t\t\t", "]"}]}],
+             "\n", "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t", 
+           "\"\<JSON\>\""}], "\n", "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", 
+       "|>"}]}], "\n", "\t\t", "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"GAFileCreatePermissions", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"a_Association", "?", 
+     RowBox[{"(", 
+      RowBox[{"KeyMemberQ", "[", "\"\<ID\>\"", "]"}], ")"}]}], ",", "\n", 
+    "\t", 
+    RowBox[{"role", ":", 
+     RowBox[{"_", "?", "GAPermissionsRoleQ"}], ":", "\"\<reader\>\""}], ",", 
+    "\n", "\t", 
+    RowBox[{"grant", ":", 
+     RowBox[{"_", "?", "GAPermissionsGrantQ"}], ":", "\"\<user\>\""}], ",", 
+    "\n", "\t", 
+    RowBox[{"params", ":", 
+     RowBox[{"_", "?", "OptionQ"}], ":", 
+     RowBox[{"{", "}"}]}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+  RowBox[{"GAFileCreatePermissions", "[", 
+   RowBox[{
+    RowBox[{"a", "[", "\"\<ID\>\"", "]"}], ",", "role", ",", "grant", ",", 
+    "params"}], "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.704641701098671*^9, 3.704641766484387*^9}, {
+  3.704641851103403*^9, 3.704641919538446*^9}, {3.704641970803608*^9, 
+  3.7046420326631804`*^9}, {3.704642653999942*^9, 3.7046427061862907`*^9}, {
+  3.704642740600473*^9, 3.704642743150476*^9}, {3.704642789254981*^9, 
+  3.70464279083848*^9}, {3.704648193635957*^9, 3.704648222959168*^9}, {
+  3.7046601652955523`*^9, 3.704660187763728*^9}, {3.704661373443268*^9, 
+  3.7046613745698633`*^9}},ExpressionUUID->"5c75a541-e650-41ee-86ce-\
+7702b3ea692b"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["UpdatePermissions", "CodeSubsubsection",
+ CellChangeTimes->{{3.70463720344389*^9, 3.70463720531595*^9}, 
+   3.704641700009985*^9, {3.7046420407930727`*^9, 
+   3.704642041476955*^9}},ExpressionUUID->"33ccafdb-a438-458c-aa77-\
+465049327253"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileUpdatePermissions", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"fid_String", "?", "GAFileIDQ"}], ",", "\n", "\t", "pid_String", 
+     ",", "\n", "\t", 
+     RowBox[{"role", ":", 
+      RowBox[{"_", "?", "GAPermissionsRoleQ"}], ":", "\"\<reader\>\""}], ",", 
+     "\n", "\t", 
+     RowBox[{"params", ":", 
+      RowBox[{"_", "?", "OptionQ"}], ":", 
+      RowBox[{"{", "}"}]}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"GAPullContent", "@", "\n", "\t", 
+    RowBox[{"GAFilesRequest", "[", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"fid", ",", "\"\<permissions\>\"", ",", "pid"}], "}"}], ",", 
+      "\n", "\t\t", 
+      RowBox[{"FilterRules", "[", "\n", "\t\t\t", 
+       RowBox[{"params", ",", "\n", "\t\t\t", 
+        RowBox[{
+        "\"\<removeExpiration\>\"", "|", "\"\<supportsTeamDrives\>\"", "|", 
+         "\n", "\t\t\t\t", "\"\<transferOwnership\>\""}]}], "\n", "\t\t\t", 
+       "]"}], ",", "\n", "\t\t", 
+      RowBox[{"<|", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"\"\<Method\>\"", "\[Rule]", "\"\<PATCH\>\""}], ",", "\n", 
+        "\t\t\t", 
+        RowBox[{"\"\<Headers\>\"", "\[Rule]", 
+         RowBox[{"{", "\n", "\t\t\t\t", 
+          RowBox[{
+          "\"\<Content-Type\>\"", "\[Rule]", "\"\<application/json\>\""}], 
+          "\n", "\t\t\t\t", "}"}]}], ",", "\n", "\t\t\t", 
+        RowBox[{"\"\<Body\>\"", "\[Rule]", "\n", "\t\t\t\t", 
+         RowBox[{"FilterRules", "[", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Flatten", "@", 
+            RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"\"\<role\>\"", "\[Rule]", "role"}], ",", "\n", 
+              "\t\t\t\t\t\t", "params"}], "\n", "\t\t\t\t\t\t", "}"}]}], ",", 
+           "\n", "\t\t\t\t\t", 
+           RowBox[{"Except", "[", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+            "\"\<removeExpiration\>\"", "|", "\"\<supportsTeamDrives\>\"", 
+             "|", "\n", "\t\t\t\t\t\t\t", "\"\<transferOwnership\>\""}], "\n",
+             "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "]"}]}]}], "\n", 
+       "\t\t\t", "|>"}]}], "\n", "\t\t", "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"GAFileUpdatePermissions", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"a_Association", "?", 
+     RowBox[{"(", 
+      RowBox[{"KeyMemberQ", "[", "\"\<ID\>\"", "]"}], ")"}]}], ",", "\n", 
+    "\t", "pid_String", ",", "\n", "\t", 
+    RowBox[{"role", ":", 
+     RowBox[{"_", "?", "GAPermissionsRoleQ"}], ":", "\"\<reader\>\""}], ",", 
+    "\n", "\t", 
+    RowBox[{"params", ":", 
+     RowBox[{"_", "?", "OptionQ"}], ":", 
+     RowBox[{"{", "}"}]}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+  RowBox[{"GAFileUpdatePermissions", "[", 
+   RowBox[{
+    RowBox[{"a", "[", "\"\<ID\>\"", "]"}], ",", "pid", ",", "role", ",", 
+    "params"}], "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.704637205909638*^9, 3.704637213395887*^9}, {
+   3.704642043211215*^9, 3.70464204475158*^9}, {3.704642532026145*^9, 
+   3.70464254894315*^9}, {3.704642589607462*^9, 3.704642660332781*^9}, {
+   3.7046428003544083`*^9, 3.7046428018293467`*^9}, 3.7046482112236433`*^9, 
+   3.704648398345118*^9, {3.704660193667598*^9, 3.704660213598009*^9}, {
+   3.704661377017021*^9, 
+   3.70466138091191*^9}},ExpressionUUID->"dc5f7d28-6780-4969-9c05-\
+c635e61b9ba4"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["DeletePermissions", "CodeSubsubsection",
+ CellChangeTimes->{{3.7046486587963457`*^9, 
+  3.7046486627480793`*^9}},ExpressionUUID->"294abd5c-8072-4a23-8917-\
+e98be4efd92f"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFileDeletePermissions", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"fid_String", "?", "GAFileIDQ"}], ",", "\n", "\t", 
+     "pid_String"}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"GAPullContent", "@", "\n", "\t\t", 
+    RowBox[{"GAFilesRequest", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"fid", ",", "\"\<permissions\>\"", ",", "pid"}], "}"}], ",", 
+      "\n", "\t\t\t", 
+      RowBox[{"<|", "\n", "\t", "\t\t\t", 
+       RowBox[{"\"\<Method\>\"", "\[Rule]", "\"\<DELETE\>\""}], "\n", "\t", 
+       "\t\t\t", "|>"}]}], "\n", "\t", "\t\t", "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"GAFileDeletePermissions", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"fid_String", "?", "GAFileIDQ"}], ",", "\n", "\t", 
+    RowBox[{"a_Association", "?", 
+     RowBox[{"(", 
+      RowBox[{"KeyMemberQ", "[", "\"\<ID\>\"", "]"}], ")"}]}]}], "\n", "\t", 
+   "]"}], ":=", "\n", "\t", 
+  RowBox[{"GAFileDeletePermissions", "[", 
+   RowBox[{"fid", ",", 
+    RowBox[{"a", "[", "\"\<ID\>\"", "]"}]}], "]"}]}], "\n", 
+ RowBox[{
+  RowBox[{"GAFileDeletePermissions", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"a_Association", "?", 
+     RowBox[{"(", 
+      RowBox[{"KeyMemberQ", "[", "\"\<ID\>\"", "]"}], ")"}]}], ",", "\n", 
+    "\t", 
+    RowBox[{"pid", ":", 
+     RowBox[{"_String", "|", 
+      RowBox[{"_Association", "?", 
+       RowBox[{"(", 
+        RowBox[{"KeyMemberQ", "[", "\"\<ID\>\"", "]"}], ")"}]}]}]}]}], "\n", 
+   "\t", "]"}], ":=", "\n", "\t", 
+  RowBox[{"GAFileDeletePermissions", "[", 
+   RowBox[{
+    RowBox[{"a", "[", "\"\<ID\>\"", "]"}], ",", "pid"}], 
+   "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.7046486703094263`*^9, 3.704648672954061*^9}, {
+   3.704648731146386*^9, 3.704648787229808*^9}, {3.704648907632082*^9, 
+   3.704648945540164*^9}, {3.704649638448135*^9, 3.704649645072028*^9}, {
+   3.704649709051187*^9, 3.704649736227384*^9}, {3.7046602195413523`*^9, 
+   3.704660246561778*^9}, 3.704660776898662*^9, 3.704660960825219*^9, {
+   3.7046613860183783`*^9, 
+   3.704661406424999*^9}},ExpressionUUID->"65c470d5-cca0-4c03-8901-\
+348abc79b976"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Publish", "CodeSubsubsection",
+ CellChangeTimes->{{3.7046519019914007`*^9, 
+  3.7046519053816977`*^9}},ExpressionUUID->"d3b89368-e8a9-48bb-b862-\
+f7f1e28b9e10"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"GAFilePublish", "[", 
+   RowBox[{"fid_", ",", "\n", "\t", 
+    RowBox[{"role", ":", 
+     RowBox[{"_", "?", "GAPermissionsRoleQ"}], ":", "\"\<reader\>\""}], ",", 
+    "\n", "\t", 
+    RowBox[{"allowDiscovery", ":", 
+     RowBox[{"True", "|", "False"}], ":", "True"}]}], "\n", "\t", "]"}], ":=",
+   "\n", "\t", 
+  RowBox[{"GAFileCreatePermissions", "[", 
+   RowBox[{
+   "fid", ",", "\n", "\t\t", "role", ",", "\n", "\t\t", "\"\<anyone\>\"", ",",
+     "\n", "\t\t", 
+    RowBox[{"\"\<allowFileDiscovery\>\"", "->", "allowDiscovery"}]}], "\n", 
+   "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.704651919689581*^9, 3.704651940844205*^9}, {
+  3.704652030643855*^9, 3.704652057673131*^9}, {3.704652123640812*^9, 
+  3.704652153089221*^9}, {3.704652190503853*^9, 3.704652191742927*^9}, {
+  3.704660732753358*^9, 3.704660760802388*^9}, {3.705523756435502*^9, 
+  3.7055237571626596`*^9}, {3.705523797031005*^9, 
+  3.7055237972524548`*^9}},ExpressionUUID->"edbe1a11-a0a1-43df-a220-\
+8dfa90b3cac6"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Privatize", "CodeSubsubsection",
+ CellChangeTimes->{{3.704651907365635*^9, 
+  3.704651910149486*^9}},ExpressionUUID->"bda0e3e9-cbfc-4483-a0c3-\
+5c661b57d283"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAFilePrivatize", "[", "fid_", "]"}], ":=", "\n", "\t", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"GAFileDeletePermissions", "[", 
+        RowBox[{"fid", ",", "#"}], "]"}], "&"}], "/@", "\n", "\t\t", 
+      RowBox[{"Select", "[", 
+       RowBox[{
+        RowBox[{"GAFilePermissions", "[", "fid", "]"}], ",", "\n", "\t", 
+        "\t\t", 
+        RowBox[{
+         RowBox[{"#Type", "\[Equal]", "\"\<anyone\>\""}], "&"}]}], "\n", 
+       "\t\t\t", "]"}]}], ";"}], ")"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.704651913596365*^9, 3.704651913598192*^9}, {
+  3.7046520607293043`*^9, 3.7046520906340723`*^9}, {3.704652160575878*^9, 
+  3.7046521869363613`*^9}, {3.7046610055669823`*^9, 
+  3.7046610083336353`*^9}},ExpressionUUID->"43d930fe-f933-4e18-a9f4-\
+ba1c7298fc5e"]
+}, Closed]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"End", "[", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"f83d489e-71b0-4387-ba75-\
+f12100be1d3e"]
+}, Open  ]],
+
+Cell["", "SectionSeparator",ExpressionUUID->"7d46921f-36b4-414a-b43f-\
+6fecf718d29f"]
+},
+WindowSize->{748, 767},
+WindowMargins->{{89, Automatic}, {Automatic, 39}},
+FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
+2018)",
+StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+

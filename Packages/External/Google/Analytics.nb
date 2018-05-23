@@ -1,0 +1,907 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Google APIs", "CodeSection",
+ CellChangeTimes->{{3.704148043325519*^9, 3.7041480459627943`*^9}, {
+  3.704148264721705*^9, 
+  3.704148294043994*^9}},ExpressionUUID->"a1b613ec-67ea-410c-ba14-\
+992bdc5920da"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"$GoogleAnalyticsCalls", "::", "usage"}], "=", "\"\<\>\""}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.734834644228537*^9, 3.734834645946527*^9}, {
+  3.7348378313452997`*^9, 
+  3.734837833616942*^9}},ExpressionUUID->"8c32236c-7686-4e14-859c-\
+bad93af75399"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAAnalyticsReportsRequest", "::", "usage"}], "=", "\"\<\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAAnalyticsReportsCall", "::", "usage"}], "=", "\"\<\>\""}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.734834468029948*^9, 3.734834476412181*^9}, {
+  3.734837844711525*^9, 3.734837847809334*^9}, {3.734839008335219*^9, 
+  3.7348390131822433`*^9}},ExpressionUUID->"0a16aabf-c7e4-4e25-9a1f-\
+3ab8644ac1f2"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAAGetReport", "::", "usage"}], "=", "\"\<\>\""}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.734839243523752*^9, 
+  3.734839245593759*^9}},ExpressionUUID->"6e45dda9-c9f3-4c82-bf24-\
+1e17a31bf867"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"7f191f15-9dd9-4039-b06f-\
+c4923eabfa12"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]API Basics\[RightFloor]", "CodeSubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.70414805890786*^9, 3.704148062441847*^9}, {
+   3.7041488201470547`*^9, 3.704148822096118*^9}, 
+   3.7042176589412127`*^9},ExpressionUUID->"2af1ce18-2954-4cc5-89e1-\
+774740f3093d"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Requests\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.704152120208335*^9, 3.704152124590876*^9}, 
+   3.704152232959446*^9},ExpressionUUID->"501b8b18-bedc-4680-8c50-\
+6da5743ec2fa"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAAnalyticsRequest", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{
+     "mode", ":", "\"\<AnalyticsReporting\>\"", ":", 
+      "\"\<AnalyticsReporting\>\""}], ",", "\n", "\t", "passoc_Association", 
+     ",", "\n", "\t", 
+     RowBox[{"assoc", ":", "_Association", ":", 
+      RowBox[{"<|", "|>"}]}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"$GAVersion", "=", "4"}], "}"}], ",", "\n", "\t\t", 
+     RowBox[{"GARequest", "[", "\n", "\t\t\t", 
+      RowBox[{
+      "\"\<AnalyticsReporting\>\"", ",", "\n", "\t\t\t", "passoc", ",", "\n", 
+       "\t\t\t", "assoc"}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAAnalyticsRequest", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{
+     "mode", ":", "\"\<AnalyticsReporting\>\"", ":", 
+      "\"\<AnalyticsReporting\>\""}], ",", "\n", "\t", 
+     RowBox[{"path", ":", 
+      RowBox[{"_String", "|", 
+       RowBox[{"{", "__String", "}"}], "|", "Nothing"}], ":", "Nothing"}], 
+     ",", "\n", "\t", 
+     RowBox[{"query", ":", 
+      RowBox[{"_Rule", "|", 
+       RowBox[{"{", "___Rule", "}"}]}], ":", 
+      RowBox[{"{", "}"}]}], ",", "\n", "\t", 
+     RowBox[{"assoc", ":", "_Association", ":", 
+      RowBox[{"<|", "|>"}]}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"$GAVersion", "=", "4"}], "}"}], ",", "\n", "\t\t", 
+     RowBox[{"GARequest", "[", "\n", "\t\t\t", 
+      RowBox[{
+      "\"\<AnalyticsReporting\>\"", ",", "\n", "\t\t\t", "path", ",", "\n", 
+       "\t\t\t", "query", ",", "\n", "\t\t\t", "assoc"}], "\n", "\t\t\t", 
+      "]"}]}], "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.704148278124859*^9, 3.704148288724184*^9}, {
+   3.704148321447947*^9, 3.7041484982251863`*^9}, {3.70414860403316*^9, 
+   3.704148615574959*^9}, {3.7041487619016857`*^9, 3.704148764450377*^9}, {
+   3.7041491216174383`*^9, 3.70414912331329*^9}, 3.704149957832692*^9, {
+   3.704152023955187*^9, 3.7041520547493067`*^9}, {3.704153992862854*^9, 
+   3.704154052697845*^9}, {3.704218170134103*^9, 3.70421818195651*^9}, {
+   3.704218253366704*^9, 3.704218270495734*^9}, {3.7043995539199963`*^9, 
+   3.7043995571537848`*^9}, {3.704400071048417*^9, 3.7044000934615602`*^9}, {
+   3.704409007872959*^9, 3.704409010140451*^9}, 3.704635972141776*^9, {
+   3.704646626471211*^9, 3.704646639463313*^9}, {3.704648352893055*^9, 
+   3.704648375445657*^9}, {3.7348378403845882`*^9, 3.734837865458074*^9}, {
+   3.734838723476931*^9, 3.734838732755411*^9}, {3.734839017074417*^9, 
+   3.73483902280342*^9}, {3.7348390853445683`*^9, 3.734839114076755*^9}, {
+   3.734841032019477*^9, 
+   3.734841066359653*^9}},ExpressionUUID->"3a088f94-c1cb-4aad-a336-\
+934b49f13654"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"GoogleAnalytics", "::", "err"}], "=", "\"\<\\n``\>\""}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7046383089254007`*^9, 3.704638354161599*^9}, {
+  3.7046384220803328`*^9, 3.704638433502048*^9}, {3.7046386197822323`*^9, 
+  3.704638620131921*^9}, {3.7348378704644403`*^9, 
+  3.734837872256855*^9}},ExpressionUUID->"7285fc6d-b62f-4a3e-8d70-\
+41b313c36210"]
+}, Closed]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Calls\[RightFloor]", "CodeSubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.734834651387059*^9, 
+  3.734834651906415*^9}},ExpressionUUID->"c8c7c876-4d6d-4db6-9ff9-\
+61f26a6c2c71"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{"!", 
+     RowBox[{"AssociationQ", "@", "$GoogleAnalyticsCalls"}]}], ",", "\n", 
+    "\t", 
+    RowBox[{"$GoogleAnalyticsCalls", "=", 
+     RowBox[{"<|", "|>"}]}]}], "\n", "\t", "]"}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7348346533799543`*^9, 3.734834655010367*^9}, 
+   3.7348378366208973`*^9, {3.734839268980424*^9, 
+   3.734839277424961*^9}},ExpressionUUID->"daa513cd-e935-4e1d-88dd-\
+21cb78d446d8"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Report\[RightFloor]", "CodeSubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7041488256731586`*^9, 3.704148827951879*^9}, {
+   3.704149997823243*^9, 3.7041499993563757`*^9}, 3.734837922720443*^9, {
+   3.734838092144842*^9, 
+   3.734838093108108*^9}},ExpressionUUID->"52e6f013-d3a2-46fc-aa9b-\
+33c298c1157b"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]ReportDimensions\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.734841088643401*^9, 3.73484109082725*^9}, {
+  3.7348444388454447`*^9, 3.73484444068442*^9}, {3.734844609585524*^9, 
+  3.734844611633806*^9}},ExpressionUUID->"2a817c8e-f249-4486-881d-\
+0cb2d672862f"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$GAAReportDimensions", "=", "\n", "\t", 
+   RowBox[{"<|", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"\"\<UserDimensions\>\"", "->", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{
+       "\"\<UserType\>\"", ",", "\"\<VisitorType\>\"", ",", 
+        "\"\<SessionCount\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
+        "\"\<VisitCount\>\"", ",", "\"\<DaysSinceLastSession\>\"", ",", 
+        "\"\<UserDefinedValue\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
+        "\"\<UserBucket\>\""}], "\n", "\t", "\t", "\t", "\t", "}"}]}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"\"\<SessionDimensions\>\"", "->", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{"\"\<SessionDurationBucket\>\"", ",", "\"\<VisitLength\>\""}], 
+       "\n", "\t\t\t\t", "}"}]}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<TrafficSourceDimensions\>\"", "->", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{
+       "\"\<ReferralPath\>\"", ",", "\"\<FullReferrer\>\"", ",", 
+        "\"\<Campaign\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
+        "\"\<Source\>\"", ",", "\"\<Medium\>\"", ",", "\"\<SourceMedium\>\"", 
+        ",", "\n", "\t", "\t", "\t", "\t", "\"\<Keyword\>\"", ",", 
+        "\"\<AdContent\>\"", ",", "\"\<SocialNetwork\>\"", ",", "\n", "\t", 
+        "\t", "\t", "\t", "\"\<HasSocialSourceReferral\>\"", ",", 
+        "\"\<CampaignCode\>\""}], "\n", "\t\t\t\t", "}"}]}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<PageDimensions\>\"", "->", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{
+       "\"\<Hostname\>\"", ",", "\"\<PagePath\>\"", ",", 
+        "\"\<PagePathLevel1\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
+        "\"\<PagePathLevel2\>\"", ",", "\"\<PagePathLevel3\>\"", ",", 
+        "\"\<PagePathLevel4\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
+        "\"\<PageTitle\>\"", ",", "\"\<LandingPagePath\>\"", ",", 
+        "\"\<SecondPagePath\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
+        "\"\<ExitPagePath\>\"", ",", "\"\<PreviousPagePath\>\"", ",", 
+        "\"\<PageDepth\>\""}], "\n", "\t\t\t\t", "}"}]}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<LocationDimensions\>\"", "->", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{
+       "\"\<Continent\>\"", ",", "\"\<SubContinent\>\"", ",", 
+        "\"\<Country\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
+        "\"\<Region\>\"", ",", "\"\<Metro\>\"", ",", "\"\<City\>\"", ",", 
+        "\n", "\t", "\t", "\t", "\t", "\"\<Latitude\>\"", ",", 
+        "\"\<Longitude\>\"", ",", "\"\<NetworkDomain\>\"", ",", "\n", "\t", 
+        "\t", "\t", "\t", "\"\<NetworkLocation\>\"", ",", "\"\<CityId\>\"", 
+        ",", "\"\<ContinentId\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
+        "\"\<CountryIsoCode\>\"", ",", "\"\<MetroId\>\"", ",", 
+        "\"\<RegionId\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
+        "\"\<RegionIsoCode\>\"", ",", "\"\<SubContinentCode\>\""}], "\n", 
+       "\t\t\t\t", "}"}]}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<TimeDimensions\>\"", "->", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{
+       "\"\<Date\>\"", ",", "\"\<Year\>\"", ",", "\"\<Month\>\"", ",", "\n", 
+        "\t", "\t", "\t", "\t", "\"\<Week\>\"", ",", "\"\<Day\>\"", ",", 
+        "\"\<Hour\>\"", ",", "\n", "\t", "\t", "\t", "\t", "\"\<Minute\>\"", 
+        ",", "\"\<NthMonth\>\"", ",", "\"\<NthWeek\>\"", ",", "\n", "\t", 
+        "\t", "\t", "\t", "\"\<NthDay\>\"", ",", "\"\<NthMinute\>\"", ",", 
+        "\"\<DayOfWeek\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
+        "\"\<DayOfWeekName\>\"", ",", "\"\<DateHour\>\"", ",", 
+        "\"\<DateHourMinute\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
+        "\"\<YearMonth\>\"", ",", "\"\<YearWeek\>\"", ",", "\"\<IsoWeek\>\"", 
+        ",", "\n", "\t", "\t", "\t", "\t", "\"\<IsoYear\>\"", ",", 
+        "\"\<IsoYearIsoWeek\>\"", ",", "\"\<NthHour\>\""}], "\n", "\t", "\t", 
+       "\t", "\t", "}"}]}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<AudienceDimensions\>\"", "->", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{
+       "\"\<UserAgeBracket\>\"", ",", "\"\<VisitorAgeBracket\>\"", ",", 
+        "\"\<UserGender\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
+        "\"\<VisitorGender\>\"", ",", "\"\<InterestOtherCategory\>\"", ",", 
+        "\n", "\t\t\t\t", "\"\<InterestAffinityCategory\>\"", ",", "\n", "\t",
+         "\t", "\t", "\t", "\"\<InterestInMarketCategory\>\""}], "\n", 
+       "\t\t\t\t", "}"}]}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<EventDimensions\>\"", "->", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{
+       "\"\<EventCategory\>\"", ",", "\"\<EventAction\>\"", ",", 
+        "\"\<EventLabel\>\""}], "\n", "\t", "\t", "\t", "\t", "}"}]}]}], "\n",
+     "\t\t", "|>"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7348444444349117`*^9, 3.734844452329043*^9}, {
+  3.734844484705948*^9, 3.734844542149992*^9}, {3.734844615194789*^9, 
+  3.734844618626501*^9}, {3.7348446503584538`*^9, 3.7348446524593267`*^9}, {
+  3.734844760309263*^9, 3.734844765847188*^9}, {3.734844969339076*^9, 
+  3.734844978759542*^9}, {3.734845075794435*^9, 3.734845083295248*^9}, {
+  3.734845175120311*^9, 3.734845190308301*^9}, {3.734845286776235*^9, 
+  3.7348452935476027`*^9}, {3.734845361375502*^9, 3.734845384544648*^9}, {
+  3.734845417669922*^9, 
+  3.7348454193996973`*^9}},ExpressionUUID->"e49d1b31-6d32-4a30-992d-\
+eafd0e8d1fda"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"$GoogleAnalyticsCalls", "[", "\"\<ReportDimensions\>\"", "]"}], 
+   "=", "\n", "\t", "GAAReportDimensions"}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.734844558123805*^9, 3.7348445675428667`*^9}, {
+  3.734844658371561*^9, 
+  3.734844668376783*^9}},ExpressionUUID->"7549a400-ebdd-4eda-b427-\
+6ab60c85a1d1"],
+
+Cell[BoxData[
+ RowBox[{"GAAReportDimensions", "//", "Clear"}]], "CodeInput",
+ CellChangeTimes->{{3.7348467423651114`*^9, 
+  3.734846743014813*^9}},ExpressionUUID->"b5709bab-a0f9-459e-ba9e-\
+69dba8d00d45"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAAReportDimensions", "[", "]"}], ":=", "\n", "\t", 
+   "$GAAReportDimensions"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAAReportDimensions", "[", 
+    RowBox[{"p_String", ",", " ", "e___String", ",", " ", "___"}], "]"}], ":=",
+    "\n", "\t", 
+   RowBox[{"$GAAReportDimensions", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"StringTrim", "[", 
+       RowBox[{"p", ",", " ", 
+        RowBox[{"\"\<s\>\"", "|", "\"\<Dimensions\>\""}]}], "]"}], "<>", 
+      "\"\<Dimensions\>\""}], ",", " ", "e"}], "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.73484456901169*^9, 3.734844580122278*^9}, {
+  3.73484466146134*^9, 3.7348446668127728`*^9}, {3.73484577445091*^9, 
+  3.734845778413782*^9}, {3.734846631870124*^9, 3.734846647147582*^9}, {
+  3.734846738158448*^9, 
+  3.734846739088955*^9}},ExpressionUUID->"1fc80f42-e4f9-4eba-b198-\
+6caa82f57f26"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]ReportMetrics\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.734841088643401*^9, 3.73484109082725*^9}, {
+  3.7348444388454447`*^9, 
+  3.73484444068442*^9}},ExpressionUUID->"49050b71-b2cb-4af0-b896-\
+f1d0622ec393"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$GAAReportMetrics", "=", "\n", "\t", 
+   RowBox[{"<|", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"\"\<UserMetrics\>\"", "->", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{
+       "\"\<Users\>\"", ",", "\"\<Visitors\>\"", ",", "\"\<NewUsers\>\"", ",",
+         "\n", "\t", "\t", "\t", "\t", "\"\<NewVisits\>\"", ",", 
+        "\"\<1DayUsers\>\"", ",", "\"\<7DayUsers\>\"", ",", "\n", "\t", "\t", 
+        "\t\t", "\"\<14DayUsers\>\"", ",", "\"\<28DayUsers\>\"", ",", 
+        "\"\<30DayUsers\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
+        "\"\<SessionsPerUser\>\"", ",", "\n", "\t\t\t\t", 
+        "\"\<PercentNewSessions\>\"", ",", "\"\<PercentNewVisits\>\""}], "\n",
+        "\t\t\t\t", "}"}]}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<SessionMetrics\>\"", "->", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{
+       "\"\<Sessions\>\"", ",", "\n", "\t\t\t\t", "\"\<Visits\>\"", ",", 
+        "\"\<Bounces\>\"", ",", "\"\<SessionDuration\>\"", ",", "\n", "\t", 
+        "\t", "\t", "\t", "\"\<UniqueDimensionCombinations\>\"", ",", 
+        "\"\<Hits\>\"", ",", "\n", "\t\t\t\t", "\"\<BounceRate\>\"", ",", 
+        "\"\<VisitBounceRate\>\"", ",", "\"\<AvgSessionDuration\>\""}], "\n", 
+       "\t\t\t\t", "}"}]}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<TrafficSourceMetrics\>\"", "->", "\n", "\t\t\t", 
+      RowBox[{
+      "{", "\n", "\t\t\t\t", "\"\<OrganicSearches\>\"", "\n", "\t\t\t\t", 
+       "}"}]}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<PageMetrics\>\"", "->", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{
+       "\"\<PageValue\>\"", ",", "\"\<Entrances\>\"", ",", 
+        "\"\<Pageviews\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
+        "\"\<UniquePageviews\>\"", ",", "\"\<TimeOnPage\>\"", ",", 
+        "\"\<Exits\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
+        "\"\<EntranceRate\>\"", ",", "\"\<PageviewsPerSession\>\"", ",", 
+        "\"\<PageviewsPerVisit\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
+        "\"\<AvgTimeOnPage\>\"", ",", "\"\<ExitRate\>\""}], "\n", "\t\t\t\t", 
+       "}"}]}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<EventMetrics\>\"", "->", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{
+       "\"\<TotalEvents\>\"", ",", "\"\<UniqueEvents\>\"", ",", 
+        "\"\<EventValue\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
+        "\"\<SessionsWithEvent\>\"", ",", "\"\<VisitsWithEvent\>\"", ",", 
+        "\"\<AvgEventValue\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
+        "\"\<EventsPerSessionWithEvent\>\"", ",", 
+        "\"\<EventsPerVisitWithEvent\>\""}], "\n", "\t", "\t", "\t", "\t", 
+       "}"}]}]}], "\n", "\t\t", "|>"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7348444444349117`*^9, 3.734844452329043*^9}, {
+  3.734844484705948*^9, 3.734844542149992*^9}, {3.734844692638193*^9, 
+  3.7348446973450727`*^9}, {3.734844776589176*^9, 3.734844799876903*^9}, {
+  3.734845000748542*^9, 3.734845014966267*^9}, {3.734845099375436*^9, 
+  3.734845106815956*^9}, {3.734845307158863*^9, 3.734845315692532*^9}, {
+  3.734845355477624*^9, 
+  3.7348453586138687`*^9}},ExpressionUUID->"04e8a5f1-0afb-4e1d-869f-\
+d00bd88172ad"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"$GoogleAnalyticsCalls", "[", "\"\<ReportMetrics\>\"", "]"}], "=", 
+   "\n", "\t", "GAAReportMetrics"}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.734844558123805*^9, 
+  3.7348445675428667`*^9}},ExpressionUUID->"c55c2ec4-67c3-48d2-bb8d-\
+99601f15a48d"],
+
+Cell[BoxData[
+ RowBox[{"GAAReportMetrics", "//", "Clear"}]], "CodeInput",
+ CellChangeTimes->{{3.734845762433446*^9, 
+  3.734845763474638*^9}},ExpressionUUID->"56bdecc4-4979-4ecf-b478-\
+da6d12a15133"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAAReportMetrics", "[", "]"}], ":=", "\n", "\t", 
+   "$GAAReportMetrics"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAAReportMetrics", "[", 
+    RowBox[{"p_", ",", " ", "e___String", ",", " ", "___"}], "]"}], ":=", 
+   "\n", "\t", 
+   RowBox[{"$GAAReportMetrics", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"StringTrim", "[", 
+       RowBox[{"p", ",", " ", 
+        RowBox[{"\"\<s\>\"", "|", "\"\<Metrics\>\""}]}], "]"}], "<>", 
+      "\"\<Metrics\>\""}], ",", " ", "e"}], "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.73484456901169*^9, 3.734844580122278*^9}, {
+  3.734845754696838*^9, 3.734845757746819*^9}, {3.734846610281011*^9, 
+  3.734846621864064*^9}, {3.734846657790552*^9, 
+  3.734846669005684*^9}},ExpressionUUID->"292f9a0f-9f90-403f-847e-\
+c9dbd4b1aea3"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]GetReport\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.734841088643401*^9, 
+  3.73484109082725*^9}},ExpressionUUID->"8f28c0d2-0a0a-40c4-8410-\
+6448fcf739ff"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"$GoogleAnalyticsCalls", "[", "\"\<GetReport\>\"", "]"}], "=", 
+   "\n", "\t", "GAAGetReport"}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.734839251643878*^9, 3.734839262009492*^9}, {
+   3.7348393101773863`*^9, 3.734839320200135*^9}, 
+   3.734839370007846*^9},ExpressionUUID->"6b9c3ea4-fba2-4641-84e4-\
+18e562386d52"],
+
+Cell[CellGroupData[{
+
+Cell["$GAParamMap", "CodeSubsubsubsection",
+ CellChangeTimes->{
+  3.734846837972093*^9},ExpressionUUID->"2392bc33-4a0c-499e-bea1-\
+413d49240489"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"$GAParamMap", "[", "\"\<GetReport\>\"", "]"}], "=", "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"\"\<dateRanges\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t", 
+     "\t", 
+     RowBox[{"\"\<samplingLevel\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
+     "\t", "\t", 
+     RowBox[{"\"\<dimensions\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t", 
+     "\t", 
+     RowBox[{"\"\<dimensionFilterClauses\>\"", "\[Rule]", "Automatic"}], ",", 
+     "\n", "\t", "\t", 
+     RowBox[{"\"\<metrics\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t", 
+     "\t", 
+     RowBox[{"\"\<metricFilterClauses\>\"", "\[Rule]", "Automatic"}], ",", 
+     "\n", "\t", "\t", 
+     RowBox[{"\"\<filtersExpression\>\"", "\[Rule]", "Automatic"}], ",", "\n",
+      "\t", "\t", 
+     RowBox[{"\"\<orderBys\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t", 
+     "\t", 
+     RowBox[{"\"\<segments\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t", 
+     "\t", 
+     RowBox[{"\"\<pivots\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t", 
+     "\t", 
+     RowBox[{"\"\<cohortGroup\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t",
+      "\t", 
+     RowBox[{"\"\<pageToken\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t", 
+     "\t", 
+     RowBox[{"\"\<pageSize\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t\t", 
+     
+     RowBox[{"\"\<includeEmptyRows\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<hideTotals\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<hideValueRanges\>\"", "\[Rule]", "Automatic"}]}], "\n", 
+    "\t\t", "}"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.73483819358902*^9, 3.734838331309248*^9}, {
+   3.734838550406679*^9, 3.7348385555495243`*^9}, 
+   3.734838589126047*^9},ExpressionUUID->"f2ef6613-a2b0-4a48-b012-\
+758dc3885ca5"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["gaaDecapsMet", "CodeSubsubsubsection",
+ CellChangeTimes->{
+  3.734846832948646*^9},ExpressionUUID->"a7bc450f-e9bf-40f3-b498-\
+c6816bd8f9a5"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"gaaDecapsMet", "[", "s_", "]"}], ":=", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"bits", "=", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"DeleteCases", "[", "\"\<\>\"", "]"}], "@", "\n", "\t\t\t", 
+       RowBox[{"StringSplit", "[", 
+        RowBox[{"s", ",", " ", 
+         RowBox[{
+          RowBox[{"StartOfString", "~~", 
+           RowBox[{"n", ":", "NumberString"}]}], "\[RuleDelayed]", "n"}], ",",
+          " ", "2"}], "]"}]}]}], "}"}], ",", "\n", "\t\t", 
+    RowBox[{"\"\<ga:\>\"", "<>", "\n", "\t\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Length", "@", "bits"}], "\[Equal]", "2"}], ",", "\n", "\t", 
+       "\t\t\t", 
+       RowBox[{
+        RowBox[{"bits", "[", 
+         RowBox[{"[", "1", "]"}], "]"}], "<>", "\n", "\t\t\t\t\t", 
+        RowBox[{"ToLowerCase", "@", 
+         RowBox[{"StringTake", "[", 
+          RowBox[{
+           RowBox[{"bits", "[", 
+            RowBox[{"[", "2", "]"}], "]"}], ",", " ", "1"}], "]"}]}], "<>", 
+        RowBox[{"StringDrop", "[", 
+         RowBox[{
+          RowBox[{"bits", "[", 
+           RowBox[{"[", "2", "]"}], "]"}], ",", " ", "1"}], "]"}]}], ",", 
+       "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"ToLowerCase", "@", 
+         RowBox[{"StringTake", "[", 
+          RowBox[{
+           RowBox[{"bits", "[", 
+            RowBox[{"[", "1", "]"}], "]"}], ",", " ", "1"}], "]"}]}], "<>", 
+        RowBox[{"StringDrop", "[", 
+         RowBox[{
+          RowBox[{"bits", "[", 
+           RowBox[{"[", "1", "]"}], "]"}], ",", " ", "1"}], "]"}]}]}], "\n", 
+      "\t", "\t\t\t", "]"}]}]}], "\n", "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.734845510804549*^9, 3.734845604342498*^9}, {
+  3.734845821747884*^9, 3.734845825297909*^9}, {3.7348459122330513`*^9, 
+  3.734845977641012*^9}},ExpressionUUID->"0697b968-4484-4d18-b319-\
+c4f0b0dc7248"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["gaaPrepMetrics", "CodeSubsubsubsection",
+ CellChangeTimes->{{3.734846987370442*^9, 
+  3.73484698974647*^9}},ExpressionUUID->"a03bafe6-0047-4852-9e63-\
+70f019d27b1a"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"gaaPrepMetrics", "[", 
+   RowBox[{"s", ":", 
+    RowBox[{"{", "__String", "}"}]}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Map", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\"\<expression\>\"", "\[Rule]", 
+       RowBox[{"gaaDecapsMet", "[", "#", "]"}]}], "}"}], "&"}], ",", "\n", 
+    "\t\t", 
+    RowBox[{"Take", "[", "\n", "\t\t\t", 
+     RowBox[{"s", ",", "\n", "\t\t\t", 
+      RowBox[{"UpTo", "[", "10", "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", 
+   "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.734846992757464*^9, 
+  3.734847010330763*^9}},ExpressionUUID->"d66f3292-0a9b-4daf-addd-\
+056df0f0747e"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["gaaPrepDims", "CodeSubsubsubsection",
+ Evaluatable->False,
+ CellChangeTimes->{{3.734847026670411*^9, 
+  3.734847028903757*^9}},ExpressionUUID->"7b77c3f0-c522-4ade-a23d-\
+952b3f918752"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"gaaPrepDims", "[", 
+   RowBox[{"s", ":", 
+    RowBox[{"{", "__String", "}"}]}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Map", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\"\<name\>\"", "\[Rule]", 
+       RowBox[{"gaaDecapsMet", "[", "#", "]"}]}], "}"}], "&"}], ",", "\n", 
+    "\t\t", 
+    RowBox[{"Take", "[", "\n", "\t\t\t", 
+     RowBox[{"s", ",", "\n", "\t\t\t", 
+      RowBox[{"UpTo", "[", "10", "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", 
+   "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.734846992757464*^9, 
+  3.73484701794519*^9}},ExpressionUUID->"1b3ac9e9-eb40-4977-b3c5-e0f4ec67d5e3"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["gaaPrepReportReqs", "CodeSubsubsubsection",
+ CellChangeTimes->{
+  3.734846829338327*^9},ExpressionUUID->"2fa0a541-7e4a-4329-bb07-\
+c9429eb5e2bb"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"gaaPrepReportReqs", "[", "s_String", "]"}], ":=", "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"\"\<metrics\>\"", "\[Rule]", "\n", "\t\t\t", 
+      RowBox[{"gaaPrepMetrics", "@", "\n", "\t\t\t\t", 
+       RowBox[{"Lookup", "[", 
+        RowBox[{"$GAAReportMetrics", ",", " ", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"StringTrim", "[", 
+           RowBox[{"s", ",", " ", "\"\<s\>\""}], "]"}], "<>", 
+          "\"\<Metrics\>\""}], ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"{", "}"}]}], "\n", "\t\t\t\t\t", "]"}]}]}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<dimensions\>\"", "->", "\n", "\t\t\t", 
+      RowBox[{"gaaPrepDims", "@", "\n", "\t\t\t\t", 
+       RowBox[{"Lookup", "[", 
+        RowBox[{"$GAAReportDimensions", ",", " ", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"StringTrim", "[", 
+           RowBox[{"s", ",", " ", "\"\<s\>\""}], "]"}], "<>", 
+          "\"\<Dimensions\>\""}], ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"{", "}"}]}], "\n", "\t\t\t\t\t", "]"}]}]}]}], "\n", "\t\t", 
+    "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"gaaPrepReportReqs", "[", "___", "]"}], ":=", 
+   RowBox[{"{", "}"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.734846809747971*^9, 3.7348468265735207`*^9}, {
+  3.734846911738373*^9, 3.734846921453648*^9}, {3.734847038937693*^9, 
+  3.734847101866581*^9}},ExpressionUUID->"e942ad97-1857-4e6c-8738-\
+a888f114047e"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["GAAGetReport", "CodeSubsubsubsection",
+ CellChangeTimes->{
+  3.734846857813251*^9},ExpressionUUID->"3b719cf3-b910-43bf-a2a8-\
+dd3d00828e44"],
+
+Cell[BoxData[
+ RowBox[{"GAAGetReport", "//", "Clear"}]], "CodeInput",
+ CellChangeTimes->{{3.734843073189075*^9, 
+  3.7348430738634357`*^9}},ExpressionUUID->"86549e1f-5b2e-4a36-8bd8-\
+df17554f711a"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "GAAGetReport", "]"}], "=", "\n", "\t", 
+   RowBox[{"Join", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"\"\<StartDate\>\"", "\[RuleDelayed]", 
+        RowBox[{"DateObject", "[", 
+         RowBox[{"{", 
+          RowBox[{"2005", ",", " ", "1", ",", " ", "1"}], "}"}], "]"}]}], ",",
+        "\n", "\t\t\t", 
+       RowBox[{"\"\<EndDate\>\"", "\[RuleDelayed]", "Tomorrow"}], ",", "\n", 
+       "\t\t\t", 
+       RowBox[{"\"\<Reports\>\"", "\[Rule]", "None"}], ",", "\n", "\t\t\t", 
+       RowBox[{"\"\<Metrics\>\"", "\[Rule]", "None"}], ",", "\n", "\t\t\t", 
+       RowBox[{"\"\<Dimensions\>\"", "\[Rule]", "None"}]}], "\n", "\t\t\t", 
+      "}"}], ",", "\n", "\t\t", 
+     RowBox[{"$GAParamMap", "[", "\"\<GetReport\>\"", "]"}]}], "\n", "\t\t", 
+    "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"GAAGetReport", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"viewID", ":", 
+     RowBox[{"_String", "|", "_Integer"}]}], ",", "\n", "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"GAAnalyticsRequest", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"<|", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"\"\<Path\>\"", "->", "\"\<reports\>\""}], ",", "\n", "\t\t\t", 
+      
+      RowBox[{"\"\<Port\>\"", "\[Rule]", "\"\<batchGet\>\""}]}], "\n", 
+     "\t\t\t", "|>"}], ",", "\n", "\t\t", 
+    RowBox[{"<|", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"\"\<Method\>\"", "\[Rule]", "\"\<POST\>\""}], ",", "\n", 
+      "\t\t\t", 
+      RowBox[{"\"\<Body\>\"", "->", "\n", "\t\t\t\t", 
+       RowBox[{"ExportString", "[", "\n", "\t\t\t\t\t", 
+        RowBox[{
+         RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+          RowBox[{"\"\<reportRequests\>\"", "->", "\n", "\t\t\t\t\t\t\t", 
+           RowBox[{"Flatten", "@", "\n", "\t\t\t\t\t\t\t\t", 
+            RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"\"\<viewId\>\"", "\[Rule]", 
+               RowBox[{"ToString", "@", "viewID"}]}], ",", "\n", 
+              "\t\t\t\t\t\t\t\t\t", 
+              RowBox[{"GAPrepParams", "[", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{"ops", ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                  "\"\<dateRanges\>\"", "->", "\n", 
+                   "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"\"\<startDate\>\"", "->", 
+                    RowBox[{"OptionValue", "[", "\"\<StartDate\>\"", "]"}]}], 
+                    ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"\"\<endDate\>\"", "\[Rule]", 
+                    RowBox[{"OptionValue", "[", "\"\<EndDate\>\"", "]"}]}]}], 
+                    "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", "}"}]}], ",", "\n", 
+                  "\t\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"Replace", "[", 
+                   RowBox[{
+                    RowBox[{"OptionValue", "[", "\"\<Metrics\>\"", "]"}], ",",
+                     "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{
+                    "s_String", ":>", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"(", 
+                    RowBox[{"\"\<metrics\>\"", "\[Rule]", 
+                    RowBox[{"gaaPrepMetrics", "[", 
+                    RowBox[{"{", "s", "}"}], "]"}]}], ")"}]}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"s", ":", 
+                    RowBox[{"{", "__String", "}"}]}], ":>", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"(", 
+                    RowBox[{"\"\<metrics\>\"", "\[Rule]", 
+                    RowBox[{"gaaPrepMetrics", "[", "s", "]"}]}], ")"}]}], ",",
+                     "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"_", "\[Rule]", 
+                    RowBox[{"{", "}"}]}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t", "}"}]}], "\n", 
+                   "\t\t\t\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+                  "\t\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"Replace", "[", 
+                   RowBox[{
+                    RowBox[{"OptionValue", "[", "\"\<Dimensions\>\"", "]"}], 
+                    ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{
+                    "s_String", ":>", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"(", 
+                    RowBox[{"\"\<dimensions\>\"", "\[Rule]", 
+                    RowBox[{"gaaPrepDims", "[", 
+                    RowBox[{"{", "s", "}"}], "]"}]}], ")"}]}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"s", ":", 
+                    RowBox[{"{", "__String", "}"}]}], ":>", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"(", 
+                    RowBox[{"\"\<dimensions\>\"", "\[Rule]", 
+                    RowBox[{"gaaPrepDims", "[", "s", "]"}]}], ")"}]}], ",", 
+                    "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"_", "\[Rule]", 
+                    RowBox[{"{", "}"}]}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t", "}"}]}], "\n", 
+                   "\t\t\t\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+                  "\t\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                  "Sequence", "@@", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{
+                   "Normal", "@", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "Merge", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Replace", "[", 
+                    RowBox[{
+                    RowBox[{"Except", "[", "_List", "]"}], "->", 
+                    RowBox[{"{", "}"}]}], "]"}], "@", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Map", "[", 
+                    RowBox[{"gaaPrepReportReqs", ",", " ", 
+                    RowBox[{"OptionValue", "[", "\"\<Reports\>\"", "]"}]}], 
+                    "]"}]}], ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"Flatten", "[", 
+                    RowBox[{"#", ",", " ", "1"}], "]"}], "&"}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "]"}]}]}]}], "\n", 
+                 "\t\t\t\t\t\t\t\t\t\t\t", "}"}], ",", "\n", 
+                "\t\t\t\t\t\t\t\t\t\t", "GAAGetReport", ",", "\n", 
+                "\t\t\t\t\t\t\t\t\t\t", "\"\<GetReport\>\""}], "\n", 
+               "\t\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t\t\t", 
+             "}"}]}]}], "\n", "\t\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t", 
+         "\"\<JSON\>\""}], "\n", "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", 
+     "|>"}]}], "\n", "\t\t", "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.7348380944645557`*^9, 3.734838125460226*^9}, {
+   3.734838184836413*^9, 3.7348381855032873`*^9}, {3.734838386490972*^9, 
+   3.73483839887157*^9}, {3.7348385623993177`*^9, 3.73483871949172*^9}, {
+   3.734839032992586*^9, 3.734839046630024*^9}, {3.7348390772579*^9, 
+   3.734839077836705*^9}, {3.734839122130436*^9, 3.734839157786978*^9}, {
+   3.7348402868772306`*^9, 3.734840292993678*^9}, {3.734840889129074*^9, 
+   3.734840933893139*^9}, {3.734841585197466*^9, 3.7348415909967203`*^9}, {
+   3.734842804059705*^9, 3.7348428132891283`*^9}, 3.7348429335327168`*^9, {
+   3.7348429968829536`*^9, 3.734843068973434*^9}, {3.7348433225798197`*^9, 
+   3.734843328308462*^9}, 3.734843362158106*^9, {3.734843733052988*^9, 
+   3.734843857880404*^9}, {3.734843922409355*^9, 3.7348439581683607`*^9}, {
+   3.734844813183551*^9, 3.734844924976746*^9}, {3.7348454324330606`*^9, 
+   3.734845507787627*^9}, {3.734845578825884*^9, 3.734845586604786*^9}, {
+   3.734845833520421*^9, 3.7348458789147167`*^9}, {3.734846011774328*^9, 
+   3.734846027444356*^9}, {3.734846086804543*^9, 3.734846171936082*^9}, {
+   3.734846203668277*^9, 3.734846204031466*^9}, {3.7348462882258263`*^9, 
+   3.7348462928950987`*^9}, {3.734846385969141*^9, 3.7348465185047207`*^9}, {
+   3.7348465769893227`*^9, 3.7348465895168447`*^9}, {3.734846677734036*^9, 
+   3.734846717883811*^9}, {3.734846749795092*^9, 3.734846805057897*^9}, {
+   3.734846862488697*^9, 3.734846969788403*^9}, {3.734847111740965*^9, 
+   3.7348471628984613`*^9}, {3.734847308384935*^9, 3.7348473674011507`*^9}, {
+   3.7348915279746637`*^9, 
+   3.734891531667321*^9}},ExpressionUUID->"88537ff6-6b0d-43fb-a80a-\
+81c66cec6ea8"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]NamedReports\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.734891537033946*^9, 
+  3.734891539267643*^9}},ExpressionUUID->"f2853ac7-3f9a-4d9d-be7b-\
+e95935e7fc03"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"$GoogleAnalyticsCalls", "[", "\"\<NamedReports\>\"", "]"}], "=", 
+   "\n", "\t", "GAANamedReport"}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.734891550414549*^9, 
+  3.734891566033752*^9}},ExpressionUUID->"4e7a55de-aa63-4f3f-a3ed-\
+15544a6b3a0f"],
+
+Cell[BoxData[
+ RowBox[{"$GAANamedReports", "=", "\n", "\t", 
+  RowBox[{"<|", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"\"\<PageUserNumbers\>\"", "->", "\n", "\t\t\t", 
+     RowBox[{"{", "\n", "\t\t\t\t", 
+      RowBox[{
+       RowBox[{"\"\<Dimensions\>\"", "->", "\n", "\t\t\t\t\t", 
+        RowBox[{
+        "{", "\n", "\t\t\t\t\t\t", "\"\<PagePath\>\"", "\n", "\t\t\t\t\t\t", 
+         "}"}]}], ",", "\n", "\t\t\t\t", 
+       RowBox[{"\"\<Metrics\>\"", "->", "\n", "\t\t\t\t\t", 
+        RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+         RowBox[{
+         "\"\<Users\>\"", ",", " ", "\n", "\t", "\t\t\t\t\t", 
+          "\"\<Visitors\>\"", ",", "\n", "\t", "\t\t\t\t\t", 
+          "\"\<NewUsers\>\"", ",", "\n", "\t", "\t\t\t\t\t", 
+          "\"\<NewVisits\>\""}], "\n", "\t", "\t\t\t\t\t", "}"}]}]}], "\n", 
+      "\t\t\t\t", "}"}]}], ","}], "\n", "\t\t", "\n", "\t\t", 
+   "|>"}]}]], "CodeInput",
+ CellChangeTimes->{{3.734891568014522*^9, 
+  3.734891616540578*^9}},ExpressionUUID->"6db2d3ac-cbaf-4709-8a8a-\
+72bfbba1915f"],
+
+Cell[BoxData[
+ RowBox[{"\n", "\t\t\t\t"}]], "CodeInput",
+ CellChangeTimes->{
+  3.7348915964453907`*^9},ExpressionUUID->"36ab5fd9-7f93-4eec-a3fb-\
+9da22e674c3b"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"End", "[", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"f83d489e-71b0-4387-ba75-\
+f12100be1d3e"]
+}, Open  ]],
+
+Cell["", "SectionSeparator",ExpressionUUID->"7d46921f-36b4-414a-b43f-\
+6fecf718d29f"]
+},
+WindowSize->{748, 767},
+WindowMargins->{{340, Automatic}, {Automatic, 30}},
+FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
+2018)",
+StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+

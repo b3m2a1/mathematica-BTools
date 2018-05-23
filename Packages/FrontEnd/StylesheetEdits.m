@@ -168,10 +168,18 @@ frontEndExecuteBlock~SetAttributes~HoldAllComplete;
 
 
 
-$StyleSheetTitleCellStyles={"Title","Chapter","Subchapter"};
-$StyleSheetSectionCellStyles={"Section","Subsection","Subsubsection","Subsubsubsection"};
-$StyleSheetIOCellStyles={"Input","Code","Output"};
-$StyleSheetTextCellStyles={"Text","Item","ItemParagraph","Subitem","SubitemParagraph"};
+$StyleSheetTitleCellStyles=
+	{"Title","Chapter","Subchapter"};
+$StyleSheetSectionCellStyles=
+	{
+		"Section",
+		"Subsection", "Subsubsection",
+		"Subsubsubsection", "Subsubsubsubsection"
+		};
+$StyleSheetIOCellStyles=
+	{"Input","Code","Output"};
+$StyleSheetTextCellStyles=
+	{"Text", "Item", "ItemParagraph", "Subitem", "SubitemParagraph"};
 
 
 $StyleSheetCellTextStyleOptions=

@@ -56,13 +56,13 @@ $WebSitePath=
 If[Length@OwnValues[$WebThemesURLBase]===0,
 	$WebThemesURLBase:=
 		$WebThemesURLBase=
-			CloudObject["user:b3m2a1.paclets/PacletServer/Resources/SiteBuilder"][[1]]
+			CloudObject["user:b3m2a1.paclets/PacletServer/Resources/SiteBuilder/Themes"][[1]]
 	];
 $WebSiteTempThemeDir=
 	FileNameJoin@{$TemporaryDirectory, "SiteBuilder_tmp", "Themes"};
 $WebSiteThemePath=
 	{
-		PackageFilePath["Resources","Themes"],
+		PackageFilePath["Resources", "Themes"],
 		FileNameJoin@{$WebSiteDirectory, "Themes"},
 		$WebSiteTempThemeDir
 		};
@@ -862,7 +862,7 @@ WebSiteTemplatePreProcess[fileContent_,args_]:=
 		patchfonts=
 			Lookup[args, "PatchFonts"],
 		srcbase=
-			Lookup[args, "SiteURL"]
+			Replace[Lookup[args, "SiteURL"], Except[_String]:>""]
 		},
 		If[StringQ[srcbase],
 			ReplaceAll[
@@ -1090,7 +1090,7 @@ WebSiteTemplateGatherArgs[fileContent_, args_]:=
 										s_String:>
 											URLParse[s,"Path"][[-1]],
 										Except[_String]:>
-											Replace[Lookup[args,"SiteDirectory"],
+											Replace[Lookup[args, "SiteDirectory"],
 												Except[_String]:>
 													Replace[$WolframID,{
 														s_String:>
@@ -1104,7 +1104,7 @@ WebSiteTemplateGatherArgs[fileContent_, args_]:=
 						],
 				"SiteURL"->
 					Replace[
-						Lookup[args,"SiteURL",Automatic],
+						Lookup[args, "SiteURL", Automatic],
 						Automatic:>
 							With[{
 								bit=
@@ -2289,7 +2289,8 @@ Options[WebSiteBuild]=
 	"GenerateContent"->True,
 	"GenerateIndex"->Automatic,
 	"GenerateAggregations"->Automatic,
-	"Configuration"->Automatic,
+	"ConfigurationOptions"->Automatic,
+	"ConfigurationFile"->Automatic,
 	"OutputDirectory"->Automatic,
 	"DefaultTheme"->"minimal",
 	"AutoDeploy"->Automatic,
@@ -2334,20 +2335,31 @@ WebSiteBuild[
 							]
 				}],
 		config=
-			Replace[
-				Replace[OptionValue["Configuration"],
-					Automatic:>
-						If[FileExistsQ@FileNameJoin@{dir,"SiteConfig.m"},
-							FileNameJoin@{dir,"SiteConfig.m"},
-							FileNameJoin@{dir,"SiteConfig.wl"}
-							]
-					],
-				{
-						f_String?FileExistsQ:>
-							Replace[Import[f],{o_?OptionQ:>Association[o],_-><||>}],
-						o_?OptionQ:>Association[o],
+			Join[
+				Replace[
+					Replace[OptionValue["ConfigurationFile"],
+						{
+							fname_String?(FileExistsQ[FileNameJoin@{dir, #}]&):>
+								FileNameJoin@{dir, fname},
+							Except[_String?FileExistsQ]:>
+								If[FileExistsQ@FileNameJoin@{dir,"SiteConfig.m"},
+									FileNameJoin@{dir,"SiteConfig.m"},
+									FileNameJoin@{dir,"SiteConfig.wl"}
+									]
+							}
+						],
+					{
+							f_String?FileExistsQ:>
+								Replace[Import[f], {o_?OptionQ:>Association[o],_-><||>}],
+							_-><||>
+						}],
+				Replace[Normal@OptionValue["ConfigurationOptions"],
+					{
+						o_?OptionQ:>Association@o,
 						_-><||>
-					}]
+						}
+					]
+				]
 			},
 		With[
 			{
@@ -2531,11 +2543,13 @@ WebSiteBuild[
 				OptionValue["AutoDeploy"]===Automatic&&
 					OptionQ@OptionValue["DeployOptions"],
 				WebSiteDeploy[outDir,
-					Lookup[config,"SiteURL",
-						Replace[FileBaseName[dir],
-							"output":>
-								FileBaseName@DirectoryName[dir]
-							]
+					Replace[
+						Lookup[config,"SiteURL"],
+						Except[_String]:>
+							Replace[FileBaseName[dir],
+								"output":>
+									FileBaseName@DirectoryName[dir]
+								]
 						],
 					Replace[
 						Replace[OptionValue["DeployOptions"],
@@ -2608,6 +2622,11 @@ webSiteDeploySelectFiles[
 			]
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*webSiteDeployFile*)
+
+
+
 webSiteDeployFile[f_, uri_, outDir_, trueDir_, stripDirs_, ops___?OptionQ]:=
 	With[{
 		(* Build export URI *)
@@ -2638,7 +2657,7 @@ webSiteDeployFile[f_, uri_, outDir_, trueDir_, stripDirs_, ops___?OptionQ]:=
 							]
 					}
 		},
-		If[StringQ@url&&StringEndsQ[url,"/index.html"],
+		(*If[StringQ@url&&StringEndsQ[url,"/index.html"],
 			(* since /index.html isn't supported in the cloud *)
 			CopyFile[
 					f,
@@ -2650,7 +2669,7 @@ webSiteDeployFile[f_, uri_, outDir_, trueDir_, stripDirs_, ops___?OptionQ]:=
 							]
 						]
 					]
-			];
+			];*)
 		Replace[
 			{
 				CloudObject[c_, ___]:>CloudObject[c],
