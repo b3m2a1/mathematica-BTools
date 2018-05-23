@@ -1151,14 +1151,7 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 										Length@URLParse[#,"Path"]&
 										],
 									{m_, ___}:>
-										Function[
-											URLBuild@
-												ReplacePart[#,
-													"Path"->
-														Append[Most[#Path],"main.html"]
-													]&@
-												URLParse[m]
-											]
+										m
 									]
 								],
 							Nothing
