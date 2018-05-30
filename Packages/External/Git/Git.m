@@ -657,15 +657,17 @@ GitClone[
 	]:=
 	With[{
 		r=
-			Replace[repo,{
-				File[d_]:>
-					If[GitRepoQ@d,
-						d,
-						GitRepo
-						],
-				URL[d_]:>
-					d
-				}],
+			Replace[repo,
+				{
+					File[d_]:>
+						If[GitRepoQ@d,
+							d,
+							GitRepo
+							],
+					URL[d_]:>
+						d
+					}
+				],
 		d=
 			Replace[dir,
 				Automatic:>
@@ -690,7 +692,7 @@ GitClone[
 						]
 				],
 			If[TrueQ[overrwriteTarget]||
-				(overrwriteTarget===Automatic&&TrueQ@OptionValue[OverwriteTarget]),
+				(overrwriteTarget===Automatic&&TrueQ@Lookup[{o}, OverwriteTarget]),
 				Quiet@DeleteDirectory[d,DeleteContents->True]
 				];
 			If[!DirectoryQ@d,

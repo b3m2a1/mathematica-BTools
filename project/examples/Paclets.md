@@ -11,87 +11,90 @@ Load the package:
 Create a new application
 
 ```mathematica
- $AppDirectoryRoot = $TemporaryDirectory; 
- AppConfigure["NewApp"]
+ AppExecute["SetMainDirectory", $TemporaryDirectory]; 
+ AppExecute["Configure", "NewApp"]
 ```
 
-	(*Out:*)
-	
-	"/private/var/folders/9t/tqc70b7d61v753jkdbjkvd640000gp/T/Applications/NewApp"
+    (*Out:*)
+    
+    "/private/var/folders/9t/tqc70b7d61v753jkdbjkvd640000gp/T/NewApp"
 
 Inspect what has been made in our new application:
 
 ```mathematica
- FileNameTake/@FileNames["*", AppDirectory["NewApp"]]
+ FileNameTake/@FileNames["*", AppExecute["Path", "NewApp"]]
 ```
 
-	(*Out:*)
-	
-	{"Config","Documentation","FrontEnd","Kernel","NewAppLoader.m","NewApp.wl","Packages","Private","project","Resources"}
+    (*Out:*)
+    
+    {"Config","Documentation","FrontEnd","Kernel","NewAppLoader.m","NewApp.wl","Packages","PacletInfo.m","Private","project","Resources"}
 
-```AppConfigure```  automatically builds out the basic directories used as well as a load-script to load the contents of the  ```"Packages"```  subdirectory with autoloading and other development support functionality.
+```"Configure"```  automatically builds out the basic directories used as well as a load-script to load the contents of the  ```"Packages"```  subdirectory with autoloading and other development support functionality.
 
 Then we'll add a package
 
 ```mathematica
- AppAddContent["NewApp", FindFile["BTools`"]]
+ AppExecute["AddContent", "NewApp", FindFile["BTools`"]]
 ```
 
-	(*Out:*)
-	
-	"/private/var/folders/9t/tqc70b7d61v753jkdbjkvd640000gp/T/Applications/NewApp/Packages/init.m"
+    (*Out:*)
+    
+    "/private/var/folders/9t/tqc70b7d61v753jkdbjkvd640000gp/T/NewApp/Packages/init.m"
 
-And a stylesheet
+And a stylesheet from BTools:
 
 ```mathematica
- AppAddContent["NewApp", FEFindFileOnPath["BTools/CodePackage.nb", "StyleSheet"]]
+ AppExecute["AddContent", "NewApp", 
+  AppExecute["Path", "BTools", "StyleSheets", "BTools", "CodePackage.nb"]
+  ]
 ```
 
-	(*Out:*)
-	
-	"/private/var/folders/9t/tqc70b7d61v753jkdbjkvd640000gp/T/Applications/NewApp/FrontEnd/StyleSheets/CodePackage.nb"
+    (*Out:*)
+    
+    "/private/var/folders/9t/tqc70b7d61v753jkdbjkvd640000gp/T/NewApp/FrontEnd/StyleSheets/NewApp/CodePackage.nb"
 
 Build the  ```"PacletInfo.m"```  file
 
 ```mathematica
- AppRegeneratePacletInfo["NewApp"]
+ AppExecute["RegenerateConfig", "NewApp", "PacletInfo"]
 ```
 
-	(*Out:*)
-	
-	"/private/var/folders/9t/tqc70b7d61v753jkdbjkvd640000gp/T/Applications/NewApp/PacletInfo.m"
+    (*Out:*)
+    
+    "/private/var/folders/9t/tqc70b7d61v753jkdbjkvd640000gp/T/NewApp/PacletInfo.m"
 
 And see what's inside:
 
 ```mathematica
- AppPacletInfo["NewApp"]
+ AppPacletExecute["PacletInfo", "NewApp"]
 ```
 
-	(*Out:*)
-	
-	<|"Name"->"NewApp","Version"->"1.0.0","Extensions"-><|"Kernel"-><|"Root"->".","Context"->{"NewApp`"}|>,"FrontEnd"-><||>|>,"Location"->"/private/var/folders/9t/tqc70b7d61v753jkdbjkvd640000gp/T/Applications/NewApp"|>
+    (*Out:*)
+    
+    <|"Name"->"NewApp","Version"->"1.0.1","Extensions"-><|"Kernel"-><|"Root"->".","Context"->{"NewApp`"}|>,"FrontEnd"-><||>|>,"Location"->"/private/var/folders/9t/tqc70b7d61v753jkdbjkvd640000gp/T/NewApp"|>
 
 We could then upload this application to the cloud so others can download it:
 
 ```mathematica
- AppPacletUpload["NewApp", CloudConnect->"b3m2a1.paclets@gmail.com"]
+ AppPacletExecute["Upload", "NewApp", CloudConnect->"b3m2a1.paclets@gmail.com"]
 ```
 
-	(*Out:*)
-	
-	<|"PacletSiteFile"->CloudObject["http://www.wolframcloud.com/objects/b3m2a1.paclets/NewApp/PacletSite.mz",Permissions->"Public",Permissions->"Public"],"PacletFiles"->{CloudObject[["http://www.wolframcloud.com/objects/b3m2a1.paclets/NewApp/Paclets/NewApp-1.0.0.paclet"](http://www.wolframcloud.com/objects/b3m2a1.paclets/NewApp/Paclets/NewApp-1.0.0.paclet)]}|>
+    (*Out:*)
+    
+    <|"PacletSiteFile"->CloudObject["http://www.wolframcloud.com/objects/b3m2a1.paclets/NewApp/PacletSite.mz",Permissions->"Public",Permissions->"Public"],"PacletFiles"->{CloudObject[]}|>
 
 Someone could install the app like
 
 ```mathematica
- PacletInstall["NewApp",
- "Site"->"http://www.wolframcloud.com/objects/b3m2a1.paclets/NewApp"
- ]
+ PacletInstall[
+  "NewApp",
+  "Site"->"http://www.wolframcloud.com/objects/b3m2a1.paclets/NewApp"
+  ]
 ```
 
-	(*Out:*)
-	
-![title-6306276067128488378](../../project/img/title-6306276067128488378.png)
+    (*Out:*)
+    
+![paclets-3060751501420587715](../../project/img/paclets-3060751501420587715.png)
 
 <a id="working-with-paclets" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
 
@@ -100,50 +103,48 @@ Someone could install the app like
 Install a paclet from GitHub
 
 ```mathematica
- PacletInstallPaclet@"github:szhorvat/MaTex"
+ PacletExecute["Install", "github:szhorvat/MaTex"]
 ```
 
-	(*Out:*)
-	
-![title-8783817164103644286](../../project/img/title-8783817164103644286.png)
+    (*Out:*)
+    
+![paclets-8090201827297721276](../../project/img/paclets-8090201827297721276.png)
 
 Find the names of all the paclets available on a server:
 
 ```mathematica
- PacletSiteInfoDataset[
- "https://www.wolframcloud.com/objects/b3m2a1.paclets/PacletServer"
- ]//
- Normal//
- Lookup[#,"Name"]&//
- DeleteDuplicates
+ PacletExecute["SiteDataset", 
+  "https://www.wolframcloud.com/objects/b3m2a1.paclets/PacletServer"][All, "Name"]//
+    DeleteDuplicates
 ```
 
-	(*Out:*)
-	
-	{"BTools","ServiceConnection_DeckOfCards","ServiceConnection_NASA","ServiceConnection_StackExchange","ChemTools","ServiceConnection_WolframCommunity","SiteBuilder","PyTools","ServiceConnection_GitHub","PacKit","DocGen","OldHelpBrowser","CustomServiceConnection","CuratedData","ServiceConnection_GoogleDrive","ServiceConnection_Qwant","AmhCode","ObjectFramework","ServiceConnection_Git","ServiceConnection_GitHubJobs"}
+    (*Out:*)
+    
+![paclets-2372610212413813325](../../project/img/paclets-2372610212413813325.png)
 
 Create a paclet directory from a package:
 
 ```mathematica
- pacDir=PacletAutoPaclet[$TemporaryDirectory, FindFile["FEInfoExtractor`"]]
+ pacDir=PacletExecute["AutoGeneratePaclet", $TemporaryDirectory, FindFile["FEInfoExtractor`"]]
 ```
 
-	(*Out:*)
-	
-	"/private/var/folders/9t/tqc70b7d61v753jkdbjkvd640000gp/T/FEInfoExtractor"
+    (*Out:*)
+    
+    "/private/var/folders/9t/tqc70b7d61v753jkdbjkvd640000gp/T/FEInfoExtractor"
 
 Upload this paclet to the cloud
 
 ```mathematica
- PacletUpload[pacDir,
- "ServerName"->"TestPaclets",
-  CloudConnect->"TestingAccount"
- ][["PacletFiles", 1]]
+ PacletExecute["Upload",
+  pacDir,
+  "ServerName"->"TestPaclets",
+   CloudConnect->"TestingAccount"
+  ][["PacletFiles", 1]]
 ```
 
-	(*Out:*)
-	
-	CloudObject[["http://www.wolframcloud.com/objects/b3m2a1.testing/TestPaclets/Paclets/FEInfoExtractor-1.0.0.paclet"](http://www.wolframcloud.com/objects/b3m2a1.testing/TestPaclets/Paclets/FEInfoExtractor-1.0.0.paclet)]
+    (*Out:*)
+    
+    CloudObject[]
 
 <a id="documentation-building" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
 
@@ -155,7 +156,7 @@ Autogenerate documentation:
  DocGen[DocGen]
 ```
 
-![title-3944086624101741822](../../project/img/title-3944086624101741822.png)
+![paclets-3944086624101741822](../../project/img/paclets-3944086624101741822.png)
 
 Autogenerate an overview guide for a context
 
@@ -163,38 +164,38 @@ Autogenerate an overview guide for a context
  DocGen["Guide", "PacletManager`"]
 ```
 
-	(*Out:*)
-	
-![title-6456334289508492125](../../project/img/title-6456334289508492125.png)
+    (*Out:*)
+    
+![paclets-6456334289508492125](../../project/img/paclets-6456334289508492125.png)
 
 Autogenerate documentation paclets from a set of contexts:
 
 ```mathematica
  <<OAuth` 
  DocGen["Paclet", 
- {
-  "OtherClient`",
-  "KeyClient`",
-  "OAuthClient`",
-  "OAuth`"
-  },
- Method->{
-  Directory->$TemporaryDirectory
-  }
- ]
+  {
+    "OtherClient`",
+    "KeyClient`",
+    "OAuthClient`",
+    "OAuth`"
+    },
+  Method->{
+    Directory->$TemporaryDirectory
+    }
+  ]
 ```
 
-![title-8350260503414164841](../../project/img/title-8350260503414164841.png)
+![paclets-8350260503414164841](../../project/img/paclets-8350260503414164841.png)
 
 Generate a template notebook for writing a tutorial
 
-![title-8031869743256385252](../../project/img/title-8031869743256385252.png)
+![paclets-8031869743256385252](../../project/img/paclets-8031869743256385252.png)
 
 The  ```"SymbolPage"``` ,  ```"Guide"``` , and  ```"Tutorial"```  types support  ```"Template"``` ,  ```"Notebook"``` , and  ```"Save"```  methods.
 
 We can write content in the template notebook and use the bar on the top to generate a tutorial.
 
-![title-265881908806275627](../../project/img/title-265881908806275627.png)
+![paclets-265881908806275627](../../project/img/paclets-265881908806275627.png)
 
 <a id="frontend-resources" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
 

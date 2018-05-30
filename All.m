@@ -20,7 +20,8 @@ Map[
     "FrontEnd",
     "Frameworks",
     "External",
-    "Web"
+    "Web",
+    "Developer"
     }
   ]
 
