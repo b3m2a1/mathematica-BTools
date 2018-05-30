@@ -1,0 +1,1291 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["ProcessTools", \
+"CodeSection",ExpressionUUID->"40a91e3d-ab32-4a0d-aed3-3077029975c1"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"ProcessRun", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<RunProcess wrapper\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ProcessStart", "::", "usage"}], "=", "\"\<\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ProcessRead", "::", "usage"}], "=", 
+   "\"\<Reads from a process object\>\""}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.6886613527387342`*^9, 3.688661363128978*^9}, {
+   3.701350032010189*^9, 3.701350069788946*^9}, 
+   3.70138856924328*^9},ExpressionUUID->"efed098f-bd91-44d2-8906-\
+9723837ef132"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"TerminalRun", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Runs a command with a GUI command visualizer\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"TerminalRunNonBlocking", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<A non-blocking version of TerminalRun\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"TerminalShell", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Creates an interactive shell for running processes\>\""}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.70134826037956*^9, 3.7013482995926*^9}, {
+  3.701369486494792*^9, 
+  3.701369516927058*^9}},ExpressionUUID->"7c7801df-d602-44af-974f-\
+df3ec752015f"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"c58cebbb-7a9b-4ee0-b917-\
+aa4c7d0d7a07"],
+
+Cell[CellGroupData[{
+
+Cell["ProcessRun", "Subsubsection",
+ CellChangeTimes->{{3.688661427920946*^9, 
+  3.688661436391261*^9}},ExpressionUUID->"ac37c5b1-8f62-40ca-9e7c-\
+5161fb16f8cb"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"ProcessRun", "::", "pnfd"}], "=", 
+   "\"\<Program `` not found. \n$PATH = ``\n$PWD = ``\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"ProcessRun", "::", "fail"}], "=", 
+    "\"\<Process failed to run: ``\>\""}], ";"}], " "}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ProcessRun", "::", "err"}], "=", 
+   "\"\<\\nError in command \\\"``\\\":\\n``\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"ProcessRun", "~", "SetAttributes", "~", "HoldRest"}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.6883884443300056`*^9, 3.688388590066854*^9}, {
+   3.688388647838023*^9, 3.688388688095325*^9}, {3.6883887878221493`*^9, 
+   3.6883887910541553`*^9}, {3.688391179920331*^9, 3.688391186713292*^9}, {
+   3.6948092448830767`*^9, 3.6948092814880133`*^9}, {3.694810937219511*^9, 
+   3.694811095346754*^9}, {3.6948111267082367`*^9, 3.6948111959599752`*^9}, {
+   3.694812044998948*^9, 3.6948121043554783`*^9}, {3.694812183163472*^9, 
+   3.694812242948739*^9}, {3.694812287276148*^9, 3.694812370455819*^9}, 
+   3.694812432662565*^9, {3.694812467449942*^9, 3.694812531419323*^9}, {
+   3.6948125823414183`*^9, 3.6948126754944963`*^9}, {3.694812809793931*^9, 
+   3.694812846934607*^9}, {3.697463301636466*^9, 3.69746341874784*^9}, {
+   3.697463756342635*^9, 3.697463777795754*^9}, {3.7013493137925463`*^9, 
+   3.701349421294311*^9}, {3.701350364940207*^9, 
+   3.7013503655980377`*^9}},ExpressionUUID->"6ed30d74-2006-484d-8118-\
+b54d23d367fb"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "ProcessRun", "]"}], "=", "\n", "\t", 
+   RowBox[{"Join", "[", 
+    RowBox[{
+     RowBox[{"Options", "[", "RunProcess", "]"}], ",", 
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"\"\<ErrorHandler\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
+       "\t\t", 
+       RowBox[{"\"\<ParseFunction\>\"", "\[Rule]", "Identity"}]}], "\n", 
+      "\t\t", "}"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ProcessRun", "[", 
+    RowBox[{
+     RowBox[{"cmds", ":", 
+      RowBox[{"{", "__", "}"}]}], ",", "\n", "\t", 
+     RowBox[{"errorMessage", ":", 
+      RowBox[{"Except", "[", 
+       RowBox[{
+        RowBox[{"_", "?", "OptionQ"}], "|", "_FilterRules"}], "]"}], ":", 
+      RowBox[{"ProcessRun", "::", "err"}]}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"capturedMessages", "=", 
+       RowBox[{"{", "}"}]}], "}"}], ",", "\n", "\t\t", 
+     RowBox[{"With", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"r", "=", "\n", "\t\t\t", 
+          RowBox[{
+          "GeneralUtilities`WithMessageHandler", "[", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"RunProcess", "[", 
+             RowBox[{"cmds", ",", "\n", "\t\t\t\t\t", 
+              RowBox[{"FilterRules", "[", 
+               RowBox[{
+                RowBox[{"{", "ops", "}"}], ",", 
+                RowBox[{"Options", "@", "RunProcess"}]}], "]"}]}], "\n", 
+             "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+            RowBox[{
+             RowBox[{"AppendTo", "[", 
+              RowBox[{"capturedMessages", ",", "#"}], "]"}], "&"}]}], "\n", 
+           "\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t", 
+         RowBox[{"parseFunction", "=", "\n", "\t\t\t\t", 
+          RowBox[{"OptionValue", "[", "\"\<ParseFunction\>\"", "]"}]}], ",", 
+         "\n", "\t\t\t", 
+         RowBox[{"errorHander", "=", "\n", "\t\t\t\t", 
+          RowBox[{"Replace", "[", 
+           RowBox[{
+            RowBox[{"OptionValue", "[", "\"\<ErrorHandler\>\"", "]"}], ",", 
+            "\n", "\t\t\t\t\t", 
+            RowBox[{"Automatic", "->", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"Function", "[", 
+              RowBox[{"Null", ",", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"Message", "[", 
+                RowBox[{"#", ",", "\n", "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"StringJoin", "@", 
+                  RowBox[{"Riffle", "[", 
+                   RowBox[{"cmds", ",", "\"\< \>\""}], "]"}]}], ",", "\n", 
+                 "\t\t\t\t\t\t\t\t", "#2"}], "\n", "\t\t\t\t\t\t\t\t", "]"}], 
+               ",", "\n", "\t\t\t\t\t\t\t", "HoldFirst"}], "\n", 
+              "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t", "]"}]}]}], 
+        "\n", "\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"r", "=!=", "$Failed"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"r", "[", "\"\<StandardError\>\"", "]"}], "\[NotEqual]", 
+             "\"\<\>\""}], ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"errorHander", "[", 
+             RowBox[{"errorMessage", ",", 
+              RowBox[{"r", "[", "\"\<StandardError\>\"", "]"}]}], "]"}]}], 
+           "\n", "\t", "\t", "\t\t\t", "]"}], ";", "\n", "\t\t\t\t", 
+          RowBox[{"parseFunction", "@", 
+           RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"StringTrim", "@", 
+              RowBox[{"r", "[", "\"\<StandardOutput\>\"", "]"}]}], ",", "\n", 
+             "\t\t\t\t\t", 
+             RowBox[{"\"\<\>\"", "\[Rule]", "Null"}]}], "\n", "\t\t\t\t\t", 
+            "]"}]}]}], ",", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Message", "[", 
+           RowBox[{
+            RowBox[{"ProcessRun", "::", "fail"}], ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"StringJoin", "@", 
+             RowBox[{"Riffle", "[", "\n", "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Replace", "[", 
+                RowBox[{"cmds", ",", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"(", 
+                   RowBox[{"k_", "\[Rule]", "v_"}], ")"}], "\[RuleDelayed]", 
+                  "\n", "\t\t\t\t\t\t\t\t", 
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{"ToString", "@", "k"}], "<>", "\"\<==\>\"", "<>", 
+                    
+                    RowBox[{"ToString", "@", "v"}]}], ")"}]}], ",", "\n", 
+                 "\t\t\t\t\t\t\t", "1"}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
+               "\"\< \>\""}], "]"}]}]}], "\n", "\t\t\t\t\t", "]"}], ";", "\n",
+           "\t\t\t\t", 
+          RowBox[{"Replace", "[", 
+           RowBox[{"capturedMessages", ",", "\n", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Failure", "[", 
+              RowBox[{"RunProcess", ",", 
+               RowBox[{"<|", "\n", "\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{
+                 "\"\<MessageTemplate\>\"", ":>", "\n", "\t\t\t\t\t\t\t", 
+                  RowBox[{"RunProcess", "::", "pnfd"}]}], ",", "\n", 
+                 "\t\t\t\t\t\t", 
+                 RowBox[{
+                 "\"\<MessageParameters\>\"", " ", "\[Rule]", " ", 
+                  "pars_"}]}], "\n", "\t\t\t\t\t\t", "|>"}]}], "]"}], 
+             "\[RuleDelayed]", 
+             RowBox[{"(", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Message", "[", 
+                RowBox[{
+                 RowBox[{"ProcessRun", "::", "pnfd"}], ",", "\n", 
+                 "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"Sequence", "@@", 
+                  RowBox[{"Join", "[", 
+                   RowBox[{"pars", ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"StringTrim", "@", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"RunProcess", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    "$SystemShell", ",", "\"\<-c\>\"", ",", 
+                    "\"\<echo $PATH\>\""}], "}"}], ",", 
+                    "\"\<StandardOutput\>\""}], "]"}]}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"StringTrim", "@", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"RunProcess", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    "$SystemShell", ",", "\"\<-c\>\"", ",", 
+                    "\"\<echo $PWD\>\""}], "}"}], ",", 
+                    "\"\<StandardOutput\>\""}], "]"}]}]}], "\n", 
+                   "\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t\t\t", 
+                "]"}], ";"}], "\n", "\t\t\t\t\t\t\t", ")"}]}], ",", "\n", 
+            "\t\t\t\t\t", "1"}], "]"}], ";", "\n", "\t\t\t\t", "$Failed"}]}], 
+        "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+    "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ProcessRun", "[", 
+    RowBox[{"s_String", ",", "\n", "\t", 
+     RowBox[{"errorMessage", ":", "_MessageName", ":", 
+      RowBox[{"ProcessRun", "::", "err"}]}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"ProcessRun", "[", 
+    RowBox[{
+     RowBox[{"{", "s", "}"}], ",", "errorMessage", ",", "ops"}], "]"}]}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.6883884443300056`*^9, 3.688388590066854*^9}, {
+   3.688388647838023*^9, 3.688388688095325*^9}, {3.6883887878221493`*^9, 
+   3.6883887910541553`*^9}, {3.688391179920331*^9, 3.688391186713292*^9}, {
+   3.6948092448830767`*^9, 3.6948092814880133`*^9}, {3.694810937219511*^9, 
+   3.694811095346754*^9}, {3.6948111267082367`*^9, 3.6948111959599752`*^9}, {
+   3.694812044998948*^9, 3.6948121043554783`*^9}, {3.694812183163472*^9, 
+   3.694812242948739*^9}, {3.694812287276148*^9, 3.694812370455819*^9}, 
+   3.694812432662565*^9, {3.694812467449942*^9, 3.694812531419323*^9}, {
+   3.6948125823414183`*^9, 3.6948126754944963`*^9}, {3.694812809793931*^9, 
+   3.694812846934607*^9}, {3.697463301636466*^9, 3.69746341874784*^9}, {
+   3.697463756342635*^9, 3.697463777795754*^9}, {3.7013493137925463`*^9, 
+   3.701349318201766*^9}, 3.701349400871093*^9, 3.7013494859566393`*^9, {
+   3.701349542087057*^9, 3.701349543069269*^9}, {3.701349617337982*^9, 
+   3.7013496203858147`*^9}, {3.701349656356575*^9, 3.7013496630116463`*^9}, {
+   3.701350366838539*^9, 3.701350442915697*^9}, {3.701350544104784*^9, 
+   3.701350562400885*^9}, {3.701350621219998*^9, 3.7013506611467524`*^9}, 
+   3.7013508346881123`*^9, {3.7013508836491737`*^9, 3.701350929056238*^9}, {
+   3.7013509608027782`*^9, 3.701351024816627*^9}, {3.70135819536561*^9, 
+   3.7013581961264467`*^9}},ExpressionUUID->"9590012e-f1bc-43c9-b1f9-\
+39e5d5886c55"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["ProcessStart", "CodeSubsubsection",
+ CellChangeTimes->{{3.7013495532099943`*^9, 3.70134955619423*^9}, 
+   3.701357556730172*^9},ExpressionUUID->"bbd4fb74-8676-4f65-8b9b-\
+232a7ac4aeb0"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"ProcessStart", "::", "pnfd"}], "=", 
+   "\"\<Program `` not found. \n$PATH = ``\n$PWD = ``\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ProcessStart", "::", "fail"}], "=", 
+   "\"\<Process failed to run: ``\>\""}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.7013576673897123`*^9, 
+  3.7013576777855186`*^9}},ExpressionUUID->"96e0d8e7-dda1-4a07-9fd9-\
+de7f5e0e7ca7"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "ProcessStart", "]"}], "=", "\n", "\t", 
+   RowBox[{"Options", "[", "StartProcess", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ProcessStart", "::", "usage"}], "=", "\n", "\t", 
+   RowBox[{"StringJoin", "[", 
+    RowBox[{
+     RowBox[{"ProcessStart", "::", "usage"}], ",", "\n", "\t\t", 
+     "\"\<\\n\>\"", ",", "\n", "\t\t", 
+     "\"\<Wrapper to StartProcess that provides more descriptive failure \
+errors\>\""}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ProcessStart", "[", 
+    RowBox[{
+     RowBox[{"cmds", ":", 
+      RowBox[{"{", "__", "}"}]}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"capturedMessages", "=", 
+       RowBox[{"{", "}"}]}], "}"}], ",", "\n", "\t\t", 
+     RowBox[{"With", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"r", "=", "\n", "\t\t\t", 
+         RowBox[{"GeneralUtilities`WithMessageHandler", "[", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"StartProcess", "[", 
+            RowBox[{"cmds", ",", "\n", "\t\t\t\t\t", 
+             RowBox[{"FilterRules", "[", 
+              RowBox[{
+               RowBox[{"{", "ops", "}"}], ",", 
+               RowBox[{"Options", "@", "StartProcess"}]}], "]"}]}], "\n", 
+            "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"AppendTo", "[", 
+             RowBox[{"capturedMessages", ",", "#"}], "]"}], "&"}]}], "\n", 
+          "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"r", "=!=", "$Failed"}], ",", "\n", "\t\t\t\t", "r", ",", 
+         "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Message", "[", 
+           RowBox[{
+            RowBox[{"ProcessStart", "::", "fail"}], ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"StringJoin", "@", 
+             RowBox[{"Riffle", "[", "\n", "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Replace", "[", 
+                RowBox[{"cmds", ",", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"(", 
+                   RowBox[{"k_", "\[Rule]", "v_"}], ")"}], "\[RuleDelayed]", 
+                  "\n", "\t\t\t\t\t\t\t\t", 
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{"ToString", "@", "k"}], "<>", "\"\<==\>\"", "<>", 
+                    
+                    RowBox[{"ToString", "@", "v"}]}], ")"}]}], ",", "\n", 
+                 "\t\t\t\t\t\t\t", "1"}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
+               "\"\< \>\""}], "]"}]}]}], "\n", "\t\t\t\t\t", "]"}], ";", "\n",
+           "\t\t\t\t", 
+          RowBox[{"Replace", "[", 
+           RowBox[{"capturedMessages", ",", "\n", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Failure", "[", 
+              RowBox[{"RunProcess", ",", 
+               RowBox[{"<|", "\n", "\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{
+                 "\"\<MessageTemplate\>\"", ":>", "\n", "\t\t\t\t\t\t\t", 
+                  RowBox[{"ProcessStart", "::", "pnfd"}]}], ",", "\n", 
+                 "\t\t\t\t\t\t", 
+                 RowBox[{
+                 "\"\<MessageParameters\>\"", " ", "\[Rule]", " ", 
+                  "pars_"}]}], "\n", "\t\t\t\t\t\t", "|>"}]}], "]"}], 
+             "\[RuleDelayed]", 
+             RowBox[{"(", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Message", "[", 
+                RowBox[{
+                 RowBox[{"ProcessStart", "::", "pnfd"}], ",", "\n", 
+                 "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"Sequence", "@@", 
+                  RowBox[{"Join", "[", 
+                   RowBox[{"pars", ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"StringTrim", "@", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"RunProcess", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    "$SystemShell", ",", "\"\<-c\>\"", ",", 
+                    "\"\<echo $PATH\>\""}], "}"}], ",", 
+                    "\"\<StandardOutput\>\""}], "]"}]}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"StringTrim", "@", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"RunProcess", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    "$SystemShell", ",", "\"\<-c\>\"", ",", 
+                    "\"\<echo $PWD\>\""}], "}"}], ",", 
+                    "\"\<StandardOutput\>\""}], "]"}]}]}], "\n", 
+                   "\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t\t\t", 
+                "]"}], ";"}], "\n", "\t\t\t\t\t\t\t", ")"}]}], ",", "\n", 
+            "\t\t\t\t\t", "1"}], "]"}], ";", "\n", "\t\t\t\t", "$Failed"}]}], 
+        "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+    "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ProcessStart", "::", "usage"}], "=", "\n", "\t", 
+   RowBox[{"StringJoin", "[", 
+    RowBox[{
+     RowBox[{"ProcessStart", "::", "usage"}], ",", "\n", "\t\t", 
+     "\"\<\\n\>\"", ",", "\n", "\t\t", 
+     "\"\<Single string version of ProcessStart\>\""}], "\n", "\t\t", "]"}]}],
+   ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ProcessStart", "[", 
+    RowBox[{"s_String", ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"ProcessStart", "[", 
+    RowBox[{
+     RowBox[{"{", "s", "}"}], ",", "ops"}], "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.6883884443300056`*^9, 3.688388590066854*^9}, {
+   3.688388647838023*^9, 3.688388688095325*^9}, {3.6883887878221493`*^9, 
+   3.6883887910541553`*^9}, {3.688391179920331*^9, 3.688391186713292*^9}, {
+   3.6948092448830767`*^9, 3.6948092814880133`*^9}, {3.694810937219511*^9, 
+   3.694811095346754*^9}, {3.6948111267082367`*^9, 3.6948111959599752`*^9}, {
+   3.694812044998948*^9, 3.6948121043554783`*^9}, {3.694812183163472*^9, 
+   3.694812242948739*^9}, {3.694812287276148*^9, 3.694812370455819*^9}, 
+   3.694812432662565*^9, {3.694812467449942*^9, 3.694812531419323*^9}, {
+   3.6948125823414183`*^9, 3.6948126754944963`*^9}, {3.694812809793931*^9, 
+   3.694812846934607*^9}, {3.697463301636466*^9, 3.69746341874784*^9}, {
+   3.697463756342635*^9, 3.697463777795754*^9}, {3.7013493137925463`*^9, 
+   3.701349318201766*^9}, 3.701349400871093*^9, 3.7013494859566393`*^9, {
+   3.701349542087057*^9, 3.701349543069269*^9}, {3.701349617337982*^9, 
+   3.7013496203858147`*^9}, {3.701349656356575*^9, 3.7013496630116463`*^9}, {
+   3.701350366838539*^9, 3.701350442915697*^9}, {3.701350544104784*^9, 
+   3.701350562400885*^9}, {3.701350621219998*^9, 3.7013506611467524`*^9}, 
+   3.7013508346881123`*^9, {3.7013508836491737`*^9, 3.701350929056238*^9}, {
+   3.7013509608027782`*^9, 3.701351024816627*^9}, {3.701357565825634*^9, 
+   3.7013576860952587`*^9}, {3.701357728994898*^9, 3.701357749480824*^9}, {
+   3.701357893776099*^9, 3.7013579045018682`*^9}, {3.701388574448168*^9, 
+   3.7013887016203136`*^9}},ExpressionUUID->"6d2642d5-a5ea-4199-95ee-\
+9b67785e422b"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["ProcessRead", "CodeSubsubsection",
+ CellChangeTimes->{{3.701349557945218*^9, 
+  3.701349560130163*^9}},ExpressionUUID->"6d157119-3225-4430-88b9-\
+0aa7c05da915"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"ProcessRead", "::", "err"}], "=", "\n", "\t", 
+   "\"\<\\nError in process:\\n``\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "ProcessRead", "]"}], "=", 
+   RowBox[{"{", "\n", "\t", 
+    RowBox[{
+     RowBox[{"\"\<ErrorHandler\>\"", "->", "\n", "\t\t", "Automatic"}], ",", 
+     "\n", "\t", 
+     RowBox[{"\"\<ParseFunction\>\"", "->", "\n", "\t\t", "Identity"}]}], 
+    "\n", "\t", "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"ProcessRead", "~", "SetAttributes", "~", "HoldRest"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ProcessRead", "[", 
+    RowBox[{"procObj_", ",", "\n", "\t", 
+     RowBox[{"errorMessage", ":", 
+      RowBox[{"Except", "[", 
+       RowBox[{
+        RowBox[{"_", "?", "OptionQ"}], "|", "_FilterRules"}], "]"}], ":", 
+      RowBox[{"ProcessRead", "::", "err"}]}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"out", "=", "\n", "\t\t\t", 
+        RowBox[{"ReadString", "[", 
+         RowBox[{
+          RowBox[{"ProcessConnection", "[", 
+           RowBox[{"procObj", ",", "\"\<StandardOutput\>\""}], "]"}], ",", 
+          "\n", "\t\t\t\t", "EndOfBuffer"}], "]"}]}], ",", "\n", "\t\t", 
+       RowBox[{"err", "=", "\n", "\t\t\t", 
+        RowBox[{"ReadString", "[", 
+         RowBox[{
+          RowBox[{"ProcessConnection", "[", 
+           RowBox[{"procObj", ",", "\"\<StandardError\>\""}], "]"}], ",", 
+          "\n", "\t\t\t\t", "EndOfBuffer"}], "]"}]}], ",", "\n", "\t\t", 
+       RowBox[{"handler", "=", "\n", "\t\t\t", 
+        RowBox[{"Replace", "[", 
+         RowBox[{
+          RowBox[{"OptionValue", "[", "\"\<ErrorHandler\>\"", "]"}], ",", 
+          "\n", "\t\t\t\t", 
+          RowBox[{"Automatic", ":>", "\n", "\t\t\t\t\t", "Message"}]}], "\n", 
+         "\t\t\t\t", "]"}]}], ",", "\n", "\t\t", 
+       RowBox[{"parse", "=", "\n", "\t\t\t", 
+        RowBox[{"OptionValue", "[", "\"\<ParseFunction\>\"", "]"}]}]}], "\n", 
+      "\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"err", "!=", "\"\<\>\""}], ",", "\n", "\t\t\t", 
+        RowBox[{"handler", "[", 
+         RowBox[{"errorMessage", ",", 
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{"StringQ", "@", "err"}], ",", 
+            RowBox[{"StringTrim", "@", "err"}], ",", "err"}], "]"}]}], 
+         "]"}]}], "\n", "\t\t\t", "]"}], ";", "\n", "\t\t", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"out", "=!=", "\"\<\>\""}], ",", "\n", "\t\t\t", 
+        RowBox[{"With", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"o", "=", 
+            RowBox[{"If", "[", 
+             RowBox[{
+              RowBox[{"StringQ", "@", "out"}], ",", 
+              RowBox[{"StringTrim", "[", "out", "]"}], ",", "out"}], "]"}]}], 
+           "}"}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"parse", "[", "o", "]"}]}], "\n", "\t\t\t\t", "]"}]}], "\n",
+        "\t\t\t", "]"}]}]}], "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.701349569891417*^9, 3.701349597050503*^9}, {
+   3.7013496404204187`*^9, 3.701349649179196*^9}, {3.7013499289047832`*^9, 
+   3.701350027059903*^9}, {3.7013500864548883`*^9, 3.701350276232459*^9}, {
+   3.701350308094247*^9, 3.701350354178043*^9}, 3.701351036523199*^9, {
+   3.70135110176256*^9, 3.701351195861465*^9}, {3.7013579108059263`*^9, 
+   3.701357915990571*^9}, {3.701358220664212*^9, 3.701358234096634*^9}, {
+   3.701360128919065*^9, 3.701360160658216*^9}, {3.7013602092541037`*^9, 
+   3.7013602789774017`*^9}, 3.701360332930485*^9, {3.701387383426385*^9, 
+   3.7013873907279377`*^9}},ExpressionUUID->"a1579a24-5fb4-4197-9bcc-\
+f0e224969fc8"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["terminalRead", "CodeSubsubsection",
+ CellChangeTimes->{{3.7013481323832483`*^9, 3.7013481345264187`*^9}, 
+   3.701369539812677*^9},ExpressionUUID->"f914db9d-cf67-4199-ba01-\
+38646ed1360f"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"terminalRead", "[", 
+    RowBox[{"p_", ",", "readVar_"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"$terminalProcessKillFlag", "=", "False"}], "}"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{
+      RowBox[{"ProcessRead", "[", 
+       RowBox[{"p", ",", "\n", "\t\t\t", 
+        RowBox[{"\"\<ParseFunction\>\"", "\[Rule]", "\n", "\t\t\t\t", 
+         RowBox[{"Replace", "[", 
+          RowBox[{"{", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"s_String", "?", 
+              RowBox[{"(", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"StringLength", "@", "#"}], ">", "0"}], "&"}], 
+               ")"}]}], "\[RuleDelayed]", 
+             RowBox[{"(", "\n", "\t\t\t\t\t\t", 
+              RowBox[{"AppendTo", "[", 
+               RowBox[{"readVar", ",", "s"}], "]"}], "\n", "\t\t\t\t\t\t", 
+              ")"}]}], ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"EndOfFile", "\[RuleDelayed]", 
+             RowBox[{"(", 
+              RowBox[{"$terminalProcessKillFlag", "=", "True"}], ")"}]}]}], 
+           "\n", "\t\t\t\t\t", "}"}], "]"}]}], ",", "\n", "\t\t\t", 
+        RowBox[{"\"\<ErrorHandler\>\"", "->", "\n", "\t\t\t\t", 
+         RowBox[{"Replace", "[", 
+          RowBox[{"{", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"s_String", "?", 
+              RowBox[{"(", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"StringLength", "@", "#"}], ">", "0"}], "&"}], 
+               ")"}]}], "\[RuleDelayed]", 
+             RowBox[{"AppendTo", "[", 
+              RowBox[{"readVar", ",", "s"}], "]"}]}], ",", "\n", "\t", "\t", 
+            "\t\t\t", 
+            RowBox[{"EndOfFile", "\[RuleDelayed]", 
+             RowBox[{"(", 
+              RowBox[{"$terminalProcessKillFlag", "=", "True"}], ")"}]}]}], 
+           "\n", "\t\t\t\t\t", "}"}], "]"}]}]}], "\n", "\t\t\t", "]"}], ";", 
+      "\n", "\t\t", 
+      RowBox[{"If", "[", 
+       RowBox[{"$terminalProcessKillFlag", ",", 
+        RowBox[{"KillProcess", "@", "p"}]}], "]"}]}]}], "\n", "\t\t", "]"}]}],
+   ";"}], "\n", 
+ RowBox[{
+  RowBox[{"terminalRead", "~", "SetAttributes", "~", "HoldRest"}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.6928958939197273`*^9, 3.692895994194886*^9}, {
+   3.692896041113612*^9, 3.6928960940149813`*^9}, {3.70134814200165*^9, 
+   3.70134815513521*^9}, {3.7013579504584017`*^9, 3.701358026897154*^9}, 
+   3.7013582638445272`*^9, {3.7013600108049517`*^9, 3.701360095041915*^9}, {
+   3.7013603854601717`*^9, 3.70136043153004*^9}, {3.7013605460782146`*^9, 
+   3.701360546226693*^9}, {3.70137609424848*^9, 3.701376096991169*^9}, {
+   3.7013761810659523`*^9, 3.7013761936000223`*^9}, {3.7013762920529547`*^9, 
+   3.7013762973651657`*^9}, 
+   3.701376874386519*^9},ExpressionUUID->"e2f4469d-1c25-4da6-b176-\
+199bd5989ecf"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["TerminalRun", "CodeSubsubsection",
+ CellChangeTimes->{
+  3.701369536835587*^9},ExpressionUUID->"14a3ff29-934a-48d7-915c-\
+d2e376e3c1ac"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "TerminalRun", "]"}], "=", "\n", "\t", 
+   RowBox[{"Join", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Options", "@", "StartProcess"}], ",", 
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"\"\<PollTime\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
+       "\t\t", 
+       RowBox[{"\"\<Title\>\"", "\[Rule]", "Automatic"}]}], "\n", "\t\t", 
+      "}"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"TerminalRun", "[", 
+    RowBox[{"cmd_", ",", 
+     RowBox[{"o", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"p", "=", "\n", "\t\t\t", 
+        RowBox[{"ProcessStart", "[", 
+         RowBox[{"cmd", ",", "\n", "\t\t\t\t", 
+          RowBox[{"FilterRules", "[", 
+           RowBox[{
+            RowBox[{"{", "o", "}"}], ",", 
+            RowBox[{"Options", "@", "StartProcess"}]}], "]"}]}], "\n", 
+         "\t\t\t\t", "]"}]}], ",", "\n", "\t\t", 
+       RowBox[{"poll", "=", "\n", "\t\t\t", 
+        RowBox[{"Replace", "[", 
+         RowBox[{
+          RowBox[{"OptionValue", "@", "\"\<PollTime\>\""}], ",", "\n", 
+          "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Except", "[", 
+            RowBox[{"_", "?", "NumericQ"}], "]"}], "\[RuleDelayed]", ".1"}]}],
+          "\n", "\t\t\t\t", "]"}]}], ",", "\n", "\t\t", 
+       RowBox[{"title", "=", "\n", "\t\t\t", 
+        RowBox[{"Replace", "[", 
+         RowBox[{
+          RowBox[{"OptionValue", "@", "\"\<Title\>\""}], ",", "\n", 
+          "\t\t\t\t", 
+          RowBox[{"Automatic", ":>", 
+           RowBox[{"StringJoin", "@", 
+            RowBox[{"Riffle", "[", "\n", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Replace", "[", 
+               RowBox[{
+                RowBox[{"Flatten", "@", 
+                 RowBox[{"{", "cmd", "}"}]}], ",", 
+                RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"r", ":", 
+                    RowBox[{"(", 
+                    RowBox[{"_Rule", "|", "_RuleDelayed"}], ")"}]}], ":>", 
+                   "\n", "\t\t\t\t\t\t\t", 
+                   RowBox[{"\"\<-\>\"", "<>", 
+                    RowBox[{"ToLowerCase", "[", 
+                    RowBox[{"ToString", "@", 
+                    RowBox[{"First", "@", "r"}]}], "]"}], "<>", "\n", 
+                    "\t\t\t\t\t\t\t\t", "\"\<=\>\"", "<>", 
+                    RowBox[{"ToString", "@", 
+                    RowBox[{"Last", "@", "r"}]}]}]}], ",", "\n", 
+                  "\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"e", ":", 
+                    RowBox[{"Except", "[", "_String", "]"}]}], ":>", "\n", 
+                   "\t\t\t\t\t\t\t", 
+                   RowBox[{"ToString", "@", "e"}]}]}], "\n", "\t\t\t\t\t\t", 
+                 "}"}], ",", "\n", "\t\t\t\t\t\t", "1"}], "]"}], ",", 
+              "\"\< \>\""}], "]"}]}]}]}], "\n", "\t\t\t\t", "]"}]}]}], "}"}], 
+     ",", "\n", "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"MatchQ", "[", 
+        RowBox[{"p", ",", "_ProcessObject"}], "]"}], ",", "\n", "\t\t\t", 
+       RowBox[{"Block", "[", 
+        RowBox[{
+         RowBox[{"{", "\n", "\t\t\t\t", 
+          RowBox[{"$terminalDownloadStrings", "=", 
+           RowBox[{"{", 
+            RowBox[{"StringJoin", "@", 
+             RowBox[{"{", 
+              RowBox[{"title", ",", "\"\<\\n\>\""}], "}"}]}], "}"}]}], "\n", 
+          "\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Pause", "[", ".001", "]"}], ";", "\n", "\t\t\t\t", 
+          RowBox[{"terminalRead", "[", 
+           RowBox[{"p", ",", "$terminalDownloadStrings"}], "]"}], ";", "\n", 
+          "\t", "\t\t\t", 
+          RowBox[{"Monitor", "[", "\n", "\t", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"While", "[", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"ProcessStatus", "@", "p"}], "===", 
+               "\"\<Running\>\""}], ",", "\n", "\t", "\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"terminalRead", "[", 
+                RowBox[{"p", ",", "$terminalDownloadStrings"}], "]"}], ";", 
+               "\n", "\t", "\t\t\t\t\t", 
+               RowBox[{"Pause", "[", "poll", "]"}], ";"}]}], "\n", 
+             "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"PaneWindow", "[", "\n", "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Dynamic", "[", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"StringJoin", "@", "$terminalDownloadStrings"}], ",", 
+                "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
+                 RowBox[{"{", "}"}]}]}], "\n", "\t\t\t\t\t\t\t", "]"}], ",", 
+              "\n", "\t\t\t\t\t\t", 
+              RowBox[{"WindowTitle", "\[Rule]", "title"}], ",", "\n", 
+              "\t\t\t\t\t\t", 
+              RowBox[{"Scrollbars", "\[Rule]", "Automatic"}], ",", "\n", 
+              "\t\t\t\t\t\t", 
+              RowBox[{"ScrollPosition", "\[Rule]", 
+               RowBox[{"{", 
+                RowBox[{"0", ",", 
+                 RowBox[{
+                  RowBox[{"Dynamic", "@", "25"}], "*", 
+                  RowBox[{"Length", "@", "$terminalDownloadStrings"}]}]}], 
+                "}"}]}]}], "\n", "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", 
+           "]"}], ";", "\n", "\t\t\t\t", 
+          RowBox[{"StringJoin", "@", "$terminalDownloadStrings"}]}]}], "\n", 
+        "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", "$Failed"}], "\n", "\t\t\t", 
+      "]"}]}], "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.692895537122006*^9, 3.692895611870323*^9}, {
+   3.6928956937247257`*^9, 3.6928957718487988`*^9}, {3.692895804047427*^9, 
+   3.6928958470146008`*^9}, {3.692895888919813*^9, 3.6928959186964207`*^9}, {
+   3.692895959537326*^9, 3.692896025351451*^9}, {3.692897977718656*^9, 
+   3.692897980707369*^9}, {3.69291213689993*^9, 3.692912142505499*^9}, {
+   3.692912180458013*^9, 3.6929122235006933`*^9}, {3.69291229674785*^9, 
+   3.69291230472225*^9}, {3.6929123542032127`*^9, 3.692912360053379*^9}, {
+   3.69291239888109*^9, 3.692912432919132*^9}, {3.6929124678034277`*^9, 
+   3.692912507465906*^9}, {3.692912876303812*^9, 3.692912921867484*^9}, {
+   3.692913443127225*^9, 3.692913443262671*^9}, {3.69291347477984*^9, 
+   3.69291348865553*^9}, {3.6929164356648483`*^9, 3.6929164359973307`*^9}, {
+   3.692916505869769*^9, 3.69291658919207*^9}, {3.692916628978923*^9, 
+   3.692916665710753*^9}, {3.692916734250736*^9, 3.6929167619289837`*^9}, {
+   3.692916836948629*^9, 3.6929168511852818`*^9}, {3.693362330324479*^9, 
+   3.693362365028989*^9}, {3.694984344620181*^9, 3.694984351858976*^9}, 
+   3.701348162792302*^9, {3.701348244038979*^9, 3.7013482570594*^9}, {
+   3.70134830574002*^9, 3.701348472855599*^9}, {3.701348540371266*^9, 
+   3.701348750747767*^9}, {3.701348790663081*^9, 3.7013488128690577`*^9}, 
+   3.701348971975041*^9, {3.7013491514573936`*^9, 3.701349195280249*^9}, {
+   3.701358043478787*^9, 3.701358063674206*^9}, {3.701359665694179*^9, 
+   3.701359668781374*^9}, 3.701359700282722*^9, {3.701360485530773*^9, 
+   3.7013605130648537`*^9}, {3.7013712253231277`*^9, 3.701371251699264*^9}, {
+   3.70137130592959*^9, 3.701371375628704*^9}, {3.70137144130558*^9, 
+   3.701371452606929*^9}, 
+   3.701371490619512*^9},ExpressionUUID->"83b769ec-8094-41a2-afae-\
+084ee8804bc2"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["TerminalRunNonBlocking", "CodeSubsubsection",
+ CellChangeTimes->{
+  3.70136953109184*^9},ExpressionUUID->"2cf90bf6-b026-4a7d-bca2-a3ffffb7ab29"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "TerminalRunNonBlocking", "]"}], "=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"DeleteDuplicatesBy", "[", "First", "]"}], "@", 
+    RowBox[{"Join", "[", 
+     RowBox[{
+      RowBox[{"{", "\n", "\t\t", 
+       RowBox[{"\"\<PollTime\>\"", "\[Rule]", "1"}], "\n", "\t\t", "}"}], ",",
+       "\n", "\t\t", 
+      RowBox[{"Options", "@", "TerminalRun"}]}], "\n", "\t\t", "]"}]}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"TerminalRunNonBlocking", "[", 
+    RowBox[{"cmd_", ",", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"p", "=", "\n", "\t\t\t", 
+        RowBox[{"ProcessStart", "[", 
+         RowBox[{"cmd", ",", "\n", "\t", "\t\t\t", 
+          RowBox[{"FilterRules", "[", 
+           RowBox[{
+            RowBox[{"{", "ops", "}"}], ",", 
+            RowBox[{"Options", "@", "ProcessStart"}]}], "]"}]}], "\n", 
+         "\t\t\t\t", "]"}]}], ",", "\n", "\t\t", 
+       RowBox[{"title", "=", "\n", "\t\t\t", 
+        RowBox[{"Replace", "[", 
+         RowBox[{
+          RowBox[{"OptionValue", "@", "\"\<Title\>\""}], ",", "\n", 
+          "\t\t\t\t", 
+          RowBox[{"Automatic", ":>", 
+           RowBox[{"StringJoin", "@", 
+            RowBox[{"Riffle", "[", "\n", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Replace", "[", 
+               RowBox[{
+                RowBox[{"Flatten", "@", 
+                 RowBox[{"{", "cmd", "}"}]}], ",", 
+                RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"r", ":", 
+                    RowBox[{"(", 
+                    RowBox[{"_Rule", "|", "_RuleDelayed"}], ")"}]}], ":>", 
+                   "\n", "\t\t\t\t\t\t\t", 
+                   RowBox[{"\"\<-\>\"", "<>", 
+                    RowBox[{"ToLowerCase", "[", 
+                    RowBox[{"ToString", "@", 
+                    RowBox[{"First", "@", "r"}]}], "]"}], "<>", "\n", 
+                    "\t\t\t\t\t\t\t\t", "\"\<=\>\"", "<>", 
+                    RowBox[{"ToString", "@", 
+                    RowBox[{"Last", "@", "r"}]}]}]}], ",", "\n", 
+                  "\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"e", ":", 
+                    RowBox[{"Except", "[", "_String", "]"}]}], ":>", "\n", 
+                   "\t\t\t\t\t\t\t", 
+                   RowBox[{"ToString", "@", "e"}]}]}], "\n", "\t\t\t\t\t\t", 
+                 "}"}], ",", "\n", "\t\t\t\t\t\t", "1"}], "]"}], ",", 
+              "\"\< \>\""}], "]"}]}]}]}], "\n", "\t\t\t\t", "]"}]}], ",", 
+       "\n", "\t\t", 
+       RowBox[{"s", "=", 
+        RowBox[{"Unique", "@", "$terminalDownloadStrings$"}]}]}], "}"}], ",", 
+     "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"s", "=", 
+       RowBox[{"{", 
+        RowBox[{"title", ",", "\"\<\\n\>\""}], "}"}]}], ";", "\n", "\t\t", 
+      RowBox[{"Interpretation", "[", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"PaneWindow", "[", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Dynamic", "[", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"s", ";", "\n", "\t", "\t\t\t\t", 
+             RowBox[{"Quiet", "[", 
+              RowBox[{
+               RowBox[{"terminalRead", "[", 
+                RowBox[{"p", ",", "s"}], "]"}], ";", "\n", "\t\t\t\t\t\t", 
+               RowBox[{"If", "[", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"Length", "@", "$MessageList"}], ">", "0"}], ",", 
+                 "\n", "\t", "\t\t\t\t\t\t", 
+                 RowBox[{"FrontEnd`SetOptions", "[", 
+                  RowBox[{
+                   RowBox[{"EvaluationBox", "[", "]"}], ",", "\n", "\t", 
+                   "\t\t\t\t\t\t\t", 
+                   RowBox[{"UpdateInterval", "\[Rule]", "\[Infinity]"}]}], 
+                  "\n", "\t", "\t\t\t\t\t\t\t", "]"}]}], "\n", 
+                "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t", "]"}], ";", 
+             "\n", "\t\t\t\t", 
+             RowBox[{"StringJoin", "@", "s"}]}], ",", "\n", "\t\t\t\t", 
+            RowBox[{"Evaluate", "@", "\n", "\t\t\t\t\t", 
+             RowBox[{"Replace", "[", 
+              RowBox[{
+               RowBox[{"OptionValue", "[", "\"\<PollTime\>\"", "]"}], ",", 
+               RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"n_", "?", "NumericQ"}], ":>", 
+                  RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
+                    RowBox[{"{", "}"}]}], ",", "\n", "\t\t\t\t\t\t\t", 
+                    RowBox[{"UpdateInterval", "\[Rule]", "n"}]}], "\n", 
+                   "\t\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t\t\t\t\t\t", 
+                 RowBox[{"_", "\[RuleDelayed]", 
+                  RowBox[{"Sequence", "@@", 
+                   RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+                    RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
+                    RowBox[{"{", "s", "}"}]}], "\n", "\t\t\t\t\t\t\t", 
+                    "}"}]}]}]}], "\n", "\t\t\t\t\t\t", "}"}]}], "]"}]}]}], 
+           "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
+          RowBox[{"WindowTitle", "->", "\n", "\t\t\t\t", "title"}], ",", "\n",
+           "\t\t\t", 
+          RowBox[{
+          "CloseButton", "->", "\n", "\t\t\t\t", "InterpretationBox"}], ",", 
+          "\n", "\t\t\t", 
+          RowBox[{"ImageSize", "\[Rule]", "Dynamic"}], ",", "\n", "\t\t\t", 
+          RowBox[{"Scrollbars", "\[Rule]", "Automatic"}], ",", "\n", "\t\t\t", 
+          RowBox[{"ScrollPosition", "\[Rule]", 
+           RowBox[{"{", "\n", "\t\t\t\t", 
+            RowBox[{"0", ",", "\n", "\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Dynamic", "@", "25"}], "*", 
+              RowBox[{"Length", "@", "s"}]}]}], "\n", "\t\t\t\t", "}"}]}]}], 
+         "\n", "\t\t\t", "]"}], ",", "\n", "\t\t\t", 
+        RowBox[{"StringJoin", "@", "s"}]}], "\n", "\t\t\t", "]"}]}]}], "\n", 
+    "\t\t", "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.692895537122006*^9, 3.692895611870323*^9}, {
+   3.6928956937247257`*^9, 3.6928957718487988`*^9}, {3.692895804047427*^9, 
+   3.6928958470146008`*^9}, {3.692895888919813*^9, 3.6928959186964207`*^9}, {
+   3.692895959537326*^9, 3.692896025351451*^9}, {3.692897977718656*^9, 
+   3.692897980707369*^9}, {3.69291213689993*^9, 3.692912142505499*^9}, {
+   3.692912180458013*^9, 3.6929122235006933`*^9}, {3.69291229674785*^9, 
+   3.69291230472225*^9}, {3.6929123542032127`*^9, 3.692912360053379*^9}, {
+   3.69291239888109*^9, 3.692912432919132*^9}, {3.6929124678034277`*^9, 
+   3.692912507465906*^9}, {3.692912876303812*^9, 3.692912921867484*^9}, {
+   3.692913443127225*^9, 3.692913443262671*^9}, {3.69291347477984*^9, 
+   3.69291348865553*^9}, {3.6929164356648483`*^9, 3.6929164359973307`*^9}, {
+   3.692916505869769*^9, 3.69291658919207*^9}, {3.692916628978923*^9, 
+   3.692916665710753*^9}, {3.692916734250736*^9, 3.6929167619289837`*^9}, {
+   3.692916836948629*^9, 3.6929168511852818`*^9}, {3.693362330324479*^9, 
+   3.693362365028989*^9}, {3.694984344620181*^9, 3.694984351858976*^9}, 
+   3.701348162792302*^9, {3.701348244038979*^9, 3.7013482570594*^9}, {
+   3.70134830574002*^9, 3.701348472855599*^9}, {3.701348540371266*^9, 
+   3.701348750747767*^9}, {3.701348790663081*^9, 3.7013488128690577`*^9}, {
+   3.701348971975041*^9, 3.701348984748721*^9}, {3.7013580704950933`*^9, 
+   3.7013581454904957`*^9}, {3.701359445950924*^9, 3.70135944754237*^9}, {
+   3.701359481360755*^9, 3.701359623286829*^9}, {3.7013597080621357`*^9, 
+   3.701359740782547*^9}, 3.701359801107113*^9, {3.701360524425115*^9, 
+   3.701360532469137*^9}, {3.7013606096780367`*^9, 3.7013606246360407`*^9}, {
+   3.701360696300685*^9, 3.701360779815775*^9}, {3.70136095407362*^9, 
+   3.701361035047303*^9}, {3.70136109751572*^9, 3.7013611599262037`*^9}, {
+   3.701361212247254*^9, 3.701361256672665*^9}, {3.701361368203639*^9, 
+   3.701361524720607*^9}, {3.701361554964369*^9, 3.701361587437675*^9}, 
+   3.701361622798501*^9, {3.701361662141411*^9, 3.701361948899582*^9}, {
+   3.701362006448694*^9, 3.701362033344345*^9}, {3.701362081963471*^9, 
+   3.7013621280699043`*^9}, {3.70136219049851*^9, 3.701362372134528*^9}, {
+   3.701362416422637*^9, 3.701362416558057*^9}, {3.701362532106627*^9, 
+   3.7013625326793756`*^9}, {3.701367822760738*^9, 3.701367919291459*^9}, {
+   3.7013681855570393`*^9, 3.7013681884553747`*^9}, {3.7013682431747923`*^9, 
+   3.701368244573085*^9}, {3.701368369151322*^9, 3.701368369450349*^9}, {
+   3.701368412106502*^9, 3.701368413407692*^9}, {3.70136912414815*^9, 
+   3.701369125868966*^9}, {3.701369410182283*^9, 3.7013694300603657`*^9}, {
+   3.701371135010868*^9, 3.701371146408334*^9}, {3.701371471833892*^9, 
+   3.701371483353219*^9}, {3.701372047806366*^9, 3.701372051775668*^9}, 
+   3.701372585197823*^9, 3.701372909989056*^9},
+ EmphasizeSyntaxErrors->
+  True,ExpressionUUID->"6ff10089-e045-4483-9d19-4d225e02dc34"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["TerminalShell", "CodeSubsubsection",
+ CellChangeTimes->{
+  3.701369521661084*^9},ExpressionUUID->"224159f7-d866-4a12-9899-\
+a73441ca25e9"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "TerminalShell", "]"}], "=", "\n", "\t", 
+   RowBox[{"Options", "[", "TerminalRunNonBlocking", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"TerminalShell", "[", 
+    RowBox[{
+     RowBox[{"startcmd", ":", 
+      RowBox[{"Except", "[", 
+       RowBox[{"_", "?", "OptionQ"}], "]"}], ":", "Automatic"}], ",", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"termStrings", "=", 
+        RowBox[{"Unique", "@", "termStrings"}]}], ",", "\n", "\t\t", 
+       RowBox[{"termInput", "=", 
+        RowBox[{"Unique", "@", "termInput"}]}], ",", "\n", "\t\t", 
+       RowBox[{"cmd", "=", 
+        RowBox[{"Replace", "[", 
+         RowBox[{"startcmd", ",", 
+          RowBox[{"Automatic", "\[Rule]", "$SystemShell"}]}], "]"}]}], ",", 
+       "\n", "\t\t", 
+       RowBox[{"imgSize", "=", 
+        RowBox[{"Unique", "@", "imgSize"}]}], ",", "\n", "\t\t", 
+       RowBox[{"inputFieldHeight", "=", "25"}], ",", "\n", "\t\t", 
+       RowBox[{"lineHeight", "=", "22"}]}], "\n", "\t\t", "}"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{
+      RowBox[{"imgSize", "=", 
+       RowBox[{"{", 
+        RowBox[{"400", ",", 
+         RowBox[{"400", "/", "GoldenRatio"}]}], "}"}]}], ";", "\n", "\t\t", 
+      RowBox[{"With", "[", 
+       RowBox[{
+        RowBox[{"{", "\n", "\t\t\t", 
+         RowBox[{
+          RowBox[{"p", "=", "\n", "\t", "\t\t\t", 
+           RowBox[{"ProcessStart", "[", 
+            RowBox[{"cmd", ",", "\n", "\t", "\t\t\t\t", 
+             RowBox[{"FilterRules", "[", 
+              RowBox[{
+               RowBox[{"{", "ops", "}"}], ",", 
+               RowBox[{"Options", "@", "ProcessStart"}]}], "]"}]}], "\n", 
+            "\t", "\t\t\t\t", "]"}]}], ",", "\n", "\t", "\t\t", 
+          RowBox[{"title", "=", "\n", "\t", "\t\t\t", 
+           RowBox[{"Replace", "[", 
+            RowBox[{
+             RowBox[{"OptionValue", "@", "\"\<Title\>\""}], ",", "\n", "\t", 
+             "\t\t\t\t", 
+             RowBox[{"Automatic", ":>", 
+              RowBox[{"StringJoin", "@", 
+               RowBox[{"Riffle", "[", "\n", "\t", "\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"Replace", "[", 
+                  RowBox[{
+                   RowBox[{"Flatten", "@", 
+                    RowBox[{"{", "cmd", "}"}]}], ",", 
+                   RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"r", ":", 
+                    RowBox[{"(", 
+                    RowBox[{"_Rule", "|", "_RuleDelayed"}], ")"}]}], ":>", 
+                    "\n", "\t", "\t\t\t\t\t\t\t", 
+                    RowBox[{"\"\<-\>\"", "<>", 
+                    RowBox[{"ToLowerCase", "[", 
+                    RowBox[{"ToString", "@", 
+                    RowBox[{"First", "@", "r"}]}], "]"}], "<>", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t", "\"\<=\>\"", "<>", 
+                    RowBox[{"ToString", "@", 
+                    RowBox[{"Last", "@", "r"}]}]}]}], ",", "\n", "\t", 
+                    "\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"e", ":", 
+                    RowBox[{"Except", "[", "_String", "]"}]}], ":>", "\n", 
+                    "\t", "\t\t\t\t\t\t\t", 
+                    RowBox[{"ToString", "@", "e"}]}]}], "\n", "\t", 
+                    "\t\t\t\t\t\t", "}"}], ",", "\n", "\t", "\t\t\t\t\t\t", 
+                   "1"}], "]"}], ",", "\"\< \>\""}], "]"}]}]}]}], "\n", "\t", 
+            "\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"termStrings", "=", 
+          RowBox[{"{", 
+           RowBox[{"\"\<>> \>\"", "<>", "title"}], "}"}]}], ";", "\n", 
+         "\t\t\t", 
+         RowBox[{"Interpretation", "[", "\n", "\t", "\t\t\t", 
+          RowBox[{
+           RowBox[{"PaneWindow", "[", "\n", "\t", "\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Dynamic", "[", "\n", "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"Quiet", "[", 
+                 RowBox[{
+                  RowBox[{"terminalRead", "[", 
+                   RowBox[{"p", ",", "termStrings"}], "]"}], ";", "\n", 
+                  "\t\t\t\t\t\t\t", 
+                  RowBox[{"If", "[", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", "$MessageList"}], ">", "0"}], ",", 
+                    "\n", "\t", "\t", "\t\t\t\t\t\t", 
+                    RowBox[{"FrontEnd`SetOptions", "[", 
+                    RowBox[{
+                    RowBox[{"EvaluationBox", "[", "]"}], ",", "\n", "\t", 
+                    "\t", "\t\t\t\t\t\t\t", 
+                    RowBox[{"UpdateInterval", "\[Rule]", "\[Infinity]"}]}], 
+                    "\n", "\t", "\t", "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t", 
+                   "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t", "\t\t\t\t\t\t", 
+                 "]"}], ";", "\n", "\t", "\t\t\t\t\t", 
+                RowBox[{"Column", "[", 
+                 RowBox[{
+                  RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"Pane", "[", "\n", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"StringJoin", "@", 
+                    RowBox[{"Riffle", "[", 
+                    RowBox[{"termStrings", ",", "\"\<\\n\>\""}], "]"}]}], ",",
+                     "\n", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Dynamic", "[", 
+                    RowBox[{
+                    RowBox[{"imgSize", "-", 
+                    RowBox[{"{", 
+                    RowBox[{"0", ",", "inputFieldHeight"}], "}"}]}], ",", 
+                    "\n", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"imgSize", "=", 
+                    RowBox[{"(", 
+                    RowBox[{"#", "+", 
+                    RowBox[{"{", 
+                    RowBox[{"0", ",", "inputFieldHeight"}], "}"}]}], ")"}]}], 
+                    ";"}], "&"}]}], "]"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Scrollbars", "\[Rule]", "True"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "ScrollPosition", "\[Rule]", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"0", ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Dynamic", "[", 
+                    RowBox[{"lineHeight", "*", 
+                    RowBox[{"Length", "@", "termStrings"}]}], "]"}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", "}"}]}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"termInput", "=", "\"\<\>\""}], ";", "\n", 
+                    "\t\t\t\t\t\t\t", 
+                    RowBox[{"EventHandler", "[", "\n", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"InputField", "[", 
+                    RowBox[{
+                    RowBox[{"Dynamic", "@", "termInput"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t", "String", ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"ImageSize", "\[Rule]", 
+                    RowBox[{"Dynamic", "[", 
+                    RowBox[{"ReplacePart", "[", 
+                    RowBox[{"imgSize", ",", 
+                    RowBox[{"2", "\[Rule]", "inputFieldHeight"}]}], "]"}], 
+                    "]"}]}]}], "]"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<ReturnKeyDown\>\"", "\[RuleDelayed]", "\n", 
+                    "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"With", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"in", "=", "termInput"}], "}"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"termInput", "=", "\"\<\>\""}], ";", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"AppendTo", "[", 
+                    RowBox[{"termStrings", ",", 
+                    RowBox[{"\"\<>> \>\"", "<>", "in"}]}], "]"}], ";", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"WriteLine", "[", 
+                    RowBox[{"p", ",", "in"}], "]"}], ";", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Pause", "[", ".05", "]"}], ";", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"terminalRead", "[", 
+                    RowBox[{"p", ",", "termStrings"}], "]"}]}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t\t", 
+                   "}"}], ",", "\n", "\t\t\t\t\t\t\t", 
+                  RowBox[{"Spacings", "\[Rule]", "0"}], ",", "\n", 
+                  "\t\t\t\t\t\t\t", 
+                  RowBox[{"Alignment", "\[Rule]", 
+                   RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"{", "Left", "}"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{"{", 
+                    RowBox[{"Top", ",", "Bottom"}], "}"}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t", "}"}]}]}], "\n", "\t\t\t\t\t\t\t", 
+                 "]"}]}], ",", "\n", "\t\t\t\t\t", 
+               RowBox[{"Evaluate", "@", "\n", "\t\t\t\t\t\t", 
+                RowBox[{"Replace", "[", 
+                 RowBox[{
+                  RowBox[{"OptionValue", "[", "\"\<PollTime\>\"", "]"}], ",", 
+                  
+                  RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"n_", "?", "NumericQ"}], ":>", 
+                    RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
+                    RowBox[{"{", "}"}]}], ",", "\n", "\t", "\t\t\t\t\t\t\t", 
+                    RowBox[{"UpdateInterval", "\[Rule]", "n"}]}], "\n", "\t", 
+                    "\t\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t", 
+                    "\t\t\t\t\t\t", 
+                    RowBox[{"_", "\[RuleDelayed]", 
+                    RowBox[{"Sequence", "@@", 
+                    RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t", 
+                    RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
+                    RowBox[{"{", "termStrings", "}"}]}], "\n", "\t", 
+                    "\t\t\t\t\t\t\t", "}"}]}]}]}], "\n", "\t", "\t\t\t\t\t\t",
+                    "}"}]}], "]"}]}]}], "\n", "\t", "\t\t\t\t", "]"}], ",", 
+             "\n", "\t", "\t\t\t", 
+             RowBox[{"WindowTitle", "->", "\n", "\t", "\t\t\t\t", "title"}], 
+             ",", "\n", "\t", "\t\t\t", 
+             RowBox[{
+             "CloseButton", "->", "\n", "\t\t\t\t\t", "InterpretationBox"}], 
+             ",", "\n", "\t\t\t\t", 
+             RowBox[{"ButtonBar", ":>", "\n", "\t\t\t\t\t", 
+              RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                "\"\<Restart\>\"", "\[RuleDelayed]", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{"KillProcess", "[", "p", "]"}]}], ",", "\n", 
+                "\t\t\t\t\t\t", 
+                RowBox[{"\"\<Kill\>\"", ":>", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{"KillProcess", "[", "p", "]"}]}]}], "\n", 
+               "\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t\t\t\t", 
+             RowBox[{"Scrollbars", "\[Rule]", "False"}], ",", "\n", 
+             "\t\t\t\t", 
+             RowBox[{"ImageSize", "->", "\n", "\t\t\t\t\t", 
+              RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"Dynamic", "[", 
+                 RowBox[{"{", 
+                  RowBox[{
+                   RowBox[{"First", "@", "imgSize"}], ",", "Automatic"}], 
+                  "}"}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
+                RowBox[{"Dynamic", "[", "imgSize", "]"}]}], "\n", 
+               "\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t\t\t\t", 
+             RowBox[{"Appearance", "\[Rule]", "Automatic"}]}], "\n", 
+            "\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+           RowBox[{"StringJoin", "@", 
+            RowBox[{"Riffle", "[", 
+             RowBox[{"termStrings", ",", "\"\<\\n\>\""}], "]"}]}]}], "\n", 
+          "\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "]"}]}]}], "\n", "\t\t", 
+    "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.70137259638239*^9, 3.701372742582656*^9}, {
+   3.7013728024558363`*^9, 3.701372902040889*^9}, {3.701372932380718*^9, 
+   3.701372936818471*^9}, {3.70137297650319*^9, 3.7013731803024406`*^9}, {
+   3.7013732166091557`*^9, 3.7013733874254513`*^9}, {3.7013734371826057`*^9, 
+   3.701373525635943*^9}, {3.701373582827916*^9, 3.701373618447238*^9}, {
+   3.701373662672921*^9, 3.701373690333708*^9}, {3.7013738133242817`*^9, 
+   3.701374011316697*^9}, {3.7013740705687*^9, 3.701374275919826*^9}, {
+   3.701374312341769*^9, 3.701374435934787*^9}, {3.701374546529594*^9, 
+   3.701374586743895*^9}, {3.701375394802568*^9, 3.701375424438245*^9}, {
+   3.701375553406205*^9, 3.701375554231901*^9}, {3.701375907569497*^9, 
+   3.7013759140585003`*^9}, {3.701376028049918*^9, 3.701376034310234*^9}, 
+   3.701376102339818*^9, {3.701376157004923*^9, 3.701376158090136*^9}, {
+   3.701376252057416*^9, 3.701376258208685*^9}, {3.701376401047353*^9, 
+   3.701376409774428*^9}, {3.701376656698079*^9, 3.7013766592821407`*^9}, {
+   3.701376719411442*^9, 3.701376858500297*^9}, {3.701376921587145*^9, 
+   3.701376962689048*^9}, {3.701377014369117*^9, 3.701377050959515*^9}, {
+   3.701377089703239*^9, 
+   3.701377095564393*^9}},ExpressionUUID->"bb4e8b4a-e4b3-4f51-91da-\
+5e61bf99ab16"]
+}, Closed]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"End", "[", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"83ecbbc6-5f3e-4d43-86d8-\
+d88d16aa8807"]
+}, Open  ]],
+
+Cell["", "SectionSeparator",ExpressionUUID->"193fe146-40a4-426a-b12f-\
+43f5ede64924"]
+},
+WindowSize->{826, 753},
+WindowMargins->{{83, Automatic}, {Automatic, 0}},
+FrontEndVersion->"11.2 for Mac OS X x86 (32-bit, 64-bit Kernel) (September \
+10, 2017)",
+StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
+  CharacterEncoding -> "UTF-8"]
+]

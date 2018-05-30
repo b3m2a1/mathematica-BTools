@@ -1,0 +1,1035 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["PyTools", "CodeSection",
+ Evaluatable->False,
+ CellChangeTimes->{{3.709665338560666*^9, 3.709665343039845*^9}, {
+  3.709665534475766*^9, 3.709665535048807*^9}, {3.7096755397206717`*^9, 
+  3.709675542333254*^9}},ExpressionUUID->"7709ceef-695e-41f3-abe3-\
+fe240a9f44a4"],
+
+Cell["\[LeftCeiling]A package for using python in its many \
+guises\[RightFloor]", "Text",
+ Evaluatable->True,
+ CellChangeTimes->{{3.709675545452774*^9, 
+  3.709675575428734*^9}},ExpressionUUID->"97d4b4d9-c01e-46f9-8abe-\
+006cecf9ff0a"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"$PyVenv", "::", "usage"}], "=", "\"\<\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PyVenvNew", "::", "usage"}], "=", "\"\<\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PyVenvRun", "::", "usage"}], "=", "\"\<\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PyVenvStart", "::", "usage"}], "=", "\"\<\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PyVenvKill", "::", "usage"}], "=", "\"\<\>\""}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.709675650836433*^9, 3.709675676474532*^9}, {
+  3.709854369999955*^9, 
+  3.7098543757542887`*^9}},ExpressionUUID->"8b77da4a-cf55-4ffb-a527-\
+e06d2dae46e5"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"$PySimpleServer", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<The current simple server instance\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PySimpleServerStart", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Starts a new SimpleHTTPServer in a specific directory and opens \
+it\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PySimpleServerOpen", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Opens a file using a SimpleHTTPServer or opens the server \
+itself\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PySimpleServerRunning", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Specifies whether there's current server running\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PySimpleServerKill", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Kills the current server\>\""}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.7078287068131533`*^9, 3.707828745492516*^9}, 
+   3.709325633259993*^9, {3.7093264899336452`*^9, 3.709326544952409*^9}, {
+   3.709326720841156*^9, 3.70932672904768*^9}, {3.709326848717595*^9, 
+   3.709326856968995*^9}, 
+   3.709327046059059*^9},ExpressionUUID->"6a2e807b-a383-4235-a345-\
+78d6bee75fd0"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"65d362a4-5c0f-45cc-8997-\
+5e9c958d120f"],
+
+Cell[CellGroupData[{
+
+Cell["PyVenv", "CodeSubsection",
+ CellChangeTimes->{{3.709675706432581*^9, 
+  3.709675707815845*^9}},ExpressionUUID->"b8ba0da4-0cf4-4e68-ab38-\
+8b4380a8839a"],
+
+Cell[CellGroupData[{
+
+Cell["New", "CodeSubsubsection",
+ CellChangeTimes->{{3.7098543804497633`*^9, 
+  3.709854405978209*^9}},ExpressionUUID->"89179a75-99f8-4957-80cf-\
+8ba6d0a6b4e8"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$PyVenvRoot", "=", "\n", "\t", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{"DirectoryQ", "@", "\"\<~/Documents/Python/config\>\""}], ",", 
+     "\n", "\t\t", "\"\<~/Documents/Python/config\>\"", ",", "\n", "\t\t", 
+     RowBox[{"FileNameJoin", "@", 
+      RowBox[{"{", 
+       RowBox[{"$HomeDirectory", ",", "\"\<virtualenvs\>\""}], "}"}]}]}], 
+    "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.709854573995717*^9, 
+  3.709854582623838*^9}},ExpressionUUID->"e0efabaa-f0bd-466b-b3a8-\
+56cc33779e8a"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "PyVenvNew", "]"}], "=", "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{"\"\<Version\>\"", "\[Rule]", "None"}], "\n", "\t\t", "}"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"PyVenvNew", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"name_String", "?", 
+     RowBox[{"(", 
+      RowBox[{"DirectoryQ", "@*", "DirectoryName"}], ")"}]}], ",", "\n", "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"(", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"SetDirectory", "[", "name", "]"}], ";", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"ResetDirectory", "[", "]"}], ";", "#"}], ")"}], "&"}], "@", 
+     "\n", "\t\t\t", 
+     RowBox[{"RunProcess", "[", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{"\"\<virtualenv\>\"", ",", "\n", "\t\t\t\t", 
+        RowBox[{"FileBaseName", "@", "name"}]}], "\n", "\t\t\t\t", "}"}], 
+      "]"}]}]}], "\n", "\t\t", ")"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.709854408784143*^9, 3.709854489913821*^9}, {
+  3.70985462333911*^9, 
+  3.70985462918533*^9}},ExpressionUUID->"4613eb47-d84f-4349-a746-\
+d20ccede7519"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"PyVenvNew", "[", 
+   RowBox[{"name_String", "?", 
+    RowBox[{"(", 
+     RowBox[{"StringMatchQ", "[", 
+      RowBox[{
+       RowBox[{"Except", "[", "$PathnameSeparator", "]"}], ".."}], "]"}], 
+     ")"}]}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"(", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{"!", 
+       RowBox[{"DirectoryQ", "[", "$PyVenvRoot", "]"}]}], ",", "\n", "\t", 
+      "\t\t", 
+      RowBox[{"CreateDirectory", "[", "$PyVenvRoot", "]"}]}], "\n", "\t", 
+     "\t\t", "]"}], ";", "\n", "\t", "\t", 
+    RowBox[{"PyVenvNew", "[", 
+     RowBox[{"FileNameJoin", "@", 
+      RowBox[{"{", 
+       RowBox[{"$PyVenvRoot", ",", "name"}], "}"}]}], "]"}]}], "\n", "\t\t", 
+   ")"}]}]], "CodeInput",
+ CellChangeTimes->{{3.7098544996168423`*^9, 
+  3.709854568457638*^9}},ExpressionUUID->"a5dbbf06-aa8b-4c2e-bdba-\
+2a01a349e2d3"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["$PyVenv", "CodeSubsubsection",
+ CellChangeTimes->{{3.70966880459414*^9, 
+  3.7096688123842583`*^9}},ExpressionUUID->"91ddd3e8-d5d8-46f9-a2ca-\
+b104848bdc3d"],
+
+Cell[BoxData[
+ RowBox[{"$PyVenv", ":=", 
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{"PyVenvActive", "[", "]"}], ",", "$pyVenv", ",", "None"}], 
+   "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.709666301727668*^9, 3.7096663018943443`*^9}, {
+  3.70966643610618*^9, 
+  3.709666444343658*^9}},ExpressionUUID->"52dffe14-c1cd-4645-a975-\
+ebf2a1aed277"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"PyVenvActive", "[", "]"}], ":=", "\n", "\t", 
+   RowBox[{"MatchQ", "[", 
+    RowBox[{
+     RowBox[{"$pyVenv", "[", "\"\<Process\>\"", "]"}], ",", 
+     RowBox[{"_ProcessObject", "?", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"ProcessStatus", "[", 
+         RowBox[{"#", ",", "\"\<Running\>\""}], "]"}], "&"}], ")"}]}]}], 
+    "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.709666323783993*^9, 
+  3.709666351997932*^9}},ExpressionUUID->"bde4a58e-16a0-4186-9670-\
+8c3a779438e6"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Start", "CodeSubsubsection",
+ CellChangeTimes->{{3.70966880459414*^9, 
+  3.709668815992799*^9}},ExpressionUUID->"728d29f1-2478-47ee-ae57-\
+4f2dd41889ca"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$PyVenvRoot", "=", "\n", "\t", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{"DirectoryQ", "@", "\"\<~/Documents/Python/config\>\""}], ",", 
+     "\n", "\t\t", "\"\<~/Documents/Python/config\>\"", ",", "\n", "\t\t", 
+     "\"\<~/virtualenvs\>\""}], "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7096655435468817`*^9, 3.709665555496633*^9}, 
+   3.709666258844325*^9, {3.709827549134767*^9, 
+   3.709827565214218*^9}},ExpressionUUID->"dc296c82-b1e7-4be5-9026-\
+75fdc31e1e71"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"PyVenvKill", "[", "]"}], ":=", "\n", "\t", 
+   RowBox[{"KillProcess", "@", 
+    RowBox[{"$pyVenv", "[", "\"\<Process\>\"", "]"}]}]}], ";"}]], "CodeInput",
+ 
+ CellChangeTimes->{{3.7096663587031937`*^9, 3.7096663633039427`*^9}, {
+  3.70966643021023*^9, 
+  3.709666431977497*^9}},ExpressionUUID->"fd1a3f6a-f3dc-4450-a616-\
+39064052324e"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"pyVenvDirQ", "[", 
+    RowBox[{"dir_String", "?", "DirectoryQ"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"FileExistsQ", "[", 
+    RowBox[{"FileNameJoin", "@", 
+     RowBox[{"{", 
+      RowBox[{"dir", ",", "\"\<bin\>\"", ",", "\"\<activate\>\""}], "}"}]}], 
+    "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"pyVenvDirQ", "[", "_", "]"}], ":=", "False"}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.709675103579789*^9, 3.709675139968267*^9}, {
+  3.713749986002976*^9, 
+  3.7137499921910267`*^9}},ExpressionUUID->"7ba11fb3-383c-4e42-bdd4-\
+b4717bd60bac"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"PyVenvStart", "[", 
+    RowBox[{
+     RowBox[{"dir_String", "?", "pyVenvDirQ"}], ",", 
+     RowBox[{"startDir", ":", 
+      RowBox[{
+       RowBox[{"_String", "?", "DirectoryQ"}], "|", "Automatic"}], ":", 
+      "Automatic"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"(", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"PyVenvKill", "[", "]"}], ";", "\n", "\t\t", 
+     RowBox[{"$pyVenv", "=", "\n", "\t\t\t", 
+      RowBox[{"With", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"d", "=", 
+          RowBox[{"Replace", "[", 
+           RowBox[{"startDir", ",", 
+            RowBox[{"Automatic", ":>", 
+             RowBox[{"Directory", "[", "]"}]}]}], "]"}]}], "}"}], ",", "\n", 
+        "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"SetDirectory", "[", "dir", "]"}], ";", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"ResetDirectory", "[", "]"}], ";", "#"}], ")"}], "&"}], 
+          "@", "\n", "\t\t\t\t\t", 
+          RowBox[{"<|", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"\"\<Process\>\"", "->", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{"With", "[", 
+              RowBox[{
+               RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+                RowBox[{"po", "=", 
+                 RowBox[{"StartProcess", "[", "$SystemShell", "]"}]}], "\n", 
+                "\t\t\t\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"WriteLine", "[", 
+                 RowBox[{"po", ",", "\"\<source bin/activate\>\""}], "]"}], 
+                ";", "\n", "\t\t\t\t\t\t\t\t", 
+                RowBox[{"WriteLine", "[", 
+                 RowBox[{"po", ",", " ", 
+                  RowBox[{
+                  "\"\<cd \\\"\>\"", "<>", "d", "<>", "\"\<\\\"\>\""}]}], 
+                 "]"}], ";", "\n", "\t\t\t\t\t\t\t\t", "po"}]}], "\n", 
+              "\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"\"\<Venv\>\"", "->", "dir"}]}], "\n", "\t\t\t\t\t\t", 
+           "|>"}]}]}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t", ")"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"PyVenvStart", "[", "name_String", "]"}], ":=", "\n", "\t", 
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{"pyVenvDirQ", "@", 
+     RowBox[{"FileNameJoin", "@", 
+      RowBox[{"{", 
+       RowBox[{"$PyVenvRoot", ",", "name"}], "}"}]}]}], ",", "\n", "\t\t", 
+    RowBox[{"PyVenvStart", "@", 
+     RowBox[{"FileNameJoin", "@", 
+      RowBox[{"{", 
+       RowBox[{"$PyVenvRoot", ",", "name"}], "}"}]}]}], ",", "\n", "\t\t", 
+    "$Failed"}], "\n", "\t\t", "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.709665537229126*^9, 3.709665593933043*^9}, {
+   3.709666133396987*^9, 3.709666186241118*^9}, {3.709666219825922*^9, 
+   3.709666318057878*^9}, {3.709666367970626*^9, 3.709666379378398*^9}, {
+   3.70966645794751*^9, 3.7096665399590178`*^9}, {3.7096666194944067`*^9, 
+   3.709666651200428*^9}, {3.709666728265016*^9, 3.70966680325218*^9}, {
+   3.709667028935268*^9, 3.709667049547163*^9}, {3.7096671097235117`*^9, 
+   3.709667137738638*^9}, {3.7096673378652678`*^9, 3.709667410181303*^9}, 
+   3.709668820217476*^9, 3.7096751425982113`*^9, 
+   3.7096752525996437`*^9},ExpressionUUID->"f63f1f4a-b6da-4a15-9a50-\
+2faa90a65860"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Run", "CodeSubsubsection",
+ CellChangeTimes->{{3.709668830465562*^9, 
+  3.7096688307285137`*^9}},ExpressionUUID->"94aa7202-e996-435f-97a1-\
+4ec41b0247f2"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"PyVenvWrite", "[", "s_String", "]"}], ":=", "\n", "\t", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{"PyVenvActive", "[", "]"}], ",", "\n", "\t\t", 
+     RowBox[{"WriteLine", "[", 
+      RowBox[{
+       RowBox[{"$pyVenv", "[", "\"\<Process\>\"", "]"}], ",", "s"}], "]"}], 
+     ",", "\n", "\t\t", "$Failed"}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"PyVenvWrite", "[", "l_List", "]"}], ":=", "\n", "\t", 
+  RowBox[{"PyVenvWrite", "[", 
+   RowBox[{"PyVenvWriteEscape", "[", "l", "]"}], "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.709666811304298*^9, 3.709666815922689*^9}, {
+  3.709666848946553*^9, 3.709666978488277*^9}, {3.709667094667873*^9, 
+  3.709667100802631*^9}, {3.709667155775668*^9, 3.709667265241576*^9}, {
+  3.709667462272341*^9, 3.709667479229743*^9}, {3.7096675316850147`*^9, 
+  3.709667537737418*^9}, {3.709667604288183*^9, 
+  3.709667622617796*^9}},ExpressionUUID->"9f98f687-d697-4147-966f-\
+693277990fca"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Clear", "[", "PyVenvWriteEscape", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PyVenvWriteEscape", "[", "s_String", "]"}], ":=", "\n", "\t", 
+   "s"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PyVenvWriteEscape", "[", 
+    RowBox[{"File", "[", "f_String", "]"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"\"\<\\\"\>\"", "<>", 
+    RowBox[{"ExpandFileName", "[", "f", "]"}], "<>", "\"\<\\\"\>\""}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PyVenvWriteEscape", "[", 
+    RowBox[{"URL", "[", "u_String", "]"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"\"\<\\\"\>\"", "<>", "u", "<>", "\"\<\\\"\>\""}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"PyVenvWriteEscape", "[", "l_List", "]"}], ":=", "\n", "\t", 
+  RowBox[{"StringRiffle", "@", 
+   RowBox[{"Map", "[", 
+    RowBox[{"PyVenvWriteEscape", ",", "l"}], "]"}]}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PyVenvWriteEscape", "[", "r_Rule", "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"PyVenvWriteEscape", "[", 
+     RowBox[{"First", "[", "r", "]"}], "]"}], "<>", "\"\<--=\>\"", "<>", 
+    RowBox[{"PyVenvWriteEscape", "[", 
+     RowBox[{"Last", "[", "r", "]"}], "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PyVenvWriteEscape", "[", "Break", "]"}], ":=", "\n", "\t", 
+   "\"\<\\n\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PyVenvWriteEscape", "[", "e_", "]"}], ":=", 
+   RowBox[{"ToString", "[", "e", "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.7096674810831757`*^9, 3.709667556961533*^9}, {
+  3.70966801440285*^9, 3.70966805803106*^9}, {3.7096685356811523`*^9, 
+  3.7096685546619883`*^9}, {3.709668638232473*^9, 
+  3.7096686587202806`*^9}},ExpressionUUID->"032fa301-8a14-4d9a-8545-\
+20923bf10be2"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"PyVenvRead", "[", "]"}], ":=", "\n", "\t", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{"PyVenvActive", "[", "]"}], ",", "\n", "\t\t", 
+     RowBox[{"AssociationMap", "[", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"ReadString", "[", 
+         RowBox[{
+          RowBox[{"ProcessConnection", "[", 
+           RowBox[{
+            RowBox[{"$pyVenv", "[", "\"\<Process\>\"", "]"}], ",", "#"}], 
+           "]"}], ",", "EndOfBuffer"}], "]"}], "&"}], ",", "\n", "\t\t\t", 
+       RowBox[{"{", "\n", "\t\t\t\t", 
+        RowBox[{
+        "\"\<StandardOutput\>\"", ",", "\n", "\t", "\t\t\t", 
+         "\"\<StandardError\>\""}], "\n", "\t\t\t\t", "}"}]}], "\n", "\t\t\t",
+       "]"}], ",", "\n", "\t\t", "$Failed"}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.709666811304298*^9, 3.709666815922689*^9}, {
+  3.709666848946553*^9, 3.709666978488277*^9}, {3.709667094667873*^9, 
+  3.709667100802631*^9}, {3.709667155775668*^9, 3.709667265241576*^9}, {
+  3.709667462272341*^9, 
+  3.709667479229743*^9}},ExpressionUUID->"d7e04012-80ef-49aa-9970-\
+aaab7fb580f5"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"$PyVenvRunDelay", "=", ".1"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"$PyVenvReadIterations", "=", "1"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "PyVenvRun", "]"}], "=", "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"TimeConstraint", "\[Rule]", "1"}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<PollTime\>\"", "\[Rule]", ".01"}]}], "\n", "\t\t", "}"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PyVenvRun", "[", 
+    RowBox[{
+     RowBox[{"s", ":", 
+      RowBox[{"_String", "|", "_List"}]}], ",", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Catch", "@", "\n", "\t", 
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{"PyVenvActive", "[", "]"}], ",", "\n", "\t\t", 
+      RowBox[{"Block", "[", 
+       RowBox[{
+        RowBox[{"{", "\n", "\t\t\t", 
+         RowBox[{
+          RowBox[{"poll", "=", 
+           RowBox[{"Replace", "[", 
+            RowBox[{
+             RowBox[{"OptionValue", "[", "\"\<PollTime\>\"", "]"}], ",", 
+             RowBox[{
+              RowBox[{"Except", "[", 
+               RowBox[{"_", "?", "NumericQ"}], "]"}], "\[Rule]", ".01"}]}], 
+            "]"}]}], ",", "\n", "\t\t\t", "reads", ",", "\n", "\t\t\t", 
+          RowBox[{"startflag", "=", 
+           RowBox[{"CreateUUID", "[", "\"\<process-start-\>\"", "]"}]}], ",", 
+          "\n", "\t\t\t", 
+          RowBox[{"doneflag", "=", 
+           RowBox[{"CreateUUID", "[", "\"\<process-\>\"", "]"}]}]}], "\n", 
+         "\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"PyVenvWrite", "[", 
+          RowBox[{
+          "\"\<echo \\\"\>\"", "<>", "startflag", "<>", "\"\<\\\"\>\""}], 
+          "]"}], ";", "\n", "\t\t\t", 
+         RowBox[{"PyVenvWrite", "[", 
+          RowBox[{
+          "\"\<>&2 echo \\\"\>\"", "<>", "startflag", "<>", "\"\<\\\"\>\""}], 
+          "]"}], ";", "\n", "\t\t\t", 
+         RowBox[{"PyVenvWrite", "[", "s", "]"}], ";", "\n", "\t\t\t", 
+         RowBox[{"PyVenvWrite", "[", 
+          RowBox[{
+          "\"\<>&2 echo \\\"\>\"", "<>", "doneflag", "<>", "\"\<\\\"\>\""}], 
+          "]"}], ";", "\n", "\t\t\t", 
+         RowBox[{"PyVenvWrite", "[", 
+          RowBox[{
+          "\"\<echo \\\"\>\"", "<>", "doneflag", "<>", "\"\<\\\"\>\""}], 
+          "]"}], ";", "\n", "\t\t\t", 
+         RowBox[{"Pause", "[", "poll", "]"}], ";", "\n", "\t\t\t", 
+         RowBox[{"reads", "=", 
+          RowBox[{"Replace", "[", 
+           RowBox[{
+            RowBox[{"PyVenvRead", "[", "]"}], ",", 
+            RowBox[{"$Failed", "\[RuleDelayed]", 
+             RowBox[{"Throw", "[", "$Failed", "]"}]}]}], "]"}]}], ";", "\n", 
+         "\t\t\t", 
+         RowBox[{"TimeConstrained", "[", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"While", "[", 
+            RowBox[{
+             RowBox[{"!", 
+              RowBox[{"StringContainsQ", "[", 
+               RowBox[{
+                RowBox[{"reads", "[", "\"\<StandardOutput\>\"", "]"}], ",", 
+                "doneflag"}], "]"}]}], ",", "\n", "\t\t\t\t\t", 
+             RowBox[{"reads", "=", 
+              RowBox[{"Merge", "[", 
+               RowBox[{
+                RowBox[{"{", 
+                 RowBox[{"reads", ",", 
+                  RowBox[{"Replace", "[", 
+                   RowBox[{
+                    RowBox[{"PyVenvRead", "[", "]"}], ",", 
+                    RowBox[{"$Failed", "\[RuleDelayed]", 
+                    RowBox[{"Throw", "[", "$Failed", "]"}]}]}], "]"}]}], 
+                 "}"}], ",", "StringJoin"}], "]"}]}]}], "\n", "\t\t\t\t\t", 
+            "]"}], ",", "\n", "\t\t\t\t", 
+           RowBox[{"Replace", "[", 
+            RowBox[{
+             RowBox[{"OptionValue", "[", "TimeConstraint", "]"}], ",", "\n", 
+             "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Except", "[", 
+               RowBox[{"_", "?", "NumericQ"}], "]"}], "\[Rule]", "1"}]}], 
+            "\n", "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+           RowBox[{"reads", "=", 
+            RowBox[{"Merge", "[", 
+             RowBox[{
+              RowBox[{"{", 
+               RowBox[{"reads", ",", 
+                RowBox[{"Replace", "[", 
+                 RowBox[{
+                  RowBox[{"PyVenvRead", "[", "]"}], ",", 
+                  RowBox[{"$Failed", "\[RuleDelayed]", 
+                   RowBox[{"Throw", "[", "$Failed", "]"}]}]}], "]"}]}], "}"}],
+               ",", "StringJoin"}], "]"}]}]}], "\n", "\t\t\t\t", "]"}], ";", 
+         "\n", "\t\t\t", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"StringTrim", "[", "\n", "\t\t\t\t", 
+            RowBox[{
+             RowBox[{"StringTrim", "[", "\n", "\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Last", "@", 
+                RowBox[{"StringSplit", "[", 
+                 RowBox[{"#", ",", "startflag", ",", "2"}], "]"}]}], ",", 
+               "\n", "\t\t\t\t\t", 
+               RowBox[{"\"\<\\n\>\"", "|", 
+                RowBox[{"(", 
+                 RowBox[{"\"\<\\n\>\"", "<>", "doneflag"}], ")"}]}]}], "\n", 
+              "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"\"\<\\n\>\"", "~~", "EndOfString"}], ")"}], "|", "\n",
+               "\t\t\t\t\t", "startflag", "|", "\n", "\t\t\t\t\t", 
+              "doneflag"}]}], "\n", "\t\t\t\t", "]"}], "&"}], "/@", 
+          "reads"}]}]}], "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
+      "$Failed"}], "\n", "\t\t", "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PyVenvRun", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"dir_String", "?", "pyVenvDirQ"}], ",", "\n", "\t", 
+     RowBox[{"cmd", ":", 
+      RowBox[{"_String", "|", "_List"}]}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"active1", "=", 
+       RowBox[{"PyVenvActive", "[", "]"}]}], "}"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"!", 
+          RowBox[{"PyVenvActive", "[", "]"}]}], "||", 
+         RowBox[{
+          RowBox[{"$PyVenv", "[", "\"\<Directory\>\"", "]"}], "=!=", 
+          "dir"}]}], ",", "\n", "\t\t\t", 
+        RowBox[{"PyVenvStart", "[", "dir", "]"}]}], "\n", "\t\t\t", "]"}], 
+      ";", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{"!", "active1"}], ",", 
+            RowBox[{"PyVenvKill", "[", "]"}]}], "]"}], ";", "#"}], ")"}], 
+        "&"}], "@", 
+       RowBox[{"PyVenvRun", "[", 
+        RowBox[{"cmd", ",", "ops"}], "]"}]}]}]}], "\n", "\t\t", "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PyVenvRun", "[", "\n", "\t", 
+    RowBox[{"s_String", ",", "\n", "\t", 
+     RowBox[{"cmd", ":", 
+      RowBox[{"_String", "|", "_List"}]}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{"pyVenvDirQ", "[", 
+      RowBox[{"FileNameJoin", "@", 
+       RowBox[{"{", 
+        RowBox[{"$PyVenvRoot", ",", "s"}], "}"}]}], "]"}], ",", "\n", "\t\t", 
+     
+     RowBox[{"PyVenvRun", "[", 
+      RowBox[{
+       RowBox[{"FileNameJoin", "@", 
+        RowBox[{"{", 
+         RowBox[{"$PyVenvRoot", ",", "s"}], "}"}]}], ",", "cmd", ",", "ops"}],
+       "]"}]}], "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->CompressedData["
+1:eJxTTMoPSmViYGAQB2IQfX5P5v4Fi187rm77C6a1vOSOgOjv8/2vgGjz+KuP
+QLT6+pmPQbTbpYpXIPrfLvUfIJonzEx+IZCOMD0OpsN2T1QF0W9y3NVBdFDj
+WR0QnSd5wAREz/363BJEz9J4FgCiH034kwiiGSsfloLo76e0qkH0skMpYPpN
+JONNEO3M9O4ViN5iJPwNRDvN+PUDRO8PDty/BEjfS4k6BaKbnoZdBNFHNp+7
+DaI3Ox7mWgqks4tOgmkz42MrVgJpoVNO60A07yzn0PdAuk3BKRpExzzWTALR
+nJxaXSD62yfRySA6LjViG4h+9vzjLhD9tHv5bhAtKHOhQGIJ0H+v8ktAdMyn
+0i0gek+q6B4QXVfPeBBEf9Y+dBpEAwB/tdJN
+  
+  "],ExpressionUUID->"87ace61d-52f6-4ea5-9ce2-edd6863ca5f2"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["PySimpleServer", "CodeSubsection",
+ CellChangeTimes->{{3.709675710799142*^9, 
+  3.7096757147757463`*^9}},ExpressionUUID->"1321e84b-b20d-4e70-81f1-\
+e88fefd200f0"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"$PySimpleServer", "::", "unsupported"}], "=", "\n", "\t", 
+   "\"\<$OperatingSystem isn't supported by SimpleHTTPServer\>\""}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.707828941123652*^9, 3.707828961402656*^9}, {
+  3.709326714914233*^9, 3.709326718519412*^9}, {3.709326848729267*^9, 
+  3.70932685384888*^9}},ExpressionUUID->"2661bbe3-4a40-4bba-a254-\
+53476a171e10"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$PySimpleServer", ":=", "\n", "\t", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{"PySimpleServerRunning", "[", "]"}], ",", "$pySimpleServer", ",",
+      "None"}], "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.709326859446208*^9, 
+  3.709326874989246*^9}},ExpressionUUID->"fd8bfa5c-6181-4676-9049-\
+08699dd9ded6"],
+
+Cell[CellGroupData[{
+
+Cell["PySimpleServerRunning", "CodeSubsubsection",
+ CellChangeTimes->{{3.7093255647877493`*^9, 
+  3.7093255696903877`*^9}},ExpressionUUID->"262c861f-ab88-4f85-89f2-\
+9e7ae905059e"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"PySimpleServerRunning", "[", "]"}], ":=", "\n", "\t", 
+   RowBox[{"MatchQ", "[", 
+    RowBox[{
+     RowBox[{"$pySimpleServer", "[", "\"\<Process\>\"", "]"}], ",", 
+     RowBox[{"_ProcessObject", "?", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"ProcessStatus", "[", 
+         RowBox[{"#", ",", "\"\<Running\>\""}], "]"}], "&"}], ")"}]}]}], 
+    "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.709325573868095*^9, 3.709325590075626*^9}, 
+   3.70932567932121*^9, 
+   3.7093268487408323`*^9},ExpressionUUID->"fcc897b1-1c1a-428e-a5df-\
+5a81b9cc5603"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["PySimpleServerKill", "CodeSubsubsection",
+ CellChangeTimes->{
+  3.7093256240608377`*^9},ExpressionUUID->"92c47915-4cbd-4543-9991-\
+f9e8ef1475db"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"PySimpleServerKill", "[", "]"}], ":=", "\n", "\t", 
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{"PySimpleServerRunning", "[", "]"}], ",", "\n", "\t\t", 
+    RowBox[{"KillProcess", "@", 
+     RowBox[{"$pySimpleServer", "[", "\"\<Process\>\"", "]"}]}]}], "\n", 
+   "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.7093256006436*^9, 3.709325618009883*^9}, 
+   3.7093256793293667`*^9, 
+   3.709326848751313*^9},ExpressionUUID->"ea6518ef-b30c-4700-b36a-\
+49fdade66b6a"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["PySimpleServerStart", "CodeSubsubsection",
+ CellChangeTimes->{{3.70782873532388*^9, 3.707828742228157*^9}, 
+   3.70932562854344*^9},ExpressionUUID->"c886059a-e0e3-444d-bf2e-\
+5a185423cca8"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "PySimpleServerStart", "]"}], "=", "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"\"\<Port\>\"", "\[Rule]", "Automatic"}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<Path\>\"", "\[Rule]", "None"}]}], "\n", "\t\t", "}"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PySimpleServerStart", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"root", ":", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"_String", "|", "_File"}], ")"}], "?", "DirectoryQ"}], "|", 
+       "Automatic"}], ":", "Automatic"}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"port", "=", "\n", "\t\t\t", 
+        RowBox[{"Replace", "[", 
+         RowBox[{
+          RowBox[{"OptionValue", "[", "\"\<Port\>\"", "]"}], ",", 
+          RowBox[{"{", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"Automatic", "\[Rule]", "\"\<7001\>\""}], ",", "\n", 
+            "\t\t\t\t", 
+            RowBox[{"e_", "\[RuleDelayed]", 
+             RowBox[{"ToString", "[", "e", "]"}]}]}], "\n", "\t\t\t\t", 
+           "}"}]}], "]"}]}], ",", "\n", "\t\t", 
+       RowBox[{"path", "=", "\n", "\t\t\t", 
+        RowBox[{"Replace", "[", 
+         RowBox[{
+          RowBox[{"OptionValue", "[", "\"\<Path\>\"", "]"}], ",", 
+          RowBox[{"{", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"Automatic", "\[Rule]", 
+             RowBox[{"{", "}"}]}], ",", "\n", "\t\t\t\t", 
+            RowBox[{
+             RowBox[{"s_String", "?", "FileExistsQ"}], ":>", "\n", 
+             "\t\t\t\t\t", 
+             RowBox[{"FileNameSplit", "[", "s", "]"}]}], ",", "\n", 
+            "\t\t\t\t", 
+            RowBox[{"p_String", ":>", "\n", "\t\t\t\t\t", 
+             RowBox[{"URLParse", "[", 
+              RowBox[{"p", ",", "\"\<Path\>\""}], "]"}]}]}], "\n", "\t\t\t\t",
+            "}"}]}], "]"}]}], ",", "\n", "\t\t", 
+       RowBox[{"dir", "=", 
+        RowBox[{"Replace", "[", 
+         RowBox[{"root", ",", 
+          RowBox[{"Automatic", "\[RuleDelayed]", 
+           RowBox[{"Directory", "[", "]"}]}]}], "]"}]}]}], "\n", "\t\t", 
+      "}"}], ",", "\n", "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"$OperatingSystem", "=!=", "\"\<Windows\>\""}], ",", "\n", 
+       "\t\t\t", 
+       RowBox[{
+        RowBox[{"PySimpleServerKill", "[", "]"}], ";", "\n", "\t\t\t", 
+        RowBox[{"$pySimpleServer", "=", "\n", "\t\t\t\t", 
+         RowBox[{"<|", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"\"\<Process\>\"", "->", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"(", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"SetDirectory", "[", "dir", "]"}], ";", "\n", 
+              "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{"ResetDirectory", "[", "]"}], ";", "#"}], ")"}], 
+                "&"}], "@", "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{"StartProcess", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{"{", 
+                 RowBox[{
+                 "\"\<python\>\"", ",", "\"\<-m\>\"", ",", 
+                  "\"\<SimpleHTTPServer\>\"", ",", "port"}], "}"}], "\n", 
+                "\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t\t", 
+             ")"}]}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{"\"\<Root\>\"", "\[Rule]", "dir"}], ",", "\n", "\t", 
+           "\t\t\t\t", 
+           RowBox[{"\"\<Port\>\"", "\[Rule]", "port"}]}], "\n", "\t", 
+          "\t\t\t\t", "|>"}]}], ";", "\n", "\t", "\t\t", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"path", "=!=", "None"}], ",", "\n", "\t", "\t\t\t", 
+          RowBox[{"SystemOpen", "@", "\n", "\t", "\t\t\t\t", 
+           RowBox[{"URLBuild", "@", 
+            RowBox[{"<|", "\n", "\t", "\t", "\t\t\t\t", 
+             RowBox[{
+              RowBox[{"\"\<Scheme\>\"", "\[Rule]", "\"\<http\>\""}], ",", 
+              "\n", "\t", "\t", "\t\t\t\t", 
+              RowBox[{"\"\<Domain\>\"", "\[Rule]", "\"\<localhost\>\""}], ",",
+               "\n", "\t", "\t", "\t\t\t\t", 
+              RowBox[{"\"\<Port\>\"", "\[Rule]", "port"}], ",", "\n", "\t", 
+              "\t\t\t\t\t", 
+              RowBox[{"\"\<Path\>\"", "\[Rule]", "path"}]}], "\n", 
+             "\t\t\t\t\t\t", "|>"}]}]}]}], "\n", "\t\t\t\t", "]"}], ";", "\n",
+         "\t\t\t", "$pySimpleServer"}], ",", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"Message", "[", 
+         RowBox[{"PySimpleServer", "::", "unsupported"}], "]"}], ";", "\n", 
+        "\t", "\t\t", "$Failed"}]}], "\n", "\t", "\t\t", "]"}]}], "\n", "\t", 
+    "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.7078287649279118`*^9, 3.707828785516734*^9}, {
+   3.707828827753852*^9, 3.7078289128815002`*^9}, {3.707828973360909*^9, 
+   3.7078292144156637`*^9}, {3.707917963430481*^9, 3.707918000777731*^9}, {
+   3.709325447018034*^9, 3.709325447455159*^9}, {3.70932549755974*^9, 
+   3.709325595129279*^9}, 3.709325631337219*^9, {3.709325674481491*^9, 
+   3.709325742066235*^9}, {3.7093259235848*^9, 3.709325928193358*^9}, {
+   3.70932600799998*^9, 3.709326009169856*^9}, {3.709326789337285*^9, 
+   3.709326804663958*^9}, {3.70932684867235*^9, 3.709326848686153*^9}, {
+   3.709326956591638*^9, 3.7093269810224247`*^9}, {3.7093270890440474`*^9, 
+   3.709327174640752*^9}, {3.709327283072926*^9, 3.709327285730351*^9}, {
+   3.709327466674035*^9, 3.709327492424789*^9}, {3.709684849299582*^9, 
+   3.7096848791027946`*^9}, {3.709684919904602*^9, 
+   3.709684955180687*^9}},ExpressionUUID->"fd1c4c8e-fa1c-41c3-83d4-\
+1fc95343438a"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["PySimpleServerOpen", "CodeSubsubsection",
+ CellChangeTimes->{
+  3.7093253910845013`*^9},ExpressionUUID->"a5d7b38c-370f-4fad-a6b5-\
+a127e9c8d246"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "PySimpleServerOpen", "]"}], "=", "\n", "\t", 
+   RowBox[{"Options", "[", "PySimpleServerStart", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"PySimpleServerOpen", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"path", ":", 
+     RowBox[{
+      RowBox[{"_String", "?", "FileExistsQ"}], "|", "Automatic"}], ":", 
+     "Automatic"}], ",", "\n", "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{"p", "=", "\n", "\t\t\t", 
+      RowBox[{"Replace", "[", 
+       RowBox[{"path", ",", "\n", "\t\t\t\t", 
+        RowBox[{"Automatic", "\[RuleDelayed]", 
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{"PySimpleServerRunning", "[", "]"}], ",", 
+           RowBox[{"$pySimpleServer", "[", "\"\<Root\>\"", "]"}], ",", 
+           RowBox[{"Directory", "[", "]"}]}], "]"}]}]}], "\n", "\t\t\t\t", 
+       "]"}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"PySimpleServerRunning", "[", "]"}], "&&", "\n", "\t", "\t\t", 
+       
+       RowBox[{"StringStartsQ", "[", "\n", "\t", "\t\t\t", 
+        RowBox[{
+         RowBox[{"ExpandFileName", "[", "p", "]"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"ExpandFileName", "[", 
+          RowBox[{"$pySimpleServer", "[", "\"\<Root\>\"", "]"}], "]"}]}], 
+        "\n", "\t", "\t\t\t", "]"}]}], ",", "\n", "\t", "\t\t", 
+      RowBox[{"SystemOpen", "@", "\n", "\t", "\t\t\t", 
+       RowBox[{"URLBuild", "@", "\n", "\t\t\t\t\t", 
+        RowBox[{"<|", "\n", "\t\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"\"\<Scheme\>\"", "\[Rule]", "\"\<http\>\""}], ",", "\n", 
+          "\t", "\t", "\t\t\t\t", 
+          RowBox[{"\"\<Domain\>\"", "\[Rule]", "\"\<localhost\>\""}], ",", 
+          "\n", "\t", "\t\t\t\t\t", 
+          RowBox[{"\"\<Port\>\"", "\[Rule]", 
+           RowBox[{"$pySimpleServer", "[", "\"\<Port\>\"", "]"}]}], ",", "\n",
+           "\t", "\t\t\t\t\t", 
+          RowBox[{"\"\<Path\>\"", "->", "\n", "\t", "\t\t\t\t\t\t", 
+           RowBox[{"FileNameSplit", "@", "\n", "\t", "\t\t\t\t\t\t\t", 
+            RowBox[{"FileNameDrop", "[", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"ExpandFileName", "[", "p", "]"}], ",", "\n", "\t", 
+              "\t\t\t\t\t\t\t\t", 
+              RowBox[{"FileNameDepth", "@", 
+               RowBox[{"ExpandFileName", "[", 
+                RowBox[{"$pySimpleServer", "[", "\"\<Root\>\"", "]"}], 
+                "]"}]}]}], "\n", "\t", "\t\t\t\t\t\t\t\t", "]"}]}]}]}], "\n", 
+         "\t", "\t\t\t\t\t", "|>"}]}]}], ",", "\n", "\t\t\t", 
+      RowBox[{"PySimpleServerStart", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"DirectoryQ", "@", "p"}], ",", "p", ",", 
+          RowBox[{"DirectoryName", "[", "p", "]"}]}], "]"}], ",", "\n", 
+        "\t\t\t\t", 
+        RowBox[{"\"\<Path\>\"", "->", "\n", "\t\t\t\t\t", 
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{"DirectoryQ", "@", "p"}], ",", "Automatic", ",", 
+           RowBox[{"FileNameTake", "@", "p"}]}], "]"}]}], ",", "\n", 
+        "\t\t\t\t", "ops"}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", 
+     "]"}]}], "\n", "\t\t", "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.70932538529257*^9, 3.709325428264125*^9}, {
+   3.709325483463977*^9, 3.709325504361392*^9}, {3.709325639911517*^9, 
+   3.709325690216688*^9}, {3.7093257864717712`*^9, 3.7093259109176493`*^9}, {
+   3.709326038895384*^9, 3.7093261323363457`*^9}, {3.709326171201172*^9, 
+   3.709326199666049*^9}, {3.7093268486962347`*^9, 3.7093268487109528`*^9}, {
+   3.709327007097039*^9, 3.709327028196725*^9}, {3.7093270652314453`*^9, 
+   3.709327073249001*^9}, {3.709327190898842*^9, 3.709327212391266*^9}, 
+   3.709327731013389*^9},ExpressionUUID->"7822327f-ecc0-47ae-b400-\
+1ea2463cdb25"]
+}, Open  ]]
+}, Closed]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"End", "[", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"5193f27b-a9a4-4f71-b4b7-\
+2e9832a2d054"]
+}, Open  ]],
+
+Cell["", "SectionSeparator",ExpressionUUID->"a2f4e154-1373-4666-ac08-\
+3805fcf0ca0e"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PyVenvStart", "[", "\"\<pelican\>\"", "]"}]], "CodeInput",
+ CellChangeTimes->{{3.70966650373656*^9, 
+  3.709666506582817*^9}},ExpressionUUID->"0acdaf4a-7c63-4840-ace4-\
+1c768559cb49"],
+
+Cell[BoxData[
+ RowBox[{"\[LeftAssociation]", 
+  RowBox[{
+   RowBox[{"\<\"Process\"\>", "\[Rule]", 
+    RowBox[{"ProcessObject", "[", "37", "]"}]}], ",", 
+   RowBox[{"\<\"Venv\"\>", 
+    "\[Rule]", "\<\"~/Documents/Python/config/pelican\"\>"}]}], 
+  "\[RightAssociation]"}]], "Output",
+ CellChangeTimes->{{3.709666506964663*^9, 3.7096665411505823`*^9}, 
+   3.709666623491766*^9, 3.709666654591894*^9, 3.7096667317016973`*^9, 
+   3.709666804989725*^9, 3.7096670195435047`*^9, 3.709667051148203*^9, 
+   3.709667140008192*^9, 3.709667418785512*^9, 3.7096692224057493`*^9, 
+   3.709669359911044*^9, 3.709669425985486*^9, 
+   3.709669475824854*^9},ExpressionUUID->"c67ded9b-6925-402b-bbb3-\
+fcd4c48eff0d"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PyVenvRun", "[", 
+  RowBox[{"\"\<pelican\>\"", ",", "\n", "\t", 
+   RowBox[{"{", 
+    RowBox[{"\"\<pip\>\"", ",", "\"\<install\>\"", ",", "\"\<markdown\>\""}], 
+    "}"}], ",", "\n", "\t", 
+   RowBox[{"\"\<Delay\>\"", "\[Rule]", ".25"}]}], "\n", "\t", 
+  "]"}]], "CodeInput",
+ CellChangeTimes->{{3.709667653798085*^9, 3.709667662916052*^9}, {
+   3.70966787117728*^9, 3.709667884430971*^9}, {3.709667961958745*^9, 
+   3.709667969127236*^9}, {3.709668982689064*^9, 3.709669041900881*^9}, {
+   3.709669332203525*^9, 3.7096693380532627`*^9}, 3.7096693932640533`*^9, {
+   3.70967525953553*^9, 
+   3.709675305297155*^9}},ExpressionUUID->"e0491f47-f49e-4a95-b39f-\
+50d725cf1c7e"],
+
+Cell[BoxData[
+ RowBox[{"\[LeftAssociation]", 
+  RowBox[{
+   RowBox[{"\<\"StandardOutput\"\>", 
+    "\[Rule]", "\<\"Requirement already satisfied (use --upgrade to upgrade): \
+markdown in \
+./Documents/Python/config/pelican/lib/python2.7/site-packages\\nCleaning \
+up...\\n\"\>"}], ",", 
+   RowBox[{"\<\"StandardError\"\>", "\[Rule]", "\<\"\"\>"}]}], 
+  "\[RightAssociation]"}]], "Output",
+ CellChangeTimes->{
+  3.709669225317362*^9, {3.709669395136652*^9, 3.709669427720093*^9}, 
+   3.709669492131542*^9, {3.709675268287177*^9, 
+   3.709675308309134*^9}},ExpressionUUID->"b88dd357-cd33-455d-80cb-\
+f518eb9b5bff"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"PyVenvRun", "[", 
+  RowBox[{"\"\<pelican\>\"", ",", "\n", "\t", 
+   RowBox[{"{", 
+    RowBox[{"\"\<pip\>\"", ",", "\"\<install\>\"", ",", "\"\<markdown\>\""}], 
+    "}"}], ",", "\n", "\t", 
+   RowBox[{"\"\<Delay\>\"", "\[Rule]", ".25"}]}], "\n", "\t", 
+  "]"}]], "Input",ExpressionUUID->"25535513-1f7b-4b77-9c1a-55ab4cb6da52"]
+},
+WindowSize->{808, 755},
+WindowMargins->{{Automatic, 210}, {Automatic, 2}},
+FrontEndVersion->"11.1 for Mac OS X x86 (32-bit, 64-bit Kernel) (April 27, \
+2017)",
+StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+

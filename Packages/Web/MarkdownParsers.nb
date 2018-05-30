@@ -1,0 +1,2593 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["MarkdownParser", "CodeSection",
+ CellChangeTimes->{{3.7126189403663397`*^9, 3.7126189449249487`*^9}, {
+  3.7225267577846813`*^9, 
+  3.72252676001336*^9}},ExpressionUUID->"9e80f00b-fbc6-4095-a83c-\
+e20e0c9e145b"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"MarkdownToXML", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Converts markdown to XML\>\""}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7125911245387278`*^9, 
+  3.71259113542382*^9}},ExpressionUUID->"643fde71-20f6-4808-8254-\
+51f7f78adf41"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"58e034d9-3a4f-4373-a898-\
+a7a25da5e895"],
+
+Cell[CellGroupData[{
+
+Cell["MarkdownToXML", "CodeSubsection",
+ CellChangeTimes->{{3.712619023511644*^9, 
+  3.712619026320654*^9}},ExpressionUUID->"1f62bfc6-6dd1-4abe-883c-\
+e8a7eaf94faf"],
+
+Cell[BoxData[
+ RowBox[{"markdownToXMLFormat", "//", "ClearAll"}]], "CodeInput",
+ CellChangeTimes->{{3.712592744915291*^9, 3.712592745573382*^9}, {
+  3.7129308329071493`*^9, 
+  3.712930837344966*^9}},ExpressionUUID->"165fae66-ca44-482a-85c7-\
+bf6b783cbfca"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Meta\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7125915870629597`*^9, 
+  3.712591587606221*^9}},ExpressionUUID->"c93261a7-1f1c-4d4d-836a-\
+79a0988e7fdb"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"markdownToXMLFormat", "[", 
+    RowBox[{"\"\<Meta\>\"", ",", "text_"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"XMLElement", "[", 
+      RowBox[{"\"\<meta\>\"", ",", "\n", "\t\t", 
+       RowBox[{"Normal", "@", 
+        RowBox[{"AssociationThread", "[", "\n", "\t\t\t", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"\"\<name\>\"", ",", "\"\<content\>\""}], "}"}], ",", "\n",
+           "\t\t\t", 
+          RowBox[{"StringTrim", "@", "\n", "\t\t\t\t", 
+           RowBox[{"StringSplit", "[", 
+            RowBox[{"#", ",", "\"\<:\>\"", ",", "2"}], "]"}]}]}], "\n", 
+         "\t\t\t", "]"}]}], ",", "\n", "\t\t", 
+       RowBox[{"{", "}"}]}], "\n", "\t\t", "]"}], "&"}], "/@", 
+    RowBox[{"StringSplit", "[", 
+     RowBox[{"text", ",", "\"\<\\n\>\""}], "]"}]}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7125915921678*^9, 3.712591609434731*^9}, {
+   3.7125916605532084`*^9, 3.7125917143523912`*^9}, 3.712592581819685*^9, {
+   3.712592760972473*^9, 3.7125927618501377`*^9}, {3.712592901514453*^9, 
+   3.7125929070400877`*^9}, 
+   3.712930838974613*^9},ExpressionUUID->"7519c343-ba12-4eb8-a75f-\
+225751f9f7cf"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]FenceBlock\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712584832841477*^9, 3.712584834368746*^9}, {
+  3.712588099871892*^9, 
+  3.712588100527226*^9}},ExpressionUUID->"a47c4b1a-418b-4281-be3c-\
+396961ada840"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"markdownToXMLFormat", "[", "\n", "\t", 
+   RowBox[{"\"\<FenceBlock\>\"", ",", "\n", "\t", "text_"}], "\n", "\t", 
+   "]"}], ":=", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{"striptext", "=", "\n", "\t\t\t", 
+      RowBox[{"StringSplit", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"StringTrim", "[", "\n", "\t\t\t\t\t", 
+         RowBox[{"text", ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"StringRepeat", "[", 
+           RowBox[{"\"\<`\>\"", ",", "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"StringLength", "@", "text"}], "-", "\n", "\t", "\t", 
+             "\t", "\t\t\t\t", 
+             RowBox[{"StringLength", "@", 
+              RowBox[{"StringTrim", "[", 
+               RowBox[{"text", ",", 
+                RowBox[{"StartOfString", "~~", 
+                 RowBox[{"(", 
+                  RowBox[{"\"\<`\>\"", ".."}], ")"}]}]}], "]"}]}]}]}], "\n", 
+           "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "]"}], ",", "\n", 
+        "\t\t\t\t", "\"\<\\n\>\"", ",", "\n", "\t\t\t\t", "2"}], "\n", 
+       "\t\t\t\t", "]"}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{"XMLElement", "[", 
+     RowBox[{"\"\<pre\>\"", ",", "\n", "\t\t\t", 
+      RowBox[{"{", "}"}], ",", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{"XMLElement", "[", 
+        RowBox[{"\"\<code\>\"", ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{"!", 
+            RowBox[{"StringMatchQ", "[", 
+             RowBox[{
+              RowBox[{"First", "@", "striptext"}], ",", "Whitespace"}], 
+             "]"}]}], ",", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"{", 
+            RowBox[{"\"\<class\>\"", "\[Rule]", 
+             RowBox[{"\"\<language-\>\"", "<>", 
+              RowBox[{"StringTrim", "[", 
+               RowBox[{"First", "@", "striptext"}], "]"}]}]}], "}"}], ",", 
+           "\n", "\t\t\t\t\t\t", 
+           RowBox[{"{", "}"}]}], "\n", "\t\t\t\t\t\t", "]"}], ",", "\n", 
+         "\t\t\t\t\t", 
+         RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+          RowBox[{"\"\<\\n\>\"", "<>", 
+           RowBox[{"Last", "@", "striptext"}]}], "\n", "\t\t\t\t\t\t", 
+          "}"}]}], "\n", "\t\t\t\t\t", "]"}], "\n", "\t\t\t\t", "}"}]}], "\n",
+      "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.712583963862913*^9, 3.71258409804002*^9}, {
+   3.7125841314486637`*^9, 3.712584146553198*^9}, {3.712584774641122*^9, 
+   3.712584817178355*^9}, {3.712588103509286*^9, 3.7125881202447023`*^9}, {
+   3.7125881621018753`*^9, 3.712588178585115*^9}, {3.7125882421518106`*^9, 
+   3.7125883539494*^9}, {3.712609149869925*^9, 3.712609151091313*^9}, 
+   3.712930841478365*^9},ExpressionUUID->"ebc328aa-857d-43b3-b1c0-\
+fb663c9c0288"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]CodeBlock\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712584832841477*^9, 
+  3.712584834368746*^9}},ExpressionUUID->"0ff29783-0aed-4704-87a6-\
+2e385f56281b"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"markdownToXMLFormat", "[", "\n", "\t", 
+   RowBox[{"\"\<CodeBlock\>\"", ",", "\n", "\t", "text_"}], "\n", "\t", "]"}],
+   ":=", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{"stripableWhitespace", "=", "\n", "\t\t\t", 
+      RowBox[{"First", "@", "\n", "\t\t\t\t", 
+       RowBox[{"MinimalBy", "[", "\n", "\t\t\t\t\t", 
+        RowBox[{
+         RowBox[{"StringCases", "[", 
+          RowBox[{"text", ",", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"StartOfLine", "~~", 
+             RowBox[{"w", ":", 
+              RowBox[{"Whitespace", "?", 
+               RowBox[{"(", 
+                RowBox[{"StringFreeQ", "[", "\"\<\\n\>\"", "]"}], ")"}]}]}], "~~",
+              "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{"Except", "[", "WhitespaceCharacter", "]"}]}], 
+            "\[RuleDelayed]", "w"}]}], "\n", "\t\t\t\t\t\t", "]"}], ",", "\n",
+          "\t\t\t\t\t", "StringLength"}], "\n", "\t\t\t\t\t", "]"}]}]}], "\n",
+      "\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{"XMLElement", "[", 
+     RowBox[{"\"\<pre\>\"", ",", "\n", "\t\t\t", 
+      RowBox[{"{", "}"}], ",", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{"XMLElement", "[", 
+        RowBox[{"\"\<code\>\"", ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"{", "}"}], ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+          RowBox[{"StringTrim", "@", "\n", "\t\t\t\t\t\t\t", 
+           RowBox[{"StringReplace", "[", "\n", "\t\t\t\t\t\t\t\t", 
+            RowBox[{"text", ",", "\n", "\t", "\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"StartOfLine", "~~", "stripableWhitespace"}], 
+              "\[Rule]", "\"\<\>\""}]}], "\n", "\t", "\t", "\t", "\t\t\t\t\t",
+             "]"}]}], "\n", "\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t", 
+        "]"}], "\n", "\t\t\t\t", "}"}]}], "\n", "\t\t\t", "]"}]}], "\n", 
+   "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.712583963862913*^9, 3.71258409804002*^9}, {
+   3.7125841314486637`*^9, 3.712584146553198*^9}, {3.712584774641122*^9, 
+   3.712584817178355*^9}, {3.712588186330008*^9, 3.712588202862813*^9}, {
+   3.712610280602582*^9, 3.712610345106998*^9}, 3.712610391878973*^9, {
+   3.712630445143224*^9, 3.712630456671145*^9}, {3.712630532174223*^9, 
+   3.712630532661957*^9}, {3.712630587503417*^9, 3.712630600080978*^9}, {
+   3.7126319035778103`*^9, 3.712631910923365*^9}, {3.712930844836821*^9, 
+   3.712930845596858*^9}},ExpressionUUID->"d67d572c-2f92-4bc2-8cd3-\
+5dcc09f7733b"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]QuoteBlock\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712584832841477*^9, 3.712584834368746*^9}, {
+  3.712932759248433*^9, 
+  3.7129327599677887`*^9}},ExpressionUUID->"e3cc6355-4aa8-442a-97ff-\
+7fccf29ab06c"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"markdownToXMLFormat", "[", "\n", "\t", 
+   RowBox[{"\"\<QuoteBlock\>\"", ",", "\n", "\t", "text_"}], "\n", "\t", 
+   "]"}], ":=", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{"quoteStripped", "=", "\n", "\t\t\t", 
+      RowBox[{"StringReplace", "[", "\n", "\t\t\t\t", 
+       RowBox[{"text", ",", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"StartOfLine", "~~", "\"\<>\>\""}], "->", "\"\<\>\""}]}], 
+       "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{"XMLElement", "[", 
+     RowBox[{"\"\<blockquote\>\"", ",", "\n", "\t\t\t", 
+      RowBox[{"{", "}"}], ",", "\n", "\t\t\t", 
+      RowBox[{"markdownToXML", "[", "quoteStripped", "]"}]}], "\n", "\t\t\t", 
+     "]"}]}], "\n", "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.712583963862913*^9, 3.71258409804002*^9}, {
+   3.7125841314486637`*^9, 3.712584146553198*^9}, {3.712584774641122*^9, 
+   3.712584817178355*^9}, {3.712588186330008*^9, 3.712588202862813*^9}, {
+   3.712610280602582*^9, 3.712610345106998*^9}, 3.712610391878973*^9, {
+   3.712630445143224*^9, 3.712630456671145*^9}, {3.712630532174223*^9, 
+   3.712630532661957*^9}, {3.712630587503417*^9, 3.712630600080978*^9}, {
+   3.7126319035778103`*^9, 3.712631910923365*^9}, {3.712930844836821*^9, 
+   3.712930845596858*^9}, {3.712932765320242*^9, 3.712932848541628*^9}, 
+   3.712933030943818*^9},ExpressionUUID->"e3bede19-08dd-492f-b5ad-\
+fe77b81ccb48"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Header\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7125895295632277`*^9, 
+  3.712589533027046*^9}},ExpressionUUID->"fda09c39-6bf8-4f0b-8940-\
+0c39eb6eafdd"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"markdownToXMLFormat", "[", "\n", "\t", 
+   RowBox[{"\"\<Header\>\"", ",", "\n", "\t", "text_"}], "\n", "\t", "]"}], ":=",
+   "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"t", "=", 
+      RowBox[{"StringTrim", "[", "text", "]"}]}], "}"}], ",", "\n", "\t\t", 
+    RowBox[{"XMLElement", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"\"\<h\>\"", "<>", "\n", "\t\t\t\t", 
+       RowBox[{"ToString", "[", 
+        RowBox[{
+         RowBox[{"StringLength", "[", "t", "]"}], "-", "\n", "\t", "\t\t\t\t", 
+         RowBox[{"StringLength", "[", 
+          RowBox[{"StringTrim", "[", 
+           RowBox[{"t", ",", 
+            RowBox[{"StartOfString", "~~", 
+             RowBox[{"\"\<#\>\"", ".."}]}]}], "]"}], "]"}]}], "]"}]}], ",", 
+      "\n", "\t\t\t", 
+      RowBox[{"{", "}"}], ",", "\n", "\t\t\t", 
+      RowBox[{"markdownToXML", "[", 
+       RowBox[{
+        RowBox[{"StringTrim", "[", 
+         RowBox[{"t", ",", 
+          RowBox[{"StartOfString", "~~", 
+           RowBox[{"\"\<#\>\"", ".."}]}]}], "]"}], ",", 
+        "$markdownToXMLElementRules"}], "]"}]}], "\n", "\t\t\t", "]"}]}], 
+   "\n", "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.712589530269245*^9, 3.712589619297452*^9}, {
+   3.712590789325131*^9, 3.712590789971059*^9}, {3.71259325779031*^9, 
+   3.712593262043249*^9}, {3.712610818624515*^9, 3.712610820702767*^9}, 
+   3.7129308491966133`*^9},ExpressionUUID->"d938b616-0808-4456-9750-\
+205e4afa2fbe"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Item\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7125976546337557`*^9, 
+  3.7125976550493393`*^9}},ExpressionUUID->"f86cfc57-e5a7-4feb-bd22-\
+78deb89ade72"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"markdownToXMLItemRecursiveFormat", "[", "l_", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"With", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{"number", "=", 
+      RowBox[{"l", "[", 
+       RowBox[{"[", 
+        RowBox[{"1", ",", "1", ",", "2"}], "]"}], "]"}]}], "\n", "\t\t\t", 
+     "}"}], ",", "\n", "\t\t", 
+    RowBox[{"XMLElement", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"Switch", "[", 
+       RowBox[{
+        RowBox[{"l", "[", 
+         RowBox[{"[", 
+          RowBox[{"1", ",", "1", ",", "1"}], "]"}], "]"}], ",", "\n", 
+        "\t\t\t\t", "DigitCharacter", ",", "\n", "\t\t\t\t\t", "\"\<ol\>\"", 
+        ",", "\n", "\t", "\t\t\t", "_", ",", "\n", "\t", "\t\t\t\t", 
+        "\"\<ul\>\""}], "\n", "\t", "\t\t\t", "]"}], ",", "\n", "\t", "\t\t", 
+      
+      RowBox[{"{", "}"}], ",", "\n", "\t\t\t", 
+      RowBox[{"Flatten", "@", 
+       RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"SplitBy", "[", 
+          RowBox[{"l", ",", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"#", "[", 
+              RowBox[{"[", 
+               RowBox[{"1", ",", "2"}], "]"}], "]"}], "\[Equal]", "number"}], 
+            "&"}]}], "\n", "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"{", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"mainlist", ":", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"{", 
+                 RowBox[{"_", ",", " ", "number"}], "}"}], "\[Rule]", "_"}], 
+               ",", "\n", "\t", "\t\t\t\t\t\t\t", "___"}], "\n", "\t", 
+              "\t\t\t\t\t\t\t", "}"}]}], ":>", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{"Last", "/@", "mainlist"}]}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{"sublist_", ":>", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+            "markdownToXMLItemRecursiveFormat", "[", "sublist", "]"}]}]}], 
+          "\n", "\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t", "1"}], "\n", 
+        "\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+   "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.712599000461113*^9, 3.712599066933628*^9}, {
+   3.712599155347239*^9, 3.712599156470695*^9}, {3.712599329896247*^9, 
+   3.7125994363157578`*^9}, {3.7125994666621923`*^9, 3.712599569533061*^9}, {
+   3.712607389922812*^9, 3.7126073900974007`*^9}, {3.712607569717833*^9, 
+   3.712607570604763*^9}, {3.7126088344642487`*^9, 3.712608845527326*^9}, 
+   3.712608912614524*^9, 3.7129308526124897`*^9, 3.722998105833315*^9, {
+   3.722998149234477*^9, 
+   3.722998157741227*^9}},ExpressionUUID->"e8fec21f-1d9d-4f49-b7f7-\
+7dbc5e080915"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"markdownToXMLFormat", "[", 
+   RowBox[{"\"\<Item\>\"", ",", "text_String"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{"lines", "=", "\n", "\t\t\t", 
+      RowBox[{"StringJoin", "/@", "\n", "\t\t\t\t", 
+       RowBox[{"Partition", "[", "\n", "\t\t\t\t\t", 
+        RowBox[{
+         RowBox[{"StringSplit", "[", 
+          RowBox[{"text", ",", "\n", "\t", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"StartOfLine", "~~", "\n", "\t", "\t\t\t\t\t\t", 
+             RowBox[{"ws", ":", 
+              RowBox[{"(", 
+               RowBox[{"Whitespace", "|", "\"\<\>\""}], ")"}]}], "~~", "\n", 
+             "\t", "\t\t\t\t\t\t\t", 
+             RowBox[{"thing", ":", 
+              RowBox[{"(", 
+               RowBox[{"\"\<* \>\"", "|", "\"\<- \>\"", "|", 
+                RowBox[{"(", 
+                 RowBox[{"(", 
+                  RowBox[{
+                   RowBox[{"DigitCharacter", ".."}], "~~", "\"\<.\>\""}], 
+                  ")"}], ")"}]}], ")"}]}]}], ":>", "\n", "\t", "\t\t\t\t\t\t", 
+            RowBox[{"ws", "<>", "thing"}]}]}], "\n", "\t", "\t\t\t\t\t", 
+          "]"}], ",", "\n", "\t\t\t\t\t", "2"}], "\n", "\t\t\t\t\t", 
+        "]"}]}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{"markdownToXMLItemRecursiveFormat", "/@", "\n", "\t\t\t", 
+     RowBox[{"SplitBy", "[", "\n", "\t\t\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{
+         RowBox[{"With", "[", 
+          RowBox[{
+           RowBox[{"{", "\n", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"subtype", "=", "\n", "\t\t\t\t\t\t", 
+              RowBox[{"Floor", "[", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{"StringLength", "[", "#", "]"}], "\n", 
+                  "\t\t\t\t\t\t\t\t", "-", 
+                  RowBox[{"StringLength", "@", 
+                   RowBox[{"StringTrim", "[", 
+                    RowBox[{"#", ",", " ", 
+                    RowBox[{"StartOfString", "~~", "Whitespace"}]}], 
+                    "]"}]}]}], ")"}], "/", "2"}], "\n", "\t\t\t\t\t\t\t", 
+               "]"}]}], ",", "\n", "\t\t\t\t\t", 
+             RowBox[{"thingtype", "=", "\n", "\t\t\t\t\t\t", 
+              RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"StringTake", "[", "\n", "\t", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"StringTrim", "[", 
+                   RowBox[{"#", ",", 
+                    RowBox[{"StartOfString", "~~", "Whitespace"}]}], "]"}], 
+                  ",", "\n", "\t", "\t\t\t\t\t\t\t", "2"}], "]"}], ",", 
+                RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"t", ":", 
+                    RowBox[{"(", 
+                    RowBox[{"\"\<* \>\"", "|", "\"\<- \>\""}], ")"}]}], 
+                   "\[RuleDelayed]", "t"}], ",", "\n", "\t", "\t\t\t\t\t\t", 
+                  RowBox[{"_", "\[Rule]", "DigitCharacter"}]}], "\n", "\t", 
+                 "\t\t\t\t\t\t", "}"}]}], "]"}]}]}], "\n", "\t", "\t", 
+            "\t\t\t", "}"}], ",", "\n", "\t", "\t", "\t\t\t", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"thingtype", ",", "subtype"}], "}"}], "->", "\n", "\t", 
+            "\t", "\t\t\t\t", 
+            RowBox[{"XMLElement", "[", 
+             RowBox[{"\"\<li\>\"", ",", 
+              RowBox[{"{", "}"}], ",", "\n", "\t", "\t", "\t\t\t\t\t", 
+              RowBox[{
+              "markdownToXML", "@", "\n", "\t", "\t", "\t\t\t\t\t\t", 
+               RowBox[{
+               "StringTrim", "[", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
+                RowBox[{"StringTrim", "[", 
+                 RowBox[{"#", ",", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"(", 
+                    RowBox[{"Whitespace", "|", "\"\<\>\""}], ")"}], "~~", 
+                   "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"(", 
+                    RowBox[{"\"\<* \>\"", "|", "\"\<- \>\"", "|", 
+                    RowBox[{"(", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{"DigitCharacter", ".."}], "~~", "\"\<. \>\""}], 
+                    ")"}], ")"}]}], ")"}]}]}], "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                 "]"}], "\n", "\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", 
+             "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t", "]"}], "&"}], "/@",
+         "lines"}], ",", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"#", "[", 
+         RowBox[{"[", 
+          RowBox[{"1", ",", "1"}], "]"}], "]"}], "&"}]}], "\n", "\t\t\t", 
+      "]"}]}]}], "\n", "\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.712597671333057*^9, 3.712597694326527*^9}, {
+  3.712597725114944*^9, 3.712597743009609*^9}, {3.7125978742883377`*^9, 
+  3.712598021501101*^9}, {3.712598111471304*^9, 3.712598157789383*^9}, {
+  3.712598617539426*^9, 3.712598749289001*^9}, {3.712598780378147*^9, 
+  3.7125989802030487`*^9}, {3.7125992348934393`*^9, 3.712599275563428*^9}, {
+  3.712599583334886*^9, 3.712599595257764*^9}, {3.7126072063781157`*^9, 
+  3.712607260192277*^9}, {3.712607331881645*^9, 3.712607344691901*^9}, {
+  3.71260889374573*^9, 3.712608895420156*^9}, {3.712930855349592*^9, 
+  3.712930862486752*^9}, {3.722998170811602*^9, 3.722998194223312*^9}, {
+  3.722998308799202*^9, 
+  3.722998359780341*^9}},ExpressionUUID->"b66b313a-a8c9-47d1-8a40-\
+a2d6e0af27d6"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]ItalBold\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7125976546337557`*^9, 3.7125976550493393`*^9}, {
+   3.722731261577491*^9, 3.7227312619924088`*^9}, {3.7227315180903063`*^9, 
+   3.722731521096801*^9}, 
+   3.722731569089779*^9},ExpressionUUID->"24550e98-0123-4b15-90ab-\
+3560b6dd3ebb"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"markdownToXMLFormat", "[", "\n", "\t", 
+   RowBox[{"\"\<ItalBold\>\"", ",", "\n", "\t", "t_"}], "\n", "\t", "]"}], ":=",
+   "\n", "\t", 
+  RowBox[{"With", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{"new", "=", "\n", "\t\t\t\t", 
+      RowBox[{"StringTrim", "[", 
+       RowBox[{"t", ",", " ", 
+        RowBox[{"Repeated", "[", 
+         RowBox[{"\"\<*\>\"", "|", "\"\<_\>\""}], "]"}]}], "]"}]}], "\n", 
+     "\t", "\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{"Which", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        RowBox[{"StringLength", "[", "t", "]"}], "-", 
+        RowBox[{"StringLength", "[", "new", "]"}]}], "<", "4"}], ",", "\n", 
+      "\t\t\t\t", 
+      RowBox[{"XMLElement", "[", 
+       RowBox[{"\"\<em\>\"", ",", " ", 
+        RowBox[{"{", "}"}], ",", " ", "\n", "\t\t\t\t\t", 
+        RowBox[{"markdownToXML", "[", 
+         RowBox[{
+         "new", ",", "\n", "\t\t\t\t\t\t", "$markdownToXMLElementRules"}], 
+         "\n", "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "]"}], ",", "\n", 
+      "\t\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"StringLength", "[", "t", "]"}], "-", 
+        RowBox[{"StringLength", "[", "new", "]"}]}], "<", "6"}], ",", "\n", 
+      "\t\t\t\t", 
+      RowBox[{"XMLElement", "[", 
+       RowBox[{"\"\<strong\>\"", ",", " ", 
+        RowBox[{"{", "}"}], ",", " ", "\n", "\t\t\t\t\t", 
+        RowBox[{"markdownToXML", "[", 
+         RowBox[{
+         "new", ",", "\n", "\t\t\t\t\t\t", "$markdownToXMLElementRules"}], 
+         "\n", "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "]"}], ",", "\n", 
+      "\t\t\t", "True", ",", "\n", "\t\t\t\t", 
+      RowBox[{"XMLElement", "[", 
+       RowBox[{"\"\<em\>\"", ",", " ", 
+        RowBox[{"{", "}"}], ",", "\n", "\t\t\t\t\t", 
+        RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+         RowBox[{"XMLElement", "[", 
+          RowBox[{"\"\<strong\>\"", ",", " ", 
+           RowBox[{"{", "}"}], ",", " ", "\n", "\t\t\t\t\t\t\t", 
+           RowBox[{"markdownToXML", "[", 
+            RowBox[{
+            "new", ",", "\n", "\t\t\t\t\t\t\t\t", 
+             "$markdownToXMLElementRules"}], "\n", "\t\t\t\t\t\t\t\t", 
+            "]"}]}], "\n", "\t\t\t\t\t\t\t", "]"}], "\n", "\t\t\t\t\t\t", 
+         "}"}]}], "\n", "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", 
+   "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.722731516053094*^9, 3.7227315168537827`*^9}, {
+  3.7227315714776487`*^9, 3.7227316545793447`*^9}, {3.722731697950646*^9, 
+  3.7227317545739927`*^9}, {3.722731786379854*^9, 3.722731801489532*^9}, {
+  3.722732181276946*^9, 3.722732215672824*^9}, {3.722733229301319*^9, 
+  3.722733272128543*^9}},ExpressionUUID->"a764d478-09c8-4b88-90c6-\
+92e7b9ce888b"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Delimiter\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712590814499344*^9, 
+  3.712590815722493*^9}},ExpressionUUID->"66aaed1d-40bd-4e0a-83a6-\
+4d52ad6e537f"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"markdownToXMLFormat", "[", "\n", "\t", 
+   RowBox[{"\"\<Delimiter\>\"", ",", "\n", "\t", "_"}], "\n", "\t", "]"}], ":=",
+   "\n", "\t", 
+  RowBox[{"XMLElement", "[", 
+   RowBox[{"\"\<hr\>\"", ",", 
+    RowBox[{"{", "}"}], ",", 
+    RowBox[{"{", "}"}]}], "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.712589530269245*^9, 3.712589619297452*^9}, {
+   3.712590789325131*^9, 3.712590810858287*^9}, 
+   3.712930866515769*^9},ExpressionUUID->"1a9fcaed-38cb-481e-89e1-\
+abc63623de3e"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]CodeLine\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{
+  3.712585193126368*^9},ExpressionUUID->"5cf5b829-a8b5-45f4-a22d-\
+975c69e73603"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"markdownToXMLFormat", "[", "\n", "\t", 
+   RowBox[{"\"\<CodeLine\>\"", ",", "\n", "\t", "text_"}], "\n", "\t", "]"}], 
+  ":=", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{"striptext", "=", "\n", "\t\t\t", 
+      RowBox[{"StringTrim", "[", "\n", "\t\t\t\t", 
+       RowBox[{"text", ",", "\n", "\t\t\t\t", 
+        RowBox[{"StringRepeat", "[", 
+         RowBox[{"\"\<`\>\"", ",", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"StringLength", "@", "text"}], "-", "\n", "\t", "\t", 
+           "\t\t\t\t", 
+           RowBox[{"StringLength", "@", 
+            RowBox[{"StringTrim", "[", 
+             RowBox[{"text", ",", 
+              RowBox[{"StartOfString", "~~", 
+               RowBox[{"(", 
+                RowBox[{"\"\<`\>\"", ".."}], ")"}]}]}], "]"}]}]}]}], "\n", 
+         "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t", 
+     "}"}], ",", "\n", "\t\t", 
+    RowBox[{"XMLElement", "[", 
+     RowBox[{"\"\<code\>\"", ",", 
+      RowBox[{"{", "}"}], ",", 
+      RowBox[{"{", "striptext", "}"}]}], "]"}]}], "\n", "\t\t", 
+   "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.712584843738523*^9, 3.712584946723186*^9}, {
+   3.712584986655004*^9, 3.712584999232127*^9}, {3.712585126948017*^9, 
+   3.7125851901442747`*^9}, {3.7125874006549664`*^9, 3.71258748525047*^9}, {
+   3.712587523004903*^9, 3.712587609728209*^9}, {3.7125876405243483`*^9, 
+   3.712587734254292*^9}, {3.7125878123905897`*^9, 3.712587855272668*^9}, {
+   3.712587932496015*^9, 3.712587940928434*^9}, {3.71258837263911*^9, 
+   3.712588401112783*^9}, 
+   3.712930868652313*^9},ExpressionUUID->"8514dd20-ae2b-48ff-a3b5-\
+115e15c90c66"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]XML\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{
+  3.712585193126368*^9, {3.7126165836400537`*^9, 3.712616584983378*^9}, 
+   3.733154881646592*^9},ExpressionUUID->"81ce9b91-b363-4762-b3c3-\
+1bc169d26212"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"markdownToXMLFormat", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"\"\<XMLBlock\>\"", "|", "\"\<XMLLine\>\""}], ",", "\n", "\t", 
+    "text_"}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+  RowBox[{"FirstCase", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"ImportString", "[", 
+     RowBox[{"text", ",", " ", 
+      RowBox[{"{", 
+       RowBox[{"\"\<HTML\>\"", ",", " ", "\"\<XMLObject\>\""}], "}"}]}], 
+     "]"}], ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"XMLElement", "[", 
+       RowBox[{
+        RowBox[{"\"\<body\>\"", "|", "\"\<head\>\""}], ",", " ", "_", ",", 
+        " ", "b_"}], "]"}], "|", 
+      RowBox[{"b", ":", 
+       RowBox[{"XMLElement", "[", 
+        RowBox[{"\"\<script\>\"", ",", " ", "__"}], "]"}]}]}], 
+     "\[RuleDelayed]", "b"}], ",", "\n", "\t\t", "\"\<\>\"", ",", "\n", 
+    "\t\t", "\[Infinity]"}], "\n", "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.712584843738523*^9, 3.712584946723186*^9}, {
+   3.712584986655004*^9, 3.712584999232127*^9}, {3.712585126948017*^9, 
+   3.7125851901442747`*^9}, {3.7125874006549664`*^9, 3.71258748525047*^9}, {
+   3.712587523004903*^9, 3.712587609728209*^9}, {3.7125876405243483`*^9, 
+   3.712587734254292*^9}, {3.7125878123905897`*^9, 3.712587855272668*^9}, {
+   3.712587932496015*^9, 3.712587940928434*^9}, {3.71258837263911*^9, 
+   3.712588401112783*^9}, {3.712616586383531*^9, 3.7126165883046*^9}, {
+   3.7126166218412123`*^9, 3.712616636367444*^9}, {3.712617390682933*^9, 
+   3.71261739152035*^9}, {3.712617424049747*^9, 3.712617436217814*^9}, {
+   3.712617550577567*^9, 3.7126175510878153`*^9}, {3.712617581481517*^9, 
+   3.7126176082584763`*^9}, {3.712618610634742*^9, 3.712618643193942*^9}, 
+   3.712930871332491*^9, {3.722732843663464*^9, 3.722732847164001*^9}, 
+   3.733151846268332*^9, {3.733151881114916*^9, 3.733151890291787*^9}, {
+   3.7331548850403967`*^9, 
+   3.733154897220601*^9}},ExpressionUUID->"78926e6d-0878-4488-b0c1-\
+8093879ad81d"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Hyperlink\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7125852658153553`*^9, 
+  3.712585267156897*^9}},ExpressionUUID->"33833740-8713-49de-9f88-\
+112df3974689"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"markdownToXMLFormat", "[", "\n", "\t", 
+   RowBox[{"\"\<Link\>\"", ",", "\n", "\t", "text_"}], "\n", "\t", "]"}], ":=",
+   "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{"bits", "=", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"StringRiffle", "[", 
+           RowBox[{
+            RowBox[{"#", "[", 
+             RowBox[{"[", 
+              RowBox[{";;", 
+               RowBox[{"-", "2"}]}], "]"}], "]"}], ",", " ", "\"\<](\>\""}], 
+           "]"}], ",", " ", 
+          RowBox[{"#", "[", 
+           RowBox[{"[", 
+            RowBox[{"-", "1"}], "]"}], "]"}]}], "}"}], "&"}], "@", 
+       RowBox[{"StringSplit", "[", "\n", "\t\t\t\t", 
+        RowBox[{"text", ",", "\n", "\t\t\t\t", "\"\<](\>\""}], "\n", 
+        "\t\t\t\t", "]"}]}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{"XMLElement", "[", 
+     RowBox[{"\"\<a\>\"", ",", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{"\"\<href\>\"", "->", "\n", "\t\t\t\t\t", 
+        RowBox[{"StringTrim", "[", 
+         RowBox[{
+          RowBox[{"Last", "[", "bits", "]"}], ",", "\"\<)\>\""}], "]"}]}], 
+       "\n", "\t\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+      RowBox[{"markdownToXML", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"StringTrim", "[", 
+         RowBox[{
+          RowBox[{"First", "[", "bits", "]"}], ",", "\"\<[\>\""}], "]"}], ",",
+         "\n", "\t\t\t\t", "$markdownToXMLElementRules"}], "\n", "\t\t\t\t", 
+       "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.712584843738523*^9, 3.712584946723186*^9}, {
+   3.712584986655004*^9, 3.712584999232127*^9}, {3.712585126948017*^9, 
+   3.712585205695238*^9}, {3.712585279797346*^9, 3.7125853433153563`*^9}, {
+   3.71258540258398*^9, 3.712585403746532*^9}, {3.712610849209692*^9, 
+   3.712610853231632*^9}, 3.712930873396324*^9, {3.722976584892807*^9, 
+   3.722976586651188*^9}, {3.72297662450119*^9, 3.7229766373103857`*^9}, {
+   3.722977279028818*^9, 3.722977294913508*^9}, {3.722977357776764*^9, 
+   3.722977367438594*^9}, {3.722977455223713*^9, 
+   3.722977484455503*^9}},ExpressionUUID->"c43c6bd5-69e4-4211-a8a7-\
+4d9adf4c8b41"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Img\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7125852658153553`*^9, 3.712585267156897*^9}, {
+  3.712585351555884*^9, 
+  3.712585351930613*^9}},ExpressionUUID->"70450f71-ec51-4ff8-9f92-\
+3da871812b5d"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"markdownToXMLFormat", "[", "\n", "\t", 
+   RowBox[{"\"\<Image\>\"", ",", "\n", "\t", "text_"}], "\n", "\t", "]"}], ":=",
+   "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{"bits", "=", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"StringJoin", "@", 
+           RowBox[{"#", "[", 
+            RowBox[{"[", 
+             RowBox[{";;", 
+              RowBox[{"-", "2"}]}], "]"}], "]"}]}], ",", " ", 
+          RowBox[{"#", "[", 
+           RowBox[{"[", 
+            RowBox[{"-", "1"}], "]"}], "]"}]}], "}"}], "&"}], "@", 
+       RowBox[{"StringSplit", "[", "\n", "\t\t\t\t", 
+        RowBox[{"text", ",", "\n", "\t\t\t\t", "\"\<](\>\""}], "\n", 
+        "\t\t\t\t", "]"}]}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{"XMLElement", "[", 
+     RowBox[{"\"\<img\>\"", ",", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"\"\<src\>\"", "->", "\n", "\t\t\t\t\t", 
+         RowBox[{"StringTrim", "[", 
+          RowBox[{
+           RowBox[{"Last", "[", "bits", "]"}], ",", "\"\<)\>\""}], "]"}]}], 
+        ",", "\n", "\t\t\t\t", 
+        RowBox[{"\"\<alt\>\"", "->", "\n", "\t\t\t\t\t", 
+         RowBox[{"StringTrim", "[", 
+          RowBox[{
+           RowBox[{"First", "[", "bits", "]"}], ",", "\"\<![\>\""}], 
+          "]"}]}]}], "\n", "\t\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+      RowBox[{"{", "}"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+   "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.712584843738523*^9, 3.712584946723186*^9}, {
+   3.712584986655004*^9, 3.712584999232127*^9}, {3.712585126948017*^9, 
+   3.712585205695238*^9}, {3.712585279797346*^9, 3.712585355580184*^9}, {
+   3.712585447084729*^9, 3.712585494648614*^9}, 3.712930875796322*^9, {
+   3.722977424291898*^9, 
+   3.722977445932652*^9}},ExpressionUUID->"e6b7ece0-44f6-4d1e-9a77-\
+cd53c7c015cb"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"markdownToXMLFormat", "[", "\n", "\t", 
+   RowBox[{"\"\<ImageRef\>\"", ",", "\n", "\t", "text_"}], "\n", "\t", "]"}], 
+  ":=", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{"bits", "=", "\n", "\t\t\t", 
+      RowBox[{"StringSplit", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+       "text", ",", "\n", "\t\t\t\t", "\"\<][\>\"", ",", "\n", "\t\t\t\t", 
+        "2"}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t", "}"}], ",", "\n", 
+    "\t\t", 
+    RowBox[{"XMLElement", "[", 
+     RowBox[{"\"\<img\>\"", ",", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"\"\<src\>\"", "->", "\n", "\t\t\t\t\t", 
+         RowBox[{"\"\<ImageRefLink\>\"", "@", 
+          RowBox[{"StringTrim", "[", 
+           RowBox[{
+            RowBox[{"Last", "[", "bits", "]"}], ",", "\"\<]\>\""}], "]"}]}]}],
+         ",", "\n", "\t\t\t\t", 
+        RowBox[{"\"\<alt\>\"", "->", "\n", "\t\t\t\t\t", 
+         RowBox[{"StringTrim", "[", 
+          RowBox[{
+           RowBox[{"First", "[", "bits", "]"}], ",", "\"\<![\>\""}], 
+          "]"}]}]}], "\n", "\t\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+      RowBox[{"{", "}"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+   "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.722729178940522*^9, 3.722729208922661*^9}, {
+  3.722729281983459*^9, 3.7227292842377567`*^9}, {3.722729503152317*^9, 
+  3.7227295045968027`*^9}, {3.7227309331552277`*^9, 
+  3.722730935297637*^9}},ExpressionUUID->"9e18e983-999e-48c6-89a4-\
+96ff0095a512"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"markdownToXMLFormat", "[", "\n", "\t", 
+    RowBox[{"\"\<ImageRefLink\>\"", ",", "\n", "\t", "text_"}], "\n", "\t", 
+    "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{"bits", "=", "\n", "\t\t\t", 
+       RowBox[{"StringSplit", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+        "text", ",", "\n", "\t\t\t\t", "\"\<]:\>\"", ",", "\n", "\t\t\t\t", 
+         "2"}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t", "}"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{
+      RowBox[{"Sow", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"\"\<ImageRefLink\>\"", ",", " ", "\n", "\t\t\t", 
+          RowBox[{"StringTrim", "[", 
+           RowBox[{
+            RowBox[{"First", "@", "bits"}], ",", " ", 
+            RowBox[{
+             RowBox[{"(", 
+              RowBox[{"Whitespace", "|", "\"\<\>\""}], ")"}], "~~", 
+             "\"\<[\>\""}]}], "]"}]}], "}"}], "->", 
+        RowBox[{"Last", "@", "bits"}]}], "]"}], ";", "\n", "\t\t\t", 
+      "Nothing"}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"markdownToXMLFormat", "[", "\n", "\t", 
+   RowBox[{"\"\<ImageRefLinkBlock\>\"", ",", "\n", "\t", "text_"}], "\n", 
+   "\t", "]"}], ":=", "\n", "\t", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"markdownToXMLFormat", "[", 
+     RowBox[{"\"\<ImageRefLink\>\"", ",", " ", "#"}], "]"}], "&"}], "/@", 
+   "\n", "\t\t", 
+   RowBox[{"Select", "[", 
+    RowBox[{
+     RowBox[{"StringSplit", "[", 
+      RowBox[{"text", ",", " ", "\"\<\\n\>\""}], "]"}], ",", "\n", "\t\t\t", 
+     RowBox[{"Not", "@*", 
+      RowBox[{"StringMatchQ", "[", "Whitespace", "]"}]}]}], "\n", "\t\t\t", 
+    "]"}]}]}]}], "CodeInput",
+ CellChangeTimes->{{3.722729178940522*^9, 3.7227292673275003`*^9}, {
+   3.722729852230435*^9, 3.722729893692144*^9}, {3.722730619987852*^9, 
+   3.722730622121168*^9}, {3.722731010231501*^9, 3.7227310161710176`*^9}, 
+   3.722732485447424*^9},ExpressionUUID->"e6b107b5-7390-49f9-bbb1-\
+2b94edca8462"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Fallback\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712585411362853*^9, 
+  3.712585412778001*^9}},ExpressionUUID->"4c7f73e4-3ae8-41e6-8794-\
+6e55c7eae903"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"markdownToXMLFormat", "[", 
+   RowBox[{"t_", ",", "text_String"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"XMLElement", "[", 
+   RowBox[{"t", ",", 
+    RowBox[{"{", "}"}], ",", 
+    RowBox[{"{", "text", "}"}]}], "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.7125854144515343`*^9, 3.712585432196765*^9}, {
+  3.712592556522406*^9, 3.712592572502489*^9}, {3.712930880067225*^9, 
+  3.7129309161003313`*^9}},ExpressionUUID->"e74de158-3e2a-4473-a7f4-\
+163fadbd3789"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]markdownToXMLValidateXMLBlock\[RightFloor]", \
+"CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.72273558063697*^9, 
+  3.722735594900942*^9}},ExpressionUUID->"9a1515f0-9990-4918-893e-\
+936c0e428094"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"markdownToXMLValidateXMLBlock", "[", 
+   RowBox[{"block_", ",", " ", "start_", ",", " ", "end_"}], "]"}], ":=", 
+  "\n", "\t", 
+  RowBox[{
+   RowBox[{"start", "\[Equal]", "end"}], "&&", "\n", "\t\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{"splits", "=", "\n", "\t\t\t\t", 
+       RowBox[{"StringCases", "[", 
+        RowBox[{"block", ",", "\n", "\t", "\t", "\t\t\t", 
+         RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{"\"\<<\>\"", "~~", 
+              RowBox[{"(", 
+               RowBox[{"Whitespace", "|", "\"\<\>\""}], ")"}], "~~", 
+              RowBox[{"(", 
+               RowBox[{"Whitespace", "|", "\"\<\>\""}], ")"}], "~~", 
+              "start"}], ")"}], "->", "\n", "\t", "\t", "\t", "\t\t\t\t", 
+            "\"\<Open\>\""}], ",", "\n", "\t", "\t", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{"\"\<<\>\"", "~~", 
+              RowBox[{"(", 
+               RowBox[{"Whitespace", "|", "\"\<\>\""}], ")"}], "~~", 
+              "\"\</\>\"", "~~", 
+              RowBox[{"(", 
+               RowBox[{"Whitespace", "|", "\"\<\>\""}], ")"}], "~~", "end"}], 
+             ")"}], "->", "\n", "\t", "\t", "\t\t\t\t\t", "\"\<Close\>\""}]}],
+           "\n", "\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t", "]"}]}], "\n", 
+      "\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"Count", "[", 
+        RowBox[{"splits", ",", " ", "\"\<Open\>\""}], "]"}], "\[Equal]", 
+       RowBox[{"Count", "[", 
+        RowBox[{"splits", ",", " ", "\"\<Close\>\""}], "]"}]}], "&&", "\n", 
+      "\t\t\t\t", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"Length", "[", "splits", "]"}], "\[Equal]", "2"}], ")"}], "||",
+         "\n", "\t\t\t\t\t", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"Count", "[", 
+           RowBox[{
+            RowBox[{"splits", "[", 
+             RowBox[{"[", 
+              RowBox[{"3", ";;"}], "]"}], "]"}], ",", " ", "\"\<Open\>\""}], 
+           "]"}], "!=", 
+          RowBox[{"Count", "[", 
+           RowBox[{
+            RowBox[{"splits", "[", 
+             RowBox[{"[", 
+              RowBox[{"3", ";;"}], "]"}], "]"}], ",", " ", "\"\<Close\>\""}], 
+           "]"}]}], ")"}]}], ")"}]}]}], "\n", "\t\t\t", 
+    "]"}]}]}]], "CodeInput",
+ CellChangeTimes->{{3.733034897267448*^9, 3.7330349129141407`*^9}, {
+  3.73303500558318*^9, 3.733035066617536*^9}, {3.7330351304799013`*^9, 
+  3.7330351337263193`*^9}, {3.7330352856836567`*^9, 3.733035318471266*^9}, {
+  3.7330353790245953`*^9, 3.733035397572356*^9}, {3.7330355238416986`*^9, 
+  3.733035616088839*^9}, {3.733035648237233*^9, 3.733035649465246*^9}, {
+  3.7330356867811413`*^9, 3.733035793360417*^9}, {3.733035866243894*^9, 
+  3.7330358704188023`*^9}, {3.733035906229417*^9, 3.7330360629942102`*^9}, {
+  3.733036119459737*^9, 3.733036159406681*^9}, {3.733036246923977*^9, 
+  3.733036426118977*^9}, {3.733151233596257*^9, 3.733151248128442*^9}, {
+  3.733151576289358*^9, 
+  3.733151766043241*^9}},ExpressionUUID->"3dabdc94-7c06-4be1-bb4a-\
+2fed5b9f926a"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$markdownToXMLRules\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712585522419114*^9, 3.712585525198983*^9}, {
+  3.712588782476274*^9, 3.712588785049725*^9}, {3.71261055872901*^9, 
+  3.71261058418211*^9}, {3.712934283987382*^9, 
+  3.7129342842790527`*^9}},ExpressionUUID->"89954bc7-5473-4905-ae95-\
+e7d003e4078f"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$markdownToXMLMeta\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{3.712588848608461*^9, 
+  3.712591479825807*^9},ExpressionUUID->"3718e2d2-a3b4-4556-9cdd-\
+aa9d07e32a74"],
+
+Cell["\[LeftCeiling]For stripping meta info as used by pelican and things\
+\[RightFloor]", "Text",
+ Evaluatable->True,
+ CellChangeTimes->{{3.733033042381743*^9, 
+  3.7330330562135887`*^9}},ExpressionUUID->"105d71d7-ce6f-461f-a1c6-\
+3f3a18c20aae"],
+
+Cell[BoxData[
+ RowBox[{"$markdownToXMLMeta", "=", "\n", "\t", 
+  RowBox[{
+   RowBox[{"meta", ":", 
+    RowBox[{"(", "\n", "\t\t", 
+     RowBox[{"StartOfString", "~~", "\n", "\t\t\t", 
+      RowBox[{"(", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"(", "\n", "\t\t\t\t\t", 
+         RowBox[{"StartOfLine", "~~", 
+          RowBox[{"(", 
+           RowBox[{"Whitespace", "|", "\"\<\>\""}], ")"}], "~~", "\n", 
+          "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Except", "[", 
+            RowBox[{"WhitespaceCharacter", ",", " ", "WordCharacter"}], "]"}],
+            ".."}], "~~", "\n", "\t\t\t\t\t", 
+          RowBox[{"(", 
+           RowBox[{"Whitespace", "|", "\"\<\>\""}], ")"}], "~~", "\"\<:\>\"", 
+          "~~", 
+          RowBox[{
+           RowBox[{"Except", "[", "\"\<\\n\>\"", "]"}], "..."}], "~~", 
+          "\"\<\\n\>\""}], ")"}], ".."}], ")"}]}], "\n", "\t\t", ")"}]}], ":>",
+    "\n", "\t\t\t", 
+   RowBox[{"{", "\n", "\t\t\t\t", 
+    RowBox[{"\"\<Meta\>\"", "\[Rule]", "meta"}], "\n", "\t\t\t\t", 
+    "}"}]}]}]], "CodeInput",
+ CellChangeTimes->{{3.7125914809496813`*^9, 3.712591580511074*^9}, {
+  3.712708217141817*^9, 3.712708320327263*^9}, {3.712708351903953*^9, 
+  3.7127083563499107`*^9}, {3.712932943254602*^9, 3.712932967234439*^9}, {
+  3.7330330403471823`*^9, 
+  3.733033093550962*^9}},ExpressionUUID->"5dd19464-5c5f-4a26-88c0-\
+65d1a3c500cc"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$markdownToXMLFenceBlock\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{
+  3.712588848608461*^9},ExpressionUUID->"927a53c4-50b7-4e58-bfca-\
+56f5172172ae"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$markdownToXMLFenceBlock", "=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"Shortest", "[", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"fence", ":", 
+       RowBox[{"(", "\n", "\t\t\t", 
+        RowBox[{"StartOfLine", "~~", "\n", "\t\t\t\t", 
+         RowBox[{"(", 
+          RowBox[{"r", ":", 
+           RowBox[{"Repeated", "[", 
+            RowBox[{"\"\<`\>\"", ",", 
+             RowBox[{"{", 
+              RowBox[{"3", ",", "\[Infinity]"}], "}"}]}], "]"}]}], ")"}], "~~", 
+         RowBox[{"Except", "[", "\"\<`\>\"", "]"}], "~~", "\n", "\t\t\t\t\t", 
+         
+         RowBox[{"l", ":", 
+          RowBox[{
+           RowBox[{"Except", "[", "\"\<`\>\"", "]"}], ".."}]}], "~~", 
+         "EndOfLine", "~~", "s__", "~~", "\n", "\t\t\t", "StartOfLine", "~~", 
+         "\n", "\t\t\t\t", 
+         RowBox[{"(", 
+          RowBox[{"b", ":", 
+           RowBox[{"Repeated", "[", 
+            RowBox[{"\"\<`\>\"", ",", 
+             RowBox[{"{", 
+              RowBox[{"3", ",", "\[Infinity]"}], "}"}]}], "]"}]}], ")"}]}], 
+        "\n", "\t\t\t", ")"}]}], "/;", 
+      RowBox[{"(", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"StringLength", "[", "r", "]"}], "\[Equal]", 
+         RowBox[{"StringLength", "[", "b", "]"}]}], "&&", "\n", "\t\t\t\t\t", 
+        
+        RowBox[{
+         RowBox[{"Length", "[", 
+          RowBox[{"StringSplit", "[", 
+           RowBox[{"fence", ",", "\"\<\\n\>\""}], "]"}], "]"}], ">", "2"}]}], 
+       "\n", "\t\t\t\t", ")"}]}], "\n", "\t\t", "]"}], ":>", "\n", "\t\t", 
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{"\"\<FenceBlock\>\"", "\[Rule]", "fence"}], "\n", "\t\t\t", 
+     "}"}]}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7125886510439663`*^9, 3.7125886588726587`*^9}, {
+  3.712588948164744*^9, 3.7125889844526787`*^9}, {3.7234252395531273`*^9, 
+  3.7234253322256002`*^9}, {3.723521233097741*^9, 
+  3.723521245788948*^9}},ExpressionUUID->"079c5f4a-4f2a-4b36-85c7-\
+f2eb47f35c39"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$markdownToXMLCodeBlock\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712588848608461*^9, 3.712588876363449*^9}, {
+  3.722730307728407*^9, 
+  3.72273030833425*^9}},ExpressionUUID->"24e584b5-a9f3-4d54-8129-\
+05bafbc7bc1a"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$markdownToXMLCodeBlock", "=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"code", ":", 
+     RowBox[{"(", "\n", "\t\t", 
+      RowBox[{"Longest", "[", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"(", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"StartOfString", "|", "\"\<\\n\>\""}], ")"}], "~~", "\n", 
+          "\t\t\t\t\t", 
+          RowBox[{"(", 
+           RowBox[{"\"\<\\t\>\"", "|", "\"\<    \>\""}], ")"}], "~~", "\n", 
+          "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Except", "[", "\"\<\\n\>\"", "]"}], ".."}], "~~", "\n", 
+          "\t\t\t\t\t", "\"\<\\n\>\""}], "\n", "\t\t\t\t\t", ")"}], "~~", 
+        "\n", "\t\t\t\t", 
+        RowBox[{"(", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"(", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{"StartOfLine", "|", 
+              RowBox[{"(", 
+               RowBox[{"StartOfLine", "~~", 
+                RowBox[{"(", 
+                 RowBox[{"\"\<\\t\>\"", "|", "\"\<    \>\""}], ")"}], "~~", 
+                "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"Except", "[", "\"\<\\n\>\"", "]"}], ".."}]}], 
+               ")"}]}], ")"}], "~~", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{"(", 
+             RowBox[{"\"\<\\n\>\"", "|", "EndOfString"}], ")"}]}], "\n", 
+           "\t\t\t\t\t\t\t", ")"}], "..."}], "\n", "\t\t\t\t\t", ")"}]}], 
+       "\n", "\t\t\t", "]"}], "\n", "\t\t", ")"}]}], ":>", "\n", "\t\t", 
+    RowBox[{"\"\<CodeBlock\>\"", "\[Rule]", "code"}]}]}], ";"}]], "CodeInput",
+ 
+ CellChangeTimes->{{3.712588678612309*^9, 3.7125886943352757`*^9}, {
+   3.71259198169578*^9, 3.712591983924655*^9}, {3.7126090342298594`*^9, 
+   3.712609059950247*^9}, {3.71260960050625*^9, 3.712609673600992*^9}, {
+   3.712609799308881*^9, 3.712609812369754*^9}, 3.712609861065812*^9, {
+   3.712610022400229*^9, 3.712610025389248*^9}, {3.712610076799542*^9, 
+   3.7126101998809834`*^9}, 3.723521263001021*^9, {3.723521315904917*^9, 
+   3.7235213421015673`*^9}, {3.723521376391746*^9, 3.7235214072482243`*^9}, {
+   3.723521438039461*^9, 3.723521464209008*^9}, 3.723521546428547*^9, 
+   3.723521594892852*^9, {3.723523320172554*^9, 3.723523390576188*^9}, {
+   3.7235243566381474`*^9, 
+   3.723524358596757*^9}},ExpressionUUID->"24b0fdf0-5fdd-47da-8068-\
+d43ea9f33c51"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$markdownToXMLEndOfStringCodeBlock", "=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"code", ":", 
+     RowBox[{"(", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"StartOfString", "|", "\"\<\\n\>\""}], ")"}], "~~", "\n", 
+       "\t\t\t", 
+       RowBox[{"(", 
+        RowBox[{"\"\<\\t\>\"", "|", "\"\<    \>\""}], ")"}], "~~", "\n", 
+       "\t\t\t", 
+       RowBox[{
+        RowBox[{"Except", "[", "\"\<\\n\>\"", "]"}], ".."}], "~~", 
+       "EndOfString"}], "\n", "\t\t", ")"}]}], "\[RuleDelayed]", "\n", "\t\t", 
+    RowBox[{"\"\<CodeBlock\>\"", "\[Rule]", "code"}]}]}], ";"}]], "CodeInput",
+ 
+ CellChangeTimes->{{3.7235243651841927`*^9, 
+  3.7235243992599688`*^9}},ExpressionUUID->"87f01ed0-ef7d-4fc8-a7fa-\
+1e19e16f14a2"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$markdownToXMLDelimiter\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{
+  3.712588848608461*^9, 3.7125890510155497`*^9, {3.712589351348996*^9, 
+   3.7125893530263157`*^9}},ExpressionUUID->"90b07577-ed37-4888-b06a-\
+6aa7d95c028e"],
+
+Cell[BoxData[
+ RowBox[{"$markdownToXMLDelimiter", "=", "\n", "\t", 
+  RowBox[{
+   RowBox[{"t", ":", 
+    RowBox[{"(", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"StartOfString", "|", "StartOfLine"}], ")"}], "~~", "\n", "\t",
+       "\t\t", 
+      RowBox[{"(", 
+       RowBox[{"Whitespace", "|", "\"\<\>\""}], ")"}], "~~", "\n", "\t\t\t", 
+      RowBox[{"Repeated", "[", 
+       RowBox[{
+        RowBox[{"\"\<-\>\"", "|", "\"\<_\>\""}], ",", 
+        RowBox[{"{", 
+         RowBox[{"3", ",", "\[Infinity]"}], "}"}]}], "]"}], "~~", "\n", 
+      "\t\t\t", 
+      RowBox[{
+       RowBox[{"Except", "[", "\"\<\\n\>\"", "]"}], "..."}]}], "\n", "\t\t\t",
+      ")"}]}], ":>", "\n", "\t\t", 
+   RowBox[{"\"\<Delimiter\>\"", "\[Rule]", "t"}]}]}]], "CodeInput",
+ CellChangeTimes->{{3.712589008627149*^9, 3.712589085241918*^9}, 
+   3.712589206639339*^9, {3.712589310286862*^9, 3.712589312566803*^9}, {
+   3.7125893776845617`*^9, 3.712589436001218*^9}, {3.712591973645121*^9, 
+   3.712591976661171*^9}, {3.7127678812779303`*^9, 3.712767899805509*^9}, {
+   3.712770441337092*^9, 3.71277044246066*^9}, {3.7127704810032177`*^9, 
+   3.71277048264747*^9}},ExpressionUUID->"11080af6-c206-4eb8-8e12-\
+02c073138c28"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$markdownToXMLHeader\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{3.712588848608461*^9, 
+  3.7125890510155497`*^9},ExpressionUUID->"54c4b741-c242-4a1e-a06d-\
+22991eed0538"],
+
+Cell[BoxData[
+ RowBox[{"$markdownToXMLHeader", "=", "\n", "\t", 
+  RowBox[{
+   RowBox[{"t", ":", 
+    RowBox[{"(", 
+     RowBox[{"StartOfLine", "~~", 
+      RowBox[{"(", 
+       RowBox[{"Whitespace", "|", "\"\<\>\""}], ")"}], "~~", 
+      RowBox[{"Longest", "[", 
+       RowBox[{"\"\<#\>\"", ".."}], "]"}], "~~", 
+      RowBox[{
+       RowBox[{"Except", "[", "\"\<\\n\>\"", "]"}], ".."}]}], ")"}]}], ":>", 
+   "\n", "\t\t", 
+   RowBox[{"\"\<Header\>\"", "\[Rule]", "t"}]}]}]], "CodeInput",
+ CellChangeTimes->{{3.712589008627149*^9, 3.712589085241918*^9}, 
+   3.712589206639339*^9, {3.712589310286862*^9, 3.712589312566803*^9}, {
+   3.712589396279677*^9, 3.7125893968736687`*^9}, {3.712591968832156*^9, 
+   3.712591971268866*^9}},ExpressionUUID->"34afc817-8726-412b-be36-\
+0e9494f0a081"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$markdownToXMLQuoteBlock\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{
+  3.712588848608461*^9, 3.7125890510155497`*^9, {3.712932667190688*^9, 
+   3.712932669166009*^9}},ExpressionUUID->"dc133ae2-ffaa-41a9-a7a8-\
+32a64078c027"],
+
+Cell[BoxData[
+ RowBox[{"$markdownToXMLQuoteBlock", "=", "\n", "\t", 
+  RowBox[{
+   RowBox[{"q", ":", 
+    RowBox[{"(", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"StartOfLine", "~~", "\"\<>\>\"", "~~", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"Except", "[", "\"\<\\n\>\"", "]"}], ".."}], "~~", 
+        RowBox[{"(", 
+         RowBox[{"\"\<\\n\>\"", "|", "EndOfString"}], ")"}]}], "\n", 
+       "\t\t\t\t", ")"}], ".."}], "\n", "\t\t\t", ")"}]}], ":>", "\n", "\t\t", 
+   RowBox[{"\"\<QuoteBlock\>\"", "\[Rule]", "q"}]}]}]], "CodeInput",
+ CellChangeTimes->{{3.712589008627149*^9, 3.712589085241918*^9}, 
+   3.712589206639339*^9, {3.712589310286862*^9, 3.712589312566803*^9}, {
+   3.712589396279677*^9, 3.7125893968736687`*^9}, {3.712591968832156*^9, 
+   3.712591971268866*^9}, {3.712932672357469*^9, 3.712932744207245*^9}, {
+   3.712932897218049*^9, 
+   3.712932901085743*^9}},ExpressionUUID->"c5a5e9c4-276f-4672-a272-\
+b2a25cd24487"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$markdownToXMLItemBlock\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{
+  3.712588848608461*^9, {3.712592046565269*^9, 
+   3.712592051140997*^9}},ExpressionUUID->"2cd73dc0-fb85-440c-9898-\
+5af435a94dd9"],
+
+Cell[BoxData[
+ RowBox[{"$markdownToXMLLineIdentifier", "=", "\n", "\t", 
+  RowBox[{"(", 
+   RowBox[{"\"\<* \>\"", "|", "\"\<- \>\"", "|", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"DigitCharacter", ".."}], ")"}], "~~", "\"\<. \>\""}], ")"}]}],
+    ")"}]}]], "CodeInput",
+ CellChangeTimes->{{3.712608486803298*^9, 
+  3.712608495877524*^9}},ExpressionUUID->"7287217a-d2d7-4452-8b8f-\
+ce0276f0cfb7"],
+
+Cell[BoxData[
+ RowBox[{"$markdownToXMLBlankSpaces", "=", "\t", "\n", "\t", 
+  RowBox[{
+   RowBox[{"Repeated", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"\"\<\\n\>\"", "~~", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"Except", "[", "\"\<\\n\>\"", "]"}], ".."}], ")"}], "~~", 
+       "EndOfLine"}], ")"}], ",", "\n", "\t\t", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", " ", "1"}], "}"}]}], "\n", "\t\t", "]"}], "~~", 
+   RowBox[{"(", 
+    RowBox[{"\"\<\\n\\n\>\"", "|", "\"\<\>\""}], ")"}]}]}]], "CodeInput",
+ CellChangeTimes->{{3.722999632069889*^9, 
+  3.7229996819623833`*^9}},ExpressionUUID->"6a2f6faf-a206-4b6c-9cb3-\
+2f16bf9cebb1"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$markdownToXMLItemLine", "=", "\n", "\t", 
+   RowBox[{"(", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"StartOfLine", "|", "StartOfString"}], ")"}], "~~", "\n", 
+     "\t\t\t", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"Whitespace", "?", 
+        RowBox[{"(", 
+         RowBox[{"StringFreeQ", "[", "\"\<\\n\>\"", "]"}], ")"}]}], "|", 
+       "\"\<\>\""}], ")"}], "~~", "\n", "\t", "\t\t", 
+     "$markdownToXMLLineIdentifier", "~~", "\n", "\t", "\t\t\t", 
+     RowBox[{
+      RowBox[{"Except", "[", "\"\<\\n\>\"", "]"}], "..."}], "~~", 
+     RowBox[{"(", 
+      RowBox[{"EndOfLine", "|", "EndOfString"}], ")"}]}], "\n", "\t\t", 
+    ")"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.712598291877953*^9, 3.712598342462212*^9}, {
+   3.712599684927434*^9, 3.712599693215983*^9}, {3.712599767596201*^9, 
+   3.712599768055006*^9}, 3.712608180626131*^9, {3.712608373803769*^9, 
+   3.712608391268365*^9}, {3.7126084621871843`*^9, 3.7126085366469183`*^9}, {
+   3.712629929921195*^9, 
+   3.712629933264455*^9}},ExpressionUUID->"3e011617-8c59-4bc9-b68e-\
+3150876ba3f1"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"$markdownToXMLItemSingle", "=", "\n", "\t", 
+   RowBox[{
+   "$markdownToXMLItemLine", "~~", "\n", "\t\t", 
+    "$markdownToXMLBlankSpaces"}]}], ";"}], "\n", 
+ RowBox[{"$markdownToXMLItemBlock", "=", "\n", "\t", 
+  RowBox[{
+   RowBox[{"t", ":", "\n", "\t\t", 
+    RowBox[{
+    "Repeated", "[", "\n", "\t\t\t", "$markdownToXMLItemSingle", "\n", 
+     "\t\t\t", "]"}]}], ":>", "\n", "\t\t", 
+   RowBox[{"\"\<Item\>\"", "\[Rule]", "t"}]}]}]}], "CodeInput",
+ CellChangeTimes->{{3.712592055423521*^9, 3.71259210525393*^9}, {
+   3.712597568556068*^9, 3.712597638157937*^9}, {3.712598256884252*^9, 
+   3.7125982904830313`*^9}, {3.712598345167274*^9, 3.712598371429899*^9}, {
+   3.712598540784293*^9, 3.71259858482012*^9}, {3.712599776073147*^9, 
+   3.712599788249002*^9}, {3.712599874617732*^9, 3.712599879931847*^9}, {
+   3.712599932576415*^9, 3.712600019228853*^9}, {3.712600060500753*^9, 
+   3.712600063330987*^9}, {3.7126001492506123`*^9, 3.712600156653686*^9}, {
+   3.7126002194533987`*^9, 3.7126002715402403`*^9}, {3.712600355184765*^9, 
+   3.7126004063181963`*^9}, {3.712600436350706*^9, 3.712600457378088*^9}, {
+   3.712600510503686*^9, 3.712600561976597*^9}, {3.712600737328938*^9, 
+   3.712600764192379*^9}, {3.7126066824108152`*^9, 3.7126067417803373`*^9}, {
+   3.71260678185071*^9, 3.712606841784115*^9}, {3.7126069199350243`*^9, 
+   3.712607053191675*^9}, {3.712607085856461*^9, 3.712607112783345*^9}, {
+   3.712607971663782*^9, 3.7126079745546227`*^9}, {3.712608016147057*^9, 
+   3.712608075083591*^9}, {3.712608110739596*^9, 3.7126081456091843`*^9}, {
+   3.7126082155803633`*^9, 3.712608316444888*^9}, 3.7126084335688953`*^9, {
+   3.712608567485818*^9, 3.712608572802731*^9}, {3.712628381410205*^9, 
+   3.712628382345497*^9}, {3.712628476074031*^9, 3.712628582293374*^9}, {
+   3.712628730481516*^9, 3.712628900334915*^9}, {3.712629024956913*^9, 
+   3.712629134512128*^9}, {3.7126291672253428`*^9, 3.712629168118534*^9}, {
+   3.712629246239626*^9, 3.712629246932687*^9}, {3.712629353674333*^9, 
+   3.712629362313837*^9}, {3.712629428882016*^9, 3.7126294950655403`*^9}, {
+   3.712629556532263*^9, 3.712629570352581*^9}, {3.712629655535925*^9, 
+   3.712629695314212*^9}, {3.712629727741804*^9, 3.712629743316283*^9}, {
+   3.7126301201192703`*^9, 3.712630120883451*^9}, {3.71263015276602*^9, 
+   3.7126301551730413`*^9}, {3.712630210378592*^9, 3.7126302467771273`*^9}, {
+   3.7229980761083097`*^9, 3.722998085446443*^9}, {3.722998870480126*^9, 
+   3.722998871812469*^9}, 3.722998997898252*^9, {3.722999660629409*^9, 
+   3.7229996866492033`*^9}},ExpressionUUID->"f9278bf3-f38a-464d-84d2-\
+ba32c7e450d1"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$markdownToXMLTwoWhitespaceItemLine", "=", "\n", "\t", 
+   RowBox[{"$markdownToXMLItemSingle", "/.", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Verbatim", "[", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"Whitespace", "?", 
+         RowBox[{"(", 
+          RowBox[{"StringFreeQ", "[", "\"\<\\n\>\"", "]"}], ")"}]}], "|", 
+        "\"\<\>\""}], ")"}], "]"}], ":>", "\n", "\t\t\t", 
+     RowBox[{"Repeated", "[", 
+      RowBox[{
+       RowBox[{"Except", "[", 
+        RowBox[{"\"\<\\n\>\"", ",", " ", "WhitespaceCharacter"}], "]"}], ",", 
+       " ", 
+       RowBox[{"{", 
+        RowBox[{"0", ",", "2"}], "}"}]}], "]"}]}]}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7229994364293547`*^9, 3.722999472405147*^9}, {
+  3.7229995806072474`*^9, 3.722999629379435*^9}, {3.7229996977592907`*^9, 
+  3.722999713488381*^9}},ExpressionUUID->"99f67953-d371-402c-a49e-\
+55b3b18f2df1"],
+
+Cell[BoxData[
+ RowBox[{"$markdownToXMLMultiItemBlock", "=", "\n", "\t", 
+  RowBox[{
+   RowBox[{"t", ":", 
+    RowBox[{"(", "\n", "\t\t", 
+     RowBox[{"$markdownToXMLTwoWhitespaceItemLine", "~~", "\n", "\t\t\t", 
+      RowBox[{"Repeated", "[", "\n", "\t", "\t\t\t", 
+       RowBox[{"$markdownToXMLItemSingle", "~~", "\n", "\t", "\t\t\t\t", 
+        RowBox[{"(", 
+         RowBox[{"\"\<\\n\\n\>\"", "|", "\"\<\>\""}], ")"}]}], "\n", 
+       "\t\t\t\t", "]"}]}], "\n", "\t\t\t", ")"}]}], ":>", "\n", "\t\t", 
+   RowBox[{"\"\<Item\>\"", "\[Rule]", "t"}]}]}]], "CodeInput",
+ CellChangeTimes->{{3.722999006636211*^9, 3.72299900663983*^9}, {
+  3.7229990387268972`*^9, 3.7229990520371847`*^9}, {3.7229990929793673`*^9, 
+  3.722999098907873*^9}, {3.722999169886445*^9, 3.722999272353483*^9}, {
+  3.722999332610627*^9, 3.7229993407407312`*^9}, {3.722999376151828*^9, 
+  3.7229994346524754`*^9}, {3.722999476523159*^9, 3.7229994884849987`*^9}, {
+  3.722999740219956*^9, 3.7229997564089746`*^9}, {3.723521531238832*^9, 
+  3.723521532149287*^9}},ExpressionUUID->"4e8ec88a-4624-46a3-88f7-\
+ec5a4c030806"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$markdownToXMLLink\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712588848608461*^9, 
+  3.712588873331856*^9}},ExpressionUUID->"018b55d0-ada6-4c38-b673-\
+7112cf41dd5c"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"markdownToXMLLinkPairedBrackets", "[", "o_", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"StringCount", "[", 
+     RowBox[{"o", ",", " ", "\"\<[\>\""}], "]"}], ">", "0"}], "&&", "\n", 
+   "\t\t", 
+   RowBox[{
+    RowBox[{"StringCount", "[", 
+     RowBox[{"o", ",", " ", "\"\<[\>\""}], "]"}], "==", 
+    RowBox[{"StringCount", "[", 
+     RowBox[{"o", ",", " ", "\"\<]\>\""}], "]"}]}]}]}], "\n", 
+ RowBox[{
+  RowBox[{"markdownToXMLValidateLink", "[", "o_", "]"}], ":=", "\n", "\t", 
+  RowBox[{
+   RowBox[{"markdownToXMLLinkPairedBrackets", "[", "o", "]"}], "&&", "\n", 
+   "\t\t", 
+   RowBox[{"!", 
+    RowBox[{"markdownToXMLLinkPairedBrackets", "[", 
+     RowBox[{
+      RowBox[{"StringSplit", "[", 
+       RowBox[{"o", ",", " ", "\"\<]\>\"", ",", " ", "2"}], "]"}], "[", 
+      RowBox[{"[", "2", "]"}], "]"}], "]"}]}]}]}]}], "CodeInput",
+ CellChangeTimes->{{3.722977109505846*^9, 3.72297716174679*^9}, {
+  3.723254456106945*^9, 
+  3.723254672296855*^9}},ExpressionUUID->"f1e17e57-05af-496b-b5a2-\
+ddf0747cdfe9"],
+
+Cell[BoxData[
+ RowBox[{"$markdownToXMLLink", "=", "\n", "\t", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"l", ":", 
+      RowBox[{"(", 
+       RowBox[{"o", ":", 
+        RowBox[{
+         RowBox[{"Except", "[", 
+          RowBox[{"\"\<!\>\"", "|", "\"\<*\>\"", "|", "\"\<_\>\""}], "]"}], 
+         "|", "StartOfLine", "|", "StartOfString"}]}], ")"}]}], "~~", "\n", 
+     "\t\t", 
+     RowBox[{"link", ":", 
+      RowBox[{"(", 
+       RowBox[{"\"\<[\>\"", "~~", 
+        RowBox[{
+         RowBox[{"Except", "[", "\"\<\\n\>\"", "]"}], ".."}], "~~", 
+        "\"\<](\>\"", "~~", 
+        RowBox[{
+         RowBox[{"Except", "[", "WhitespaceCharacter", "]"}], ".."}], "~~", 
+        "\"\<)\>\""}], ")"}]}]}], "/;", "\n", "\t\t\t", 
+    RowBox[{"markdownToXMLValidateLink", "[", "link", "]"}]}], ":>", "\n", 
+   "\t\t", 
+   RowBox[{"{", "\n", "\t\t\t", 
+    RowBox[{
+     RowBox[{"\"\<Orphan\>\"", "\[Rule]", "o"}], ",", "\n", "\t\t\t", 
+     RowBox[{"\"\<Link\>\"", "\[Rule]", "link"}]}], "\n", "\t\t\t", 
+    "}"}]}]}]], "CodeInput",
+ CellChangeTimes->{{3.7125887002424183`*^9, 3.7125887088360977`*^9}, {
+   3.7125919299040117`*^9, 3.712591962909424*^9}, {3.722976693332492*^9, 
+   3.7229767491362333`*^9}, {3.722976834922146*^9, 3.7229768525929413`*^9}, {
+   3.722977059961351*^9, 3.722977060070829*^9}, {3.72297709830732*^9, 
+   3.722977106448656*^9}, {3.722977218244918*^9, 3.722977218410818*^9}, {
+   3.723254294088676*^9, 3.7232542987885733`*^9}, {3.723254419547423*^9, 
+   3.723254420633309*^9}, 3.723254509204093*^9, 3.723254681948353*^9, {
+   3.7335396272106752`*^9, 
+   3.73353963306463*^9}},ExpressionUUID->"8529685b-d3e0-4d50-ba1e-\
+48c04f89904c"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$markdownToXMLImage\[RightFloor]", "CodeSubsubsubsection",
+ 
+ Evaluatable->True,
+ CellChangeTimes->{{3.712588848608461*^9, 
+  3.712588870300029*^9}},ExpressionUUID->"31f6484f-af75-4cc2-968b-\
+6b6051b8012d"],
+
+Cell[BoxData[
+ RowBox[{"$markdownToXMLImage", "=", "\n", "\t", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"img", ":", 
+     RowBox[{"(", 
+      RowBox[{"\"\<![\>\"", "~~", 
+       RowBox[{
+        RowBox[{"Except", "[", "\"\<\\n\>\"", "]"}], ".."}], "~~", 
+       "\"\<](\>\"", "~~", 
+       RowBox[{
+        RowBox[{"Except", "[", "WhitespaceCharacter", "]"}], ".."}], "~~", 
+       "\"\<)\>\""}], ")"}]}], "/;", "\n", "\t\t", 
+    RowBox[{"markdownToXMLValidateLink", "[", "img", "]"}]}], ":>", "\n", 
+   "\t\t", 
+   RowBox[{"\"\<Image\>\"", "\[Rule]", "img"}]}]}]], "CodeInput",
+ CellChangeTimes->{{3.712588717937821*^9, 3.712588727681539*^9}, {
+  3.712591936359393*^9, 3.712591992086437*^9}, {3.722729008070812*^9, 
+  3.722729009719146*^9}, {3.7227295693177767`*^9, 3.722729571403511*^9}, {
+  3.722977170280386*^9, 
+  3.722977223970269*^9}},ExpressionUUID->"d876adc3-7d31-4e52-8224-\
+a8a7d117b397"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$markdownToXMLImageRef\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712588848608461*^9, 3.712588870300029*^9}, {
+  3.722728982127678*^9, 
+  3.722728983847582*^9}},ExpressionUUID->"443569d4-6446-4141-94f7-\
+d7d49c89b6d8"],
+
+Cell[BoxData[
+ RowBox[{"$markdownToXMLImageRef", "=", "\n", "\t", 
+  RowBox[{
+   RowBox[{"img", ":", 
+    RowBox[{"(", 
+     RowBox[{"\"\<![\>\"", "~~", 
+      RowBox[{
+       RowBox[{"Except", "[", "\"\<]\>\"", "]"}], ".."}], "~~", "\"\<][\>\"", 
+      "~~", 
+      RowBox[{
+       RowBox[{"Except", "[", "\"\<]\>\"", "]"}], ".."}], "~~", "\"\<]\>\""}],
+      ")"}]}], ":>", "\n", "\t\t", 
+   RowBox[{"\"\<ImageRef\>\"", "\[Rule]", "img"}]}]}]], "CodeInput",
+ CellChangeTimes->{{3.712588717937821*^9, 3.712588727681539*^9}, {
+  3.712591936359393*^9, 3.712591992086437*^9}, {3.722728966275847*^9, 
+  3.722729001047985*^9}, {3.72272954950968*^9, 3.722729551195294*^9}, {
+  3.722729650888288*^9, 
+  3.722729658983327*^9}},ExpressionUUID->"7f36822a-a938-49df-88ee-\
+e194ca935afa"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$markdownToXMLImageRefLinkBlock\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712588848608461*^9, 3.712588870300029*^9}, {
+  3.722728982127678*^9, 3.722728983847582*^9}, {3.722729039296618*^9, 
+  3.722729044462641*^9}, {3.722729722507296*^9, 
+  3.7227297230993423`*^9}},ExpressionUUID->"04ab39c9-6c71-4b14-8eb6-\
+3ad40e984f68"],
+
+Cell[BoxData[
+ RowBox[{"$markdownToXMLImageRefLinkBlock", "=", "\n", "\t", 
+  RowBox[{
+   RowBox[{"img", ":", 
+    RowBox[{"Repeated", "[", 
+     RowBox[{"(", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"Whitespace", "|", "\"\<\>\""}], ")"}], "~~", "\"\<[\>\"", "~~", 
+       RowBox[{
+        RowBox[{"Except", "[", "\"\<]\>\"", "]"}], ".."}], "~~", "\"\<]:\>\"",
+        "~~", 
+       RowBox[{"(", 
+        RowBox[{"Whitespace", "|", "\"\<\>\""}], ")"}], "~~", "\n", "\t\t\t", 
+       "WordCharacter", "~~", 
+       RowBox[{
+        RowBox[{"Except", "[", "WhitespaceCharacter", "]"}], ".."}]}], ")"}], 
+     "]"}]}], ":>", "\n", "\t\t", 
+   RowBox[{"\"\<ImageRefLinkBlock\>\"", "\[Rule]", "img"}]}]}]], "CodeInput",
+ CellChangeTimes->{{3.712588717937821*^9, 3.712588727681539*^9}, {
+   3.712591936359393*^9, 3.712591992086437*^9}, {3.722728966275847*^9, 
+   3.722729001047985*^9}, {3.722729050543755*^9, 3.722729158595942*^9}, {
+   3.722729334720614*^9, 3.722729337597437*^9}, {3.722729555891307*^9, 
+   3.722729557309012*^9}, {3.722729618101619*^9, 3.722729619117403*^9}, {
+   3.7227297486572647`*^9, 3.722729809344079*^9}, 3.722729921124359*^9, {
+   3.72272996048912*^9, 3.722729968138188*^9}, 3.722730122877915*^9, {
+   3.7227301974762163`*^9, 3.722730209512785*^9}, {3.7235216185022097`*^9, 
+   3.723521620818325*^9}},ExpressionUUID->"3d721500-e6f8-414f-945d-\
+55ea1dc652df"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$markdownToXMLImageRefLink\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712588848608461*^9, 3.712588870300029*^9}, {
+  3.722728982127678*^9, 3.722728983847582*^9}, {3.722729039296618*^9, 
+  3.722729044462641*^9}},ExpressionUUID->"b823bf9b-9267-4d0c-96fc-\
+4bb2803b9add"],
+
+Cell[BoxData[
+ RowBox[{"$markdownToXMLImageRefLink", "=", "\n", "\t", 
+  RowBox[{
+   RowBox[{"img", ":", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"Whitespace", "|", "\"\<\>\""}], ")"}], "~~", "\"\<[\>\"", "~~", 
+      RowBox[{
+       RowBox[{"Except", "[", "\"\<]\>\"", "]"}], ".."}], "~~", "\"\<]:\>\"", 
+      "~~", 
+      RowBox[{"(", 
+       RowBox[{"Whitespace", "|", "\"\<\>\""}], ")"}], "~~", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"Except", "[", "WhitespaceCharacter", "]"}], ".."}], "~~", 
+      RowBox[{"(", 
+       RowBox[{"Whitespace", "|", "\"\<\>\""}], ")"}]}], ")"}]}], ":>", "\n", 
+   "\t\t", 
+   RowBox[{"\"\<ImageRefLink\>\"", "\[Rule]", "img"}]}]}]], "CodeInput",
+ CellChangeTimes->{{3.712588717937821*^9, 3.712588727681539*^9}, {
+   3.712591936359393*^9, 3.712591992086437*^9}, {3.722728966275847*^9, 
+   3.722729001047985*^9}, {3.722729050543755*^9, 3.722729158595942*^9}, {
+   3.722729334720614*^9, 3.722729337597437*^9}, {3.722729555891307*^9, 
+   3.722729557309012*^9}, {3.722729618101619*^9, 3.722729619117403*^9}, 
+   3.722729832479554*^9, 3.722730139108529*^9, {3.722730182437168*^9, 
+   3.722730194401149*^9}, {3.722730273777581*^9, 
+   3.722730273951789*^9}},ExpressionUUID->"83b01619-079a-4544-9462-\
+10ad1f6d6522"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$markdownToXMLCodeLine\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712588848608461*^9, 3.712588865723672*^9}, {
+  3.712615805447455*^9, 
+  3.7126158366247*^9}},ExpressionUUID->"a115797c-bf10-4472-95c2-fbfde5410517"],
+
+Cell[BoxData[
+ RowBox[{"$markdownToXMLCodeLine", "=", "\n", "\t", 
+  RowBox[{
+   RowBox[{"Shortest", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"o", ":", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"Except", "[", "\"\<`\>\"", "]"}], "|", "StartOfLine", "|", 
+         "StartOfString"}], ")"}]}], "~~", "\n", "\t\t\t", 
+      RowBox[{"code", ":", 
+       RowBox[{"(", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"r", ":", 
+           RowBox[{"\"\<`\>\"", ".."}]}], ")"}], "~~", "\n", "\t\t\t\t\t", 
+         RowBox[{"Except", "[", "\"\<`\>\"", "]"}], "~~", "mid___", "~~", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"Except", "[", "\"\<`\>\"", "]"}], "|", "\"\<\>\""}], 
+          ")"}], "~~", "\n", "\t\t\t\t\t", 
+         RowBox[{"(", 
+          RowBox[{"b", ":", 
+           RowBox[{"\"\<`\>\"", ".."}]}], ")"}]}], "\n", "\t\t\t\t", 
+        ")"}]}]}], "/;", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"StringLength", "[", "r", "]"}], "\[Equal]", 
+       RowBox[{"StringLength", "[", "b", "]"}]}], "&&", 
+      RowBox[{
+       RowBox[{"StringCount", "[", 
+        RowBox[{"mid", ",", " ", "\"\<`\>\""}], "]"}], "<", 
+       RowBox[{"StringLength", "[", "r", "]"}]}]}]}], "\n", "\t\t", "]"}], 
+   "\[RuleDelayed]", "\n", "\t\t", 
+   RowBox[{"{", "\n", "\t\t\t", 
+    RowBox[{
+     RowBox[{"\"\<Orphan\>\"", "\[Rule]", "o"}], ",", "\n", "\t\t\t", 
+     RowBox[{"\"\<CodeLine\>\"", "\[Rule]", "code"}]}], "\n", "\t\t\t", 
+    "}"}]}]}]], "CodeInput",
+ CellChangeTimes->{{3.712588738306407*^9, 3.712588746310459*^9}, {
+  3.723255216327025*^9, 3.723255217804574*^9}, {3.723255254290855*^9, 
+  3.723255263881672*^9}, {3.723255779631727*^9, 
+  3.723255797652647*^9}},ExpressionUUID->"c6bc3c2e-9d45-46a5-ad1f-\
+0ced568cfa71"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$markdownToXMLXMLLine\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712588848608461*^9, 3.712588865723672*^9}, {
+   3.712615805447455*^9, 3.712615834337294*^9}, 3.712616605335886*^9, {
+   3.722730294768784*^9, 
+   3.722730296447711*^9}},ExpressionUUID->"11f9b493-64a5-49c7-983a-\
+7d5d17ddded9"],
+
+Cell[BoxData[
+ RowBox[{"$markdownToXMLXMLLine", "=", "\n", "\t", 
+  RowBox[{
+   RowBox[{"xml", ":", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"\"\<<\>\"", "~~", 
+       RowBox[{"tag", ":", 
+        RowBox[{"WordCharacter", ".."}]}], "~~", 
+       RowBox[{
+        RowBox[{"Except", "[", "\"\<<\>\"", "]"}], ".."}], "~~", 
+       "\"\</>\>\""}], ")"}], "|", "\n", "\t\t", 
+     RowBox[{"(", 
+      RowBox[{"\"\<<link\>\"", "~~", 
+       RowBox[{
+        RowBox[{"Except", "[", "\"\<<\>\"", "]"}], ".."}], "~~", 
+       "\"\<>\>\""}], ")"}]}]}], "\[RuleDelayed]", "\n", "\t\t", 
+   RowBox[{"(", 
+    RowBox[{"\"\<XMLLine\>\"", "\[Rule]", "xml"}], ")"}]}]}]], "CodeInput",
+ CellChangeTimes->{{3.712615893976552*^9, 3.712615950995812*^9}, {
+   3.7126166715585623`*^9, 3.7126166737074614`*^9}, {3.712616725334612*^9, 
+   3.712616726586769*^9}, 3.7126174675086203`*^9, 3.7126183025679073`*^9, {
+   3.7129323436196117`*^9, 3.712932344810234*^9}, 3.712932381569346*^9, {
+   3.722732712469718*^9, 3.7227327274035597`*^9}, {3.722732797679961*^9, 
+   3.722732798523843*^9}, 3.722732875655401*^9, {3.72334069238102*^9, 
+   3.7233407045133867`*^9}, {3.733154465338724*^9, 3.733154532456188*^9}, {
+   3.733154646294455*^9, 
+   3.7331546547643223`*^9}},ExpressionUUID->"67451052-adac-4787-9e48-\
+08e9c30bb4e0"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$markdownToXMLXMLBlock\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712588848608461*^9, 3.712588865723672*^9}, {
+  3.712615805447455*^9, 
+  3.712615834337294*^9}},ExpressionUUID->"aa35f1d5-dad3-4b2e-9185-\
+ad13799d77c4"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$markdownToXMLXMLBlock", "=", "\n", "\t", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"cont", ":", 
+      RowBox[{"(", "\n", "\t\t", 
+       RowBox[{"\"\<<\>\"", "~~", 
+        RowBox[{"t", ":", 
+         RowBox[{"WordCharacter", ".."}]}], "~~", "__", "~~", "\n", "\t\t\t", 
+        "\"\<</\>\"", "~~", 
+        RowBox[{"(", 
+         RowBox[{"Whitespace", "|", "\"\<\>\""}], ")"}], "~~", 
+        RowBox[{"t2", ":", 
+         RowBox[{"WordCharacter", ".."}]}], "~~", 
+        RowBox[{"(", 
+         RowBox[{"Whitespace", "|", "\"\<\>\""}], ")"}], "~~", "\"\<>\>\""}], 
+       "\n", "\t\t", ")"}]}], "/;", 
+     RowBox[{"markdownToXMLValidateXMLBlock", "[", 
+      RowBox[{"cont", ",", " ", "t", ",", " ", "t2"}], "]"}]}], 
+    "\[RuleDelayed]", "\n", "\t\t", 
+    RowBox[{"(", 
+     RowBox[{"\"\<XMLBlock\>\"", "\[Rule]", "cont"}], ")"}]}]}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.712588738306407*^9, 3.712588746310459*^9}, {
+   3.712615860958061*^9, 3.712615880477358*^9}, {3.712616265586692*^9, 
+   3.7126163037617273`*^9}, {3.7126163375095663`*^9, 
+   3.7126164553436403`*^9}, {3.712616503630546*^9, 3.712616524417787*^9}, {
+   3.7126167159614573`*^9, 3.712616721719482*^9}, {3.7126168060613728`*^9, 
+   3.712616806218158*^9}, {3.712616873689736*^9, 3.7126169140678177`*^9}, 
+   3.712617013721966*^9, {3.712617115953616*^9, 3.712617151127469*^9}, {
+   3.712617201973474*^9, 3.712617228025106*^9}, {3.7126173003921328`*^9, 
+   3.712617364561631*^9}, {3.7126174648361263`*^9, 3.712617465761195*^9}, 
+   3.712617612066506*^9, {3.722726771275201*^9, 3.722726817433983*^9}, {
+   3.722726892313525*^9, 3.722726940028542*^9}, {3.722727133057269*^9, 
+   3.722727140763648*^9}, {3.722727203853319*^9, 3.722727235249941*^9}, {
+   3.722732763401266*^9, 3.7227327712515182`*^9}, {3.722735709361381*^9, 
+   3.72273571079206*^9}, {3.722735766448217*^9, 3.72273578370231*^9}, {
+   3.723340712351265*^9, 3.7233407267527*^9}, {3.733034992399225*^9, 
+   3.733035001578302*^9}, {3.733151773119375*^9, 3.7331517900119953`*^9}, {
+   3.733151822729466*^9, 3.7331518232428703`*^9}, {3.733154614843845*^9, 
+   3.733154620203726*^9}},ExpressionUUID->"47127425-bd5f-4a63-8bcd-\
+502ad14294e6"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$markdownToXMLRawXMLBlock\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712588848608461*^9, 3.712588865723672*^9}, {
+   3.712615805447455*^9, 3.712615834337294*^9}, 
+   3.7227296021845303`*^9},ExpressionUUID->"5f4ba7e0-cbf7-4174-a18c-\
+6b920590d638"],
+
+Cell[BoxData[
+ RowBox[{"$markdownToXMLRawXMLBlock", "=", "\n", "\t", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"cont", ":", 
+     RowBox[{"(", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"StartOfLine", "|", "StartOfString"}], ")"}], "~~", 
+       "\"\<<\>\"", "~~", 
+       RowBox[{"t", ":", 
+        RowBox[{"WordCharacter", ".."}]}], "~~", "__", "~~", "\n", "\t\t\t", 
+       "\"\<</\>\"", "~~", 
+       RowBox[{"(", 
+        RowBox[{"Whitespace", "|", "\"\<\>\""}], ")"}], "~~", "t__", "~~", 
+       RowBox[{"(", 
+        RowBox[{"Whitespace", "|", "\"\<\>\""}], ")"}], "~~", "\"\<>\>\""}], 
+      "\n", "\t\t", ")"}]}], "/;", 
+    RowBox[{"markdownToXMLValidateXMLBlock", "[", 
+     RowBox[{"cont", ",", " ", "t", ",", " ", "t"}], "]"}]}], 
+   "\[RuleDelayed]", "\n", "\t\t", 
+   RowBox[{"(", 
+    RowBox[{"\"\<XMLBlock\>\"", "\[Rule]", "cont"}], ")"}]}]}]], "CodeInput",
+ CellChangeTimes->{{3.712588738306407*^9, 3.712588746310459*^9}, {
+   3.712615860958061*^9, 3.712615880477358*^9}, {3.712616265586692*^9, 
+   3.7126163037617273`*^9}, {3.7126163375095663`*^9, 
+   3.7126164553436403`*^9}, {3.712616503630546*^9, 3.712616524417787*^9}, {
+   3.7126167159614573`*^9, 3.712616721719482*^9}, {3.7126168060613728`*^9, 
+   3.712616806218158*^9}, {3.712616873689736*^9, 3.7126169140678177`*^9}, 
+   3.712617013721966*^9, {3.712617115953616*^9, 3.712617151127469*^9}, {
+   3.712617201973474*^9, 3.712617228025106*^9}, {3.7126173003921328`*^9, 
+   3.712617364561631*^9}, {3.7126174648361263`*^9, 3.712617465761195*^9}, 
+   3.712617612066506*^9, {3.722726771275201*^9, 3.722726817433983*^9}, {
+   3.722726892313525*^9, 3.722726940028542*^9}, {3.722727133057269*^9, 
+   3.722727140763648*^9}, {3.722727203853319*^9, 3.722727235249941*^9}, {
+   3.7227275623613443`*^9, 3.722727572211993*^9}, {3.7227353490949574`*^9, 
+   3.722735431206951*^9}, {3.7227354711447363`*^9, 3.722735472718419*^9}, 
+   3.7227355732990417`*^9, {3.722735697336762*^9, 3.7227357015166893`*^9}, 
+   3.7227357406857967`*^9, 3.722735786856844*^9, {3.722735860292873*^9, 
+   3.7227359590316668`*^9}, {3.723261928361574*^9, 3.723261953143388*^9}, {
+   3.72326202880767*^9, 3.723262089577765*^9}, {3.723262180125876*^9, 
+   3.723262189434156*^9}, {3.723262535466959*^9, 3.723262541562542*^9}, {
+   3.723340180548594*^9, 3.723340188917123*^9}, {3.7330350862438*^9, 
+   3.733035094598899*^9}, {3.7330353508179197`*^9, 3.733035353142275*^9}, {
+   3.733151800866173*^9, 3.733151820433936*^9}, {3.7331547911675453`*^9, 
+   3.7331547962646313`*^9}, {3.733154848009304*^9, 
+   3.733154858892164*^9}},ExpressionUUID->"de3967b8-a935-4e59-86bf-\
+c312ea7dae53"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$markdownToXMLItalBold\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712588848608461*^9, 3.712588873331856*^9}, 
+   3.722731969268093*^9},ExpressionUUID->"e61119fb-1f41-4ea8-b85b-\
+4641e32ecfbe"],
+
+Cell[BoxData[
+ RowBox[{"$markdownToXMLItalBold", "=", "\n", "\t", 
+  RowBox[{
+   RowBox[{"o", ":", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"Longest", "[", 
+       RowBox[{"a", ":", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"\"\<*\>\"", "|", "\"\<_\>\""}], ")"}], ".."}]}], "]"}], "~~", 
+      RowBox[{"Shortest", "[", 
+       RowBox[{"t", ":", 
+        RowBox[{
+         RowBox[{"Except", "[", "\"\<\\n\>\"", "]"}], ".."}]}], "]"}], "~~", 
+      "a_"}], ")"}]}], ":>", "\n", "\t\t", 
+   RowBox[{"\"\<ItalBold\>\"", "\[Rule]", "o"}]}]}]], "CodeInput",
+ CellChangeTimes->{{3.7125887002424183`*^9, 3.7125887088360977`*^9}, {
+  3.7125919299040117`*^9, 3.712591962909424*^9}, {3.7227318467369223`*^9, 
+  3.722731881888345*^9}, {3.722731962798614*^9, 3.722731964184595*^9}, {
+  3.722732024954492*^9, 3.722732171728869*^9}, {3.7227352163119593`*^9, 
+  3.722735224548308*^9}},ExpressionUUID->"ec76f599-0544-4ca6-8a9b-\
+1fb0c98c762e"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$markdownToXMLBlockRules\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712588848608461*^9, 3.712588863660001*^9}, 
+   3.712616547265324*^9},ExpressionUUID->"0ad624a5-c871-4056-894d-\
+98c6e24c34ca"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$markdownToXMLBlockRules", "=", 
+   RowBox[{"{", "\n", "\t", 
+    RowBox[{
+    "$markdownToXMLRawXMLBlock", ",", "\n", "\t", "$markdownToXMLFenceBlock", 
+     ",", "\n", "\t", "$markdownToXMLImageRefLinkBlock", ",", "\n", "\t", 
+     "$markdownToXMLMultiItemBlock", ",", "\n", "\t", 
+     "$markdownToXMLCodeBlock", ",", "\n", "\t", 
+     "$markdownToXMLEndOfStringCodeBlock", ",", "\n", "\t", 
+     "$markdownToXMLDelimiter", ",", "\n", "\t", "$markdownToXMLHeader", ",", 
+     "\n", "\t", "$markdownToXMLItemBlock", ",", "\n", "\t", 
+     "$markdownToXMLQuoteBlock"}], "\n", "\t", "}"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.712588626462678*^9, 3.71258865012868*^9}, {
+   3.712588882278028*^9, 3.712588894552516*^9}, {3.712589323769863*^9, 
+   3.712589341955855*^9}, {3.712589480780923*^9, 3.712589487884227*^9}, {
+   3.712591466118793*^9, 3.712591470100093*^9}, {3.712607164037251*^9, 
+   3.712607164988921*^9}, {3.7126105708001833`*^9, 3.7126105885752897`*^9}, 
+   3.71261089112879*^9, {3.712930601036415*^9, 3.712930601879683*^9}, {
+   3.7129326415533333`*^9, 3.7129326478554296`*^9}, 3.712932738598175*^9, {
+   3.72272752826915*^9, 3.722727550523326*^9}, {3.7227298194900513`*^9, 
+   3.722729826109161*^9}, {3.722999132895624*^9, 3.722999141443873*^9}, {
+   3.723524408457965*^9, 
+   3.7235244099973497`*^9}},ExpressionUUID->"a34bb83d-6acd-42fb-b8a6-\
+567964faa74d"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$markdownToXMLElementRules\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712588848608461*^9, 3.712588863660001*^9}, 
+   3.712616549240281*^9},ExpressionUUID->"f317eb17-1ad2-425b-a570-\
+d5a4884dc9d3"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$markdownToXMLElementRules", "=", 
+   RowBox[{"{", "\n", "\t", 
+    RowBox[{
+    "$markdownToXMLLink", ",", "\n", "\t", "$markdownToXMLImageRef", ",", 
+     "\n", "\t", "$markdownToXMLImageRefLink", ",", "\n", "\t", 
+     "$markdownToXMLImage", ",", "\n", "\t", "$markdownToXMLCodeLine", ",", 
+     "\n", "\t", "$markdownToXMLItalBold", ",", "\n", "\t", 
+     "$markdownToXMLXMLBlock", ",", "\n", "\t", "$markdownToXMLXMLLine"}], 
+    "\n", "\t", "}"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.712588626462678*^9, 3.71258865012868*^9}, {
+   3.712588882278028*^9, 3.712588894552516*^9}, {3.712589323769863*^9, 
+   3.712589341955855*^9}, {3.712589480780923*^9, 3.712589487884227*^9}, {
+   3.712591466118793*^9, 3.712591470100093*^9}, {3.712607164037251*^9, 
+   3.712607164988921*^9}, {3.7126105708001833`*^9, 3.712610597831357*^9}, {
+   3.712616517532279*^9, 3.71261653831138*^9}, 3.712617740090372*^9, {
+   3.722729294631049*^9, 3.722729309564849*^9}, {3.72273197842817*^9, 
+   3.722731978922387*^9}, {3.7227333430751133`*^9, 3.7227333465678167`*^9}, {
+   3.723439401497842*^9, 3.723439406733123*^9}, {3.7235228057976103`*^9, 
+   3.7235228109960203`*^9}},ExpressionUUID->"c2b66f01-391e-4451-a787-\
+ea01a0983ef3"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$markdownToXMLNewLineElements\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712588848608461*^9, 3.712588863660001*^9}, 
+   3.712616549240281*^9, {3.7126633638400908`*^9, 
+   3.7126633681738243`*^9}},ExpressionUUID->"59689ea7-b034-4e65-9ba0-\
+679847384347"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$markdownToXMLNewLineElements", "=", "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", "\"\<img\>\"", "\n", "\t\t", "}"}]}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7126633695913477`*^9, 
+  3.7126633754466476`*^9}},ExpressionUUID->"afd9d08b-c309-478c-a060-\
+5bf071180477"]
+}, Closed]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]markdownToXMLPrep\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{
+  3.7125887916848383`*^9, {3.7125908829100122`*^9, 3.71259090500384*^9}, {
+   3.712931641806718*^9, 
+   3.712931642789854*^9}},ExpressionUUID->"3de6c822-0b84-4fe5-9dcf-\
+4b56c8ed84a1"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"markdownToXMLPrep", "[", 
+   RowBox[{"text_String", ",", " ", 
+    RowBox[{"rules", ":", 
+     RowBox[{"_List", "|", "Automatic"}], ":", "Automatic"}]}], "]"}], ":=", 
+  "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"baseData", "=", "\n", "\t\t", 
+      RowBox[{"Fold", "[", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Flatten", "@", "\n", "\t\t\t\t", 
+          RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"Replace", "[", 
+             RowBox[{"#", ",", "\n", "\t\t\t\t\t\t", 
+              RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"baseText_String", "\[RuleDelayed]", 
+                 RowBox[{"{", "baseText", "}"}]}], ",", "\n", 
+                "\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"StringExpression", "[", "l__", "]"}], ":>", "\n", 
+                 "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"List", "[", "l", "]"}]}]}], "\n", "\t\t\t\t\t\t\t", 
+               "}"}]}], "\n", "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t", 
+            
+            RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"baseString_String", ":>", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"Replace", "[", 
+               RowBox[{
+                RowBox[{"StringReplace", "[", 
+                 RowBox[{"baseString", ",", "#2"}], "]"}], ",", "\n", "\t", 
+                "\t", "\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"StringExpression", "[", "l__", "]"}], ":>", "\n", 
+                 "\t", "\t", "\t\t\t\t\t\t\t", 
+                 RowBox[{"List", "[", "l", "]"}]}]}], "\n", "\t", 
+               "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t", "\t\t\t\t\t", "}"}], 
+            ",", "\n", "\t\t\t\t\t", "1"}], "]"}]}], "&"}], ",", "\n", 
+        "\t\t\t", "text", ",", "\n", "\t\t\t", 
+        RowBox[{"Replace", "[", 
+         RowBox[{"rules", ",", "\n", "\t\t\t\t", 
+          RowBox[{"Automatic", ":>", "$markdownToXMLBlockRules"}]}], "\n", 
+         "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "}"}], 
+    ",", "\n", "\t\t", 
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{"StringQ", "@", "baseData"}], ",", "\n", "\t\t\t", "baseData", 
+      ",", "\n", "\t\t\t", 
+      RowBox[{"Flatten", "@", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"ReplaceAll", "[", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"\"\<Orphan\>\"", "\[Rule]", "_"}], ")"}], 
+          "\[RuleDelayed]", 
+          RowBox[{"Sequence", "@@", 
+           RowBox[{"{", "}"}]}]}], "\n", "\t\t\t\t\t", "]"}], "@", "\n", 
+        "\t\t\t\t", 
+        RowBox[{"ReplaceRepeated", "[", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Flatten", "[", 
+           RowBox[{"List", "@@", "baseData"}], "]"}], ",", "\n", "\t", 
+          "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"a___", ",", " ", 
+             RowBox[{"t_", " ", "String"}], ",", " ", 
+             RowBox[{"\"\<Orphan\>\"", "\[Rule]", "o_"}], ",", " ", "b___"}], 
+            "}"}], ":>", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"{", 
+            RowBox[{"a", ",", 
+             RowBox[{"markdownToXMLPrep", "[", 
+              RowBox[{"t", "<>", "o"}], "]"}], ",", "b"}], "}"}]}]}], "\n", 
+         "\t", "\t\t\t\t", "]"}]}]}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t",
+    "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.712585525876885*^9, 3.7125856497422123`*^9}, {
+   3.7125856800545473`*^9, 3.712586148489777*^9}, {3.7125867457387037`*^9, 
+   3.712586755261982*^9}, {3.712587051355555*^9, 3.7125871192735777`*^9}, {
+   3.712587150035431*^9, 3.71258726781678*^9}, {3.712588070877434*^9, 
+   3.712588088299489*^9}, {3.712588427762301*^9, 3.71258859627372*^9}, {
+   3.7125886424596043`*^9, 3.7125887361448603`*^9}, {3.712588773356861*^9, 
+   3.712588775517509*^9}, {3.71258881479443*^9, 3.712588837686987*^9}, {
+   3.71259226916709*^9, 3.712592422664789*^9}, {3.712592491999218*^9, 
+   3.7125925072715387`*^9}, {3.712609437027781*^9, 3.712609438466709*^9}, 
+   3.712609545465448*^9, {3.712609697122617*^9, 3.71260969956251*^9}, 
+   3.712609792909339*^9, {3.712610606315009*^9, 3.7126106069046288`*^9}, {
+   3.712610652266011*^9, 3.7126106691946774`*^9}, {3.712610913725472*^9, 
+   3.712610931926944*^9}, {3.712611023882469*^9, 3.7126110242898693`*^9}, {
+   3.71261790115653*^9, 3.712617902011039*^9}, 3.712618012348188*^9, {
+   3.712811765022601*^9, 3.7128117924318113`*^9}, {3.733032929040019*^9, 
+   3.733032961214594*^9}},ExpressionUUID->"1781532a-d191-4e05-9b98-\
+bca92295a5fc"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]markdownToXMLReinsertRefs\[RightFloor]", \
+"CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{
+  3.7227294181184998`*^9},ExpressionUUID->"2611c03c-066c-4e6d-a664-\
+e591b1c5fb00"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"markdownToXMLReinsertRefs", "[", 
+   RowBox[{"{", 
+    RowBox[{"expr_", ",", " ", "ops_"}], "}"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"oppp", "=", 
+      RowBox[{"Association", "@", 
+       RowBox[{"Cases", "[", 
+        RowBox[{
+         RowBox[{"Flatten", "@", "ops"}], ",", " ", 
+         RowBox[{"_Rule", "|", "_RuleDelayed"}]}], "]"}]}]}], "}"}], ",", 
+    "\n", "\t", 
+    RowBox[{"expr", "/.", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"\"\<ImageRefLink\>\"", "[", "x_", "]"}], ":>", "\n", "\t\t\t", 
+      
+      RowBox[{"Lookup", "[", 
+       RowBox[{"oppp", ",", " ", 
+        RowBox[{"Key", "@", 
+         RowBox[{"{", 
+          RowBox[{"\"\<ImageRefLink\>\"", ",", " ", "x"}], "}"}]}], ",", " ", 
+        "x"}], "]"}]}]}]}], "\n", "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.722729418612842*^9, 3.722729486540822*^9}, {
+   3.722729517398745*^9, 3.722729520526979*^9}, {3.722730674383408*^9, 
+   3.722730707958432*^9}, {3.7227308533887653`*^9, 3.7227309107233458`*^9}, {
+   3.722730991207212*^9, 3.722731000976787*^9}, {3.722731039536031*^9, 
+   3.7227310621260767`*^9}, 
+   3.7227311162689037`*^9},ExpressionUUID->"1ceffb40-a0d9-4152-b79c-\
+97ebeda8a612"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]markdownToXML\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{
+  3.712931647268867*^9},ExpressionUUID->"38bcb829-5f13-4873-8504-\
+2cbb7ffa900b"],
+
+Cell[BoxData[
+ RowBox[{"markdownToXML", "//", "Clear"}]], "CodeInput",
+ CellChangeTimes->{{3.712931832266232*^9, 
+  3.712931833024248*^9}},ExpressionUUID->"e4ff933b-9b19-4f14-92a6-\
+5f911fdb482a"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"markdownToXML", "[", "\n", "\t", 
+   RowBox[{"text_String", ",", "\n", "\t", 
+    RowBox[{"rules", ":", 
+     RowBox[{"_List", "|", "Automatic"}], ":", "Automatic"}], ",", "\n", "\t", 
+    RowBox[{"extraBlockRules", ":", "_List", ":", 
+     RowBox[{"{", "}"}]}], ",", "\n", "\t", 
+    RowBox[{"extraElementRules", ":", "_List", ":", 
+     RowBox[{"{", "}"}]}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+  RowBox[{"Block", "[", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"$markdownToXMLBlockRules", "=", "\n", "\t\t\t", 
+       RowBox[{"Join", "[", 
+        RowBox[{"extraBlockRules", ",", " ", "$markdownToXMLBlockRules"}], 
+        "]"}]}], ",", "\n", "\t\t", 
+      RowBox[{"$markdownToXMLElementRules", "=", "\n", "\t\t\t", 
+       RowBox[{"Join", "[", 
+        RowBox[{"extraElementRules", ",", " ", "$markdownToXMLElementRules"}],
+         "]"}]}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{"Flatten", "@", "\n", "\t\t\t", 
+     RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
+      RowBox[{
+       RowBox[{"markdownToXMLPrep", "[", 
+        RowBox[{"text", ",", "rules"}], "]"}], ",", 
+       RowBox[{"{", "\n", "\t", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"s_String", "\[RuleDelayed]", "\n", "\t", "\t\t\t\t\t", 
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{"rules", "===", "Automatic"}], ",", "\n", "\t", 
+            "\t\t\t\t\t\t", 
+            RowBox[{"Flatten", "@", 
+             RowBox[{"List", "@", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{"markdownToXMLPostProcess1", "[", "s", "]"}]}]}], ",", 
+            "\n", "\t", "\t\t\t\t\t\t", 
+            RowBox[{"{", "s", "}"}]}], "\n", "\t", "\t\t\t\t\t\t", "]"}]}], 
+         ",", "\n", "\t", "\t\t\t\t", 
+         RowBox[{"l_List", ":>", "\n", "\t", "\t\t\t\t\t", 
+          RowBox[{"Replace", "[", 
+           RowBox[{"l", ",", "\n", "\t", "\t\t\t\t\t\t", 
+            RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"s_String", ":>", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+               RowBox[{"If", "[", 
+                RowBox[{
+                 RowBox[{"rules", "===", "Automatic"}], ",", "\n", 
+                 "\t\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{"markdownToXMLPostProcess1", "[", "s", "]"}], ",", 
+                 "\n", "\t", "\t\t\t\t\t\t\t\t\t", "s"}], "\n", "\t", 
+                "\t\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t", 
+              "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"(", 
+                RowBox[{"r_", "\[Rule]", "s_"}], ")"}], ":>", "\n", 
+               "\t\t\t\t\t\t\t\t\t", 
+               RowBox[{"markdownToXMLFormat", "[", 
+                RowBox[{"r", ",", "s"}], "]"}]}]}], "\n", "\t", "\t", "\t", 
+             "\t", "\t", "\t\t\t", "}"}], ",", "\n", "\t", "\t\t\t\t\t\t", 
+            "1"}], "\n", "\t", "\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", 
+        "}"}]}], "]"}]}]}], "\n", "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.712590894312006*^9, 3.71259096055415*^9}, {
+   3.71259100864517*^9, 3.7125910195260973`*^9}, {3.712591743842039*^9, 
+   3.7125918427527733`*^9}, {3.71259253197532*^9, 3.7125925326356573`*^9}, {
+   3.712592689070903*^9, 3.712592690430208*^9}, 3.7125927414127827`*^9, {
+   3.71259281438559*^9, 3.712592823409284*^9}, {3.712592921983774*^9, 
+   3.712592959927082*^9}, {3.71259309689753*^9, 3.712593112702729*^9}, {
+   3.71259327158469*^9, 3.7125932751951637`*^9}, {3.712608738366452*^9, 
+   3.712608739373402*^9}, 3.712608805928253*^9, 3.712610635750432*^9, {
+   3.7126107091975727`*^9, 3.712610766329051*^9}, {3.7126109401262627`*^9, 
+   3.7126109611648197`*^9}, {3.712611017219344*^9, 3.7126110182088423`*^9}, {
+   3.7126110695974817`*^9, 3.712611086281948*^9}, {3.712633782596953*^9, 
+   3.71263380780453*^9}, {3.712634364077664*^9, 3.712634386357726*^9}, {
+   3.7126632599213457`*^9, 3.712663300226807*^9}, 3.712663353987391*^9, {
+   3.712663412671835*^9, 3.7126634139341183`*^9}, {3.712663452456441*^9, 
+   3.71266354980842*^9}, {3.712663620652667*^9, 3.712663636407419*^9}, {
+   3.7126636847205667`*^9, 3.712663761639885*^9}, {3.712663795072153*^9, 
+   3.712663829211733*^9}, {3.712663874191511*^9, 3.712663875856051*^9}, {
+   3.712663929152285*^9, 3.712663930645727*^9}, {3.7126639825034933`*^9, 
+   3.712663993314307*^9}, {3.7126640591401367`*^9, 3.712664060492552*^9}, {
+   3.712664091174358*^9, 3.712664119827202*^9}, {3.712698273147784*^9, 
+   3.712698275511578*^9}, {3.7126983402758217`*^9, 3.7126984235432*^9}, {
+   3.712698500689405*^9, 3.7126985447483*^9}, {3.712698580837225*^9, 
+   3.712698599228541*^9}, {3.7128052495581837`*^9, 3.7128053136778507`*^9}, {
+   3.712809896231979*^9, 3.712810094722105*^9}, {3.712810509639642*^9, 
+   3.712810575939061*^9}, {3.712810730464098*^9, 3.7128107496408854`*^9}, {
+   3.712810795027042*^9, 3.712810836619676*^9}, {3.712811465684578*^9, 
+   3.712811470574068*^9}, {3.71281154019543*^9, 3.7128115445274067`*^9}, 
+   3.712811594268436*^9, {3.712811635106606*^9, 3.71281172963615*^9}, {
+   3.712811808755962*^9, 3.712811823676392*^9}, {3.712811901447474*^9, 
+   3.712811927091292*^9}, {3.712930972656546*^9, 3.7129309732657146`*^9}, {
+   3.7129315600358887`*^9, 3.712931624859432*^9}, {3.712931759838181*^9, 
+   3.712931825067376*^9}, {3.7129324414140472`*^9, 3.712932447580022*^9}, 
+   3.722727308592457*^9, 3.7227275988134604`*^9, {3.722729357282185*^9, 
+   3.722729412653324*^9}, {3.722729673165436*^9, 3.7227296741105833`*^9}, {
+   3.722730002371003*^9, 3.722730035454299*^9}, {3.722730242380801*^9, 
+   3.722730247354599*^9}, {3.722730385265987*^9, 3.722730403224256*^9}, {
+   3.722730511811574*^9, 3.722730653156884*^9}, {3.722731068346559*^9, 
+   3.7227310819399433`*^9}, 3.723340802364378*^9, {3.723521578791206*^9, 
+   3.723521579805332*^9}, {3.733032974117437*^9, 
+   3.7330329761305647`*^9}},ExpressionUUID->"8c3d358d-18f2-4265-9bbf-\
+605f80cec69b"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]markdownToXMLPostProcess1\[RightFloor]", \
+"CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712811835942511*^9, 3.712811844493601*^9}, {
+  3.712811886780139*^9, 
+  3.7128118883724003`*^9}},ExpressionUUID->"8165e97b-e81a-4705-94f3-\
+887cb4cd028a"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"markdownToXMLPostProcess1", "[", "s_", "]"}], ":=", "\n", "\t", 
+  RowBox[{"SplitBy", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"Replace", "[", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"DeleteCases", "[", 
+           RowBox[{"_String", "?", 
+            RowBox[{"(", 
+             RowBox[{"StringMatchQ", "[", "Whitespace", "]"}], ")"}]}], "]"}],
+           "@", "\n", "\t\t\t\t", 
+          RowBox[{"Flatten", "@", 
+           RowBox[{"List", "@", "\n", "\t\t\t\t\t", 
+            RowBox[{"markdownToXML", "[", 
+             RowBox[{"#", ",", "$markdownToXMLElementRules"}], "]"}]}]}]}], 
+         ",", "\n", "\t\t\t", 
+         RowBox[{"{", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"{", "e_XMLElement", "}"}], "\[RuleDelayed]", "e"}], ",", 
+           "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"e", ":", 
+             RowBox[{"Except", "[", 
+              RowBox[{"{", "_XMLElement", "}"}], "]"}]}], ":>", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"XMLElement", "[", 
+             RowBox[{"\"\<p\>\"", ",", "\n", "\t\t\t\t\t\t", 
+              RowBox[{"{", "}"}], ",", "\n", "\t\t\t\t\t\t", 
+              RowBox[{"Flatten", "@", 
+               RowBox[{"{", "e", "}"}]}]}], "\n", "\t\t\t\t\t\t", "]"}]}]}], 
+          "\n", "\t\t\t\t", "}"}]}], "\n", "\t\t\t", "]"}], "&"}], "/@", "\n",
+       "\t\t\t", 
+      RowBox[{
+       RowBox[{"Select", "[", 
+        RowBox[{"Not", "@*", 
+         RowBox[{"StringMatchQ", "[", "Whitespace", "]"}]}], "]"}], "@", "\n",
+        "\t\t\t\t", 
+       RowBox[{"StringSplit", "[", 
+        RowBox[{"s", ",", "\"\<\\n\\n\>\""}], "]"}]}]}], "//", "Flatten"}], 
+    ",", "\n", "\t\t", 
+    RowBox[{"Replace", "[", 
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"XMLElement", "[", 
+         RowBox[{
+          RowBox[{"Alternatives", "@@", "$markdownToXMLNewLineElements"}], 
+          ",", "__"}], "]"}], ":>", "\n", "\t\t\t\t", 
+        RowBox[{"RandomReal", "[", "]"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"_", "\[Rule]", "True"}]}], "\n", "\t\t\t", "}"}], "]"}]}], 
+   "\n", "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.712811846756812*^9, 3.712811890106792*^9}, 
+   3.723340845051607*^9, {3.723340937396449*^9, 3.723340948689896*^9}, {
+   3.723341686076715*^9, 3.723341697076337*^9}, 
+   3.723341946523843*^9},ExpressionUUID->"dff6eae9-a002-482b-b951-\
+7096eba292eb"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]markdownToXMLPreProcess\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712590886734819*^9, 
+  3.7125908915812063`*^9}},ExpressionUUID->"f7e354b7-a0e5-42dc-834b-\
+8c1b4dcbb735"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"markdownToXMLPreProcess", "[", "t_String", "]"}], ":=", "\n", "\t", 
+  RowBox[{"StringReplace", "[", 
+   RowBox[{"t", ",", 
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"\"\<\\n\>\"", "~~", 
+         RowBox[{"Whitespace", "?", 
+          RowBox[{"(", 
+           RowBox[{"StringFreeQ", "[", "\"\<\\n\>\"", "]"}], ")"}]}], "~~", 
+         "EndOfLine"}], ")"}], "\[Rule]", "\"\<\\n\>\""}], ",", "\n", "\t\t", 
+      
+      RowBox[{"\"\<\[IndentingNewLine]\>\"", "\[Rule]", "\"\<\\n\\t\>\""}], 
+      ",", "\n", "\t\t", 
+      RowBox[{"\"\<\\t\>\"", "\[Rule]", "\"\<    \>\""}], ",", "\n", "\t\t", 
+      RowBox[{"\"\<\[SpanFromLeft]\>\"", "\[Rule]", "\"\<\[Ellipsis]\>\""}]}],
+      "\n", "\t\t", "}"}]}], "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.712591029828374*^9, 3.712591067802205*^9}, {
+  3.712592202495163*^9, 3.712592217141049*^9}, {3.712608325521289*^9, 
+  3.71260834163937*^9}, {3.7126087858805313`*^9, 3.712608793190493*^9}, {
+  3.712608981714282*^9, 3.712608986343693*^9}, {3.712609513267964*^9, 
+  3.7126095136326714`*^9}, {3.722651469243658*^9, 
+  3.7226514803453083`*^9}},ExpressionUUID->"bdd745e5-83f0-4f8a-9e35-\
+ff78849a8cd4"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]MarkdownToXML\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7125910702970753`*^9, 
+  3.712591072890123*^9}},ExpressionUUID->"b86a5c6c-b2aa-4b5c-9cb0-\
+fc19f5bc5d1b"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "MarkdownToXML", "]"}], "=", "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"\"\<StripMetaInformation\>\"", "\[Rule]", "True"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<HeaderElements\>\"", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+       "\"\<meta\>\"", ",", " ", "\"\<style\>\"", ",", " ", "\"\<link\>\"", 
+        ",", " ", "\"\<title\>\""}], "}"}]}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<BlockRules\>\"", "\[Rule]", 
+      RowBox[{"{", "}"}]}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<ElementRules\>\"", "\[Rule]", 
+      RowBox[{"{", "}"}]}]}], "\n", "\t\t", "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"MarkdownToXML", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"s_String", "?", 
+      RowBox[{"(", 
+       RowBox[{"Not", "@*", "FileExistsQ"}], ")"}]}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"sm", "=", 
+        RowBox[{"TrueQ", "@", 
+         RowBox[{
+         "OptionValue", "[", "\"\<StripMetaInformation\>\"", "]"}]}]}], ",", 
+       "\n", "\t\t", 
+       RowBox[{"he", "=", 
+        RowBox[{"OptionValue", "[", "\"\<HeaderElements\>\"", "]"}]}], ",", 
+       "\n", "\t\t", 
+       RowBox[{"er", "=", 
+        RowBox[{"Replace", "[", 
+         RowBox[{
+          RowBox[{"OptionValue", "[", "\"\<ElementRules\>\"", "]"}], ",", 
+          RowBox[{
+           RowBox[{"Except", "[", 
+            RowBox[{"_", "?", "OptionQ"}], "]"}], "\[RuleDelayed]", 
+           RowBox[{"{", "}"}]}]}], "]"}]}], ",", "\n", "\t\t", 
+       RowBox[{"br", "=", 
+        RowBox[{"Replace", "[", 
+         RowBox[{
+          RowBox[{"OptionValue", "[", "\"\<BlockRules\>\"", "]"}], ",", 
+          RowBox[{
+           RowBox[{"Except", "[", 
+            RowBox[{"_", "?", "OptionQ"}], "]"}], "\[RuleDelayed]", 
+           RowBox[{"{", "}"}]}]}], "]"}]}]}], "\n", "\t\t", "}"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"Replace", "[", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"GatherBy", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"markdownToXMLReinsertRefs", "@", "\n", "\t\t\t\t\t", 
+          RowBox[{"Reap", "@", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"markdownToXML", "[", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"markdownToXMLPreProcess", "[", "s", "]"}], ",", "\n", 
+             "\t", "\t", "\t\t\t\t\t", "Automatic", ",", "\n", "\t", "\t", 
+             "\t\t\t\t\t", 
+             RowBox[{"Join", "[", "\n", "\t", "\t", "\t\t\t\t\t\t", 
+              RowBox[{"br", ",", "\n", "\t", "\t", "\t\t\t\t\t\t", 
+               RowBox[{"If", "[", 
+                RowBox[{"sm", ",", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                 "{", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
+                  "$markdownToXMLMeta", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
+                  "}"}], ",", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
+                 RowBox[{"{", "}"}]}], "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
+                "]"}]}], "\n", "\t", "\t", "\t\t\t\t\t\t", "]"}], ",", "\n", 
+             "\t", "\t", "\t\t\t\t\t", "er"}], "\n", "\t", "\t\t\t\t\t\t", 
+            "]"}]}]}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"With", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"base", "=", 
+             RowBox[{"StringMatchQ", "[", 
+              RowBox[{"Alternatives", "@@", "he"}], "]"}]}], "}"}], ",", "\n",
+            "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{"Head", "[", "#", "]"}], "\[Equal]", "XMLElement"}], "&&", 
+             RowBox[{
+              RowBox[{"Length", "[", "#", "]"}], ">", "0"}], "&&", 
+             RowBox[{"base", "@", 
+              RowBox[{"First", "[", "#", "]"}]}]}], "&"}]}], "\n", 
+          "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t", 
+       RowBox[{"{", "\n", "\t", "\t\t", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"h_", ",", "b_"}], "}"}], ":>", "\n", "\t", "\t\t\t", 
+          RowBox[{"XMLElement", "[", 
+           RowBox[{"\"\<html\>\"", ",", "\n", "\t", "\t\t\t\t", 
+            RowBox[{"{", "}"}], ",", "\n", "\t", "\t\t\t\t", 
+            RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"XMLElement", "[", 
+               RowBox[{"\"\<head\>\"", ",", " ", 
+                RowBox[{"{", "}"}], ",", " ", 
+                RowBox[{"DeleteDuplicates", "@", "h"}]}], "]"}], ",", "\n", 
+              "\t\t\t\t\t\t", 
+              RowBox[{"XMLElement", "[", 
+               RowBox[{"\"\<body\>\"", ",", " ", 
+                RowBox[{"{", "}"}], ",", " ", "b"}], "]"}]}], "\n", 
+             "\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t", "]"}]}], ",", "\n", 
+         "\t", "\t\t", 
+         RowBox[{
+          RowBox[{"{", "b_", "}"}], ":>", "\n", "\t", "\t\t\t", 
+          RowBox[{"XMLElement", "[", 
+           RowBox[{"\"\<html\>\"", ",", "\n", "\t", "\t\t\t\t", 
+            RowBox[{"{", "}"}], ",", "\n", "\t", "\t\t\t\t", 
+            RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
+             RowBox[{"XMLElement", "[", 
+              RowBox[{"\"\<body\>\"", ",", 
+               RowBox[{"{", "}"}], ",", "b"}], "]"}], "\n", "\t", 
+             "\t\t\t\t\t", "}"}]}], "\n", "\t", "\t\t\t\t", "]"}]}]}], "\n", 
+        "\t\t\t", "}"}]}], "]"}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"MarkdownToXML", "[", 
+   RowBox[{"f", ":", 
+    RowBox[{"(", 
+     RowBox[{"_File", "|", 
+      RowBox[{"_String", "?", "FileExistsQ"}]}], ")"}]}], "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"MarkdownToXML", "@", "\n", "\t\t", 
+   RowBox[{"Import", "[", 
+    RowBox[{"f", ",", " ", "\"\<Text\>\""}], "]"}]}]}]}], "CodeInput",
+ CellChangeTimes->{{3.7125910746026697`*^9, 3.7125911198833027`*^9}, {
+   3.712591728625841*^9, 3.712591739311037*^9}, {3.7125928265919323`*^9, 
+   3.7125928342747383`*^9}, 3.712592887845458*^9, {3.712608963663906*^9, 
+   3.71260896503113*^9}, 3.7126091788519087`*^9, {3.712609398842909*^9, 
+   3.7126093997177763`*^9}, 3.712609537922327*^9, {3.712618023484964*^9, 
+   3.712618024692335*^9}, 3.7126181179649763`*^9, {3.7129306149887667`*^9, 
+   3.7129307355135717`*^9}, {3.7129307760281963`*^9, 3.712930821282563*^9}, {
+   3.7129309561801567`*^9, 3.712930964353239*^9}, {3.7129309954438*^9, 
+   3.712931008576623*^9}, {3.712931542944963*^9, 3.712931549031287*^9}, {
+   3.712931684240974*^9, 3.712931749378909*^9}, {3.712932131092998*^9, 
+   3.712932181129183*^9}, {3.712933567372128*^9, 3.712933569085676*^9}, {
+   3.722727256772462*^9, 3.722727285395527*^9}, {3.72273109622196*^9, 
+   3.7227311059670362`*^9}, 3.722732506664969*^9, {3.722732566393498*^9, 
+   3.722732648416211*^9}, 3.7227326933136463`*^9, {3.722732856783684*^9, 
+   3.7227328588791924`*^9}, {3.7227336911417294`*^9, 
+   3.7227337535851297`*^9}, {3.722735018592812*^9, 3.722735027172676*^9}, {
+   3.723340768169839*^9, 3.72334079352147*^9}, {3.7330327016295347`*^9, 
+   3.733032702650902*^9}, {3.733036521153854*^9, 3.733036585606793*^9}, {
+   3.733151054798217*^9, 3.733151096950097*^9}, {3.733151454944524*^9, 
+   3.733151457084567*^9}, {3.733434162046125*^9, 3.7334341947391*^9}, {
+   3.733434301720448*^9, 
+   3.733434329104332*^9}},ExpressionUUID->"8097baae-df23-46e5-9dff-\
+e7a8d8eb4cc4"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"End", "[", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"bcdb7196-8e28-4ebb-8b67-\
+13ca5c895615"]
+}, Open  ]],
+
+Cell["", "SectionSeparator",ExpressionUUID->"0792ebaa-1dc2-414d-9656-\
+e65bfc12151a"]
+},
+WindowSize->{808, 755},
+WindowMargins->{{177, Automatic}, {Automatic, 34}},
+FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
+2018)",
+StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+

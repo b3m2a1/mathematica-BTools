@@ -1,0 +1,1257 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["WebTools", "CodeSection",
+ CellChangeTimes->{{3.692181160075109*^9, 3.69218116081855*^9}, {
+  3.701690507468943*^9, 
+  3.701690511481413*^9}},ExpressionUUID->"dc86c068-af81-4323-9c7c-\
+0a6a257b414e"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"CSSGenerate", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Takes a list of rules and creates a CSS block\>\""}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7330275941845284`*^9, 
+  3.7330276441607733`*^9}},ExpressionUUID->"b2a0bbc2-8364-48c3-bee2-\
+3c9a3439dabd"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"5c51a4c0-162b-4138-b16b-\
+64352b76d76c"],
+
+Cell[CellGroupData[{
+
+Cell["CSS", "CodeSubsection",
+ CellChangeTimes->{{3.7016908133028193`*^9, 3.7016908153266497`*^9}, {
+  3.701741610662965*^9, 3.701741610996945*^9}, {3.7330276607541113`*^9, 
+  3.733027661080315*^9}},ExpressionUUID->"0e24520e-9c40-41b8-aab1-\
+0aa83b9176d4"],
+
+Cell[CellGroupData[{
+
+Cell["CSSGenerate", "CodeSubsubsection",
+ CellChangeTimes->{{3.733027747343328*^9, 
+  3.7330277487754803`*^9}},ExpressionUUID->"4a223301-a434-4e8f-8881-\
+7a44e031971f"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AllowedProperties\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7330291688658257`*^9, 3.7330291903133183`*^9}, {
+  3.733029264250448*^9, 
+  3.733029267751775*^9}},ExpressionUUID->"cb5dd701-66ad-4e30-8a2a-\
+2afeb0d78dde"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$CSSDefaultAllowedProperties", "=", "\n", "\t", 
+   RowBox[{"Alternatives", "@@", "\n", "\t\t", 
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{
+     "\"\<align-content\>\"", ",", "\"\<align-items\>\"", ",", 
+      "\"\<align-self\>\"", ",", "\n", "\t", "\t", "\t", "\"\<all\>\"", ",", 
+      "\"\<animation\>\"", ",", "\"\<animation-delay\>\"", ",", "\n", "\t", 
+      "\t", "\t", "\"\<animation-direction\>\"", ",", 
+      "\"\<animation-duration\>\"", ",", "\"\<animation-fill-mode\>\"", ",", 
+      "\n", "\t", "\t", "\t", "\"\<animation-iteration-count\>\"", ",", 
+      "\"\<animation-name\>\"", ",", "\"\<animation-play-state\>\"", ",", 
+      "\n", "\t", "\t", "\t", "\"\<animation-timing-function\>\"", ",", 
+      "\"\<backface-visibility\>\"", ",", "\"\<background\>\"", ",", "\n", 
+      "\t", "\t", "\t", "\"\<background-attachment\>\"", ",", 
+      "\"\<background-blend-mode\>\"", ",", "\"\<background-clip\>\"", ",", 
+      "\n", "\t", "\t", "\t", "\"\<background-color\>\"", ",", 
+      "\"\<background-image\>\"", ",", "\"\<background-origin\>\"", ",", "\n",
+       "\t", "\t", "\t", "\"\<background-position\>\"", ",", 
+      "\"\<background-repeat\>\"", ",", "\"\<background-size\>\"", ",", "\n", 
+      "\t", "\t", "\t", "\"\<border\>\"", ",", "\"\<border-bottom\>\"", ",", 
+      "\"\<border-bottom-color\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<border-bottom-left-radius\>\"", ",", 
+      "\"\<border-bottom-right-radius\>\"", ",", 
+      "\"\<border-bottom-style\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<border-bottom-width\>\"", ",", "\"\<border-collapse\>\"", ",", 
+      "\"\<border-color\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<border-image\>\"", ",", "\"\<border-image-outset\>\"", ",", 
+      "\"\<border-image-repeat\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<border-image-slice\>\"", ",", "\"\<border-image-source\>\"", ",", 
+      "\"\<border-image-width\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<border-left\>\"", ",", "\"\<border-left-color\>\"", ",", 
+      "\"\<border-left-style\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<border-left-width\>\"", ",", "\"\<border-radius\>\"", ",", 
+      "\"\<border-right\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<border-right-color\>\"", ",", "\"\<border-right-style\>\"", ",", 
+      "\"\<border-right-width\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<border-spacing\>\"", ",", "\"\<border-style\>\"", ",", 
+      "\"\<border-top\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<border-top-color\>\"", ",", "\"\<border-top-left-radius\>\"", ",", 
+      "\"\<border-top-right-radius\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<border-top-style\>\"", ",", "\"\<border-top-width\>\"", ",", 
+      "\"\<border-width\>\"", ",", "\n", "\t", "\t", "\t", "\"\<bottom\>\"", 
+      ",", "\"\<box-shadow\>\"", ",", "\"\<box-sizing\>\"", ",", "\n", "\t", 
+      "\t", "\t", "\"\<caption-side\>\"", ",", "\"\<clear\>\"", ",", 
+      "\"\<clip\>\"", ",", "\n", "\t", "\t", "\t", "\"\<color\>\"", ",", 
+      "\"\<column-count\>\"", ",", "\"\<column-fill\>\"", ",", "\n", "\t", 
+      "\t", "\t", "\"\<column-gap\>\"", ",", "\"\<column-rule\>\"", ",", 
+      "\"\<column-rule-color\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<column-rule-style\>\"", ",", "\"\<column-rule-width\>\"", ",", 
+      "\"\<column-span\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<column-width\>\"", ",", "\"\<columns\>\"", ",", "\"\<content\>\"", 
+      ",", "\n", "\t", "\t", "\t", "\"\<counter-increment\>\"", ",", 
+      "\"\<counter-reset\>\"", ",", "\"\<cursor\>\"", ",", "\n", "\t", "\t", 
+      "\t", "\"\<direction\>\"", ",", "\"\<display\>\"", ",", 
+      "\"\<empty-cells\>\"", ",", "\n", "\t", "\t", "\t", "\"\<filter\>\"", 
+      ",", "\"\<flex\>\"", ",", "\"\<flex-basis\>\"", ",", "\n", "\t", "\t", 
+      "\t", "\"\<flex-direction\>\"", ",", "\"\<flex-flow\>\"", ",", 
+      "\"\<flex-grow\>\"", ",", "\n", "\t", "\t", "\t", "\"\<flex-shrink\>\"",
+       ",", "\"\<flex-wrap\>\"", ",", "\"\<float\>\"", ",", "\n", "\t", "\t", 
+      "\t", "\"\<font\>\"", ",", "\"\<@font-face\>\"", ",", 
+      "\"\<font-family\>\"", ",", "\n", "\t", "\t", "\t", "\"\<font-size\>\"",
+       ",", "\"\<font-size-adjust\>\"", ",", "\"\<font-stretch\>\"", ",", 
+      "\n", "\t", "\t", "\t", "\"\<font-style\>\"", ",", 
+      "\"\<font-variant\>\"", ",", "\"\<font-weight\>\"", ",", "\n", "\t", 
+      "\t", "\t", "\"\<hanging-punctuation\>\"", ",", "\"\<height\>\"", ",", 
+      "\"\<justify-content\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<@keyframes\>\"", ",", "\"\<left\>\"", ",", 
+      "\"\<letter-spacing\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<line-height\>\"", ",", "\"\<list-style\>\"", ",", 
+      "\"\<list-style-image\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<list-style-position\>\"", ",", "\"\<list-style-type\>\"", ",", 
+      "\"\<margin\>\"", ",", "\n", "\t", "\t", "\t", "\"\<margin-bottom\>\"", 
+      ",", "\"\<margin-left\>\"", ",", "\"\<margin-right\>\"", ",", "\n", 
+      "\t", "\t", "\t", "\"\<margin-top\>\"", ",", "\"\<max-height\>\"", ",", 
+      "\"\<max-width\>\"", ",", "\n", "\t", "\t", "\t", "\"\<@media\>\"", 
+      ",", "\"\<min-height\>\"", ",", "\"\<min-width\>\"", ",", "\n", "\t", 
+      "\t", "\t", "\"\<nav-down\>\"", ",", "\"\<nav-index\>\"", ",", 
+      "\"\<nav-left\>\"", ",", "\n", "\t", "\t", "\t", "\"\<nav-right\>\"", 
+      ",", "\"\<nav-up\>\"", ",", "\"\<opacity\>\"", ",", "\n", "\t", "\t", 
+      "\t", "\"\<order\>\"", ",", "\"\<outline\>\"", ",", 
+      "\"\<outline-color\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<outline-offset\>\"", ",", "\"\<outline-style\>\"", ",", 
+      "\"\<outline-width\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<overflow\>\"", ",", "\"\<overflow-x\>\"", ",", 
+      "\"\<overflow-y\>\"", ",", "\n", "\t", "\t", "\t", "\"\<padding\>\"", 
+      ",", "\"\<padding-bottom\>\"", ",", "\"\<padding-left\>\"", ",", "\n", 
+      "\t", "\t", "\t", "\"\<padding-right\>\"", ",", "\"\<padding-top\>\"", 
+      ",", "\"\<page-break-after\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<page-break-before\>\"", ",", "\"\<page-break-inside\>\"", ",", 
+      "\"\<perspective\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<perspective-origin\>\"", ",", "\"\<position\>\"", ",", 
+      "\"\<quotes\>\"", ",", "\n", "\t", "\t", "\t", "\"\<resize\>\"", ",", 
+      "\"\<right\>\"", ",", "\"\<tab-size\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<table-layout\>\"", ",", "\"\<text-align\>\"", ",", 
+      "\"\<text-align-last\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<text-decoration\>\"", ",", "\"\<text-decoration-color\>\"", ",", 
+      "\"\<text-decoration-line\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<text-decoration-style\>\"", ",", "\"\<text-indent\>\"", ",", 
+      "\"\<text-justify\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<text-overflow\>\"", ",", "\"\<text-shadow\>\"", ",", 
+      "\"\<text-transform\>\"", ",", "\n", "\t", "\t", "\t", "\"\<top\>\"", 
+      ",", "\"\<transform\>\"", ",", "\"\<transform-origin\>\"", ",", "\n", 
+      "\t", "\t", "\t", "\"\<transform-style\>\"", ",", "\"\<transition\>\"", 
+      ",", "\"\<transition-delay\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<transition-duration\>\"", ",", "\"\<transition-property\>\"", ",", 
+      "\"\<transition-timing-function\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<unicode-bidi\>\"", ",", "\"\<user-select\>\"", ",", 
+      "\"\<vertical-align\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<visibility\>\"", ",", "\"\<white-space\>\"", ",", "\"\<width\>\"", 
+      ",", "\n", "\t", "\t", "\t", "\"\<word-break\>\"", ",", 
+      "\"\<word-spacing\>\"", ",", "\"\<word-wrap\>\"", ",", "\n", "\t", "\t",
+       "\t", "\"\<z-index\>\"", ",", "\"\<color\>\"", ",", "\"\<opacity\>\"", 
+      ",", "\n", "\t", "\t", "\t", "\"\<background\>\"", ",", 
+      "\"\<background-attachment\>\"", ",", "\"\<background-blend-mode\>\"", 
+      ",", "\n", "\t", "\t", "\t", "\"\<background-color\>\"", ",", 
+      "\"\<background-image\>\"", ",", "\"\<background-position\>\"", ",", 
+      "\n", "\t", "\t", "\t", "\"\<background-repeat\>\"", ",", 
+      "\"\<background-clip\>\"", ",", "\"\<background-origin\>\"", ",", "\n", 
+      "\t", "\t", "\t", "\"\<background-size\>\"", ",", "\"\<border\>\"", 
+      ",", "\"\<border-bottom\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<border-bottom-color\>\"", ",", "\"\<border-bottom-left-radius\>\"",
+       ",", "\"\<border-bottom-right-radius\>\"", ",", "\n", "\t", "\t", 
+      "\t", "\"\<border-bottom-style\>\"", ",", "\"\<border-bottom-width\>\"",
+       ",", "\"\<border-color\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<border-image\>\"", ",", "\"\<border-image-outset\>\"", ",", 
+      "\"\<border-image-repeat\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<border-image-slice\>\"", ",", "\"\<border-image-source\>\"", ",", 
+      "\"\<border-image-width\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<border-left\>\"", ",", "\"\<border-left-color\>\"", ",", 
+      "\"\<border-left-style\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<border-left-width\>\"", ",", "\"\<border-radius\>\"", ",", 
+      "\"\<border-right\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<border-right-color\>\"", ",", "\"\<border-right-style\>\"", ",", 
+      "\"\<border-right-width\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<border-style\>\"", ",", "\"\<border-top\>\"", ",", 
+      "\"\<border-top-color\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<border-top-left-radius\>\"", ",", 
+      "\"\<border-top-right-radius\>\"", ",", "\"\<border-top-style\>\"", ",",
+       "\n", "\t", "\t", "\t", "\"\<border-top-width\>\"", ",", 
+      "\"\<border-width\>\"", ",", "\"\<box-shadow\>\"", ",", "\n", "\t", 
+      "\t", "\t", "\"\<bottom\>\"", ",", "\"\<clear\>\"", ",", "\"\<clip\>\"",
+       ",", "\n", "\t", "\t", "\t", "\"\<display\>\"", ",", "\"\<float\>\"", 
+      ",", "\"\<height\>\"", ",", "\n", "\t", "\t", "\t", "\"\<left\>\"", 
+      ",", "\"\<margin\>\"", ",", "\"\<margin-bottom\>\"", ",", "\n", "\t", 
+      "\t", "\t", "\"\<margin-left\>\"", ",", "\"\<margin-right\>\"", ",", 
+      "\"\<margin-top\>\"", ",", "\n", "\t", "\t", "\t", "\"\<max-height\>\"",
+       ",", "\"\<max-width\>\"", ",", "\"\<min-height\>\"", ",", "\n", "\t", 
+      "\t", "\t", "\"\<min-width\>\"", ",", "\"\<overflow\>\"", ",", 
+      "\"\<overflow-x\>\"", ",", "\n", "\t", "\t", "\t", "\"\<overflow-y\>\"",
+       ",", "\"\<padding\>\"", ",", "\"\<padding-bottom\>\"", ",", "\n", "\t",
+       "\t", "\t", "\"\<padding-left\>\"", ",", "\"\<padding-right\>\"", ",", 
+      "\"\<padding-top\>\"", ",", "\n", "\t", "\t", "\t", "\"\<position\>\"", 
+      ",", "\"\<right\>\"", ",", "\"\<top\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<visibility\>\"", ",", "\"\<width\>\"", ",", 
+      "\"\<vertical-align\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<z-index\>\"", ",", "\"\<align-content\>\"", ",", 
+      "\"\<align-items\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<align-self\>\"", ",", "\"\<flex\>\"", ",", "\"\<flex-basis\>\"", 
+      ",", "\n", "\t", "\t", "\t", "\"\<flex-direction\>\"", ",", 
+      "\"\<flex-flow\>\"", ",", "\"\<flex-grow\>\"", ",", "\n", "\t", "\t", 
+      "\t", "\"\<flex-shrink\>\"", ",", "\"\<flex-wrap\>\"", ",", 
+      "\"\<justify-content\>\"", ",", "\n", "\t", "\t", "\t", "\"\<order\>\"",
+       ",", "\"\<hanging-punctuation\>\"", ",", "\"\<letter-spacing\>\"", ",",
+       "\n", "\t", "\t", "\t", "\"\<line-height\>\"", ",", "\"\<tab-size\>\"",
+       ",", "\"\<text-align\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<text-align-last\>\"", ",", "\"\<text-indent\>\"", ",", 
+      "\"\<text-justify\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<text-transform\>\"", ",", "\"\<white-space\>\"", ",", 
+      "\"\<word-break\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<word-spacing\>\"", ",", "\"\<word-wrap\>\"", ",", 
+      "\"\<text-decoration\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<text-decoration-color\>\"", ",", "\"\<text-decoration-line\>\"", 
+      ",", "\"\<text-decoration-style\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<text-shadow\>\"", ",", "\"\<@font-face\>\"", ",", "\"\<font\>\"", 
+      ",", "\n", "\t", "\t", "\t", "\"\<font-family\>\"", ",", 
+      "\"\<font-size\>\"", ",", "\"\<font-size-adjust\>\"", ",", "\n", "\t", 
+      "\t", "\t", "\"\<font-stretch\>\"", ",", "\"\<font-style\>\"", ",", 
+      "\"\<font-variant\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<font-weight\>\"", ",", "\"\<direction\>\"", ",", 
+      "\"\<unicode-bidi\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<direction\>\"", ",", "\"\<user-select\>\"", ",", 
+      "\"\<border-collapse\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<border-spacing\>\"", ",", "\"\<caption-side\>\"", ",", 
+      "\"\<empty-cells\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<table-layout\>\"", ",", "\"\<counter-increment\>\"", ",", 
+      "\"\<counter-reset\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<list-style\>\"", ",", "\"\<list-style-image\>\"", ",", 
+      "\"\<list-style-position\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<list-style-type\>\"", ",", "\"\<@keyframes\>\"", ",", 
+      "\"\<animation\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<animation-delay\>\"", ",", "\"\<animation-direction\>\"", ",", 
+      "\"\<animation-duration\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<animation-fill-mode\>\"", ",", "\"\<animation-iteration-count\>\"",
+       ",", "\"\<animation-name\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<animation-play-state\>\"", ",", 
+      "\"\<animation-timing-function\>\"", ",", "\"\<backface-visibility\>\"",
+       ",", "\n", "\t", "\t", "\t", "\"\<perspective\>\"", ",", 
+      "\"\<perspective-origin\>\"", ",", "\"\<transform\>\"", ",", "\n", "\t",
+       "\t", "\t", "\"\<transform-origin\>\"", ",", "\"\<transform-style\>\"",
+       ",", "\"\<transition\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<transition-property\>\"", ",", "\"\<transition-duration\>\"", ",", 
+      "\"\<transition-timing-function\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<transition-delay\>\"", ",", "\"\<box-sizing\>\"", ",", 
+      "\"\<content\>\"", ",", "\n", "\t", "\t", "\t", "\"\<cursor\>\"", ",", 
+      "\"\<nav-down\>\"", ",", "\"\<nav-index\>\"", ",", "\n", "\t", "\t", 
+      "\t", "\"\<nav-left\>\"", ",", "\"\<nav-right\>\"", ",", 
+      "\"\<nav-up\>\"", ",", "\n", "\t", "\t", "\t", "\"\<outline\>\"", ",", 
+      "\"\<outline-color\>\"", ",", "\"\<outline-offset\>\"", ",", "\n", "\t",
+       "\t", "\t", "\"\<outline-style\>\"", ",", "\"\<outline-width\>\"", 
+      ",", "\"\<resize\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<text-overflow\>\"", ",", "\"\<column-count\>\"", ",", 
+      "\"\<column-fill\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<column-gap\>\"", ",", "\"\<column-rule\>\"", ",", 
+      "\"\<column-rule-color\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<column-rule-style\>\"", ",", "\"\<column-rule-width\>\"", ",", 
+      "\"\<column-span\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<column-width\>\"", ",", "\"\<columns\>\"", ",", 
+      "\"\<page-break-after\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<page-break-before\>\"", ",", "\"\<page-break-inside\>\"", ",", 
+      "\"\<quotes\>\"", ",", "\n", "\t", "\t", "\t", "\"\<filter\>\""}], "\n",
+      "\t", "\t\t", "}"}]}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.733029174726426*^9, 3.733029182953493*^9}, {
+  3.7330292686833887`*^9, 
+  3.733029277278213*^9}},ExpressionUUID->"59774654-59b4-4115-be23-\
+49dbd7763939"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AllowedTypes\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7330291688658257`*^9, 3.7330291903133183`*^9}, {
+  3.733029264250448*^9, 3.733029267751775*^9}, {3.733029897601782*^9, 
+  3.7330298984526377`*^9}, {3.733030034901659*^9, 
+  3.733030035453197*^9}},ExpressionUUID->"d9d7448f-6153-4f95-bcdd-\
+d601ed5a6ac3"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$CSSDefaultAllowedTypes", "=", "\n", "\t", 
+   RowBox[{"Alternatives", "@@", "\n", "\t\t", 
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{
+     "\"\<a\>\"", ",", "\"\<abbr\>\"", ",", "\"\<acronym\>\"", ",", "\n", 
+      "\t", "\t", "\t", "\"\<address\>\"", ",", "\"\<applet\>\"", ",", 
+      "\"\<area\>\"", ",", "\n", "\t", "\t", "\t", "\"\<article\>\"", ",", 
+      "\"\<aside\>\"", ",", "\"\<audio\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<b\>\"", ",", "\"\<base\>\"", ",", "\"\<basefont\>\"", ",", "\n", 
+      "\t", "\t", "\t", "\"\<bdi\>\"", ",", "\"\<bdo\>\"", ",", "\"\<big\>\"",
+       ",", "\n", "\t", "\t", "\t", "\"\<blockquote\>\"", ",", "\"\<body\>\"",
+       ",", "\n", "\t\t\t", "\"\<br\>\"", ",", "\"\<button\>\"", ",", 
+      "\"\<buildto\>\"", ",", "\n", "\t", "\t", "\t", "\"\<canvas\>\"", ",", 
+      "\"\<caption\>\"", ",", "\"\<center\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<cite\>\"", ",", "\"\<code\>\"", ",", "\"\<col\>\"", ",", "\n", 
+      "\t", "\t", "\t", "\"\<colgroup\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<data\>\"", ",", "\"\<datalist\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<dd\>\"", ",", "\"\<del\>\"", ",", "\"\<details\>\"", ",", "\n", 
+      "\t", "\t", "\t", "\"\<dfn\>\"", ",", "\"\<dialog\>\"", ",", 
+      "\"\<dir\>\"", ",", "\n", "\t", "\t", "\t", "\"\<div\>\"", ",", 
+      "\"\<dl\>\"", ",", "\"\<dt\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<em\>\"", ",", "\"\<embed\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<fieldset\>\"", ",", "\"\<figcaption\>\"", ",", "\"\<figure\>\"", 
+      ",", "\n", "\t", "\t", "\t", "\"\<font\>\"", ",", "\"\<footer\>\"", 
+      ",", "\"\<form\>\"", ",", "\n", "\t", "\t", "\t", "\"\<frame\>\"", ",", 
+      "\"\<frameset\>\"", ",", "\n", "\t", "\t", "\t", "\"\<header\>\"", ",", 
+      "\"\<hr\>\"", ",", "\n", "\t", "\t\t", "\"\<h1\>\"", ",", "\"\<h2\>\"", 
+      ",", "\"\<h3\>\"", ",", "\n", "\t", "\t\t", "\"\<h4\>\"", ",", 
+      "\"\<h5\>\"", ",", "\"\<h6\>\"", ",", "\n", "\t", "\t\t", "\"\<i\>\"", 
+      ",", "\"\<iframe\>\"", ",", "\"\<img\>\"", ",", "\n", "\t", "\t\t", 
+      "\"\<inputcell\>\"", ",", "\n", "\t", "\t\t", "\"\<input\>\"", ",", 
+      "\"\<ins\>\"", ",", "\n", "\t", "\t", "\t", "\"\<kbd\>\"", ",", 
+      "\"\<keygen\>\"", ",", "\n", "\t", "\t", "\t", "\"\<label\>\"", ",", 
+      "\"\<legend\>\"", ",", "\"\<li\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<link\>\"", ",", "\n", "\t", "\t", "\t", "\"\<main\>\"", ",", 
+      "\"\<map\>\"", ",", "\"\<mark\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<menu\>\"", ",", "\"\<menuitem\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<meta\>\"", ",", "\"\<meter\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<nav\>\"", ",", "\"\<noframes\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<noscript\>\"", ",", "\n", "\t", "\t", "\t", "\"\<object\>\"", ",", 
+      "\"\<ol\>\"", ",", "\n", "\t", "\t", "\t", "\"\<optgroup\>\"", ",", 
+      "\"\<option\>\"", ",", "\n", "\t", "\t", "\t", "\"\<output\>\"", ",", 
+      "\n", "\t", "\t", "\t", "\"\<p\>\"", ",", "\"\<param\>\"", ",", "\n", 
+      "\t", "\t", "\t", "\"\<picture\>\"", ",", "\"\<pre\>\"", ",", "\n", 
+      "\t", "\t", "\t", "\"\<progress\>\"", ",", "\n", "\t", "\t\t", 
+      "\"\<q\>\"", ",", "\n", "\t", "\t", "\t", "\"\<rp\>\"", ",", 
+      "\"\<rt\>\"", ",", "\"\<ruby\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<s\>\"", ",", "\"\<samp\>\"", ",", "\"\<script\>\"", ",", "\n", 
+      "\t", "\t", "\t", "\"\<section\>\"", ",", "\"\<select\>\"", ",", 
+      "\"\<small\>\"", ",", "\n", "\t", "\t", "\t", "\"\<source\>\"", ",", 
+      "\"\<span\>\"", ",", "\"\<strike\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<strong\>\"", ",", "\"\<style\>\"", ",", "\"\<sub\>\"", ",", "\n", 
+      "\t", "\t", "\t", "\"\<summary\>\"", ",", "\"\<sup\>\"", ",", "\n", 
+      "\t", "\t", "\t", "\"\<table\>\"", ",", "\"\<tbody\>\"", ",", 
+      "\"\<td\>\"", ",", "\n", "\t", "\t", "\t", "\"\<textarea\>\"", ",", 
+      "\"\<tfoot\>\"", ",", "\"\<th\>\"", ",", "\n", "\t", "\t", "\t", 
+      "\"\<thead\>\"", ",", "\"\<time\>\"", ",", "\"\<title\>\"", ",", "\n", 
+      "\t", "\t", "\t", "\"\<tr\>\"", ",", "\"\<track\>\"", ",", "\"\<tt\>\"",
+       ",", "\n", "\t", "\t", "\t", "\"\<u\>\"", ",", "\"\<ul\>\"", ",", "\n",
+       "\t", "\t", "\t", "\"\<var\>\"", ",", "\"\<video\>\"", ",", "\n", "\t",
+       "\t", "\t", "\"\<wbr\>\""}], "\n", "\t", "\t\t", "}"}]}]}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7330299001025763`*^9, 3.733029914719771*^9}, {
+  3.733029971203589*^9, 3.733029989665352*^9}, {3.733030031946465*^9, 
+  3.733030032472371*^9}, {3.733033385995122*^9, 
+  3.733033392511209*^9}},ExpressionUUID->"b2449162-6fdd-45cd-a97c-\
+c7740d3f7460"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$CSSPropertyRules\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{3.73302765996661*^9, 
+  3.733027905355218*^9},ExpressionUUID->"28b63d8e-be28-4477-a6f8-\
+81219a7002e8"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$CSSDefaultPropertyRules", "=", "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"FontColor", "\[Rule]", "\"\<color\>\""}], ",", "\n", "\t\t", 
+     RowBox[{"FrameStyle", "\[Rule]", "\"\<border\>\""}], ",", "\n", "\t\t", 
+     RowBox[{"FrameMargins", "\[Rule]", "\"\<margin\>\""}], ",", "\n", "\t\t", 
+     RowBox[{"TextAlignment", "\[Rule]", "\"\<text-align\>\""}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"TabSpacings", "\[Rule]", "\"\<tab-size\>\""}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"SourceLink", "\[Rule]", "\"\<src\>\""}], ",", "\n", "\t\t", 
+     RowBox[{"ButtonFunction", "->", "\n", "\t\t\t", "\"\<onclick\>\""}], ",",
+      "\n", "\t\t", 
+     RowBox[{"Annotation", "\[Rule]", "\"\<alt\>\""}], ",", "\n", "\t\t", 
+     RowBox[{"Hyperlink", "\[Rule]", "\"\<href\>\""}], ",", "\n", "\t\t", 
+     RowBox[{"RoundingRadius", "\[Rule]", "\"\<border-radius\>\""}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"LineSpacing", "\[Rule]", "\"\<line-height\>\""}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"ImageSize", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"\"\<width\>\"", ",", "\"\<height\>\""}], "}"}]}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"CellSize", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"\"\<width\>\"", ",", " ", "\"\<height\>\""}], "}"}]}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"e_", "\[RuleDelayed]", "\n", "\t\t\t", 
+      RowBox[{"(", "\n", "\t\t\t\t", 
+       RowBox[{"ToLowerCase", "[", "\n", "\t\t\t\t\t", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"StringJoin", "@", 
+           RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"StringTake", "[", 
+              RowBox[{"#", ",", "1"}], "]"}], ",", "\n", "\t", "\t", 
+             "\t\t\t\t", 
+             RowBox[{"StringReplace", "[", 
+              RowBox[{
+               RowBox[{"StringDrop", "[", 
+                RowBox[{"#", ",", "1"}], "]"}], ",", "\n", "\t", "\t", "\t", 
+               "\t\t\t\t", 
+               RowBox[{
+                RowBox[{"l", ":", 
+                 RowBox[{"LetterCharacter", "?", 
+                  RowBox[{"(", 
+                   RowBox[{"Not", "@*", "LowerCaseQ"}], ")"}]}]}], ":>", 
+                RowBox[{"\"\<-\>\"", "<>", "l"}]}]}], "]"}]}], "\n", "\t", 
+            "\t\t\t\t\t", "}"}]}], "&"}], "@", 
+         RowBox[{"ToString", "[", "e", "]"}]}], "\n", "\t\t\t\t\t", "]"}], 
+       "\n", "\t\t\t\t", ")"}]}]}], "\n", "\t\t", "}"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.701742376486145*^9, 3.701742390262436*^9}, {
+   3.701742542122346*^9, 3.70174254644563*^9}, {3.701742579226017*^9, 
+   3.701742763243984*^9}, {3.701743489135323*^9, 3.701743494159808*^9}, {
+   3.701747750199545*^9, 3.701747757407359*^9}, {3.7017779741339703`*^9, 
+   3.701777974309288*^9}, {3.701778007534182*^9, 3.7017780175553617`*^9}, {
+   3.701778646899786*^9, 3.70177864982447*^9}, {3.7017790649227133`*^9, 
+   3.7017790755720863`*^9}, {3.7017798427423143`*^9, 3.701779852690042*^9}, {
+   3.7017824620460567`*^9, 3.7017824648262243`*^9}, {3.701782502845847*^9, 
+   3.701782511425811*^9}, {3.70179470421922*^9, 3.701794742734206*^9}, {
+   3.704570604225387*^9, 3.704570608451426*^9}, {3.70457064762927*^9, 
+   3.7045706486213293`*^9}, 3.733027905371779*^9, {3.7330279837840433`*^9, 
+   3.733027984626937*^9}, {3.7330288379143887`*^9, 3.733028851143744*^9}, {
+   3.73302888733778*^9, 3.733028919030015*^9}, {3.733028956624175*^9, 
+   3.733028969607233*^9}, {3.733029289401211*^9, 
+   3.733029307335341*^9}},ExpressionUUID->"56f57cd7-16a9-49ad-9519-\
+3a582e5844dd"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$CSSValueRules\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{3.733027739308865*^9, 
+  3.733027921911899*^9},ExpressionUUID->"7683df4d-a3c5-46e5-90f3-\
+42e704b1650a"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$CSSDefaultValueRules", "=", "\n", "\t", 
+   RowBox[{"Join", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Map", "[", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Replace", "[", 
+         RowBox[{"#", ",", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Hold", "[", "c_", "]"}], ":>", "\n", "\t\t\t\t\t", 
+           RowBox[{"(", 
+            RowBox[{"c", "\[Rule]", 
+             RowBox[{"ToLowerCase", "@", 
+              RowBox[{"ToString", "[", 
+               RowBox[{"Unevaluated", "[", "c", "]"}], "]"}]}]}], ")"}]}]}], 
+         "\n", "\t\t\t\t", "]"}], "&"}], ",", "\n", "\t\t\t", 
+       RowBox[{"Thread", "@", 
+        RowBox[{"Hold", "@", 
+         RowBox[{"{", "\n", "\t\t\t\t", 
+          RowBox[{
+          "Red", ",", "White", ",", "Blue", ",", "Black", ",", "Yellow", ",", 
+           "\n", "\t\t\t\t", "Green", ",", "Orange", ",", "Purple", ",", 
+           "Pink", ",", "Gray", ",", "\n", "\t\t\t\t", "LightBlue", ",", 
+           "LightRed", ",", "LightGray", ",", "LightYellow", ",", "\n", 
+           "\t\t\t\t", "LightGreen", ",", "LightOrange", ",", "LightPurple", 
+           ",", "LightPink", ",", "\n", "\t\t\t\t", "Thick", ",", "Dotted", 
+           ",", "Thin", ",", "Dashed"}], "\n", "\t\t\t\t", "}"}]}]}]}], "]"}],
+      ",", 
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"c_", "?", "ColorQ"}], ":>", "\n", "\t\t\t", 
+        RowBox[{"\"\<#\>\"", "<>", 
+         RowBox[{"Map", "[", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"StringPadLeft", "[", "\n", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"IntegerString", "[", 
+               RowBox[{"#", ",", "16"}], "]"}], ",", "\n", "\t\t\t\t\t", "2", 
+              ",", "\n", "\t\t\t\t\t", "\"\<0\>\""}], "\n", "\t\t\t\t\t", 
+             "]"}], "&"}], ",", "\n", "\t\t\t\t", 
+           RowBox[{"Floor", "[", 
+            RowBox[{"255", "*", 
+             RowBox[{"Apply", "[", 
+              RowBox[{"List", ",", 
+               RowBox[{"ColorConvert", "[", 
+                RowBox[{"c", ",", "RGBColor"}], "]"}]}], "]"}]}], "]"}]}], 
+          "\n", "\t\t\t\t", "]"}]}]}], ",", "\n", "\t\t", 
+       RowBox[{"i_Integer", ":>", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"ToString", "[", "i", "]"}], "<>", "\"\<px\>\""}]}], ",", 
+       "\n", "\t\t", 
+       RowBox[{"q_Quantity", ":>", "\n", "\t\t\t", 
+        RowBox[{"StringReplace", "[", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"ToString", "[", "q", "]"}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"\"\< \>\"", "\[Rule]", "\"\<\>\""}]}], "\n", "\t\t\t\t", 
+         "]"}]}], ",", "\n", "\t\t", 
+       RowBox[{
+        RowBox[{"Scaled", "[", "i_", "]"}], ":>", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"ToString", "@", 
+          RowBox[{"Floor", "[", 
+           RowBox[{"i", "*", "100"}], "]"}]}], "<>", "\"\<%\>\""}]}], ",", 
+       "\n", "\t\t", 
+       RowBox[{"r_Rule", ":>", "\n", "\t\t\t", 
+        RowBox[{"(", 
+         RowBox[{"cssGenerate", "[", "r", "]"}], ")"}]}], ",", "\n", "\t\t", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"{", "l__", "}"}], "|", 
+         RowBox[{"Directive", "[", "l__", "]"}]}], "\[RuleDelayed]", "\n", 
+        "\t\t\t", 
+        RowBox[{"StringRiffle", "@", 
+         RowBox[{"Map", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"#", "/.", "$CSSValueRules"}], "&"}], ",", 
+           RowBox[{"{", "l", "}"}]}], "]"}]}]}], ",", "\n", "\t\t", 
+       RowBox[{"d_Dynamic", ":>", "\n", "\t\t\t", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"Setting", "[", "d", "]"}], "/.", "$CSSValueRules"}], 
+         ")"}]}], ",", "\n", "\t\t", 
+       RowBox[{"i_", "\[RuleDelayed]", 
+        RowBox[{"ToLowerCase", "@", 
+         RowBox[{"ToString", "[", "i", "]"}]}]}]}], "\n", "\t\t", "}"}]}], 
+    "\n", "\t", "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.70174235905682*^9, 3.7017425345349073`*^9}, {
+  3.7017778433576117`*^9, 3.7017779310901613`*^9}, {3.701778050186521*^9, 
+  3.7017780784270906`*^9}, {3.701778210375092*^9, 3.701778250270299*^9}, {
+  3.701778403605918*^9, 3.7017784264749393`*^9}, {3.701778590922645*^9, 
+  3.7017786045549583`*^9}, {3.701779618522738*^9, 3.701779639969715*^9}, {
+  3.701781457484383*^9, 3.701781459979834*^9}, {3.701787025864047*^9, 
+  3.70178704508114*^9}, {3.702348677302252*^9, 3.702348714911435*^9}, {
+  3.7330279181098003`*^9, 3.7330279181234217`*^9}, {3.7330279669102907`*^9, 
+  3.733027978091425*^9}, {3.733029843900152*^9, 
+  3.73302986314715*^9}},ExpressionUUID->"ab17d9fd-1db8-4bfd-80d1-c44a8c53f7f0"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$CSSTypeRules\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7330277297951612`*^9, 3.7330277322573853`*^9}, 
+   3.733027936089677*^9},ExpressionUUID->"5fdc73a8-f17f-490b-8655-\
+bfdb42a9baee"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$CSSDefaultTypeRules", "=", "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"\"\<Title\>\"", "\[Rule]", "\"\<h1\>\""}], ",", "\n", "\t", 
+     "\t", 
+     RowBox[{"\"\<Subtitle\>\"", "\[Rule]", "\"\<h2\>\""}], ",", "\n", "\t", 
+     "\t", 
+     RowBox[{"\"\<Section\>\"", "\[Rule]", "\"\<h3\>\""}], ",", "\n", "\t", 
+     "\t", 
+     RowBox[{"\"\<Subsection\>\"", "\[Rule]", "\"\<h4\>\""}], ",", "\n", "\t",
+      "\t", 
+     RowBox[{"\"\<Subsubsection\>\"", "\[Rule]", "\"\<h5\>\""}], ",", "\n", 
+     "\t", "\t", 
+     RowBox[{"\"\<Subsubsubsection\>\"", "\[Rule]", "\"\<h6\>\""}], ",", "\n",
+      "\t", "\t", 
+     RowBox[{"\"\<Hyperlink\>\"", "\[Rule]", "\"\<a\>\""}], ",", "\n", "\t", 
+     "\t", 
+     RowBox[{"\"\<HyperlinkActive\>\"", "\[Rule]", "\"\<a:hover\>\""}], ",", 
+     "\n", "\t", "\t", 
+     RowBox[{"\"\<Graphics\>\"", "\[Rule]", "\"\<img\>\""}], ",", "\n", "\t", 
+     "\t", 
+     RowBox[{"\"\<Text\>\"", "\[Rule]", "\"\<p\>\""}], ",", "\n", "\t", "\t", 
+     
+     RowBox[{"s_String", "\[RuleDelayed]", 
+      RowBox[{"(", 
+       RowBox[{"ToLowerCase", "[", "s", "]"}], ")"}]}]}], "\n", "\t", "\t", 
+    "}"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7017495165486298`*^9, 3.7017495607749147`*^9}, {
+   3.701781896320071*^9, 3.7017819041800327`*^9}, {3.7017865298120403`*^9, 
+   3.701786538840781*^9}, {3.701786706801643*^9, 3.701786709589716*^9}, {
+   3.706720539780176*^9, 3.7067205498410587`*^9}, 3.7330279316698437`*^9, {
+   3.733027991630755*^9, 
+   3.733027996151807*^9}},ExpressionUUID->"8928c85c-2c8a-437f-90a6-\
+f579a0059703"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]cssThreadedOptions\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{
+  3.733027724981748*^9},ExpressionUUID->"997b3723-ee4d-4962-9eab-\
+54605de83e14"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"cssThreadedOptions", "[", 
+   RowBox[{"propBase_", ",", "propOps_", ",", "vals_"}], "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"MapThread", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"!", 
+        RowBox[{"MatchQ", "[", 
+         RowBox[{"#2", ",", 
+          RowBox[{"Inherited", "|", "None"}]}], "]"}]}], ",", "\n", "\t\t\t", 
+       
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"StringContainsQ", "[", 
+          RowBox[{"propBase", ",", "\"\<-\>\""}], "]"}], ",", "\n", 
+         "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"StringReplace", "[", 
+           RowBox[{"propBase", ",", 
+            RowBox[{"{", "\n", "\t\t\t\t\t", 
+             RowBox[{"\"\<-\>\"", "\[Rule]", 
+              RowBox[{"(", 
+               RowBox[{"\"\<-\>\"", "<>", "#", "<>", "\"\<-\>\""}], ")"}]}], 
+             "\n", "\t\t\t\t\t", "}"}]}], "]"}], "\[Rule]", 
+          RowBox[{"(", 
+           RowBox[{"#2", "/.", "$CSSValueRules"}], ")"}]}], ",", "\n", 
+         "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"StringJoin", "[", 
+           RowBox[{"propBase", ",", 
+            RowBox[{"\"\<-\>\"", "<>", "#"}]}], "]"}], "\[Rule]", 
+          RowBox[{"(", 
+           RowBox[{"#2", "/.", "$CSSValueRules"}], ")"}]}]}], "\n", 
+        "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", "Nothing"}], "\n", "\t\t\t", 
+      "]"}], "&"}], ",", 
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{"propOps", ",", "\n", "\t\t", "vals"}], "\n", "\t\t", "}"}]}], 
+   "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.7017769364278183`*^9, 3.701777003676669*^9}, {
+  3.7017772335524397`*^9, 3.7017772357767477`*^9}, {3.701777488214386*^9, 
+  3.701777492557832*^9}, {3.7017860505563087`*^9, 3.701786056345842*^9}, {
+  3.7330279181286173`*^9, 
+  3.7330279181339197`*^9}},ExpressionUUID->"c9ca5160-ff8c-4990-8837-\
+7fe143b02119"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]cssGenerate\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.733027700697241*^9, 
+  3.7330277182878323`*^9}},ExpressionUUID->"fed64632-696f-4a31-aff8-\
+c542a5ae743c"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"cssGenerate", "//", "Clear"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"cssGenerate", "[", "\n", "\t", 
+    RowBox[{"prop_", "\[Rule]", 
+     RowBox[{"val", ":", 
+      RowBox[{"Except", "[", 
+       RowBox[{"{", "__Rule", "}"}], "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{"propBase", "=", "\n", "\t\t\t", 
+       RowBox[{"prop", "/.", "$CSSPropertyRules"}]}], "\n", "\t\t", "}"}], 
+     ",", "\n", "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"!", 
+        RowBox[{"MatchQ", "[", 
+         RowBox[{"propBase", ",", " ", "$CSSAllowedProperties"}], "]"}]}], 
+       ",", "\n", "\t\t\t", "Nothing", ",", "\n", "\t\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"Not", "@", 
+          RowBox[{"ListQ", "@", "propBase"}]}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"Sequence", "@@", "\n", "\t\t\t\t\t\t", 
+          RowBox[{"Replace", "[", 
+           RowBox[{"val", ",", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{
+                 RowBox[{"{", 
+                  RowBox[{"l_", ",", "r_"}], "}"}], ",", 
+                 RowBox[{"{", 
+                  RowBox[{"b_", ",", "h_"}], "}"}]}], "}"}], ":>", "\n", "\t",
+                "\t", "\t", "\t\t\t\t\t\t", 
+               RowBox[{"If", "[", 
+                RowBox[{
+                 RowBox[{"StringContainsQ", "[", 
+                  RowBox[{"propBase", ",", "\"\<radius\>\""}], "]"}], ",", 
+                 "\n", "\t", "\t", "\t", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                 "cssThreadedOptions", "[", "\n", "\t", "\t", "\t", 
+                  "\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                  "propBase", ",", "\n", "\t", "\t", "\t", "\t", 
+                   "\t\t\t\t\t\t\t", 
+                   RowBox[{"{", 
+                    RowBox[{
+                    "\"\<left-bottom\>\"", ",", "\"\<right-bottom\>\"", ",", 
+                    "\"\<left-top\>\"", ",", "\"\<right-top\>\""}], "}"}], 
+                   ",", "\n", "\t", "\t", "\t", "\t", "\t", "\t", 
+                   "\t\t\t\t\t", 
+                   RowBox[{"{", 
+                    RowBox[{"l", ",", "r", ",", "b", ",", "h"}], "}"}]}], 
+                  "\n", "\t", "\t", "\t", "\t\t\t\t\t\t\t\t", "]"}], ",", 
+                 "\n", "\t", "\t", "\t", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                 "cssThreadedOptions", "[", "\n", "\t", "\t", "\t", 
+                  "\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                  "propBase", ",", "\n", "\t", "\t", "\t", "\t", 
+                   "\t\t\t\t\t\t\t", 
+                   RowBox[{"{", 
+                    RowBox[{
+                    "\"\<left\>\"", ",", "\"\<right\>\"", ",", 
+                    "\"\<bottom\>\"", ",", "\"\<top\>\""}], "}"}], ",", "\n", 
+                   "\t", "\t", "\t", "\t", "\t", "\t", "\t\t\t\t\t", 
+                   RowBox[{"{", 
+                    RowBox[{"l", ",", "r", ",", "b", ",", "h"}], "}"}]}], 
+                  "\n", "\t", "\t", "\t", "\t\t\t\t\t\t\t\t", "]"}]}], "\n", 
+                "\t", "\t", "\t", "\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t", 
+              "\t", "\t", "\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"l_", ",", "r_"}], "}"}], ":>", "\n", "\t", "\t", 
+               "\t", "\t\t\t\t\t\t", 
+               RowBox[{
+               "cssThreadedOptions", "[", "\n", "\t", "\t", "\t", 
+                "\t\t\t\t\t\t\t", 
+                RowBox[{
+                "propBase", ",", "\n", "\t", "\t", "\t", "\t\t\t\t\t\t\t", 
+                 RowBox[{"{", 
+                  RowBox[{"\"\<left\>\"", ",", "\"\<right\>\""}], "}"}], ",", 
+                 "\n", "\t", "\t", "\t", "\t\t\t\t\t\t\t", 
+                 RowBox[{"{", 
+                  RowBox[{"l", ",", "r"}], "}"}]}], "\n", "\t", "\t", "\t", 
+                "\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t", "\t", "\t", 
+              "\t\t\t\t\t", 
+              RowBox[{"v_", ":>", "\n", "\t", "\t", "\t", "\t\t\t\t\t\t", 
+               RowBox[{"{", 
+                RowBox[{"propBase", "\[Rule]", 
+                 RowBox[{"(", 
+                  RowBox[{"v", "/.", "$CSSValueRules"}], ")"}]}], "}"}]}]}], 
+             "\n", "\t\t\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t\t\t", 
+           "]"}]}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{"ListQ", "@", "val"}], ",", "\n", "\t", "\t\t\t\t", 
+           RowBox[{"Sequence", "@@", 
+            RowBox[{"cssGenerate", "[", 
+             RowBox[{"Thread", "[", 
+              RowBox[{"propBase", "\[Rule]", "val"}], "]"}], "]"}]}], ",", 
+           "\n", "\t\t\t\t\t", 
+           RowBox[{"cssGenerate", "[", 
+            RowBox[{
+             RowBox[{"First", "@", "propBase"}], "\[Rule]", "val"}], "]"}]}], 
+          "\n", "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "]"}]}], "\n", 
+      "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"cssGenerate", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"type", ":", 
+      RowBox[{"_String", "|", "_Symbol"}]}], "->", 
+     RowBox[{"spec", ":", 
+      RowBox[{"{", "__Rule", "}"}]}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"tp", "=", 
+       RowBox[{
+        RowBox[{"ToString", "[", "type", "]"}], "/.", "$CSSTypeRules"}]}], 
+      "}"}], ",", "\n", "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"!", 
+        RowBox[{"MatchQ", "[", 
+         RowBox[{"tp", ",", " ", "$CSSAllowedProperties"}], "]"}]}], ",", 
+       "\n", "\t\t\t", "Nothing", ",", "\n", "\t\t\t", 
+       RowBox[{"tp", "\[Rule]", 
+        RowBox[{"Map", "[", 
+         RowBox[{"cssGenerate", ",", " ", "spec"}], "]"}]}]}], "\n", "\t\t\t",
+       "]"}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"cssGenerate", "[", 
+    RowBox[{"r", ":", 
+     RowBox[{"{", "__Rule", "}"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"cssGenerate", "/@", "r"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"cssGenerate", "[", "a_Association", "]"}], ":=", "\n", "\t", 
+   RowBox[{"KeyValueMap", "[", 
+    RowBox[{"cssGenerate", ",", "a"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"cssGenerate", "[", 
+    RowBox[{
+     RowBox[{"{", "}"}], ",", 
+     RowBox[{"Optional", "[", 
+      RowBox[{"_", ",", "_"}], "]"}]}], "]"}], ":=", 
+   RowBox[{"{", "}"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.701741625510021*^9, 3.701741627028345*^9}, {
+   3.701741705948105*^9, 3.701741708589278*^9}, {3.701741763622472*^9, 
+   3.701741900150556*^9}, {3.701741940014846*^9, 3.701741984736967*^9}, {
+   3.7017420242368593`*^9, 3.701742104433015*^9}, {3.70174221673208*^9, 
+   3.7017422449650793`*^9}, {3.701742281366375*^9, 3.7017423829610767`*^9}, {
+   3.701742781263833*^9, 3.701742803204671*^9}, {3.701743515444727*^9, 
+   3.7017435784361897`*^9}, {3.701744589694929*^9, 3.701744602685816*^9}, {
+   3.7017495654176617`*^9, 3.7017495696395807`*^9}, {3.701749660869115*^9, 
+   3.70174967390064*^9}, 3.7017497658161592`*^9, {3.701749888616754*^9, 
+   3.701749897561047*^9}, {3.701750015413636*^9, 3.701750020686413*^9}, {
+   3.7017500607020473`*^9, 3.701750083195094*^9}, {3.7017501459243717`*^9, 
+   3.701750163350892*^9}, {3.701750204964576*^9, 3.701750214701816*^9}, {
+   3.701750380631542*^9, 3.701750381128127*^9}, {3.701750419800441*^9, 
+   3.701750426840554*^9}, {3.701750470623146*^9, 3.701750480413599*^9}, 
+   3.701750599414249*^9, {3.7017762482344303`*^9, 3.701776287630517*^9}, {
+   3.7017763232671547`*^9, 3.7017763338156*^9}, {3.701776688190473*^9, 
+   3.701776935244144*^9}, {3.701776985590233*^9, 3.701777035012838*^9}, {
+   3.701777083771212*^9, 3.70177718299815*^9}, {3.7017772401720123`*^9, 
+   3.701777248082369*^9}, {3.701777373195477*^9, 3.701777468625947*^9}, {
+   3.7017775833046293`*^9, 3.701777587586152*^9}, {3.701777622664774*^9, 
+   3.7017776272409277`*^9}, {3.701777660863597*^9, 3.7017776804380207`*^9}, {
+   3.701779101758329*^9, 3.701779126490542*^9}, {3.701779219752219*^9, 
+   3.701779245439249*^9}, {3.701779284700718*^9, 3.7017793930283422`*^9}, {
+   3.7017794564263687`*^9, 3.701779463370623*^9}, {3.701782522031039*^9, 
+   3.701782630027092*^9}, {3.7017830124956503`*^9, 3.7017830138522797`*^9}, {
+   3.701787406411532*^9, 3.7017874175854473`*^9}, {3.73302790538536*^9, 
+   3.7330279316814528`*^9}, {3.7330289856597757`*^9, 3.733029006079143*^9}, {
+   3.733029323217971*^9, 3.733029335046502*^9}, {3.733029598271516*^9, 
+   3.733029628094508*^9}, {3.733029677012439*^9, 
+   3.733029797325038*^9}},ExpressionUUID->"78bcc96d-bdf3-4a06-b3fd-\
+9fe397bdd884"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]generateCSSString\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.73302835471618*^9, 
+  3.7330283627021227`*^9}},ExpressionUUID->"6c20722b-2715-4695-88e8-\
+8d0529279466"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"generateCSSString", "[", 
+   RowBox[{
+    RowBox[{"{", "}"}], ",", " ", "_"}], "]"}], ":=", 
+  "\"\<\>\""}]], "CodeInput",
+ CellChangeTimes->{{3.7330344555261374`*^9, 
+  3.7330344594922867`*^9}},ExpressionUUID->"f4a68384-ce72-4111-88aa-\
+2be0b8981e84"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"generateCSSString", "[", 
+    RowBox[{
+     RowBox[{"r", ":", 
+      RowBox[{"{", "__Rule", "}"}]}], ",", " ", 
+     RowBox[{"riffle", ":", "_String", ":", "\"\< \>\""}]}], "]"}], ":=", 
+   "\n", "\t", 
+   RowBox[{"StringRiffle", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"KeyValueMap", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"#", "<>", "\"\<: \>\"", "<>", "#2", "<>", "\"\<;\>\""}], 
+        "&"}], ",", " ", 
+       RowBox[{"Association", "[", "r", "]"}]}], "]"}], ",", "\n", "\t\t", 
+     "riffle"}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"generateCSSString", "[", 
+   RowBox[{
+    RowBox[{"r", ":", 
+     RowBox[{"{", "__Rule", "}"}]}], ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"riffle_String", ",", " ", "_"}], "}"}]}], "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"generateCSSString", "[", 
+   RowBox[{"r", ",", " ", "riffle"}], "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.733028346168064*^9, 3.7330284373534813`*^9}, 
+   3.73302992929797*^9, {3.7330313960452538`*^9, 
+   3.733031416506465*^9}},ExpressionUUID->"ff530862-e011-429e-994f-\
+e2f5dd2c8160"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"generateCSSString", "[", 
+    RowBox[{
+     RowBox[{"a_Association", "?", "AssociationQ"}], ",", " ", "\n", "\t", 
+     RowBox[{"riffle", ":", 
+      RowBox[{"{", 
+       RowBox[{"_String", ",", " ", "_String"}], "}"}], ":", 
+      RowBox[{"{", 
+       RowBox[{"\"\< \>\"", ",", " ", "\"\<\\n\>\""}], "}"}]}]}], "]"}], ":=",
+    "\n", "\t", 
+   RowBox[{"StringRiffle", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"KeyValueMap", "[", "\n", "\t\t\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"#", "/.", "$CSSTypeRules"}], ")"}], "<>", "\"\<{\>\"", "<>", 
+         RowBox[{"riffle", "[", 
+          RowBox[{"[", "1", "]"}], "]"}], "<>", "\n", "\t", "\t\t\t\t", 
+         RowBox[{"generateCSSString", "[", 
+          RowBox[{"#2", ",", " ", 
+           RowBox[{"riffle", "[", 
+            RowBox[{"[", "1", "]"}], "]"}]}], "]"}], "<>", 
+         RowBox[{"riffle", "[", 
+          RowBox[{"[", "1", "]"}], "]"}], "<>", "\"\<}\>\""}], "&"}], ",", 
+       "\n", "\t\t\t", "a"}], "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
+     RowBox[{"riffle", "[", 
+      RowBox[{"[", "2", "]"}], "]"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.733028491212611*^9, 3.733028536532174*^9}, {
+  3.7330285754469357`*^9, 3.733028576171235*^9}, {3.733031342047432*^9, 
+  3.7330314203545322`*^9}, {3.733031522053755*^9, 
+  3.733031522249918*^9}},ExpressionUUID->"ae939e65-1d2d-4e70-be5b-\
+45e83d2c682d"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]generateObjectStyles\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7330286382593517`*^9, 3.733028645105814*^9}, {
+  3.733028712496649*^9, 
+  3.733028713935507*^9}},ExpressionUUID->"2bf83bf5-50f1-4f4a-8aa2-\
+8f48b51a7a8b"],
+
+Cell[BoxData[
+ RowBox[{"generateObjectStyles", "//", "Clear"}]], "CodeInput",
+ CellChangeTimes->{{3.733033344693329*^9, 
+  3.733033345435913*^9}},ExpressionUUID->"45b74f36-17c6-4c1e-a6e3-\
+b94d00984fd3"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"generateObjectStyles", "[", "nb_NotebookObject", "]"}], ":=", "\n",
+   "\t", 
+  RowBox[{"Prepend", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"AssociationMap", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"AbsoluteCurrentValue", "[", 
+        RowBox[{"nb", ",", " ", 
+         RowBox[{"{", 
+          RowBox[{"StyleDefinitions", ",", " ", "#"}], "}"}]}], "]"}], "&"}], 
+      ",", "\n", "\t", "\t\t", 
+      RowBox[{
+       RowBox[{"Select", "[", "StringQ", "]"}], "@", 
+       RowBox[{"Keys", "@", "\n", "\t", "\t\t\t", 
+        RowBox[{"FE`Evaluate", "@", "\n", "\t", "\t\t\t\t", 
+         RowBox[{"FEPrivate`GetPopupList", "[", 
+          RowBox[{"nb", ",", "\"\<MenuListStyles\>\""}], "]"}]}]}]}]}], "\n", 
+     "\t\t\t", "]"}], ",", "\n", "\t\t", 
+    RowBox[{"\"\<body\>\"", "\[Rule]", 
+     RowBox[{"Options", "[", "nb", "]"}]}]}], "\n", "\t\t", 
+   "]"}]}]], "CodeInput",
+ CellChangeTimes->{
+  3.733029353506015*^9, {3.733033198465671*^9, 
+   3.7330332142157507`*^9}},ExpressionUUID->"5835b3a3-3be7-4fbc-a597-\
+12273d047257"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"generateObjectStyles", "[", "cell_CellObject", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"Normal", "@", 
+   RowBox[{"Merge", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"Options", "[", "cell", "]"}], ",", "\n", "\t\t\t", 
+       RowBox[{"AbsoluteCurrentValue", "[", 
+        RowBox[{
+         RowBox[{"ParentNotebook", "[", "cell", "]"}], ",", "\n", "\t", 
+         "\t\t\t", 
+         RowBox[{"{", 
+          RowBox[{"StyleDefinitions", ",", " ", 
+           RowBox[{
+            RowBox[{"NotebookRead", "[", "cell", "]"}], "[", 
+            RowBox[{"[", "2", "]"}], "]"}]}], "}"}]}], "\n", "\t\t\t\t", 
+        "]"}]}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", "First"}], "\n", 
+    "\t\t", "]"}]}]}]], "CodeInput",
+ CellChangeTimes->{{3.733028654493984*^9, 3.733028681690174*^9}, {
+   3.733028751859568*^9, 3.7330287708564777`*^9}, {3.7330290259822893`*^9, 
+   3.7330290616253223`*^9}, 3.733029354390874*^9, {3.733034555838484*^9, 
+   3.733034556762847*^9}},ExpressionUUID->"2042b1b9-329e-4072-b947-\
+bc78ae8224d0"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"generateObjectStyles", "[", "box_BoxObject", "]"}], ":=", "\n", 
+   "\t", 
+   RowBox[{"Options", "[", "box", "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.733028654493984*^9, 3.733028681690174*^9}, {
+  3.733028751859568*^9, 3.7330287708564777`*^9}, {3.7330290259822893`*^9, 
+  3.7330290616253223`*^9}, {3.733029348147403*^9, 
+  3.7330293682921762`*^9}},ExpressionUUID->"2d6b94ea-990f-4c95-aa62-\
+d2a9e18a106d"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]CSSGenerate\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{
+  3.7330277082093277`*^9},ExpressionUUID->"2a613ec5-c7d2-406c-99af-\
+dbac1e2f1c58"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "CSSGenerate", "]"}], "=", "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"\"\<PropertyMapping\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<AllowedProperties\>\"", "\[Rule]", "Automatic"}], ",", "\n",
+      "\t\t", 
+     RowBox[{"\"\<ValueMapping\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<TypeMapping\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<AllowedTypes\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<GenerateString\>\"", "\[Rule]", "True"}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<RiffleCharacter\>\"", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"\"\< \>\"", ",", " ", "\"\<\\n\>\""}], "}"}]}]}], "\n", 
+    "\t\t", "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"CSSGenerate", "[", 
+   RowBox[{
+    RowBox[{"l", ":", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"_List", "?", "OptionQ"}], "|", 
+       RowBox[{"_Association", "?", 
+        RowBox[{"(", 
+         RowBox[{"OptionQ", "@*", "Normal"}], ")"}]}]}], ")"}]}], ",", " ", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Block", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"$CSSPropertyRules", "=", "\n", "\t", "\t\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{
+         RowBox[{"OptionValue", "[", "\"\<PropertyMapping\>\"", "]"}], ",", 
+         "\n", "\t", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Except", "[", 
+           RowBox[{"_", "?", "OptionQ"}], "]"}], ":>", 
+          "$CSSDefaultPropertyRules"}]}], "\n", "\t", "\t\t\t\t", "]"}]}], 
+      ",", "\n", "\t", "\t\t", 
+      RowBox[{"$CSSValueRules", "=", "\n", "\t", "\t\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{
+         RowBox[{"OptionValue", "[", "\"\<ValueMapping\>\"", "]"}], ",", "\n",
+          "\t", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Except", "[", 
+           RowBox[{"_", "?", "OptionQ"}], "]"}], ":>", 
+          "$CSSDefaultValueRules"}]}], "\n", "\t", "\t\t\t\t", "]"}]}], ",", 
+      "\n", "\t", "\t\t", 
+      RowBox[{"$CSSTypeRules", "=", "\n", "\t", "\t\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{
+         RowBox[{"OptionValue", "[", "\"\<TypeMapping\>\"", "]"}], ",", "\n", 
+         "\t", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Except", "[", 
+           RowBox[{"_", "?", "OptionQ"}], "]"}], ":>", 
+          "$CSSDefaultTypeRules"}]}], "\n", "\t\t\t\t\t", "]"}]}], ",", "\n", 
+      "\t\t\t", 
+      RowBox[{"$CSSAllowedProperties", "=", "\n", "\t\t\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{
+         RowBox[{"OptionValue", "[", "\"\<AllowedProperties\>\"", "]"}], ",", 
+         "\n", "\t\t\t\t\t", 
+         RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"{", "s__String", "}"}], ":>", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{"Alternatives", "[", "s", "]"}]}], ",", "\n", 
+           "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"Except", "[", "_Alternatives", "]"}], ":>", "\n", 
+            "\t\t\t\t\t\t\t", "$CSSDefaultAllowedProperties"}]}], "\n", 
+          "\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t", "]"}]}], ",", "\n", 
+      "\t\t\t", 
+      RowBox[{"$CSSAllowedTypes", "=", "\n", "\t\t\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{
+         RowBox[{"OptionValue", "[", "\"\<AllowedTypes\>\"", "]"}], ",", "\n",
+          "\t\t\t\t\t", 
+         RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"{", "s__String", "}"}], ":>", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{"Alternatives", "[", "s", "]"}]}], ",", "\n", 
+           "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"Except", "[", "_Alternatives", "]"}], ":>", "\n", 
+            "\t\t\t\t\t\t\t", "$CSSDefaultAllowedTypes"}]}], "\n", 
+          "\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t", "]"}]}]}], "\n", 
+     "\t\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"TrueQ", "@", 
+        RowBox[{"OptionValue", "[", "\"\<GenerateString\>\"", "]"}]}], ",", 
+       " ", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"generateCSSString", "[", 
+         RowBox[{"#", ",", " ", "\n", "\t\t\t\t", 
+          RowBox[{"Replace", "[", 
+           RowBox[{
+            RowBox[{"OptionValue", "[", "\"\<RiffleCharacter\>\"", "]"}], ",",
+             " ", "\n", "\t\t\t\t\t", 
+            RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"s_String", "?", "StringQ"}], "\[RuleDelayed]", "\n", 
+               "\t\t\t\t\t\t\t", 
+               RowBox[{"{", 
+                RowBox[{"s", ",", " ", "\"\<\\n\>\""}], "}"}]}], ",", "\n", 
+              "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Except", "[", 
+                RowBox[{"{", 
+                 RowBox[{
+                  RowBox[{"_String", "?", "StringQ"}], ",", " ", 
+                  RowBox[{"_String", "?", "StringQ"}]}], "}"}], "]"}], 
+               "\[RuleDelayed]", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"{", 
+                RowBox[{"\"\< \>\"", ",", " ", "\"\<\\n\>\""}], "}"}]}]}], 
+             "\n", "\t\t\t\t\t\t", "}"}]}], "]"}]}], "\n", "\t\t\t\t", "]"}], 
+        "&"}], ",", "\n", "\t\t\t", "Identity"}], "\n", "\t\t ", "]"}], "@", 
+     "\n", "\t\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"AllTrue", "[", 
+        RowBox[{
+         RowBox[{"Values", "@", "l"}], ",", " ", "OptionQ"}], "]"}], ",", 
+       "\n", "\t", "\t", "\t\t", 
+       RowBox[{"Map", "[", 
+        RowBox[{"cssGenerate", ",", " ", "\n", "\t\t\t\t\t", 
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{"$CSSAllowedTypes", "===", "All"}], ",", "\n", 
+           "\t\t\t\t\t\t", 
+           RowBox[{"Association", "[", "l", "]"}], ",", "\n", "\t\t\t\t\t\t", 
+           
+           RowBox[{
+            RowBox[{"KeySortBy", "[", 
+             RowBox[{
+              RowBox[{"FirstPosition", "[", 
+               RowBox[{"$CSSTypeRules", ",", " ", 
+                RowBox[{"#", "/.", "$CSSTypeRules"}]}], "]"}], "&"}], "]"}], 
+            "@", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{"KeySelect", "[", 
+             RowBox[{
+              RowBox[{"Association", "[", "l", "]"}], ",", " ", "\n", "\t", 
+              "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"MatchQ", "[", 
+                RowBox[{
+                 RowBox[{"#", "/.", "$CSSTypeRules"}], ",", " ", 
+                 "$CSSAllowedTypes"}], "]"}], "&"}]}], "\n", "\t", 
+             "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t", "]"}]}], "\n",
+         "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+       RowBox[{"cssGenerate", "[", "l", "]"}]}], "\n", "\t", "\t\t\t", 
+      "]"}]}]}], "\n", "\t", "\t", "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.733027760076365*^9, 3.733027888906763*^9}, {
+  3.733027944559003*^9, 3.733027960340364*^9}, {3.733028003215768*^9, 
+  3.7330281527586403`*^9}, {3.73302819131712*^9, 3.73302834310705*^9}, {
+  3.733028454419438*^9, 3.733028477471258*^9}, {3.7330285491377707`*^9, 
+  3.733028605188364*^9}, {3.73302877941361*^9, 3.733028794159165*^9}, {
+  3.733029200337844*^9, 3.7330292583950977`*^9}, {3.733029380821125*^9, 
+  3.7330293832566347`*^9}, {3.733029489138379*^9, 3.7330295081679163`*^9}, {
+  3.7330300036763077`*^9, 3.733030048617972*^9}, {3.733030082352434*^9, 
+  3.733030216594943*^9}, {3.733030504417598*^9, 3.733030505154811*^9}, {
+  3.733031317892159*^9, 3.733031330127441*^9}, {3.7330314300431128`*^9, 
+  3.733031495429912*^9}},ExpressionUUID->"24cf7d84-5b63-433d-a1ac-\
+642de4387ee9"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"CSSGenerate", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"nb", ":", "\n", "\t\t", 
+     RowBox[{
+     "_NotebookObject", "|", "_CellObject", "|", "_BoxObject", "|", "\n", 
+      "\t\t", "_FrontEnd`EvaluationNotebook", "|", 
+      "_FrontEnd`InputNotebook"}], ":", 
+     RowBox[{"FrontEnd`InputNotebook", "[", "]"}]}], ",", " ", "\n", "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"CSSGenerate", "[", 
+   RowBox[{
+    RowBox[{"generateObjectStyles", "[", 
+     RowBox[{"FE`Evaluate", "@", "nb"}], "]"}], ",", " ", "ops"}], 
+   "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.733028691822049*^9, 3.733028706498887*^9}, {
+  3.733029388353176*^9, 
+  3.733029474981082*^9}},ExpressionUUID->"5718720d-8f58-4aaa-9f37-\
+aeb451c529f0"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"End", "[", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"8f99fd4b-9960-4392-aaab-\
+251d3482d1d5"]
+}, Open  ]],
+
+Cell["", "SectionSeparator",ExpressionUUID->"211fbf67-7f01-4eef-ad84-\
+7b56b44dc5c5"]
+},
+WindowSize->{809, 755},
+WindowMargins->{{22, Automatic}, {23, Automatic}},
+FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
+2018)",
+StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+

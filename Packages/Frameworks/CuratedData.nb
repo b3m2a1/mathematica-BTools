@@ -1,0 +1,3085 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["CuratedData", "CodeSection",
+ CellChangeTimes->{{3.703789454228374*^9, 
+  3.703789456977995*^9}},ExpressionUUID->"05307305-378f-4696-92d8-\
+e4f5dcb99618"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"CuratedDataExport", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Exports an EntityStore as a CuratedData function backed by \
+DataPaclets\>\""}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.703789499248488*^9, 3.703789550620078*^9}, {
+  3.71017329191728*^9, 
+  3.710173292162752*^9}},ExpressionUUID->"6ad6eebb-6ebb-4c6b-99f0-\
+65dae3e20fc6"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"91f94a22-634c-4779-b38a-\
+7f66cfa7be67"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Constants\[RightFloor]", "CodeSubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.704678431771563*^9, 
+  3.704678432858721*^9}},ExpressionUUID->"100fb3fd-ac48-4709-adbf-\
+0aa51f308c09"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"dataPacletIndexNumber", "[", 
+    RowBox[{"padLength_", ",", "num_Integer"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"StringPadLeft", "[", 
+    RowBox[{
+     RowBox[{"ToString", "@", "num"}], ",", "padLength", ",", "\"\<0\>\""}], 
+    "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"dataPacletIndexNumber", "[", 
+    RowBox[{"padLength_", ",", 
+     RowBox[{"{", "num_Integer", "}"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"dataPacletIndexNumber", "[", 
+    RowBox[{"padLength", ",", "num"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"dataPacletIndexNumber", "[", "num_", "]"}], ":=", "\n", "\t", 
+   RowBox[{"dataPacletIndexNumber", "[", 
+    RowBox[{"$dataPacletPartitionNumber", ",", "num"}], "]"}]}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.704677902532896*^9, 
+  3.704678017057056*^9}},ExpressionUUID->"4b795412-34cf-4e97-9139-\
+b3370243a934"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$dataPacletVersionNumber", "=", "\"\<1.0.0\>\""}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.704678436523835*^9, 
+  3.704678442210897*^9}},ExpressionUUID->"145e8251-ccfd-434b-9685-\
+b632f0a5d605"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]IndexPaclet\[RightFloor]", "CodeSubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7038027978478003`*^9, 3.703802799438521*^9}, {
+  3.703803711275009*^9, 
+  3.7038037119868793`*^9}},ExpressionUUID->"d53d9a6e-8007-4666-87c3-\
+151da66196a7"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Primary Index\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.703863596180822*^9, 
+  3.7038636053338547`*^9}},ExpressionUUID->"31564c93-c6f5-4eec-8b87-\
+92fbc12e3fb0"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"dataPacletIndexFile", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"dir", ":", 
+      RowBox[{
+       RowBox[{"_String", "?", "DirectoryQ"}], "|", "Automatic"}], ":", 
+      "Automatic"}], ",", "\n", "\t", "dataType_String", ",", "\n", "\t", 
+     RowBox[{"entityStore", ":", 
+      RowBox[{"_Association", "|", 
+       RowBox[{"{", "__Association", "}"}]}]}]}], "\n", "\t", "]"}], ":=", 
+   "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{"index", "=", "\n", "\t\t\t", 
+       RowBox[{"{", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"\"\<Sources\>\"", "\[Rule]", "\n", "\t\t\t\t\t", 
+          RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"\"\<Data\>\"", "\[Rule]", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{"If", "[", 
+             RowBox[{
+              RowBox[{"AssociationQ", "@", "entityStore"}], ",", "\n", 
+              "\t\t\t\t\t\t\t\t", 
+              RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{
+               "\"\<Part01\>\"", "\[Rule]", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+                RowBox[{"Keys", "@", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{"entityStore", "[", "\"\<Entities\>\"", "]"}]}]}], 
+               "\n", "\t\t\t\t\t\t\t\t\t\t", "}"}], ",", "\n", 
+              "\t\t\t\t\t\t\t\t", 
+              RowBox[{"MapIndexed", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"\"\<Part\>\"", "<>", 
+                   RowBox[{"dataPacletIndexNumber", "[", "#2", "]"}]}], 
+                  "\[Rule]", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"Keys", "@", 
+                   RowBox[{"#", "[", "\"\<Entities\>\"", "]"}]}]}], "&"}], 
+                ",", "\n", "\t\t\t\t\t\t\t\t\t", "entityStore"}], "\n", 
+               "\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t\t", 
+             "]"}]}], "\n", "\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"\"\<Properties\>\"", "\[Rule]", "\n", "\t\t\t\t\t", 
+          RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"\"\<Data\>\"", "\[Rule]", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{"Thread", "@", 
+             RowBox[{"List", "@", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"DeleteCases", "[", "\"\<Label\>\"", "]"}], "@", "\n", 
+               "\t\t\t\t\t\t\t\t\t", 
+               RowBox[{"Keys", "@", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"If", "[", 
+                  RowBox[{
+                   RowBox[{"AssociationQ", "@", "entityStore"}], ",", "\n", 
+                   "\t\t\t\t\t\t\t\t\t\t\t", "entityStore", ",", "\n", 
+                   "\t\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"First", "@", "entityStore"}]}], "\n", 
+                  "\t\t\t\t\t\t\t\t\t\t\t", "]"}], "[", "\"\<Properties\>\"", 
+                 "]"}]}]}]}]}]}], "\n", "\t\t\t\t\t\t", "}"}]}]}], "\n", 
+        "\t\t\t\t", "}"}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{"Export", "[", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"FileNameJoin", "@", 
+        RowBox[{"{", "\n", "\t", "\t\t\t", 
+         RowBox[{
+          RowBox[{"Replace", "[", 
+           RowBox[{"dir", ",", "\n", "\t", "\t\t\t\t", 
+            RowBox[{
+            "Automatic", ":>", "\n", "\t", "\t\t\t\t\t", 
+             "$TemporaryDirectory"}]}], "\n", "\t", "\t\t\t\t", "]"}], ",", 
+          "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"StringTrim", "[", 
+            RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+           "\"\<Data_Index\>\""}], ",", "\n", "\t", "\t\t\t", "\"\<Data\>\"", 
+          ",", "\n", "\t", "\t\t\t", "\"\<Index.wdx\>\""}], "\n", "\t", 
+         "\t\t\t", "}"}]}], ",", "\n", "\t", "\t\t", "index", ",", "\n", "\t",
+        "\t\t", "\"\<DataIndex\>\""}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+    "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.703863670040143*^9, 3.703863694747498*^9}, {
+   3.703863784702787*^9, 3.7038637849804296`*^9}, {3.703998361129562*^9, 
+   3.7039983691356792`*^9}, 3.7039984590639887`*^9, {3.70399855951303*^9, 
+   3.70399856461544*^9}, {3.704677402484503*^9, 3.704677532831834*^9}, {
+   3.7046781359461727`*^9, 3.704678138981159*^9}, {3.704683168335041*^9, 
+   3.704683170156514*^9}, 
+   3.704728031815414*^9},ExpressionUUID->"aacd4ebc-f01c-44d5-b093-\
+4589d369deda"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Names Index\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.703863756613757*^9, 
+  3.703863764196247*^9}},ExpressionUUID->"2e339089-7547-4606-9ec9-\
+4fd20230319d"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"dataPacletNamesIndexFile", "[", "\n", "\t", 
+    RowBox[{
+    "dir_", ",", "\n", "\t", "dataType_String", ",", "\n", "\t", 
+     "entityStore_Association"}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{"names", "=", "\n", "\t\t\t", 
+       RowBox[{"Normal", "@", "\n", "\t\t\t\t", 
+        RowBox[{"AssociationMap", "[", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"#", ",", 
+             RowBox[{"First", "@", 
+              RowBox[{"StringSplit", "[", 
+               RowBox[{"#", ",", "\"\<::\>\""}], "]"}]}]}], "}"}], "&"}], ",",
+           "\n", "\t", "\t\t\t\t", 
+          RowBox[{"Flatten", "@", 
+           RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Keys", "@", 
+              RowBox[{"entityStore", "[", "\"\<Entities\>\"", "]"}]}], ",", 
+             "\n", "\t\t\t\t\t\t", 
+             RowBox[{"Lookup", "[", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Values", "@", 
+                RowBox[{"entityStore", "[", "\"\<Entities\>\"", "]"}]}], ",", 
+               "\n", "\t", "\t", "\t\t\t\t\t", "\"\<AlternateNames\>\"", ",", 
+               "\n", "\t", "\t", "\t\t\t\t\t", 
+               RowBox[{"{", "}"}]}], "\n", "\t", "\t\t\t\t\t\t", "]"}]}], 
+            "\n", "\t", "\t\t\t\t\t", "}"}]}]}], "\n", "\t", "\t\t\t\t", 
+         "]"}]}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{"Export", "[", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"FileNameJoin", "@", 
+        RowBox[{"{", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Replace", "[", 
+           RowBox[{"dir", ",", "\n", "\t\t\t\t\t", 
+            RowBox[{
+            "Automatic", ":>", "\n", "\t\t\t\t\t\t", 
+             "$TemporaryDirectory"}]}], "\n", "\t\t\t\t\t", "]"}], ",", "\n", 
+          "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"StringTrim", "[", 
+            RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+           "\"\<Data_Index\>\""}], ",", "\n", "\t\t\t\t", "\"\<Data\>\"", ",",
+           "\n", "\t\t\t\t", "\"\<Names.wdx\>\""}], "\n", "\t\t\t\t", "}"}]}],
+        ",", "\n", "\t\t\t", "names"}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t",
+     "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.703863747134754*^9, 3.70386380626792*^9}, {
+   3.703863987595517*^9, 3.703863988266367*^9}, {3.703864800814786*^9, 
+   3.7038648011255207`*^9}, {3.7038712104112053`*^9, 3.703871252356893*^9}, {
+   3.7038713744337997`*^9, 3.703871444743067*^9}, 3.7039985177749853`*^9, {
+   3.7047280330513*^9, 
+   3.704728034817586*^9}},ExpressionUUID->"7515beb2-cf19-4331-97b9-\
+11723d53490e"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Entities Index\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.703863596180822*^9, 
+  3.7038636002284107`*^9}},ExpressionUUID->"875b1f11-83d4-45d8-b9e3-\
+e5aa53c94700"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"dataPacletEntitiesIndexFile", "[", "\n", "\t", 
+    RowBox[{
+    "dir_", ",", "\n", "\t", "dataType_String", ",", "\n", "\t", 
+     "entityStore_Association"}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"Export", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"FileNameJoin", "@", 
+      RowBox[{"{", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"Replace", "[", 
+         RowBox[{"dir", ",", "\n", "\t\t\t\t", 
+          RowBox[{
+          "Automatic", ":>", "\n", "\t\t\t\t\t", "$TemporaryDirectory"}]}], 
+         "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"StringTrim", "[", 
+          RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+         "\"\<Data_Index\>\""}], ",", "\n", "\t\t\t", "\"\<Data\>\"", ",", 
+        "\n", "\t\t\t", "\"\<Entities.wdx\>\""}], "\n", "\t\t\t", "}"}]}], 
+     ",", "\n", "\t\t", 
+     RowBox[{"Compress", "@", "\n", "\t\t\t", 
+      RowBox[{"Map", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{
+         RowBox[{
+          RowBox[{"Hash", "[", 
+           RowBox[{"#", ",", "\"\<Adler32\>\""}], "]"}], "->", "#"}], "&"}], 
+        ",", "\n", "\t\t\t\t", 
+        RowBox[{"Keys", "@", 
+         RowBox[{"entityStore", "[", "\"\<Entities\>\"", "]"}]}]}], "\n", 
+       "\t\t\t\t", "]"}]}]}], "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.703863522688311*^9, 3.7038635810469418`*^9}, {
+   3.7038648236872253`*^9, 3.703864826735075*^9}, {3.703871306894265*^9, 
+   3.703871308518085*^9}, 
+   3.704728036808001*^9},ExpressionUUID->"9b128344-6f0f-4dad-8032-\
+2d83e40dbfc6"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Properties Index\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.703863596180822*^9, 3.7038636002284107`*^9}, {
+  3.7038638378948307`*^9, 
+  3.7038638391738863`*^9}},ExpressionUUID->"2007e792-b858-458f-8144-\
+a449abf47c56"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"dataPacletPropertiesIndexFile", "[", "\n", "\t", 
+   RowBox[{
+   "dir_", ",", "\n", "\t", "dataType_String", ",", "\n", "\t", 
+    "entityStore_Association"}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{"properties", "=", "\n", "\t\t\t", 
+      RowBox[{"Thread", "@", 
+       RowBox[{"List", "@", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"DeleteCases", "[", "\"\<Label\>\"", "]"}], "@", "\n", 
+         "\t\t\t\t\t", 
+         RowBox[{"Keys", "@", 
+          RowBox[{"entityStore", "[", "\"\<Properties\>\"", "]"}]}]}]}]}]}], 
+     "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Export", "[", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"FileNameJoin", "@", 
+        RowBox[{"{", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Replace", "[", 
+           RowBox[{"dir", ",", "\n", "\t\t\t\t\t", 
+            RowBox[{
+            "Automatic", ":>", "\n", "\t\t\t\t\t\t", 
+             "$TemporaryDirectory"}]}], "\n", "\t\t\t\t\t", "]"}], ",", "\n", 
+          "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"StringTrim", "[", 
+            RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+           "\"\<Data_Index\>\""}], ",", "\n", "\t\t\t\t", "\"\<Data\>\"", ",",
+           "\n", "\t\t\t\t", "\"\<Properties.wdx\>\""}], "\n", "\t\t\t\t", 
+         "}"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"Compress", "@", 
+        RowBox[{"{", 
+         RowBox[{"\"\<Data\>\"", "->", "properties"}], "}"}]}]}], "\n", 
+      "\t\t\t", "]"}], ";"}]}], "\n", "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.703863861109598*^9, 3.703863887062902*^9}, {
+   3.703863957351317*^9, 3.7038639807300262`*^9}, 3.703864870524809*^9, {
+   3.70399713541476*^9, 3.703997135913368*^9}, {3.7039973052257433`*^9, 
+   3.703997306536244*^9}, 
+   3.704728038518908*^9},ExpressionUUID->"cd2ff488-533d-4799-8207-\
+609eeb52731f"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Functions Index\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.703863596180822*^9, 3.7038636002284107`*^9}, {
+  3.7038638425745687`*^9, 
+  3.703863844901754*^9}},ExpressionUUID->"1d280ae7-ccd9-4e0d-956e-\
+38676829b321"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"dataPacletFunctionsIndexFile", "[", "\n", "\t", 
+   RowBox[{
+   "dir_", ",", "\n", "\t", "dataType_String", ",", "\n", "\t", 
+    "entityStore_Association"}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{"functions", "=", "\n", "\t\t\t", 
+      RowBox[{"With", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"computeFunction", "=", "\n", "\t\t\t\t", 
+          RowBox[{"Symbol", "@", 
+           RowBox[{"Evaluate", "[", 
+            RowBox[{"\"\<DataPaclets`\>\"", "<>", 
+             RowBox[{"StringTrim", "[", 
+              RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+             "\"\<DataDump`ComputeFunction\>\""}], "]"}]}]}], "\n", 
+         "\t\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Normal", "@", "\n", "\t\t\t\t", 
+           RowBox[{"ReplacePart", "[", 
+            RowBox[{"#", ",", "\n", "\t\t\t\t\t", 
+             RowBox[{"\"\<Helpers\>\"", ":>", "\n", "\t\t\t\t\t\t", 
+              RowBox[{"(", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"Normal", "@", 
+                RowBox[{
+                 RowBox[{"GroupBy", "[", 
+                  RowBox[{"First", "\[Rule]", "Last"}], "]"}], "@", 
+                 RowBox[{"Flatten", "@", 
+                  RowBox[{"#", "[", "\"\<Helpers\>\"", "]"}]}]}]}], "\n", 
+               "\t\t\t\t\t\t\t", ")"}]}]}], "\n", "\t\t\t\t\t", "]"}]}], 
+          "&"}], "@", "\n", "\t\t\t", 
+         RowBox[{"Join", "[", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"<|", "\n", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"\"\<Primary\>\"", "\[Rule]", 
+              RowBox[{"{", "}"}]}], ",", "\n", "\t\t\t\t\t", 
+             RowBox[{"\"\<Helpers\>\"", "\[Rule]", 
+              RowBox[{"{", "}"}]}]}], "\n", "\t\t\t\t\t", "|>"}], ",", "\n", 
+           "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"GroupBy", "[", 
+             RowBox[{"First", "\[Rule]", "Last"}], "]"}], "@", "\n", "\t", 
+            "\t\t\t\t", 
+            RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Lookup", "[", 
+               RowBox[{"entityStore", ",", "\"\<Functions\>\"", ",", 
+                RowBox[{"{", "}"}]}], "]"}], ",", 
+              RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"(", 
+                  RowBox[{
+                   RowBox[{
+                    RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", 
+                    "p___", "]"}], "\[RuleDelayed]", "f_"}], ")"}], ":>", 
+                 "\n", "\t", "\t", "\t\t\t\t\t\t", 
+                 RowBox[{
+                 "\"\<Primary\>\"", "->", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
+                  
+                  RowBox[{"(", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"HoldPattern", "[", 
+                    RowBox[{"computeFunction", "[", "p", "]"}], "]"}], 
+                    "\[RuleDelayed]", "f"}], "\n", "\t", "\t", 
+                   "\t\t\t\t\t\t\t\t\t", ")"}]}]}], ",", "\n", "\t", "\t", 
+                "\t\t\t\t\t", 
+                RowBox[{"s_Symbol", ":>", "\n", "\t", "\t", "\t\t\t\t\t\t", 
+                 RowBox[{"With", "[", 
+                  RowBox[{
+                   RowBox[{"{", 
+                    RowBox[{"key", "=", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
+                    RowBox[{"SymbolName", "@", 
+                    RowBox[{"Unevaluated", "@", "s"}]}]}], "\n", "\t", "\t", 
+                    "\t\t\t\t\t\t\t", "}"}], ",", "\n", "\t", "\t", 
+                   "\t\t\t\t\t\t\t", 
+                   RowBox[{
+                   "\"\<Helpers\>\"", "->", "\n", "\t", "\t", 
+                    "\t\t\t\t\t\t\t\t", 
+                    RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{
+                    "\"\<OwnValues\>\"", "\[Rule]", "\n", "\t", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"(", 
+                    RowBox[{"key", "\[Rule]", 
+                    RowBox[{"OwnValues", "[", "s", "]"}]}], ")"}]}], ",", 
+                    "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<DownValues\>\"", "\[Rule]", "\n", "\t", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"(", 
+                    RowBox[{"key", "\[Rule]", 
+                    RowBox[{"DownValues", "[", "s", "]"}]}], ")"}]}], ",", 
+                    "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<UpValues\>\"", "\[Rule]", "\n", "\t", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"(", 
+                    RowBox[{"key", "\[Rule]", 
+                    RowBox[{"UpValues", "[", "s", "]"}]}], ")"}]}], ",", "\n",
+                     "\t", "\t", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<SubValues\>\"", "\[Rule]", "\n", "\t", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"(", 
+                    RowBox[{"key", "\[Rule]", 
+                    RowBox[{"SubValues", "[", "s", "]"}]}], ")"}]}]}], "\n", 
+                    "\t", "\t", "\t\t\t\t\t\t\t\t\t", "}"}]}]}], "\n", "\t", 
+                  "\t", "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t", 
+               "}"}]}], "]"}]}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", 
+       "\t\t\t", "]"}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Export", "[", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"FileNameJoin", "@", 
+        RowBox[{"{", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Replace", "[", 
+           RowBox[{"dir", ",", "\n", "\t\t\t\t\t", 
+            RowBox[{
+            "Automatic", ":>", "\n", "\t\t\t\t\t\t", 
+             "$TemporaryDirectory"}]}], "\n", "\t\t\t\t\t", "]"}], ",", "\n", 
+          "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"StringTrim", "[", 
+            RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+           "\"\<Data_Index\>\""}], ",", "\n", "\t\t\t\t", "\"\<Data\>\"", ",",
+           "\n", "\t\t\t\t", "\"\<Functions.wdx\>\""}], "\n", "\t\t\t\t", 
+         "}"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"Compress", "@", "functions"}]}], "\n", "\t\t\t", "]"}], 
+     ";"}]}], "\n", "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.703863921411715*^9, 3.703863939955287*^9}, {
+  3.703864025988504*^9, 3.703864049032407*^9}, {3.7038645960517483`*^9, 
+  3.703864596994198*^9}, {3.7039896472339573`*^9, 3.70398967227072*^9}, {
+  3.7047280396507874`*^9, 
+  3.704728043990719*^9}},ExpressionUUID->"7d5e80fc-ea93-4fc4-adf3-\
+a3e2f64a7165"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Groups Index\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.703864079677712*^9, 
+  3.703864082365622*^9}},ExpressionUUID->"972ba91f-56b0-4bd1-8705-\
+224d6ea714ca"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"dataPacletGroupsIndexFile", "[", "\n", "\t", 
+   RowBox[{
+   "dir_", ",", "\n", "\t", "dataType_String", ",", "\n", "\t", 
+    "entityStore_Association"}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{"groups", "=", "\n", "\t\t\t", 
+      RowBox[{"Replace", "[", 
+       RowBox[{
+        RowBox[{"entityStore", "[", "\"\<EntityClasses\>\"", "]"}], ",", 
+        RowBox[{"{", "\n", "\t", "\t\t\t", 
+         RowBox[{
+          RowBox[{"l_List", ":>", "\n", "\t", "\t\t\t\t", 
+           RowBox[{"Normal", "[", 
+            RowBox[{"Keys", "/@", "l"}], "]"}]}], ",", "\n", "\t", "\t\t\t", 
+          RowBox[{"_", "\[Rule]", 
+           RowBox[{"{", "}"}]}]}], "\n", "\t\t\t\t", "}"}]}], "]"}]}], "\n", 
+     "\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Export", "[", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"FileNameJoin", "@", 
+        RowBox[{"{", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Replace", "[", 
+           RowBox[{"dir", ",", "\n", "\t\t\t\t\t", 
+            RowBox[{
+            "Automatic", ":>", "\n", "\t\t\t\t\t\t", 
+             "$TemporaryDirectory"}]}], "\n", "\t\t\t\t\t", "]"}], ",", "\n", 
+          "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"StringTrim", "[", 
+            RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+           "\"\<Data_Index\>\""}], ",", "\n", "\t\t\t\t", "\"\<Data\>\"", ",",
+           "\n", "\t\t\t\t", "\"\<Groups.wdx\>\""}], "\n", "\t\t\t\t", 
+         "}"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"Compress", "@", "groups"}]}], "\n", "\t\t\t", "]"}], ";"}]}], 
+   "\n", "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.7038640924830723`*^9, 3.703864131894266*^9}, 
+   3.7038647141179523`*^9, 
+   3.704728045789607*^9},ExpressionUUID->"291308f5-27a8-4d71-a9b3-\
+82988e568b77"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]PrivateGroups Index\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.703864668062723*^9, 
+  3.703864671438258*^9}},ExpressionUUID->"d8247197-ae83-4de4-a8e0-\
+dc703bae6db6"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"dataPacletPrivateGroupsIndexFile", "[", "\n", "\t", 
+    RowBox[{
+    "dir_", ",", "\n", "\t", "dataType_String", ",", "\n", "\t", 
+     "entityStore_Association"}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"Export", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"FileNameJoin", "@", 
+      RowBox[{"{", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"Replace", "[", 
+         RowBox[{"dir", ",", "\n", "\t\t\t\t", 
+          RowBox[{
+          "Automatic", ":>", "\n", "\t\t\t\t\t", "$TemporaryDirectory"}]}], 
+         "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"StringTrim", "[", 
+          RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+         "\"\<Data_Index\>\""}], ",", "\n", "\t\t\t", "\"\<Data\>\"", ",", 
+        "\n", "\t\t\t", "\"\<PrivateGroups.wdx\>\""}], "\n", "\t\t\t", 
+       "}"}]}], ",", "\n", "\t\t", 
+     RowBox[{"Compress", "@", 
+      RowBox[{"{", "}"}]}]}], "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7038646836040573`*^9, 3.703864699116847*^9}, {
+   3.703896438802814*^9, 3.703896439722912*^9}, 
+   3.704728047237301*^9},ExpressionUUID->"d4c412eb-f6f7-4366-96c9-\
+f6a093fe3b09"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Data File\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.703863596180822*^9, 
+  3.7038636152054977`*^9}},ExpressionUUID->"40ffa4ee-588a-47a0-ad7f-\
+a4d0b8591715"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"dataPacletDataFile", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"n", ":", "_Integer", ":", "1"}], ",", "\n", "\t", "dir_", ",", 
+     "\n", "\t", "dataType_String", ",", "\n", "\t", 
+     "entityStore_Association"}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{"ents", "=", "\n", "\t\t\t", 
+       RowBox[{"{", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"\"\<Keys\>\"", "\[Rule]", "\n", "\t", "\t\t\t\t", 
+          RowBox[{"Keys", "@", 
+           RowBox[{"entityStore", "[", "\"\<Entities\>\"", "]"}]}]}], ",", 
+         "\n", "\t", "\t\t\t", 
+         RowBox[{"\"\<Properties\>\"", "\[Rule]", "\n", "\t", "\t\t\t\t", 
+          RowBox[{"Thread", "@", 
+           RowBox[{"List", "@", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"DeleteCases", "[", "\"\<Label\>\"", "]"}], "@", "\n", 
+             "\t\t\t\t\t\t\t", 
+             RowBox[{"Keys", "@", 
+              RowBox[{
+              "entityStore", "[", "\"\<Properties\>\"", "]"}]}]}]}]}]}], ",", 
+         "\n", "\t\t\t\t", 
+         RowBox[{"\"\<Data\>\"", "->", "\n", "\t\t\t\t\t", 
+          RowBox[{"Map", "[", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Lookup", "[", "\n", "\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"Replace", "[", 
+                  RowBox[{"#", ",", 
+                   RowBox[{
+                    RowBox[{"f_File", "?", "FileExistsQ"}], "\[RuleDelayed]", 
+                    
+                    RowBox[{"Import", "[", "f", "]"}]}]}], "]"}], ",", "\n", 
+                 "\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"DeleteCases", "[", "\"\<Label\>\"", "]"}], "@", 
+                  "\n", "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"Keys", "@", 
+                   RowBox[{
+                   "entityStore", "[", "\"\<Properties\>\"", "]"}]}]}]}], 
+                "\n", "\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t", 
+               
+               RowBox[{"_Missing", "\[Rule]", 
+                RowBox[{"Missing", "[", "\"\<NotAvailable\>\"", "]"}]}], ",", 
+               "\n", "\t\t\t\t\t\t\t", "1"}], "]"}], "&"}], ",", "\n", 
+            "\t\t\t\t\t\t", 
+            RowBox[{"entityStore", "[", "\"\<Entities\>\"", "]"}]}], "\n", 
+           "\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"\"\<Attributes\>\"", "->", "\n", "\t\t\t\t\t", 
+          RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"\"\<CreationDate\>\"", "\[Rule]", 
+             RowBox[{"DateList", "[", "]"}]}], ",", "\n", "\t", "\t", 
+            "\t\t\t\t", 
+            RowBox[{
+            "\"\<Signature\>\"", "\[Rule]", 
+             "228610809693471781814095222429607185306"}]}], "\n", "\t", 
+           "\t\t\t\t\t", "}"}]}]}], "\n", "\t\t\t\t", "}"}]}], "\n", "\t\t", 
+      "}"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Quiet", "@", "\n", "\t\t\t", 
+       RowBox[{"CreateDirectory", "@", "\n", "\t\t\t\t", 
+        RowBox[{"FileNameJoin", "@", 
+         RowBox[{"{", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Replace", "[", 
+            RowBox[{"dir", ",", "\n", "\t", "\t\t\t\t\t", 
+             RowBox[{
+             "Automatic", ":>", "\n", "\t", "\t\t\t\t\t\t", 
+              "$TemporaryDirectory"}]}], "\n", "\t", "\t\t\t\t\t", "]"}], ",",
+            "\n", "\t", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"StringTrim", "[", 
+             RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+            "\"\<Data_Part\>\"", "<>", "\t", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"StringPadLeft", "[", 
+             RowBox[{
+              RowBox[{"ToString", "@", "n"}], ",", "2", ",", "\"\<0\>\""}], 
+             "]"}]}], ",", "\n", "\t", "\t\t\t\t", "\"\<Data\>\""}], "\n", 
+          "\t\t\t\t\t", "}"}]}]}]}], ";", "\n", "\t\t", 
+      RowBox[{"Export", "[", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"FileNameJoin", "@", 
+         RowBox[{"{", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Replace", "[", 
+            RowBox[{"dir", ",", "\n", "\t\t\t\t\t", 
+             RowBox[{
+             "Automatic", ":>", "\n", "\t\t\t\t\t\t", 
+              "$TemporaryDirectory"}]}], "\n", "\t\t\t\t\t", "]"}], ",", "\n",
+            "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"StringTrim", "[", 
+             RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+            "\"\<Data_Part\>\"", "<>", 
+            RowBox[{"StringPadLeft", "[", 
+             RowBox[{
+              RowBox[{"ToString", "@", "n"}], ",", "2", ",", "\"\<0\>\""}], 
+             "]"}]}], ",", "\n", "\t\t\t\t", "\"\<Data\>\"", ",", "\n", 
+           "\t\t\t\t", 
+           RowBox[{"\"\<Part\>\"", "<>", 
+            RowBox[{"dataPacletIndexNumber", "[", "n", "]"}], "<>", 
+            "\"\<.wdx\>\""}]}], "\n", "\t\t\t\t", "}"}]}], ",", "\n", 
+        "\t\t\t", "ents", ",", "\n", "\t\t\t", "\"\<DataTable\>\""}], "\n", 
+       "\t\t\t", "]"}], ";"}]}], "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.703864567946414*^9, 3.703864648871336*^9}, {
+   3.703864947034647*^9, 3.703864947658437*^9}, {3.703866322877997*^9, 
+   3.703866332187709*^9}, {3.703900296663623*^9, 3.7039003125351543`*^9}, {
+   3.703900414492845*^9, 3.703900417234679*^9}, {3.703900463298455*^9, 
+   3.7039004644407253`*^9}, 3.703901064725964*^9, {3.703903148162208*^9, 
+   3.703903210238552*^9}, {3.7039032489186487`*^9, 3.703903378994282*^9}, {
+   3.703903409810967*^9, 3.703903437328422*^9}, 3.703911418263565*^9, {
+   3.70391226515707*^9, 3.7039123538718567`*^9}, {3.703912385965958*^9, 
+   3.703912394380156*^9}, {3.7039125316208477`*^9, 3.7039125955199947`*^9}, 
+   3.70391280377565*^9, 3.703915663686507*^9, 3.70391578500028*^9, {
+   3.7039178883482523`*^9, 3.703917948713676*^9}, 3.703918028971323*^9, {
+   3.703996883511567*^9, 3.703996889436302*^9}, {3.703996945758615*^9, 
+   3.7039969555831614`*^9}, {3.7039974204872103`*^9, 3.703997447626926*^9}, {
+   3.703997499632159*^9, 3.703997546720896*^9}, {3.7039977365918903`*^9, 
+   3.703997737424603*^9}, 3.703997844137882*^9, {3.7046765821470137`*^9, 
+   3.704676621620844*^9}, {3.704678121050927*^9, 3.704678122575152*^9}, {
+   3.70468173522421*^9, 3.704681737739154*^9}, 3.7046818160584106`*^9, 
+   3.704728048718362*^9, {3.7047282042629213`*^9, 3.704728229672306*^9}, {
+   3.70571300832265*^9, 
+   3.705713027102427*^9}},ExpressionUUID->"0eb36bdd-b3bc-4f20-a90a-\
+4034250083e8"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Data Partitioning\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.705765997322413*^9, 
+  3.705766001969123*^9}},ExpressionUUID->"e1e1b8d7-414f-45cf-a0ab-\
+c3a1e05bc4c6"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"dataPartition", "[", 
+   RowBox[{"data_", ",", "max_"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Block", "[", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{"d", "=", "data"}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Part", "[", 
+       RowBox[{"d", ",", "#"}], "]"}], "&"}], "/@", "\n", "\t\t\t", 
+     RowBox[{"basicPartition", "[", 
+      RowBox[{
+       RowBox[{"ByteCount", "/@", "data"}], ",", "max"}], "]"}]}]}], "\n", 
+   "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.705766004468521*^9, 3.705766040001233*^9}, {
+  3.705766073897694*^9, 
+  3.705766088782321*^9}},ExpressionUUID->"c18ba040-9df1-4650-a549-\
+69d10a81d288"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"basicPartition", "[", 
+   RowBox[{"byteCounts_", ",", "max_"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Block", "[", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{"(*", "\n", "\t\t\t", 
+      RowBox[{
+      "Basic", " ", "chunking", " ", "sysetm", " ", "that", " ", "tries", " ",
+        "to", " ", "get", " ", "part", " ", "sizes", " ", "as", " ", "close", 
+       " ", "to", " ", "max", " ", "\n", "\t\t\t\t", "while", " ", 
+       "maximizing", " ", "the", " ", "number", " ", "of", " ", "chunks", " ",
+        "in", " ", "a", " ", "given", " ", "grouping"}], "\n", "\t\t\t", 
+      "*)"}], "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"counts", "=", "byteCounts"}], ",", "total", ",", "\n", 
+      "\t\t\t", "rightIndex", ",", "leftIndex", ",", "\n", "\t", "\t\t", 
+      "indexMoverLeft", ",", "indexMoverRight", ",", "\n", "\t", "\t\t", 
+      "ordering", ",", "chunks"}], 
+     RowBox[{"(*", 
+      RowBox[{",", "\n", "\t\t\t", 
+       RowBox[{"step", "=", "1"}]}], "*)"}], "\n", "\t\t\t", "}"}], ",", "\n",
+     "\t\t", 
+    RowBox[{
+     RowBox[{"ordering", "=", 
+      RowBox[{"Ordering", "@", "counts"}]}], ";", "\n", "\t\t", 
+     RowBox[{"counts", "=", 
+      RowBox[{"counts", "[", 
+       RowBox[{"[", "ordering", "]"}], "]"}]}], ";", "\n", "\t\t", 
+     RowBox[{"rightIndex", "=", "\n", "\t\t\t", 
+      RowBox[{"First", "@", "\n", "\t\t\t\t", 
+       RowBox[{"FirstPosition", "[", 
+        RowBox[{"counts", ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"Integer", "?", 
+          RowBox[{"(", 
+           RowBox[{"GreaterThan", "[", "max", "]"}], ")"}]}], ",", "\n", 
+         "\t\t\t\t\t", 
+         RowBox[{"{", 
+          RowBox[{"Length", "@", "counts"}], "}"}], ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"{", "1", "}"}]}], "]"}]}]}], ";", "\n", "\t\t", 
+     RowBox[{"leftIndex", "=", "1"}], ";", "\n", "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"rightIndex", "<", 
+        RowBox[{"Length", "@", "counts"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"chunks", "=", 
+        RowBox[{"Thread", "[", 
+         RowBox[{"{", 
+          RowBox[{"Take", "[", 
+           RowBox[{"ordering", ",", 
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"rightIndex", "+", "1"}], ",", 
+              RowBox[{"-", "1"}]}], "}"}]}], "]"}], "}"}], "]"}]}], ",", "\n",
+        "\t", "\t\t", 
+       RowBox[{"chunks", "=", 
+        RowBox[{"{", "}"}]}]}], "\n", "\t", "\t\t", "]"}], ";", "\n", "\t", 
+     "\t", 
+     RowBox[{"While", "[", 
+      RowBox[{
+       RowBox[{"leftIndex", "<", "rightIndex"}], 
+       RowBox[{"(*", 
+        RowBox[{"&&", 
+         RowBox[{"step", "<", 
+          RowBox[{"2", "*", 
+           RowBox[{"Length", "@", "counts"}]}]}]}], "*)"}], ",", "\n", 
+       "\t\t\t", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{"step", "++"}], ";"}], "*)"}], "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"total", "=", 
+         RowBox[{"counts", "[", 
+          RowBox[{"[", "rightIndex", "]"}], "]"}]}], ";", "\n", "\t", "\t\t", 
+        
+        RowBox[{"indexMoverRight", "=", "rightIndex"}], ";", "\n", "\t", 
+        "\t\t", 
+        RowBox[{"While", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"total", "<=", "max"}], "&&", 
+           RowBox[{"indexMoverRight", ">=", "leftIndex"}]}], ",", "\n", "\t", 
+          "\t\t\t", 
+          RowBox[{
+           RowBox[{"indexMoverRight", "--"}], ";", "\n", "\t\t\t\t", 
+           RowBox[{"total", "+=", 
+            RowBox[{"counts", "[", 
+             RowBox[{"[", "indexMoverRight", "]"}], "]"}]}]}]}], "\n", "\t", 
+         "\t\t\t", "]"}], ";", "\n", "\t\t\t", 
+        RowBox[{"indexMoverRight", "++"}], ";", "\n", "\t\t\t", 
+        RowBox[{"total", "-=", 
+         RowBox[{"counts", "[", 
+          RowBox[{"[", "indexMoverRight", "]"}], "]"}]}], ";", "\n", "\t\t\t",
+         "\n", "\t\t\t", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"leftIndex", "==", "indexMoverRight"}], ",", "\n", 
+          "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"AppendTo", "[", 
+            RowBox[{"chunks", ",", 
+             RowBox[{"{", 
+              RowBox[{"{", 
+               RowBox[{"leftIndex", ",", "rightIndex"}], "}"}], "}"}]}], 
+            "]"}], ";", "\n", "\t\t\t\t", 
+           RowBox[{"leftIndex", "=", "rightIndex"}]}], ",", "\n", "\t\t\t\t", 
+          "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"total", "+", 
+               RowBox[{"counts", "[", 
+                RowBox[{"[", "leftIndex", "]"}], "]"}]}], ">", "max"}], ",", 
+             "\n", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"AppendTo", "[", 
+               RowBox[{"chunks", ",", "\n", "\t\t\t\t\t\t", 
+                RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{"{", 
+                  RowBox[{"indexMoverRight", ",", "rightIndex"}], "}"}], "\n",
+                  "\t\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t\t", "]"}], ";",
+               "\n", "\t\t\t\t\t", 
+              RowBox[{"rightIndex", "=", 
+               RowBox[{"indexMoverRight", "-", "1"}]}]}], ",", "\n", 
+             "\t\t\t\t\t", "\n", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"indexMoverLeft", "=", "leftIndex"}], ";", "\n", "\t", 
+              "\t\t\t\t", 
+              RowBox[{"While", "[", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"total", "<=", "max"}], "&&", 
+                 RowBox[{"indexMoverLeft", "<=", "indexMoverRight"}]}], ",", 
+                "\n", "\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"indexMoverLeft", "++"}], ";", "\n", "\t\t\t\t\t\t", 
+                 
+                 RowBox[{"total", "+=", 
+                  RowBox[{"counts", "[", 
+                   RowBox[{"[", "indexMoverLeft", "]"}], "]"}]}]}]}], "\n", 
+               "\t", "\t\t\t\t\t", "]"}], ";", "\n", "\t", "\t\t\t\t", 
+              RowBox[{"indexMoverLeft", "--"}], ";", "\n", "\t\t\t\t\t", 
+              RowBox[{"AppendTo", "[", 
+               RowBox[{"chunks", ",", "\n", "\t\t\t\t\t\t", 
+                RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"{", 
+                   RowBox[{"leftIndex", ",", "indexMoverLeft"}], "}"}], ",", 
+                  "\n", "\t\t\t\t\t\t\t", 
+                  RowBox[{"{", 
+                   RowBox[{"indexMoverRight", ",", "rightIndex"}], "}"}]}], 
+                 "\n", "\t\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t\t", "]"}],
+               ";", "\n", "\t\t\t\t\t", 
+              RowBox[{"rightIndex", "=", 
+               RowBox[{"indexMoverRight", "-", "1"}]}], ";", "\n", 
+              "\t\t\t\t\t", 
+              RowBox[{"leftIndex", "=", 
+               RowBox[{"indexMoverLeft", "+", "1"}]}], ";"}]}], "\n", 
+            "\t\t\t\t\t", "]"}], ";", "\n", "\t\t\t\t", 
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{"rightIndex", "\[Equal]", "leftIndex"}], ",", 
+             RowBox[{"AppendTo", "[", 
+              RowBox[{"chunks", ",", 
+               RowBox[{"{", 
+                RowBox[{"{", 
+                 RowBox[{"leftIndex", ",", "leftIndex"}], "}"}], "}"}]}], 
+              "]"}]}], "]"}]}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t\t",
+       "]"}], ";", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"Apply", "[", "Join", "]"}], "@*", 
+       RowBox[{"Map", "[", 
+        RowBox[{
+         RowBox[{"Take", "[", 
+          RowBox[{"ordering", ",", "#"}], "]"}], "&"}], "]"}]}], "/@", 
+      "chunks"}]}]}], "\n", "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.705710353327661*^9, 3.705710396090909*^9}, {
+   3.70571045247517*^9, 3.705710538430292*^9}, {3.7057106466577787`*^9, 
+   3.705710893874214*^9}, {3.705711031965287*^9, 3.705711111629794*^9}, {
+   3.70571114876667*^9, 3.70571115329389*^9}, {3.705711187341713*^9, 
+   3.705711249913385*^9}, 3.70571134930061*^9, {3.7057114190039787`*^9, 
+   3.705711432090028*^9}, {3.705711621911118*^9, 3.7057118309178057`*^9}, {
+   3.7057119060033484`*^9, 3.705711959569334*^9}, {3.705712027047349*^9, 
+   3.705712051044958*^9}, {3.705712159534089*^9, 3.7057122756675663`*^9}, {
+   3.7057123057479267`*^9, 3.705712306028762*^9}, {3.705712429834177*^9, 
+   3.7057124385484257`*^9}, {3.7057124878304462`*^9, 3.705712509941176*^9}, {
+   3.705712570459773*^9, 3.705712618670471*^9}, {3.705712675786023*^9, 
+   3.705712858423628*^9}, {3.7057129531664543`*^9, 3.705712981142087*^9}, {
+   3.705751066077323*^9, 3.705751083933902*^9}, {3.705751220221876*^9, 
+   3.705751374217257*^9}, {3.705751433087688*^9, 3.70575147818071*^9}, {
+   3.705751523719759*^9, 3.705751542862384*^9}, 3.705751603125448*^9, {
+   3.705751669200204*^9, 3.705751698207122*^9}, {3.7057517676119843`*^9, 
+   3.70575177400416*^9}, {3.705751805082959*^9, 3.7057518193263807`*^9}, {
+   3.7057520671725197`*^9, 3.705752074584702*^9}, {3.70575228953646*^9, 
+   3.705752292025497*^9}, {3.705752464410306*^9, 3.7057524794093227`*^9}, {
+   3.705752520992036*^9, 3.705752531048525*^9}, {3.705752573727759*^9, 
+   3.70575257698879*^9}, 3.705752731686523*^9, {3.7057528099657183`*^9, 
+   3.7057528117106867`*^9}, {3.705753641817273*^9, 3.705753670917666*^9}, {
+   3.70575371080943*^9, 3.705753779661079*^9}, {3.705753874282229*^9, 
+   3.705753901933453*^9}, {3.705754003827713*^9, 3.7057540859211187`*^9}, {
+   3.705754373512033*^9, 3.705754406829417*^9}, {3.705754550288844*^9, 
+   3.705754571703*^9}, {3.70575468626877*^9, 3.705754755628373*^9}, {
+   3.705754792731283*^9, 3.705754847841405*^9}, {3.705755023478146*^9, 
+   3.7057550296731853`*^9}, {3.705755589041246*^9, 3.705755611166444*^9}, 
+   3.7057556661700087`*^9, 3.705755830521*^9, {3.7057558696228037`*^9, 
+   3.705755876835064*^9}, {3.705756186620648*^9, 3.705756189608553*^9}, {
+   3.70576564863899*^9, 3.70576565106956*^9}, {3.705765755046465*^9, 
+   3.705765854870556*^9}, {3.705765932049045*^9, 3.7057659325856953`*^9}, 
+   3.7057660029572773`*^9},ExpressionUUID->"2cbe0d7b-e849-4825-bfc4-\
+47580a69c79b"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Main\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.703863593806262*^9, 
+  3.703863594429812*^9}},ExpressionUUID->"2a7e81c2-ad60-4901-b405-\
+db5cefa71420"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"CuratedDataIndexPaclet", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"dir", ":", 
+      RowBox[{
+       RowBox[{"_String", "?", "DirectoryQ"}], "|", "Automatic"}], ":", 
+      "Automatic"}], ",", "\n", "\t", "dataType_String", ",", "\n", "\t", 
+     "entityStore_Association", ",", "\n", "\t", 
+     RowBox[{"pack", ":", 
+      RowBox[{"True", "|", "False"}], ":", "True"}]}], "\n", "\t", "]"}], ":=",
+    "\n", "\t", 
+   RowBox[{"CompoundExpression", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{
+     "Begin", "[", "\"\<DataPaclets`CuratedDataFormattingDump`\>\"", "]"}], 
+     ",", "\n", "\t", "\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"End", "[", "]"}], ";", "#"}], ")"}], "&"}], "@", "\n", 
+      "\t\t", 
+      RowBox[{"CheckAbort", "[", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"Block", "[", 
+         RowBox[{
+          RowBox[{"{", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"partitions", "=", "\n", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Map", "[", "\n", "\t", "\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"ReplacePart", "[", 
+                 RowBox[{"entityStore", ",", "\n", "\t", "\t\t\t\t\t\t", 
+                  RowBox[{
+                  "\"\<Entities\>\"", "\[Rule]", "\n", "\t\t\t\t\t\t\t\t", 
+                   RowBox[{"Association", "@", "#"}]}]}], "\n", 
+                 "\t\t\t\t\t\t\t", "]"}], "&"}], "\n", "\t\t\t\t\t\t", "]"}], 
+              "@", "\n", "\t\t\t\t\t\t", 
+              RowBox[{"dataPartition", "[", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"Normal", "@", 
+                 RowBox[{"entityStore", "[", "\"\<Entities\>\"", "]"}]}], ",",
+                 "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{"5", "*", 
+                 RowBox[{"10", "^", "7"}]}]}], "\n", "\t\t\t\t\t\t\t", 
+               "]"}]}]}], ",", "\n", "\t\t\t\t", 
+            "$dataPacletPartitionNumber"}], "\n", "\t\t\t\t", "}"}], ",", 
+          "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"$dataPacletPartitionNumber", "=", "\n", "\t\t\t\t\t", 
+            RowBox[{"Max", "@", 
+             RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Length", "@", 
+                RowBox[{"IntegerDigits", "@", 
+                 RowBox[{"Length", "@", "partitions"}]}]}], ",", "\n", "\t", 
+               "\t\t\t\t\t", "2"}], "\n", "\t", "\t\t\t\t\t", "}"}]}]}], ";", 
+           "\n", "\t\t\t\t", 
+           RowBox[{"(*", " ", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"--", 
+               RowBox[{"--", 
+                RowBox[{"--", 
+                 RowBox[{"-", " ", "Prep"}]}]}]}], " ", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"Directories", "  ", "--"}], "--"}], "--"}]}], "-"}], 
+            " ", "*)"}], "\n", "\t\t\t\t", 
+           RowBox[{"Quiet", "@", "\n", "\t\t\t\t\t", 
+            RowBox[{
+            "CreateDirectory", "[", "\n", "\t", "\t", "\t", "\t\t\t", 
+             RowBox[{
+              RowBox[{"FileNameJoin", "@", 
+               RowBox[{"{", "\n", "\t", "\t", "\t", "\t", "\t\t\t", 
+                RowBox[{
+                 RowBox[{"Replace", "[", 
+                  RowBox[{"dir", ",", "\t", "\n", "\t\t\t\t\t\t\t\t", 
+                   RowBox[{
+                   "Automatic", ":>", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    "$TemporaryDirectory"}]}], "\n", "\t", "\t\t\t\t\t\t\t", 
+                  "]"}], ",", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"StringTrim", "[", 
+                   RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+                  "\"\<Data_Index\>\""}], ",", "\n", "\t", "\t", "\t", 
+                 "\t\t\t\t", "\"\<Data\>\""}], "\n", "\t\t\t\t\t\t\t", 
+                "}"}]}], ",", "\n", "\t\t\t\t\t\t", 
+              RowBox[{"CreateIntermediateDirectories", "\[Rule]", "True"}]}], 
+             "\n", "\t\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t\t", 
+           RowBox[{"(*", " ", 
+            RowBox[{
+             RowBox[{"--", 
+              RowBox[{"--", 
+               RowBox[{"--", 
+                RowBox[{"-", " ", 
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"Indices", " ", "--"}], "--"}], "--"}]}]}]}]}], 
+             "-"}], "*)"}], "\n", "\t\t\t\t", 
+           RowBox[{"dataPacletIndexFile", "[", "\n", "\t\t\t\t\t", 
+            RowBox[{
+            "dir", ",", "\n", "\t\t\t\t\t", "dataType", ",", "\n", 
+             "\t\t\t\t\t", "partitions"}], "\n", "\t\t\t\t\t", "]"}], ";", 
+           "\n", "\t\t\t\t", 
+           RowBox[{"dataPacletNamesIndexFile", "[", 
+            RowBox[{"dir", ",", "dataType", ",", "entityStore"}], "]"}], ";", 
+           "\n", "\t\t\t\t", 
+           RowBox[{"dataPacletEntitiesIndexFile", "[", 
+            RowBox[{"dir", ",", "dataType", ",", "entityStore"}], "]"}], ";", 
+           "\n", "\t\t\t\t", 
+           RowBox[{"dataPacletPropertiesIndexFile", "[", 
+            RowBox[{"dir", ",", "dataType", ",", "entityStore"}], "]"}], ";", 
+           "\n", "\t\t\t\t", 
+           RowBox[{"dataPacletFunctionsIndexFile", "[", 
+            RowBox[{"dir", ",", "dataType", ",", "entityStore"}], "]"}], ";", 
+           "\n", "\t\t\t\t", 
+           RowBox[{"dataPacletGroupsIndexFile", "[", 
+            RowBox[{"dir", ",", "dataType", ",", "entityStore"}], "]"}], ";", 
+           "\n", "\t\t\t\t", 
+           RowBox[{"dataPacletPrivateGroupsIndexFile", "[", 
+            RowBox[{"dir", ",", "dataType", ",", "entityStore"}], "]"}], ";", 
+           "\n", "\t\t\t\t", 
+           RowBox[{"(*", " ", 
+            RowBox[{
+             RowBox[{"--", 
+              RowBox[{"--", 
+               RowBox[{"--", 
+                RowBox[{"-", " ", 
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"Data", " ", "--"}], "--"}], "--"}]}]}]}]}], "-"}],
+             " ", "*)"}], "\n", "\t\t\t\t", 
+           RowBox[{"MapIndexed", "[", "\n", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Function", "[", "\n", "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Quiet", "@", "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{
+                "CreateDirectory", "[", "\n", "\t", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"FileNameJoin", "@", 
+                   RowBox[{
+                   "{", "\n", "\t", "\t", "\t", "\t", "\t", "\t", "\t\t\t", 
+                    RowBox[{
+                    RowBox[{"Replace", "[", 
+                    RowBox[{
+                    "dir", ",", "\t", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "Automatic", ":>", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t",
+                     "$TemporaryDirectory"}]}], "\n", "\t", "\t", "\t", 
+                    "\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    
+                    RowBox[{
+                    RowBox[{"StringTrim", "[", 
+                    RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+                    "\n", "\t\t\t\t\t\t\t\t\t\t", "\"\<Data_Part\>\"", "<>", 
+                    "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"dataPacletIndexNumber", "[", "#2", "]"}]}], ",", 
+                    "\n", "\t\t\t\t\t\t\t\t\t", "\"\<Data\>\""}], "\n", "\t", 
+                    "\t", "\t\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t", "\t", 
+                  "\t\t\t\t\t\t", 
+                  RowBox[{
+                  "CreateIntermediateDirectories", "\[Rule]", "True"}]}], 
+                 "\n", "\t", "\t\t\t\t\t\t\t", "]"}]}], ";", "\n", 
+               "\t\t\t\t\t\t", 
+               RowBox[{"dataPacletDataFile", "[", 
+                RowBox[{
+                 RowBox[{"First", "@", "#2"}], ",", "\n", "\t\t\t\t\t\t\t", 
+                 "dir", ",", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{"StringTrim", "[", 
+                  RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], ",", "\n",
+                  "\t\t\t\t\t\t\t", "#"}], "\n", "\t\t\t\t\t\t\t", "]"}]}], 
+              "\n", "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t", 
+             "partitions"}], "\n", "\t\t\t\t\t", "]"}], ";", "\n", "\t\t\t\t", 
+           RowBox[{"(*", " ", 
+            RowBox[{
+             RowBox[{"--", 
+              RowBox[{"--", 
+               RowBox[{"--", 
+                RowBox[{"-", " ", 
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"Paclets", "  ", "--"}], "--"}], "--"}]}]}]}]}], 
+             "-"}], " ", "*)"}], "\n", "\t\t\t\t", 
+           RowBox[{"If", "[", 
+            RowBox[{"pack", ",", "\n", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Quiet", "@", "\n", "\t\t\t\t\t\t", 
+               RowBox[{
+               "PacletInfoExpressionBundle", "[", "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"FileNameJoin", "@", 
+                  RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"Replace", "[", 
+                    RowBox[{"dir", ",", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "Automatic", ":>", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                    "$TemporaryDirectory"}]}], "\n", "\t", "\t", 
+                    "\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"StringTrim", "[", 
+                    RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+                    "\"\<Data_Index\>\""}]}], "\n", "\t\t\t\t\t\t\t\t", 
+                   "}"}]}], ",", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                 "\"\<Version\>\"", "->", "$dataPacletVersionNumber"}]}], 
+                "\n", "\t\t\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t\t\t", 
+              RowBox[{"Map", "[", "\n", "\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Quiet", "@", "\n", "\t\t\t\t\t\t\t", 
+                  RowBox[{
+                  "PacletInfoExpressionBundle", "[", "\n", "\t\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"FileNameJoin", "@", 
+                    RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"Replace", "[", 
+                    RowBox[{
+                    "dir", ",", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "Automatic", ":>", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t",
+                     "$TemporaryDirectory"}]}], "\n", "\t", "\t", "\t", 
+                    "\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    
+                    RowBox[{
+                    RowBox[{"StringTrim", "[", 
+                    RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+                    "\"\<Data_Part\>\"", "<>", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"dataPacletIndexNumber", "[", "#", "]"}]}]}], 
+                    "\n", "\t\t\t\t\t\t\t\t\t", "}"}]}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<Version\>\"", "->", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    "$dataPacletVersionNumber"}]}], "\n", "\t\t\t\t\t\t\t\t", 
+                   "]"}]}], "&"}], ",", "\n", "\t\t\t\t\t\t", 
+                RowBox[{"Range", "[", 
+                 RowBox[{"Length", "@", "partitions"}], "]"}]}], "\n", 
+               "\t\t\t\t\t\t", "]"}], ";", "\n", "\t\t\t\t\t", 
+              RowBox[{"AssociationMap", "[", "\n", "\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"PacletBundle", "@", "\n", "\t", "\t\t\t\t\t\t", 
+                  RowBox[{"FileNameJoin", "@", 
+                   RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"Replace", "[", 
+                    RowBox[{"dir", ",", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "Automatic", ":>", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
+                    "$TemporaryDirectory"}]}], "\n", "\t", "\t", 
+                    "\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"StringTrim", "[", 
+                    RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+                    "\"\<Data_\>\"", "<>", "#"}]}], "\n", "\t", 
+                    "\t\t\t\t\t\t\t", "}"}]}]}], "&"}], ",", "\n", 
+                "\t\t\t\t\t\t", 
+                RowBox[{"Flatten", "@", 
+                 RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+                  RowBox[{"\"\<Index\>\"", ",", "\n", "\t\t\t\t\t\t\t", 
+                   RowBox[{"Map", "[", "\n", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"\"\<Part\>\"", "<>", 
+                    RowBox[{"dataPacletIndexNumber", "[", "#", "]"}]}], "&"}],
+                     ",", "\n", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Range", "[", 
+                    RowBox[{"Length", "@", "partitions"}], "]"}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t", 
+                  "}"}]}]}], "]"}]}], ",", "\n", "\t\t\t\t\t", 
+             RowBox[{"<|", "\n", "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"\"\<Index\>\"", "->", "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{"FileNameJoin", "@", 
+                 RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"Replace", "[", 
+                    RowBox[{"dir", ",", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "Automatic", ":>", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                    "$TemporaryDirectory"}]}], "\n", "\t", "\t", 
+                    "\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"StringTrim", "[", 
+                    RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+                    "\"\<Data_Index\>\""}]}], "\n", "\t\t\t\t\t\t\t\t", 
+                  "}"}]}]}], ",", "\n", "\t\t\t\t\t\t", 
+               RowBox[{"\"\<Data\>\"", "->", "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{"Map", "[", "\n", "\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"FileNameJoin", "@", 
+                    RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"Replace", "[", 
+                    RowBox[{
+                    "dir", ",", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "Automatic", ":>", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t",
+                     "$TemporaryDirectory"}]}], "\n", "\t", "\t", "\t", 
+                    "\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    
+                    RowBox[{
+                    RowBox[{"StringTrim", "[", 
+                    RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+                    "\"\<Data_Part\>\"", "<>", 
+                    RowBox[{"dataPacletIndexNumber", "[", "#", "]"}]}]}], 
+                    "\n", "\t\t\t\t\t\t\t\t\t", "}"}]}], "&"}], ",", "\n", 
+                  "\t\t\t\t\t\t\t\t", 
+                  RowBox[{"Range", "[", 
+                   RowBox[{"Length", "@", "partitions"}], "]"}]}], "\n", 
+                 "\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t", 
+              "|>"}]}], "\n", "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", 
+         "]"}], ",", "\n", "\t\t\t", 
+        RowBox[{"End", "[", "]"}]}], "\n", "\t\t\t", "]"}]}]}], "\n", "\t\t", 
+    "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7037896100158443`*^9, 3.70378965118299*^9}, {
+   3.703799622203175*^9, 3.703799724030908*^9}, {3.7037997929236403`*^9, 
+   3.7037998087312517`*^9}, {3.703799901177936*^9, 3.703799992630021*^9}, {
+   3.7038000865364933`*^9, 3.7038001677591753`*^9}, {3.7038002273846617`*^9, 
+   3.703800243001316*^9}, {3.7038002877448483`*^9, 3.703800308535564*^9}, {
+   3.703800858749148*^9, 3.7038008685389442`*^9}, {3.70380103260815*^9, 
+   3.703801033358419*^9}, {3.7038011084312773`*^9, 3.703801120806078*^9}, {
+   3.7038011521205587`*^9, 3.703801442260065*^9}, {3.703801490531105*^9, 
+   3.703801557213399*^9}, {3.703801607597006*^9, 3.703801795471057*^9}, {
+   3.703801861240617*^9, 3.7038018741851063`*^9}, {3.703802184435501*^9, 
+   3.703802197157631*^9}, 3.703802652768877*^9, {3.703803472003014*^9, 
+   3.703803540610036*^9}, {3.703805933819992*^9, 3.703805965674924*^9}, 
+   3.703806045376451*^9, {3.703806440584826*^9, 3.7038064423036737`*^9}, {
+   3.703806568775886*^9, 3.703806570078145*^9}, {3.703806608953561*^9, 
+   3.703806658988825*^9}, {3.703807748429598*^9, 3.7038077574252043`*^9}, {
+   3.7038078679218407`*^9, 3.703807961846119*^9}, {3.7038080024326572`*^9, 
+   3.7038080584431667`*^9}, {3.703810112528039*^9, 3.703810146520094*^9}, 
+   3.703810180986886*^9, {3.7038102236796627`*^9, 3.703810272963871*^9}, {
+   3.703816191101644*^9, 3.703816240057124*^9}, {3.703816294633376*^9, 
+   3.703816357709621*^9}, {3.703816391798622*^9, 3.703816392500441*^9}, {
+   3.703819193533227*^9, 3.703819197936788*^9}, {3.7038192999762697`*^9, 
+   3.7038193738542147`*^9}, {3.70382071367115*^9, 3.7038207504084682`*^9}, {
+   3.703820804620185*^9, 3.7038208308785543`*^9}, {3.703821023526342*^9, 
+   3.703821031728582*^9}, {3.703821069960486*^9, 3.7038210717131567`*^9}, {
+   3.70382116567244*^9, 3.70382116928511*^9}, {3.7038213102810183`*^9, 
+   3.703821475573368*^9}, {3.7038216098098507`*^9, 3.703821625846263*^9}, {
+   3.7038216701320868`*^9, 3.703821681536042*^9}, {3.70382188143633*^9, 
+   3.703821881888887*^9}, 3.703863561703875*^9, {3.703863660438283*^9, 
+   3.703863680834813*^9}, {3.703863719015806*^9, 3.703863735772727*^9}, 
+   3.703863799606886*^9, 3.7038638558326797`*^9, {3.703863893627516*^9, 
+   3.703863915514243*^9}, 3.703863952859461*^9, 3.703864021577434*^9, {
+   3.703864062780531*^9, 3.703864066229672*^9}, 3.703864127264203*^9, 
+   3.7038645638659163`*^9, {3.703864642503852*^9, 3.703864660943117*^9}, {
+   3.703864732120226*^9, 3.703864745789761*^9}, {3.703864811293817*^9, 
+   3.703864966969872*^9}, {3.7038650089158*^9, 3.703865024679315*^9}, {
+   3.7038962018371487`*^9, 3.7038962039576406`*^9}, 3.70389635842267*^9, {
+   3.703896391354021*^9, 3.7038963926089153`*^9}, 3.703896453925778*^9, {
+   3.703915849001974*^9, 3.703915908179655*^9}, {3.703915975904983*^9, 
+   3.7039159768486853`*^9}, {3.703916202872444*^9, 3.70391620571761*^9}, {
+   3.703916462517027*^9, 3.703916475158052*^9}, 3.703916696030305*^9, 
+   3.703917233408888*^9, {3.7046768003019247`*^9, 3.7046771344048777`*^9}, {
+   3.704677194442227*^9, 3.704677239271256*^9}, {3.70467738015979*^9, 
+   3.704677394957775*^9}, {3.7046775835752172`*^9, 3.704677611071487*^9}, {
+   3.704677678725456*^9, 3.704677691523871*^9}, {3.7046777321978188`*^9, 
+   3.704677810920043*^9}, {3.704677871827388*^9, 3.7046778985007353`*^9}, {
+   3.70467802891368*^9, 3.7046781089731483`*^9}, 3.7046781531621428`*^9, {
+   3.704678219926309*^9, 3.7046782331312733`*^9}, {3.7046782987482557`*^9, 
+   3.704678327239401*^9}, {3.7046784551339827`*^9, 3.704678470393458*^9}, {
+   3.704678776662055*^9, 3.704678789908226*^9}, 3.7046813729606657`*^9, {
+   3.7046818645160418`*^9, 3.704681898093301*^9}, {3.704681944687376*^9, 
+   3.704681969316127*^9}, {3.70471182641525*^9, 3.7047118315323763`*^9}, {
+   3.704727901761197*^9, 3.704727923421913*^9}, {3.704728050039566*^9, 
+   3.7047280622920723`*^9}, {3.7047283913244123`*^9, 
+   3.7047284119549007`*^9}, {3.705712875215559*^9, 3.705712890913212*^9}, {
+   3.728150842123658*^9, 
+   3.72815084213275*^9}},ExpressionUUID->"3ae78ddd-532e-4d3f-94c2-\
+285f5f025cdf"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Package\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.703802810806117*^9, 
+  3.703802811717814*^9}},ExpressionUUID->"e3cf9017-5102-409a-8d84-\
+2e1d538be19d"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$CuratedDataPackageTemplate", ":=", "\n", "\t", 
+   RowBox[{"Import", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"PackageFilePath", "[", "\n", "\t\t\t", 
+      RowBox[{
+      "\"\<Resources\>\"", ",", "\n", "\t\t\t", "\"\<Templates\>\"", ",", 
+       "\n", "\t\t\t", "\"\<CuratedData\>\"", ",", "\n", "\t\t\t", 
+       "\"\<$CuratedData.m\>\""}], "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
+     "\"\<Text\>\""}], "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.703789692135688*^9, 3.703789730115967*^9}, {
+   3.703797596998155*^9, 3.7037976094999657`*^9}, {3.703807021914261*^9, 
+   3.7038070381752443`*^9}, {3.705172327593479*^9, 3.705172327924362*^9}, 
+   3.705178584163437*^9, 3.705638222220743*^9, 3.705710299730225*^9, {
+   3.7099894927121983`*^9, 3.709989497207141*^9}, {3.7126150431626987`*^9, 
+   3.7126150437151527`*^9}},ExpressionUUID->"8525783f-f8e4-4e92-b776-\
+663dc186877a"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"CuratedDataPaclet", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"dir", ":", 
+     RowBox[{
+      RowBox[{"_String", "?", "DirectoryQ"}], "|", "Automatic"}], ":", 
+     "Automatic"}], ",", "\n", "\t", "dataType_String", ",", "\n", "\t", 
+    "entityStore_Association", ",", "\n", "\t", 
+    RowBox[{"pack", ":", 
+     RowBox[{"True", "|", "False"}], ":", "True"}], ",", "\n", "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"_String", "\[Rule]", "_String"}], ")"}], "..."}]}], ",", "\n",
+     "\t", 
+    RowBox[{"pacletInfo", ":", 
+     RowBox[{"_List", "?", "OptionQ"}], ":", 
+     RowBox[{"{", "}"}]}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{"file", "=", "\n", "\t\t\t", 
+      RowBox[{"With", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"d", "=", "\n", "\t\t\t\t", 
+          RowBox[{"FileNameJoin", "@", 
+           RowBox[{"{", "\n", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Replace", "[", 
+              RowBox[{"dir", ",", "\n", "\t\t\t\t\t\t", 
+               RowBox[{
+               "Automatic", ":>", "\n", "\t\t\t\t\t\t\t", 
+                "$TemporaryDirectory"}]}], "\n", "\t\t\t\t\t\t", "]"}], ",", 
+             "\n", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"StringTrim", "[", 
+               RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+              "\"\<Data\>\""}]}], "\n", "\t\t\t\t\t", "}"}]}]}], "\n", 
+         "\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"Quiet", "@", "\n", "\t\t\t\t\t", 
+          RowBox[{"CreateDirectory", "[", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"FileNameJoin", "@", 
+             RowBox[{"{", 
+              RowBox[{"d", ",", "\"\<AutoCompletionData\>\""}], "}"}]}], ",", 
+            "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{"CreateIntermediateDirectories", "\[Rule]", "True"}]}], 
+           "\n", "\t\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t\t", 
+         RowBox[{"FileNameJoin", "@", 
+          RowBox[{"{", "\n", "\t\t\t\t\t", 
+           RowBox[{"d", ",", "\n", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"StringTrim", "[", 
+              RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+             "\"\<Data.m\>\""}]}], "\n", "\t\t\t\t\t", "}"}]}]}]}], "\n", 
+       "\t\t\t\t", "]"}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t\t", 
+    RowBox[{"(*", " ", 
+     RowBox[{
+      RowBox[{"--", 
+       RowBox[{"--", 
+        RowBox[{"--", 
+         RowBox[{"--", 
+          RowBox[{"-", " ", 
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{"Package", " ", "--"}], "--"}], "--"}], 
+            "--"}]}]}]}]}]}], "-"}], " ", "*)"}], "\n", "\t\t\t", 
+    RowBox[{
+     RowBox[{"With", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"fob", "=", 
+         RowBox[{"OpenWrite", "@", "file"}]}], "}"}], ",", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"WriteString", "[", 
+            RowBox[{"fob", ",", "#"}], "]"}], ";", 
+           RowBox[{"Close", "@", "fob"}]}], ")"}], "&"}], "@", "\n", 
+        "\t\t\t\t\t", 
+        RowBox[{"StringReplace", "[", 
+         RowBox[{"$CuratedDataPackageTemplate", ",", 
+          RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"ops", ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+            "\"\<$CuratedDataProperties\>\"", "->", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{"ToString", "[", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"DeleteCases", "[", "\"\<Label\>\"", "]"}], "@", "\n",
+                 "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{"Keys", "@", 
+                 RowBox[{"entityStore", "[", "\"\<Properties\>\"", "]"}]}]}], 
+               ",", "\n", "\t\t\t\t\t\t\t\t", "InputForm"}], "\n", 
+              "\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+            "\"\<$CuratedDataLabelFunction\>\"", "->", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{"ToString", "[", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"Lookup", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{
+                   "Lookup", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"entityStore", "[", "\"\<Properties\>\"", "]"}], 
+                    ",", "\n", "\t", "\t", "\t", "\t\t\t\t\t\t\t\t", 
+                    "\"\<Label\>\"", ",", "\n", "\t", "\t", "\t", 
+                    "\t\t\t\t\t\t\t\t", 
+                    RowBox[{"<|", "|>"}]}], "\n", "\t", "\t", 
+                    "\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t", "\t", 
+                   "\t\t\t\t\t\t\t\t", "\"\<DefaultFunction\>\""}], "\n", 
+                  "\t", "\t\t\t\t\t\t\t\t\t", "]"}], ",", 
+                 RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"_Missing", "|", "CommonName"}], "\[Rule]", 
+                   "CanonicalName"}], "\n", "\t", "\t\t\t\t\t\t\t\t", "}"}]}],
+                 "]"}], ",", "\n", "\t\t\t\t\t\t\t\t", "InputForm"}], "\n", 
+              "\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+            "\"\<$CuratedDataDefaultProperty\>\"", "\[Rule]", "\n", 
+             "\t\t\t\t\t\t\t", 
+             RowBox[{"ToString", "[", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Lookup", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                "entityStore", ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                 "\"\<DefaultProperty\>\"", ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                 "\"\<Entity\>\""}], "\n", "\t\t\t\t\t\t\t\t\t", "]"}], ",", 
+               "\n", "\t\t\t\t\t\t\t\t", "InputForm"}], "\n", 
+              "\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"\"\<$CuratedDataType\>\"", "\[Rule]", "dataType"}], ",", 
+            "\n", "\t\t\t\t\t\t", 
+            RowBox[{"\"\<$CuratedData\>\"", "\[Rule]", 
+             RowBox[{
+              RowBox[{"StringTrim", "[", 
+               RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+              "\"\<Data\>\""}]}]}], "\n", "\t\t\t\t\t\t", "}"}]}], "\n", 
+         "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", "]"}], ";", "\n", 
+     "\t\t\t\t", "\n", "\t\t\t", 
+     RowBox[{"(*", " ", 
+      RowBox[{
+       RowBox[{"--", 
+        RowBox[{"--", 
+         RowBox[{"--", 
+          RowBox[{"--", 
+           RowBox[{"-", " ", 
+            RowBox[{
+             RowBox[{
+              RowBox[{
+               RowBox[{"Autocompletions", " ", "--"}], "--"}], "--"}], 
+             "--"}]}]}]}]}]}], "-"}], " ", "*)"}], "\n", "\t\t\t", 
+     RowBox[{"Export", "[", "\n", "\t\t\t\t", 
+      RowBox[{
+       RowBox[{"FileNameJoin", "@", 
+        RowBox[{"{", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Replace", "[", 
+           RowBox[{"dir", ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+            "Automatic", ":>", "\n", "\t\t\t\t\t\t\t", 
+             "$TemporaryDirectory"}]}], "\n", "\t\t\t\t\t\t", "]"}], ",", 
+          "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"StringTrim", "[", 
+            RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+           "\"\<Data\>\""}], ",", "\n", "\t\t\t\t\t", 
+          "\"\<AutoCompletionData\>\"", ",", "\n", "\t\t\t\t\t", 
+          "\"\<specialArgFunctions.tr\>\""}], "\n", "\t\t\t\t\t", "}"}]}], 
+       ",", "\n", "\t\t\t\t", 
+       RowBox[{"StringReplace", "[", "\n", "\t\t\t\t\t", 
+        RowBox[{
+         RowBox[{"Import", "[", "\n", "\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"PackageFilePath", "[", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{
+            "\"\<Resources\>\"", ",", "\n", "\t\t\t\t\t\t\t", 
+             "\"\<Templates\>\"", ",", "\n", "\t\t\t\t\t\t\t", 
+             "\"\<CuratedData\>\"", ",", "\n", "\t\t\t\t\t\t\t", 
+             "\"\<$CuratedDataCompletions.tr\>\""}], "\n", "\t\t\t\t\t\t\t", 
+            "]"}], ",", "\n", "\t\t\t\t\t\t", "\"\<Text\>\""}], "\n", 
+          "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+           "\"\<$CuratedDataEntities\>\"", "\[Rule]", "\n", "\t\t\t\t\t\t\t", 
+            
+            RowBox[{"ToString", "[", "\n", "\t\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Function", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                "DeleteDuplicates", "@", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{"Join", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"Map", "[", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"First", "@", 
+                    RowBox[{"StringSplit", "[", 
+                    RowBox[{"#", ",", "\"\<::\>\""}], "]"}]}], "&"}], ",", 
+                    "#"}], "]"}], ",", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t",
+                    "#"}], "]"}]}], "\n", "\t", "\t\t\t\t\t\t\t\t", "]"}], 
+               "@", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+               RowBox[{"SortBy", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"Keys", "@", 
+                  RowBox[{"entityStore", "[", "\"\<Entities\>\"", "]"}]}], 
+                 ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t", "StringLength"}], 
+                "\n", "\t", "\t\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+              "\t\t\t\t\t\t\t\t", "InputForm"}], "\n", "\t\t\t\t\t\t\t\t", 
+             "]"}]}], ",", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+           "\"\<$CuratedDataProperties\>\"", "\[Rule]", "\n", 
+            "\t\t\t\t\t\t\t", 
+            RowBox[{"ToString", "[", "\n", "\t\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"SortBy", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"DeleteCases", "[", "\"\<Label\>\"", "]"}], "@", 
+                 "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{"Keys", "@", 
+                  RowBox[{"entityStore", "[", "\"\<Properties\>\"", "]"}]}]}],
+                 ",", "\n", "\t\t\t\t\t\t\t\t\t", "StringLength"}], "\n", 
+               "\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+              "InputForm"}], "\n", "\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+           "\t\t\t\t\t\t", 
+           RowBox[{"\"\<$CuratedData\>\"", "->", 
+            RowBox[{
+             RowBox[{"StringTrim", "[", 
+              RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+             "\"\<Data\>\""}]}]}], "\n", "\t\t\t\t\t\t", "}"}]}], "]"}], ",", 
+       "\n", "\t\t\t\t", "\"\<Text\>\""}], "\n", "\t\t\t\t", "]"}], ";", "\n",
+      "\t\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{"pack", ",", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"PacletInfoExpressionBundle", "[", 
+            RowBox[{"#", ",", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"Flatten", "@", 
+              RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"pacletInfo", ",", "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{
+                "\"\<Version\>\"", "->", "$dataPacletVersionNumber"}]}], "\n",
+                "\t\t\t\t\t\t\t", "}"}]}]}], "\n", "\t\t\t\t\t\t", "]"}], ";",
+            "\n", "\t\t\t\t\t", 
+           RowBox[{"PacletBundle", "[", "#", "]"}]}], "\n", "\t\t\t\t\t", 
+          ")"}], "&"}], "@", "\n", "\t\t\t\t\t", 
+        RowBox[{"FileNameJoin", "@", 
+         RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Replace", "[", 
+            RowBox[{"dir", ",", "\n", "\t", "\t\t\t\t\t\t", 
+             RowBox[{
+             "Automatic", ":>", "\n", "\t", "\t\t\t\t\t\t\t", 
+              "$TemporaryDirectory"}]}], "\n", "\t", "\t\t\t\t\t\t", "]"}], 
+           ",", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"StringTrim", "[", 
+             RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+            "\"\<Data\>\""}]}], "\n", "\t\t\t\t\t\t", "}"}]}]}], ",", "\n", 
+       "\t\t\t\t", 
+       RowBox[{"FileNameJoin", "@", 
+        RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Replace", "[", 
+           RowBox[{"dir", ",", "\n", "\t", "\t\t\t\t\t\t", 
+            RowBox[{
+            "Automatic", ":>", "\n", "\t", "\t\t\t\t\t\t\t", 
+             "$TemporaryDirectory"}]}], "\n", "\t", "\t\t\t\t\t\t", "]"}], 
+          ",", "\n", "\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"StringTrim", "[", 
+            RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+           "\"\<Data\>\""}]}], "\n", "\t\t\t\t\t\t", "}"}]}]}], "\n", 
+      "\t\t\t\t", "]"}]}]}], "\n", "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.7037896100158443`*^9, 3.703789689421751*^9}, {
+   3.703797613758215*^9, 3.703797669377283*^9}, {3.703802489922763*^9, 
+   3.7038027198163223`*^9}, {3.703802910500217*^9, 3.703803085227693*^9}, {
+   3.703803166092952*^9, 3.7038032144038477`*^9}, {3.7038035492037277`*^9, 
+   3.7038035505519333`*^9}, {3.703803721905696*^9, 3.703803749810431*^9}, {
+   3.703805977996323*^9, 3.703805981342629*^9}, {3.703806022909717*^9, 
+   3.703806026958363*^9}, 3.7038066848339767`*^9, {3.703807042920396*^9, 
+   3.703807060709836*^9}, {3.703816586475662*^9, 3.7038166095220613`*^9}, {
+   3.703871580233479*^9, 3.703871624041909*^9}, {3.7038717827699547`*^9, 
+   3.703871828970257*^9}, {3.703891368548004*^9, 3.703891380062359*^9}, {
+   3.703891416953726*^9, 3.7038915370722227`*^9}, {3.703891637414321*^9, 
+   3.7038917558376303`*^9}, {3.7038918428628273`*^9, 3.703891881694685*^9}, {
+   3.703891996023129*^9, 3.703892003088125*^9}, {3.7038920673208714`*^9, 
+   3.703892071478446*^9}, {3.703893774609352*^9, 3.7038938362639523`*^9}, {
+   3.7038938750123587`*^9, 3.703893900324027*^9}, {3.703911305197802*^9, 
+   3.703911315461473*^9}, {3.7039159270030413`*^9, 3.703915949910885*^9}, 
+   3.7039184673006277`*^9, {3.703991761690613*^9, 3.7039917737574387`*^9}, 
+   3.7039924361833553`*^9, {3.7039924705171137`*^9, 3.7039924735320597`*^9}, {
+   3.7039925283787823`*^9, 3.70399253313759*^9}, {3.703992564428466*^9, 
+   3.703992602848358*^9}, {3.703995020573648*^9, 3.703995114618905*^9}, {
+   3.70399631279923*^9, 3.703996386311783*^9}, {3.703996624781847*^9, 
+   3.703996731272828*^9}, {3.703997802649579*^9, 3.703997828168549*^9}, {
+   3.7039979294021606`*^9, 3.7039979342508574`*^9}, {3.703998721435554*^9, 
+   3.703998741385462*^9}, {3.704031829557151*^9, 3.704031831480052*^9}, {
+   3.704678521003985*^9, 3.704678528912805*^9}, {3.704680535341761*^9, 
+   3.7046805355947104`*^9}, {3.7047252173311357`*^9, 3.704725257386035*^9}, {
+   3.704727985949853*^9, 3.704728014405651*^9}, 3.7047280646874647`*^9, {
+   3.704728134817997*^9, 3.704728170368897*^9}, {3.705172330409971*^9, 
+   3.705172332581202*^9}, 3.705178584179261*^9, {3.7056377861814404`*^9, 
+   3.7056378506331587`*^9}, 3.7056382222373447`*^9, {3.709989500759063*^9, 
+   3.709989504508561*^9}, {3.7126150471001062`*^9, 3.7126150477197123`*^9}, 
+   3.728150842162903*^9},ExpressionUUID->"01759bad-bff6-4e89-812d-\
+e83c662bd04c"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Wrapper\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.704724740623703*^9, 
+  3.7047247413903017`*^9}},ExpressionUUID->"94307993-756c-445f-8c01-\
+aee65c065892"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$CuratedDataWrapperPackageTemplate", ":=", "\n", "\t", 
+   RowBox[{"Import", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"PackageFilePath", "[", "\n", "\t\t\t", 
+      RowBox[{
+      "\"\<Resources\>\"", ",", "\n", "\t\t\t", "\"\<Templates\>\"", ",", 
+       "\n", "\t\t\t", "\"\<CuratedData\>\"", ",", "\n", "\t\t\t", 
+       "\"\<$CuratedDataWrapper.m\>\""}], "]"}], ",", "\n", "\t\t", 
+     "\"\<Text\>\""}], "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.703789692135688*^9, 3.703789730115967*^9}, {
+   3.703797596998155*^9, 3.7037976094999657`*^9}, {3.703807021914261*^9, 
+   3.7038070381752443`*^9}, {3.7047247647628613`*^9, 3.704724770982218*^9}, {
+   3.705172314526923*^9, 3.705172317197626*^9}, 3.705178584187312*^9, 
+   3.705638222242436*^9, {3.709989506854704*^9, 3.7099895097667217`*^9}, {
+   3.712615051143773*^9, 
+   3.712615052130934*^9}},ExpressionUUID->"6c9c444e-9c92-4173-b620-\
+9139bbebe94f"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"CuratedDataWrapperPaclet", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"dir", ":", 
+     RowBox[{
+      RowBox[{"_String", "?", "DirectoryQ"}], "|", "Automatic"}], ":", 
+     "Automatic"}], ",", "\n", "\t", "dataType_String", ",", "\n", "\t", 
+    "dataFunctions_Association", ",", "\n", "\t", 
+    RowBox[{"pack", ":", 
+     RowBox[{"True", "|", "False"}], ":", "True"}], ",", "\n", "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"_String", "\[Rule]", "_String"}], ")"}], "..."}]}], ",", "\n",
+     "\t", 
+    RowBox[{"pacletInfo", ":", 
+     RowBox[{"_List", "?", "OptionQ"}], ":", 
+     RowBox[{"{", "}"}]}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{"file", "=", "\n", "\t\t\t", 
+      RowBox[{"With", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"d", "=", "\n", "\t\t\t\t", 
+          RowBox[{"FileNameJoin", "@", 
+           RowBox[{"{", "\n", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Replace", "[", 
+              RowBox[{"dir", ",", "\n", "\t\t\t\t\t\t", 
+               RowBox[{
+               "Automatic", ":>", "\n", "\t\t\t\t\t\t\t", 
+                "$TemporaryDirectory"}]}], "\n", "\t\t\t\t\t\t", "]"}], ",", 
+             "\n", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"StringTrim", "[", 
+               RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+              "\"\<Data\>\""}]}], "\n", "\t\t\t\t\t", "}"}]}]}], "\n", 
+         "\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"Quiet", "@", "\n", "\t\t\t\t\t", 
+          RowBox[{"CreateDirectory", "[", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"FileNameJoin", "@", 
+             RowBox[{"{", 
+              RowBox[{"d", ",", "\"\<AutoCompletionData\>\""}], "}"}]}], ",", 
+            "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{"CreateIntermediateDirectories", "\[Rule]", "True"}]}], 
+           "\n", "\t\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t\t", 
+         RowBox[{"FileNameJoin", "@", 
+          RowBox[{"{", "\n", "\t\t\t\t\t", 
+           RowBox[{"d", ",", "\n", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"StringTrim", "[", 
+              RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+             "\"\<Data.m\>\""}]}], "\n", "\t\t\t\t\t", "}"}]}]}]}], "\n", 
+       "\t\t\t\t", "]"}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t\t", 
+    RowBox[{"(*", " ", 
+     RowBox[{
+      RowBox[{"--", 
+       RowBox[{"--", 
+        RowBox[{"--", 
+         RowBox[{"--", 
+          RowBox[{"-", " ", 
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{"Package", " ", "--"}], "--"}], "--"}], 
+            "--"}]}]}]}]}]}], "-"}], " ", "*)"}], "\n", "\t\t\t", 
+    RowBox[{
+     RowBox[{"With", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"fob", "=", 
+         RowBox[{"OpenWrite", "@", "file"}]}], "}"}], ",", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"WriteString", "[", 
+            RowBox[{"fob", ",", "#"}], "]"}], ";", 
+           RowBox[{"Close", "@", "fob"}]}], ")"}], "&"}], "@", "\n", 
+        "\t\t\t\t\t", 
+        RowBox[{"StringReplace", "[", 
+         RowBox[{"$CuratedDataWrapperPackageTemplate", ",", 
+          RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"ops", ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+            "\"\<$CuratedDataFunctions\>\"", "->", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{"Block", "[", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{
+                 RowBox[{"$Context", "=", "\"\<System`\>\""}], ",", 
+                 RowBox[{"$ContextPath", "=", 
+                  RowBox[{"{", "\"\<System`\>\"", "}"}]}]}], "}"}], ",", "\n",
+                "\t\t\t\t\t\t\t\t", 
+               RowBox[{"ToString", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                "dataFunctions", ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                 "InputForm"}], "\n", "\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", 
+              "\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"\"\<$CuratedDataType\>\"", "\[Rule]", "dataType"}], ",", 
+            "\n", "\t\t\t\t\t\t", 
+            RowBox[{"\"\<$CuratedData\>\"", "\[Rule]", 
+             RowBox[{
+              RowBox[{"StringTrim", "[", 
+               RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+              "\"\<Data\>\""}]}]}], "\n", "\t\t\t\t\t\t", "}"}]}], "\n", 
+         "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", "]"}], ";", "\n", 
+     "\t\t\t\t", "\n", "\t\t\t", 
+     RowBox[{"(*", " ", 
+      RowBox[{
+       RowBox[{"--", 
+        RowBox[{"--", 
+         RowBox[{"--", 
+          RowBox[{"--", 
+           RowBox[{"-", " ", 
+            RowBox[{
+             RowBox[{
+              RowBox[{
+               RowBox[{"Autocompletions", " ", "--"}], "--"}], "--"}], 
+             "--"}]}]}]}]}]}], "-"}], " ", "*)"}], "\n", "\t\t\t", 
+     RowBox[{"Export", "[", "\n", "\t\t\t\t", 
+      RowBox[{
+       RowBox[{"FileNameJoin", "@", 
+        RowBox[{"{", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Replace", "[", 
+           RowBox[{"dir", ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+            "Automatic", ":>", "\n", "\t\t\t\t\t\t\t", 
+             "$TemporaryDirectory"}]}], "\n", "\t\t\t\t\t\t", "]"}], ",", 
+          "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"StringTrim", "[", 
+            RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+           "\"\<Data\>\""}], ",", "\n", "\t\t\t\t\t", 
+          "\"\<AutoCompletionData\>\"", ",", "\n", "\t\t\t\t\t", 
+          "\"\<specialArgFunctions.tr\>\""}], "\n", "\t\t\t\t\t", "}"}]}], 
+       ",", "\n", "\t\t\t\t", 
+       RowBox[{"StringReplace", "[", "\n", "\t\t\t\t\t", 
+        RowBox[{
+         RowBox[{"Import", "[", "\n", "\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"PackageFilePath", "[", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{
+            "\"\<Resources\>\"", ",", "\n", "\t\t\t\t\t\t\t", 
+             "\"\<Templates\>\"", ",", "\n", "\t\t\t\t\t\t\t", 
+             "\"\<CuratedData\>\"", ",", "\n", "\t\t\t\t\t\t\t", 
+             "\"\<$CuratedDataCompletions.tr\>\""}], "\n", "\t\t\t\t\t\t\t", 
+            "]"}], ",", "\n", "\t\t\t\t\t\t", "\"\<Text\>\""}], "\n", 
+          "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+           "\"\<$CuratedDataEntities\>\"", "\[Rule]", "\n", "\t\t\t\t\t\t\t", 
+            
+            RowBox[{"ToString", "[", "\n", "\t\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Keys", "@", "dataFunctions"}], ",", "\n", 
+              "\t\t\t\t\t\t\t\t", "InputForm"}], "\n", "\t\t\t\t\t\t\t\t", 
+             "]"}]}], ",", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"\"\<$CuratedData\>\"", "->", 
+            RowBox[{
+             RowBox[{"StringTrim", "[", 
+              RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+             "\"\<Data\>\""}]}]}], "\n", "\t\t\t\t\t\t", "}"}]}], "]"}], ",", 
+       "\n", "\t\t\t\t", "\"\<Text\>\""}], "\n", "\t\t\t\t", "]"}], ";", "\n",
+      "\t\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{"pack", ",", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"PacletInfoExpressionBundle", "[", 
+            RowBox[{"#", ",", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"Flatten", "@", 
+              RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"pacletInfo", ",", "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{
+                "\"\<Version\>\"", "->", "$dataPacletVersionNumber"}]}], "\n",
+                "\t\t\t\t\t\t\t", "}"}]}]}], "]"}], ";", "\n", "\t\t\t\t\t", 
+           RowBox[{"PacletBundle", "[", "#", "]"}]}], "\n", "\t\t\t\t\t", 
+          ")"}], "&"}], "@", "\n", "\t\t\t\t\t", 
+        RowBox[{"FileNameJoin", "@", 
+         RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Replace", "[", 
+            RowBox[{"dir", ",", "\n", "\t", "\t\t\t\t\t\t", 
+             RowBox[{
+             "Automatic", ":>", "\n", "\t", "\t\t\t\t\t\t\t", 
+              "$TemporaryDirectory"}]}], "\n", "\t", "\t\t\t\t\t\t", "]"}], 
+           ",", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"StringTrim", "[", 
+             RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+            "\"\<Data\>\""}]}], "\n", "\t\t\t\t\t\t", "}"}]}]}], ",", "\n", 
+       "\t\t\t\t", 
+       RowBox[{"FileNameJoin", "@", 
+        RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Replace", "[", 
+           RowBox[{"dir", ",", "\n", "\t", "\t\t\t\t\t\t", 
+            RowBox[{
+            "Automatic", ":>", "\n", "\t", "\t\t\t\t\t\t\t", 
+             "$TemporaryDirectory"}]}], "\n", "\t", "\t\t\t\t\t\t", "]"}], 
+          ",", "\n", "\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"StringTrim", "[", 
+            RowBox[{"dataType", ",", "\"\<Data\>\""}], "]"}], "<>", 
+           "\"\<Data\>\""}]}], "\n", "\t\t\t\t\t\t", "}"}]}]}], "\n", 
+      "\t\t\t\t", "]"}]}]}], "\n", "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.704724747311315*^9, 3.704724754897884*^9}, {
+   3.7047253005503893`*^9, 3.704725337129849*^9}, {3.7047253927767773`*^9, 
+   3.704725406699683*^9}, {3.704725466139757*^9, 3.704725492681357*^9}, {
+   3.704725522858613*^9, 3.7047255840865498`*^9}, {3.7047279587800713`*^9, 
+   3.704727974156382*^9}, {3.704728151296451*^9, 3.704728155110602*^9}, {
+   3.704728314819962*^9, 3.704728315113453*^9}, {3.704729891501131*^9, 
+   3.70472989448282*^9}, {3.704730276609144*^9, 3.704730294523219*^9}, {
+   3.7051723222838306`*^9, 3.7051723224558573`*^9}, 3.705178584201947*^9, {
+   3.705637859709391*^9, 3.7056379007917767`*^9}, 3.705638222248856*^9, {
+   3.709989512428132*^9, 3.7099895156189117`*^9}, {3.712615054923551*^9, 
+   3.712615055422611*^9}, 
+   3.7281508421825666`*^9},ExpressionUUID->"d096b2d0-38b8-457d-843d-\
+f82b1a478157"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Export\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.703802816510491*^9, 
+  3.703802817509385*^9}},ExpressionUUID->"3fe0674f-f00e-484f-ac3e-\
+65008d2c3fd1"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "CuratedDataExport", "]"}], "=", "\n", "\t", 
+   RowBox[{"Options", "@", "PacletInfoExpressionBundle"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"CuratedDataExport", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"dir", ":", 
+      RowBox[{
+       RowBox[{"_String", "?", "DirectoryQ"}], "|", "Automatic"}], ":", 
+      "Automatic"}], ",", "\n", "\t", "dataType_String", ",", "\n", "\t", 
+     RowBox[{"entityStore", ":", 
+      RowBox[{"_Association", "?", 
+       RowBox[{"(", "\n", "\t\t", 
+        RowBox[{"Function", "[", 
+         RowBox[{"a", ",", 
+          RowBox[{"AllTrue", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"\"\<Entities\>\"", ",", "\"\<Properties\>\""}], "}"}], 
+            ",", 
+            RowBox[{
+             RowBox[{"KeyMemberQ", "[", 
+              RowBox[{"a", ",", "#"}], "]"}], "&"}]}], "]"}]}], "]"}], "\n", 
+        "\t\t", ")"}]}]}], ",", "\n", "\t", 
+     RowBox[{"pack", ":", 
+      RowBox[{"True", "|", "False"}], ":", "True"}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{"$dataPacletVersionNumber", "=", "\n", "\t\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{
+         RowBox[{"OptionValue", "[", "\"\<Version\>\"", "]"}], ",", 
+         RowBox[{
+          RowBox[{"Except", "[", "_String", "]"}], "->", 
+          "$dataPacletVersionNumber"}]}], "]"}]}], "\n", "\t\t\t", "}"}], ",",
+      "\n", "\t ", 
+     RowBox[{
+      RowBox[{"Prepend", "[", "\n", "\t \t", 
+       RowBox[{"\"\<Package\>\"", "->", "\n", "\t \t\t", 
+        RowBox[{"CuratedDataPaclet", "[", 
+         RowBox[{
+         "dir", ",", "\n", "\t \t\t\t", "dataType", ",", "\n", "\t \t\t\t", 
+          "entityStore", ",", "\n", "\t \t\t\t", "pack", ",", "\n", 
+          "\t \t\t\t", 
+          RowBox[{
+          "\"\<$CuratedDataDefaultProperty\>\"", "->", "\n", "\t \t\t\t\t", 
+           RowBox[{"Lookup", "[", 
+            RowBox[{
+            "entityStore", ",", "\n", "\t \t\t\t\t\t", 
+             "\"\<DefaultProperty\>\"", ",", "\n", "\t \t\t\t\t\t", 
+             RowBox[{"(*", 
+              RowBox[{"First", "@", 
+               RowBox[{
+                RowBox[{"DeleteCases", "[", "\"\<Label\>\"", "]"}], "@", "\n",
+                 "\t \t\t\t\t\t\t", 
+                RowBox[{"Keys", "@", 
+                 RowBox[{
+                 "entityStore", "[", "\"\<Properties\>\"", "]"}]}]}]}], 
+              "*)"}], "\n", "\t \t\t\t\t\t", "\"\<Entity\>\""}], "\n", 
+            "\t \t\t\t\t\t", "]"}]}], ",", "\n", "\t \t\t\t", 
+          RowBox[{"{", "ops", "}"}]}], "\n", "\t \t\t\t", "]"}]}], "\n", 
+       "\t \t\t", "]"}], "@", "\n", "\t\t \t", 
+      RowBox[{"CuratedDataIndexPaclet", "[", 
+       RowBox[{
+       "dir", ",", "\n", "\t\t \t\t", "dataType", ",", "\n", "\t\t \t\t", 
+        "entityStore", ",", "\n", "\t\t \t\t", "pack"}], "\n", "\t\t \t\t", 
+       "]"}]}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"CuratedDataExport", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"dir", ":", 
+      RowBox[{
+       RowBox[{"_String", "?", "DirectoryQ"}], "|", "Automatic"}], ":", 
+      "Automatic"}], ",", "\n", "\t", 
+     RowBox[{"name", ":", 
+      RowBox[{"_String", "|", "None"}], ":", "None"}], ",", "\n", "\t", 
+     RowBox[{"datasets_Association", "?", 
+      RowBox[{"(", "\n", "\t\t", 
+       RowBox[{
+        RowBox[{"AllTrue", "[", 
+         RowBox[{
+          RowBox[{"Values", "@", "#"}], ",", "\n", "\t\t\t", 
+          RowBox[{
+           RowBox[{"With", "[", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"a", "=", "#"}], "}"}], ",", "\n", "\t\t\t\t", 
+             RowBox[{"AllTrue", "[", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"\"\<Entities\>\"", ",", "\"\<Properties\>\""}], 
+                "}"}], ",", "\n", "\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"KeyMemberQ", "[", 
+                 RowBox[{"a", ",", "#"}], "]"}], "&"}]}], "\n", "\t\t\t\t\t", 
+              "]"}]}], "\n", "\t\t\t\t", "]"}], "&"}]}], "\n", "\t\t\t", 
+         "]"}], "&"}], ")"}]}], ",", "\n", "\t", 
+     RowBox[{"pack", ":", 
+      RowBox[{"True", "|", "False"}], ":", "True"}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{"$dataPacletVersionNumber", "=", "\n", "\t\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{
+         RowBox[{"OptionValue", "[", "\"\<Version\>\"", "]"}], ",", 
+         RowBox[{
+          RowBox[{"Except", "[", "_String", "]"}], "->", 
+          "$dataPacletVersionNumber"}]}], "]"}]}], "\n", "\t\t\t", "}"}], ",",
+      "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"name", "===", "None"}], ",", "\n", "\t", "\t\t", "Identity", 
+        ",", "\n", "\t", "\t\t", 
+        RowBox[{"Prepend", "[", "\n", "\t", "\t\t\t", 
+         RowBox[{"name", "->", "\n", "\t", "\t", "\t\t\t", 
+          RowBox[{"CuratedDataWrapperPaclet", "[", 
+           RowBox[{
+           "dir", ",", "\n", "\t", "\t\t\t\t\t", "name", ",", "\n", "\t", 
+            "\t\t\t\t\t", 
+            RowBox[{"AssociationThread", "[", "\n", "\t", "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"StringTrim", "[", "\n", "\t", "\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"Replace", "[", 
+                 RowBox[{
+                  RowBox[{"Keys", "@", "datasets"}], ",", "\n", "\t", "\t", 
+                  "\t", "\t\t\t\t\t\t", 
+                  RowBox[{"s_Symbol", "\[RuleDelayed]", 
+                   RowBox[{"SymbolName", "[", "s", "]"}]}], ",", "\n", "\t", 
+                  "\t", "\t\t\t\t\t\t\t", "1"}], "\n", "\t", 
+                 "\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t", "\t\t\t\t\t\t\t",
+                 "name"}], "\n", "\t", "\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+              "\t", "\t\t\t\t\t\t", 
+              RowBox[{"Replace", "[", 
+               RowBox[{
+                RowBox[{"Keys", "@", "datasets"}], ",", "\n", "\t", 
+                "\t\t\t\t\t\t\t", 
+                RowBox[{
+                "s_String", "\[RuleDelayed]", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+                 
+                 RowBox[{
+                 "ToExpression", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"StringTrim", "[", 
+                    RowBox[{"s", ",", "\"\<Data\>\""}], "]"}], "<>", 
+                   "\"\<Data\>\"", "<>", "\"\<`\>\"", "<>", "\n", "\t", 
+                   "\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"StringTrim", "[", 
+                    RowBox[{"s", ",", "\"\<Data\>\""}], "]"}], "<>", 
+                   "\"\<Data\>\""}], "]"}]}], ",", "\n", "\t", 
+                "\t\t\t\t\t\t\t", "1"}], "\n", "\t", "\t\t\t\t\t\t\t", 
+               "]"}]}], "\n", "\t", "\t\t\t\t\t\t", "]"}], ",", "\n", "\t", 
+            "\t\t\t\t\t", "pack", ",", "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{"{", "ops", "}"}]}], "\n", "\t", "\t\t\t\t\t", "]"}]}], 
+         "\n", "\t", "\t\t\t", "]"}]}], "\n", "\t", "\t\t", "]"}], "@", "\n", 
+      "\t", "\t\t", 
+      RowBox[{"Association", "@", "\n", "\t", "\t\t\t", 
+       RowBox[{"KeyValueMap", "[", "\n", "\t", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"#", "->", "\n", "\t", "\t\t\t\t\t", 
+           RowBox[{"CuratedDataExport", "[", 
+            RowBox[{"dir", ",", "#", ",", "#2", ",", "pack"}], "]"}]}], "&"}],
+          ",", "\n", "\t\t\t\t\t", "datasets"}], "\n", "\t\t\t\t\t", 
+        "]"}]}]}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"CuratedDataExport", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"dir", ":", 
+      RowBox[{
+       RowBox[{"_String", "?", "DirectoryQ"}], "|", "Automatic"}], ":", 
+      "Automatic"}], ",", "\n", "\t", 
+     RowBox[{"name", ":", 
+      RowBox[{"_String", "|", "None"}], ":", "None"}], ",", "\n", "\t", 
+     "entityStore_EntityStore", ",", "\n", "\t", 
+     RowBox[{"pack", ":", 
+      RowBox[{"True", "|", "False"}], ":", "True"}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"CuratedDataExport", "[", "\n", "\t\t", 
+    RowBox[{"dir", ",", "\n", "\t\t", "name", ",", "\n", "\t\t", 
+     RowBox[{"entityStore", "[", 
+      RowBox[{"[", 
+       RowBox[{"1", ",", "\"\<Types\>\""}], "]"}], "]"}], ",", "\n", "\t\t", 
+     "pack", ",", "\n", "\t\t", "ops"}], "\n", "\t\t", "]"}]}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.703802822734325*^9, 3.703802862942852*^9}, {
+   3.7038037861743402`*^9, 3.703803826431279*^9}, {3.703804751388824*^9, 
+   3.70380475241698*^9}, {3.7038054819301*^9, 3.703805625616413*^9}, {
+   3.703805679199128*^9, 3.703805694560953*^9}, 3.7038059217136097`*^9, {
+   3.703810952943219*^9, 3.703810976803595*^9}, {3.703816621200221*^9, 
+   3.703816682270837*^9}, {3.70389179648186*^9, 3.703891812512581*^9}, {
+   3.703916002263295*^9, 3.703916029661059*^9}, 3.7039977861827917`*^9, {
+   3.703998447054318*^9, 3.7039984521008463`*^9}, {3.704680607426092*^9, 
+   3.704680610309978*^9}, {3.704725596754859*^9, 3.704725722826454*^9}, {
+   3.704725755614395*^9, 3.704725929113907*^9}, {3.704725960961952*^9, 
+   3.70472598071903*^9}, {3.704726043587009*^9, 3.704726135313532*^9}, {
+   3.704726181859482*^9, 3.7047262143389997`*^9}, {3.704726256637632*^9, 
+   3.704726263627714*^9}, {3.704727809369*^9, 3.704727818368436*^9}, {
+   3.7047285721030188`*^9, 3.704728572949078*^9}, {3.7047298533871117`*^9, 
+   3.704729866291781*^9}, {3.705637708960956*^9, 3.705637760246907*^9}, {
+   3.705637921161644*^9, 3.70563794282813*^9}, {3.705638127135758*^9, 
+   3.705638197999564*^9}, 
+   3.7281508422060204`*^9},ExpressionUUID->"ce465a66-9cd4-49ee-a903-\
+36d485bce66a"]
+}, Closed]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"End", "[", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"180d2f59-9c04-45ca-bd69-\
+c49e22615f5c"]
+}, Open  ]],
+
+Cell["", "SectionSeparator",ExpressionUUID->"01091bcf-2484-4331-adfe-\
+871b4445c15a"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"ClearAll", "@", 
+  "\"\<DataPaclets`PackageDataDump`*\>\""}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"PacletUninstall", "/@", 
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{
+    "\"\<PackageData\>\"", ",", "\[IndentingNewLine]", 
+     "\"\<PackageData_Index\>\"", ",", "\[IndentingNewLine]", 
+     "\"\<PackageData_Part01\>\""}], "\[IndentingNewLine]", "}"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"Quiet", "@", 
+     RowBox[{"DeleteDirectory", "[", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"FileNameJoin", "@", 
+        RowBox[{"{", "\[IndentingNewLine]", 
+         RowBox[{"$TemporaryDirectory", ",", "\[IndentingNewLine]", "#"}], 
+         "\[IndentingNewLine]", "}"}]}], ",", "\[IndentingNewLine]", 
+       RowBox[{"DeleteContents", "\[Rule]", "True"}]}], "]"}]}], "&"}], "/@", 
+   
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{
+    "\"\<PackageData\>\"", ",", "\[IndentingNewLine]", 
+     "\"\<PackageData_Index\>\"", ",", "\[IndentingNewLine]", 
+     "\"\<PackageData_Part01\>\""}], "\[IndentingNewLine]", "}"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Quiet", "[", 
+    RowBox[{"Close", "/@", 
+     RowBox[{"Streams", "[", "]"}]}], "]"}], ";"}], 
+  " "}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"CuratedDataExport", "[", "\[IndentingNewLine]", 
+    RowBox[{"$PackageIndex", ",", "\[IndentingNewLine]", "False"}], 
+    "\[IndentingNewLine]", "]"}], "[", "\"\<Package\>\"", "]"}], 
+  ";"}], "\n", 
+ RowBox[{"PacletInstall", "/@", 
+  RowBox[{
+   RowBox[{"CuratedDataExport", "[", "$PackageIndex", "]"}], "[", 
+   "\"\<Package\>\"", "]"}]}]}], "Input",
+ CellChangeTimes->{{3.703805892995488*^9, 3.703805899623268*^9}, {
+   3.703806834488414*^9, 3.703806889561328*^9}, {3.7038069506719017`*^9, 
+   3.7038069927449427`*^9}, {3.70381099628666*^9, 3.703811010330142*^9}, {
+   3.703820779422792*^9, 3.7038207877462473`*^9}, {3.7038695240595827`*^9, 
+   3.703869524553129*^9}, {3.703893909252314*^9, 3.703893913215014*^9}, {
+   3.7039157588746557`*^9, 3.703915769277783*^9}, {3.703917258816498*^9, 
+   3.703917265862052*^9}, {3.703918519166868*^9, 3.703918519805729*^9}, {
+   3.7039896911190157`*^9, 3.703989691788663*^9}, {3.7039947507704897`*^9, 
+   3.703994772502741*^9}, {3.7039957562590113`*^9, 3.703995756844331*^9}, 
+   3.703996746361689*^9},ExpressionUUID->"9e884330-5ca0-4f1f-9000-\
+78770beb9aab"],
+
+Cell[BoxData[
+ RowBox[{"\[LeftAssociation]", 
+  RowBox[{
+   RowBox[{"\<\"Package\"\>", "\[Rule]", 
+    InterpretationBox[
+     RowBox[{
+     "Paclet", "[", "\<\"PackageData\"\>", ",", "\<\"1.0.0\"\>", ",", "<>", 
+      "]"}],
+     PacletManager`Paclet[
+     "Name" -> "PackageData", "Version" -> "1.0.0", 
+      "Extensions" -> {{
+        "Kernel", "Root" -> ".", "Context" -> "PackageData`"}, {
+        "AutoCompletionData", "Root" -> "AutoCompletionData"}}, "Location" -> 
+      "/Users/markb/Library/Mathematica/Paclets/Repository/PackageData-1.0.0"]\
+]}], ",", 
+   RowBox[{"\<\"Index\"\>", "\[Rule]", 
+    InterpretationBox[
+     RowBox[{
+     "Paclet", "[", "\<\"PackageData_Index\"\>", ",", "\<\"1.0.0\"\>", ",", "<>",
+       "]"}],
+     PacletManager`Paclet[
+     "Name" -> "PackageData_Index", "Version" -> "1.0.0", 
+      "Extensions" -> {{
+        "Kernel", "Root" -> ".", "Context" -> "PackageData_Index`"}, {
+        "Resource", "Root" -> "Data", 
+         "Resources" -> {
+          "Entities.wdx", "Functions.wdx", "Groups.wdx", "Index.wdx", 
+           "Names.wdx", "PrivateGroups.wdx", "Properties.wdx"}}}, "Location" -> 
+      "/Users/markb/Library/Mathematica/Paclets/Repository/PackageData_Index-\
+1.0.0"]]}], ",", 
+   RowBox[{"\<\"Part01\"\>", "\[Rule]", 
+    InterpretationBox[
+     RowBox[{
+     "Paclet", "[", "\<\"PackageData_Part01\"\>", ",", "\<\"1.0.0\"\>", ",", "<>",
+       "]"}],
+     PacletManager`Paclet[
+     "Name" -> "PackageData_Part01", "Version" -> "1.0.0", 
+      "Extensions" -> {{
+        "Kernel", "Root" -> ".", "Context" -> "PackageData_Part01`"}, {
+        "Resource", "Root" -> "Data", "Resources" -> {"Part01.wdx"}}}, 
+      "Location" -> 
+      "/Users/markb/Library/Mathematica/Paclets/Repository/PackageData_Part01-\
+1.0.0"]]}]}], "\[RightAssociation]"}]], "Output",
+ CellChangeTimes->{3.704031255682975*^9, 
+  3.7040318418489656`*^9},ExpressionUUID->"18d9e8a9-9de4-400f-ba60-\
+faf95a6fd262"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PacletUpload", "[", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Values", "@", "\[IndentingNewLine]", 
+    RowBox[{"\[LeftAssociation]", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"\"\<Package\>\"", "\[Rule]", 
+       InterpretationBox[
+        RowBox[{
+        "Paclet", "[", "\"\<PackageData\>\"", ",", "\"\<1.0.0\>\"", ",", "<>",
+          "]"}],
+        PacletManager`Paclet[
+        "Name" -> "PackageData", "Version" -> "1.0.0", 
+         "Extensions" -> {{
+           "Kernel", "Root" -> ".", "Context" -> "PackageData`"}, {
+           "AutoCompletionData", "Root" -> "AutoCompletionData"}}, "Location" -> 
+         "/Users/markb/Library/Mathematica/Paclets/Repository/PackageData-1.0.\
+0"]]}], ",", 
+      RowBox[{"\"\<Index\>\"", "\[Rule]", 
+       InterpretationBox[
+        RowBox[{
+        "Paclet", "[", "\"\<PackageData_Index\>\"", ",", "\"\<1.0.0\>\"", ",",
+          "<>", "]"}],
+        PacletManager`Paclet[
+        "Name" -> "PackageData_Index", "Version" -> "1.0.0", 
+         "Extensions" -> {{
+           "Kernel", "Root" -> ".", "Context" -> "PackageData_Index`"}, {
+           "Resource", "Root" -> "Data", 
+            "Resources" -> {
+             "Entities.wdx", "Functions.wdx", "Groups.wdx", "Index.wdx", 
+              "Names.wdx", "PrivateGroups.wdx", "Properties.wdx"}}}, 
+         "Location" -> 
+         "/Users/markb/Library/Mathematica/Paclets/Repository/PackageData_\
+Index-1.0.0"]]}], ",", 
+      RowBox[{"\"\<Part01\>\"", "\[Rule]", 
+       InterpretationBox[
+        RowBox[{
+        "Paclet", "[", "\"\<PackageData_Part01\>\"", ",", "\"\<1.0.0\>\"", 
+         ",", "<>", "]"}],
+        PacletManager`Paclet[
+        "Name" -> "PackageData_Part01", "Version" -> "1.0.0", 
+         "Extensions" -> {{
+           "Kernel", "Root" -> ".", "Context" -> "PackageData_Part01`"}, {
+           "Resource", "Root" -> "Data", "Resources" -> {"Part01.wdx"}}}, 
+         "Location" -> 
+         "/Users/markb/Library/Mathematica/Paclets/Repository/PackageData_\
+Part01-1.0.0"]]}]}], "\[IndentingNewLine]", "\[RightAssociation]"}]}], ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{"CloudConnect", "\[Rule]", "\"\<b3m2a1.paclets@gmail.com\>\""}]}], 
+  "\[IndentingNewLine]", "]"}]], "Input",
+ CellChangeTimes->{{3.704028114001851*^9, 3.704028133984563*^9}, {
+  3.704028598799823*^9, 
+  3.70402862827075*^9}},ExpressionUUID->"3a6536c0-428b-4019-b74e-\
+1c404faba3af"],
+
+Cell[BoxData[
+ RowBox[{"\[LeftAssociation]", 
+  RowBox[{
+   RowBox[{"\<\"PacletSiteFile\"\>", "\[Rule]", 
+    InterpretationBox[
+     RowBox[{"CloudObject", "[", 
+      TagBox[
+       ButtonBox[
+        PaneSelectorBox[{
+         False->"\<\"http://www.wolframcloud.com/objects/user-e4d1d43a-267f-\
+4924-934a-2ba2321519a9/paclets/PacletSite.mz\"\>", True->
+         StyleBox["\<\"http://www.wolframcloud.com/objects/user-e4d1d43a-267f-\
+4924-934a-2ba2321519a9/paclets/PacletSite.mz\"\>", "HyperlinkActive"]}, 
+         Dynamic[
+          CurrentValue["MouseOver"]],
+         BaseStyle->{"Hyperlink"},
+         FrameMargins->0,
+         ImageSize->Automatic],
+        BaseStyle->"Hyperlink",
+        ButtonData->{
+          URL[
+          "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/PacletSite.mz"], None},
+        ButtonNote->
+         "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/PacletSite.mz"],
+       Annotation[#, 
+        "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/PacletSite.mz", "Hyperlink"]& ], "]"}],
+     CloudObject[
+     "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/PacletSite.mz"],
+     SelectWithContents->True]}], ",", 
+   RowBox[{"\<\"PacletFiles\"\>", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{
+      InterpretationBox[
+       RowBox[{"CloudObject", "[", 
+        TagBox[
+         ButtonBox[
+          
+          PaneSelectorBox[{
+           False->"\<\"http://www.wolframcloud.com/objects/user-e4d1d43a-267f-\
+4924-934a-2ba2321519a9/paclets/Paclets/PackageData-1.0.0.paclet\"\>", True->
+           
+           StyleBox["\<\"http://www.wolframcloud.com/objects/user-e4d1d43a-\
+267f-4924-934a-2ba2321519a9/paclets/Paclets/PackageData-1.0.0.paclet\"\>", 
+            "HyperlinkActive"]}, Dynamic[
+            CurrentValue["MouseOver"]],
+           BaseStyle->{"Hyperlink"},
+           FrameMargins->0,
+           ImageSize->Automatic],
+          BaseStyle->"Hyperlink",
+          ButtonData->{
+            URL[
+            "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Paclets/PackageData-1.0.0.paclet"], None},
+          
+          ButtonNote->
+           "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Paclets/PackageData-1.0.0.paclet"],
+         Annotation[#, 
+          "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Paclets/PackageData-1.0.0.paclet", "Hyperlink"]& ], "]"}],
+       CloudObject[
+       "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Paclets/PackageData-1.0.0.paclet"],
+       SelectWithContents->True], ",", 
+      InterpretationBox[
+       RowBox[{"CloudObject", "[", 
+        TagBox[
+         ButtonBox[
+          
+          PaneSelectorBox[{
+           False->"\<\"http://www.wolframcloud.com/objects/user-e4d1d43a-267f-\
+4924-934a-2ba2321519a9/paclets/Paclets/PackageData_Index-1.0.0.paclet\"\>", 
+           True->
+           
+           StyleBox["\<\"http://www.wolframcloud.com/objects/user-e4d1d43a-\
+267f-4924-934a-2ba2321519a9/paclets/Paclets/PackageData_Index-1.0.0.paclet\"\>\
+", "HyperlinkActive"]}, Dynamic[
+            CurrentValue["MouseOver"]],
+           BaseStyle->{"Hyperlink"},
+           FrameMargins->0,
+           ImageSize->Automatic],
+          BaseStyle->"Hyperlink",
+          ButtonData->{
+            URL[
+            "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Paclets/PackageData_Index-1.0.0.paclet"], None},
+          
+          ButtonNote->
+           "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Paclets/PackageData_Index-1.0.0.paclet"],
+         Annotation[#, 
+          "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Paclets/PackageData_Index-1.0.0.paclet", "Hyperlink"]& ],
+         "]"}],
+       CloudObject[
+       "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Paclets/PackageData_Index-1.0.0.paclet"],
+       SelectWithContents->True], ",", 
+      InterpretationBox[
+       RowBox[{"CloudObject", "[", 
+        TagBox[
+         ButtonBox[
+          
+          PaneSelectorBox[{
+           False->"\<\"http://www.wolframcloud.com/objects/user-e4d1d43a-267f-\
+4924-934a-2ba2321519a9/paclets/Paclets/PackageData_Part01-1.0.0.paclet\"\>", 
+           True->
+           
+           StyleBox["\<\"http://www.wolframcloud.com/objects/user-e4d1d43a-\
+267f-4924-934a-2ba2321519a9/paclets/Paclets/PackageData_Part01-1.0.0.paclet\"\
+\>", "HyperlinkActive"]}, Dynamic[
+            CurrentValue["MouseOver"]],
+           BaseStyle->{"Hyperlink"},
+           FrameMargins->0,
+           ImageSize->Automatic],
+          BaseStyle->"Hyperlink",
+          ButtonData->{
+            URL[
+            "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Paclets/PackageData_Part01-1.0.0.paclet"], None},
+          
+          ButtonNote->
+           "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Paclets/PackageData_Part01-1.0.0.paclet"],
+         Annotation[#, 
+          "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Paclets/PackageData_Part01-1.0.0.paclet", 
+          "Hyperlink"]& ], "]"}],
+       CloudObject[
+       "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Paclets/PackageData_Part01-1.0.0.paclet"],
+       SelectWithContents->True]}], "}"}]}], ",", 
+   RowBox[{"\<\"PacletInstaller\"\>", "\[Rule]", 
+    InterpretationBox[
+     RowBox[{"CloudObject", "[", 
+      TagBox[
+       ButtonBox[
+        PaneSelectorBox[{
+         False->"\<\"http://www.wolframcloud.com/objects/user-e4d1d43a-267f-\
+4924-934a-2ba2321519a9/paclets/Installer.m\"\>", True->
+         StyleBox["\<\"http://www.wolframcloud.com/objects/user-e4d1d43a-267f-\
+4924-934a-2ba2321519a9/paclets/Installer.m\"\>", "HyperlinkActive"]}, Dynamic[
+         
+          CurrentValue["MouseOver"]],
+         BaseStyle->{"Hyperlink"},
+         FrameMargins->0,
+         ImageSize->Automatic],
+        BaseStyle->"Hyperlink",
+        ButtonData->{
+          URL[
+          "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Installer.m"], None},
+        ButtonNote->
+         "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Installer.m"],
+       Annotation[#, 
+        "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Installer.m", "Hyperlink"]& ], "]"}],
+     CloudObject[
+     "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Installer.m"],
+     SelectWithContents->True]}], ",", 
+   RowBox[{"\<\"PacletUninstaller\"\>", "\[Rule]", 
+    InterpretationBox[
+     RowBox[{"CloudObject", "[", 
+      TagBox[
+       ButtonBox[
+        PaneSelectorBox[{
+         False->"\<\"http://www.wolframcloud.com/objects/user-e4d1d43a-267f-\
+4924-934a-2ba2321519a9/paclets/Uninstaller.m\"\>", True->
+         StyleBox["\<\"http://www.wolframcloud.com/objects/user-e4d1d43a-267f-\
+4924-934a-2ba2321519a9/paclets/Uninstaller.m\"\>", "HyperlinkActive"]}, 
+         Dynamic[
+          CurrentValue["MouseOver"]],
+         BaseStyle->{"Hyperlink"},
+         FrameMargins->0,
+         ImageSize->Automatic],
+        BaseStyle->"Hyperlink",
+        ButtonData->{
+          URL[
+          "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Uninstaller.m"], None},
+        ButtonNote->
+         "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Uninstaller.m"],
+       Annotation[#, 
+        "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Uninstaller.m", "Hyperlink"]& ], "]"}],
+     CloudObject[
+     "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Uninstaller.m"],
+     SelectWithContents->True]}]}], "\[RightAssociation]"}]], "Output",
+ CellChangeTimes->{
+  3.704028268713539*^9, {3.704028329606563*^9, 3.704028351012824*^9}, 
+   3.704028531199512*^9, 3.704028592511962*^9, {3.7040287002229424`*^9, 
+   3.7040287266969547`*^9}, 3.704029653678895*^9, 3.704031147270916*^9, 
+   3.704031261196508*^9, 3.704031471192381*^9, 3.704031642911879*^9, 
+   3.7040316757310677`*^9, 3.704031846019959*^9, 
+   3.704031940965426*^9},ExpressionUUID->"df8f939b-b2df-46d8-8d5b-\
+9ab0bdd9bbc4"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  InterpretationBox[
+   RowBox[{"CloudObject", "[", 
+    TagBox[
+     ButtonBox[
+      PaneSelectorBox[{
+       False->"\<\"http://www.wolframcloud.com/objects/user-e4d1d43a-267f-\
+4924-934a-2ba2321519a9/paclets/Installer.m\"\>", True->
+       StyleBox["\<\"http://www.wolframcloud.com/objects/user-e4d1d43a-267f-\
+4924-934a-2ba2321519a9/paclets/Installer.m\"\>", "HyperlinkActive"]}, Dynamic[
+       
+        CurrentValue["MouseOver"]],
+       BaseStyle->{"Hyperlink"},
+       FrameMargins->0,
+       ImageSize->Automatic],
+      BaseStyle->"Hyperlink",
+      ButtonData->{
+        URL[
+        "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Installer.m"], None},
+      ButtonNote->
+       "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Installer.m"],
+     Annotation[#, 
+      "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Installer.m", "Hyperlink"]& ], "]"}],
+   CloudObject[
+   "http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-934a-\
+2ba2321519a9/paclets/Installer.m"],
+   SelectWithContents->True], "//", "CloudGet"}]], "Input",
+ CellChangeTimes->{{3.704031269110623*^9, 
+  3.704031294011245*^9}},ExpressionUUID->"70da8fe9-735f-41bb-b2fa-\
+bdf825fa09c7"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   InterpretationBox[
+    RowBox[{
+    "Paclet", "[", "\<\"PackageData\"\>", ",", "\<\"1.0.0\"\>", ",", "<>", 
+     "]"}],
+    PacletManager`Paclet[
+    "Name" -> "PackageData", "Version" -> "1.0.0", 
+     "Extensions" -> {{
+       "Kernel", "Root" -> ".", "Context" -> "PackageData`"}, {
+       "AutoCompletionData", "Root" -> "AutoCompletionData"}}, "Location" -> 
+     "/Users/markb/Library/Mathematica/Paclets/Repository/PackageData-1.0.0"]]\
+, ",", 
+   InterpretationBox[
+    RowBox[{
+    "Paclet", "[", "\<\"PackageData_Index\"\>", ",", "\<\"1.0.0\"\>", ",", "<>",
+      "]"}],
+    PacletManager`Paclet[
+    "Name" -> "PackageData_Index", "Version" -> "1.0.0", 
+     "Extensions" -> {{
+       "Kernel", "Root" -> ".", "Context" -> "PackageData_Index`"}, {
+       "Resource", "Root" -> "Data", 
+        "Resources" -> {
+         "Entities.wdx", "Functions.wdx", "Groups.wdx", "Index.wdx", 
+          "Names.wdx", "PrivateGroups.wdx", "Properties.wdx"}}}, "Location" -> 
+     "/Users/markb/Library/Mathematica/Paclets/Repository/PackageData_Index-1.\
+0.0"]], ",", 
+   InterpretationBox[
+    RowBox[{
+    "Paclet", "[", "\<\"PackageData_Part01\"\>", ",", "\<\"1.0.0\"\>", ",", "<>",
+      "]"}],
+    PacletManager`Paclet[
+    "Name" -> "PackageData_Part01", "Version" -> "1.0.0", 
+     "Extensions" -> {{
+       "Kernel", "Root" -> ".", "Context" -> "PackageData_Part01`"}, {
+       "Resource", "Root" -> "Data", "Resources" -> {"Part01.wdx"}}}, 
+     "Location" -> 
+     "/Users/markb/Library/Mathematica/Paclets/Repository/PackageData_Part01-\
+1.0.0"]]}], "}"}]], "Output",
+ CellChangeTimes->{3.704031646179081*^9, 3.704031678896578*^9, 
+  3.704031709686735*^9, 
+  3.70403196349538*^9},ExpressionUUID->"d384b97c-a76f-4adc-a00f-9313e9858906"],
+
+Cell[BoxData["\<\"http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-\
+934a-2ba2321519a9/paclets/Installer.m\"\>"], "Output",
+ CellChangeTimes->{
+  3.704031717970945*^9},ExpressionUUID->"3b7f0587-e27d-4276-a366-50ef75472fcf"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\"\<http://www.wolframcloud.com/objects/user-e4d1d43a-267f-4924-\
+934a-2ba2321519a9/paclets/Uninstaller.m\>\"", "//", "CloudGet"}]], "Input",
+ CellChangeTimes->{{3.704031862750804*^9, 
+  3.704031866670257*^9}},ExpressionUUID->"f845fe8d-831e-459e-bd4e-\
+da8d90145a53"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "PacletUninstall","vnotfound",
+   "\"Paclet with name \\!\\(\\*RowBox[{\\\"\\\\\\\"PackageData\\\\\\\"\\\"}]\
+\\) and version \\!\\(\\*RowBox[{\\\"\\\\\\\"1.0.0\\\\\\\"\\\"}]\\) not \
+found.\"",2,42,17,27228416381670618665,"Local",
+   "PacletManager`PacletUninstall"},
+  "MessageTemplate2"]], "Message", "MSG",
+ CellChangeTimes->{3.704031867278674*^9, 
+  3.704031947052931*^9},ExpressionUUID->"59c7dc14-bfee-495c-8f9c-\
+26c919da3483"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "PacletUninstall","vnotfound",
+   "\"Paclet with name \\!\\(\\*RowBox[{\\\"\\\\\\\"PackageData_Index\\\\\\\"\
+\\\"}]\\) and version \\!\\(\\*RowBox[{\\\"\\\\\\\"1.0.0\\\\\\\"\\\"}]\\) not \
+found.\"",2,42,18,27228416381670618665,"Local",
+   "PacletManager`PacletUninstall"},
+  "MessageTemplate2"]], "Message", "MSG",
+ CellChangeTimes->{3.704031867278674*^9, 
+  3.704031947063135*^9},ExpressionUUID->"ba6ed3da-6d06-4f8c-bd20-\
+a4a111d15658"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "PacletUninstall","vnotfound",
+   "\"Paclet with name \
+\\!\\(\\*RowBox[{\\\"\\\\\\\"PackageData_Part01\\\\\\\"\\\"}]\\) and version \
+\\!\\(\\*RowBox[{\\\"\\\\\\\"1.0.0\\\\\\\"\\\"}]\\) not found.\"",2,42,19,
+   27228416381670618665,"Local","PacletManager`PacletUninstall"},
+  "MessageTemplate2"]], "Message", "MSG",
+ CellChangeTimes->{3.704031867278674*^9, 
+  3.7040319470695753`*^9},ExpressionUUID->"ba6e8dd2-45f6-45ce-95c7-\
+a58ceed778a8"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "General","stop",
+   "\"Further output of \\!\\(\\*StyleBox[RowBox[{\\\"PacletUninstall\\\", \\\
+\"::\\\", \\\"vnotfound\\\"}], \\\"MessageName\\\"]\\) will be suppressed \
+during this calculation.\"",2,42,20,27228416381670618665,"Local"},
+  "MessageTemplate"]], "Message", "MSG",
+ CellChangeTimes->{3.704031867278674*^9, 
+  3.704031947076103*^9},ExpressionUUID->"c7f0bc83-d9b8-4205-9593-\
+576a4ea91b64"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"$Failed", ",", "$Failed", ",", "$Failed"}], "}"}]], "Output",
+ CellChangeTimes->{3.704031867639295*^9, 
+  3.704031947082713*^9},ExpressionUUID->"c730ad50-1123-44f9-9e51-2771863098d4"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"<<", "PackageData`"}]], "Input",
+ CellChangeTimes->{{3.704031972613307*^9, 
+  3.704031975108869*^9}},ExpressionUUID->"8fd2c03d-9d50-41c2-9e56-\
+c79212758437"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PackageData", "[", "\"\<MaTeX\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.7040317583246593`*^9, 3.704031783781568*^9}, {
+  3.704031852858129*^9, 
+  3.704031853007997*^9}},ExpressionUUID->"3037c0b1-304a-41dc-ac36-\
+222de08566a7"],
+
+Cell[BoxData[
+ TemplateBox[{"\"MaTeX\"",RowBox[{"Entity", "[", 
+     RowBox[{"\"Package\"", ",", "\"MaTeX\""}], "]"}],
+   "\"Entity[\\\"Package\\\", \\\"MaTeX\\\"]\"","\"Package\""},
+  "Entity"]], "Output",
+ CellChangeTimes->{{3.704031772021718*^9, 3.7040317843476458`*^9}, 
+   3.704031976545033*^9},ExpressionUUID->"36d97630-fd18-49e0-aa5c-\
+3ce077e579e5"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  TemplateBox[{"\"MaTeX\"",RowBox[{"Entity", "[", 
+      RowBox[{"\"Package\"", ",", "\"MaTeX\""}], "]"}],
+    "\"Entity[\\\"Package\\\", \\\"MaTeX\\\"]\"","\:f3b5Package\:f3b5"},
+   "Entity"], "[", "\"\<Author\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.704032010131337*^9, 
+  3.704032015209819*^9}},ExpressionUUID->"e6e02d4f-c6d3-4887-8af8-\
+41db5b42c32d"],
+
+Cell[BoxData["\<\"szhorvat\"\>"], "Output",
+ CellChangeTimes->{
+  3.704032015651222*^9},ExpressionUUID->"3e880e1f-2d4c-485e-ad13-e4aa3bf4aeba"]
+}, Open  ]],
+
+Cell[BoxData["PacletBundle"], "Input",
+ CellChangeTimes->{{3.704028374307776*^9, 
+  3.704028377498076*^9}},ExpressionUUID->"9a9aa4b0-1e88-4a58-b2e6-\
+5c0e598afb43"],
+
+Cell[BoxData["Quit"], "Input",
+ CellChangeTimes->{{3.7039973448459473`*^9, 
+  3.703997346284586*^9}},ExpressionUUID->"17764d1b-5a60-4db8-90b7-\
+710be2f39fae"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Clear", "[", "\[IndentingNewLine]", 
+   RowBox[{
+   "\"\<DataPaclets`PackageDataDump`*\>\"", ",", "\[IndentingNewLine]", 
+    "\"\<PackageData`*\>\""}], "\[IndentingNewLine]", "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"<<", "PackageData`"}]}], "Input",
+ CellChangeTimes->{{3.7039186195485477`*^9, 3.703918622553507*^9}, {
+  3.703993009845663*^9, 3.703993011423327*^9}, {3.703993087026128*^9, 
+  3.703993087616374*^9}, {3.703997016679659*^9, 
+  3.703997049431684*^9}},ExpressionUUID->"4f4c584f-1f8c-4981-be27-\
+ef4301b65c8d"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Unprotect", "[", "Internal`$DefaultEntityStores", "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Internal`$DefaultEntityStores", "=", 
+   RowBox[{"Take", "[", 
+    RowBox[{"Internal`$DefaultEntityStores", ",", "1"}], "]"}]}], 
+  ";"}]}], "Input",
+ CellChangeTimes->{{3.703994283786405*^9, 
+  3.703994292384328*^9}},ExpressionUUID->"42c8850f-3a2d-452e-b456-\
+29e79cf96359"],
+
+Cell[BoxData[
+ RowBox[{"Internal`DeleteCache", "[", 
+  RowBox[{"{", "\"\<PackageData\>\"", "}"}], "]"}]], "Input",
+ CellChangeTimes->{{3.7039970938951073`*^9, 3.703997097733982*^9}, {
+  3.703998406271781*^9, 3.703998407909718*^9}, {3.703998621227687*^9, 
+  3.703998622435499*^9}},ExpressionUUID->"52927f9f-0816-4e7b-80d7-\
+3c23d26c3606"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PackageData", "[", 
+  RowBox[{"{", 
+   RowBox[{"\"\<BTools\>\"", ",", "\"\<MaTeX\>\""}], "}"}], "]"}]], "Input",
+ CellChangeTimes->{{3.703989768279344*^9, 3.703989781878893*^9}, {
+  3.703996989329014*^9, 3.703997003192952*^9}, {3.7039971172467823`*^9, 
+  3.703997117949054*^9}, {3.7039986036937647`*^9, 3.703998649250469*^9}, {
+  3.703998953342992*^9, 
+  3.703998958045455*^9}},ExpressionUUID->"650dd0ee-5873-46a8-bc67-\
+3e5ef2d322f2"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   TemplateBox[{"\"BTools\"",RowBox[{"Entity", "[", 
+       RowBox[{"\"Package\"", ",", "\"BTools\""}], "]"}],
+     "\"Entity[\\\"Package\\\", \\\"BTools\\\"]\"","\"Package\""},
+    "Entity"], ",", 
+   TemplateBox[{"\"MaTeX\"",RowBox[{"Entity", "[", 
+       RowBox[{"\"Package\"", ",", "\"MaTeX\""}], "]"}],
+     "\"Entity[\\\"Package\\\", \\\"MaTeX\\\"]\"","\"Package\""},
+    "Entity"]}], "}"}]], "Output",
+ CellChangeTimes->{{3.703998950873683*^9, 3.703998958533457*^9}, 
+   3.703999025258914*^9},ExpressionUUID->"3096acc4-511c-46ef-baf3-\
+99ccaf460fc1"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  TemplateBox[{"\"MaTeX\"",RowBox[{"Entity", "[", 
+      RowBox[{"\"Package\"", ",", "\"MaTeX\""}], "]"}],
+    "\"Entity[\\\"Package\\\", \\\"MaTeX\\\"]\"","\"Package\""},
+   "Entity"], "[", 
+  RowBox[{"{", 
+   RowBox[{"\"\<Name\>\"", ",", "\"\<Location\>\""}], "}"}], "]"}]], "Input",
+ CellChangeTimes->{{3.703998762509798*^9, 3.703998763917006*^9}, {
+  3.703999164937272*^9, 
+  3.703999178343945*^9}},ExpressionUUID->"0df263f0-a577-4cc4-a298-\
+c660bac6fb4e"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PackageData", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    TemplateBox[{"\"MaTeX\"",RowBox[{"Entity", "[", 
+        RowBox[{"\"Package\"", ",", "\"MaTeX\""}], "]"}],
+      "\"Entity[\\\"Package\\\", \\\"MaTeX\\\"]\"","\"Package\""},
+     "Entity"], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\"\<Name\>\"", ",", "\"\<Location\>\""}], "}"}]}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.7039987899651937`*^9, 3.7039988013719378`*^9}, {
+  3.70399904643489*^9, 3.703999066914113*^9}, {3.703999146136847*^9, 
+  3.703999150287107*^9}},ExpressionUUID->"a3814d7b-06eb-4327-99ee-\
+ae290e149ba3"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"\<\"MaTeX\"\>", 
+    ",", "\<\"https://github.com/szhorvat/MaTeX/releases\"\>"}], "}"}], 
+  "}"}]], "Output",
+ CellChangeTimes->{
+  3.703998801714404*^9, {3.7039990289800453`*^9, 3.703999062519082*^9}, {
+   3.703999137594411*^9, 
+   3.703999150547608*^9}},ExpressionUUID->"2834cd30-ccfa-4cab-aa65-\
+dc9b8b6a51ea"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Imp Tests", "Section",
+ CellChangeTimes->{{3.703997166674233*^9, 
+  3.703997170274106*^9}},ExpressionUUID->"b2733d0f-8751-4843-9f9c-\
+addc4501c2dd"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"wdxReadFunction", "[", 
+   RowBox[{"type_", ",", "part_"}], "]"}], ":=", "\[IndentingNewLine]", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"wdx", ",", "idx", ",", "read"}], "}"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"ClearAttributes", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"wdx", ",", "idx", ",", "read"}], "}"}], ",", "Temporary"}], 
+      "]"}], ";", "\[IndentingNewLine]", 
+     RowBox[{"wdx", "=", 
+      RowBox[{"DataPaclets`GetDataPacletResource", "[", 
+       RowBox[{
+        RowBox[{"type", "<>", "\"\<Data_Part\>\"", "<>", "part"}], ",", 
+        RowBox[{"\"\<Part\>\"", "<>", "part", "<>", "\"\<.wdx\>\""}]}], 
+       "]"}]}], ";", 
+     RowBox[{"idx", "=", 
+      RowBox[{"DataPaclets`ImportData", "[", 
+       RowBox[{
+        RowBox[{"type", "<>", "\"\<Data_Part\>\"", "<>", "part"}], ",", "wdx",
+         ",", 
+        RowBox[{"{", 
+         RowBox[{"\"\<DataTable\>\"", ",", "\"\<Index\>\""}], "}"}]}], 
+       "]"}]}], ";", 
+     RowBox[{
+      RowBox[{"read", "[", 
+       RowBox[{"piece_", ",", 
+        RowBox[{"n", ":", "_Integer", ":", "1"}]}], "]"}], ":=", 
+      RowBox[{"With", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"strm", "=", 
+          RowBox[{"OpenRead", "[", 
+           RowBox[{"wdx", ",", 
+            RowBox[{"BinaryFormat", "\[Rule]", "True"}]}], "]"}]}], "}"}], 
+        ",", 
+        RowBox[{
+         RowBox[{"SetStreamPosition", "[", 
+          RowBox[{"strm", ",", 
+           RowBox[{"idx", "[", 
+            RowBox[{"[", "piece", "]"}], "]"}]}], "]"}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"Close", "[", "strm", "]"}], ";", "#"}], ")"}], "&"}], 
+          "@", 
+          RowBox[{"Table", "[", 
+           RowBox[{
+            RowBox[{"System`Convert`WDXDump`readWDXObject", "@", "strm"}], 
+            ",", "n"}], "]"}]}]}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+     "read"}]}], "\[IndentingNewLine]", "]"}]}]], "Input",
+ CellChangeTimes->{{3.704681084869608*^9, 
+  3.70468122063815*^9}},ExpressionUUID->"d4855743-dd35-4b74-bae9-\
+ea3910aba4c4"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"wdx", "=", 
+   RowBox[{"DataPaclets`GetDataPacletResource", "[", 
+    RowBox[{"\"\<ChemicalData_Part01\>\"", ",", "\"\<Part01.wdx\>\""}], 
+    "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"idx", "=", 
+   RowBox[{"DataPaclets`ImportData", "[", 
+    RowBox[{"\"\<ChemicalData_Part01\>\"", ",", "wdx", ",", 
+     RowBox[{"{", 
+      RowBox[{"\"\<DataTable\>\"", ",", "\"\<Index\>\""}], "}"}]}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"read", "[", 
+   RowBox[{"piece_", ",", 
+    RowBox[{"n", ":", "_Integer", ":", "1"}]}], "]"}], ":=", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"strm", "=", 
+      RowBox[{"OpenRead", "[", 
+       RowBox[{"wdx", ",", 
+        RowBox[{"BinaryFormat", "\[Rule]", "True"}]}], "]"}]}], "}"}], ",", 
+    RowBox[{
+     RowBox[{"SetStreamPosition", "[", 
+      RowBox[{"strm", ",", 
+       RowBox[{"idx", "[", 
+        RowBox[{"[", "piece", "]"}], "]"}]}], "]"}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"Close", "[", "strm", "]"}], ";", "#"}], ")"}], "&"}], "@", 
+      RowBox[{"Table", "[", 
+       RowBox[{
+        RowBox[{"System`Convert`WDXDump`readWDXObject", "@", "strm"}], ",", 
+        "n"}], "]"}]}]}]}], "]"}]}]}], "Input",
+ CellChangeTimes->{{3.703997612004039*^9, 3.7039976333029127`*^9}, {
+  3.704681021040555*^9, 
+  3.704681024624449*^9}},ExpressionUUID->"b3e460d4-ba47-4e24-a516-\
+60da1f0072d1"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"DataPaclets`ImportData", "[", "\n", 
+   RowBox[{"\"\<PackageData_Index\>\"", ",", "\n", 
+    RowBox[{"DataPaclets`GetDataPacletResource", "[", 
+     RowBox[{"\"\<PackageData_Index\>\"", ",", "\"\<Properties.wdx\>\""}], 
+     "]"}]}], "\[IndentingNewLine]", "]"}], "//", "Uncompress"}]], "Input",
+ CellChangeTimes->{{3.70399717102643*^9, 3.70399720124933*^9}, {
+  3.703997267475029*^9, 
+  3.7039972892597513`*^9}},ExpressionUUID->"98a91f23-9eab-400b-8cdb-\
+e5a129f3da91"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"\<\"Data\"\>", "\[Rule]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", "\<\"Name\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"Author\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"Description\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"HomePage\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"Location\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"Label\"\>", "}"}], ",", 
+     RowBox[{"{", "\<\"Keywords\"\>", "}"}]}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{{3.703997285949877*^9, 
+  3.703997289478736*^9}},ExpressionUUID->"abfe2887-753b-46ca-8755-\
+3917dc55b644"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"DataPaclets`ImportData", "[", "\n", 
+  RowBox[{"\"\<PackageData_Part01\>\"", ",", "\n", 
+   RowBox[{"DataPaclets`GetDataPacletResource", "[", 
+    RowBox[{"\"\<PackageData_Part01\>\"", ",", "\"\<Part01.wdx\>\""}], "]"}], 
+   ",", "\[IndentingNewLine]", 
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{"\"\<DataTable\>\"", ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Properties\>\"", ",", "\"\<Index\>\""}], "}"}]}], 
+    "\[IndentingNewLine]", "\[IndentingNewLine]", "}"}]}], 
+  "\[IndentingNewLine]", "]"}]], "Input",
+ CellChangeTimes->{{3.703997378289673*^9, 3.703997402318825*^9}, {
+  3.703997562961092*^9, 
+  3.703997572477957*^9}},ExpressionUUID->"e0fe4f28-40e6-487e-931d-\
+a4c982d14e06"]
+}, Open  ]],
+
+Cell["Server Tests", "Section",
+ CellChangeTimes->{{3.704023282918941*^9, 
+  3.704023285401836*^9}},ExpressionUUID->"6cb4d9c4-2223-40e8-846c-\
+c24ba917415a"]
+},
+WindowSize->{808, 755},
+WindowMargins->{{62, Automatic}, {Automatic, 23}},
+FrontEndVersion->"11.2 for Mac OS X x86 (32-bit, 64-bit Kernel) (September \
+10, 2017)",
+StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+

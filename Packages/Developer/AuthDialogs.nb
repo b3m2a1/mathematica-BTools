@@ -1,0 +1,2278 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Banner Dialogs", "CodeSection",
+ CellChangeTimes->{{3.703614319907288*^9, 3.7036143221370163`*^9}, {
+  3.7036284401616488`*^9, 
+  3.703628445215501*^9}},ExpressionUUID->"30ef6bfc-052d-4d4d-88ef-\
+104f26cd7fa2"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"BannerDialog", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Generate a dialog with a banner\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"BannerDialogInput", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Generates a dialog for with a banner\>\""}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.7036143288918333`*^9, 3.703614332403687*^9}, {
+   3.703627312490975*^9, 3.703627348032221*^9}, 3.703628446793289*^9, 
+   3.703631525905336*^9, {3.703632550015318*^9, 
+   3.703632564366716*^9}},ExpressionUUID->"8c25b49b-a50f-47d3-b45e-\
+7ce92085155a"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"AuthDialog", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Generates an authentication dialog\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PasswordDialog", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<A raw password dialog\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"OAuthDialog", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Uses AuthDialog to generate an OAuth dialog\>\""}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.7036143288918333`*^9, 3.703614332403687*^9}, {
+   3.703627312490975*^9, 3.703627348032221*^9}, 3.703628446793289*^9, {
+   3.703632861060144*^9, 3.703632865160529*^9}, {3.703637346039781*^9, 
+   3.703637359176951*^9}, {3.703638005746292*^9, 3.703638014082244*^9}, {
+   3.703642579260891*^9, 3.703642589917479*^9}, {3.7297988336137323`*^9, 
+   3.729798847724568*^9}},ExpressionUUID->"1937443d-5981-4786-be20-\
+0d8fc6870731"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"61da9dcf-c892-409d-9cb9-\
+0a7b7606df54"],
+
+Cell[CellGroupData[{
+
+Cell["BannerDialogConfig", "CodeSubsubsection",
+ CellChangeTimes->{
+  3.703621076244172*^9, {3.7036216996545897`*^9, 3.7036217064137*^9}, 
+   3.703631525914301*^9, 
+   3.703631647578354*^9},ExpressionUUID->"fcea0a88-20ed-4ed1-918c-\
+9dfe40a516b8"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "BannerDialogConfig", "]"}], "=", "\n", "\t", 
+   RowBox[{"Join", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Options", "[", "DialogInput", "]"}], ",", 
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{"Appearance", "\[Rule]", "Automatic"}], "\n", "\t\t", "}"}]}], 
+    "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"BannerDialogConfig", "[", "\n", "\t", 
+    RowBox[{"banner_", ",", "\n", "\t", "content_", ",", "\n", "\t", 
+     RowBox[{"submit", ":", 
+      RowBox[{"_Button", "|", "Automatic"}], ":", "Automatic"}], ",", "\n", 
+     "\t", 
+     RowBox[{"cancel", ":", 
+      RowBox[{"_Button", "|", "Automatic"}], ":", "Automatic"}], ",", "\n", 
+     "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t\t", 
+   RowBox[{"{", "\n", "\t\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{
+         RowBox[{"ExpressionCell", "[", 
+          RowBox[{"#", ",", "\n", "\t\t\t\t\t", 
+           RowBox[{"CellFrameMargins", "\[Rule]", "None"}], ",", "\n", "\t", 
+           "\t\t\t\t", 
+           RowBox[{"CellMargins", "\[Rule]", "8"}]}], "]"}], "&"}], "@", "\n",
+         "\t", "\t\t\t\t", 
+        RowBox[{"With", "[", 
+         RowBox[{
+          RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
+           RowBox[{"size", "=", "\n", "\t", "\t\t\t\t\t\t", 
+            RowBox[{"Replace", "[", 
+             RowBox[{
+              RowBox[{"OptionValue", "[", "WindowSize", "]"}], ",", 
+              RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"{", 
+                  RowBox[{"w_", ",", "h_"}], "}"}], ":>", "\n", "\t", "\t", 
+                 "\t\t\t\t\t\t\t", 
+                 RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"Replace", "[", 
+                    RowBox[{
+                    "w", ",", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Automatic", "\[Rule]", "400"}]}], "\n", "\t", 
+                    "\t", "\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t", "\t", 
+                   "\t\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"Replace", "[", 
+                    RowBox[{
+                    "h", ",", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Automatic", "\[Rule]", "450"}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", "]"}], "-", "110"}]}], "\n", 
+                  "\t\t\t\t\t\t\t\t\t\t", "}"}]}], ",", "\n", 
+                "\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                "w_Integer", ":>", "\n", "\t", "\t", "\t", "\t\t\t\t\t\t", 
+                 RowBox[{"{", 
+                  RowBox[{"w", ",", "340"}], "}"}]}], ",", "\n", 
+                "\t\t\t\t\t\t\t\t", 
+                RowBox[{"Automatic", ":>", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
+                 RowBox[{"{", 
+                  RowBox[{"400", ",", "340"}], "}"}]}]}], "\n", 
+               "\t\t\t\t\t\t\t\t", "}"}]}], "]"}]}], "\n", "\t\t\t\t\t\t", 
+           "}"}], ",", "\n", "\t", "\t\t\t\t\t", 
+          RowBox[{"Pane", "[", "\n", "\t", "\t\t\t\t\t\t", 
+           RowBox[{"content", ",", "\n", "\t", "\t\t\t\t\t\t", 
+            RowBox[{
+            "ImageSize", "\[Rule]", "\n", "\t", "\t\t\t\t\t\t\t", "size"}], 
+            ",", "\n", "\t", "\t\t\t\t\t\t", 
+            RowBox[{"BaseStyle", "\[Rule]", "\"\<Output\>\""}], ",", "\n", 
+            "\t\t\t\t\t\t\t", 
+            RowBox[{"Scrollbars", "\[Rule]", "Automatic"}]}], "\n", 
+           "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t", "]"}]}], ",", 
+       "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"ExpressionCell", "[", 
+          RowBox[{
+          "#", ",", "\n", "\t\t\t\t\t", "\"\<Output\>\"", ",", "\n", "\t", 
+           "\t\t\t\t", 
+           RowBox[{"Background", "\[Rule]", 
+            RowBox[{"GrayLevel", "[", ".98", "]"}]}], ",", "\n", "\t", 
+           "\t\t\t\t", 
+           RowBox[{"CellFrameColor", "\[Rule]", 
+            RowBox[{"GrayLevel", "[", ".8", "]"}]}], ",", "\n", "\t", 
+           "\t\t\t\t", 
+           RowBox[{"CellFrame", "\[Rule]", 
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"{", 
+               RowBox[{"0", ",", "0"}], "}"}], ",", 
+              RowBox[{"{", 
+               RowBox[{"0", ",", "1"}], "}"}]}], "}"}]}], ",", "\n", "\t", 
+           "\t\t\t\t", 
+           RowBox[{"CellMargins", "\[Rule]", "0"}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{"CellTags", "\[Rule]", 
+            RowBox[{"{", "\"\<FooterCell\>\"", "}"}]}]}], "\n", "\t\t\t\t\t", 
+          "]"}], "&"}], "@", "\n", "\t\t\t\t\t", 
+        RowBox[{"Pane", "[", "\n", "\t\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Row", "@", "\n", "\t\t\t\t\t\t\t", 
+           RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"With", "[", 
+              RowBox[{
+               RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{"s", "=", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{"Replace", "[", 
+                  RowBox[{"submit", ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{
+                   "Automatic", ":>", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Button", "[", 
+                    RowBox[{"\"\<Submit\>\"", ",", 
+                    RowBox[{"DialogReturn", "[", "True", "]"}]}], "]"}]}]}], 
+                  "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", 
+                "\t\t\t\t\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+               
+               RowBox[{"(*", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"ExpressionCell", "[", 
+                   RowBox[{"#", ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"CellTags", "\[Rule]", "\"\<Return\>\""}], ",", 
+                    "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"CellMargins", "\[Rule]", "0"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"CellFrameMargins", "\[Rule]", "0"}]}], "\n", 
+                   "\t\t\t\t\t\t\t\t\t\t", "]"}], "&"}], "@"}], "*)"}], "\n", 
+               "\t\t\t\t\t\t\t\t\t", 
+               RowBox[{"Button", "[", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"Style", "[", 
+                  RowBox[{
+                   RowBox[{"First", "@", "s"}], ",", "\n", 
+                   "\t\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"Replace", "[", 
+                    RowBox[{
+                    RowBox[{"OptionValue", "@", "Appearance"}], ",", 
+                    RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"c_", "?", "ColorQ"}], "\[RuleDelayed]", "\n", 
+                    "\t", "\t", "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"ColorDistance", "[", 
+                    RowBox[{"c", ",", "Black", ",", 
+                    RowBox[{
+                    "DistanceFunction", "\[Rule]", "\"\<DeltaL\>\""}]}], 
+                    "]"}], ">", ".7"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "Black", ",", "\n", "\t", 
+                    "\t", "\t\t\t\t\t\t\t\t\t\t\t\t", "White"}], "\n", "\t", 
+                    "\t", "\t\t\t\t\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+                    "\t", "\t", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"_", "->", "White"}]}], "\n", "\t", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t", "}"}]}], "]"}]}], "\n", "\t", 
+                  "\t", "\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+                 "\t\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"s", "[", 
+                   RowBox[{"[", "2", "]"}], "]"}], ";", 
+                  RowBox[{"DialogReturn", "[", "]"}]}], ",", "\n", "\t", "\t",
+                  "\t", "\t", "\t", "\t", "\t\t\t\t", 
+                 RowBox[{"ImageSize", "\[Rule]", 
+                  RowBox[{"{", 
+                   RowBox[{"100", ",", "30"}], "}"}]}], ",", "\n", 
+                 "\t\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                 "Appearance", "\[Rule]", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"Replace", "[", 
+                    RowBox[{
+                    RowBox[{"OptionValue", "@", "Appearance"}], ",", 
+                    RowBox[{
+                    "{", "\n", "\t", "\t", "\t", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"c_", "?", "ColorQ"}], ":>", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "GradientButtonAppearance", "[", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    "c", ",", "c", ",", "\n", "\t", "\t", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Replace", "[", 
+                    RowBox[{
+                    RowBox[{"ColorConvert", "[", 
+                    RowBox[{"c", ",", "Hue"}], "]"}], ",", "\n", "\t", "\t", 
+                    "\t", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"Hue", "[", 
+                    RowBox[{"h_", ",", "s_", ",", "b_"}], "]"}], ":>", "\n", 
+                    "\t", "\t", "\t", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Hue", "[", 
+                    RowBox[{"h", ",", "s", ",", 
+                    RowBox[{"b", "*", "1.1"}]}], "]"}]}]}], "\n", "\t", "\t", 
+                    "\t", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t",
+                     "\t", "\t", "\t\t\t\t\t\t\t\t\t\t\t\t\t", "}"}], "\n", 
+                    "\t", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+                    "\t", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<OAuth\>\"", "->", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"\<Default\>\"", "\[Rule]", 
+                    GraphicsBox[
+                    TagBox[RasterBox[CompressedData["
+1:eJxTTMoPSmNiYGAo5gASQYnljkVFiZXBAkBOaF5xZnpeaopnXklqemqRRRIz
+UFAGiHmBmIUBBfwngFFAmrHxf2Ixsp6Zvr4E8TDW859EPf+Hgp5ZQDFCGF3P
+HD8/ghhdz1x/f4IYXc98oBghjK5nYUAAQYyuZ1FgIEGMrmdJUBBBjK5nWXAw
+QYyuZ3lICEGMrmcFUIwQplAPA4l6GIaCHhLLREJlLkYZDAA7N6DO
+                    
+                    "], {{0, 28}, {13, 0}}, {0, 255},
+                    ColorFunction->RGBColor],
+                    BoxForm`ImageTag[
+                    "Byte", ColorSpace -> "RGB", Interleaving -> True],
+                    Selectable->False],
+                    DefaultBaseStyle->"ImageGraphics",
+                    ImageSizeRaw->{13, 28},
+                    PlotRange->{{0, 13}, {0, 28}},
+                    ImageCache->GraphicsData["CompressedBitmap", "\<\
+eJyl1EtLAmEUBuCZ7KtF9A9aSIspF4KuyoUbg2rKGS+ptQhkzMAWUVS0axVh
+UEQXItTsfqdf4f+S03uOWTmMQTSgc3zPMyPzzZmxnK3S8qqztbLk+Kc2nPXS
+ytKmf3JtA5FP1zRtEJ8hv8Y1ofz8GuCdTuORiE7Y8MNHjUaDSjMzZA4Pa/0U
+NwydS522FxbaqJf3dFgs0tHEBF0lEooubRvHopTooFDQOvG+41DFNOk9l1P0
+ls0Co5QILQ98MT3NTtFLJgOMUqJ/4EAgQPOhENVt2405QgsYSDCvjmUYckUu
+zBFawJpsLWyPjFAdnVfGz4Jf+cyI0PLC+E+cVNHT3BwwSom8cc2y2Cl6SKeB
+UUrkjSvo3KfTiu5SKWCUEnXB8Tg7RbfJJDBKibzxxews3SSTiq4TCWCUEnnj
+c3SuGNcFo5SoC8bE1b8HiZeNI298hqmp2baiqmUBo5TIG5+iU2VcEYxSon9i
+no0uuHM2DECeuhPMowtz1Jo6IMHNZlPm+SAWc2OOWvMM1DH8v2L3k/InfIhH
+ucY3pSo3BaVEP7FP8N7iIu1Go1ofnZgmsmNc2c7YGOcu+VguUzYYhMSbBVkO
+S1PO5zlvyx7Z+SgUDlP7TSWLjswYHaXP7evE+gdzExfH\
+\>"]]}], ",", 
+                    RowBox[{"\"\<Hover\>\"", "\[Rule]", 
+                    GraphicsBox[
+                    TagBox[RasterBox[CompressedData["
+1:eJzd1DEKwkAQheFBLWwED5DGW9haSrqIB0hwDTZrsruJeCgjiop6uXVKMxbP
+xSou/IE8+NqZZNtk3SMiO+RPku5mxqT7xZh/ltpucq1Wc+1Ursw06/MYcSNu
+QK3nQa3n4th/27s5FAXsj40PNL4LpilLmDRH3lDSnIyBSXO2FibNhTeUNFfn
+YNLcqgomzZ03lDSPuoZJ8+QN9aOhQENdMIE3Ed3cjxv8AkYm/IA=
+                    
+                    "], {{0, 28}, {13, 0}}, {0, 255},
+                    ColorFunction->RGBColor],
+                    BoxForm`ImageTag[
+                    "Byte", ColorSpace -> "RGB", Interleaving -> True],
+                    Selectable->False],
+                    DefaultBaseStyle->"ImageGraphics",
+                    ImageSizeRaw->{13, 28},
+                    PlotRange->{{0, 13}, {0, 28}},
+                    ImageCache->GraphicsData["CompressedBitmap", "\<\
+eJyl1M9OGlEUBvA7nd66aHyDLlhhWNUFi9GV0cSu3BmLGyMgRkSccRjEla+g
+ppG4apv4pzFWsMZarU0XvBf5+p2j2DAdmhhvAvfwnR83zJ3LzOSjlVI1H5WL
++dS7MB+slIu11LQfMnIdY8wwX29SRmqwfHh7LZMDz/MccPCDi06ngyCXw2w2
+a4YwJy2WDraXl3vopcw4aDTwuVhE2/ctWr7P77LUqFmvm378oVbD2eoqfm9t
+WfxqNIhZasRWAj4tl8VZ/NzcJGap0TNwJpNBYWpKf2QMS8QWMZFi2Z3c2Bgu
+giCOJWKL2Oi4x/Pj42izcyf4VvGdrMyIrQTMHZNFLW64Wa6UGiXjc3ZuBF8r
+ZqlRMv66vo4f9brF9ygiZqlRMj6rVnEdRRZX3CxXSo2S8Sk7V4IvFbPUaDCm
+s/gWhsSXcp8G4i9ra7gIQ4v2xgYxS42S8Qk7bcEtxSw1SsbHlYo4i/MgIGap
+0TOxnI0BuP9spNNpFCYnccSTHsMSsUVMpLjb7ep5/ri0FMcS3Z9nor7D/18c
+/6c8CX8qleI3RaJ/8S7PYnNhAUeVipXLIj7kxe3wMcKW+ftwkdHa38fixIR5
+hfeex2yRu7PHpZn35AudXLwdHUXvYaX7ziw9MoKH8biw8we9K022\
+\>"]]}], ",", 
+                    RowBox[{"\"\<Pressed\>\"", "\[Rule]", 
+                    GraphicsBox[
+                    TagBox[RasterBox[CompressedData["
+1:eJxTTMoPSmNiYGAo5gASQYnljkVFiZXBAkBOaF5xZnpeaopnXklqemqRRRIz
+UFAGiHmBmIUBBfwngFFAjJ7ef2Ixsp5aOzuCeBjr+U+inv9012NvTxCj62lw
+cCCI0fU0OzoSxOh6Wp2dCWJ0PR0uLgQxup5uV1eCGF1Pr7s7QYyuZ4KHB0GM
+rmeylxdBjK5nmrc3QYyuZ7qPD0FMoR4GEvUwDAU9JJaJhMpcjDIYAHUsdEc=
+
+                    "], {{0, 28}, {13, 0}}, {0, 255},
+                    ColorFunction->RGBColor],
+                    BoxForm`ImageTag[
+                    "Byte", ColorSpace -> "RGB", Interleaving -> True],
+                    Selectable->False],
+                    DefaultBaseStyle->"ImageGraphics",
+                    ImageSizeRaw->{13, 28},
+                    PlotRange->{{0, 13}, {0, 28}},
+                    ImageCache->GraphicsData["CompressedBitmap", "\<\
+eJyllN1KG1EUhWc6Pe1F6RsUCRFSI15UQagYJxmdn2gc640giGIqpXohSvTC
+Qk2MjVaxFcXSv5u+S94rrK69MbadTCilBzJnzdpf9pyzZ8+Jq/ubr7ar+1sb
+1UxUq+5ubm3sZcKdGi3HtizrMX9PMpZoUN5eHslk4/nEhA0O3txHu93GyyiC
+NzAAP5s1CLJZyxGp1u7SktWFHZnRWl9Ho1CwHuJjFNkibRyvrf3KKONodRVn
+nofvCwsG3+KY/6VUiyGrF35fKuFrHBt8mZ8nTKnWf8D5fB4vRkZklUlYLIYI
+E1JYqsON47JcTsJiSU1srWEXDgcHNQ05g8+VCmFKtRhKwBHhizDEp0rF4GZu
+jjClWlEqfO77uJ6dNbgqlwlTqpUOnzLCRRp5OGFZ72lf+GR6Gh/C0OAiCAhT
+qpUOH/N1nQeBwZnvE6ZUKx0+4hvgcw1OZmYIyxLESofrxSJanmfwzvMIU6qV
+Dr91XTRLJSP5CFOqlQ6/mZqSVAaHxSJhySpWH7hQQN11CbuuwMwqVi8csjf6
+wOEfvZHL5bDIrjuYnEzCYi1q1xFSuNPpoMl+ro2PJ2GxmtrPhO6a/6/w71/K
+P8N7jDQEritMqVYvfLi8jO2xMdm+wQHPAkc395r7ZihxXvxotRAPD1sPELCs
+jn6TjZUV8bvkPZ0cPBsdRfew0rrTezo0hNtxl9j+CcmyAGQ=\
+\>"]]}]}], "}"}]}], ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<Password\>\"", "->", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"\<Default\>\"", "\[Rule]", 
+                    GraphicsBox[
+                    TagBox[RasterBox[CompressedData["
+1:eJxTTMoPSmNiYGAo5gASQYnljkVFiZXBAkBOaF5xZnpeaopnXklqemqRRRIz
+UFAGiHmBmIUBBfwngFGAa5rtf2Ixsp6MmTEE8TDW859EPf+Hgp7MWTEEMbqe
+rDmxBDG6nuy5cQQxup6c+fEEMbqe3IUJBDG6nrxFiQQxup6CJUkEMbqewmXJ
+BDG6nqLlKQQxhp4VqQQxhXoYSNTDMBT0kFgmEipzMcpgALzlzcw=
+                    
+                    "], {{0, 28}, {13, 0}}, {0, 255},
+                    ColorFunction->RGBColor],
+                    BoxForm`ImageTag[
+                    "Byte", ColorSpace -> "RGB", Interleaving -> True],
+                    Selectable->False],
+                    DefaultBaseStyle->"ImageGraphics",
+                    ImageSizeRaw->{13, 28},
+                    PlotRange->{{0, 13}, {0, 28}},
+                    ImageCache->GraphicsData["CompressedBitmap", "\<\
+eJyl1NtqE1EUBuAZ49YL8Q28yFVKhNYWq7ag3qkUUqmnNNXMtHNqzqZNg3de
+iSi0iq1IieezVnyKvFf4/ddKo2ScCNINyV759zcDs1iZea9djhpeuxJ46Sst
+b61cCTbSl5stRinbsqzj/JxIW1KD5f7XMdlszM7M2uDijxS63S5ulhcwOXfS
+OorTuXFbShv+PXeADsuO1lYd7tMbqL1dNqi+dnktS43WN6vWMG4+riDqLKH9
+s2Sw8WOVmKVGPErA4W5BnEHre0TMUqMD4Gw2i4uLM6i+ceNYIh4REymW7kzP
+T+gTxbBEPCK2dPXxmaunUJM770XE30LBe5FGPErEDm8aGqx/DYhZapSMq68c
+cQZrn31ilhol43KniOYn3+DuR4+YpUbJuNS5I86g8WGFmKVGyXh19zYa71cM
+6u+WiVlqNAK/WEJdZoM9IGapUTKOeEIng+TIILFt0UgcPi/I4xtUXhaJpRMS
+JeNgp0BHzB4Qs9TogFhmYwQeno1MJqNT528vxrFE/akjUtzr9XSei5vX4lii
+/jwTDQ3/P3H8n/Jf2Nm6zua60mdH++xq9DeuPQyRf5BDsF0w8ljE/rM8Fu5f
+kiPrz8tF1s6XJzh/66x1BNO5CWYX8ufQeFSSfCAP6ZbC1OQUBi8r7TuzscwY
+9tfvG9u/AB4kMzI=\
+\>"]]}], ",", 
+                    RowBox[{"\"\<Hover\>\"", "\[Rule]", 
+                    GraphicsBox[
+                    TagBox[RasterBox[CompressedData["
+1:eJxTTMoPSmNiYGAo5gASQYnljkVFiZXBAkBOaF5xZnpeaopnXklqemqRRRIz
+UFAGiHmBmIUBBfwngFFAZEnwf2Ixsp62tTUE8TDW859EPf+Hgp72dbUEMbqe
+jvV1BDG6ns6NdQQxhp5N9QQxup6uLQ0EMbqe7q2NBDG6np5tTQQxup7eHc0E
+Mbqevp3NBDG6nv5dLQQxhXoYSNTDMBT0kFgmEipzMcpgAEESIOE=
+                    
+                    "], {{0, 28}, {13, 0}}, {0, 255},
+                    ColorFunction->RGBColor],
+                    BoxForm`ImageTag[
+                    "Byte", ColorSpace -> "RGB", Interleaving -> True],
+                    Selectable->False],
+                    DefaultBaseStyle->"ImageGraphics",
+                    ImageSizeRaw->{13, 28},
+                    PlotRange->{{0, 13}, {0, 28}},
+                    ImageCache->GraphicsData["CompressedBitmap", "\<\
+eJyl1EtvEmEYBeAZ8dOF8R+4YEXDyi6Ji9ZYUzXanWl1YQJtTGi8QLClXIdL
+gV4trSaNcVFNvKWpBSRatTYu+F/keN63RQsOMaZfAnM438OEmbzMWGgmfP9R
+aGZ6KuS9FgtFw9NTT7yjkRgrj21Z1nm+LngtyWA8ejsnBxuBQMAGFz940Gq1
+EIzew/DtS9ZZXBkfsiXaeOw86KDTckTxRRbJ1xFU6hmDSi3D7zJqld9MW93Y
+eZ5EYWcOz35WDDYOysSMWnHLBee341g/KBtU90vEjFqdAPv9foxN3tAf2YOl
+4hYxkWK5OyN3hrHQyPZiqbhFbOk6xFfvXtbTVH+UDNa+zxMzasUtN1zLYG2f
++Ok3wYxauePyblqcwepekZhRK3dc+pjG6teiwcqXAjGjVu54fieFlb2CwfLn
+PDGjVu64uJ0UZ7DUzBEzatUPJ7DczBF/cgQ3c1r1wR8SWGoQL9YFM2rljgvv
+58QZLNSyxIxaueP8u7g4juiujCijVifEMht9cPds+Hw+nbrc29leLNXh1BEp
+brfbHNoUkluRXiwVt4iJjg3/P3D3P+U/cepVFIsNuc91vc8NR6u/cWo9jthm
+mFcUN3JZxM6bWTysTsqW9efhImur9hI3g6PWGYxMDLG7FbyOzEZC+o48pQcP
+Bi8OovOw0vvObsA3gKP1+8T2LxfnYdY=\
+\>"]]}], ",", 
+                    RowBox[{"\"\<Pressed\>\"", "\[Rule]", 
+                    GraphicsBox[
+                    TagBox[RasterBox[CompressedData["
+1:eJxTTMoPSmNiYGAo5gASQYnljkVFiZXBAkBOaF5xZnpeaopnXklqemqRRRIz
+UFAGiHmBmIUBBfwngFGAXYz5f2Ixsp7QWm+CeBjr+U+inv9DQU94gy9BjK4n
+stmPIEbXE90aQBCj64npCCKI0fXEdQcTxOh6EnpDCWJ0PUkTwglidD0pkyMI
+YnQ9adOiCGJ0PenTowliCvUwkKiHYSjoIbFMJFTmYpTBADDZm5A=
+                    
+                    "], {{0, 28}, {13, 0}}, {0, 255},
+                    ColorFunction->RGBColor],
+                    BoxForm`ImageTag[
+                    "Byte", ColorSpace -> "RGB", Interleaving -> True],
+                    Selectable->False],
+                    DefaultBaseStyle->"ImageGraphics",
+                    ImageSizeRaw->{13, 28},
+                    PlotRange->{{0, 13}, {0, 28}},
+                    ImageCache->GraphicsData["CompressedBitmap", "\<\
+eJyl1F1P01AcBvDWefTC+A282I3DYsJYuHDcmEB0G+yNjsFGN8C9uTZKIIOL
+mYgbCAhRiUbj243fZd9reXz+RyZaaoyhydZnz/nttD1pm63tuK2N2o7XqIWT
+ndqW6zW2w4nNDquQaRjGTX5uhQ3JYDz7uiE7E9PxaRPc+OMqBoMB7HoGd2du
+Y+KBpTDx0DJCEnW1tuUYIxySPZ4etFHszRnX8ejtkinRxJP91vmMsnn9JirH
+eXjfVhXcr1X+l/Fn1W8aF7HzKgf3S1Wh/blCzKirS2DLshDPT8lZ+rFUHCIm
+0lhWhxeO2umyH0sla2LqNRzhaGJcT0On8PiTQ8yoKw758GRyHGuvF9H6uKLQ
+/FAmZtQVhwLw6kkBjfdlhfq7EjGjroJx5ciWk1RycGI5X6mCsXOYx/qbopKD
+EzPqKhiX93M87qJC9bhAzKirYFzqZ1E9shUqhwvEjLoKxssv0nAO8gorL3PE
+jLoKxsXn8yjv5ZTMR8yoq2BceDYnUyks7aaJZVapLomjCetvmEO/4UgkgvjC
+FOxuyo+l4hAxkcbD4RDeXhPpzqwfS8UhYqLzm/9f+I8n5X9xZnsWpV5GkWWI
+GXV1Ebd215HcuM/LTykUuiliu5vETDsuQ773xen3E9zLxoxriOo3izyTbq8u
+/Uhe0bsQYpMxjF5Wet3ZjY3dwdn2a2LzB44RFl8=\
+\>"]]}]}], "}"}]}], ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "_", ":>", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"\<Default\>\"", "\[Rule]", 
+                    GraphicsBox[
+                    TagBox[RasterBox[CompressedData["
+1:eJxTTMoPSmNiYGAo5gASQYnljkVFiZXBAkBOaF5xZnpeaopnXklqemqRRRIz
+UFAGiHmBmIUBBfwngFGBTv5/ojGyHqdlhPHw1fOfRD3/h4Qe5+WEMboel1WE
+Mboe17WEMboetw2EMboe982EMboez62EMboerx2EMboe792EMboen32EMboe
+3/2EMWV6GEjUwzAk9JBWJhIqczHKYAD7oFbD
+                    "], {{0, 28}, {13, 
+                    0}}, {0, 255},
+                    ColorFunction->RGBColor],
+                    BoxForm`ImageTag[
+                    "Byte", ColorSpace -> "RGB", Interleaving -> True],
+                    Selectable->False],
+                    DefaultBaseStyle->"ImageGraphics",
+                    ImageSizeRaw->{13, 28},
+                    PlotRange->{{0, 13}, {0, 28}},
+                    ImageCache->GraphicsData["CompressedBitmap", "\<\
+eJyl1FtLAkEYBuDZzKLTP+hCu5DEIoouUuykZWVZUUbQQRAJ8iKK6q7LroIo
+iKBuKopI7WQYUhSd7HfJ1/vNaCK7EuHAOuO7zy4zs99uILy5vLQS3oxGwpah
+9fDacjSyYfGtriMyaUKIBhyNFsFjwjD3U8edRi5nl0Zo+GOiTCZDLb4VEo2T
+opqEdUrjIVBwK48quSd36JCE+5zEcMpMYugB12IoI9fCgSjGrvl9Ep57EhPf
+wONfjCe+ZYRTRrj/lh1w4IPx+JeMysB2u51qHCFMNaXDiHAKGEhiuUXWIFb0
+qMMcWYPAQrYcbppRdw58Ao+9Mw58qqhpxgj7HuDegEdfGY+9qcgYD97BvQD7
+nxmPvqioBL6BewIeSTP2P6nIGHsTWFGan+CjfIJpFRljT4xXZOaZMubFcWSM
++y/hkmaeKWNfUkUl8AVPEnjgmjHPlyNj3HcGFwf2xhgPxFVkjHvP2AF7rhh7
+YyoqE3NtlMBFtWGz2VTV9ZzqMCJVdUASZ7NZvDuo564jHUaEU8BAheL/Cxe9
+Kf/GzmNsboL3OS73OSEjPe6c3SXRiQt6T6uwrBMsv3VH47jwXeEW3b6h+uYF
+AWSdRlbrWKTuuT3O83eskJ2JOtrbKP+dkluOzN5so1z7nYD2A6AL7yk=\
+\>"]]}], ",", 
+                    RowBox[{"\"\<Hover\>\"", "\[Rule]", 
+                    GraphicsBox[
+                    TagBox[RasterBox[CompressedData["
+1:eJxTTMoPSmNiYGAo5gASQYnljkVFiZXBAkBOaF5xZnpeaopnXklqemqRRRIz
+UFAGiHmBmIUBBfwngFGAkmvVf2Ixsh7jjB0E8TDW859EPf+Hhp6dBDGGnszd
+BDGGnqy9BDGGnuwDBDGGnpxDBDGGntwjBDGGnrxjBDGGnvyTBDGGnoLTBDGm
+njMEMYV6GEjUwzAU9JBYJhIqczHKYAATccEy
+                    "], {{0, 28}, {13, 
+                    0}}, {0, 255},
+                    ColorFunction->RGBColor],
+                    BoxForm`ImageTag[
+                    "Byte", ColorSpace -> "RGB", Interleaving -> True],
+                    Selectable->False],
+                    DefaultBaseStyle->"ImageGraphics",
+                    ImageSizeRaw->{13, 28},
+                    PlotRange->{{0, 13}, {0, 28}},
+                    ImageCache->GraphicsData["CompressedBitmap", "\<\
+eJyt1E1LG1EUBuA7pupCXHYRERoRo1mZGKUItnSlKz8QPwoaIZlEZ6Jxkui2
+i/6FIooiuNVN/EDEJIbKIKJYpX8onL7njKkaM4LoheTevOfJEO49ucPRVSOR
+iq6aetQ3lI2mDVNf8Q1aWUQeTSnVjFerT/GasLx/a+JJo/7+zxph4IOHbNum
+bxMr9DH4XTWSNzyj8VKjkdjPCvrAM01nt6kzkqOg+buegkYJ38VSosnMlnqK
+J6wNCsSLFM7+radw5g4YS4lQqoX1PDvg9B/GmTuJ3oADgQC1f52XH1mFOUIJ
+GEgw7463d5ZCyfNqzBFKwEqGg1v6Iqjwk28Z3wi+lQilWtgssQO2rhmnbyRy
+wQa2zroCXr5kbF1JVAvPUWghzw44dcF4+VIilGrh+VN2wEs249SFRG74hB3w
+4jnjJVsiF5w4hkNvhJPcG1hK5ILjR+yAzSLjZEkiF6wfsAM28ozNokQv4QLj
+U8GF98De3ogbRukR9vv9TtfF9qsxR07XAQkul8tOP8/uVmOOnH4Getr8L+Fn
+/5RX4cgeTuKMD6Ugh3Im0XM8urhGHVM7FNT3cRXEcsDdsRx9Gtvkknq4XHj8
++HVIbQNx1YCdmkHW/iVB46l1ziuyTiYP9YS6qXJZyb4j6+r00/34/2DtHwp5
+LBk=\
+\>"]]}], ",", 
+                    RowBox[{"\"\<Pressed\>\"", "\[Rule]", 
+                    GraphicsBox[
+                    TagBox[RasterBox[CompressedData["
+1:eJxTTMoPSmNiYGAo5gASQYnljkVFiZXBAkBOaF5xZnpeaopnXklqemqRRRIz
+UFAGiHmBmIUBBfwngFGBRvJ/ojGyHvMOwnj46vlPop7/9NfTSRij67HoJozR
+9Vj2EcboeqwmEsboeqwnE8boemymE8boeuxmE8boehwWEMboepyWEsboelxW
+EcboelzXEMaU6WEgUQ/DkNBDWplIqMzFKIMBfRg0Sw==
+                    "], {{0, 
+                    28}, {13, 0}}, {0, 255},
+                    ColorFunction->RGBColor],
+                    BoxForm`ImageTag[
+                    "Byte", ColorSpace -> "RGB", Interleaving -> True],
+                    Selectable->False],
+                    DefaultBaseStyle->"ImageGraphics",
+                    ImageSizeRaw->{13, 28},
+                    PlotRange->{{0, 13}, {0, 28}},
+                    ImageCache->GraphicsData["CompressedBitmap", "\<\
+eJyl1O9LU1EYB/BnzRtY9gcIMffGsVFEyczd68yZulHamzIqejUkcS/EXwPf
+2IsyRZdlmaDUoEWEECL+Dfu/xtP3e87M3D0jogO799zv+fDcu3POvQ+K5dkX
+c8VyaboYLywVF2ZL08vx/PwSomhERK7gdzUu7Cu6zcNlniIa+JmIouGiQ+v1
+ul4fm1HpLqjE7nk43JcouyYKHpblDLNln1dU+j+o5GrAua/EuZqJgmebLTh4
+uqESVFUKJ8D5Y+LCiYkw5ML+Zzrg8SPi/LGJ/gOnUintTD62D9mCEWEIGMhg
+M1WxCZWRbyHMKDYBLKY1cc8kJ4EOeOwn8fiRjXomXfjOF5XRQ+C7P4hHD23k
+xkP7vC/nuUbMR2DkxoOfVIarHusRD1dt5MY+VjB7AJzdJ84e2MiNM+9Qas9j
+PeLBPRu1wW+xvrvAwUfiYNdGbjywhfvuAPvvif0dG7nxbSx5ZttjPeLMto3c
+uH8dpSoe6xEPVGzUBr+hI940eMtGYcy90Qaf2xuJRMLuuvRaCCOyuw7I4Eaj
+gXcH/+TGaggjwhAw0Nnm/xs+96b8O34ZmjpEf+Kowemp1yrXVuQiJmCNMo3r
+3kXmLbL06rt29T6iNJ+XS8kpHXqyzvxUXjCnqPbduqmnXywz6chSyYQ22+/C
+kV+bYd8w\
+\>"]]}]}], "}"}]}]}], "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", "}"}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "l_List", ":>", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Append", "[", 
+                    RowBox[{"l", ",", 
+                    RowBox[{
+                    "\"\<ButtonType\>\"", " ", "->", " ", 
+                    "\"\<Default\>\""}]}], "]"}]}]}], "\n", 
+                   "\t\t\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", 
+                "\t\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t\t\t", 
+              "]"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+             RowBox[{"Spacer", "[", 
+              RowBox[{"{", 
+               RowBox[{"10", ",", "0"}], "}"}], "]"}], ",", "\n", 
+             "\t\t\t\t\t\t\t\t", 
+             RowBox[{"With", "[", 
+              RowBox[{
+               RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{"c", "=", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{"Replace", "[", 
+                  RowBox[{"cancel", ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{
+                   "Automatic", ":>", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Button", "[", 
+                    RowBox[{"\"\<Cancel\>\"", ",", 
+                    RowBox[{"DialogReturn", "[", "$Canceled", "]"}]}], 
+                    "]"}]}]}], "\n", "\t\t\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", 
+                "\t\t\t\t\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+               
+               RowBox[{"Button", "[", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"First", "@", "c"}], ",", "\n", "\t", 
+                 "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"c", "[", 
+                   RowBox[{"[", "2", "]"}], "]"}], ";", "\n", 
+                  "\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"DialogReturn", "[", "$Canceled", "]"}]}], ",", 
+                 "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"ImageSize", "\[Rule]", 
+                  RowBox[{"{", 
+                   RowBox[{"100", ",", "30"}], "}"}]}], ",", "\n", "\t", "\t",
+                  "\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                 "Appearance", "\[Rule]", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"\"\<Default\>\"", "\[Rule]", 
+                    GraphicsBox[
+                    TagBox[RasterBox[CompressedData["
+1:eJzV1EEKgkAYhuGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKRxNFUVFEEVF0bUMU
+5NfiS1r1wzvMDDzbf66e1vuBEOI8lsdauS4NQ7ltpvKx1c/Hg67tVvpFO2jG
+Qh3Kz5lsIhuJzrSkzpim2X7bu7Esi4bGtm0aGsdxaGhc16Wh8TyP9mYed9/3
+aU/TvkwQBDQ0YRjS0ERRREMTxzENTZIkNDRpmtLQZFlGQ5PnOQ1NURQ0NGVZ
+0tBUVUVDU9c1DU3TNLQfjehpxD+YnjuR7dyPHXwHy1co2w==
+                    "], {{0, 
+                    28}, {13, 0}}, {0, 255},
+                    ColorFunction->RGBColor],
+                    BoxForm`ImageTag[
+                    "Byte", ColorSpace -> "RGB", Interleaving -> True],
+                    Selectable->False],
+                    DefaultBaseStyle->"ImageGraphics",
+                    ImageSizeRaw->{13, 28},
+                    PlotRange->{{0, 13}, {0, 28}},
+                    ImageCache->GraphicsData["CompressedBitmap", "\<\
+eJyllLuKWlEUhs+J2Zki5A1S2CjY2PoGSZWHkCEwU4SIl04tfQJfQy3Eykpt
+xQsIKt7v4gXxLoKs/Gs5Jmh2Nxv0/H77c3NYa53zw+1/+fnL7X99dlu/e92e
+l9dnn/Xbby+QxTQM4ws+X60GZ0J8+/rMF5NcLpdJWPhhoWw2S5FIhDwej/FE
+Xq/X5GhSNBq9SR/5SqlUiiqVCk0mE0Wj0Qj/RRSUTCaNezmRSFC/36fz+azo
+dDpBRhSELY3c7XbpeDwq2u/3kBEFvUN2OBwUDoflJh9kRtiCDElkro7f76fp
+dPooM8IWZEPWVQ4EAnLM4XBQtNvtICMKwpZGRsXYU7TZbCAjCtLLw+GQttut
+ovV6DRlRkF4eDAbsKVqtVpARBenlXq/HnqLlcgkZUZBe5qLCUzSfzyEjCtLL
+nU6HFouFotlsBhlRkF5utVrsKa4uZERBernZbLKnaDweQ+aGMNLLjUbjcUQZ
+6eV6vc6e4oJB5oYw+l/m2ajVatwFxVMMmRvC6H427Ha7TF21WuVDFVcXMjeE
+0XXqIIl8uVxknovFInuKCwaZG8LoOs+Q7oa/UChwFxS1223I3BBG+icln8+z
+p7hgkBEFvVOOxWKUyWSoXC4rvlPIpVKJ0uk0bxn/Xi68crkchUIh4xP5fD6w
+YDBI8Xic+c38IBcLOZ1Our2spO5gNpuN3tbfg80/0yP18g==\
+\>"]]}], ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"\"\<Hover\>\"", "\[Rule]", 
+                    GraphicsBox[
+                    TagBox[RasterBox[CompressedData["
+1:eJzV1E0KgkAYxvGhWrQJOkCbbtG2ZduiAyhZtDGwIDqKx/MDP1FRUZc2REE+
+LZ6kVS/8h5mB3/adq6f1fiCEOI/lsVauS8NQbpupfGz18/Gga7uVftEOmrFQ
+h/JzJpvIRqIzLakzpmm23/ZuLMuiobFtm4bGcRwaGtd1aWg8z6O9mcfd933a
+07QvEwQBDU0YhjQ0URTR0MRxTEOTJAkNTZqmNDRZltHQ5HlOQ1MUBQ1NWZY0
+NFVV0dDUdU1D0zQN7UcjehrxD6bnTmQ792MH3wFFhzOd
+                    "], {{0, 
+                    28}, {13, 0}}, {0, 255},
+                    ColorFunction->RGBColor],
+                    BoxForm`ImageTag[
+                    "Byte", ColorSpace -> "RGB", Interleaving -> True],
+                    Selectable->False],
+                    DefaultBaseStyle->"ImageGraphics",
+                    ImageSizeRaw->{13, 28},
+                    PlotRange->{{0, 13}, {0, 28}},
+                    ImageCache->GraphicsData["CompressedBitmap", "\<\
+eJyllDmOWkEQht8zbjmwfAMHJCCRTMoNxpEPgUaWZgLLiCVDhJyAawABIkcg
+cQDWALHv+74KVP6rAEvgHiduCfp/f32U0Ku/+7vL9/rjp8v39uKyfvO43K9v
+L17r8y8PLItpGMYXfL5aDdYEef36zJtJTqfTJCw8WCiVSlEoFCK32218Io/H
+Y7I0KRwO36CPvFMikaBCoUD9fl9Rr9fDbyHFisfjxj0ci8Wo3W7T6XRSdDwe
+AUOKhZIGbjabdDgcFO12O8CQYv0H7HA4KBgMyp98gNlCCTAggfnt+Hw+GgwG
+jzBbKAE2ZF1gv98vbfb7vaLtdgsYUiyU3oHRVNFmswEM+Q+42+0yp2i1WgGG
+FEsPdzodWq/XipbLJWBIsfQwTwBNFS0WC8CQYunhVqvFnKLZbAYYUiw9zBOY
+z+eKptMpYEix9HCj0eCmiiaTCWBIsfRwvV5nTtFoNAIMKZYertVqNB6PFQ2H
+Q8CQYunharXKTRUPGTCkWH/DnI1KpcJNFc8NMKRY99mw2+2SunK5zE1vJ4VD
+xNYldYAEPp/Pkud8Pn85Vhjy9VixdckzoLvw53I55hTPDTDngi39SclmsxwG
+xXMDzLlg6334obMejkQilMlkqFQqKb4AABeLRUomk1x6gNPpNAUCAb5aFHm9
+XsD8GI1GuXSDP8hmoaenJ7rdV/Lq4dlsNrquP73N32HO/aU=\
+\>"]]}], ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"\"\<Pressed\>\"", "\[Rule]", 
+                    GraphicsBox[
+                    TagBox[RasterBox[CompressedData["
+1:eJxTTMoPSmNiYGAo5gASQYnljkVFiZXBAkBOaF5xZnpeaopnXklqemqRRRIz
+UFAGiHmBmIUBBfwngFHAzJkz/xOLkfVs27aNIB7Gev6TqOc/vfVs376dIEbX
+s2fPHoIYXc/BgwcJYnQ9x44dI4jR9Zw+fZogRtdz/vx5ghhdz6VLlwhidD1X
+r14liNH13LhxgyBG13P79m2CGF3PnTt3CGIK9TCQqIdhKOghsUwkVOZilMEA
+mEXTyg==
+                    "], {{0, 28}, {13, 0}}, {0, 255},
+                    ColorFunction->RGBColor],
+                    BoxForm`ImageTag[
+                    "Byte", ColorSpace -> "RGB", Interleaving -> True],
+                    Selectable->False],
+                    DefaultBaseStyle->"ImageGraphics",
+                    ImageSizeRaw->{13, 28},
+                    PlotRange->{{0, 13}, {0, 28}},
+                    ImageCache->GraphicsData["CompressedBitmap", "\<\
+eJyllMuKGkEUhrtjKlmEeYMs3Ci4cesbJKs8hAyBmUVIHFt34s4n8BXciQpe
+ERW8oIiioijiDV9ETv6/Roexp4ZhmAKtv7/zWXZXn+5fYefu95+wc38b9v58
+CP+7u7+Nen/8fQDy2JZl3eDz3WsxC+L56xsnW0KhkC0YOPBIp9ORVColkUjE
++irRaNRmtCWdTl+kz5ylXC5Lr9eTxWKhZD6f47eIGhWLRetazufzMplM5Hg8
+KjkcDpARNULJII/HY3pKdrsdZESNPiAHAgFJJpM8VbdMhBJkSFrm7sRiMX1F
+LpkIJciWHo9yPB7Xlf1+r2S73UJG1AglgzybzWSz2ShZr9eQETUyy9yn1Wql
+ZLlcQkbUyCyPRiP3TSEyy8PhkP+rZDqdQuYpEJnlfr/PjVVcDzL3mMgss5EG
+g4GiAhlRI7PcarVYVdJut89NSGSW6/W6NJtNJY1GAzKiRma5UqlIrVZTUq1W
+ISNqZJbZ0/AUFciIGr2U2RuvyNe94ff7ddeVSiW3TPTYdZC0fDqdpFAoSC6X
+c8tEKEGG9NT8b8rPn5R3y3y0XFtH9FLmEtlslpf/hZdlSyaTsYmvvW63K4lE
+gm8VJY7jYFEeclGULot+0pNHgsGgXF5VetfBfD6fnMfTOdj/AVAxyoE=\
+\>"]]}], ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<ButtonType\>\"", " ", "->", " ", 
+                    "\"\<Cancel\>\""}]}], "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                   "}"}]}]}], "\n", "\t\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", 
+              "\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t\t", 
+            "}"}]}], ",", "\n", "\t\t\t\t\t\t", 
+          RowBox[{"ImageSize", "\[Rule]", "\n", "\t\t\t\t\t\t\t", 
+           RowBox[{"Replace", "[", 
+            RowBox[{
+             RowBox[{"OptionValue", "[", "WindowSize", "]"}], ",", 
+             RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"{", 
+                 RowBox[{"w_", ",", "h_"}], "}"}], ":>", "\n", "\t", "\t", 
+                "\t\t\t\t\t\t\t", 
+                RowBox[{"{", 
+                 RowBox[{
+                  RowBox[{"Replace", "[", 
+                   RowBox[{"w", ",", 
+                    RowBox[{
+                    RowBox[{"Automatic", "|", "Fit"}], "\[Rule]", "400"}]}], 
+                   "]"}], ",", 
+                  RowBox[{"100", "-", "70"}]}], "}"}]}], ",", "\n", "\t", 
+               "\t\t\t\t\t\t\t", 
+               RowBox[{
+               "w_Integer", ":>", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
+                RowBox[{"{", 
+                 RowBox[{"w", ",", 
+                  RowBox[{"100", "-", "70"}]}], "}"}]}], ",", "\n", "\t", 
+               "\t\t\t\t\t\t\t", 
+               RowBox[{"_", "\[Rule]", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
+                RowBox[{"{", 
+                 RowBox[{"400", ",", 
+                  RowBox[{"100", "-", "70"}]}], "}"}]}]}], "\n", 
+              "\t\t\t\t\t\t\t\t", "}"}]}], "]"}]}], ",", "\n", "\t", "\t", 
+          "\t\t\t\t", 
+          RowBox[{"Alignment", "\[Rule]", 
+           RowBox[{"{", 
+            RowBox[{"Left", ",", "Center"}], "}"}]}]}], "\n", "\t\t\t\t\t\t", 
+         "]"}]}]}], "\n", "\t\t\t\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{"WindowSize", "\[Rule]", "\n", "\t\t\t", 
+      RowBox[{"Replace", "[", 
+       RowBox[{
+        RowBox[{"OptionValue", "@", "WindowSize"}], ",", 
+        RowBox[{"{", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"w_", ",", "h_"}], "}"}], ":>", "\n", "\t\t\t\t\t", 
+           RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Replace", "[", 
+              RowBox[{"w", ",", 
+               RowBox[{"Automatic", "\[Rule]", "400"}]}], "]"}], ",", "\n", 
+             "\t\t\t\t\t\t", 
+             RowBox[{"Replace", "[", 
+              RowBox[{"h", ",", 
+               RowBox[{"Automatic", "\[Rule]", "450"}]}], "]"}]}], "\n", 
+            "\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"w_Integer", ":>", "\n", "\t\t\t\t\t", 
+           RowBox[{"{", 
+            RowBox[{"w", ",", "450"}], "}"}]}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"_", "->", 
+           RowBox[{"{", 
+            RowBox[{"400", ",", "450"}], "}"}]}]}], "\n", "\t\t\t\t", "}"}]}],
+        "]"}]}], ",", "\n", "\t\t", 
+     RowBox[{"Sequence", "@@", "\n", "\t\t\t", 
+      RowBox[{"FilterRules", "[", 
+       RowBox[{
+        RowBox[{"{", "\n", "\t\t\t\t", "ops", "\n", "\t\t\t\t", "}"}], ",", 
+        "\n", "\t\t\t\t", 
+        RowBox[{"Options", "@", "DialogInput"}]}], "\n", "\t", "\t\t\t", 
+       "]"}]}], ",", "\n", "\t\t", 
+     RowBox[{"DockedCells", "\[Rule]", "\n", "\t\t\t", 
+      RowBox[{"Cell", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"BoxData", "@", 
+         RowBox[{"ToBoxes", "@", "\n", "\t\t\t\t\t", 
+          RowBox[{"Pane", "[", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"If", "[", 
+             RowBox[{
+              RowBox[{"StringQ", "@", "banner"}], ",", 
+              RowBox[{"RawBoxes", "@", "banner"}], ",", "banner"}], "]"}], 
+            ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"Scaled", "[", ".7", "]"}], ",", "30"}], "}"}], ",", 
+            "\n", "\t\t\t\t\t\t", 
+            RowBox[{"Alignment", "->", 
+             RowBox[{"{", 
+              RowBox[{"Center", ",", "Center"}], "}"}]}], ",", "\n", 
+            "\t\t\t\t\t\t", 
+            RowBox[{"ImageSizeAction", "\[Rule]", "\"\<ResizeToFit\>\""}]}], 
+           "\n", "\t\t\t\t\t\t", "]"}]}]}], ",", "\n", "\t\t\t\t", 
+        "\"\<Panel\>\"", ",", "\n", "\t\t\t\t", 
+        RowBox[{"FontFamily", "\[Rule]", "\"\<Times\>\""}], ",", "\n", 
+        "\t\t\t\t", 
+        RowBox[{"FontColor", "\[Rule]", "\n", "\t\t\t\t\t", 
+         RowBox[{"Replace", "[", 
+          RowBox[{
+           RowBox[{"OptionValue", "[", "Appearance", "]"}], ",", 
+           RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"c_", "?", "ColorQ"}], ":>", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"Replace", "[", 
+               RowBox[{
+                RowBox[{"ColorConvert", "[", 
+                 RowBox[{"c", ",", "Hue"}], "]"}], ",", "\n", 
+                "\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"Hue", "[", 
+                  RowBox[{"h_", ",", "_", ",", "b_"}], "]"}], ":>", "\n", 
+                 "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{"If", "[", 
+                  RowBox[{
+                   RowBox[{"b", ">", ".7"}], ",", "\n", 
+                   "\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"Hue", "[", 
+                    RowBox[{"h", ",", ".1", ",", ".2"}], "]"}], ",", "\n", 
+                   "\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"Hue", "[", 
+                    RowBox[{"h", ",", ".05", ",", ".95"}], "]"}]}], "\n", 
+                  "\t\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t\t\t",
+                "]"}]}], ",", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"\"\<OAuth\>\"", "\[Rule]", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"Hue", "[", 
+               RowBox[{"0", ",", ".03", ",", ".95"}], "]"}]}], ",", "\n", 
+             "\t\t\t\t\t\t", 
+             RowBox[{"\"\<Password\>\"", "\[Rule]", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"Hue", "[", 
+               RowBox[{".3", ",", ".03", ",", ".95"}], "]"}]}], ",", "\n", 
+             "\t\t\t\t\t\t", 
+             RowBox[{"_", "->", 
+              RowBox[{"Hue", "[", 
+               RowBox[{".6", ",", ".05", ",", ".95"}], "]"}]}]}], "\n", 
+            "\t\t\t\t\t\t", "}"}]}], "]"}]}], ",", "\n", "\t\t\t\t", 
+        RowBox[{"TextAlignment", "\[Rule]", "Center"}], ",", "\n", "\t\t\t\t", 
+        RowBox[{"Background", "\[Rule]", "\n", "\t\t\t\t\t", 
+         RowBox[{"Replace", "[", 
+          RowBox[{
+           RowBox[{"OptionValue", "[", "Appearance", "]"}], ",", 
+           RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"c_", "?", "ColorQ"}], ":>", "\n", "\t\t\t\t\t\t\t", 
+              "c"}], ",", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"\"\<OAuth\>\"", "->", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"Hue", "[", 
+               RowBox[{"0", ",", ".5", ",", ".6"}], "]"}]}], ",", "\n", 
+             "\t\t\t\t\t\t", 
+             RowBox[{"\"\<Password\>\"", "->", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"Hue", "[", 
+               RowBox[{".3", ",", ".4", ",", ".6"}], "]"}]}], ",", "\n", 
+             "\t\t\t\t\t\t", 
+             RowBox[{"_", "->", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"Hue", "[", 
+               RowBox[{".6", ",", "1", ",", ".65"}], "]"}]}]}], "\n", 
+            "\t\t\t\t\t\t", "}"}]}], "]"}]}], ",", "\n", "\t\t\t\t", 
+        RowBox[{"CellFrame", "\[Rule]", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"0", ",", "0"}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"1", ",", "0"}], "}"}]}], "}"}]}]}], "\n", "\t\t\t\t", 
+       "]"}]}], ",", "\n", "\t\t", 
+     RowBox[{
+     "NotebookDynamicExpression", " ", "\[RuleDelayed]", "\n", "\t\t\t", 
+      RowBox[{"Refresh", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"FrontEnd`MoveCursorToInputField", "[", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"EvaluationNotebook", "[", "]"}], ",", " ", "\n", 
+           "\t\t\t\t\t", "\"\<password\>\""}], "\n", "\t\t\t\t\t", "]"}], ";",
+          "\n", "\t\t\t\t", 
+         RowBox[{"FrontEnd`MoveCursorToInputField", "[", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"EvaluationNotebook", "[", "]"}], ",", " ", "\n", 
+           "\t\t\t\t\t", "\"\<username\>\""}], "\n", "\t\t\t\t\t", "]"}], 
+         ";"}], ",", "\n", "\t\t\t\t", "None"}], "\n", "\t\t\t", "]"}]}], ",",
+      "\n", "\t\t", 
+     RowBox[{"WindowFrameElements", "\[Rule]", 
+      RowBox[{"{", "\"\<CloseBox\>\"", "}"}]}], ",", "\n", "\t\t", 
+     RowBox[{"WindowElements", "\[Rule]", "None"}], ",", "\n", "\t\t", 
+     RowBox[{"WindowTitle", "\[Rule]", "\"\<\>\""}], ",", "\n", "\t\t", 
+     RowBox[{"Background", "\[Rule]", "White"}], ",", "\n", "\t\t", 
+     RowBox[{"ImageMargins", "->", "0"}], ",", "\n", "\t\t", 
+     RowBox[{"CellMargins", "->", "0"}]}], "\n", "\t\t", "}"}]}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.703613619512732*^9, 3.703613683711955*^9}, {
+   3.70361387578058*^9, 3.703613928405377*^9}, 3.703614058050705*^9, {
+   3.703614199597619*^9, 3.703614472117179*^9}, {3.703614559529476*^9, 
+   3.703614755548847*^9}, {3.703614857677313*^9, 3.70361486182506*^9}, {
+   3.7036149121347637`*^9, 3.703615034516879*^9}, 3.7036150647280607`*^9, {
+   3.703615104822782*^9, 3.7036151246971083`*^9}, {3.703615338160553*^9, 
+   3.703615347632781*^9}, {3.703615402261157*^9, 3.703615410477792*^9}, 
+   3.703615444655086*^9, {3.703615530475168*^9, 3.703615554958643*^9}, {
+   3.7036156093028193`*^9, 3.703615623717369*^9}, 3.703615750442946*^9, {
+   3.703615786351214*^9, 3.703615887809713*^9}, {3.703616004257916*^9, 
+   3.703616072190926*^9}, 3.7036161093077793`*^9, {3.7036161503753853`*^9, 
+   3.703616163335826*^9}, {3.70361624485498*^9, 3.703616667635518*^9}, {
+   3.703616703731326*^9, 3.7036167688564568`*^9}, {3.703616915465255*^9, 
+   3.703616970347164*^9}, {3.703617004827145*^9, 3.703617116324473*^9}, {
+   3.70361723041066*^9, 3.703617463792626*^9}, {3.703617529254407*^9, 
+   3.703617846016631*^9}, {3.7036179035028267`*^9, 3.7036180327672663`*^9}, 
+   3.703618079194769*^9, {3.703618112492152*^9, 3.7036181480757*^9}, {
+   3.7036181790092373`*^9, 3.703618193911532*^9}, 3.7036182429273443`*^9, {
+   3.703618273310109*^9, 3.703618334006386*^9}, {3.703618364941831*^9, 
+   3.703618365181623*^9}, {3.703618426609005*^9, 3.703618475166904*^9}, {
+   3.703618507455701*^9, 3.703618508675201*^9}, {3.703618599241309*^9, 
+   3.7036186081156063`*^9}, {3.703618641836357*^9, 3.703618675913027*^9}, {
+   3.703618731971784*^9, 3.703618783782978*^9}, {3.703619192822464*^9, 
+   3.703619226092957*^9}, {3.7036192725745983`*^9, 3.703619429939713*^9}, {
+   3.703619465441826*^9, 3.703619527542406*^9}, {3.703619706918763*^9, 
+   3.7036197827279177`*^9}, {3.703619854925789*^9, 3.703619881671606*^9}, {
+   3.703619964170767*^9, 3.703619969653277*^9}, {3.703620014464229*^9, 
+   3.7036200278599977`*^9}, {3.703620061415753*^9, 3.703620198347928*^9}, {
+   3.703620264611237*^9, 3.7036202814598703`*^9}, {3.7036203900168457`*^9, 
+   3.7036204649242764`*^9}, {3.703620495342458*^9, 3.70362070873398*^9}, {
+   3.703620808544478*^9, 3.703620836938582*^9}, {3.7036208725565243`*^9, 
+   3.703620911848413*^9}, {3.703620958683157*^9, 3.703620970850318*^9}, {
+   3.703621050783854*^9, 3.703621058030006*^9}, {3.7036216453876677`*^9, 
+   3.703621667411096*^9}, {3.703621703522662*^9, 3.703621725644541*^9}, {
+   3.703622969808449*^9, 3.703622969984023*^9}, {3.703623010231967*^9, 
+   3.703623015407754*^9}, {3.70362332156735*^9, 3.703623354115097*^9}, {
+   3.703623396990473*^9, 3.70362347866765*^9}, {3.703623538132949*^9, 
+   3.70362355895753*^9}, {3.7036236260702133`*^9, 3.703623632993161*^9}, {
+   3.70362366319092*^9, 3.7036237606248903`*^9}, {3.7036237911705637`*^9, 
+   3.70362379750375*^9}, {3.7036240410314217`*^9, 3.703624152966693*^9}, {
+   3.7036270454053507`*^9, 3.703627160339979*^9}, {3.7036286838251677`*^9, 
+   3.703628839614686*^9}, {3.703628880907996*^9, 3.703628901285296*^9}, {
+   3.70362894988033*^9, 3.703629018123321*^9}, {3.703629096155394*^9, 
+   3.703629262702821*^9}, {3.703629754094825*^9, 3.7036297641222754`*^9}, {
+   3.7036298598030367`*^9, 3.703629866840938*^9}, {3.7036299189552593`*^9, 
+   3.703629960658004*^9}, {3.703630029051424*^9, 3.703630037415349*^9}, {
+   3.703630077072022*^9, 3.703630133664688*^9}, 3.703630245100655*^9, {
+   3.703630337663727*^9, 3.703630344341416*^9}, 3.703630387345929*^9, {
+   3.703630468720373*^9, 3.703630475879342*^9}, 3.7036305464391317`*^9, {
+   3.703630818100643*^9, 3.703630930596066*^9}, {3.703630996608265*^9, 
+   3.703631005651718*^9}, {3.703631090108432*^9, 3.7036311104251623`*^9}, {
+   3.703631146657237*^9, 3.703631163479061*^9}, {3.7036311937685738`*^9, 
+   3.703631193885655*^9}, {3.703631237056857*^9, 3.703631363243845*^9}, {
+   3.703631407388619*^9, 3.703631413681823*^9}, {3.703631464637513*^9, 
+   3.703631470261869*^9}, {3.703631502268374*^9, 3.7036315951482487`*^9}, {
+   3.7036316338778467`*^9, 3.7036316390779343`*^9}, 3.7036318739709787`*^9, {
+   3.703631969098425*^9, 3.703631969361479*^9}, {3.703632351670673*^9, 
+   3.703632484578126*^9}, {3.703632720100788*^9, 3.703632728842284*^9}, {
+   3.7036347314632483`*^9, 3.703634735719614*^9}, {3.7036353966570263`*^9, 
+   3.703635464962597*^9}, {3.703635512241127*^9, 3.7036355407762737`*^9}, {
+   3.70363573374745*^9, 3.703635741704975*^9}, {3.703636216535697*^9, 
+   3.703636219782089*^9}, {3.7036363259008417`*^9, 3.703636330027212*^9}, {
+   3.703636387064747*^9, 3.7036365200847893`*^9}, {3.703637393804062*^9, 
+   3.7036373991503057`*^9}, {3.70364291796989*^9, 3.703643005326729*^9}, 
+   3.703643075589952*^9, {3.703643118858651*^9, 3.703643182454566*^9}, {
+   3.703643232816977*^9, 3.7036432612678823`*^9}, {3.7036568041294203`*^9, 
+   3.703656821214026*^9}, 3.703657140724955*^9, {3.70365848697136*^9, 
+   3.703658528708246*^9}, {3.70365855954888*^9, 3.703658611595016*^9}, {
+   3.703659188757367*^9, 3.7036592221302547`*^9}, {3.703659594470481*^9, 
+   3.703659642420515*^9}, {3.703659711457193*^9, 3.7036597186095047`*^9}, {
+   3.703660087746949*^9, 3.7036601266475353`*^9}, {3.7108671432504597`*^9, 
+   3.710867144443491*^9}, {3.710867197647943*^9, 3.710867206819594*^9}, {
+   3.710867275684363*^9, 3.710867289923995*^9}, {3.710867364588932*^9, 
+   3.710867438689288*^9}, 3.720113741648473*^9, {3.7201138777696953`*^9, 
+   3.720114009139586*^9}},ExpressionUUID->"36e8d3f2-1f61-4296-afd6-\
+a3b4df96e3f7"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["BannerDialog", "CodeSubsubsection",
+ CellChangeTimes->{
+  3.7036316258007593`*^9, {3.703631755761367*^9, 
+   3.7036317565995483`*^9}},ExpressionUUID->"0ecde7a6-1db0-4014-a34b-\
+7c6a3282bcac"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "BannerDialog", "]"}], "=", "\n", "\t", 
+   RowBox[{"Options", "@", "BannerDialogConfig"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"BannerDialog", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"banner_:", "\"\<\>\""}], ",", "\n", "\t", "content_", ",", "\n", 
+    "\t", 
+    RowBox[{"submit", ":", 
+     RowBox[{
+      RowBox[{"Button", "[", 
+       RowBox[{"_", ",", "__"}], "]"}], "|", "Automatic"}], ":", 
+     "Automatic"}], ",", "\n", "\t", 
+    RowBox[{"cancel", ":", 
+     RowBox[{
+      RowBox[{"Button", "[", 
+       RowBox[{"_", ",", "__"}], "]"}], "|", "Automatic"}], ":", 
+     "Automatic"}], ",", "\n", "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
+  "\t\t", 
+  RowBox[{"CreateDialog", "@@", "\n", "\t\t\t", 
+   RowBox[{"BannerDialogConfig", "[", 
+    RowBox[{
+    "banner", ",", "content", ",", "submit", ",", "cancel", ",", "ops"}], 
+    "]"}]}]}]}], "CodeInput",
+ CellChangeTimes->{{3.703613619512732*^9, 3.703613683711955*^9}, {
+   3.70361387578058*^9, 3.703613928405377*^9}, 3.703614058050705*^9, {
+   3.703614199597619*^9, 3.703614472117179*^9}, {3.703614559529476*^9, 
+   3.703614755548847*^9}, {3.703614857677313*^9, 3.70361486182506*^9}, {
+   3.7036149121347637`*^9, 3.703615034516879*^9}, 3.7036150647280607`*^9, {
+   3.703615104822782*^9, 3.7036151246971083`*^9}, {3.703615338160553*^9, 
+   3.703615347632781*^9}, {3.703615402261157*^9, 3.703615410477792*^9}, 
+   3.703615444655086*^9, {3.703615530475168*^9, 3.703615554958643*^9}, {
+   3.7036156093028193`*^9, 3.703615623717369*^9}, 3.703615750442946*^9, {
+   3.703615786351214*^9, 3.703615887809713*^9}, {3.703616004257916*^9, 
+   3.703616072190926*^9}, 3.7036161093077793`*^9, {3.7036161503753853`*^9, 
+   3.703616163335826*^9}, {3.70361624485498*^9, 3.703616667635518*^9}, {
+   3.703616703731326*^9, 3.7036167688564568`*^9}, {3.703616915465255*^9, 
+   3.703616970347164*^9}, {3.703617004827145*^9, 3.703617116324473*^9}, {
+   3.70361723041066*^9, 3.703617463792626*^9}, {3.703617529254407*^9, 
+   3.703617846016631*^9}, {3.7036179035028267`*^9, 3.7036180327672663`*^9}, 
+   3.703618079194769*^9, {3.703618112492152*^9, 3.7036181480757*^9}, {
+   3.7036181790092373`*^9, 3.703618193911532*^9}, 3.7036182429273443`*^9, {
+   3.703618273310109*^9, 3.703618334006386*^9}, {3.703618364941831*^9, 
+   3.703618365181623*^9}, {3.703618426609005*^9, 3.703618475166904*^9}, {
+   3.703618507455701*^9, 3.703618508675201*^9}, {3.703618599241309*^9, 
+   3.7036186081156063`*^9}, {3.703618641836357*^9, 3.703618675913027*^9}, {
+   3.703618731971784*^9, 3.703618783782978*^9}, {3.703619192822464*^9, 
+   3.703619226092957*^9}, {3.7036192725745983`*^9, 3.703619429939713*^9}, {
+   3.703619465441826*^9, 3.703619527542406*^9}, {3.703619706918763*^9, 
+   3.7036197827279177`*^9}, {3.703619854925789*^9, 3.703619881671606*^9}, {
+   3.703619964170767*^9, 3.703619969653277*^9}, {3.703620014464229*^9, 
+   3.7036200278599977`*^9}, {3.703620061415753*^9, 3.703620198347928*^9}, {
+   3.703620264611237*^9, 3.7036202814598703`*^9}, {3.7036203900168457`*^9, 
+   3.7036204649242764`*^9}, {3.703620495342458*^9, 3.70362070873398*^9}, {
+   3.703620808544478*^9, 3.703620836938582*^9}, {3.7036208725565243`*^9, 
+   3.703620911848413*^9}, {3.703620958683157*^9, 3.703620970850318*^9}, {
+   3.703621050783854*^9, 3.703621058030006*^9}, {3.7036216453876677`*^9, 
+   3.703621667411096*^9}, {3.703621703522662*^9, 3.703621725644541*^9}, {
+   3.703622969808449*^9, 3.703622969984023*^9}, {3.703623010231967*^9, 
+   3.703623015407754*^9}, {3.70362332156735*^9, 3.703623354115097*^9}, {
+   3.703623396990473*^9, 3.70362347866765*^9}, {3.703623538132949*^9, 
+   3.70362355895753*^9}, {3.7036236260702133`*^9, 3.703623632993161*^9}, {
+   3.70362366319092*^9, 3.7036237606248903`*^9}, {3.7036237911705637`*^9, 
+   3.70362379750375*^9}, {3.7036240410314217`*^9, 3.703624152966693*^9}, {
+   3.7036270454053507`*^9, 3.703627160339979*^9}, {3.7036286838251677`*^9, 
+   3.703628839614686*^9}, {3.703628880907996*^9, 3.703628901285296*^9}, {
+   3.70362894988033*^9, 3.703629018123321*^9}, {3.703629096155394*^9, 
+   3.703629262702821*^9}, {3.703629754094825*^9, 3.7036297641222754`*^9}, {
+   3.7036298598030367`*^9, 3.703629866840938*^9}, {3.7036299189552593`*^9, 
+   3.703629960658004*^9}, {3.703630029051424*^9, 3.703630037415349*^9}, {
+   3.703630077072022*^9, 3.703630133664688*^9}, 3.703630245100655*^9, {
+   3.703630337663727*^9, 3.703630344341416*^9}, 3.703630387345929*^9, {
+   3.703630468720373*^9, 3.703630475879342*^9}, 3.7036305464391317`*^9, {
+   3.703630818100643*^9, 3.703630930596066*^9}, {3.703630996608265*^9, 
+   3.703631005651718*^9}, {3.703631090108432*^9, 3.7036311104251623`*^9}, {
+   3.703631146657237*^9, 3.703631163479061*^9}, {3.7036311937685738`*^9, 
+   3.703631193885655*^9}, {3.703631237056857*^9, 3.703631363243845*^9}, {
+   3.703631407388619*^9, 3.703631413681823*^9}, {3.703631464637513*^9, 
+   3.703631470261869*^9}, {3.703631502268374*^9, 3.703631620504018*^9}, {
+   3.703631672692553*^9, 3.703631730554906*^9}, {3.7036317629138823`*^9, 
+   3.703631784967181*^9}, {3.703632620919582*^9, 3.7036326417898903`*^9}, 
+   3.703632713580782*^9, {3.7036327797106743`*^9, 
+   3.703632781428093*^9}},ExpressionUUID->"fe6146f3-f40c-4892-89c2-\
+ecdd83f53e97"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["BannerDialogInput", "CodeSubsubsection",
+ CellChangeTimes->{
+  3.7036316258007593`*^9},ExpressionUUID->"33090e80-0ec4-452e-849e-\
+b20e8f216f74"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "BannerDialogInput", "]"}], "=", "\n", "\t", 
+   RowBox[{"Options", "@", "BannerDialogConfig"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"BannerDialogInput", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"vars", ":", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"_Symbol", "|", "_Set", "|", "_SetDelayed"}], ")"}], 
+         "..."}], "}"}], "|", "None"}], ":", "None"}], ",", "\n", "\t", 
+     RowBox[{"banner_:", "\"\<\>\""}], ",", "\n", "\t", "content_", ",", "\n",
+      "\t", 
+     RowBox[{"submit", ":", 
+      RowBox[{
+       RowBox[{"Button", "[", 
+        RowBox[{"_", ",", "__"}], "]"}], "|", "Automatic"}], ":", 
+      "Automatic"}], ",", "\n", "\t", 
+     RowBox[{"cancel", ":", 
+      RowBox[{
+       RowBox[{"Button", "[", 
+        RowBox[{"_", ",", "__"}], "]"}], "|", "Automatic"}], ":", 
+      "Automatic"}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"Unevaluated", "[", "vars", "]"}], "===", "None"}], ",", "\n", 
+      "\t\t", 
+      RowBox[{
+       RowBox[{"DialogInput", "[", 
+        RowBox[{"#", ",", "##2"}], "]"}], "&"}], ",", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"DialogInput", "[", 
+        RowBox[{"vars", ",", 
+         RowBox[{"Column", "@", "#"}], ",", "##2"}], "]"}], "&"}]}], "\n", 
+     "\t\t", "]"}], "@@", "\n", "\t\t", 
+    RowBox[{"BannerDialogConfig", "[", 
+     RowBox[{
+     "banner", ",", "content", ",", "submit", ",", "cancel", ",", "ops"}], 
+     "]"}]}]}], ";"}], "\n", 
+ RowBox[{"BannerDialogInput", "~", "SetAttributes", "~", 
+  "HoldFirst"}]}], "CodeInput",
+ CellChangeTimes->{{3.703613619512732*^9, 3.703613683711955*^9}, {
+   3.70361387578058*^9, 3.703613928405377*^9}, 3.703614058050705*^9, {
+   3.703614199597619*^9, 3.703614472117179*^9}, {3.703614559529476*^9, 
+   3.703614755548847*^9}, {3.703614857677313*^9, 3.70361486182506*^9}, {
+   3.7036149121347637`*^9, 3.703615034516879*^9}, 3.7036150647280607`*^9, {
+   3.703615104822782*^9, 3.7036151246971083`*^9}, {3.703615338160553*^9, 
+   3.703615347632781*^9}, {3.703615402261157*^9, 3.703615410477792*^9}, 
+   3.703615444655086*^9, {3.703615530475168*^9, 3.703615554958643*^9}, {
+   3.7036156093028193`*^9, 3.703615623717369*^9}, 3.703615750442946*^9, {
+   3.703615786351214*^9, 3.703615887809713*^9}, {3.703616004257916*^9, 
+   3.703616072190926*^9}, 3.7036161093077793`*^9, {3.7036161503753853`*^9, 
+   3.703616163335826*^9}, {3.70361624485498*^9, 3.703616667635518*^9}, {
+   3.703616703731326*^9, 3.7036167688564568`*^9}, {3.703616915465255*^9, 
+   3.703616970347164*^9}, {3.703617004827145*^9, 3.703617116324473*^9}, {
+   3.70361723041066*^9, 3.703617463792626*^9}, {3.703617529254407*^9, 
+   3.703617846016631*^9}, {3.7036179035028267`*^9, 3.7036180327672663`*^9}, 
+   3.703618079194769*^9, {3.703618112492152*^9, 3.7036181480757*^9}, {
+   3.7036181790092373`*^9, 3.703618193911532*^9}, 3.7036182429273443`*^9, {
+   3.703618273310109*^9, 3.703618334006386*^9}, {3.703618364941831*^9, 
+   3.703618365181623*^9}, {3.703618426609005*^9, 3.703618475166904*^9}, {
+   3.703618507455701*^9, 3.703618508675201*^9}, {3.703618599241309*^9, 
+   3.7036186081156063`*^9}, {3.703618641836357*^9, 3.703618675913027*^9}, {
+   3.703618731971784*^9, 3.703618783782978*^9}, {3.703619192822464*^9, 
+   3.703619226092957*^9}, {3.7036192725745983`*^9, 3.703619429939713*^9}, {
+   3.703619465441826*^9, 3.703619527542406*^9}, {3.703619706918763*^9, 
+   3.7036197827279177`*^9}, {3.703619854925789*^9, 3.703619881671606*^9}, {
+   3.703619964170767*^9, 3.703619969653277*^9}, {3.703620014464229*^9, 
+   3.7036200278599977`*^9}, {3.703620061415753*^9, 3.703620198347928*^9}, {
+   3.703620264611237*^9, 3.7036202814598703`*^9}, {3.7036203900168457`*^9, 
+   3.7036204649242764`*^9}, {3.703620495342458*^9, 3.70362070873398*^9}, {
+   3.703620808544478*^9, 3.703620836938582*^9}, {3.7036208725565243`*^9, 
+   3.703620911848413*^9}, {3.703620958683157*^9, 3.703620970850318*^9}, {
+   3.703621050783854*^9, 3.703621058030006*^9}, {3.7036216453876677`*^9, 
+   3.703621667411096*^9}, {3.703621703522662*^9, 3.703621725644541*^9}, {
+   3.703622969808449*^9, 3.703622969984023*^9}, {3.703623010231967*^9, 
+   3.703623015407754*^9}, {3.70362332156735*^9, 3.703623354115097*^9}, {
+   3.703623396990473*^9, 3.70362347866765*^9}, {3.703623538132949*^9, 
+   3.70362355895753*^9}, {3.7036236260702133`*^9, 3.703623632993161*^9}, {
+   3.70362366319092*^9, 3.7036237606248903`*^9}, {3.7036237911705637`*^9, 
+   3.70362379750375*^9}, {3.7036240410314217`*^9, 3.703624152966693*^9}, {
+   3.7036270454053507`*^9, 3.703627160339979*^9}, {3.7036286838251677`*^9, 
+   3.703628839614686*^9}, {3.703628880907996*^9, 3.703628901285296*^9}, {
+   3.70362894988033*^9, 3.703629018123321*^9}, {3.703629096155394*^9, 
+   3.703629262702821*^9}, {3.703629754094825*^9, 3.7036297641222754`*^9}, {
+   3.7036298598030367`*^9, 3.703629866840938*^9}, {3.7036299189552593`*^9, 
+   3.703629960658004*^9}, {3.703630029051424*^9, 3.703630037415349*^9}, {
+   3.703630077072022*^9, 3.703630133664688*^9}, 3.703630245100655*^9, {
+   3.703630337663727*^9, 3.703630344341416*^9}, 3.703630387345929*^9, {
+   3.703630468720373*^9, 3.703630475879342*^9}, 3.7036305464391317`*^9, {
+   3.703630818100643*^9, 3.703630930596066*^9}, {3.703630996608265*^9, 
+   3.703631005651718*^9}, {3.703631090108432*^9, 3.7036311104251623`*^9}, {
+   3.703631146657237*^9, 3.703631163479061*^9}, {3.7036311937685738`*^9, 
+   3.703631193885655*^9}, {3.703631237056857*^9, 3.703631363243845*^9}, {
+   3.703631407388619*^9, 3.703631413681823*^9}, {3.703631464637513*^9, 
+   3.703631470261869*^9}, {3.703631502268374*^9, 3.703631620504018*^9}, {
+   3.703631672692553*^9, 3.703631730554906*^9}, {3.703631792194264*^9, 
+   3.7036317961830873`*^9}, {3.703631834550766*^9, 3.703631836165909*^9}, {
+   3.703632061844903*^9, 3.703632068924473*^9}, {3.7036321691802597`*^9, 
+   3.703632201883853*^9}, {3.7036322757285843`*^9, 3.703632342014324*^9}, {
+   3.703632495193851*^9, 3.7036325092435217`*^9}, {3.7036326453596487`*^9, 
+   3.703632650432044*^9}, {3.703632702179171*^9, 3.703632707277113*^9}, {
+   3.7036327723592176`*^9, 3.703632775212697*^9}, {3.703634795981112*^9, 
+   3.7036348004782476`*^9}, 3.7036351769866734`*^9, {3.70363522754263*^9, 
+   3.7036352353489656`*^9}},ExpressionUUID->"0c52f535-7e91-4b91-b8f4-\
+9c599c4cb00b"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["AuthDialog", "CodeSubsubsection",
+ CellChangeTimes->{3.703621076244172*^9, 3.703621690559016*^9, 
+  3.703635242247993*^9, 
+  3.7297988336376953`*^9},ExpressionUUID->"0d554695-d2d0-4a8f-b10c-\
+7241f02fb0c4"],
+
+Cell[CellGroupData[{
+
+Cell["authUserNameField", "CodeSubsubsubsection",
+ CellChangeTimes->{
+  3.703626127617792*^9},ExpressionUUID->"f9c9093b-5684-4057-a057-\
+d2ca3fc4c04a"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"authUserNameField", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Verbatim", "[", "Dynamic", "]"}], "[", "var_", "]"}], ",", 
+     "site_", ",", "default_"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"InputField", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"var", "[", "site", "]"}], "=", "\n", "\t\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{
+         RowBox[{"var", "[", "site", "]"}], ",", 
+         RowBox[{"{", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"v", ":", 
+               RowBox[{"Except", "[", "\"\<\>\"", "]"}]}], ",", "p_"}], "}"}],
+             "\[RuleDelayed]", "\n", "\t\t\t\t\t", 
+            RowBox[{"{", 
+             RowBox[{"v", ",", "p"}], "}"}]}], ",", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"\"\<\>\"", ",", "p_"}], "}"}], "\[RuleDelayed]", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"{", 
+             RowBox[{"default", ",", "p"}], "}"}]}], ",", "\n", "\t\t\t\t", 
+           RowBox[{"_", "\[Rule]", 
+            RowBox[{"{", 
+             RowBox[{"default", ",", "\"\<\>\""}], "}"}]}]}], "\n", 
+          "\t\t\t\t", "}"}]}], "]"}]}], ";", "\n", "\t\t", 
+      RowBox[{"Dynamic", "[", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"Replace", "[", 
+         RowBox[{
+          RowBox[{"var", "[", "site", "]"}], ",", 
+          RowBox[{"{", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"u_", ",", "_"}], "}"}], "\[RuleDelayed]", "u"}], ",", 
+            "\n", "\t\t\t\t", 
+            RowBox[{"_", "\[Rule]", "default"}]}], "\n", "\t\t\t\t", "}"}]}], 
+         "]"}], ",", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"var", "[", "site", "]"}], "=", "\n", "\t\t\t\t", 
+           RowBox[{"Replace", "[", 
+            RowBox[{
+             RowBox[{"var", "[", "site", "]"}], ",", 
+             RowBox[{"{", "\n", "\t", "\t\t\t\t", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"{", 
+                 RowBox[{"_", ",", "p_"}], "}"}], "\[RuleDelayed]", "\n", 
+                "\t", "\t\t\t\t\t", 
+                RowBox[{"{", 
+                 RowBox[{"#", ",", "p"}], "}"}]}], ",", "\n", "\t", 
+               "\t\t\t\t", 
+               RowBox[{"_", "\[Rule]", 
+                RowBox[{"{", 
+                 RowBox[{"#", ",", "\"\<\>\""}], "}"}]}]}], "\n", 
+              "\t\t\t\t\t", "}"}]}], "]"}]}], ";"}], "&"}]}], "\n", "\t\t\t", 
+       "]"}]}], ",", "\n", "\t\t", "String", ",", "\n", "\t\t", 
+     RowBox[{"BoxID", "->", "\"\<username\>\""}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.703621692893804*^9, 3.703621692896089*^9}, {
+   3.7036217303344393`*^9, 3.703621768474174*^9}, {3.703621863391165*^9, 
+   3.703621863899743*^9}, {3.70362190858027*^9, 3.70362211276989*^9}, {
+   3.703622301313863*^9, 3.70362243366341*^9}, {3.703622465162304*^9, 
+   3.703622676231546*^9}, {3.703622711146433*^9, 3.7036227174218082`*^9}, {
+   3.703624324698704*^9, 3.7036244101173687`*^9}, 3.703625824420787*^9, {
+   3.703625959518601*^9, 3.703625981805623*^9}, 3.703626130528304*^9, {
+   3.7036261735805492`*^9, 3.703626178152907*^9}, 3.703635316925349*^9, {
+   3.703717556711481*^9, 3.703717697096846*^9}, {3.720114024241707*^9, 
+   3.720114027291152*^9}},ExpressionUUID->"ab2500c5-797a-4f57-9488-\
+5a81935608e3"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["authPasswordField", "CodeSubsubsubsection",
+ CellChangeTimes->{{3.703626127617792*^9, 
+  3.703626133171815*^9}},ExpressionUUID->"34198c1e-0ebd-4e53-b75a-\
+49400090d9ed"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"authPasswordField", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Verbatim", "[", "Dynamic", "]"}], "[", "var_", "]"}], ",", 
+     "site_", ",", "default_"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"InputField", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"var", "[", "site", "]"}], "=", "\n", "\t\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{
+         RowBox[{"var", "[", "site", "]"}], ",", 
+         RowBox[{"{", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"v_", ",", 
+              RowBox[{"p", ":", 
+               RowBox[{"Except", "[", "\"\<\>\"", "]"}]}]}], "}"}], 
+            "\[RuleDelayed]", "\n", "\t\t\t\t\t", 
+            RowBox[{"{", 
+             RowBox[{"v", ",", "p"}], "}"}]}], ",", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"v_", ",", "\"\<\>\""}], "}"}], "\[RuleDelayed]", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"{", 
+             RowBox[{"v", ",", "default"}], "}"}]}], ",", "\n", "\t\t\t\t", 
+           RowBox[{"_", "\[Rule]", 
+            RowBox[{"{", 
+             RowBox[{"\"\<\>\"", ",", "default"}], "}"}]}]}], "\n", 
+          "\t\t\t\t", "}"}]}], "]"}]}], ";", "\n", "\t\t", 
+      RowBox[{"Dynamic", "[", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"Replace", "[", 
+         RowBox[{
+          RowBox[{"var", "[", "site", "]"}], ",", 
+          RowBox[{"{", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"_", ",", "p_"}], "}"}], "\[RuleDelayed]", "p"}], ",", 
+            "\n", "\t\t\t\t", 
+            RowBox[{"_", "\[Rule]", "default"}]}], "\n", "\t\t\t\t", "}"}]}], 
+         "]"}], ",", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"var", "[", "site", "]"}], "=", "\[IndentingNewLine]", 
+           "\t", 
+           RowBox[{"Replace", "[", 
+            RowBox[{
+             RowBox[{"var", "[", "site", "]"}], ",", 
+             RowBox[{"{", "\n", "\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"{", 
+                 RowBox[{"u_", ",", "_"}], "}"}], "\[RuleDelayed]", "\n", 
+                "\t\t\t\t\t\t", 
+                RowBox[{"{", 
+                 RowBox[{"u", ",", "#"}], "}"}]}], ",", "\n", "\t\t\t\t\t", 
+               RowBox[{"_", "\[Rule]", 
+                RowBox[{"{", 
+                 RowBox[{"default", ",", "#"}], "}"}]}]}], "\n", "\t\t\t\t\t",
+               "}"}]}], "]"}]}], ";"}], "&"}]}], "\n", "\t\t\t", "]"}]}], ",",
+      "\n", "\t\t", "String", ",", "\n", "\t\t", 
+     RowBox[{"FieldMasked", "\[Rule]", "$authDialogFieldMasked"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"BoxID", "->", "\"\<password\>\""}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.703621692893804*^9, 3.703621692896089*^9}, {
+   3.7036217303344393`*^9, 3.703621768474174*^9}, {3.703621863391165*^9, 
+   3.703621863899743*^9}, {3.70362190858027*^9, 3.70362211276989*^9}, {
+   3.703622301313863*^9, 3.70362243366341*^9}, {3.703622465162304*^9, 
+   3.703622676231546*^9}, {3.703622711146433*^9, 3.7036227174218082`*^9}, {
+   3.703624324698704*^9, 3.7036244101173687`*^9}, 3.703625824420787*^9, {
+   3.703625959518601*^9, 3.703625981805623*^9}, 3.703626130528304*^9, {
+   3.703626824445257*^9, 3.7036268252900677`*^9}, 3.703626953545809*^9, 
+   3.703635311755413*^9, 3.703636932239698*^9, {3.703657076388228*^9, 
+   3.703657121091958*^9}, {3.703717707400408*^9, 3.7037177868367*^9}, {
+   3.720114034385096*^9, 
+   3.720114041359722*^9}},ExpressionUUID->"6efcb8b4-32cf-4b0d-86c3-\
+76f0cdc55e42"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["authDialogFields", "CodeSubsubsubsection",
+ CellChangeTimes->{
+  3.703626140635151*^9},ExpressionUUID->"1ad0dc9c-faae-42e4-9252-\
+14df11c86937"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"authDialogFields", "[", 
+    RowBox[{"var_", ",", "\n", "\t", 
+     RowBox[{"site", ":", 
+      RowBox[{"_String", "|", 
+       RowBox[{"{", 
+        RowBox[{"_String", ",", "_"}], "}"}]}]}], ",", "\n", "\t", 
+     RowBox[{"username", ":", 
+      RowBox[{"_String", "|", "None", "|", 
+       RowBox[{"{", 
+        RowBox[{"_String", ",", "_"}], "}"}]}], ":", "\"\<\>\""}], ",", "\n", 
+     "\t", 
+     RowBox[{"password", ":", 
+      RowBox[{"_String", "|", "None", "|", 
+       RowBox[{"{", 
+        RowBox[{"_String", ",", "_"}], "}"}]}], ":", "\"\<\>\""}]}], "]"}], ":=",
+    "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"StringQ", "@", "site"}], "||", 
+          RowBox[{
+           RowBox[{"Last", "@", "site"}], "===", "Automatic"}]}], ",", "\n", 
+         "\t\t\t\t", 
+         RowBox[{"Style", "[", 
+          RowBox[{
+           RowBox[{
+           "\"\<Enter the password for ``:\>\"", "~", "TemplateApply", "~", 
+            "site"}], ",", 
+           RowBox[{"GrayLevel", "[", ".2", "]"}]}], "]"}], ",", "\n", 
+         "\t\t\t\t", 
+         RowBox[{"Last", "@", "site"}]}], "\n", "\t\t\t\t", "]"}], ",", "\n", 
+       "\t\t\t", "SpanFromLeft"}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"username", "=!=", "None"}], ",", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"DeleteCases", "[", "None", "]"}], "@", 
+        RowBox[{"{", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"StringQ", "@", "username"}], "||", 
+             RowBox[{
+              RowBox[{"Last", "@", "site"}], "===", "Automatic"}]}], ",", 
+            "\n", "\t\t\t\t\t", 
+            RowBox[{"Style", "[", 
+             RowBox[{"\"\<Username:\>\"", ",", 
+              RowBox[{"GrayLevel", "[", ".5", "]"}]}], "]"}], ",", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"Last", "@", "username"}]}], "\n", "\t\t\t\t\t", "]"}], 
+          ",", "\n", "\t\t\t\t", 
+          RowBox[{"authUserNameField", "[", 
+           RowBox[{"var", ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"Replace", "[", 
+             RowBox[{"site", ",", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"s_", ",", "_"}], "}"}], "\[RuleDelayed]", "s"}]}], 
+             "]"}], ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"Replace", "[", 
+             RowBox[{"username", ",", "\n", "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"u_", ",", "_"}], "}"}], "\[RuleDelayed]", "u"}]}], 
+             "\n", "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "]"}]}], "\n",
+          "\t\t\t\t", "}"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"{", "}"}]}], "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"password", "=!=", "None"}], ",", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"DeleteCases", "[", "None", "]"}], "@", 
+        RowBox[{"{", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"StringQ", "@", "password"}], "||", 
+             RowBox[{
+              RowBox[{"Last", "@", "site"}], "===", "Automatic"}]}], ",", 
+            "\n", "\t\t\t\t\t", 
+            RowBox[{"Style", "[", 
+             RowBox[{"\"\<Password:\>\"", ",", 
+              RowBox[{"GrayLevel", "[", ".5", "]"}]}], "]"}], ",", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"Last", "@", "password"}]}], "\n", "\t\t\t\t\t", "]"}], 
+          ",", "\n", "\t\t\t\t", 
+          RowBox[{"authPasswordField", "[", 
+           RowBox[{"var", ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"Replace", "[", 
+             RowBox[{"site", ",", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"s_", ",", "_"}], "}"}], "\[RuleDelayed]", "s"}]}], 
+             "]"}], ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"Replace", "[", 
+             RowBox[{"password", ",", "\n", "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"p_", ",", "_"}], "}"}], "\[RuleDelayed]", "p"}]}], 
+             "\n", "\t\t\t\t\t\t", "]"}]}], "]"}]}], "\n", "\t\t\t\t", 
+         "}"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"{", "}"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "}"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"authDialogFields", "[", 
+    RowBox[{"var_", ",", "\n", "\t", 
+     RowBox[{"{", 
+      RowBox[{"site", ":", 
+       RowBox[{"_String", "|", 
+        RowBox[{"{", 
+         RowBox[{"_String", ",", "_"}], "}"}]}]}], "}"}]}], "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"authDialogFields", "[", 
+    RowBox[{"var", ",", "site"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"authDialogFields", "[", 
+    RowBox[{"var_", ",", "\n", "\t", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"site", ":", 
+        RowBox[{"_String", "|", 
+         RowBox[{"{", 
+          RowBox[{"_String", ",", "_"}], "}"}]}]}], ",", "\n", "\t\t", 
+       RowBox[{"username", ":", 
+        RowBox[{"_String", "|", "None", "|", 
+         RowBox[{"{", 
+          RowBox[{"_String", ",", "_"}], "}"}]}]}]}], "\n", "\t\t", "}"}]}], 
+    "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"authDialogFields", "[", 
+    RowBox[{"var", ",", "site", ",", "username"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"authDialogFields", "[", 
+    RowBox[{"var_", ",", "\n", "\t", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"site", ":", 
+        RowBox[{"_String", "|", 
+         RowBox[{"{", 
+          RowBox[{"_String", ",", "_"}], "}"}]}]}], ",", "\n", "\t\t", 
+       RowBox[{"username", ":", 
+        RowBox[{"_String", "|", "None", "|", 
+         RowBox[{"{", 
+          RowBox[{"_String", ",", "_"}], "}"}]}]}], ",", "\n", "\t\t", 
+       RowBox[{"password", ":", 
+        RowBox[{"_String", "|", "None", "|", 
+         RowBox[{"{", 
+          RowBox[{"_String", ",", "_"}], "}"}]}]}]}], "}"}]}], "]"}], ":=", 
+   "\n", "\t", 
+   RowBox[{"authDialogFields", "[", 
+    RowBox[{"var", ",", "site", ",", "username", ",", "password"}], "]"}]}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.703621692893804*^9, 3.703621692896089*^9}, {
+  3.7036217303344393`*^9, 3.703621768474174*^9}, {3.703621863391165*^9, 
+  3.703621863899743*^9}, {3.70362190858027*^9, 3.70362211276989*^9}, {
+  3.703622301313863*^9, 3.70362243366341*^9}, {3.703622465162304*^9, 
+  3.703622676231546*^9}, {3.703622711146433*^9, 3.7036227174218082`*^9}, {
+  3.703624324698704*^9, 3.7036244101173687`*^9}, {3.703625824420787*^9, 
+  3.703625853337178*^9}, {3.703634150177081*^9, 3.7036342497243547`*^9}, {
+  3.703634281105014*^9, 3.7036342972653913`*^9}, {3.703634932246649*^9, 
+  3.703634986477786*^9}, {3.703635275677011*^9, 3.703635307947047*^9}, {
+  3.703635978353603*^9, 3.7036360802614193`*^9}, {3.703636650674067*^9, 
+  3.703636844628365*^9}, {3.703637097749846*^9, 3.703637098627788*^9}, {
+  3.703644363669508*^9, 3.703644368941721*^9}, {3.703669276656954*^9, 
+  3.7036693089408417`*^9}},ExpressionUUID->"36a2209e-09ad-409d-a6ef-\
+49c35cc7c12c"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"SetAttributes", "[", 
+     RowBox[{"#", ",", "\n", "\t", 
+      RowBox[{"{", "\n", "\t\t", "HoldFirst", "\n", "\t\t", "}"}]}], "\n", 
+     "\t", "]"}], "&"}], "/@", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{
+    "authDialogFields", ",", "\n", "\t\t", "authPasswordField", ",", "\n", 
+     "\t\t", "authUserNameField"}], "\n", "\t\t", "}"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.703621692893804*^9, 3.703621692896089*^9}, {
+   3.7036217303344393`*^9, 3.703621768474174*^9}, {3.703621863391165*^9, 
+   3.703621863899743*^9}, {3.70362190858027*^9, 3.70362211276989*^9}, {
+   3.703622301313863*^9, 3.70362243366341*^9}, {3.703622465162304*^9, 
+   3.703622676231546*^9}, {3.703622711146433*^9, 3.7036227174218082`*^9}, {
+   3.703624324698704*^9, 3.7036244101173687`*^9}, {3.703625824420787*^9, 
+   3.70362591912263*^9}, 3.703626292515257*^9, {3.703629378962502*^9, 
+   3.703629390513876*^9}},ExpressionUUID->"90f7aed2-0f14-4370-a147-\
+d33abbc578b0"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["AuthDialog", "CodeSubsubsubsection",
+ CellChangeTimes->{3.7036261524511223`*^9, 3.7036350172826977`*^9, 
+  3.729798833677393*^9},ExpressionUUID->"23bab33d-8b86-4045-8b11-\
+ba3fa83511a2"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "AuthDialog", "]"}], "=", "\n", "\t", 
+   RowBox[{"Join", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Options", "@", "BannerDialogConfig"}], ",", 
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{"FieldMasked", "\[Rule]", "True"}], "\n", "\t\t", "}"}]}], 
+    "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AuthDialog", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"var", ":", 
+      RowBox[{
+       RowBox[{"Verbatim", "[", "Dynamic", "]"}], "[", "_Symbol", "]"}], ":", 
+      
+      RowBox[{"Dynamic", "[", "None", "]"}]}], ",", "\n", "\t", 
+     RowBox[{"banner_:", "\"\<Authentication Credentials\>\""}], ",", "\n", 
+     "\t", 
+     RowBox[{"header_:", "None"}], ",", "\n", "\t", 
+     RowBox[{"specs", ":", 
+      RowBox[{
+       RowBox[{"(", "\n", "\t\t", 
+        RowBox[{"_String", "|", 
+         RowBox[{"{", 
+          RowBox[{"_String", "|", 
+           RowBox[{"{", 
+            RowBox[{"_String", ",", "_"}], "}"}]}], "}"}], "|", "\n", "\t\t", 
+         
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"_String", "|", 
+            RowBox[{"{", 
+             RowBox[{"_String", ",", "_"}], "}"}]}], ",", 
+           RowBox[{"_String", "|", "None", "|", 
+            RowBox[{"{", 
+             RowBox[{"_String", ",", "_"}], "}"}]}]}], "}"}], "|", "\n", 
+         "\t\t", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"_String", "|", 
+            RowBox[{"{", 
+             RowBox[{"_String", ",", "_"}], "}"}]}], ",", 
+           RowBox[{"_String", "|", "None", "|", 
+            RowBox[{"{", 
+             RowBox[{"_String", ",", "_"}], "}"}]}], ",", 
+           RowBox[{"_String", "|", "None", "|", 
+            RowBox[{"{", 
+             RowBox[{"_String", ",", "_"}], "}"}]}]}], "}"}]}], "\n", "\t\t", 
+        ")"}], ".."}]}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{"MatchQ", "[", 
+      RowBox[{"var", ",", 
+       RowBox[{
+        RowBox[{"Verbatim", "[", "Dynamic", "]"}], "[", "None", "]"}]}], 
+      "]"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Clear", "@", "$AuthenticationCache"}], ";", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"Clear", "@", "$AuthenticationCache"}], ";", "#"}], ")"}], 
+        "&"}], "@", "\n", "\t\t", 
+       RowBox[{"AuthDialog", "[", 
+        RowBox[{
+         RowBox[{"Dynamic", "[", "$AuthenticationCache", "]"}], ",", "\n", 
+         "\t\t\t", "banner", ",", "\n", "\t\t\t", "header", ",", "\n", 
+         "\t\t\t", "specs", ",", "\n", "\t\t\t", "ops"}], "]"}]}]}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"BannerDialogInput", "[", "\n", "\t\t\t", 
+      RowBox[{"None", ",", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"!", 
+           RowBox[{"AssociationQ", "@", 
+            RowBox[{"First", "@", "var"}]}]}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"Replace", "[", 
+           RowBox[{"var", ",", "\n", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"Verbatim", "[", "Dynamic", "]"}], "[", "v_", "]"}], ":>",
+              "\n", "\t\t\t\t\t\t", 
+             RowBox[{"Set", "[", 
+              RowBox[{"v", ",", 
+               RowBox[{"<|", "|>"}]}], "]"}]}]}], "\n", "\t\t\t\t\t", "]"}]}],
+          "\n", "\t\t\t\t", "]"}], ";", "\n", "\t\t\t", "banner"}], ",", "\n",
+        "\t\t\t", 
+       RowBox[{
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"header", "=!=", "None"}], ",", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Column", "@", 
+            RowBox[{"{", 
+             RowBox[{"header", ",", "#"}], "}"}]}], "&"}], ",", "\n", 
+          "\t\t\t\t", "Identity"}], "]"}], "@", "\n", "\t\t\t\t", 
+        RowBox[{"Block", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"$authDialogFieldMasked", "=", 
+            RowBox[{"TrueQ", "@", 
+             RowBox[{"OptionValue", "[", "FieldMasked", "]"}]}]}], "}"}], ",",
+           "\n", "\t\t\t\t\t", 
+          RowBox[{"Grid", "[", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"Join", "@@", "\n", "\t", "\t", "\t\t\t\t\t", 
+             RowBox[{"Map", "[", "\n", "\t", "\t", "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Function", "[", 
+                RowBox[{"Null", ",", "\n", "\t", "\t", "\t", "\t\t\t\t\t\t", 
+                 RowBox[{"authDialogFields", "[", 
+                  RowBox[{"var", ",", "#"}], "]"}], ",", "\n", "\t", "\t", 
+                 "\t", "\t\t\t\t\t\t", "HoldFirst"}], "]"}], ",", "\n", 
+               "\t\t\t\t\t\t\t\t", 
+               RowBox[{"DeleteDuplicatesBy", "[", 
+                RowBox[{
+                 RowBox[{"{", "specs", "}"}], ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{"Replace", "[", 
+                  RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"s_String", ",", "___"}], "}"}], "\[RuleDelayed]",
+                     "s"}], ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"s_String", ",", "_"}], "}"}], ",", "___"}], 
+                    "}"}], "\[RuleDelayed]", "s"}]}], "\n", 
+                   "\t\t\t\t\t\t\t\t\t\t", "}"}], "]"}]}], "\n", 
+                "\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t\t", 
+              "]"}]}], ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"Dividers", "\[Rule]", 
+             RowBox[{"{", 
+              RowBox[{"None", ",", 
+               RowBox[{"{", 
+                RowBox[{"None", ",", 
+                 RowBox[{"{", 
+                  RowBox[{"None", ",", "None", ",", 
+                   RowBox[{"GrayLevel", "[", ".8", "]"}]}], "}"}], ",", 
+                 "None"}], "}"}]}], "}"}]}], ",", "\n", "\t", "\t", "\t", 
+            "\t", "\t\t", 
+            RowBox[{"Spacings", "\[Rule]", 
+             RowBox[{"{", 
+              RowBox[{"Automatic", ",", 
+               RowBox[{"{", 
+                RowBox[{"0", ",", 
+                 RowBox[{"{", 
+                  RowBox[{".5", ",", ".5", ",", "1"}], "}"}], ",", "0"}], 
+                "}"}]}], "}"}]}], ",", "\n", "\t", "\t", "\t\t\t\t", 
+            RowBox[{"Alignment", "\[Rule]", "Left"}]}], "\n", "\t\t\t\t\t\t", 
+           "]"}]}], "\n", "\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"Button", "[", "\n", "\t\t\t\t", 
+        RowBox[{"\"\<Submit\>\"", ",", "\n", "\t\t\t\t", 
+         RowBox[{"DialogReturn", "[", 
+          RowBox[{"First", "@", "var"}], "]"}]}], "\n", "\t\t\t\t", "]"}], 
+       ",", "\n", "\t\t\t", 
+       RowBox[{"Button", "[", "\n", "\t\t\t\t", 
+        RowBox[{"\"\<Cancel\>\"", ",", "\n", "\t\t\t\t", 
+         RowBox[{"DialogReturn", "[", "$Canceled", "]"}]}], "\n", "\t\t\t\t", 
+        "]"}], ",", "\n", "\t\t\t", 
+       RowBox[{"FilterRules", "[", 
+        RowBox[{
+         RowBox[{"{", "ops", "}"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"Options", "@", "BannerDialogConfig"}]}], "\n", "\t\t\t\t", 
+        "]"}], ",", "\n", "\t\t\t", 
+       RowBox[{"WindowTitle", "\[Rule]", "\"\<Authenticate\>\""}], ",", "\n", 
+       "\t\t\t", 
+       RowBox[{"WindowSize", "->", "\n", "\t\t\t\t", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Length", "@", 
+            RowBox[{"{", "specs", "}"}]}], ">", "1"}], ",", "\n", 
+          "\t\t\t\t\t", "Automatic", ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"{", 
+           RowBox[{"350", ",", "300"}], "}"}]}], "\n", "\t\t\t\t\t", "]"}]}], 
+       ",", "\n", "\t\t\t", 
+       RowBox[{"WindowFrame", "\[Rule]", "\"\<MovableModalDialog\>\""}], ",", 
+       "\n", "\t\t\t", 
+       RowBox[{"CellContext", "\[Rule]", "$Context"}]}], "\n", "\t\t\t", 
+      "]"}]}], "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.703621692893804*^9, 3.703621692896089*^9}, {
+   3.7036217303344393`*^9, 3.703621768474174*^9}, {3.703621863391165*^9, 
+   3.703621863899743*^9}, {3.70362190858027*^9, 3.70362211276989*^9}, {
+   3.703622301313863*^9, 3.703622381729233*^9}, {3.703622721520754*^9, 
+   3.703622851137985*^9}, {3.703622898264243*^9, 3.7036229189951878`*^9}, {
+   3.703622989323023*^9, 3.703623039719973*^9}, {3.7036231114668007`*^9, 
+   3.703623149448728*^9}, {3.703623189777583*^9, 3.7036232804571877`*^9}, {
+   3.703624423007636*^9, 3.703624604956522*^9}, {3.7036248100269938`*^9, 
+   3.703624902888813*^9}, 3.703625439986513*^9, {3.703625481983776*^9, 
+   3.703625574843511*^9}, {3.703625649540395*^9, 3.703625691002441*^9}, {
+   3.7036260406267157`*^9, 3.70362606141085*^9}, {3.7036266061254587`*^9, 
+   3.703626636362495*^9}, {3.703626934845003*^9, 3.703626941308948*^9}, {
+   3.703627199286604*^9, 3.7036272012623863`*^9}, {3.703627243033272*^9, 
+   3.703627289154311*^9}, {3.703629449625215*^9, 3.70362947648193*^9}, 
+   3.703629521978045*^9, {3.703629615587371*^9, 3.703629619664476*^9}, {
+   3.70362966573912*^9, 3.703629723469014*^9}, 3.703629767333858*^9, {
+   3.703629874138668*^9, 3.703629888096599*^9}, 3.703629994866531*^9, {
+   3.703630041322269*^9, 3.703630044034494*^9}, 3.703630304219389*^9, {
+   3.7036303540762453`*^9, 3.703630408199809*^9}, {3.703630444867571*^9, 
+   3.7036304456408443`*^9}, {3.7036304930180387`*^9, 3.703630519646121*^9}, {
+   3.703630552175137*^9, 3.703630592607333*^9}, {3.703630669759033*^9, 
+   3.7036306740442963`*^9}, {3.7036307327766867`*^9, 3.703630752765877*^9}, {
+   3.703631525886272*^9, 3.703631525893387*^9}, 3.703631659012822*^9, {
+   3.703632222788464*^9, 3.7036322239146633`*^9}, {3.7036325800243893`*^9, 
+   3.703632599856269*^9}, {3.703632807567906*^9, 3.703632812213888*^9}, {
+   3.703632858181974*^9, 3.7036328858875723`*^9}, {3.703634101789081*^9, 
+   3.7036341430653276`*^9}, {3.70363434582286*^9, 3.703634392871037*^9}, {
+   3.703634447937593*^9, 3.7036344524499483`*^9}, {3.70363448686869*^9, 
+   3.703634522669764*^9}, {3.703634557470491*^9, 3.703634679758245*^9}, {
+   3.7036348605226583`*^9, 3.703634917745503*^9}, {3.7036350654727297`*^9, 
+   3.703635096589291*^9}, 3.703635143008493*^9, {3.703635598985403*^9, 
+   3.703635628407571*^9}, {3.703635900811469*^9, 3.703635955878326*^9}, {
+   3.703636130718317*^9, 3.703636144995167*^9}, {3.703636576109541*^9, 
+   3.703636614322916*^9}, {3.703636850683913*^9, 3.7036369211613607`*^9}, {
+   3.703636959553335*^9, 3.70363697190117*^9}, {3.703637087618063*^9, 
+   3.703637091880248*^9}, {3.7036372984627857`*^9, 3.70363731386244*^9}, {
+   3.703637461186124*^9, 3.703637489506221*^9}, {3.7036384907856283`*^9, 
+   3.7036384976353407`*^9}, {3.703640000873703*^9, 3.703640001800646*^9}, {
+   3.703668954270214*^9, 3.703668976516271*^9}, {3.703669068489566*^9, 
+   3.703669083816581*^9}, {3.706617887912424*^9, 3.7066178900996437`*^9}, {
+   3.7066179343564796`*^9, 3.706617942112556*^9}, {3.729798833692895*^9, 
+   3.7297988337127457`*^9}},ExpressionUUID->"1995df0d-ada0-45b9-89af-\
+453f120c66cb"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["PasswordDialog", "CodeSubsubsection",
+ CellChangeTimes->{{3.7036372068789873`*^9, 3.703637211789597*^9}, 
+   3.703642577130155*^9},ExpressionUUID->"229be948-83a2-494f-bea1-\
+d7c6640864ff"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "PasswordDialog", "]"}], "=", "\n", "\t", 
+   RowBox[{"Append", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Options", "[", "AuthDialog", "]"}], ",", "\n", "\t\t", 
+     RowBox[{
+     "\"\<PromptString\>\"", "->", "\"\<Input the password for ``:\>\""}]}], 
+    "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"PasswordDialog", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"var", ":", 
+     RowBox[{
+      RowBox[{"Verbatim", "[", "Dynamic", "]"}], "[", "_Symbol", "]"}], ":", 
+     RowBox[{"Dynamic", "[", "None", "]"}]}], ",", "\n", "\t", 
+    RowBox[{"banner_:", "\"\<\>\""}], ",", "\n", "\t", "spec_String", ",", 
+    "\n", "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{"MatchQ", "[", 
+     RowBox[{"var", ",", 
+      RowBox[{
+       RowBox[{"Verbatim", "[", "Dynamic", "]"}], "[", "None", "]"}]}], "]"}],
+     ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Clear", "@", "$PasswordCache"}], ";", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"Clear", "@", "$PasswordCache"}], ";", "#"}], ")"}], "&"}], 
+      "@", "\n", "\t\t", 
+      RowBox[{"PasswordDialog", "[", 
+       RowBox[{
+        RowBox[{"Dynamic", "@", "$PasswordCache"}], ",", "\n", "\t\t\t", 
+        "banner", ",", "\n", "\t\t\t", "spec", ",", "\n", "\t\t\t", "ops"}], 
+       "\n", "\t\t\t", "]"}]}]}], ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Replace", "[", "\n", "\t\t\t", 
+      RowBox[{"a_Association", ":>", "\n", "\t\t\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{
+         RowBox[{"a", "[", "spec", "]"}], ",", 
+         RowBox[{"{", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"_Missing", "\[Rule]", "None"}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"_", ",", "p_String"}], "}"}], ":>", "\n", 
+            "\t\t\t\t\t\t", "p"}]}], "\n", "\t\t\t\t\t", "}"}]}], "]"}]}], 
+      "\n", "\t\t\t", "]"}], "@", "\n", "\t\t\t", 
+     RowBox[{"AuthDialog", "[", 
+      RowBox[{"var", ",", "\n", "\t\t\t\t", "banner", ",", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"OptionValue", "[", "\"\<PromptString\>\"", "]"}], "~", 
+        "TemplateApply", "~", "spec"}], ",", "\n", "\t", "\t\t\t", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"spec", ",", "Null"}], "}"}], ",", "None", ",", 
+         RowBox[{"{", 
+          RowBox[{"\"\<\>\"", ",", "None"}], "}"}]}], "}"}], ",", "\n", 
+       "\t\t\t\t", 
+       RowBox[{"Evaluate", "@", "\n", "\t\t\t\t\t", 
+        RowBox[{"FilterRules", "[", 
+         RowBox[{
+          RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"ops", ",", "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{"Appearance", "\[Rule]", "\"\<Password\>\""}], ",", "\n", 
+            "\t", "\t", "\t", "\t\t\t", 
+            RowBox[{"WindowTitle", "\[Rule]", "\"\<Input Password\>\""}]}], 
+           "\n", "\t", "\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t\t", 
+          RowBox[{"Options", "@", "AuthDialog"}]}], "\n", "\t\t\t\t\t\t", 
+         "]"}]}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t", 
+   "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.703634068762918*^9, 3.703634094936195*^9}, {
+   3.70363469794314*^9, 3.703634703006114*^9}, 3.703634836932906*^9, {
+   3.703635113260252*^9, 3.7036351152748823`*^9}, {3.703635373634897*^9, 
+   3.7036353741598063`*^9}, {3.7036355662416363`*^9, 3.703635587393815*^9}, {
+   3.7036357131868877`*^9, 3.703635717225934*^9}, {3.703635757659141*^9, 
+   3.703635782775696*^9}, {3.703635839968194*^9, 3.703635874391572*^9}, {
+   3.7036360990435877`*^9, 3.703636109640881*^9}, 3.7036361792649918`*^9, {
+   3.7036365376705313`*^9, 3.703636552419133*^9}, {3.703636942942238*^9, 
+   3.7036369488674793`*^9}, {3.703637029221744*^9, 3.703637068636241*^9}, {
+   3.703637134075704*^9, 3.703637177628029*^9}, {3.703637240348851*^9, 
+   3.703637244913759*^9}, {3.703637277048764*^9, 3.7036372804628477`*^9}, {
+   3.703637415160736*^9, 3.703637452395447*^9}, {3.703637501411224*^9, 
+   3.703637552338852*^9}, {3.7036376178492823`*^9, 3.703637665540585*^9}, {
+   3.703637716502101*^9, 3.703637910572056*^9}, {3.703637965233782*^9, 
+   3.703637974361095*^9}, {3.703638039654009*^9, 3.703638049934471*^9}, {
+   3.703638093146299*^9, 3.7036381974549828`*^9}, {3.703638287216422*^9, 
+   3.7036382888196774`*^9}, {3.703639009495359*^9, 3.7036390159822807`*^9}, {
+   3.7036397651063013`*^9, 3.703639783298745*^9}, {3.703639813856798*^9, 
+   3.7036398231506357`*^9}, {3.703642572968961*^9, 3.7036425754314137`*^9}, {
+   3.703642610642405*^9, 3.703642636829351*^9}, {3.7036426823256207`*^9, 
+   3.703642831676128*^9}, {3.703643380943266*^9, 3.703643416891345*^9}, {
+   3.703643452803091*^9, 3.703643475097172*^9}, {3.70364368157572*^9, 
+   3.703643706210413*^9}, {3.703643740443169*^9, 3.7036437406408987`*^9}, {
+   3.703644235820094*^9, 3.7036443366679792`*^9}, {3.703644457772028*^9, 
+   3.703644463601068*^9}, {3.705357046751235*^9, 3.7053570720133944`*^9}, {
+   3.705357125090891*^9, 3.7053571382692432`*^9}, {3.706617853885994*^9, 
+   3.706617877722912*^9}, {3.706617908606723*^9, 3.706617925689888*^9}, {
+   3.729798833729797*^9, 
+   3.729798833744027*^9}},ExpressionUUID->"8fea78ee-d913-42db-823c-\
+8aaaeb87a7c2"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["OAuthDialog", "CodeSubsubsection",
+ CellChangeTimes->{{3.7036372068789873`*^9, 
+  3.703637211789597*^9}},ExpressionUUID->"f9d00d1f-c78a-403c-adae-\
+5c49388f2901"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "OAuthDialog", "]"}], "=", "\n", "\t", 
+   RowBox[{"Options", "[", "AuthDialog", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"OAuthDialog", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"var", ":", 
+     RowBox[{
+      RowBox[{"Verbatim", "[", "Dynamic", "]"}], "[", "_Symbol", "]"}], ":", 
+     RowBox[{"Dynamic", "[", "None", "]"}]}], ",", "\n", "\t", 
+    RowBox[{"banner_:", "\"\<OAuth\>\""}], ",", "\n", "\t", 
+    RowBox[{"header", ":", 
+     RowBox[{
+      RowBox[{"_String", "?", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"URLParse", "[", 
+           RowBox[{"#", ",", "\"\<Scheme\>\""}], "]"}], "=!=", "None"}], 
+         "&"}], ")"}]}], "|", 
+      RowBox[{"Except", "[", "_String", "]"}]}], ":", "None"}], ",", "\n", 
+    "\t", 
+    RowBox[{"spec", ":", 
+     RowBox[{"_String", "|", 
+      RowBox[{"{", 
+       RowBox[{"_String", ",", "_String"}], "}"}]}]}], ",", "\n", "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{"MatchQ", "[", 
+     RowBox[{"var", ",", 
+      RowBox[{
+       RowBox[{"Verbatim", "[", "Dynamic", "]"}], "[", "None", "]"}]}], "]"}],
+     ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Clear", "@", "$OAuthCache"}], ";", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"Clear", "@", "$OAuthCache"}], ";", "#"}], ")"}], "&"}], "@",
+       "\n", "\t\t", 
+      RowBox[{"OAuthDialog", "[", 
+       RowBox[{
+        RowBox[{"Dynamic", "@", "$OAuthCache"}], ",", "\n", "\t\t\t", 
+        "banner", ",", "\n", "\t\t\t", "header", ",", "\n", "\t\t\t", "spec", 
+        ",", "\n", "\t\t\t", "ops"}], "\n", "\t\t\t", "]"}]}]}], ",", "\n", 
+    "\t\t", 
+    RowBox[{
+     RowBox[{"Replace", "[", "\n", "\t\t\t", 
+      RowBox[{"a_Association", ":>", "\n", "\t\t\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{
+         RowBox[{"a", "[", 
+          RowBox[{"First", "@", 
+           RowBox[{"Flatten", "@", 
+            RowBox[{"{", "spec", "}"}]}]}], "]"}], ",", 
+         RowBox[{"{", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"_Missing", "\[Rule]", "None"}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"u_String", ",", "p_String"}], "}"}], ":>", "\n", 
+            "\t\t\t\t\t\t", 
+            RowBox[{"If", "[", 
+             RowBox[{
+              RowBox[{"StringQ", "@", "spec"}], ",", "\n", "\t\t\t\t\t\t\t", 
+              "p", ",", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"{", 
+               RowBox[{"u", ",", "p"}], "}"}]}], "\n", "\t\t\t\t\t\t\t", 
+             "]"}]}]}], "\n", "\t\t\t\t\t", "}"}]}], "]"}]}], "\n", "\t\t\t", 
+      "]"}], "@", "\n", "\t\t\t", 
+     RowBox[{"AuthDialog", "[", 
+      RowBox[{
+      "var", ",", "\n", "\t", "\t\t\t", "banner", ",", "\n", "\t", "\t\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{"header", ",", 
+         RowBox[{"{", "\n", "\t", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"s_String", ":>", "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{"Row", "@", 
+             RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t", 
+              RowBox[{"\"\<Go to the \>\"", ",", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"Hyperlink", "[", 
+                RowBox[{"\"\<OAuth Site\>\"", ",", "s"}], "]"}]}], "\n", 
+              "\t\t\t\t\t\t\t", "}"}]}]}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"s_String", ",", 
+              RowBox[{"example", ":", 
+               RowBox[{"Except", "[", "_String", "]"}]}]}], "}"}], ":>", "\n",
+             "\t\t\t\t\t\t", 
+            RowBox[{"Column", "@", 
+             RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Row", "@", 
+                RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                 "\"\<Go to the \>\"", ",", "\n", "\t", "\t\t\t\t\t\t\t", 
+                  RowBox[{"Hyperlink", "[", 
+                   RowBox[{"\"\<OAuth Site\>\"", ",", "s"}], "]"}]}], "\n", 
+                 "\t\t\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"Mouseover", "[", "\n", "\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"Style", "[", 
+                  RowBox[{
+                  "\"\<Trouble finding the key?\>\"", ",", 
+                   "\"\<Message\>\""}], "]"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                 
+                 RowBox[{"If", "[", 
+                  RowBox[{
+                   RowBox[{"ImageQ", "@", "example"}], ",", "\n", 
+                   "\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"Image", "[", 
+                    RowBox[{"example", ",", 
+                    RowBox[{"ImageSize", "\[Rule]", "325"}]}], "]"}], ",", 
+                   "\n", "\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"Pane", "[", 
+                    RowBox[{"example", ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"ImageSize", "\[Rule]", "325"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "ImageSizeAction", "\[Rule]", "\"\<ShrinkToFit\>\""}]}], 
+                    "\n", "\t\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", 
+                  "\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                 
+                 RowBox[{"ImageSize", "\[Rule]", "All"}]}], "\n", "\t", "\t", 
+                "\t", "\t", "\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t", 
+              "}"}]}]}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"label_", ",", "link_String"}], "}"}], "\[RuleDelayed]", 
+            "\n", "\t\t\t\t\t\t", 
+            RowBox[{"Row", "@", 
+             RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"\"\<Go to \>\"", ",", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"Hyperlink", "[", 
+                RowBox[{"label", ",", "link"}], "]"}]}], "\n", 
+              "\t\t\t\t\t\t\t", "}"}]}]}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"{", 
+               RowBox[{"label_", ",", "link_"}], "}"}], ",", "example_"}], 
+             "}"}], ":>", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"Column", "@", 
+             RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Row", "@", 
+                RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                 "\"\<Go to \>\"", ",", "\n", "\t", "\t\t\t\t\t\t\t", 
+                  RowBox[{"Hyperlink", "[", 
+                   RowBox[{"label", ",", "link"}], "]"}]}], "\n", 
+                 "\t\t\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"Mouseover", "[", "\n", "\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"Style", "[", 
+                  RowBox[{
+                  "\"\<Trouble finding the key?\>\"", ",", 
+                   "\"\<Message\>\""}], "]"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                 
+                 RowBox[{"If", "[", 
+                  RowBox[{
+                   RowBox[{"ImageQ", "@", "example"}], ",", "\n", 
+                   "\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"Image", "[", 
+                    RowBox[{"example", ",", 
+                    RowBox[{"ImageSize", "\[Rule]", "325"}]}], "]"}], ",", 
+                   "\n", "\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"Pane", "[", 
+                    RowBox[{
+                    "example", ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"ImageSize", "\[Rule]", "325"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "ImageSizeAction", "\[Rule]", "\"\<ShrinkToFit\>\""}]}], 
+                    "\n", "\t\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", 
+                  "\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                 
+                 RowBox[{"ImageSize", "\[Rule]", "All"}]}], "\n", "\t", "\t", 
+                "\t", "\t", "\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t", 
+              "}"}]}]}]}], "\n", "\t\t\t\t\t", "}"}]}], "]"}], ",", "\n", 
+       "\t\t\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{"spec", ",", 
+         RowBox[{"{", "\n", "\t", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"site_String", ":>", "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"{", 
+               RowBox[{"site", ",", "Null"}], "}"}], ",", "\n", "\t", 
+              "\t\t\t\t\t\t", "None", ",", "\n", "\t", "\t\t\t\t\t\t", 
+              RowBox[{"{", 
+               RowBox[{"\"\<\>\"", ",", "None"}], "}"}]}], "\n", 
+             "\t\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"site_", ",", "uname_"}], "}"}], "\[RuleDelayed]", "\n", 
+            "\t", "\t\t\t\t\t", 
+            RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"{", 
+               RowBox[{"site", ",", "Null"}], "}"}], ",", "\n", "\t", 
+              "\t\t\t\t\t\t", "uname", ",", "\n", "\t", "\t\t\t\t\t\t", 
+              RowBox[{"{", 
+               RowBox[{"\"\<\>\"", ",", "None"}], "}"}]}], "\n", 
+             "\t\t\t\t\t\t\t", "}"}]}]}], "\n", "\t\t\t\t\t", "}"}]}], "]"}], 
+       ",", "\n", "\t\t\t\t", "ops", ",", "\n", "\t\t\t\t", 
+       RowBox[{"Appearance", "\[Rule]", "\"\<OAuth\>\""}], ",", "\n", "\t", 
+       "\t\t\t", 
+       RowBox[{"WindowTitle", "\[Rule]", "\"\<OAuth\>\""}], ",", "\n", "\t", 
+       "\t", "\t", "\t", 
+       RowBox[{"FieldMasked", "\[Rule]", "False"}]}], "\n", "\t", "\t\t\t", 
+      "]"}]}]}], "\n", "\t\t", "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.703634068762918*^9, 3.703634094936195*^9}, {
+   3.70363469794314*^9, 3.703634703006114*^9}, 3.703634836932906*^9, {
+   3.703635113260252*^9, 3.7036351152748823`*^9}, {3.703635373634897*^9, 
+   3.7036353741598063`*^9}, {3.7036355662416363`*^9, 3.703635587393815*^9}, {
+   3.7036357131868877`*^9, 3.703635717225934*^9}, {3.703635757659141*^9, 
+   3.703635782775696*^9}, {3.703635839968194*^9, 3.703635874391572*^9}, {
+   3.7036360990435877`*^9, 3.703636109640881*^9}, 3.7036361792649918`*^9, {
+   3.7036365376705313`*^9, 3.703636552419133*^9}, {3.703636942942238*^9, 
+   3.7036369488674793`*^9}, {3.703637029221744*^9, 3.703637068636241*^9}, {
+   3.703637134075704*^9, 3.703637177628029*^9}, {3.703637240348851*^9, 
+   3.703637244913759*^9}, {3.703637277048764*^9, 3.7036372804628477`*^9}, {
+   3.703637415160736*^9, 3.703637452395447*^9}, {3.703637501411224*^9, 
+   3.703637552338852*^9}, {3.7036376178492823`*^9, 3.703637665540585*^9}, {
+   3.703637716502101*^9, 3.703637910572056*^9}, {3.703637965233782*^9, 
+   3.703637974361095*^9}, {3.703638039654009*^9, 3.703638049934471*^9}, {
+   3.703638093146299*^9, 3.7036381974549828`*^9}, {3.703638287216422*^9, 
+   3.7036382888196774`*^9}, {3.703639009495359*^9, 3.7036390159822807`*^9}, {
+   3.7036397651063013`*^9, 3.703639783298745*^9}, {3.703639813856798*^9, 
+   3.7036398231506357`*^9}, {3.703642743427658*^9, 3.7036427521709137`*^9}, {
+   3.703642958514866*^9, 3.703642962225101*^9}, {3.7036435046120996`*^9, 
+   3.703643661438054*^9}, {3.703643714875589*^9, 3.70364371830832*^9}, {
+   3.703644435294873*^9, 3.703644438096987*^9}, 3.703644468176649*^9, {
+   3.7041582541915092`*^9, 3.7041582625142384`*^9}, {3.7042170699827003`*^9, 
+   3.704217089030829*^9}, {3.704217121378565*^9, 3.704217170882884*^9}, {
+   3.7042176921641273`*^9, 3.7042177451375113`*^9}, {3.704217786325656*^9, 
+   3.7042178447476063`*^9}, {3.704217877997322*^9, 3.704217881787722*^9}, {
+   3.704402875431584*^9, 3.70440289341726*^9}, {3.704402939569025*^9, 
+   3.7044029582148857`*^9}, {3.704402988883506*^9, 3.704403081031109*^9}, {
+   3.704403355304935*^9, 3.7044034036501083`*^9}, {3.704408330095697*^9, 
+   3.704408336049267*^9}, {3.706617898841357*^9, 3.706617902604272*^9}, {
+   3.706617949942408*^9, 3.7066179511562433`*^9}, {3.729798833776381*^9, 
+   3.729798833785636*^9}},ExpressionUUID->"d74e0918-0d7a-42ab-84ed-\
+15432d5d305a"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"End", "[", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"f8d31767-11be-4b1e-ab2c-\
+42589b3cbb3c"]
+}, Open  ]],
+
+Cell["", "SectionSeparator",ExpressionUUID->"e5482971-4c88-4ee4-8d35-\
+dc2a8891a397"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PasswordDialog", "[", "\"\<test\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.703643437067436*^9, 
+  3.703643439665324*^9}},ExpressionUUID->"a53d96be-3e8a-4a68-b026-\
+93eda67ea609"],
+
+Cell[BoxData["$Canceled"], "Output",
+ CellChangeTimes->{{3.703656835945571*^9, 3.703656859154537*^9}, {
+   3.703657127585516*^9, 3.70365714969934*^9}, 3.7036576009788933`*^9, 
+   3.7036600977030363`*^9, 3.7036601350750523`*^9, 
+   3.7036689904355507`*^9},ExpressionUUID->"26f41ddb-5deb-4ad5-a6dd-\
+c60e879260b4"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"AuthDialog", "[", 
+  RowBox[{"\"\<\>\"", ",", "None", ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\"\<test\>\"", ",", "Automatic"}], "}"}], ",", 
+     "\"\<ploo\>\""}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.703668997758153*^9, 3.703669049662574*^9}, {
+   3.703669212546804*^9, 3.703669220833609*^9}, {3.703669330011641*^9, 
+   3.703669332298771*^9}, 
+   3.729798833794669*^9},ExpressionUUID->"feea2ed8-3ff0-443c-80e4-\
+9b3a85fdc212"],
+
+Cell[BoxData["$Canceled"], "Output",
+ CellChangeTimes->{{3.703669010657292*^9, 3.7036690553749743`*^9}, 
+   3.703669223623221*^9, {3.703669327450005*^9, 
+   3.703669335518063*^9}},ExpressionUUID->"f6b1bec7-c254-422f-b5a4-\
+325e89b1b316"]
+}, Open  ]]
+},
+WindowSize->{808, 755},
+WindowMargins->{{Automatic, 10}, {0, Automatic}},
+FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
+2018)",
+StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+

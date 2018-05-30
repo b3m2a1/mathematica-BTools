@@ -1,0 +1,270 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Package Tools", "CodeSection",
+ CellChangeTimes->{{3.727103325121559*^9, 
+  3.727103327270545*^9}},ExpressionUUID->"294fe872-67f1-4df3-b5b7-\
+7e2de797ad05"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"ContextScopeBlock", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<\>\""}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.727103330002384*^9, 3.7271033776804733`*^9}, 
+   3.727103591038404*^9, {3.730478985065837*^9, 3.730478991964838*^9}, {
+   3.730479200716256*^9, 
+   3.730479200992158*^9}},ExpressionUUID->"fb7cc72d-6bbd-40c6-9afa-\
+41dee34ee8ce"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"ContextRemove", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Removes a package entirely from the current working state\>\""}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.727103330002384*^9, 3.7271033776804733`*^9}, 
+   3.727103591038404*^9, {3.730478985065837*^9, 3.730478991964838*^9}, {
+   3.730479200716256*^9, 
+   3.730479200992158*^9}},ExpressionUUID->"ca2b9d26-24ce-40ca-89cf-\
+9750ded9fc7f"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"3e80f830-b059-4e12-916a-\
+efdb0f28a13e"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]ContextRemove\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.730479203656942*^9, 
+  3.730479205407589*^9}},ExpressionUUID->"68f63d25-be8c-4341-8968-\
+cf84e21d69e4"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ContextRemove", "[", "pkgContext_String", "]"}], ":=", "\n", "\t", 
+  
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"cont", "=", 
+      RowBox[{
+       RowBox[{"StringTrim", "[", 
+        RowBox[{"pkgContext", ",", " ", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"\"\<*\>\"", "|", "\"\<`\>\""}], ")"}], ".."}]}], "]"}], 
+       "<>", "\"\<`\>\""}]}], "}"}], ",", "\n", "\t\t", 
+    RowBox[{"With", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"cps", "=", 
+        RowBox[{"NestList", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"#", "<>", "\"\<`*\>\""}], "&"}], ",", " ", 
+          RowBox[{"cont", "<>", "\"\<*\>\""}], ",", " ", "3"}], "]"}]}], 
+       "}"}], ",", "\n", "\t\t\t", 
+      RowBox[{"Quiet", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Unprotect", "@@", "cps"}], ";", "\n", "\t\t\t\t", 
+         RowBox[{"ClearAll", "@@", "cps"}], ";", "\n", "\t\t\t\t", 
+         RowBox[{"Remove", "@@", "cps"}], ";", "\n", "\t\t\t\t", 
+         RowBox[{"$ContextPath", "=", "\n", "\t\t\t\t\t", 
+          RowBox[{"Select", "[", 
+           RowBox[{"$ContextPath", ",", " ", 
+            RowBox[{"Not", "@*", 
+             RowBox[{"StringStartsQ", "[", "cont", "]"}]}]}], "]"}]}], ";", 
+         "\n", "\t", "\t", "\t\t", 
+         RowBox[{"Unprotect", "[", "$Packages", "]"}], ";", "\n", "\t", "\t", 
+         "\t\t", 
+         RowBox[{"$Packages", "=", 
+          RowBox[{"Select", "[", 
+           RowBox[{"$Packages", ",", " ", 
+            RowBox[{"Not", "@*", 
+             RowBox[{"StringStartsQ", "[", "cont", "]"}]}]}], "]"}]}], ";", 
+         "\n", "\t", "\t", "\t\t", 
+         RowBox[{"Protect", "[", "$Packages", "]"}], ";"}], ",", "\n", "\t", 
+        "\t", "\t\t", 
+        RowBox[{"{", "\n", "\t", "\t", "\t\t\t", 
+         RowBox[{
+          RowBox[{"General", "::", "readp"}], ",", "\n", "\t", "\t", "\t\t\t", 
+          RowBox[{"Protect", "::", "locked"}], ",", "\n", "\t", "\t", 
+          "\t\t\t", 
+          RowBox[{"Attributes", "::", "locked"}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"Remove", "::", "rmnsm"}]}], "\n", "\t\t\t\t\t", "}"}]}], 
+       "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+   "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.727103385018908*^9, 3.7271035544051523`*^9}, 
+   3.727103593080453*^9, {3.727652599051218*^9, 3.727652677564443*^9}, {
+   3.7278253488150063`*^9, 3.727825387018116*^9}, {3.727880374870658*^9, 
+   3.727880443914144*^9}, {3.7278804977786303`*^9, 3.727880502843563*^9}, {
+   3.727880537486417*^9, 3.7278805846135397`*^9}, {3.727880619424378*^9, 
+   3.7278806201156197`*^9}},ExpressionUUID->"da95fbf4-e3bc-4bb3-bcc8-\
+057680ad3250"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]ContextScopeBlock\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7304791855413*^9, 
+  3.730479208568962*^9}},ExpressionUUID->"36f6b64c-97d4-441f-81d0-\
+96495cf586ae"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"ContextScopeBlock", "[", "\n", "\t", 
+    RowBox[{"e_", ",", "\n", "\t", 
+     RowBox[{"baseContext_String", "?", 
+      RowBox[{"(", 
+       RowBox[{"StringEndsQ", "[", "\"\<`\>\"", "]"}], ")"}]}], ",", "\n", 
+     "\t", 
+     RowBox[{"contextPath", ":", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"__String", "?", "StringEndsQ"}], "[", "\"\<`\>\"", "]"}], 
+        "}"}], "|", "Automatic"}], ":", "Automatic"}], ",", "\n", "\t", 
+     RowBox[{"scope", ":", 
+      RowBox[{"_String", "?", 
+       RowBox[{"(", 
+        RowBox[{"StringFreeQ", "[", "\"\<`\>\"", "]"}], ")"}]}], ":", 
+      "\"\<Package\>\""}], ",", "\n", "\t", 
+     RowBox[{"context", ":", 
+      RowBox[{"_String", "?", 
+       RowBox[{"(", 
+        RowBox[{"StringEndsQ", "[", "\"\<`\>\"", "]"}], ")"}]}], ":", 
+      "\"\<`PackageScope`\>\""}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"newcont", "=", "\n", "\t\t\t", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"StringStartsQ", "[", 
+           RowBox[{"context", ",", " ", "\"\<`\>\""}], "]"}], ",", "\n", 
+          "\t\t\t\t", 
+          RowBox[{
+          "baseContext", "<>", "context", "<>", "scope", "<>", "\"\<`\>\""}], 
+          ",", "\n", "\t\t\t\t", 
+          RowBox[{"context", "<>", "scope", "<>", "\"\<`\>\""}]}], "\n", 
+         "\t\t\t\t", "]"}]}], ",", "\n", "\t\t", 
+       RowBox[{"res", "=", "e"}], ",", "\n", "\t\t", 
+       RowBox[{"cp", "=", 
+        RowBox[{"Replace", "[", 
+         RowBox[{"contextPath", ",", " ", 
+          RowBox[{"Automatic", "\[RuleDelayed]", "$ContextPath"}]}], 
+         "]"}]}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Replace", "[", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"Thread", "[", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Cases", "[", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"HoldComplete", "[", "e", "]"}], ",", "\n", "\t\t\t\t\t", 
+            
+            RowBox[{
+             RowBox[{"sym_Symbol", "?", 
+              RowBox[{"(", "\n", "\t\t\t\t\t\t", 
+               RowBox[{"Function", "[", 
+                RowBox[{"Null", ",", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{"MemberQ", "[", 
+                  RowBox[{"cp", ",", " ", 
+                   RowBox[{"Quiet", "[", 
+                    RowBox[{"Context", "[", "#", "]"}], "]"}]}], "]"}], ",", 
+                 "\n", "\t\t\t\t\t\t\t", "HoldAllComplete"}], "\n", 
+                "\t\t\t\t\t\t\t", "]"}], "\n", "\t\t\t\t\t\t", ")"}]}], ":>", 
+             "\n", "\t\t\t\t\t\t", 
+             RowBox[{"HoldComplete", "[", "sym", "]"}]}], ",", "\n", 
+            "\t\t\t\t\t", "\[Infinity]"}], "\n", "\t\t\t\t\t", "]"}], ",", 
+          "\n", "\t\t\t\t", "HoldComplete"}], "\n", "\t\t\t\t", "]"}], ",", 
+        "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"HoldComplete", "[", 
+            RowBox[{"{", "s__", "}"}], "]"}], ":>", "\n", "\t\t\t\t\t", 
+           RowBox[{"Map", "[", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Function", "[", 
+              RowBox[{"Null", ",", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"Quiet", "[", "\n", "\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"Check", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"Set", "[", 
+                    RowBox[{
+                    RowBox[{"Context", "[", "#", "]"}], ",", " ", "newcont"}],
+                     "]"}], ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"Remove", "[", "#", "]"}], ",", "\n", 
+                   "\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"Context", "::", "cxdup"}]}], "\n", 
+                  "\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                 
+                 RowBox[{"Context", "::", "cxdup"}]}], "\n", 
+                "\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t", 
+               "HoldAllComplete"}], "\n", "\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+             "\t\t\t\t\t\t", 
+             RowBox[{"HoldComplete", "[", "s", "]"}]}], "\n", "\t\t\t\t\t\t", 
+            "]"}]}], "//", "ReleaseHold"}], ";"}]}], "\n", "\t\t\t", "]"}], 
+      ";", "\n", "\t\t", "res"}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"ContextScopeBlock", "~", "SetAttributes", "~", "HoldFirst"}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.730479001034123*^9, 
+  3.730479183549844*^9}},ExpressionUUID->"cdd19b85-9398-49d0-949c-\
+5888530d7300"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Autocompletes\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.733360590720572*^9, 
+  3.73336059725438*^9}},ExpressionUUID->"f934d178-0be0-4832-854e-\
+ecd71fc29bf9"],
+
+Cell[BoxData[
+ RowBox[{"PackageAddAutocompletions", "[", "\n", "\t", 
+  RowBox[{"\"\<ContextRemove\>\"", ",", "\n", "\t", 
+   RowBox[{"SortBy", "[", 
+    RowBox[{
+     RowBox[{"{", "$Packages", "}"}], ",", " ", 
+     RowBox[{
+      RowBox[{"MemberQ", "[", 
+       RowBox[{"$ContextPath", ",", " ", "#"}], "]"}], "&"}]}], "]"}]}], "\n",
+   "\t", "]"}]], "CodeInput",
+ CellChangeTimes->{{3.73336059842808*^9, 
+  3.733360632151492*^9}},ExpressionUUID->"38d6b391-5f24-4ca3-b756-\
+ba2dc28d8de7"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"End", "[", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"da959e37-3581-4707-95be-\
+41c6f03c6cbc"]
+}, Open  ]],
+
+Cell["", "SectionSeparator",ExpressionUUID->"8b650c8d-9d4f-44a8-a616-\
+d693a8202253"]
+},
+WindowSize->{808, 755},
+WindowMargins->{{174, Automatic}, {8, Automatic}},
+FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
+2018)",
+StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+

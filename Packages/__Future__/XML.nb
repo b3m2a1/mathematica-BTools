@@ -1,0 +1,2710 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["XML Tools", "CodeSection",
+ CellChangeTimes->{{3.691938801708151*^9, 
+  3.691938808378779*^9}},ExpressionUUID->"56447181-47a9-44c2-a85c-\
+bc9387762972"],
+
+Cell["\<\
+Add system for tree-traversal (depth and breadth first) with call-backs \
+applied on various tags with meta-information passed along\
+\>", "Text",
+ CellChangeTimes->{{3.699615700510387*^9, 
+  3.699615742865732*^9}},ExpressionUUID->"2b7d4653-ac95-4ce3-b252-\
+1ecb5c8b76fc"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLImport", "::", "usage"}], "=", 
+   "\"\<Imports as XMLObject\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTree", "::", "usage"}], "=", 
+   "\"\<Generates an XML tree from an XMLObject\>\""}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.691966505687718*^9, 
+  3.6919665421904287`*^9}},ExpressionUUID->"8c6bde19-183a-4efd-ae2d-\
+c4ed9d63c0cd"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLNodeFind", "::", "usage"}], "=", 
+   "\"\<Finds a given node by index (just the depth list really)\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLNodeParent", "::", "usage"}], "=", 
+   "\"\<Finds the parent node of a given node\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLNodeChildren", "::", "usage"}], "=", 
+   "\"\<Returns the child nodes of an XML node\>\""}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.691966505687718*^9, 3.691966568015522*^9}, {
+  3.693059309454425*^9, 3.693059321021213*^9}, {3.69305954664563*^9, 
+  3.693059592060526*^9}},ExpressionUUID->"138b228a-9934-4086-891d-\
+c2da57550814"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLNodeType", "::", "usage"}], "=", 
+   "\"\<Type of an XML node\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLNodeAttributes", "::", "usage"}], "=", 
+   "\"\<Attributes of an XML node\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLNodeData", "::", "usage"}], "=", 
+   "\"\<Data of an XML node\>\""}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.691966505687718*^9, 3.691966586139757*^9}, {
+  3.693059282319293*^9, 
+  3.693059306349823*^9}},ExpressionUUID->"8956f785-18e1-4d65-80b6-\
+f2580b358619"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTreeSelect", "::", "usage"}], "=", 
+   "\"\<Selects from an XML tree by matching against some node \
+property\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTreeTypes", "::", "usage"}], "=", 
+   "\"\<The element types in an XML tree\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTreeAttributes", "::", "usage"}], "=", 
+   "\"\<Lists the attributes in the XML tree\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTreeClasses", "::", "usage"}], "=", 
+   "\"\<Lists the HTML classes in the XML tree\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTreeIDs", "::", "usage"}], "=", 
+   "\"\<Lists the HTML IDs in the XML tree\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTreeAttributeSelect", "::", "usage"}], "=", 
+   "\"\<Selects nodes by attribute from an XML tree\>\""}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.691966597487015*^9, 3.6919666508351173`*^9}, {
+  3.693059127850993*^9, 
+  3.6930592442853117`*^9}},ExpressionUUID->"54798df4-74aa-4988-8b40-\
+5c2877551a75"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTreeDrop", "::", "usage"}], "=", 
+   "\"\<Drops a node and its children from an XML tree\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLSubTree", "::", "usage"}], "=", 
+   "\"\<Expands tree from flat Association to nested child data Association\>\
+\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLFullTree", "::", "usage"}], "=", 
+   "\"\<Expands tree from flat Association to nested Association with full \
+node data\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTreeMap", "::", "usage"}], "=", 
+   "\"\<Maps a function over an XML subtree\>\""}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.691966651597045*^9, 3.691966718866334*^9}, {
+  3.693059373135292*^9, 3.693059445208383*^9}, {3.6930595128870087`*^9, 
+  3.693059538717615*^9}, {3.6930597233764257`*^9, 
+  3.693059735453644*^9}},ExpressionUUID->"01930877-1f94-4485-868c-\
+73bab605f012"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTreeView", "::", "usage"}], "=", 
+   "\"\<Visualizes an XML tree\>\""}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.693059747295825*^9, 
+  3.69305975778214*^9}},ExpressionUUID->"aba1b129-5b68-4886-9e98-\
+523bf492f640"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"$XMLFormatting", "::", "usage"}], "=", 
+   "\"\<Not ready for prime-time\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLNodeFormat", "::", "usage"}], "=", 
+   "\"\<Not ready for prime-time\>\""}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.6919665875585117`*^9, 3.691966596603342*^9}, {
+  3.691966713877791*^9, 3.691966723529722*^9}, {3.6930593398262444`*^9, 
+  3.693059371787137*^9}},ExpressionUUID->"f1413842-5e56-46bc-8cfe-\
+3e6766b22f01"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"htmlRef", "::", "usage"}], "=", 
+   "\"\<Pulls HTML tag data from w3 schools\>\""}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.691966724540408*^9, 3.691966726673794*^9}, {
+  3.693059597283638*^9, 
+  3.6930596053863297`*^9}},ExpressionUUID->"8d8ca391-f496-4235-ab3f-\
+815344a109fc"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"ef08c34c-894d-4c1e-afde-\
+f23a7cd56ae3"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"XMLImport", "[", "url_", "]"}], ":=", 
+  RowBox[{"Import", "[", 
+   RowBox[{"url", ",", 
+    RowBox[{"{", 
+     RowBox[{"\"\<HTML\>\"", ",", "\"\<XMLObject\>\""}], "}"}]}], 
+   "]"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTree", "[", 
+    RowBox[{
+     RowBox[{"XMLObject", "[", "type_", "]"}], "[", 
+     RowBox[{"declaration_", ",", "data_", ",", "other_"}], "]"}], "]"}], ":=",
+    "\n", "\t", 
+   RowBox[{"<|", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"\"\<Type\>\"", "\[Rule]", "type"}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<Headers\>\"", "\[Rule]", 
+      RowBox[{"Cases", "[", 
+       RowBox[{"declaration", ",", "_Rule", ",", "\[Infinity]"}], "]"}]}], 
+     ",", "\n", "\t\t", 
+     RowBox[{"\"\<Elements\>\"", "\[Rule]", 
+      RowBox[{"Association", "@", 
+       RowBox[{"Flatten", "@", 
+        RowBox[{"getTree", "[", 
+         RowBox[{"data", ",", 
+          RowBox[{"{", "1", "}"}]}], "]"}]}]}]}]}], "\n", "\t\t", "|>"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"getTree", "[", 
+    RowBox[{
+     RowBox[{"XMLElement", "[", 
+      RowBox[{"type_", ",", "attrs_", ",", "elements_"}], "]"}], ",", 
+     "depth_"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"subtree", "=", "\n", "\t\t", 
+       RowBox[{"MapIndexed", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Replace", "[", 
+           RowBox[{"#", ",", 
+            RowBox[{"_XMLElement", "\[RuleDelayed]", 
+             RowBox[{"getTree", "[", 
+              RowBox[{"#", ",", 
+               RowBox[{"Join", "[", 
+                RowBox[{"depth", ",", "#2"}], "]"}]}], "]"}]}]}], "]"}], 
+          "&"}], ",", "elements"}], "]"}]}], "}"}], ",", "\n", "\t\t", 
+     RowBox[{"With", "[", 
+      RowBox[{
+       RowBox[{"{", "\n", "\t\t\t", 
+        RowBox[{"children", "=", 
+         RowBox[{"Cases", "[", 
+          RowBox[{"subtree", ",", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"c", ":", 
+               RowBox[{"(", 
+                RowBox[{"Rule", "[", 
+                 RowBox[{"_", ",", "_Association"}], "]"}], ")"}]}], ",", 
+              "_"}], "}"}], "\[RuleDelayed]", "c"}]}], "]"}]}], "}"}], ",", 
+       "\n", "\t\t\t", 
+       RowBox[{"{", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"depth", "\[Rule]", "\n", "\t\t\t\t\t", 
+          RowBox[{"<|", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"\"\<Type\>\"", "\[Rule]", "type"}], ",", "\n", 
+            "\t\t\t\t\t\t", 
+            RowBox[{"\"\<Attributes\>\"", "\[Rule]", "attrs"}], ",", "\n", 
+            "\t\t\t\t\t\t", 
+            RowBox[{"\"\<ID\>\"", "\[Rule]", "depth"}], ",", "\n", 
+            "\t\t\t\t\t\t", 
+            RowBox[{"\"\<Parent\>\"", "\[Rule]", 
+             RowBox[{"Most", "@", "depth"}]}], ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"\"\<Children\>\"", "\[Rule]", 
+             RowBox[{"Keys", "@", "children"}]}], ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"\"\<Data\>\"", "\[Rule]", 
+             RowBox[{"Replace", "[", 
+              RowBox[{"subtree", ",", 
+               RowBox[{
+                RowBox[{"{", 
+                 RowBox[{
+                  RowBox[{"(", 
+                   RowBox[{"Rule", "[", 
+                    RowBox[{"k_", ",", "_Association"}], "]"}], ")"}], ",", 
+                  "_"}], "}"}], "\[RuleDelayed]", "k"}], ",", "1"}], 
+              "]"}]}]}], "\n", "\t\t\t\t\t\t", "|>"}]}], ",", "\n", 
+         "\t\t\t\t", 
+         RowBox[{"Cases", "[", 
+          RowBox[{"subtree", ",", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"(", 
+              RowBox[{"Rule", "[", 
+               RowBox[{"_", ",", "_Association"}], "]"}], ")"}], ",", "_"}], 
+            "}"}]}], "]"}]}], "\n", "\t\t\t\t", "}"}]}], "\n", "\t\t\t", 
+      "]"}]}], "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.691934546661401*^9, 3.6919345500716047`*^9}, {
+  3.691938730050565*^9, 3.691938761969613*^9}, {3.69193881141582*^9, 
+  3.691938958931127*^9}, {3.6919403558118134`*^9, 3.691940406180008*^9}, {
+  3.691942374852722*^9, 
+  3.6919423798028307`*^9}},ExpressionUUID->"353cec2a-2cc8-4d8b-abac-\
+703184cea13e"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLNodeFind", "[", 
+    RowBox[{"xmlAssoc_", ",", "node__"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"xmlAssoc", "[", "\"\<Elements\>\"", "]"}], "[", 
+    RowBox[{"Flatten", "@", 
+     RowBox[{"{", "node", "}"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLNodeParent", "[", 
+    RowBox[{"xmlAssoc_", ",", "node__"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Replace", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"XMLNodeFind", "[", 
+      RowBox[{"xmlAssoc", ",", "node"}], "]"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"e", ":", 
+       RowBox[{"Except", "[", "_Missing", "]"}]}], "\[RuleDelayed]", "\n", 
+      "\t\t\t", 
+      RowBox[{"XMLNodeFind", "[", 
+       RowBox[{"xmlAssoc", ",", 
+        RowBox[{"e", "[", "\"\<Parent\>\"", "]"}]}], "]"}]}]}], "\n", "\t\t", 
+    "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLNodeChildren", "[", 
+    RowBox[{"xmlAssoc_", ",", "node__"}], "]"}], ":=", "\n", "\t\t", 
+   RowBox[{"Replace", "[", "\n", "\t\t\t", 
+    RowBox[{
+     RowBox[{"XMLNodeFind", "[", 
+      RowBox[{"xmlAssoc", ",", "node"}], "]"}], ",", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"e", ":", 
+       RowBox[{"Except", "[", "_Missing", "]"}]}], "\[RuleDelayed]", "\n", 
+      "\t\t\t\t", 
+      RowBox[{"Lookup", "[", 
+       RowBox[{
+        RowBox[{"xmlAssoc", "[", "\"\<Elements\>\"", "]"}], ",", 
+        RowBox[{"e", "[", "\"\<Children\>\"", "]"}]}], "]"}]}]}], "\n", 
+    "\t\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLNodeType", "[", 
+    RowBox[{"xmlAssoc_", ",", "node__"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Replace", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"XMLNodeFind", "[", 
+      RowBox[{"xmlAssoc", ",", "node"}], "]"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"e", ":", 
+       RowBox[{"Except", "[", "_Missing", "]"}]}], "\[RuleDelayed]", "\n", 
+      "\t\t\t", 
+      RowBox[{"e", "[", "\"\<Type\>\"", "]"}]}]}], "\n", "\t\t", "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLNodeAttributes", "[", 
+    RowBox[{"xmlAssoc_", ",", "node__"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Replace", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"XMLNodeFind", "[", 
+      RowBox[{"xmlAssoc", ",", "node"}], "]"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"e", ":", 
+       RowBox[{"Except", "[", "_Missing", "]"}]}], "\[RuleDelayed]", "\n", 
+      "\t\t\t", 
+      RowBox[{"e", "[", "\"\<Attributes\>\"", "]"}]}]}], "\n", "\t\t", 
+    "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLNodeData", "[", 
+    RowBox[{"xmlAssoc_", ",", "node__"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Replace", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"XMLNodeFind", "[", 
+      RowBox[{"xmlAssoc", ",", "node"}], "]"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"e", ":", 
+       RowBox[{"Except", "[", "_Missing", "]"}]}], "\[RuleDelayed]", 
+      RowBox[{"e", "[", "\"\<Data\>\"", "]"}]}]}], "]"}]}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.691934546661401*^9, 3.6919345500716047`*^9}, {
+  3.691938730050565*^9, 3.691938761969613*^9}, {3.69193881141582*^9, 
+  3.691938958931127*^9}, {3.691940411570181*^9, 3.69194046563505*^9}, {
+  3.691940742286807*^9, 3.691940756274013*^9}, {3.691941209654665*^9, 
+  3.691941395190605*^9}, {3.691942502151945*^9, 
+  3.691942515222887*^9}},ExpressionUUID->"d8099c45-65a8-4405-8025-\
+3f55c8c67923"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTreeTypes", "[", "xmlAssoc_", "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"#Type", "&"}], "/@", 
+      RowBox[{"xmlAssoc", "[", "\"\<Elements\>\"", "]"}]}], "//", "Values"}], 
+    "//", "DeleteDuplicates"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTreeAttributes", "[", "xmlAssoc_", "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"#Attributes", "&"}], "/@", 
+       RowBox[{"xmlAssoc", "[", "\"\<Elements\>\"", "]"}]}], "//", "Values"}],
+      "//", "Flatten"}], "//", "DeleteDuplicates"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTreeClasses", "[", "xmlAssoc_", "]"}], ":=", "\n", "\t", 
+   RowBox[{"Cases", "[", 
+    RowBox[{
+     RowBox[{"XMLTreeAttributes", "@", "xmlAssoc"}], ",", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"\"\<class\>\"", "\[Rule]", "c_"}], ")"}], "\[RuleDelayed]", 
+      "c"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTreeIDs", "[", "xmlAssoc_", "]"}], ":=", "\n", "\t", 
+   RowBox[{"Cases", "[", 
+    RowBox[{
+     RowBox[{"XMLTreeAttributes", "@", "xmlAssoc"}], ",", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"\"\<id\>\"", "\[Rule]", "c_"}], ")"}], "\[RuleDelayed]", 
+      "c"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTreeSelect", "[", 
+    RowBox[{"xmlAssoc_", ",", "pat_", ",", 
+     RowBox[{"elem_:", "\"\<Type\>\""}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{"elem", "===", "\"\<Position\>\""}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"xmlAssoc", "[", "\"\<Elements\>\"", "]"}], "[", "pat", "]"}], 
+     ",", "\n", "\t\t", 
+     RowBox[{"Select", "[", 
+      RowBox[{
+       RowBox[{"xmlAssoc", "[", "\"\<Elements\>\"", "]"}], ",", 
+       RowBox[{
+        RowBox[{"MatchQ", "[", 
+         RowBox[{
+          RowBox[{"#", "[", "elem", "]"}], ",", "pat"}], "]"}], "&"}]}], 
+      "]"}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTreeAttributeSelect", "[", 
+    RowBox[{"xmlAssoc_", ",", 
+     RowBox[{"attr", ":", 
+      RowBox[{"Except", "[", "_Rule", "]"}]}], ",", 
+     RowBox[{"val_:", "_"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Select", "[", 
+    RowBox[{
+     RowBox[{"xmlAssoc", "[", "\"\<Elements\>\"", "]"}], ",", 
+     RowBox[{
+      RowBox[{"MatchQ", "[", 
+       RowBox[{
+        RowBox[{"#", "[", "\"\<Attributes\>\"", "]"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"___", ",", 
+          RowBox[{"attr", "\[Rule]", "val"}], ",", "___"}], "}"}]}], "]"}], 
+      "&"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTreeAttributeSelect", "[", 
+    RowBox[{"xmlAssoc_", ",", "attrs__Rule"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Merge", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"KeyIntersection", "[", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"XMLTreeAttributeSelect", "[", 
+         RowBox[{"xmlAssoc", ",", 
+          RowBox[{"First", "@", "#"}], ",", 
+          RowBox[{"Last", "@", "#"}]}], "]"}], "&"}], "/@", 
+       RowBox[{"{", "attrs", "}"}]}], "\n", "\t\t\t", "]"}], ",", "\n", 
+     "\t\t", "First"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLSubTree", "[", 
+    RowBox[{"xmlAssoc_", ",", "node__"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Replace", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"XMLNodeFind", "[", 
+      RowBox[{"xmlAssoc", ",", "node"}], "]"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"e", ":", 
+       RowBox[{"Except", "[", "_Missing", "]"}]}], "\[RuleDelayed]", "\n", 
+      "\t\t\t", 
+      RowBox[{
+       RowBox[{"Flatten", "@", 
+        RowBox[{"{", "node", "}"}]}], "\[Rule]", "\n", "\t\t\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{
+         RowBox[{"e", "[", "\"\<Children\>\"", "]"}], ",", 
+         RowBox[{"{", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"{", "}"}], "\[Rule]", "None"}], ",", "\n", "\t\t\t\t\t", 
+           
+           RowBox[{"_", ":>", 
+            RowBox[{"Association", "@", 
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"XMLSubTree", "[", 
+                 RowBox[{"xmlAssoc", ",", "#"}], "]"}], "&"}], "/@", 
+               RowBox[{"e", "[", "\"\<Children\>\"", "]"}]}], ")"}]}]}]}], 
+          "\n", "\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t", "]"}]}]}]}], "\n", 
+    "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTreeMap", "[", 
+    RowBox[{"xmlAssoc_", ",", "xmlSubTree_Association", ",", "f_"}], "]"}], ":=",
+    "\n", "\t", 
+   RowBox[{"Thread", "[", 
+    RowBox[{
+     RowBox[{"Map", "[", 
+      RowBox[{"f", ",", 
+       RowBox[{"Keys", "@", "xmlSubTree"}]}], "]"}], "\[Rule]", 
+     RowBox[{"Map", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"XMLTreeMap", "[", 
+         RowBox[{"xmlAssoc", ",", "#", ",", "f"}], "]"}], "&"}], ",", 
+       "xmlSubTree"}], "]"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTreeMap", "[", 
+    RowBox[{"xmlAssoc_", ",", "xmlSubTree_", ",", "f_"}], "]"}], ":=", "\n", 
+   "\t", 
+   RowBox[{"XMLTreeMap", "[", 
+    RowBox[{"xmlAssoc", ",", 
+     RowBox[{"Association", "@", "xmlSubTree"}], ",", "f"}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"XMLFullTree", "[", 
+   RowBox[{"xmlAssoc_", ",", "node__"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Replace", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"XMLNodeFind", "[", 
+     RowBox[{"xmlAssoc", ",", "node"}], "]"}], ",", "\n", "\t", "\t\t", 
+    RowBox[{
+     RowBox[{"e", ":", 
+      RowBox[{"Except", "[", "_Missing", "]"}]}], "\[RuleDelayed]", "\n", 
+     "\t", "\t\t\t", 
+     RowBox[{"With", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"c", "=", 
+         RowBox[{"Thread", "[", 
+          RowBox[{
+           RowBox[{"e", "[", "\"\<Children\>\"", "]"}], "\[Rule]", 
+           RowBox[{"Map", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"XMLFullTree", "[", 
+               RowBox[{"xmlAssoc", ",", "#"}], "]"}], "&"}], ",", 
+             RowBox[{"e", "[", "\"\<Children\>\"", "]"}]}], "]"}]}], "]"}]}], 
+        "}"}], ",", "\n", "\t", "\t\t\t\t\t", 
+       RowBox[{
+        RowBox[{"KeyDrop", "[", 
+         RowBox[{"e", ",", 
+          RowBox[{"{", 
+           RowBox[{"\"\<Parent\>\"", ",", "\"\<Children\>\""}], "}"}]}], 
+         "]"}], "/.", "c"}]}], "\n", "\t", "\t\t\t\t", "]"}]}]}], "\n", "\t", 
+   "\t", "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.691934546661401*^9, 3.6919345500716047`*^9}, {
+   3.691938730050565*^9, 3.691938761969613*^9}, {3.69193881141582*^9, 
+   3.691938957300012*^9}, {3.6919392492192907`*^9, 3.691939250627481*^9}, {
+   3.69193930283532*^9, 3.6919393120075617`*^9}, {3.691939505182249*^9, 
+   3.691939666393918*^9}, {3.691939819294241*^9, 3.691939838188027*^9}, {
+   3.691940168624283*^9, 3.691940343450534*^9}, {3.691940470329504*^9, 
+   3.691940473153116*^9}, 3.691940999873496*^9, {3.6919410678536043`*^9, 
+   3.691941111753067*^9}, {3.691942592301811*^9, 3.6919426064195538`*^9}, {
+   3.69194347781221*^9, 3.691943609151197*^9}, 3.691943780287107*^9, {
+   3.691943858814674*^9, 3.691943894268709*^9}, {3.691943939764765*^9, 
+   3.6919439730536213`*^9}, {3.6919440225003023`*^9, 3.69194403586666*^9}, {
+   3.691966696593307*^9, 
+   3.691966701454754*^9}},ExpressionUUID->"0d9d67b4-f2d1-4847-9b33-\
+4955b737f0e2"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"subTreeFlatten", "[", 
+    RowBox[{"node_", "->", "subTree_"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"k", "=", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"subTree", "===", "None"}], ",", 
+         RowBox[{"{", "}"}], ",", 
+         RowBox[{"Keys", "@", "subTree"}]}], "]"}]}], "}"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Length", "@", "k"}], ">", "0"}], ",", "\n", "\t\t\t", 
+       RowBox[{"Join", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"Map", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"node", "\[Rule]", "#"}], "&"}], ",", 
+           RowBox[{"(", 
+            RowBox[{"Keys", "@", "subTree"}], ")"}]}], "]"}], ",", "\n", 
+         "\t\t\t\t", 
+         RowBox[{"Join", "@@", 
+          RowBox[{"subTreeFlatten", "/@", 
+           RowBox[{"(", 
+            RowBox[{"Normal", "@", "subTree"}], ")"}]}]}]}], "\n", "\t\t\t\t",
+         "]"}], ",", "\n", "\t\t\t", 
+       RowBox[{"{", "}"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTreeView", "[", 
+    RowBox[{"xmlAssoc_Association", "?", 
+     RowBox[{"(", 
+      RowBox[{"KeyMemberQ", "@", "\"\<Elements\>\""}], ")"}]}], "]"}], ":=", 
+   "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"nodes", "=", 
+       RowBox[{"subTreeFlatten", "@", 
+        RowBox[{"XMLSubTree", "[", 
+         RowBox[{"xmlAssoc", ",", 
+          RowBox[{"First", "@", 
+           RowBox[{"Sort", "[", 
+            RowBox[{"Keys", "@", 
+             RowBox[{"xmlAssoc", "[", "\"\<Elements\>\"", "]"}]}], "]"}]}], 
+          ",", "1"}], "]"}]}]}], "}"}], ",", "\n", "\t\t", 
+     RowBox[{"Graph", "[", "\n", "\t\t\t", 
+      RowBox[{"nodes", ",", "\n", "\t\t\t", 
+       RowBox[{"VertexShape", "\[Rule]", "\n", "\t\t\t\t", 
+        RowBox[{"Table", "[", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"With", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"node", "=", "node"}], "}"}], ",", "\n", "\t\t\t\t\t\t", 
+            
+            RowBox[{"node", "\[Rule]", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{"Graphics", "[", 
+              RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"EdgeForm", "@", 
+                 RowBox[{"Hue", "[", 
+                  RowBox[{".6", ",", ".5", ",", ".2"}], "]"}]}], ",", "\n", 
+                "\t\t\t\t\t\t\t\t", 
+                RowBox[{"Hue", "[", 
+                 RowBox[{".6", ",", ".5", ",", ".5"}], "]"}], ",", "\n", 
+                "\t\t\t\t\t\t\t\t", 
+                RowBox[{"Tooltip", "[", 
+                 RowBox[{
+                  RowBox[{"Disk", "[", "]"}], ",", 
+                  RowBox[{"XMLNodeFind", "[", 
+                   RowBox[{"xmlAssoc", ",", "node"}], "]"}]}], "]"}]}], "\n", 
+               "\t\t\t\t\t\t\t\t", "}"}], "]"}]}]}], "\n", "\t\t\t\t\t\t", 
+           "]"}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"{", 
+           RowBox[{"node", ",", 
+            RowBox[{"DeleteDuplicates", "@", 
+             RowBox[{"Cases", "[", 
+              RowBox[{"nodes", ",", 
+               RowBox[{"{", "__Integer", "}"}], ",", "\[Infinity]"}], 
+              "]"}]}]}], "}"}]}], "]"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"VertexSize", "\[Rule]", "1"}], ",", "\n", "\t\t\t", 
+       RowBox[{"GraphLayout", "\[Rule]", "\"\<LayeredEmbedding\>\""}]}], "\n",
+       "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.693059774846694*^9, 3.693059838811413*^9}, {
+  3.693059892556715*^9, 3.693059937334209*^9}, {3.693059969325096*^9, 
+  3.693060008350421*^9}, {3.693060096527175*^9, 3.693060189626837*^9}, {
+  3.693060260437318*^9, 3.6930603575998487`*^9}, {3.6930603996023903`*^9, 
+  3.6930604508775053`*^9}, {3.693060482916554*^9, 3.6930604842300577`*^9}, {
+  3.6930605305497503`*^9, 3.693060536778634*^9}, {3.693060603844859*^9, 
+  3.6930609218064957`*^9}},ExpressionUUID->"3960ceb1-7522-414a-8593-\
+1a3049595938"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTreeChildren", "[", 
+    RowBox[{"xmlAssoc_", ",", "node__"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"nodePattern", "=", 
+       RowBox[{"Append", "[", 
+        RowBox[{
+         RowBox[{"Flatten", "@", 
+          RowBox[{"{", "node", "}"}]}], ",", "___"}], "]"}]}], "}"}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"Cases", "[", 
+      RowBox[{
+       RowBox[{"Keys", "@", 
+        RowBox[{"xmlAssoc", "[", "\"\<Elements\>\"", "]"}]}], ",", 
+       "nodePattern"}], "]"}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLTreeDrop", "[", 
+    RowBox[{"xmlAssoc_", ",", "node__"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"ReplacePart", "[", 
+    RowBox[{"xmlAssoc", ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Key", "[", "\"\<Elements\>\"", "]"}], "\[Rule]", "\n", 
+      "\t\t\t", 
+      RowBox[{"With", "[", 
+       RowBox[{
+        RowBox[{"{", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"parentNode", "=", 
+           RowBox[{"XMLNodeParent", "[", 
+            RowBox[{"xmlAssoc", ",", "node"}], "]"}]}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"chopNode", "=", 
+           RowBox[{"XMLNodeFind", "[", 
+            RowBox[{"xmlAssoc", ",", "node"}], "]"}]}]}], "}"}], ",", "\n", 
+        "\t\t\t\t", 
+        RowBox[{"ReplacePart", "[", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"KeyDrop", "[", 
+           RowBox[{
+            RowBox[{"xmlAssoc", "[", "\"\<Elements\>\"", "]"}], ",", "\n", 
+            "\t", "\t\t\t\t\t", 
+            RowBox[{"XMLTreeChildren", "[", 
+             RowBox[{"xmlAssoc", ",", "node"}], "]"}]}], "\n", "\t", 
+           "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Key", "[", 
+            RowBox[{"chopNode", "[", "\"\<Parent\>\"", "]"}], "]"}], "->", 
+           "\n", "\t\t\t\t\t\t", 
+           RowBox[{"ReplacePart", "[", 
+            RowBox[{"parentNode", ",", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Key", "[", "\"\<Children\>\"", "]"}], "\[Rule]", "\n", 
+              "\t\t\t\t\t\t\t\t", 
+              RowBox[{"DeleteCases", "[", 
+               RowBox[{
+                RowBox[{"parentNode", "[", "\"\<Children\>\"", "]"}], ",", 
+                RowBox[{"chopNode", "[", "\"\<ID\>\"", "]"}]}], "]"}]}]}], 
+            "\n", "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t", "]"}]}], 
+       "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.691941406197328*^9, 3.691941465402028*^9}, {
+   3.691941506521796*^9, 3.691941636595291*^9}, {3.691941679235759*^9, 
+   3.691941754392829*^9}, {3.6919417892073917`*^9, 3.691941799828776*^9}, {
+   3.691941834891597*^9, 3.691941964066077*^9}, {3.691942011297937*^9, 
+   3.691942024479828*^9}, {3.691942234506999*^9, 3.691942247529458*^9}, {
+   3.6919422940692368`*^9, 3.69194229647748*^9}, 3.6919423365181932`*^9, {
+   3.691942423071856*^9, 3.691942484503283*^9}, {3.691942524316608*^9, 
+   3.6919425249804173`*^9}, 
+   3.691947359234743*^9},ExpressionUUID->"2f3fbbb8-3c7a-45f0-b9b5-\
+1181692d2819"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$XMLFormatting", "=", 
+   RowBox[{"<|", "\n", "\t", 
+    RowBox[{
+     RowBox[{"\"\<div\>\"", "\[Rule]", 
+      RowBox[{"Column", "@*", "First", "@*", "List"}]}], ",", "\n", "\t", 
+     RowBox[{"\"\<code\>\"", "\[Rule]", "\"\<Input\>\""}], ",", "\n", "\t", 
+     RowBox[{"\"\<samp\>\"", "\[Rule]", "\"\<Input\>\""}], ",", "\n", "\t", 
+     RowBox[{"\"\<kbd\>\"", "\[Rule]", "\"\<Input\>\""}], ",", "\n", "\t", 
+     RowBox[{"\"\<p\>\"", "\[Rule]", "\"\<Text\>\""}], ",", "\n", "\t", 
+     RowBox[{"\"\<pre\>\"", "\[Rule]", "\"\<Text\>\""}], ",", "\n", "\t", 
+     RowBox[{"\"\<th\>\"", "\[Rule]", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"Style", "[", 
+         RowBox[{"#", ",", "\"\<Text\>\"", ",", "Italic"}], "]"}], "&"}], 
+       ")"}]}], ",", "\n", "\t", 
+     RowBox[{"\"\<tr\>\"", "\[Rule]", 
+      RowBox[{"Identity", "@*", "First", "@*", "List"}]}], ",", "\n", "\t", 
+     RowBox[{"\"\<td\>\"", "\[Rule]", "\"\<Text\>\""}], ",", "\n", "\t", 
+     RowBox[{"\"\<table\>\"", "\[Rule]", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"Grid", "[", 
+         RowBox[{"#", ",", 
+          RowBox[{"Spacings", "\[Rule]", 
+           RowBox[{"{", 
+            RowBox[{"0", ",", " ", "0"}], "}"}]}]}], "]"}], "&"}], ")"}]}], 
+     ",", "\n", "\t", 
+     RowBox[{"\"\<ul\>\"", "\[Rule]", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"Column", "[", 
+         RowBox[{"#", ",", 
+          RowBox[{"Spacings", "\[Rule]", "0"}]}], "]"}], "&"}], ")"}]}], ",", 
+     "\n", "\t", 
+     RowBox[{"\"\<ol\>\"", "\[Rule]", 
+      RowBox[{"Row", "@*", "First", "@*", "List"}]}], ",", "\n", "\t", 
+     RowBox[{"\"\<li\>\"", "\[Rule]", 
+      RowBox[{"Row", "@*", "First", "@*", "List"}]}], ",", "\n", "\t", 
+     RowBox[{"\"\<a\>\"", "\[Rule]", "\n", "\t\t", 
+      RowBox[{"Function", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"data", ",", "attrs"}], "}"}], ",", "\n", "\t", "\t\t", 
+        RowBox[{"With", "[", 
+         RowBox[{
+          RowBox[{"{", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"href", "=", 
+             RowBox[{"Lookup", "[", 
+              RowBox[{"attrs", ",", "\"\<href\>\"", ",", "None"}], "]"}]}], 
+            ",", "\n", "\t\t\t\t", 
+            RowBox[{"shape", "=", 
+             RowBox[{"Lookup", "[", 
+              RowBox[{"attrs", ",", "\"\<shape\>\"", ",", "None"}], "]"}]}], 
+            ",", "\n", "\t\t\t\t", 
+            RowBox[{"img", "=", 
+             RowBox[{"Lookup", "[", 
+              RowBox[{"attrs", ",", "\"\<img\>\"", ",", "None"}], "]"}]}], 
+            ",", "\n", "\t\t\t\t", 
+            RowBox[{"width", "=", 
+             RowBox[{"ToExpression", "@", 
+              RowBox[{"Lookup", "[", 
+               RowBox[{
+               "attrs", ",", "\"\<width\>\"", ",", "\"\<Automatic\>\""}], 
+               "]"}]}]}], ",", "\n", "\t\t\t\t", 
+            RowBox[{"height", "=", 
+             RowBox[{"ToExpression", "@", 
+              RowBox[{"Lookup", "[", 
+               RowBox[{
+               "attrs", ",", "\"\<height\>\"", ",", "\"\<Automatic\>\""}], 
+               "]"}]}]}]}], "}"}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"With", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"disp", "=", "\n", "\t\t\t\t\t\t", 
+              RowBox[{"Which", "[", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"shape", "=!=", "None"}], ",", "\n", 
+                "\t\t\t\t\t\t\t\t", 
+                RowBox[{"Graphics", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"Switch", "[", 
+                   RowBox[{
+                   "shape", ",", "\n", "\t\t\t\t\t\t\t\t\t\t", "\"\<rect\>\"",
+                     ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Rectangle", "[", "]"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", "\"\<triangle\>\"", ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Triangle", "[", "]"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", "\"\<circle\>\"", ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Disk", "[", "]"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", "_", ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Inset", "@", 
+                    RowBox[{"Pane", "[", 
+                    RowBox[{"shape", ",", 
+                    RowBox[{"{", 
+                    RowBox[{"width", ",", "height"}], "}"}], ",", 
+                    RowBox[{
+                    "ImageSizeAction", "\[Rule]", "\"\<ShrinkToFit\>\""}]}], 
+                    "]"}]}]}], "\n", "\t\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n",
+                   "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"ImageSize", "\[Rule]", 
+                   RowBox[{"{", 
+                    RowBox[{"width", ",", "height"}], "}"}]}], ",", "\n", 
+                  "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                  "AspectRatio", "\[Rule]", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{"MemberQ", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"width", ",", "height"}], "}"}], ",", 
+                    "Automatic"}], "]"}], ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t",
+                     "Automatic", ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"height", "/", "width"}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+                  "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"ImagePadding", "\[Rule]", "None"}], ",", "\n", 
+                  "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"Method", "\[Rule]", 
+                   RowBox[{"{", 
+                    RowBox[{"\"\<ShrinkWrap\>\"", "\[Rule]", "True"}], 
+                    "}"}]}]}], "\n", "\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+                "\t\t\t\t\t\t\t", 
+                RowBox[{"img", "=!=", "None"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                RowBox[{"Replace", "[", 
+                 RowBox[{
+                  RowBox[{"Import", "[", "img", "]"}], ",", 
+                  RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"$Failed", "\[Rule]", "\"\<No image\>\""}], ",", 
+                    "\n", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"im_", ":>", 
+                    RowBox[{"Image", "[", 
+                    RowBox[{"im", ",", 
+                    RowBox[{"ImageSize", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"width", ",", "height"}], "}"}]}]}], "]"}]}]}], 
+                   "\n", "\t\t\t\t\t\t\t\t\t", "}"}]}], "]"}], ",", "\n", 
+                "\t\t\t\t\t\t\t", "_", ",", "\n", "\t\t\t\t\t\t\t\t", 
+                "data"}], "\n", "\t\t\t\t\t\t\t\t", "]"}]}], "\n", 
+             "\t\t\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{"If", "[", "\n", "\t\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"href", "=!=", "None"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+              
+              RowBox[{"Hyperlink", "[", 
+               RowBox[{"disp", ",", "href"}], "]"}], ",", "\n", 
+              "\t\t\t\t\t\t\t\t", "disp"}], "\n", "\t\t\t\t\t\t\t\t", "]"}]}],
+            "\n", "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "]"}]}], "\n", 
+       "\t\t\t", "]"}]}]}], "\n", "\t", "|>"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.691944378899007*^9, 3.6919444213116817`*^9}, {
+  3.691944494871265*^9, 3.6919446373207817`*^9}, {3.691944712412203*^9, 
+  3.6919447435289087`*^9}, {3.691946238226778*^9, 3.691946238385417*^9}, {
+  3.691946698007574*^9, 3.6919467267602663`*^9}, {3.691947368630557*^9, 
+  3.691947438628951*^9}, {3.691947995495247*^9, 3.691948037182563*^9}, {
+  3.691948725706543*^9, 3.691948738647513*^9}, {3.691958414197425*^9, 
+  3.691958466272735*^9}, {3.691959971759062*^9, 3.691959998266905*^9}, {
+  3.6919600962410717`*^9, 3.6919601738361998`*^9}, {3.691960303765427*^9, 
+  3.691960305708331*^9}, {3.6919603791211*^9, 3.691960399575715*^9}, {
+  3.6919614673458357`*^9, 3.691961551325386*^9}, {3.691961621830225*^9, 
+  3.691961633452956*^9}, {3.691963191524789*^9, 3.691963544929405*^9}, {
+  3.6919636133629303`*^9, 
+  3.6919636954166927`*^9}},ExpressionUUID->"ff9a42cd-d4e7-4c34-a929-\
+ec6d70536fc4"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"nodeFormatRecusive", "[", 
+    RowBox[{"xmlAssoc_", ",", "nodeList_", ",", "formattingAssoc_"}], "]"}], ":=",
+    "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"node", "=", 
+       RowBox[{
+        RowBox[{"xmlAssoc", "[", "\"\<Elements\>\"", "]"}], "[", "nodeList", 
+        "]"}]}], "}"}], ",", "\n", "\t\t", 
+     RowBox[{"With", "[", 
+      RowBox[{
+       RowBox[{"{", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"formatFunction", "=", "\n", "\t\t\t\t", 
+          RowBox[{"Lookup", "[", 
+           RowBox[{"formattingAssoc", ",", 
+            RowBox[{"node", "[", "\"\<Type\>\"", "]"}], ",", "\"\<Text\>\""}],
+            "]"}]}], ",", "\n", "\t\t\t", 
+         RowBox[{"formatData", "=", 
+          RowBox[{"node", "[", "\"\<Data\>\"", "]"}]}]}], "}"}], ",", "\n", 
+       "\t\t\t", 
+       RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"formatData", "/.", 
+          RowBox[{
+           RowBox[{"n", ":", 
+            RowBox[{"{", "__Integer", "}"}]}], ":>", 
+           RowBox[{"nodeFormatRecusive", "[", 
+            RowBox[{"xmlAssoc", ",", "n", ",", "formattingAssoc"}], "]"}]}]}],
+          ",", 
+         RowBox[{"{", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"{", "}"}], "->", "Nothing"}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"o", ":", 
+             RowBox[{"{", "_", "}"}]}], "\[RuleDelayed]", "\n", 
+            "\t\t\t\t\t\t", 
+            RowBox[{"Tooltip", "[", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Replace", "[", 
+                RowBox[{"formatFunction", ",", 
+                 RowBox[{"t_String", "\[RuleDelayed]", 
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{"Style", "[", 
+                    RowBox[{
+                    RowBox[{"First", "@", "#"}], ",", "t"}], "]"}], "&"}], 
+                   ")"}]}]}], "]"}], "[", 
+               RowBox[{"o", ",", 
+                RowBox[{"node", "[", "\"\<Attributes\>\"", "]"}]}], "]"}], 
+              ",", "\n", "\t\t\t\t\t\t\t", "node"}], "]"}]}], ",", "\n", 
+           "\t\t\t\t\t", 
+           RowBox[{"e_", ":>", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"Tooltip", "[", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Replace", "[", 
+                RowBox[{"formatFunction", ",", 
+                 RowBox[{"t_String", "\[RuleDelayed]", 
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{"Style", "[", 
+                    RowBox[{"#", ",", "t"}], "]"}], "&"}], ")"}]}]}], "]"}], 
+               "[", 
+               RowBox[{"e", ",", 
+                RowBox[{"node", "[", "\"\<Attributes\>\"", "]"}]}], "]"}], 
+              ",", "\n", "\t\t\t\t\t\t\t", "node"}], "\n", "\t\t\t\t\t\t\t", 
+             "]"}]}]}], "\n", "\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t", 
+        "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"XMLNodeFormat", "[", 
+    RowBox[{"xmlAssoc_", ",", 
+     RowBox[{"formattingAssoc_Association:", 
+      RowBox[{"<|", "|>"}]}], ",", "node__"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"formatter", "=", 
+       RowBox[{"Merge", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"$XMLFormatting", ",", "formattingAssoc"}], "}"}], ",", 
+         "Last"}], "]"}]}], "}"}], ",", "\n", "\t\t", 
+     RowBox[{"nodeFormatRecusive", "[", 
+      RowBox[{"xmlAssoc", ",", 
+       RowBox[{"Flatten", "@", 
+        RowBox[{"{", "node", "}"}]}], ",", "formatter"}], "]"}]}], "\n", 
+    "\t\t", "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.691944378899007*^9, 3.6919444213116817`*^9}, {
+  3.691944494871265*^9, 3.691944604542589*^9}, {3.691944642832055*^9, 
+  3.691944645872137*^9}, {3.691944677413612*^9, 3.691944681629859*^9}, {
+  3.691944750312378*^9, 3.691944916043949*^9}, {3.691944948970613*^9, 
+  3.691944969945754*^9}, {3.6919459293107767`*^9, 3.6919459883400803`*^9}, {
+  3.691946054209223*^9, 3.691946102295035*^9}, {3.691946243372447*^9, 
+  3.691946501558978*^9}, {3.691947524688202*^9, 3.691947549543738*^9}, {
+  3.6919587209290953`*^9, 3.691958743703581*^9}, {3.691960062180417*^9, 
+  3.6919600882776003`*^9}, {3.6919639147356653`*^9, 
+  3.691963958132391*^9}},ExpressionUUID->"d9b93fb5-b396-44e6-a12d-\
+abfbeeadd176"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Clear", "@", "htmlRef"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"htmlRef", "[", "\"\<\>\"", "]"}], ":=", "\"\<\>\""}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"htmlRef", "[", 
+    RowBox[{
+    "\"\<h1\>\"", "|", "\"\<h2\>\"", "|", "\"\<h3\>\"", "|", "\"\<h4\>\"", 
+     "|", "\"\<h5\>\"", "|", "\"\<h6\>\""}], "]"}], ":=", 
+   RowBox[{"htmlRef", "[", "\"\<hn\>\"", "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"htmlRef", "[", "tag_String", "]"}], ":=", 
+  RowBox[{"Replace", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Quiet", "@", 
+     RowBox[{"StringCases", "[", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"Import", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"TemplateApply", "[", 
+          RowBox[{
+          "\"\<http://www.w3schools.com/tags/tag_``.asp\>\"", ",", "tag"}], 
+          "]"}], ",", "\[IndentingNewLine]", "\"\<HTML\>\""}], 
+        "\[IndentingNewLine]", "]"}], ",", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{
+        "\"\<Definition and Usage\>\"", "~~", "def__", "~~", 
+         "\"\<Browser Support\>\""}], "\[RuleDelayed]", 
+        RowBox[{"StringTrim", "@", "def"}]}]}], "\[IndentingNewLine]", 
+      "]"}]}], ",", 
+    RowBox[{"{", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"{", "d_", "}"}], "\[RuleDelayed]", "d"}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{"_", "\[RuleDelayed]", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"htmlRef", "[", "tag", "]"}], "=", "\"\<Tag not found\>\""}],
+         ")"}]}]}], "\[IndentingNewLine]", "}"}]}], "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.686492648889728*^9, 3.6864926548967113`*^9}, {
+  3.686492751911676*^9, 3.686492752119582*^9}, {3.6864933043425817`*^9, 
+  3.6864933774445744`*^9}, {3.686493409509658*^9, 3.6864934503073683`*^9}, {
+  3.686493520688754*^9, 3.6864935228786287`*^9}, {3.686507433486405*^9, 
+  3.686507461942875*^9}},ExpressionUUID->"b62fb8e0-563b-4877-a175-\
+b8b96cf94e0f"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"End", "[", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"168fe0c2-8ea2-46b8-a4d6-\
+1643a36f1abd"]
+}, Open  ]],
+
+Cell["", "SectionSeparator",ExpressionUUID->"54a4d1c9-ff2a-4c58-8a84-\
+526ce6256385"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+  "url", "=", 
+   "\"\<https://mathematica.stackexchange.com/questions/134394/symbolic-\
+manipulation-of-expression-with-undefined-function\>\""}], ";"}]], "Input",
+ CellChangeTimes->{{3.691939942114093*^9, 3.6919399643587503`*^9}, {
+  3.693060944738656*^9, 
+  3.693060945685511*^9}},ExpressionUUID->"ffa3ea94-133b-4a58-8715-\
+18eeaac37b8d"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"url", "=", "\"\<~/Desktop/XMLTest.htm\>\""}], ";"}]], "Input",
+ CellChangeTimes->{{3.69228585350208*^9, 
+  3.692285863344952*^9}},ExpressionUUID->"0a8006ba-e33f-41b8-af5c-\
+a8b25d38d1bf"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+  "url", "=", 
+   "\"\<https://twiki.wolfram.com/view/WolframAlpha/EducationMarketAnalysis\>\
+\""}], ";"}]], "Input",
+ CellChangeTimes->{{3.693060948488173*^9, 
+  3.69306095081147*^9}},ExpressionUUID->"607c097f-b143-4652-b2f4-\
+8b96872daae7"],
+
+Cell[BoxData[
+ RowBox[{"\"\<https://twiki.wolfram.com/view/WolframAlpha/\
+EducationMarketAnalysis\>\"", "//", "SystemOpen"}]], "Input",
+ CellChangeTimes->{{3.693064254694942*^9, 
+  3.6930642566622257`*^9}},ExpressionUUID->"84e648ca-2280-4a77-8c80-\
+b81358a79c1d"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"xmlObj", "=", 
+   RowBox[{"XMLImport", "@", "url"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"xmlAssoc", "=", 
+   RowBox[{"XMLTree", "@", "xmlObj"}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.691934546661401*^9, 3.6919345500716047`*^9}, {
+  3.691938730050565*^9, 3.691938778029396*^9}, {3.6919399689574223`*^9, 
+  3.691939974019072*^9}},ExpressionUUID->"34519802-b1e3-40ff-a4ba-\
+3c391470c6b0"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"XMLTreeView", "@", "xmlAssoc"}]], "Input",
+ CellChangeTimes->{{3.693060421006752*^9, 
+  3.693060421430504*^9}},ExpressionUUID->"e57b9d19-d64a-462f-a647-\
+ceef6ee78faf"],
+
+Cell[BoxData[
+ GraphicsBox[
+  NamespaceBox["NetworkGraphics",
+   DynamicModuleBox[{Typeset`graph = HoldComplete[
+     Graph[{{1, 1}, {1, 1, 1}, {1, 1, 2}, {1, 1, 3}, {1, 1, 4}, {1, 1, 5}, {1,
+        1, 6}, {1, 1, 7}, {1, 1, 8}, {1, 1, 9}, {1, 1, 10}, {1, 1, 11}, {1, 1,
+        12}, {1, 1, 13}, {1, 1, 14}, {1, 1, 15}, {1, 1, 16}, {1, 1, 17}, {1, 
+       1, 18}, {1, 1, 19}, {1, 1, 20}, {1, 1, 21}, {1, 1, 22}, {1, 1, 23}, {1,
+        1, 24}, {1, 1, 25}, {1, 1, 26}}, {{{1, 2}, {1, 3}, {1, 4}, {1, 5}, {1,
+        6}, {1, 7}, {1, 8}, {1, 9}, {1, 10}, {1, 11}, {1, 12}, {1, 13}, {1, 
+       14}, {1, 15}, {1, 16}, {1, 17}, {1, 18}, {1, 19}, {1, 20}, {1, 21}, {1,
+        22}, {1, 23}, {1, 24}, {1, 25}, {1, 26}, {1, 27}}, Null}, {
+      GraphLayout -> "LayeredEmbedding", 
+       VertexShape -> {{1, 1, 4} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "link", 
+              "Attributes" -> {
+               "rel" -> "stylesheet", "href" -> 
+                "/pub/TWiki/EditChapterPlugin/ecpstyles.css", "type" -> 
+                "text/css", "media" -> "all"}, "ID" -> {1, 1, 4}, 
+              "Parent" -> {1, 1}, "Children" -> {}, "Data" -> {}]]}], {1, 1, 
+          5} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "script", 
+              "Attributes" -> {
+               "type" -> "text/javascript", "src" -> 
+                "/pub/TWiki/EditChapterPlugin/ecpjavascript.js"}, 
+              "ID" -> {1, 1, 5}, "Parent" -> {1, 1}, "Children" -> {}, 
+              "Data" -> {}]]}], {1, 1, 7} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "link", 
+              "Attributes" -> {
+               "rel" -> "icon", "href" -> "/common/images2003/favicon.ico", 
+                "type" -> "image/x-icon"}, "ID" -> {1, 1, 7}, 
+              "Parent" -> {1, 1}, "Children" -> {}, "Data" -> {}]]}], {1, 1, 
+          3} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "script", 
+              "Attributes" -> {
+               "type" -> "text/javascript", "src" -> 
+                "/pub/TWiki/JQueryPlugin/jquery-all.js"}, "ID" -> {1, 1, 3}, 
+              "Parent" -> {1, 1}, "Children" -> {}, "Data" -> {}]]}], {1, 1, 
+          2} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "link", 
+              "Attributes" -> {
+               "rel" -> "stylesheet", "href" -> 
+                "/pub/TWiki/JQueryPlugin/jquery-all.css", "type" -> 
+                "text/css", "media" -> "all"}, "ID" -> {1, 1, 2}, 
+              "Parent" -> {1, 1}, "Children" -> {}, "Data" -> {}]]}], {1, 1, 
+          8} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "link", 
+              "Attributes" -> {
+               "rel" -> "shortcut icon", "href" -> 
+                "/common/images2003/favicon.ico", "type" -> "image/x-icon"}, 
+              "ID" -> {1, 1, 8}, "Parent" -> {1, 1}, "Children" -> {}, 
+              "Data" -> {}]]}], {1, 1, 11} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "script", 
+              "Attributes" -> {
+               "language" -> "JavaScript", "type" -> "text/javascript", "src" -> 
+                "/common/javascript/menu.js"}, "ID" -> {1, 1, 11}, 
+              "Parent" -> {1, 1}, "Children" -> {}, "Data" -> {}]]}], {1, 1, 
+          16} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "style", 
+              "Attributes" -> {"type" -> "text/css", "media" -> "all"}, 
+              "ID" -> {1, 1, 16}, "Parent" -> {1, 1}, "Children" -> {}, 
+              "Data" -> {
+               "\n\t@import url('/pub/TWiki/WolframSkin/layout.css');\n\t\
+@import url('/pub/TWiki/WolframSkin/style.css');\n\t@import \
+url('/pub/TWiki/WolframSkin/colors.css');\n"}]]}], {1, 1, 22} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "script", 
+              "Attributes" -> {
+               "type" -> "text/javascript", "src" -> 
+                "/common/javascript/jquery/core/1.2.6/jquery.js"}, 
+              "ID" -> {1, 1, 22}, "Parent" -> {1, 1}, "Children" -> {}, 
+              "Data" -> {}]]}], {1, 1, 1} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "script", 
+              "Attributes" -> {
+               "type" -> "text/javascript", "src" -> 
+                "/pub/TWiki/JQueryPlugin/jquery.js"}, "ID" -> {1, 1, 1}, 
+              "Parent" -> {1, 1}, "Children" -> {}, "Data" -> {}]]}], {1, 1, 
+          9} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "link", 
+              "Attributes" -> {
+               "rel" -> "alternate", "type" -> "application/rss+xml", "title" -> 
+                "RSS Feed", "href" -> "/view/WolframAlpha/WebRss"}, 
+              "ID" -> {1, 1, 9}, "Parent" -> {1, 1}, "Children" -> {}, 
+              "Data" -> {}]]}], {1, 1, 23} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "script", 
+              "Attributes" -> {
+               "type" -> "text/javascript", "src" -> 
+                "/common/javascript/jquery/plugins/hoverIntent/r5/jquery.\
+hoverIntent.js"}, "ID" -> {1, 1, 23}, "Parent" -> {1, 1}, "Children" -> {}, 
+              "Data" -> {}]]}], {1, 1, 21} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "link", 
+              "Attributes" -> {
+               "rel" -> "stylesheet", "type" -> "text/css", "href" -> 
+                "/common/includes/CSS.cgi?b=header;p=css2009/internal.wolfram.\
+com/;v=en"}, "ID" -> {1, 1, 21}, "Parent" -> {1, 1}, "Children" -> {}, 
+              "Data" -> {}]]}], {1, 1, 19} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "style", 
+              "Attributes" -> {"type" -> "text/css", "media" -> "all"}, 
+              "ID" -> {1, 1, 19}, "Parent" -> {1, 1}, "Children" -> {}, 
+              "Data" -> {
+               "\n\t@import url(\"/pub/TWiki/PatternSkin/print.css\");\n\
+"}]]}], {1, 1, 20} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "link", 
+              "Attributes" -> {
+               "rel" -> "stylesheet", "type" -> "text/css", "href" -> 
+                "/common/includes/CSS.cgi?b=2009nonHPheader;p=css2009/;v=$\
+lang"}, "ID" -> {1, 1, 20}, "Parent" -> {1, 1}, "Children" -> {}, 
+              "Data" -> {}]]}], {1, 1, 15} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "style", 
+              "Attributes" -> {"type" -> "text/css", "media" -> "all"}, 
+              "ID" -> {1, 1, 15}, "Parent" -> {1, 1}, "Children" -> {}, 
+              "Data" -> {
+               "\n\t#patternTopBar,\n#patternClearHeaderCenter,\n\
+#patternClearHeaderLeft,\n#patternClearHeaderRight,\n\
+#patternTopBarContentsOuter {\n\theight:55px; /* top bar height; make room \
+for header columns */\n}\n\t#patternOuter {\n\tmargin-left:12em;\n}\n\
+#patternLeftBar {\n\twidth:12em;\n\tmargin-left:-12em;\n}\n"}]]}], {1, 1, 6} -> 
+         Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "title", "Attributes" -> {}, "ID" -> {1, 1, 6}, 
+              "Parent" -> {1, 1}, "Children" -> {}, 
+              "Data" -> {
+               " EducationMarketAnalysis < WolframAlpha < TWiki"}]]}], {1, 1, 
+          24} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "script", 
+              "Attributes" -> {
+               "type" -> "text/javascript", "src" -> 
+                "/common/javascript/WRImenu.js"}, "ID" -> {1, 1, 24}, 
+              "Parent" -> {1, 1}, "Children" -> {}, "Data" -> {}]]}], {1, 1, 
+          12} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "script", 
+              "Attributes" -> {
+               "type" -> "text/javascript", "src" -> 
+                "/pub/TWiki/TWikiJavascripts/twiki.js"}, "ID" -> {1, 1, 12}, 
+              "Parent" -> {1, 1}, "Children" -> {}, "Data" -> {}]]}], {1, 1, 
+          10} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "base", 
+              "Attributes" -> {
+               "href" -> 
+                "https://twiki.wolfram.com/view/WolframAlpha/\
+EducationMarketAnalysis"}, "ID" -> {1, 1, 10}, "Parent" -> {1, 1}, 
+              "Children" -> {}, "Data" -> {}]]}], {1, 1} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "head", "Attributes" -> {}, "ID" -> {1, 1}, 
+              "Parent" -> {1}, 
+              "Children" -> {{1, 1, 1}, {1, 1, 2}, {1, 1, 3}, {1, 1, 4}, {1, 
+               1, 5}, {1, 1, 6}, {1, 1, 7}, {1, 1, 8}, {1, 1, 9}, {1, 1, 
+               10}, {1, 1, 11}, {1, 1, 12}, {1, 1, 13}, {1, 1, 14}, {1, 1, 
+               15}, {1, 1, 16}, {1, 1, 17}, {1, 1, 18}, {1, 1, 19}, {1, 1, 
+               20}, {1, 1, 21}, {1, 1, 22}, {1, 1, 23}, {1, 1, 24}, {1, 1, 
+               25}, {1, 1, 26}}, 
+              "Data" -> {{1, 1, 1}, {1, 1, 2}, {1, 1, 3}, {1, 1, 4}, {1, 1, 
+               5}, {1, 1, 6}, {1, 1, 7}, {1, 1, 8}, {1, 1, 9}, {1, 1, 10}, {1,
+                1, 11}, {1, 1, 12}, {1, 1, 13}, {1, 1, 14}, {1, 1, 15}, {1, 1,
+                16}, {1, 1, 17}, {1, 1, 18}, {1, 1, 19}, {1, 1, 20}, {1, 1, 
+               21}, {1, 1, 22}, {1, 1, 23}, {1, 1, 24}, {1, 1, 25}, {1, 1, 
+               26}}]]}], {1, 1, 26} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "style", 
+              "Attributes" -> {"type" -> "text/css", "media" -> "all"}, 
+              "ID" -> {1, 1, 26}, "Parent" -> {1, 1}, "Children" -> {}, 
+              "Data" -> {
+               "\n.tableSortIcon img {padding-left:.3em; \
+vertical-align:text-bottom;}\n.twikiTable#twikiAttachmentsTable td \
+{border-style:solid none;}\n.twikiTable#twikiAttachmentsTable th \
+{border-style:solid none;}\n.twikiTable#twikiAttachmentsTable td \
+{vertical-align:middle;}\n.twikiTable#twikiAttachmentsTable th \
+{vertical-align:middle;}\n.twikiTable#twikiAttachmentsTable td \
+{vertical-align:top;}\n.twikiTable#twikiAttachmentsTable th \
+{background-color:#ffffff;}\n.twikiTable#twikiAttachmentsTable \
+th.twikiSortedCol {background-color:#eeeeee;}\n\
+.twikiTable#twikiAttachmentsTable th {color:#0066cc;}\n\
+.twikiTable#twikiAttachmentsTable th a:link {color:#0066cc;}\n\
+.twikiTable#twikiAttachmentsTable th a:visited {color:#0066cc;}\n\
+.twikiTable#twikiAttachmentsTable th a:link font {color:#0066cc;}\n\
+.twikiTable#twikiAttachmentsTable th a:visited font {color:#0066cc;}\n\
+.twikiTable#twikiAttachmentsTable th a:hover \
+{color:#ffffff;background-color:#0066cc;}\n.twikiTable#twikiAttachmentsTable \
+th a:hover font {color:#ffffff;background-color:#0066cc;}\n\
+.twikiTable#twikiAttachmentsTable tr.twikiTableRowdataBg0 td \
+{background-color:#ffffff;}\n.twikiTable#twikiAttachmentsTable \
+tr.twikiTableRowdataBg0 td.twikiSortedCol {background-color:#f5f5f5;}\n\
+.twikiTable#twikiAttachmentsTable td.twikiTableCol0 {text-align:center;}\n\
+.twikiTable#twikiAttachmentsTable td.twikiTableCol1 {text-align:left;}\n\
+.twikiTable#twikiAttachmentsTable td.twikiTableCol2 {text-align:left;}\n\
+.twikiTable#twikiAttachmentsTable td.twikiTableCol3 {text-align:right;}\n\
+.twikiTable#twikiAttachmentsTable td.twikiTableCol4 {text-align:left;}\n\
+.twikiTable#twikiAttachmentsTable td.twikiTableCol5 {text-align:left;}\n\
+.twikiTable#twikiAttachmentsTable td.twikiTableCol6 {text-align:left;}\n\
+.twikiTable#twikiAttachmentsTable td.twikiTableCol7 {text-align:center;}\n\
+"}]]}], {1, 1, 18} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "style", 
+              "Attributes" -> {"type" -> "text/css", "media" -> "all"}, 
+              "ID" -> {1, 1, 18}, "Parent" -> {1, 1}, "Children" -> {}, 
+              "Data" -> {"\n\t\n\t\n\t\n"}]]}], {1, 1, 14} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "script", 
+              "Attributes" -> {"type" -> "text/javascript"}, 
+              "ID" -> {1, 1, 14}, "Parent" -> {1, 1}, "Children" -> {}, 
+              "Data" -> {
+               "\n//<![CDATA[\n\tfunction launchWindow(inWeb, inTopic) {\n\t\t\
+return launchTheWindow(\"/view/\", inWeb, inTopic, \"\", \"viewplain\" );\n\t\
+}\n//]]>\n"}]]}], {1, 1, 17} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "style", 
+              "Attributes" -> {"type" -> "text/css", "media" -> "all"}, 
+              "ID" -> {1, 1, 17}, "Parent" -> {1, 1}, "Children" -> {}, 
+              "Data" -> {
+               "\n\t/* Styles that are set using variables */\n\t\
+#patternLeftBar .patternWebIndicator,\n\t.patternBookView .twikiTopRow {\n\t\t\
+background-color:#FF8900;\n\t}\n\t\n\t#patternTopBar { \
+background-color:#ffffff;}\n\t.patternBookView {\n\t\tborder-color:#FF8900;\n\
+\t}\n\t.patternPreviewPage #patternMain {\n\t\t/* uncomment to set the \
+preview image */\n\t\t\
+/*background-image:url(\"/pub/TWiki/PreviewBackground/preview2bg.gif\");*/\n\t\
+}\n\t\n\t.twikiTable .tableSortIcon img {visibility:hidden;}\n\t.twikiTable \
+.tableSortUp \
+{background:url(\"https://twiki.wolfram.com/pub/TWiki/TWikiDocGraphics/\
+tablesortup.gif\") no-repeat;}\n\t.twikiTable .tableSortDown {background:url(\
+\"https://twiki.wolfram.com/pub/TWiki/TWikiDocGraphics/tablesortdown.gif\") \
+no-repeat;}\n\t.twikiTable .tableSortDiamond \
+{background:url(\"https://twiki.wolfram.com/pub/TWiki/TWikiDocGraphics/\
+tablesortdiamond.gif\") no-repeat;}\n"}]]}], {1, 1, 13} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "script", 
+              "Attributes" -> {
+               "type" -> "text/javascript", "src" -> 
+                "/pub/TWiki/PatternSkin/pattern.js"}, "ID" -> {1, 1, 13}, 
+              "Parent" -> {1, 1}, "Children" -> {}, "Data" -> {}]]}], {1, 1, 
+          25} -> Graphics[{
+            EdgeForm[
+             Hue[0.6, 0.5, 0.2]], 
+            Hue[0.6, 0.5, 0.5], 
+            Tooltip[
+             Disk[{0, 0}], 
+             Association[
+             "Type" -> "script", 
+              "Attributes" -> {
+               "src" -> 
+                "https://twiki.wolfram.com/pub/TWiki/ChecklistPlugin/\
+itemstatechange.js", "language" -> "javascript", "type" -> "text/javascript"},
+               "ID" -> {1, 1, 25}, "Parent" -> {1, 1}, "Children" -> {}, 
+              "Data" -> {}]]}]}, VertexSize -> {1}}]]}, 
+    TagBox[GraphicsGroupBox[{GraphicsComplexBox[CompressedData["
+1:eJxTTMoPSmViYGCQBmIQHb3zrv+JvF/2FVIHF+99dcCeAQ2gi0P4F+D8LcsX
+lsok3ESTfwDniyVu5MlVfYqm/iWcH/Ru4r3Ts96i6f8A5x+3tYwQ5fiMZt5X
+OD+1RfPgEafvaOb/hPOZT0tqldT+RrPvL5y/UJBrsvKO/2j2MzjA+PI6f2sz
+fzLC+RD3MMP5ef6lRgfFWOB8iPtY4fy9RW+fSZiwwfkQ97LD+TzTUmcXBHLA
++RD3c8L5kPjhgvMBCEdmRw==
+        "], {{{{
+            {Hue[0.6, 0.7, 0.5], Opacity[0.7], Arrowheads[
+             0.024500868779529054`], 
+             ArrowBox[{{1, 2}, {1, 3}, {1, 4}, {1, 5}, {1, 6}, {1, 7}, {1, 
+              8}, {1, 9}, {1, 10}, {1, 11}, {1, 12}, {1, 13}, {1, 14}, {1, 
+              15}, {1, 16}, {1, 17}, {1, 18}, {1, 19}, {1, 20}, {1, 21}, {1, 
+              22}, {1, 23}, {1, 24}, {1, 25}, {1, 26}, {1, 27}}, 
+              0.06608186004550887]}}}}, {{{
+            {Hue[0.6, 0.2, 0.8], EdgeForm[{GrayLevel[0], Opacity[0.7]}], 
+             InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"head\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", "1", "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "1"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "2"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "3"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "4"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "5"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "6"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "7"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "8"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "9"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "10"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "11"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "12"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "13"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "14"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "15"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "16"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "17"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "18"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "19"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "20"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "21"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "22"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "23"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "24"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "25"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "26"}], "}"}]}], "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "1"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "2"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "3"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "4"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "5"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "6"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "7"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "8"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "9"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "10"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "11"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "12"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "13"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "14"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "15"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "16"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "17"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "18"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "19"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "20"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "21"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "22"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "23"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "24"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "25"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "26"}], "}"}]}], "}"}]}]}], 
+                    "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "head", "Attributes" -> {}, "ID" -> {1, 1}, 
+                    "Parent" -> {1}, 
+                    "Children" -> {{1, 1, 1}, {1, 1, 2}, {1, 1, 3}, {1, 1, 
+                    4}, {1, 1, 5}, {1, 1, 6}, {1, 1, 7}, {1, 1, 8}, {1, 1, 
+                    9}, {1, 1, 10}, {1, 1, 11}, {1, 1, 12}, {1, 1, 13}, {1, 1,
+                     14}, {1, 1, 15}, {1, 1, 16}, {1, 1, 17}, {1, 1, 18}, {1, 
+                    1, 19}, {1, 1, 20}, {1, 1, 21}, {1, 1, 22}, {1, 1, 23}, {
+                    1, 1, 24}, {1, 1, 25}, {1, 1, 26}}, 
+                    "Data" -> {{1, 1, 1}, {1, 1, 2}, {1, 1, 3}, {1, 1, 4}, {1,
+                     1, 5}, {1, 1, 6}, {1, 1, 7}, {1, 1, 8}, {1, 1, 9}, {1, 1,
+                     10}, {1, 1, 11}, {1, 1, 12}, {1, 1, 13}, {1, 1, 14}, {1, 
+                    1, 15}, {1, 1, 16}, {1, 1, 17}, {1, 1, 18}, {1, 1, 19}, {
+                    1, 1, 20}, {1, 1, 21}, {1, 1, 22}, {1, 1, 23}, {1, 1, 
+                    24}, {1, 1, 25}, {1, 1, 26}}], "Tooltip"]& ]}}}}], 1, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"script\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"type\"", "\[Rule]", "\"text/javascript\""}], 
+                    ",", 
+                    
+                    RowBox[{"\"src\"", "\[Rule]", 
+                    "\"/pub/TWiki/JQueryPlugin/jquery.js\""}]}], "}"}]}], ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}]}], "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "script", 
+                    "Attributes" -> {
+                    "type" -> "text/javascript", "src" -> 
+                    "/pub/TWiki/JQueryPlugin/jquery.js"}, "ID" -> {1, 1, 1}, 
+                    "Parent" -> {1, 1}, "Children" -> {}, "Data" -> {}], 
+                    "Tooltip"]& ]}}}}], 2, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"link\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"rel\"", "\[Rule]", "\"stylesheet\""}], ",", 
+                    
+                    RowBox[{"\"href\"", "\[Rule]", 
+                    "\"/pub/TWiki/JQueryPlugin/jquery-all.css\""}], ",", 
+                    RowBox[{"\"type\"", "\[Rule]", "\"text/css\""}], ",", 
+                    RowBox[{"\"media\"", "\[Rule]", "\"all\""}]}], "}"}]}], 
+                    ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "2"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}]}], "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "link", 
+                    "Attributes" -> {
+                    "rel" -> "stylesheet", "href" -> 
+                    "/pub/TWiki/JQueryPlugin/jquery-all.css", "type" -> 
+                    "text/css", "media" -> "all"}, "ID" -> {1, 1, 2}, 
+                    "Parent" -> {1, 1}, "Children" -> {}, "Data" -> {}], 
+                    "Tooltip"]& ]}}}}], 3, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"script\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"type\"", "\[Rule]", "\"text/javascript\""}], 
+                    ",", 
+                    
+                    RowBox[{"\"src\"", "\[Rule]", 
+                    "\"/pub/TWiki/JQueryPlugin/jquery-all.js\""}]}], "}"}]}], 
+                    ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "3"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}]}], "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "script", 
+                    "Attributes" -> {
+                    "type" -> "text/javascript", "src" -> 
+                    "/pub/TWiki/JQueryPlugin/jquery-all.js"}, 
+                    "ID" -> {1, 1, 3}, "Parent" -> {1, 1}, "Children" -> {}, 
+                    "Data" -> {}], "Tooltip"]& ]}}}}], 4, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"link\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"rel\"", "\[Rule]", "\"stylesheet\""}], ",", 
+                    
+                    RowBox[{"\"href\"", "\[Rule]", 
+                    "\"/pub/TWiki/EditChapterPlugin/ecpstyles.css\""}], ",", 
+                    RowBox[{"\"type\"", "\[Rule]", "\"text/css\""}], ",", 
+                    RowBox[{"\"media\"", "\[Rule]", "\"all\""}]}], "}"}]}], 
+                    ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "4"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}]}], "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "link", 
+                    "Attributes" -> {
+                    "rel" -> "stylesheet", "href" -> 
+                    "/pub/TWiki/EditChapterPlugin/ecpstyles.css", "type" -> 
+                    "text/css", "media" -> "all"}, "ID" -> {1, 1, 4}, 
+                    "Parent" -> {1, 1}, "Children" -> {}, "Data" -> {}], 
+                    "Tooltip"]& ]}}}}], 5, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"script\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"type\"", "\[Rule]", "\"text/javascript\""}], 
+                    ",", 
+                    
+                    RowBox[{"\"src\"", "\[Rule]", 
+                    "\"/pub/TWiki/EditChapterPlugin/ecpjavascript.js\""}]}], 
+                    "}"}]}], ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "5"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}]}], "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "script", 
+                    "Attributes" -> {
+                    "type" -> "text/javascript", "src" -> 
+                    "/pub/TWiki/EditChapterPlugin/ecpjavascript.js"}, 
+                    "ID" -> {1, 1, 5}, "Parent" -> {1, 1}, "Children" -> {}, 
+                    "Data" -> {}], "Tooltip"]& ]}}}}], 6, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"title\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "6"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    
+                    RowBox[{"{", 
+                    "\" EducationMarketAnalysis < WolframAlpha < TWiki\"", 
+                    "}"}]}]}], "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "title", "Attributes" -> {}, "ID" -> {1, 1, 6}, 
+                    "Parent" -> {1, 1}, "Children" -> {}, 
+                    "Data" -> {
+                    " EducationMarketAnalysis < WolframAlpha < TWiki"}], 
+                    "Tooltip"]& ]}}}}], 7, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"link\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"rel\"", "\[Rule]", "\"icon\""}], ",", 
+                    
+                    RowBox[{"\"href\"", "\[Rule]", 
+                    "\"/common/images2003/favicon.ico\""}], ",", 
+                    RowBox[{"\"type\"", "\[Rule]", "\"image/x-icon\""}]}], 
+                    "}"}]}], ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "7"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}]}], "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "link", 
+                    "Attributes" -> {
+                    "rel" -> "icon", "href" -> 
+                    "/common/images2003/favicon.ico", "type" -> 
+                    "image/x-icon"}, "ID" -> {1, 1, 7}, "Parent" -> {1, 1}, 
+                    "Children" -> {}, "Data" -> {}], "Tooltip"]& ]}}}}], 8, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"link\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"rel\"", "\[Rule]", "\"shortcut icon\""}], ",", 
+                    
+                    
+                    RowBox[{"\"href\"", "\[Rule]", 
+                    "\"/common/images2003/favicon.ico\""}], ",", 
+                    RowBox[{"\"type\"", "\[Rule]", "\"image/x-icon\""}]}], 
+                    "}"}]}], ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "8"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}]}], "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "link", 
+                    "Attributes" -> {
+                    "rel" -> "shortcut icon", "href" -> 
+                    "/common/images2003/favicon.ico", "type" -> 
+                    "image/x-icon"}, "ID" -> {1, 1, 8}, "Parent" -> {1, 1}, 
+                    "Children" -> {}, "Data" -> {}], "Tooltip"]& ]}}}}], 9, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"link\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"rel\"", "\[Rule]", "\"alternate\""}], ",", 
+                    
+                    RowBox[{"\"type\"", "\[Rule]", 
+                    "\"application/rss+xml\""}], ",", 
+                    RowBox[{"\"title\"", "\[Rule]", "\"RSS Feed\""}], ",", 
+                    
+                    RowBox[{"\"href\"", "\[Rule]", 
+                    "\"/view/WolframAlpha/WebRss\""}]}], "}"}]}], ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "9"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}]}], "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "link", 
+                    "Attributes" -> {
+                    "rel" -> "alternate", "type" -> "application/rss+xml", 
+                    "title" -> "RSS Feed", "href" -> 
+                    "/view/WolframAlpha/WebRss"}, "ID" -> {1, 1, 9}, 
+                    "Parent" -> {1, 1}, "Children" -> {}, "Data" -> {}], 
+                    "Tooltip"]& ]}}}}], 10, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"base\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    
+                    RowBox[{"\"href\"", "\[Rule]", 
+                    "\"https://twiki.wolfram.com/view/WolframAlpha/\
+EducationMarketAnalysis\""}], "}"}]}], ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "10"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}]}], "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "base", 
+                    "Attributes" -> {
+                    "href" -> 
+                    "https://twiki.wolfram.com/view/WolframAlpha/\
+EducationMarketAnalysis"}, "ID" -> {1, 1, 10}, "Parent" -> {1, 1}, 
+                    "Children" -> {}, "Data" -> {}], "Tooltip"]& ]}}}}], 11, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"script\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"language\"", "\[Rule]", "\"JavaScript\""}], 
+                    ",", 
+                    RowBox[{"\"type\"", "\[Rule]", "\"text/javascript\""}], 
+                    ",", 
+                    
+                    RowBox[{"\"src\"", "\[Rule]", 
+                    "\"/common/javascript/menu.js\""}]}], "}"}]}], ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "11"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}]}], "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "script", 
+                    "Attributes" -> {
+                    "language" -> "JavaScript", "type" -> "text/javascript", 
+                    "src" -> "/common/javascript/menu.js"}, 
+                    "ID" -> {1, 1, 11}, "Parent" -> {1, 1}, "Children" -> {}, 
+                    "Data" -> {}], "Tooltip"]& ]}}}}], 12, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"script\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"type\"", "\[Rule]", "\"text/javascript\""}], 
+                    ",", 
+                    
+                    RowBox[{"\"src\"", "\[Rule]", 
+                    "\"/pub/TWiki/TWikiJavascripts/twiki.js\""}]}], "}"}]}], 
+                    ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "12"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}]}], "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "script", 
+                    "Attributes" -> {
+                    "type" -> "text/javascript", "src" -> 
+                    "/pub/TWiki/TWikiJavascripts/twiki.js"}, 
+                    "ID" -> {1, 1, 12}, "Parent" -> {1, 1}, "Children" -> {}, 
+                    "Data" -> {}], "Tooltip"]& ]}}}}], 13, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"script\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"type\"", "\[Rule]", "\"text/javascript\""}], 
+                    ",", 
+                    
+                    RowBox[{"\"src\"", "\[Rule]", 
+                    "\"/pub/TWiki/PatternSkin/pattern.js\""}]}], "}"}]}], ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "13"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}]}], "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "script", 
+                    "Attributes" -> {
+                    "type" -> "text/javascript", "src" -> 
+                    "/pub/TWiki/PatternSkin/pattern.js"}, "ID" -> {1, 1, 13}, 
+                    "Parent" -> {1, 1}, "Children" -> {}, "Data" -> {}], 
+                    "Tooltip"]& ]}}}}], 14, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"script\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"\"type\"", "\[Rule]", "\"text/javascript\""}], 
+                    "}"}]}], ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "14"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    
+                    RowBox[{"{", 
+                    "\"\\n//<![CDATA[\\n\\tfunction launchWindow(inWeb, \
+inTopic) {\\n\\t\\treturn launchTheWindow(\\\"/view/\\\", inWeb, inTopic, \
+\\\"\\\", \\\"viewplain\\\" );\\n\\t}\\n//]]>\\n\"", "}"}]}]}], 
+                    "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "script", 
+                    "Attributes" -> {"type" -> "text/javascript"}, 
+                    "ID" -> {1, 1, 14}, "Parent" -> {1, 1}, "Children" -> {}, 
+                    "Data" -> {
+                    "\n//<![CDATA[\n\tfunction launchWindow(inWeb, inTopic) {\
+\n\t\treturn launchTheWindow(\"/view/\", inWeb, inTopic, \"\", \"viewplain\" \
+);\n\t}\n//]]>\n"}], "Tooltip"]& ]}}}}], 15, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"style\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"type\"", "\[Rule]", "\"text/css\""}], ",", 
+                    RowBox[{"\"media\"", "\[Rule]", "\"all\""}]}], "}"}]}], 
+                    ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "15"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    
+                    RowBox[{"{", 
+                    "\"\\n\\t#patternTopBar,\\n#patternClearHeaderCenter,\\n#\
+patternClearHeaderLeft,\\n#patternClearHeaderRight,\\n#\
+patternTopBarContentsOuter {\\n\\theight:55px; /* top bar height; make room \
+for header columns */\\n}\\n\\t#patternOuter \
+{\\n\\tmargin-left:12em;\\n}\\n#patternLeftBar \
+{\\n\\twidth:12em;\\n\\tmargin-left:-12em;\\n}\\n\"", "}"}]}]}], 
+                    "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "style", 
+                    "Attributes" -> {"type" -> "text/css", "media" -> "all"}, 
+                    "ID" -> {1, 1, 15}, "Parent" -> {1, 1}, "Children" -> {}, 
+                    "Data" -> {
+                    "\n\t#patternTopBar,\n#patternClearHeaderCenter,\n\
+#patternClearHeaderLeft,\n#patternClearHeaderRight,\n\
+#patternTopBarContentsOuter {\n\theight:55px; /* top bar height; make room \
+for header columns */\n}\n\t#patternOuter {\n\tmargin-left:12em;\n}\n\
+#patternLeftBar {\n\twidth:12em;\n\tmargin-left:-12em;\n}\n"}], 
+                    "Tooltip"]& ]}}}}], 16, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"style\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"type\"", "\[Rule]", "\"text/css\""}], ",", 
+                    RowBox[{"\"media\"", "\[Rule]", "\"all\""}]}], "}"}]}], 
+                    ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "16"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    
+                    RowBox[{"{", 
+                    "\"\\n\\t@import \
+url('/pub/TWiki/WolframSkin/layout.css');\\n\\t@import \
+url('/pub/TWiki/WolframSkin/style.css');\\n\\t@import \
+url('/pub/TWiki/WolframSkin/colors.css');\\n\"", "}"}]}]}], 
+                    "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "style", 
+                    "Attributes" -> {"type" -> "text/css", "media" -> "all"}, 
+                    "ID" -> {1, 1, 16}, "Parent" -> {1, 1}, "Children" -> {}, 
+                    "Data" -> {
+                    "\n\t@import url('/pub/TWiki/WolframSkin/layout.css');\n\t\
+@import url('/pub/TWiki/WolframSkin/style.css');\n\t@import \
+url('/pub/TWiki/WolframSkin/colors.css');\n"}], "Tooltip"]& ]}}}}], 17, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"style\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"type\"", "\[Rule]", "\"text/css\""}], ",", 
+                    RowBox[{"\"media\"", "\[Rule]", "\"all\""}]}], "}"}]}], 
+                    ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "17"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    
+                    RowBox[{"{", 
+                    "\"\\n\\t/* Styles that are set using variables \
+*/\\n\\t#patternLeftBar .patternWebIndicator,\\n\\t.patternBookView \
+.twikiTopRow \
+{\\n\\t\\tbackground-color:#FF8900;\\n\\t}\\n\\t\\n\\t#patternTopBar { \
+background-color:#ffffff;}\\n\\t.patternBookView \
+{\\n\\t\\tborder-color:#FF8900;\\n\\t}\\n\\t.patternPreviewPage #patternMain \
+{\\n\\t\\t/* uncomment to set the preview image \
+*/\\n\\t\\t/*background-image:url(\\\"/pub/TWiki/PreviewBackground/preview2bg.\
+gif\\\");*/\\n\\t}\\n\\t\\n\\t.twikiTable .tableSortIcon img \
+{visibility:hidden;}\\n\\t.twikiTable .tableSortUp \
+{background:url(\\\"https://twiki.wolfram.com/pub/TWiki/TWikiDocGraphics/\
+tablesortup.gif\\\") no-repeat;}\\n\\t.twikiTable .tableSortDown \
+{background:url(\\\"https://twiki.wolfram.com/pub/TWiki/TWikiDocGraphics/\
+tablesortdown.gif\\\") no-repeat;}\\n\\t.twikiTable .tableSortDiamond \
+{background:url(\\\"https://twiki.wolfram.com/pub/TWiki/TWikiDocGraphics/\
+tablesortdiamond.gif\\\") no-repeat;}\\n\"", "}"}]}]}], 
+                    "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "style", 
+                    "Attributes" -> {"type" -> "text/css", "media" -> "all"}, 
+                    "ID" -> {1, 1, 17}, "Parent" -> {1, 1}, "Children" -> {}, 
+                    "Data" -> {
+                    "\n\t/* Styles that are set using variables */\n\t\
+#patternLeftBar .patternWebIndicator,\n\t.patternBookView .twikiTopRow {\n\t\t\
+background-color:#FF8900;\n\t}\n\t\n\t#patternTopBar { \
+background-color:#ffffff;}\n\t.patternBookView {\n\t\tborder-color:#FF8900;\n\
+\t}\n\t.patternPreviewPage #patternMain {\n\t\t/* uncomment to set the \
+preview image */\n\t\t\
+/*background-image:url(\"/pub/TWiki/PreviewBackground/preview2bg.gif\");*/\n\t\
+}\n\t\n\t.twikiTable .tableSortIcon img {visibility:hidden;}\n\t.twikiTable \
+.tableSortUp \
+{background:url(\"https://twiki.wolfram.com/pub/TWiki/TWikiDocGraphics/\
+tablesortup.gif\") no-repeat;}\n\t.twikiTable .tableSortDown {background:url(\
+\"https://twiki.wolfram.com/pub/TWiki/TWikiDocGraphics/tablesortdown.gif\") \
+no-repeat;}\n\t.twikiTable .tableSortDiamond \
+{background:url(\"https://twiki.wolfram.com/pub/TWiki/TWikiDocGraphics/\
+tablesortdiamond.gif\") no-repeat;}\n"}], "Tooltip"]& ]}}}}], 18, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"style\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"type\"", "\[Rule]", "\"text/css\""}], ",", 
+                    RowBox[{"\"media\"", "\[Rule]", "\"all\""}]}], "}"}]}], 
+                    ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "18"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    RowBox[{"{", "\"\\n\\t\\n\\t\\n\\t\\n\"", "}"}]}]}], 
+                    "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "style", 
+                    "Attributes" -> {"type" -> "text/css", "media" -> "all"}, 
+                    "ID" -> {1, 1, 18}, "Parent" -> {1, 1}, "Children" -> {}, 
+                    "Data" -> {"\n\t\n\t\n\t\n"}], "Tooltip"]& ]}}}}], 19, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"style\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"type\"", "\[Rule]", "\"text/css\""}], ",", 
+                    RowBox[{"\"media\"", "\[Rule]", "\"all\""}]}], "}"}]}], 
+                    ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "19"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    "\"\\n\\t@import url(\\\"/pub/TWiki/PatternSkin/print.css\
+\\\");\\n\"", "}"}]}]}], "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "style", 
+                    "Attributes" -> {"type" -> "text/css", "media" -> "all"}, 
+                    "ID" -> {1, 1, 19}, "Parent" -> {1, 1}, "Children" -> {}, 
+                    "Data" -> {
+                    "\n\t@import url(\"/pub/TWiki/PatternSkin/print.css\");\n\
+"}], "Tooltip"]& ]}}}}], 20, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"link\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"rel\"", "\[Rule]", "\"stylesheet\""}], ",", 
+                    RowBox[{"\"type\"", "\[Rule]", "\"text/css\""}], ",", 
+                    
+                    RowBox[{"\"href\"", "\[Rule]", 
+                    "\"/common/includes/CSS.cgi?b=2009nonHPheader;p=css2009/;\
+v=$lang\""}]}], "}"}]}], ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "20"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}]}], "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "link", 
+                    "Attributes" -> {
+                    "rel" -> "stylesheet", "type" -> "text/css", "href" -> 
+                    "/common/includes/CSS.cgi?b=2009nonHPheader;p=css2009/;v=$\
+lang"}, "ID" -> {1, 1, 20}, "Parent" -> {1, 1}, "Children" -> {}, 
+                    "Data" -> {}], "Tooltip"]& ]}}}}], 21, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"link\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"rel\"", "\[Rule]", "\"stylesheet\""}], ",", 
+                    RowBox[{"\"type\"", "\[Rule]", "\"text/css\""}], ",", 
+                    
+                    RowBox[{"\"href\"", "\[Rule]", 
+                    "\"/common/includes/CSS.cgi?b=header;p=css2009/internal.\
+wolfram.com/;v=en\""}]}], "}"}]}], ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "21"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}]}], "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "link", 
+                    "Attributes" -> {
+                    "rel" -> "stylesheet", "type" -> "text/css", "href" -> 
+                    "/common/includes/CSS.cgi?b=header;p=css2009/internal.\
+wolfram.com/;v=en"}, "ID" -> {1, 1, 21}, "Parent" -> {1, 1}, "Children" -> {},
+                     "Data" -> {}], "Tooltip"]& ]}}}}], 22, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"script\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"type\"", "\[Rule]", "\"text/javascript\""}], 
+                    ",", 
+                    
+                    RowBox[{"\"src\"", "\[Rule]", 
+                    "\"/common/javascript/jquery/core/1.2.6/jquery.js\""}]}], 
+                    "}"}]}], ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "22"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}]}], "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "script", 
+                    "Attributes" -> {
+                    "type" -> "text/javascript", "src" -> 
+                    "/common/javascript/jquery/core/1.2.6/jquery.js"}, 
+                    "ID" -> {1, 1, 22}, "Parent" -> {1, 1}, "Children" -> {}, 
+                    "Data" -> {}], "Tooltip"]& ]}}}}], 23, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"script\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"type\"", "\[Rule]", "\"text/javascript\""}], 
+                    ",", 
+                    
+                    RowBox[{"\"src\"", "\[Rule]", 
+                    "\"/common/javascript/jquery/plugins/hoverIntent/r5/\
+jquery.hoverIntent.js\""}]}], "}"}]}], ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "23"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}]}], "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "script", 
+                    "Attributes" -> {
+                    "type" -> "text/javascript", "src" -> 
+                    "/common/javascript/jquery/plugins/hoverIntent/r5/jquery.\
+hoverIntent.js"}, "ID" -> {1, 1, 23}, "Parent" -> {1, 1}, "Children" -> {}, 
+                    "Data" -> {}], "Tooltip"]& ]}}}}], 24, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"script\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"type\"", "\[Rule]", "\"text/javascript\""}], 
+                    ",", 
+                    
+                    RowBox[{"\"src\"", "\[Rule]", 
+                    "\"/common/javascript/WRImenu.js\""}]}], "}"}]}], ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "24"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}]}], "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "script", 
+                    "Attributes" -> {
+                    "type" -> "text/javascript", "src" -> 
+                    "/common/javascript/WRImenu.js"}, "ID" -> {1, 1, 24}, 
+                    "Parent" -> {1, 1}, "Children" -> {}, "Data" -> {}], 
+                    "Tooltip"]& ]}}}}], 25, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"script\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    
+                    RowBox[{"\"src\"", "\[Rule]", 
+                    "\"https://twiki.wolfram.com/pub/TWiki/ChecklistPlugin/\
+itemstatechange.js\""}], ",", 
+                    RowBox[{"\"language\"", "\[Rule]", "\"javascript\""}], 
+                    ",", 
+                    RowBox[{"\"type\"", "\[Rule]", "\"text/javascript\""}]}], 
+                    "}"}]}], ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "25"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}]}], "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "script", 
+                    "Attributes" -> {
+                    "src" -> 
+                    "https://twiki.wolfram.com/pub/TWiki/ChecklistPlugin/\
+itemstatechange.js", "language" -> "javascript", "type" -> "text/javascript"},
+                     "ID" -> {1, 1, 25}, "Parent" -> {1, 1}, "Children" -> {},
+                     "Data" -> {}], "Tooltip"]& ]}}}}], 26, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}], InsetBox[
+              GraphicsBox[{{{
+                  {Hue[0.6, 0.5, 0.5], EdgeForm[Hue[0.6, 0.5, 0.2]], 
+                   TagBox[
+                    TooltipBox[DiskBox[{0, 0}],
+                    RowBox[{"\[LeftAssociation]", 
+                    RowBox[{
+                    RowBox[{"\"Type\"", "\[Rule]", "\"style\""}], ",", 
+                    RowBox[{"\"Attributes\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"\"type\"", "\[Rule]", "\"text/css\""}], ",", 
+                    RowBox[{"\"media\"", "\[Rule]", "\"all\""}]}], "}"}]}], 
+                    ",", 
+                    RowBox[{"\"ID\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1", ",", "26"}], "}"}]}], ",", 
+                    RowBox[{"\"Parent\"", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"1", ",", "1"}], "}"}]}], ",", 
+                    RowBox[{"\"Children\"", "\[Rule]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"\"Data\"", "\[Rule]", 
+                    
+                    RowBox[{"{", 
+                    
+                    "\"\\n.tableSortIcon img {padding-left:.3em; \
+vertical-align:text-bottom;}\\n.twikiTable#twikiAttachmentsTable td \
+{border-style:solid none;}\\n.twikiTable#twikiAttachmentsTable th \
+{border-style:solid none;}\\n.twikiTable#twikiAttachmentsTable td \
+{vertical-align:middle;}\\n.twikiTable#twikiAttachmentsTable th \
+{vertical-align:middle;}\\n.twikiTable#twikiAttachmentsTable td \
+{vertical-align:top;}\\n.twikiTable#twikiAttachmentsTable th \
+{background-color:#ffffff;}\\n.twikiTable#twikiAttachmentsTable \
+th.twikiSortedCol \
+{background-color:#eeeeee;}\\n.twikiTable#twikiAttachmentsTable th \
+{color:#0066cc;}\\n.twikiTable#twikiAttachmentsTable th a:link \
+{color:#0066cc;}\\n.twikiTable#twikiAttachmentsTable th a:visited \
+{color:#0066cc;}\\n.twikiTable#twikiAttachmentsTable th a:link font \
+{color:#0066cc;}\\n.twikiTable#twikiAttachmentsTable th a:visited font \
+{color:#0066cc;}\\n.twikiTable#twikiAttachmentsTable th a:hover \
+{color:#ffffff;background-color:#0066cc;}\\n.twikiTable#twikiAttachmentsTable \
+th a:hover font \
+{color:#ffffff;background-color:#0066cc;}\\n.twikiTable#twikiAttachmentsTable \
+tr.twikiTableRowdataBg0 td \
+{background-color:#ffffff;}\\n.twikiTable#twikiAttachmentsTable \
+tr.twikiTableRowdataBg0 td.twikiSortedCol \
+{background-color:#f5f5f5;}\\n.twikiTable#twikiAttachmentsTable \
+td.twikiTableCol0 {text-align:center;}\\n.twikiTable#twikiAttachmentsTable \
+td.twikiTableCol1 {text-align:left;}\\n.twikiTable#twikiAttachmentsTable \
+td.twikiTableCol2 {text-align:left;}\\n.twikiTable#twikiAttachmentsTable \
+td.twikiTableCol3 {text-align:right;}\\n.twikiTable#twikiAttachmentsTable \
+td.twikiTableCol4 {text-align:left;}\\n.twikiTable#twikiAttachmentsTable \
+td.twikiTableCol5 {text-align:left;}\\n.twikiTable#twikiAttachmentsTable \
+td.twikiTableCol6 {text-align:left;}\\n.twikiTable#twikiAttachmentsTable \
+td.twikiTableCol7 {text-align:center;}\\n\"", "}"}]}]}], 
+                    "\[RightAssociation]"}]],
+                    Annotation[#, 
+                    Association[
+                    "Type" -> "style", 
+                    "Attributes" -> {"type" -> "text/css", "media" -> "all"}, 
+                    "ID" -> {1, 1, 26}, "Parent" -> {1, 1}, "Children" -> {}, 
+                    "Data" -> {
+                    "\n.tableSortIcon img {padding-left:.3em; \
+vertical-align:text-bottom;}\n.twikiTable#twikiAttachmentsTable td \
+{border-style:solid none;}\n.twikiTable#twikiAttachmentsTable th \
+{border-style:solid none;}\n.twikiTable#twikiAttachmentsTable td \
+{vertical-align:middle;}\n.twikiTable#twikiAttachmentsTable th \
+{vertical-align:middle;}\n.twikiTable#twikiAttachmentsTable td \
+{vertical-align:top;}\n.twikiTable#twikiAttachmentsTable th \
+{background-color:#ffffff;}\n.twikiTable#twikiAttachmentsTable \
+th.twikiSortedCol {background-color:#eeeeee;}\n\
+.twikiTable#twikiAttachmentsTable th {color:#0066cc;}\n\
+.twikiTable#twikiAttachmentsTable th a:link {color:#0066cc;}\n\
+.twikiTable#twikiAttachmentsTable th a:visited {color:#0066cc;}\n\
+.twikiTable#twikiAttachmentsTable th a:link font {color:#0066cc;}\n\
+.twikiTable#twikiAttachmentsTable th a:visited font {color:#0066cc;}\n\
+.twikiTable#twikiAttachmentsTable th a:hover \
+{color:#ffffff;background-color:#0066cc;}\n.twikiTable#twikiAttachmentsTable \
+th a:hover font {color:#ffffff;background-color:#0066cc;}\n\
+.twikiTable#twikiAttachmentsTable tr.twikiTableRowdataBg0 td \
+{background-color:#ffffff;}\n.twikiTable#twikiAttachmentsTable \
+tr.twikiTableRowdataBg0 td.twikiSortedCol {background-color:#f5f5f5;}\n\
+.twikiTable#twikiAttachmentsTable td.twikiTableCol0 {text-align:center;}\n\
+.twikiTable#twikiAttachmentsTable td.twikiTableCol1 {text-align:left;}\n\
+.twikiTable#twikiAttachmentsTable td.twikiTableCol2 {text-align:left;}\n\
+.twikiTable#twikiAttachmentsTable td.twikiTableCol3 {text-align:right;}\n\
+.twikiTable#twikiAttachmentsTable td.twikiTableCol4 {text-align:left;}\n\
+.twikiTable#twikiAttachmentsTable td.twikiTableCol5 {text-align:left;}\n\
+.twikiTable#twikiAttachmentsTable td.twikiTableCol6 {text-align:left;}\n\
+.twikiTable#twikiAttachmentsTable td.twikiTableCol7 {text-align:center;}\n"}],
+                     "Tooltip"]& ]}}}}], 27, 
+              Automatic, {0.13216372009101773, 0.13216372009101773}]}}}}}]}],
+     MouseAppearanceTag["NetworkGraphics"]],
+    AllowKernelInitialization->False]],
+  DefaultBaseStyle->{
+   "NetworkGraphics", FrontEnd`GraphicsHighlightColor -> Hue[0.8, 1., 0.6]},
+  FormatType->TraditionalForm,
+  FrameTicks->None]], "Output",
+ CellChangeTimes->{
+  3.693060788544599*^9, {3.693060906361725*^9, 3.693060925788909*^9}, 
+   3.693060988017812*^9},ExpressionUUID->"d120f89e-4419-4d3e-82d0-\
+84a5d76b0869"]
+}, Open  ]]
+},
+WindowSize->{933, 855},
+WindowMargins->{{-4, Automatic}, {Automatic, 0}},
+FrontEndVersion->"11.1 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 16, \
+2017)",
+StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+

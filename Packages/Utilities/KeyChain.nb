@@ -1,0 +1,1118 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Keychain", "CodeSection",
+ CellChangeTimes->{{3.703594527890148*^9, 3.70359453973701*^9}, {
+   3.70359462614196*^9, 3.703594635877697*^9}, {3.703633068533736*^9, 
+   3.703633069864256*^9}, {3.729771434390788*^9, 3.729771435828908*^9}, 
+   3.7336971823420267`*^9},ExpressionUUID->"832e927d-f257-43ae-847b-\
+e54cbc0f4934"],
+
+Cell[CellGroupData[{
+
+Cell["$Keychain", "CodeSubsubsection",
+ CellChangeTimes->{3.7036676440080957`*^9, 
+  3.733697173496705*^9},ExpressionUUID->"c1a48582-1ea5-4871-a5da-\
+c466bde85f58"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"KeychainConnect", "::", "usage"}], "=", 
+   "\"\<Uses the keychain to cloud connect\>\""}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7064045538112297`*^9, 3.706404566987259*^9}, 
+   3.733697174341865*^9},ExpressionUUID->"2caa7be1-16f6-498e-8b3d-\
+15b8e806ae6a"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"KeychainAdd", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Adds auth data to the Keychain\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"KeychainRemove", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Removes auth data from the Keychain\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"KeychainGet", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Gets auth data from the Keychain\>\""}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.703668010074709*^9, 3.7036680345236397`*^9}, {
+  3.703698398040112*^9, 3.703698408448823*^9}, {3.7066147521837187`*^9, 
+  3.706614775350679*^9}, {3.733697174904006*^9, 
+  3.733697177021152*^9}},ExpressionUUID->"2b2e80bc-6cdd-4ac4-b2fc-\
+0101df4fac6f"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"$Keychain", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<An interface object to a password keychain\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"$KeychainSettings", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<An interface object for the options of the keychain\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"$KeychainPassword", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<An interface object for the password of the keychain\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"$KeychainDirectory", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<A settable directory to change where the $Keychain loads from\>\""}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.703667310720837*^9, 3.703667342546315*^9}, {
+  3.703667602157186*^9, 3.7036676344034243`*^9}, {3.733697177026428*^9, 
+  3.733697177044858*^9}},ExpressionUUID->"6a63053a-850f-447c-80f1-\
+a3fae2edd5be"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"$KeychainCloudAccounts", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<A collection of known accounts for KeychainConnect\>\""}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7127885508656282`*^9, 3.712788564144682*^9}, {
+  3.7127967579828863`*^9, 3.7127967672294607`*^9}, {3.733697177049439*^9, 
+  3.733697177054137*^9}},ExpressionUUID->"c8dda5d3-e375-4c64-8381-\
+08dd42758e84"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["PasswordGen", "CodeSubsubsection",
+ CellChangeTimes->{{3.7066146394607964`*^9, 
+  3.706614644786724*^9}},ExpressionUUID->"416de265-fa32-4463-8774-\
+e26536bd3a7f"],
+
+Cell[BoxData[
+ RowBox[{"(*", 
+  RowBox[{
+   RowBox[{"KeychainGenerateWord", "::", "usage"}], "=", 
+   "\"\<Futurized password-management function for building secure \
+passwords\>\""}], "*)"}]], "CodeInput",
+ CellChangeTimes->{{3.712788471077874*^9, 3.712788508199992*^9}, 
+   3.733697177067111*^9},ExpressionUUID->"a07e2eab-25a6-4f5b-a9ab-\
+ef98bfd733fd"]
+}, Closed]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"502fa3ff-68e0-4295-a7df-\
+be729aeb8839"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Keychain\[RightFloor]", "CodeSubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7036554805257397`*^9, 3.703655481380496*^9}, {
+   3.703667448129917*^9, 3.703667449672553*^9}, 
+   3.733697177102646*^9},ExpressionUUID->"7aa5b446-d221-49e0-a3a6-\
+ecc828ba9e1c"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{"!", 
+     RowBox[{"ValueQ", "@", "$KeychainKey"}]}], ",", "\n", "\t", 
+    RowBox[{"$KeychainKey", ":=", "\n", "\t\t", 
+     RowBox[{"(", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"$KeychainDirectory", "=", "Automatic"}], ";", "\n", "\t\t\t", 
+       
+       RowBox[{"$KeychainKey", "=", "\"\<Keychain\>\""}]}], "\n", "\t\t\t", 
+      ")"}]}]}], "\n", "\t", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{"!", 
+     RowBox[{"ValueQ", "@", "$KeychainDirectory"}]}], ",", "\n", "\t", 
+    RowBox[{"$KeychainDirectory", ":=", "\n", "\t\t", 
+     RowBox[{"(", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"$KeychainKey", "=", "\"\<Keychain\>\""}], ";", "\n", "\t\t\t", 
+       RowBox[{"$KeychainDirectory", "=", "Automatic"}]}], "\n", "\t\t\t", 
+      ")"}]}]}], "\n", "\t", "]"}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.7036554820613203`*^9, 3.703655511265875*^9}, {
+  3.703655582961388*^9, 3.703655636818952*^9}, {3.703655826955214*^9, 
+  3.703655862148424*^9}, {3.703655917790092*^9, 3.7036559454259768`*^9}, {
+  3.7036560452973003`*^9, 3.703656052301132*^9}, {3.7036560902710867`*^9, 
+  3.703656100709076*^9}, {3.703656223430559*^9, 3.703656230120579*^9}, {
+  3.703663289157263*^9, 3.703663295809515*^9}, {3.7036664613308697`*^9, 
+  3.703666541725885*^9}, {3.7036667829197893`*^9, 3.70366678951411*^9}, {
+  3.703667470651984*^9, 3.703667508670332*^9}, {3.70366772970674*^9, 
+  3.7036677345958767`*^9}, {3.707499994400228*^9, 3.70749999492496*^9}, {
+  3.7336971589721327`*^9, 
+  3.733697168914383*^9}},ExpressionUUID->"15cbd063-deb9-4710-bc49-\
+d2e650fd71f7"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$Keychain\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{3.70365620267865*^9, 3.703669623843958*^9, 
+  3.7336971590912657`*^9},ExpressionUUID->"2d1e326d-0702-43ff-af43-\
+4c2774437db6"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"HoldPattern", "[", 
+    RowBox[{"$Keychain", "[", "k__", "]"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"EncodedCache", "[", "$KeychainKey", "]"}], "[", "k", "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"$Keychain", "/:", "\n", "\t", 
+   RowBox[{"Set", "[", 
+    RowBox[{
+     RowBox[{"$Keychain", "[", "k__", "]"}], ",", "v_"}], "]"}], ":=", "\n", 
+   "\t\t", 
+   RowBox[{"Set", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"EncodedCache", "[", "$KeychainKey", "]"}], "[", "k", "]"}], 
+     ",", "v"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"$Keychain", "/:", "\n", "\t", 
+   RowBox[{"SetDelayed", "[", 
+    RowBox[{
+     RowBox[{"$Keychain", "[", "k__", "]"}], ",", "v_"}], "]"}], ":=", "\n", 
+   "\t\t", 
+   RowBox[{"SetDelayed", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"EncodedCache", "[", "$KeychainKey", "]"}], "[", "k", "]"}], 
+     ",", "v"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"$Keychain", "/:", "\n", "\t", 
+   RowBox[{"Unset", "[", 
+    RowBox[{"$Keychain", "[", "k__", "]"}], "]"}], ":=", "\n", "\t\t", 
+   RowBox[{"Unset", "[", 
+    RowBox[{
+     RowBox[{"EncodedCache", "[", "$KeychainKey", "]"}], "[", "k", "]"}], 
+    "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.7036554820613203`*^9, 3.703655511265875*^9}, {
+  3.703655582961388*^9, 3.7036556749084673`*^9}, {3.70365606392258*^9, 
+  3.703656074554669*^9}, {3.703656252229534*^9, 3.703656284289832*^9}, {
+  3.703656316648637*^9, 3.7036563193973627`*^9}, {3.7036675286802998`*^9, 
+  3.703667542127749*^9}, {3.703667582282745*^9, 3.703667582293363*^9}, {
+  3.733697159130149*^9, 
+  3.733697159176515*^9}},ExpressionUUID->"38366c20-9c93-434c-8cbc-\
+9d40d35e2cc3"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"$Keychain", "/:", "\n", "\t", 
+   RowBox[{"File", "@", "$Keychain"}], ":=", "\n", "\t\t", 
+   RowBox[{"EncodedCacheFile", "[", "$KeychainKey", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"$Keychain", "/:", "\n", "\t", 
+   RowBox[{"DeleteFile", "[", "$Keychain", "]"}], ":=", "\n", "\t\t", 
+   RowBox[{"DeleteFile", "@", 
+    RowBox[{"File", "@", "$Keychain"}]}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.703666157959382*^9, 3.703666161149868*^9}, {
+   3.703666212212461*^9, 3.703666275512776*^9}, {3.7036675425977182`*^9, 
+   3.70366754377859*^9}, 3.703667582297872*^9, {3.7336971591852093`*^9, 
+   3.733697159211296*^9}},ExpressionUUID->"c06e1738-5c08-4e4b-8e50-\
+e1701fd8bf3d"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"$Keychain", "/:", "\n", "\t", 
+   RowBox[{"Set", "[", 
+    RowBox[{"$Keychain", ",", "a_Association"}], "]"}], ":=", "\n", "\t\t", 
+   RowBox[{"Set", "[", 
+    RowBox[{
+     RowBox[{"EncodedCache", "[", "$KeychainKey", "]"}], ",", "a"}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"$Keychain", "/:", "\n", "\t", 
+   RowBox[{"Unset", "[", "$Keychain", "]"}], ":=", "\n", "\t\t", 
+   RowBox[{"Unset", "[", 
+    RowBox[{"EncodedCache", "[", "$KeychainKey", "]"}], "]"}]}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.703695666062223*^9, 3.703695696796894*^9}, {
+  3.7036986926929703`*^9, 3.703698692866761*^9}, {3.7336971592222433`*^9, 
+  3.733697159248048*^9}},ExpressionUUID->"266cac23-7de8-4ecd-9977-\
+a9f40e60ed86"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$KeychainSettings\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{
+  3.703656217357647*^9, {3.7036631762714243`*^9, 3.703663177791792*^9}, 
+   3.703667544495522*^9, 
+   3.733697159284713*^9},ExpressionUUID->"fc07ddf3-96ef-4a72-9f1a-\
+0b3082f29db3"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"$KeychainSettings", "[", "k__", "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"EncodedCache", "[", 
+     RowBox[{"$KeychainKey", ",", "\"\<Options\>\""}], "]"}], "[", "k", 
+    "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"$KeychainSettings", "/:", "\n", "\t", 
+   RowBox[{"Set", "[", 
+    RowBox[{
+     RowBox[{"$KeychainSettings", "[", "k__", "]"}], ",", "v_"}], "]"}], ":=",
+    "\n", "\t\t", 
+   RowBox[{"Set", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"EncodedCache", "[", 
+       RowBox[{"$KeychainKey", ",", "\"\<Options\>\""}], "]"}], "[", "k", 
+      "]"}], ",", "v"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"$KeychainSettings", "/:", "\n", "\t", 
+   RowBox[{"Unset", "[", 
+    RowBox[{"$KeychainSettings", "[", "k__", "]"}], "]"}], ":=", "\n", "\t\t", 
+   RowBox[{"Unset", "[", 
+    RowBox[{
+     RowBox[{"EncodedCache", "[", 
+      RowBox[{"$KeychainKey", ",", "\"\<Options\>\""}], "]"}], "[", "k", 
+     "]"}], "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.70365564391089*^9, 3.7036556535491753`*^9}, {
+   3.703655691727436*^9, 3.7036557061634912`*^9}, {3.703655895077434*^9, 
+   3.7036559025482683`*^9}, {3.703655958372294*^9, 3.703655966167268*^9}, {
+   3.703656080506866*^9, 3.703656087525947*^9}, 3.703656145920306*^9, {
+   3.7036562060223923`*^9, 3.7036562077728024`*^9}, {3.703656268875214*^9, 
+   3.7036563004470043`*^9}, {3.703656522043251*^9, 3.703656525759294*^9}, {
+   3.703666177014799*^9, 3.70366619952173*^9}, {3.7036675451240788`*^9, 
+   3.70366754711895*^9}, {3.703667582303802*^9, 3.703667582310533*^9}, {
+   3.733697159311699*^9, 
+   3.73369715934767*^9}},ExpressionUUID->"7ca71ff8-568b-43b5-8122-\
+65c30f3e0f4e"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"$KeychainSettings", "/:", "\n", "\t", 
+   RowBox[{"File", "@", "$KeychainSettings"}], ":=", "\n", "\t\t", 
+   RowBox[{"EncodedCacheOptionsFile", "[", "$KeychainKey", "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"$KeychainSettings", "/:", "\n", "\t", 
+   RowBox[{"DeleteFile", "@", "$KeychainSettings"}], ":=", "\n", "\t\t", 
+   RowBox[{"DeleteFile", "@", 
+    RowBox[{"File", "@", "$KeychainSettings"}]}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.703667041649056*^9, 3.7036670542120247`*^9}, {
+   3.7036675476209593`*^9, 3.703667549793887*^9}, 3.703667582316359*^9, {
+   3.733697159356575*^9, 
+   3.733697159379856*^9}},ExpressionUUID->"36b970c9-b8e5-4d1a-bb91-\
+b1e580e5c881"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$KeychainPassword\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{3.703656220830353*^9, 3.7036675511027327`*^9, 
+  3.733697159416931*^9},ExpressionUUID->"a0291d35-9671-4620-b31e-\
+24245e112bda"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"$KeychainPassword", "[", "]"}], ":=", "\n", "\t", 
+   RowBox[{"EncodedCache", "[", 
+    RowBox[{"$KeychainKey", ",", "\"\<Password\>\""}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"$KeychainPassword", "/:", "\n", "\t", 
+   RowBox[{"Set", "[", 
+    RowBox[{
+     RowBox[{"$KeychainPassword", "[", "]"}], ",", "v_"}], "]"}], ":=", "\n", 
+   "\t\t", 
+   RowBox[{"Set", "[", "\n", "\t\t\t", 
+    RowBox[{
+     RowBox[{"EncodedCache", "[", 
+      RowBox[{"$KeychainKey", ",", "\"\<Password\>\""}], "]"}], ",", "\n", 
+     "\t\t\t", "v"}], "\n", "\t\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"$KeychainPassword", "/:", "\n", "\t", 
+   RowBox[{"Unset", "[", 
+    RowBox[{"$KeychainPassword", "[", "]"}], "]"}], ":=", "\n", "\t\t", 
+   RowBox[{"Unset", "[", 
+    RowBox[{"EncodedCache", "[", 
+     RowBox[{"$KeychainKey", ",", "\"\<Password\>\""}], "]"}], "]"}]}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.703655710869029*^9, 3.703655716854905*^9}, {
+  3.7036559780520763`*^9, 3.703656021832884*^9}, {3.7036561068335047`*^9, 
+  3.703656137640444*^9}, {3.703656210205036*^9, 3.70365622748193*^9}, {
+  3.703660667017853*^9, 3.703660727857765*^9}, {3.703667006368334*^9, 
+  3.703667006598936*^9}, {3.703667102004793*^9, 3.703667106717902*^9}, {
+  3.703667551360465*^9, 3.703667582329124*^9}, {3.733697159446516*^9, 
+  3.733697159479518*^9}},ExpressionUUID->"804a4687-a7b7-4947-8e8a-\
+f83c57f61624"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"$KeychainPassword", "/:", "\n", "\t", 
+   RowBox[{"File", "@", "$KeychainPassword"}], ":=", "\n", "\t\t", 
+   RowBox[{"EncodedCachePasswordFile", "[", "$KeychainKey", "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"$KeychainPassword", "/:", "\n", "\t", 
+   RowBox[{"DeleteFile", "@", "$KeychainPassword"}], ":=", "\n", "\t\t", 
+   RowBox[{"DeleteFile", "@", 
+    RowBox[{"File", "@", "$KeychainPassword"}]}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.703666913147984*^9, 3.703666964440386*^9}, {
+  3.7036670167246513`*^9, 3.7036670285080357`*^9}, {3.7036675551892967`*^9, 
+  3.703667582334805*^9}, {3.733697159488639*^9, 
+  3.7336971595121317`*^9}},ExpressionUUID->"01f3878d-fb3e-45b2-9650-\
+28180e53ef25"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$KeychainDirectory\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7036633019084787`*^9, 3.7036633054826508`*^9}, 
+   3.7036675583285847`*^9, 
+   3.733697159548945*^9},ExpressionUUID->"a844eec3-ada2-4126-ba69-\
+9b1601ec8286"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$KeychainDirectory", "/:", "\n", "\t", 
+   RowBox[{
+    RowBox[{"Set", "[", 
+     RowBox[{"$KeychainDirectory", ",", "dir_"}], "]"}], "/;", 
+    RowBox[{"(", 
+     RowBox[{"!", 
+      RowBox[{"TrueQ", "@", "$inEncodedCacheDirectoryOverload"}]}], ")"}]}], ":=",
+    "\n", "\t\t", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"$inEncodedCacheDirectoryOverload", "=", "True"}], "}"}], ",", 
+     "\n", "\t\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"dir", "=!=", "$KeychainDirectory"}], ",", "\n", "\t\t\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{"dir", ",", 
+         RowBox[{"{", "\n", "\t", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Automatic", ":>", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"(", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"$KeychainKey", "=", "\"\<Keychain\>\""}], ";", "\n", 
+              "\t\t\t\t\t\t\t", 
+              RowBox[{"EncodedCacheOptionsLoad", "[", "$KeychainKey", "]"}], 
+              ";", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"EncodedCacheLoad", "[", "$KeychainKey", "]"}], ";", 
+              "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"$KeychainDirectory", "=", "Automatic"}]}], "\n", 
+             "\t\t\t\t\t\t\t", ")"}]}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"f", ":", 
+             RowBox[{"FileName", "[", 
+              RowBox[{"{", 
+               RowBox[{"p___", ",", "n_"}], "}"}], "]"}]}], ":>", "\n", 
+            "\t\t\t\t\t\t", 
+            RowBox[{"(", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"EncodedCacheLoad", "[", 
+               RowBox[{"FileNameJoin", "[", 
+                RowBox[{"{", 
+                 RowBox[{"p", ",", "n"}], "}"}], "]"}], "]"}], ";", "\n", 
+              "\t\t\t\t\t\t\t", 
+              RowBox[{"$KeychainKey", "=", 
+               RowBox[{"FileBaseName", "@", "n"}]}], ";", "\n", 
+              "\t\t\t\t\t\t\t", 
+              RowBox[{"$KeychainDirectory", "=", "f"}], ";"}], "\n", 
+             "\t\t\t\t\t\t\t", ")"}]}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"d", ":", 
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"_String", "|", "_File"}], ")"}], "?", 
+              "DirectoryQ"}]}], ":>", "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{"Replace", "[", 
+             RowBox[{
+              RowBox[{"EncodedCacheLoad", "[", "d", "]"}], ",", "\n", "\t", 
+              "\t\t\t\t\t\t", 
+              RowBox[{"a_Association", ":>", "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{"(", "\n", "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"EncodedCacheLoad", "[", "d", "]"}], ";", "\n", 
+                 "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{"$KeychainKey", "=", 
+                  RowBox[{"FileBaseName", "@", "d"}]}], ";", "\n", 
+                 "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{"$KeychainDirectory", "=", "d"}], ";"}], "\n", 
+                "\t\t\t\t\t\t\t\t\t", ")"}]}]}], "\n", "\t\t\t\t\t\t\t", 
+             "]"}]}]}], "\n", "\t\t\t\t\t", "}"}]}], "]"}], ",", "\n", 
+       "\t\t\t\t", "dir"}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", 
+    "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7036554820613203`*^9, 3.703655511265875*^9}, {
+   3.703655582961388*^9, 3.703655636818952*^9}, {3.703655826955214*^9, 
+   3.703655862148424*^9}, {3.703655917790092*^9, 3.7036559454259768`*^9}, {
+   3.7036560452973003`*^9, 3.703656052301132*^9}, {3.7036560902710867`*^9, 
+   3.703656100709076*^9}, {3.703656223430559*^9, 3.703656230120579*^9}, {
+   3.703663289157263*^9, 3.703663295809515*^9}, {3.703663331199551*^9, 
+   3.703663392408925*^9}, {3.7036637079106693`*^9, 3.703663800226988*^9}, {
+   3.703663877122106*^9, 3.703664017685548*^9}, {3.703664074111225*^9, 
+   3.7036641327220984`*^9}, 3.703665040720727*^9, {3.703665261113194*^9, 
+   3.703665276762188*^9}, {3.703666321907772*^9, 3.703666390420644*^9}, {
+   3.703666719335442*^9, 3.70366676175703*^9}, {3.703667558794355*^9, 
+   3.703667582275778*^9}, 3.703667738803659*^9, {3.733697159578888*^9, 
+   3.7336971689225817`*^9}},ExpressionUUID->"26ad7205-7272-43a5-a554-\
+8bd4ca9fde22"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]KeychainAdd\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{3.703668044529352*^9, 
+  3.7336971689600277`*^9},ExpressionUUID->"019162d3-5ea7-46cc-9c57-\
+0b8755a2c65d"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$keyChainFailureForms", "=", 
+   RowBox[{"\"\<\>\"", "|", "$Failed", "|", "$Canceled", "|", "_Missing"}]}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7067164010041323`*^9, 3.706716405880221*^9}, {
+  3.706716496862301*^9, 
+  3.70671649893116*^9}},ExpressionUUID->"89ee1699-d25b-4776-ad2f-\
+b51f4b036839"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"KeychainAdd", "[", 
+    RowBox[{"site_", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"username", ":", 
+        RowBox[{"Except", "[", "None", "]"}]}], ",", 
+       RowBox[{"password", ":", 
+        RowBox[{"Except", "[", "$keyChainFailureForms", "]"}]}]}], "}"}]}], 
+    "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"$Keychain", "[", 
+     RowBox[{"{", 
+      RowBox[{"site", ",", "username"}], "}"}], "]"}], "=", "password"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"KeychainAdd", "[", 
+    RowBox[{"{", 
+     RowBox[{"site_", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"username", ":", 
+         RowBox[{"Except", "[", "None", "]"}]}], ",", 
+        RowBox[{"password", ":", 
+         RowBox[{"Except", "[", "$keyChainFailureForms", "]"}]}]}], "}"}]}], 
+     "}"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"$Keychain", "[", 
+     RowBox[{"{", 
+      RowBox[{"site", ",", "username"}], "}"}], "]"}], "=", "password"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"KeychainAdd", "[", 
+    RowBox[{"sites", ":", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"_", "->", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"Except", "[", "None", "]"}], ",", "_"}], "}"}]}], ")"}], 
+       ",", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"_", "->", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"Except", "[", "None", "]"}], ",", "_"}], "}"}]}], ")"}], 
+        ".."}]}], "}"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"saveOps", "=", 
+        RowBox[{
+        "$KeychainSettings", "[", "\"\<SaveOptionsToDisk\>\"", "]"}]}], ",", 
+       "\n", "\t\t", 
+       RowBox[{"saveDisk", "=", 
+        RowBox[{"$KeychainSettings", "[", "\"\<SaveToDisk\>\"", "]"}]}], ",", 
+       "\n", "\t\t", 
+       RowBox[{"storeLocal", "=", 
+        RowBox[{"$KeychainSettings", "[", "\"\<StoreInMemory\>\"", "]"}]}]}], 
+      "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"$KeychainSettings", "[", "\"\<SaveOptionsToDisk\>\"", "]"}], 
+       "=", "False"}], ";", "\n", "\t\t", 
+      RowBox[{"If", "[", 
+       RowBox[{"storeLocal", ",", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"$KeychainSettings", "[", "\"\<SaveToDisk\>\"", "]"}], "=", 
+         "False"}]}], "\n", "\t\t\t", "]"}], ";", "\n", "\t\t", 
+      RowBox[{"With", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"s", "=", 
+          RowBox[{"KeychainAdd", "/@", 
+           RowBox[{"Most", "@", "sites"}]}]}], "}"}], ",", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"If", "[", 
+          RowBox[{"storeLocal", ",", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"$KeychainSettings", "[", "\"\<SaveToDisk\>\"", "]"}], 
+            "=", "saveDisk"}]}], "\n", "\t", "\t\t\t", "]"}], ";", "\n", 
+         "\t\t\t", 
+         RowBox[{
+          RowBox[{
+          "$KeychainSettings", "[", "\"\<SaveOptionsToDisk\>\"", "]"}], "=", 
+          "saveOps"}], ";", "\n", "\t\t\t", 
+         RowBox[{"Append", "[", 
+          RowBox[{"s", ",", "\n", "\t\t\t\t", 
+           RowBox[{"KeychainAdd", "@", 
+            RowBox[{"Last", "@", "sites"}]}]}], "\n", "\t\t\t\t", "]"}]}]}], 
+       "\n", "\t\t\t", "]"}]}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"KeychainAdd", "[", "\n", "\t", 
+    RowBox[{"sites", ":", 
+     RowBox[{"(", "\n", "\t\t", 
+      RowBox[{"_String", "|", 
+       RowBox[{"(", 
+        RowBox[{"_String", "\[Rule]", "_String"}], ")"}], "|", "\n", "\t\t\t", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"_String", "|", 
+           RowBox[{"(", 
+            RowBox[{"_String", "\[Rule]", "_String"}], ")"}]}], ")"}], ".."}],
+         "}"}]}], "\n", "\t\t", ")"}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+   
+   RowBox[{
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"Clear", "@", "$keyChainAuth"}], ";", 
+       RowBox[{"Replace", "[", 
+        RowBox[{"#", ",", 
+         RowBox[{"_KeychainAdd", "\[Rule]", "$Failed"}]}], "]"}]}], ")"}], 
+     "&"}], "@", "\n", "\t\t", 
+    RowBox[{"KeychainAdd", "@", "\n", "\t\t\t", 
+     RowBox[{"Normal", "@", "\n", "\t\t\t\t", 
+      RowBox[{"AuthDialog", "[", "\n", "\t\t\t\t\t", 
+       RowBox[{
+        RowBox[{"Dynamic", "@", "$keyChainAuth"}], ",", "\n", "\t\t\t\t\t", 
+        "\"\<\>\"", ",", "\n", "\t", "\t\t\t\t", "None", ",", "\n", "\t", 
+        "\t", "\t", "\t\t", 
+        RowBox[{"Sequence", "@@", "\n", "\t", "\t", "\t", "\t\t\t", 
+         RowBox[{"Replace", "[", 
+          RowBox[{
+           RowBox[{"Flatten", "@", 
+            RowBox[{"{", "sites", "}"}]}], ",", "\n", "\t", "\t", "\t", 
+           "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{"s_", "\[Rule]", "u_"}], ")"}], ":>", "\n", "\t", "\t", 
+            "\t", "\t\t\t\t\t", 
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"{", 
+               RowBox[{"s", ",", "Automatic"}], "}"}], ",", "u"}], "}"}]}], 
+           ",", "\n", "\t", "\t", "\t", "\t\t\t\t", "1"}], "\n", 
+          "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t", "]"}]}]}]}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"KeychainAdd", "[", "\n", "\t", 
+    RowBox[{"site_", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{"None", ",", "s_String"}], "}"}]}], "\n", "\t", "]"}], ":=", 
+   "\n", "\t", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"Clear", "@", "$keyChainAuth"}], ";", 
+       RowBox[{"Replace", "[", 
+        RowBox[{"#", ",", 
+         RowBox[{"_KeychainAdd", "\[Rule]", "$Failed"}]}], "]"}]}], ")"}], 
+     "&"}], "@", "\n", "\t\t", 
+    RowBox[{"KeychainAdd", "[", "\n", "\t\t\t", 
+     RowBox[{"site", "->", "\n", "\t\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t\t", 
+       RowBox[{"s", ",", "\n", "\t\t\t\t\t", 
+        RowBox[{"PasswordDialog", "[", "\n", "\t\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Dynamic", "@", "$keyChainAuth"}], ",", "\n", 
+          "\t\t\t\t\t\t", "s", ",", "\n", "\t\t\t\t\t\t", "s", ",", "\n", 
+          "\t\t\t\t\t\t", 
+          RowBox[{
+          "\"\<PromptString\>\"", "->", "\n", "\t\t\t\t\t\t\t", 
+           "\"\<Enter ``:\>\""}], ",", "\n", "\t\t\t\t\t\t", 
+          RowBox[{"WindowTitle", "\[Rule]", "s"}], ",", "\n", "\t\t\t\t\t\t", 
+          
+          RowBox[{"FieldMasked", "\[Rule]", "False"}]}], "\n", "\t\t\t\t\t\t",
+          "]"}]}], "\n", "\t\t\t\t\t", "}"}]}], "\n", "\t\t\t", "]"}]}]}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.703668045401395*^9, 3.703668064005631*^9}, {
+   3.703668182849551*^9, 3.703668285736513*^9}, {3.703668337935845*^9, 
+   3.703668351995816*^9}, {3.703668393917201*^9, 3.703668461608343*^9}, {
+   3.7036684985713387`*^9, 3.7036685539569263`*^9}, {3.703668652382023*^9, 
+   3.703668861822431*^9}, {3.703669109606554*^9, 3.703669231513588*^9}, {
+   3.703669342113325*^9, 3.703669381734778*^9}, {3.703669416872705*^9, 
+   3.703669421782963*^9}, {3.703698487062488*^9, 3.703698521336363*^9}, 
+   3.7036985922378683`*^9, {3.703714696621069*^9, 3.703714703549693*^9}, {
+   3.7037172677859793`*^9, 3.703717283287105*^9}, {3.7037173525934896`*^9, 
+   3.70371735318503*^9}, {3.703717840137392*^9, 3.703717844736678*^9}, {
+   3.705356288429372*^9, 3.705356331462878*^9}, {3.705356402030452*^9, 
+   3.7053564706026907`*^9}, {3.705356522489554*^9, 3.705356558317466*^9}, {
+   3.705356597638132*^9, 3.7053565996348047`*^9}, 3.705356816929167*^9, {
+   3.705357077039315*^9, 3.705357089989603*^9}, {3.705357173755851*^9, 
+   3.705357212052992*^9}, {3.705357376535182*^9, 3.705357380775176*^9}, {
+   3.705357421320013*^9, 3.70535742541601*^9}, 3.7060641887380953`*^9, {
+   3.706064233579053*^9, 3.706064236806065*^9}, {3.706716145891591*^9, 
+   3.706716173870289*^9}, {3.706716212499919*^9, 3.70671625119284*^9}, {
+   3.706716434728855*^9, 3.706716444026217*^9}, {3.728339528148198*^9, 
+   3.728339529547121*^9}, 3.7297988636179857`*^9, {3.73369715965804*^9, 
+   3.733697169062336*^9}},ExpressionUUID->"c94a04a5-136c-4a2d-803f-\
+4ec3e80da440"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]KeychainRemove\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{3.703668044529352*^9, 3.706615629811696*^9, 
+  3.7336971691001453`*^9},ExpressionUUID->"50ee692f-aa3f-471a-9a9f-\
+dca067ab9b7a"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"KeychainRemove", "[", 
+    RowBox[{"site_", "\[Rule]", 
+     RowBox[{"username", ":", 
+      RowBox[{"Except", "[", "None", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"$Keychain", "[", 
+     RowBox[{"{", 
+      RowBox[{"site", ",", "username"}], "}"}], "]"}], "=."}]}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.703668045401395*^9, 3.703668064005631*^9}, {
+   3.703668182849551*^9, 3.703668285736513*^9}, {3.703668337935845*^9, 
+   3.703668351995816*^9}, {3.703668393917201*^9, 3.703668461608343*^9}, {
+   3.7036684985713387`*^9, 3.7036685539569263`*^9}, {3.703668652382023*^9, 
+   3.703668861822431*^9}, {3.703669109606554*^9, 3.703669231513588*^9}, {
+   3.703669342113325*^9, 3.703669381734778*^9}, {3.703669416872705*^9, 
+   3.703669421782963*^9}, {3.703698487062488*^9, 3.703698521336363*^9}, 
+   3.7036985922378683`*^9, {3.703714696621069*^9, 3.703714703549693*^9}, {
+   3.7037172677859793`*^9, 3.703717283287105*^9}, {3.7037173525934896`*^9, 
+   3.70371735318503*^9}, {3.703717840137392*^9, 3.703717844736678*^9}, {
+   3.705356288429372*^9, 3.705356331462878*^9}, {3.705356402030452*^9, 
+   3.7053564706026907`*^9}, {3.705356522489554*^9, 3.705356558317466*^9}, {
+   3.705356597638132*^9, 3.7053565996348047`*^9}, 3.705356816929167*^9, {
+   3.705357077039315*^9, 3.705357089989603*^9}, {3.705357173755851*^9, 
+   3.705357212052992*^9}, {3.705357376535182*^9, 3.705357380775176*^9}, {
+   3.705357421320013*^9, 3.70535742541601*^9}, 3.7060641887380953`*^9, {
+   3.706064233579053*^9, 3.706064236806065*^9}, {3.7066147975222692`*^9, 
+   3.706614798359187*^9}, {3.7066156468956738`*^9, 3.706615650318097*^9}, {
+   3.7066157144291887`*^9, 3.706615718226615*^9}, {3.733697159728671*^9, 
+   3.7336971691198683`*^9}},ExpressionUUID->"8c5deb33-cb6e-4ac2-a250-\
+4542509e9cc2"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]KeychainGet\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.703698267781785*^9, 3.7036982697351217`*^9}, 
+   3.733697169156719*^9},ExpressionUUID->"9da90f52-0422-462b-ac8d-\
+542cee589150"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$KeychainGetAccountKeys", "=", "\n", "\t", 
+   RowBox[{"{", 
+    RowBox[{"\"\<AccountData\>\"", ",", " ", "\"\<WolframCloud\>\""}], 
+    "}"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.728313428715385*^9, 3.728313440606633*^9}, {
+   3.728313522496414*^9, 3.72831352342899*^9}, 
+   3.733697159735256*^9},ExpressionUUID->"7bd253f3-cda0-4930-90af-\
+d1e02b5f82a2"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"KeychainGet", "[", 
+    RowBox[{"site_String", ",", 
+     RowBox[{"lookup", ":", 
+      RowBox[{"True", "|", "False"}], ":", "False"}]}], "]"}], ":=", "\n", 
+   "\t", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"If", "[", 
+      RowBox[{"lookup", ",", "\n", "\t\t", 
+       RowBox[{"FirstCase", "[", 
+        RowBox[{"#", ",", 
+         RowBox[{"_String", "?", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"StringLength", "@", "#"}], ">", "0"}], "&"}], ")"}]}], 
+         ",", "\n", "\t\t\t", 
+         RowBox[{"KeychainAdd", "[", "site", "]"}]}], "\n", "\t\t\t", "]"}], 
+       ",", "\n", "\t\t", 
+       RowBox[{"FirstCase", "[", 
+        RowBox[{"#", ",", 
+         RowBox[{"_String", "?", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"StringLength", "@", "#"}], ">", "0"}], "&"}], ")"}]}]}],
+         "]"}]}], "\n", "\t\t", "]"}], "&"}], "@", "\n", "\t\t", 
+    RowBox[{"$Keychain", "[", 
+     RowBox[{"{", 
+      RowBox[{"site", ",", 
+       RowBox[{"Key", "@", 
+        RowBox[{"{", 
+         RowBox[{"site", ",", "\"\<\>\""}], "}"}]}]}], "}"}], "]"}]}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"iKeychainGet", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+      "site_String", ",", " ", "\n", "\t\t", "username_String", ",", "\n", 
+       "\t\t", "subparts___String"}], "\n", "\t\t", "}"}], ",", "\n", "\t", 
+     RowBox[{"lookup", ":", 
+      RowBox[{"True", "|", "False"}], ":", "False"}]}], "\n", "\t", "]"}], ":=",
+    "\n", "\t", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"If", "[", 
+      RowBox[{"lookup", ",", "\n", "\t\t", 
+       RowBox[{"FirstCase", "[", 
+        RowBox[{"#", ",", 
+         RowBox[{"Except", "[", "$keyChainFailureForms", "]"}], ",", "\n", 
+         "\t\t\t", 
+         RowBox[{"KeychainAdd", "[", 
+          RowBox[{"site", "\[Rule]", 
+           RowBox[{"StringJoin", "[", 
+            RowBox[{"username", ",", " ", "subparts"}], "]"}]}], "]"}]}], 
+        "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
+       RowBox[{"FirstCase", "[", 
+        RowBox[{"#", ",", 
+         RowBox[{"Except", "[", "$keyChainFailureForms", "]"}]}], "]"}]}], 
+      "\n", "\t\t", "]"}], "&"}], "@", 
+    RowBox[{"$Keychain", "[", 
+     RowBox[{"{", 
+      RowBox[{"Key", "@", 
+       RowBox[{"{", 
+        RowBox[{"site", ",", 
+         RowBox[{"StringJoin", "[", 
+          RowBox[{"username", ",", " ", "subparts"}], "]"}]}], "}"}]}], "}"}],
+      "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"KeychainGet", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"site", ":", 
+        RowBox[{"Except", "[", 
+         RowBox[{
+          RowBox[{"Alternatives", "@@", 
+           RowBox[{"Append", "[", 
+            RowBox[{"$KeychainGetAccountKeys", ",", " ", "\"\<\>\""}], 
+            "]"}]}], ",", " ", "_String"}], "]"}]}], ",", " ", "\n", "\t\t", 
+       "username_String", ",", "\n", "\t\t", "subparts___String"}], "\n", 
+      "\t\t", "}"}], ",", "\n", "\t", 
+     RowBox[{"lookup", ":", 
+      RowBox[{"True", "|", "False"}], ":", "False"}]}], "\n", "\t", "]"}], ":=",
+    "\n", "\t", 
+   RowBox[{"iKeychainGet", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"site", ",", " ", "username", ",", " ", "subparts"}], "}"}], 
+     ",", " ", "lookup"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"KeychainGet", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"site_", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+       "None", ",", " ", "username_String", ",", " ", "subparts___String"}], 
+       "}"}]}], ",", "\n", "\t", 
+     RowBox[{"lookup", ":", 
+      RowBox[{"True", "|", "False"}], ":", "False"}]}], "\n", "\t", "]"}], ":=",
+    "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"key", "=", 
+       RowBox[{"StringJoin", "[", 
+        RowBox[{"username", ",", " ", "subparts"}], "]"}]}], "}"}], ",", "\n",
+      "\t\t", 
+     RowBox[{"Replace", "[", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"iKeychainGet", "[", 
+        RowBox[{"{", 
+         RowBox[{"site", ",", "key"}], "}"}], "]"}], ",", "\n", "\t", "\t\t", 
+       
+       RowBox[{
+        RowBox[{"e", ":", "$keyChainFailureForms"}], ":>", "\n", "\t", 
+        "\t\t\t", 
+        RowBox[{"If", "[", 
+         RowBox[{"lookup", ",", " ", 
+          RowBox[{"KeychainAdd", "[", 
+           RowBox[{"site", "\[Rule]", 
+            RowBox[{"{", 
+             RowBox[{"None", ",", "key"}], "}"}]}], "]"}], ",", " ", "e"}], 
+         "]"}]}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"KeychainGet", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"site", ":", 
+       RowBox[{"Alternatives", "@@", "$KeychainGetAccountKeys"}]}], ",", " ", 
+      "\n", "\t\t", "username_String", ",", "\n", "\t\t", 
+      "subparts___String"}], "\n", "\t\t", "}"}], ",", "\n", "\t", 
+    RowBox[{"lookup", ":", 
+     RowBox[{"True", "|", "False"}], ":", "False"}]}], "\n", "\t", "]"}], ":=",
+   "\n", "\t", 
+  RowBox[{"KeychainGet", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"site", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{"None", ",", " ", "username", ",", " ", "subparts"}], "}"}]}], 
+    ",", "\n", "\t\t", "lookup"}], "\n", "\t\t", "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.703698265198927*^9, 3.70369838650814*^9}, {
+   3.703698429122066*^9, 3.703698455454576*^9}, {3.703698901645712*^9, 
+   3.703698912033641*^9}, {3.7037142625887203`*^9, 3.703714294928784*^9}, {
+   3.703714325223257*^9, 3.7037143554170647`*^9}, 3.703714456747575*^9, {
+   3.703714509334754*^9, 3.703714578385745*^9}, {3.703714627739894*^9, 
+   3.703714631631968*^9}, {3.7053567261839933`*^9, 3.70535680940197*^9}, {
+   3.705357255477714*^9, 3.7053573351777554`*^9}, {3.7053573681788063`*^9, 
+   3.705357389023789*^9}, {3.706716376022293*^9, 3.706716411111657*^9}, {
+   3.7075005732073174`*^9, 3.70750059708084*^9}, {3.707500641066125*^9, 
+   3.7075006844264297`*^9}, 3.707500949923107*^9, {3.720994057349761*^9, 
+   3.7209940576519947`*^9}, {3.7283132107343893`*^9, 3.728313324012875*^9}, {
+   3.72831341571243*^9, 3.728313533788433*^9}, {3.7283165512918043`*^9, 
+   3.728316622544094*^9}, {3.7283396135842047`*^9, 3.7283396255649443`*^9}, 
+   3.728340030372335*^9, {3.728362935132416*^9, 3.728362961389859*^9}, {
+   3.728363602930056*^9, 3.728363653972143*^9}, {3.728363686429905*^9, 
+   3.728363696177503*^9}, {3.728881975136216*^9, 3.728881976955254*^9}, {
+   3.728882027621812*^9, 3.7288820370103893`*^9}, {3.733107003319891*^9, 
+   3.733107004875517*^9}, {3.733697159741948*^9, 
+   3.733697169240469*^9}},ExpressionUUID->"d6126ffe-deba-4809-8f57-\
+f37a60d27c08"],
+
+Cell[BoxData[
+ RowBox[{"PackageAddAutocompletions", "[", "\n", "\t", 
+  RowBox[{"\"\<KeychainGet\>\"", ",", "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{"Map", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"ToString", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"\"\<\\\"\>\"", "<>", "#", "<>", "\"\<\\\"\>\""}], ",", 
+          " ", "\"\<accountName\>\""}], "}"}], "]"}], "&"}], ",", "\n", 
+      "\t\t\t", "$KeychainGetAccountKeys"}], "\n", "\t\t\t", "]"}], "\n", 
+    "\t\t", "}"}]}], "\n", "\t", "]"}]], "CodeInput",
+ CellChangeTimes->{{3.72831363182158*^9, 3.728313693821632*^9}, {
+  3.733697159768499*^9, 
+  3.7336971692499037`*^9}},ExpressionUUID->"237ec652-27bc-4326-a767-\
+803f691555fb"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]KeychainConnect\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.706404573997568*^9, 3.706404576043379*^9}, 
+   3.7336971692879133`*^9},ExpressionUUID->"efa3577b-7070-4420-87c3-\
+8fc2276b8c59"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$KeychainCloudAccounts", "=", "\n", "\t", 
+   RowBox[{
+   "\"\<TestingAccount\>\"", "|", "\"\<DeploymentsAccount\>\"", "|", "\n", 
+    "\t\t", "\"\<PacletsAccount\>\"", "|", "\"\<DatasetsAccount\>\"", "|", 
+    "\n", "\t\t", "\"\<ServiceConnectionsAccount\>\"", "|", 
+    "\"\<DocumentationAccount\>\"", "|", "\n", "\t\t", "\"\<PaidAccount\>\"", 
+    "|", "\"\<FreeAccount\>\"", "|", "\"\<PacletServer\>\""}]}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.710853340573987*^9, 3.710853379416327*^9}, {
+   3.712163704462352*^9, 3.712163710021063*^9}, {3.712788530978294*^9, 
+   3.712788532393708*^9}, {3.7144005339335747`*^9, 3.714400560480844*^9}, {
+   3.733106933574893*^9, 3.733106939508564*^9}, 
+   3.733697159779101*^9},ExpressionUUID->"8cc9d67d-6043-4c60-a75c-\
+caff01a0cacc"],
+
+Cell[BoxData[
+ RowBox[{"PackageAddAutocompletions", "[", "\n", "\t", 
+  RowBox[{"\"\<KeychainConnect\>\"", ",", "\n", "\t", 
+   RowBox[{"{", 
+    RowBox[{"List", "@@", "$KeychainCloudAccounts"}], "}"}]}], "\n", "\t", 
+  "]"}]], "CodeInput",
+ CellChangeTimes->{{3.710853424196577*^9, 3.7108534463372793`*^9}, 
+   3.7127885395660067`*^9, 3.726941914853294*^9, {3.733697159787539*^9, 
+   3.733697169304803*^9}},ExpressionUUID->"9098c2e5-3b7d-4846-86bf-\
+8a48f3f7cc9f"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "KeychainConnect", "]"}], "=", "\n", "\t", 
+   RowBox[{"Options", "[", "CloudConnect", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"KeychainConnect", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"acc", ":", "$KeychainCloudAccounts"}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"KeychainConnect", "[", 
+    RowBox[{
+     RowBox[{"Key", "[", "acc", "]"}], ",", "ops"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"KeychainConnect", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"acct", ":", 
+      RowBox[{"_String", "|", 
+       RowBox[{"Key", "[", "_String", "]"}]}], ":", 
+      RowBox[{"Key", "[", "\"\<TestingAccount\>\"", "]"}]}], ",", "\n", "\t", 
+     
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"With", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"user", "=", "\n", "\t\t\t\t", 
+        RowBox[{"Replace", "[", 
+         RowBox[{"acct", ",", 
+          RowBox[{
+           RowBox[{"Key", "[", "a_", "]"}], ":>", 
+           RowBox[{"KeychainGet", "[", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"\"\<WolframCloud\>\"", ",", " ", "a"}], "}"}], ",", 
+             "True"}], "]"}]}]}], "]"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"base", "=", "\n", "\t\t\t\t", 
+        RowBox[{"Replace", "[", 
+         RowBox[{
+          RowBox[{"OptionValue", "[", "CloudBase", "]"}], ",", 
+          RowBox[{"Automatic", "\[RuleDelayed]", "$CloudBase"}]}], "]"}]}]}], 
+      "\n", "\t", "\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"$WolframID", "=!=", "user"}], "||", 
+        RowBox[{"$CloudBase", "=!=", "base"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"CloudConnect", "[", 
+        RowBox[{"user", ",", "\n", "\t\t\t\t", 
+         RowBox[{"KeychainGet", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"base", ",", "user"}], "}"}], ",", "True"}], "]"}], ",", 
+         "\n", "\t\t\t\t", "ops"}], "\n", "\t\t\t\t", "]"}], ",", "\n", 
+       "\t\t\t", "$WolframID"}], "\t", "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+    "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"KeychainConnect", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"acct", ":", 
+      RowBox[{"_String", "|", 
+       RowBox[{"Key", "[", "_String", "]"}]}]}], ",", "\n", "\t", 
+     "pass_String", ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"user", "=", "\n", "\t\t\t", 
+        RowBox[{"Replace", "[", 
+         RowBox[{"acct", ",", 
+          RowBox[{
+           RowBox[{"Key", "[", "a_", "]"}], ":>", 
+           RowBox[{"KeychainGet", "[", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"\"\<WolframCloud\>\"", ",", " ", "a"}], "}"}], ",", 
+             " ", "True"}], "]"}]}]}], "]"}]}], ",", "\n", "\t\t", 
+       RowBox[{"base", "=", 
+        RowBox[{"Replace", "[", 
+         RowBox[{
+          RowBox[{"OptionValue", "[", "CloudBase", "]"}], ",", 
+          RowBox[{"Automatic", "\[RuleDelayed]", "$CloudBase"}]}], "]"}]}]}], 
+      "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"$WolframID", "=!=", "user"}], "||", 
+        RowBox[{"$CloudBase", "=!=", "base"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"CloudConnect", "[", 
+        RowBox[{
+        "user", ",", "\n", "\t\t\t\t", "pass", ",", "\n", "\t\t\t\t", "ops"}],
+         "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+    "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.706404581570434*^9, 3.7064047010408373`*^9}, {
+   3.7066136761192913`*^9, 3.706613707933115*^9}, {3.706716536371162*^9, 
+   3.706716585919169*^9}, {3.70750001415142*^9, 3.707500017482503*^9}, {
+   3.710853334511406*^9, 3.710853339146137*^9}, {3.7108533942055492`*^9, 
+   3.710853414480556*^9}, 3.710853458231146*^9, 3.712163717444611*^9, 
+   3.712788541415411*^9, {3.720642671110139*^9, 3.720642728086779*^9}, {
+   3.7209923529155073`*^9, 3.720992357209898*^9}, {3.7283133421437597`*^9, 
+   3.7283133448774233`*^9}, {3.728313500082748*^9, 3.728313513624715*^9}, {
+   3.729799024480258*^9, 3.729799027047311*^9}, {3.733697159802526*^9, 
+   3.733697169369277*^9}},ExpressionUUID->"c1ca9548-f92f-4698-826b-\
+746a2609684b"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"End", "[", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"853ba206-a4a3-488e-a30f-\
+154601656bc0"]
+}, Open  ]],
+
+Cell["", "SectionSeparator",ExpressionUUID->"a3863332-6fed-4739-b079-\
+87d1444cede0"]
+},
+WindowSize->{804, 807},
+WindowMargins->{{Automatic, 180}, {Automatic, 0}},
+FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
+2018)",
+StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+

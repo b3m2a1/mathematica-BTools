@@ -1,0 +1,1816 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["SyncTools", "CodeSection",
+ CellChangeTimes->{{3.686348732790689*^9, 
+  3.6863487349591208`*^9}},ExpressionUUID->"25fd2085-9430-4611-ab4d-\
+71fdbfa613b2"],
+
+Cell[BoxData[
+ RowBox[{"PackageScopeBlock", "[", "\n", "\n", "\t", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"$BundleMetaInformationFile", "::", "usage"}], "=", 
+    "\"\<The meta info file created by CreateSyncBundle\>\""}], ";", "\n", 
+   "\t", 
+   RowBox[{
+    RowBox[{"CreateSyncBundle", "::", "usage"}], "=", 
+    "\"\<Create a bundle with various bits of metadata for syncing\>\""}], 
+   ";"}], "\n", "\t", "\n", "\t", "]"}]], "CodeInput",
+ CellChangeTimes->{{3.691341805636161*^9, 3.691341829112795*^9}, {
+   3.691342764326666*^9, 3.691342794754385*^9}, {3.707090454075367*^9, 
+   3.707090459505569*^9}, {3.712008699617963*^9, 3.712008706927005*^9}, 
+   3.712008739472896*^9, 
+   3.712198756001048*^9},ExpressionUUID->"f59b83b0-0842-45bd-a75f-\
+b7e982349425"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"SyncPath", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<A sync path finder for even non-standard dirs\>\""}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.70237852539268*^9, 3.70237855353475*^9}, {
+  3.702380189776723*^9, 3.702380190987439*^9}, {3.707090442389583*^9, 
+  3.707090452909556*^9}},ExpressionUUID->"00e68e23-6bb9-4b8c-aaff-\
+bf9ad6411878"],
+
+Cell[BoxData[
+ RowBox[{"PackageScopeBlock", "[", "\n", "\n", "\t", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"SyncPathQ", "::", "usage"}], "=", 
+    "\"\<Tests whether is a sync path\>\""}], ";", "\n", "\t", 
+   RowBox[{
+    RowBox[{"UploadFile", "::", "usage"}], "=", 
+    "\"\<Uploads a directory to the cloud\>\""}], ";", "\n", "\t", 
+   RowBox[{
+    RowBox[{"DownloadFile", "::", "usage"}], "=", 
+    "\"\<Downloads a directory from the cloud\>\""}], ";", "\n", "\t", 
+   RowBox[{
+   "$BackupDirectoryName", "=", 
+    "\"\<The extension for backups to be sent to\>\""}], ";", "\n", "\t", 
+   RowBox[{
+    RowBox[{"BackupFile", "::", "usage"}], "=", 
+    "\"\<Backs up a directory\>\""}], ";", "\n", "\t", 
+   RowBox[{
+    RowBox[{"RestoreFile", "::", "usage"}], "=", 
+    "\"\<Restores a directory\>\""}], ";"}], "\n", "\t", "\n", "\t", 
+  "]"}]], "CodeInput",
+ CellChangeTimes->{{3.689127677960307*^9, 3.689127763271646*^9}, {
+   3.689127946659246*^9, 3.6891279564028177`*^9}, {3.689132202198889*^9, 
+   3.6891322134897118`*^9}, {3.70709046295798*^9, 3.70709046578528*^9}, {
+   3.712008709179441*^9, 3.712008738378604*^9}, 3.712198757993444*^9, {
+   3.7121988482368507`*^9, 
+   3.71219886635419*^9}},ExpressionUUID->"ac358637-5a69-4444-8770-\
+ca5c952ee624"],
+
+Cell[BoxData[
+ RowBox[{"PackageScopeBlock", "[", "\n", "\n", "\t", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"$SyncUploads", "::", "usage"}], "=", 
+    "\"\<The spec of what to upload / download\>\""}], ";", "\n", "\t", 
+   RowBox[{
+    RowBox[{"SyncUploadWork", "::", "usage"}], "=", 
+    "\"\<Uploads current work projects in one fell swoop\>\""}], ";", "\n", 
+   "\t", 
+   RowBox[{
+    RowBox[{"SyncDownloadWork", "::", "usage"}], "=", 
+    "\"\<Downloads current work projects in one fell swoop\>\""}], ";"}], 
+  "\n", "\t", "\n", "\t", "]"}]], "CodeInput",
+ CellChangeTimes->{{3.686348778367282*^9, 3.686348806764531*^9}, {
+   3.6872069941463346`*^9, 3.687207005478525*^9}, 3.6985143038107643`*^9, {
+   3.6985145765689707`*^9, 3.6985145868042107`*^9}, {3.707090466770419*^9, 
+   3.707090469225185*^9}, {3.712008710386073*^9, 3.7120087366065617`*^9}, 
+   3.7121987592712183`*^9, {3.712614645672078*^9, 
+   3.712614645908938*^9}},ExpressionUUID->"f8f11f92-0c1e-41e1-b931-\
+f8b06144c1e0"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"c1522f67-c4a2-4bd6-b53d-\
+101d3349a0d3"],
+
+Cell[CellGroupData[{
+
+Cell["SyncPath", "CodeSubsubsection",
+ CellChangeTimes->{{3.7023784566942177`*^9, 3.7023784746950274`*^9}, {
+   3.702378513207757*^9, 3.702378514206028*^9}, 
+   3.702385243361389*^9},ExpressionUUID->"1083491d-ed9c-4257-97c7-\
+02c0234ea6af"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$SyncPathExtension", "=", "\"\<Mathematica\>\""}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.702605545070293*^9, 3.702605552330534*^9}, 
+   3.702607894209741*^9},ExpressionUUID->"6c041eda-6c05-4ef0-a70e-\
+a9a62a4244b9"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"$SyncDirectories", "=", 
+   RowBox[{"{", "\n", "\t", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+      "\"\<Google Drive\>\"", "|", "\"\<GoogleDrive\>\"", "|", "\n", "\t\t", 
+       "\"\<google drive\>\"", "|", "\"\<googledrive\>\""}], ":>", "\n", 
+      "\t\t", 
+      RowBox[{"FileNameJoin", "@", 
+       RowBox[{"{", 
+        RowBox[{"$HomeDirectory", ",", "\"\<Google Drive\>\""}], "}"}]}]}], 
+     ",", "\n", "\t", 
+     RowBox[{
+      RowBox[{
+      "\"\<DropBox\>\"", "|", "\"\<Dropbox\>\"", "|", "\"\<dropbox\>\""}], ":>",
+       "\n", "\t\t", 
+      RowBox[{"FileNameJoin", "@", 
+       RowBox[{"{", 
+        RowBox[{"$HomeDirectory", ",", "\"\<Dropbox\>\""}], "}"}]}]}], ",", 
+     "\n", "\t", 
+     RowBox[{
+      RowBox[{
+      "\"\<One Drive\>\"", "|", "\"\<One Drive\>\"", "|", "\"\<OneDrive\>\"", 
+       "|", "\"\<onedrive\>\""}], ":>", "\n", "\t\t", 
+      RowBox[{"FileNameJoin", "@", 
+       RowBox[{"{", 
+        RowBox[{"$HomeDirectory", ",", "\"\<OneDrive\>\""}], "}"}]}]}]}], 
+    "\n", "\t", "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"SyncPathQ", "//", "Clear"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SyncPathQ", "[", "s_String", "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"StringMatchQ", "[", 
+     RowBox[{"s", ",", 
+      RowBox[{"(", 
+       RowBox[{"Alternatives", "@@", 
+        RowBox[{"Keys", "@", "$SyncDirectories"}]}], ")"}]}], "]"}], "||", 
+    "\n", "\t", 
+    RowBox[{"StringMatchQ", "[", 
+     RowBox[{"s", ",", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"Alternatives", "@@", 
+         RowBox[{"Keys", "@", "$SyncDirectories"}]}], ")"}], "~~", 
+       "\"\<:\>\"", "~~", "__"}]}], "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SyncPathQ", "[", "_", "]"}], ":=", "$Failed"}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.7023783355069838`*^9, 3.7023783875240793`*^9}, {
+   3.7023784784770527`*^9, 3.702378517591776*^9}, {3.7023785566963*^9, 
+   3.702378772105054*^9}, {3.702378973135887*^9, 3.702379076883753*^9}, {
+   3.702379157100272*^9, 3.702379190626958*^9}, {3.7023801497094383`*^9, 
+   3.702380163634297*^9}, {3.702380213880735*^9, 3.7023802229559307`*^9}, 
+   3.7023852919671583`*^9, {3.702385336943749*^9, 3.702385339914239*^9}, {
+   3.70238631076093*^9, 3.7023863791662617`*^9}, {3.702843108701581*^9, 
+   3.702843117783328*^9}, {3.702843473423719*^9, 3.70284348744727*^9}, 
+   3.702843698620957*^9, {3.702843820264407*^9, 3.7028438303177958`*^9}, {
+   3.7028439422079144`*^9, 3.702843991125721*^9}, 
+   3.702844052116412*^9},ExpressionUUID->"63edbc2c-bfd4-456f-9151-\
+de067a63a8d1"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"SyncPathBuild", "[", 
+    RowBox[{"{", 
+     RowBox[{"root_", ",", "ext__"}], "}"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{"StringMatchQ", "[", 
+      RowBox[{"root", ",", 
+       RowBox[{"(", 
+        RowBox[{"Alternatives", "@@", 
+         RowBox[{"Keys", "@", "$SyncDirectories"}]}], ")"}]}], "]"}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"URLBuild", "@", 
+      RowBox[{"<|", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"\"\<Scheme\>\"", "\[Rule]", "root"}], ",", "\n", "\t\t\t", 
+        RowBox[{"\"\<Path\>\"", "\[Rule]", 
+         RowBox[{"{", "ext", "}"}]}]}], "\n", "\t\t\t", "|>"}]}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"URLBuild", "@", 
+      RowBox[{"{", 
+       RowBox[{"root", ",", "ext"}], "}"}]}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7023783355069838`*^9, 3.7023783875240793`*^9}, {
+   3.7023784784770527`*^9, 3.702378517591776*^9}, {3.7023785566963*^9, 
+   3.702378772105054*^9}, {3.702378973135887*^9, 3.702379076883753*^9}, {
+   3.702379157100272*^9, 3.702379190626958*^9}, {3.7023801497094383`*^9, 
+   3.702380163634297*^9}, {3.702380213880735*^9, 3.7023802229559307`*^9}, 
+   3.7023852919671583`*^9, {3.702385336943749*^9, 3.702385339914239*^9}, {
+   3.70238631076093*^9, 3.7023863791662617`*^9}, {3.702843108701581*^9, 
+   3.702843117783328*^9}, {3.702843473423719*^9, 3.70284348744727*^9}, 
+   3.702843698620957*^9, {3.702843820264407*^9, 3.7028438303177958`*^9}, {
+   3.7028439422079144`*^9, 3.702843991125721*^9}, {3.702844052116412*^9, 
+   3.702844070431095*^9}},ExpressionUUID->"ad1603fa-3857-4713-bce0-\
+ef18845a0998"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"SyncPath", "[", 
+    RowBox[{"s_String", "?", 
+     RowBox[{"(", 
+      RowBox[{"StringMatchQ", "[", 
+       RowBox[{"(", 
+        RowBox[{"Alternatives", "@@", 
+         RowBox[{"Keys", "@", "$SyncDirectories"}]}], ")"}], "]"}], ")"}]}], 
+    "]"}], ":=", "\n", "\t", 
+   RowBox[{"FileNameJoin", "@", 
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"s", "/.", "$SyncDirectories"}], ",", "\n", "\t\t", 
+      "$SyncPathExtension"}], "\n", "\t\t", "}"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SyncPath", "[", 
+    RowBox[{"s_String", "?", 
+     RowBox[{"(", "FileExistsQ", ")"}]}], "]"}], ":=", "\n", "\t", "s"}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"SyncPath", "[", 
+   RowBox[{"s_String", "?", 
+    RowBox[{"(", "\n", "\t", 
+     RowBox[{"StringMatchQ", "[", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"Alternatives", "@@", 
+         RowBox[{"Keys", "@", "$SyncDirectories"}]}], ")"}], "~~", 
+       "\"\<:\>\"", "~~", "__"}], "]"}], "\n", "\t", ")"}]}], "]"}], ":=", 
+  "\n", "\t", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"FileNameJoin", "@", "\n", "\t\t", 
+     RowBox[{"Flatten", "[", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"SyncPath", "[", "#", "]"}], ",", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"URLParse", "[", "#2", "]"}], "[", "\"\<Path\>\"", "]"}]}], 
+       "\n", "\t\t\t\t", "}"}], "]"}]}], "&"}], "@@", "\n", "\t\t\t\t", 
+   RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
+    RowBox[{
+     RowBox[{"Replace", "[", 
+      RowBox[{
+       RowBox[{"StringSplit", "[", 
+        RowBox[{"s", ",", "\"\<://\>\"", ",", "2"}], "]"}], ",", "\n", 
+       "\t\t\t\t\t\t", 
+       RowBox[{
+        RowBox[{"{", "b_", "}"}], ":>", "\n", "\t\t\t\t\t\t\t", 
+        RowBox[{"Replace", "[", 
+         RowBox[{
+          RowBox[{"StringSplit", "[", 
+           RowBox[{"s", ",", "\"\<:\>\"", ",", "2"}], "]"}], ",", "\n", 
+          "\t\t\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"_", ",", "\"\<//\>\""}], "}"}], "\[RuleDelayed]", 
+           "b"}]}], "\n", "\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t",
+       "]"}], ",", "\n", "\t\t\t\t\t", 
+     RowBox[{
+      RowBox[{"{", "b_", "}"}], "\[RuleDelayed]", 
+      RowBox[{"{", 
+       RowBox[{"b", ",", "\"\<\>\""}], "}"}]}]}], "\n", "\t\t\t\t\t", 
+    "]"}]}]}]}], "CodeInput",
+ CellChangeTimes->{{3.7023783355069838`*^9, 3.7023783875240793`*^9}, {
+   3.7023784784770527`*^9, 3.702378517591776*^9}, {3.7023785566963*^9, 
+   3.702378772105054*^9}, {3.702378973135887*^9, 3.702379076883753*^9}, {
+   3.702379157100272*^9, 3.702379190626958*^9}, {3.7023801497094383`*^9, 
+   3.702380163634297*^9}, {3.702380213880735*^9, 3.7023802229559307`*^9}, 
+   3.7023852919671583`*^9, {3.702385336943749*^9, 3.702385339914239*^9}, {
+   3.70238631076093*^9, 3.7023863791662617`*^9}, {3.702843108701581*^9, 
+   3.702843117783328*^9}, {3.702843473423719*^9, 3.70284348744727*^9}, 
+   3.702843698620957*^9, {3.702843820264407*^9, 3.7028438303177958`*^9}, {
+   3.7028439422079144`*^9, 3.702843991125721*^9}, {3.702844052116412*^9, 
+   3.702844053201881*^9}},ExpressionUUID->"0262df62-b163-4540-83f4-\
+6c67a691cf87"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Sync Config", "CodeSubsubsection",
+ CellChangeTimes->{{3.702378425345565*^9, 
+  3.7023784335917997`*^9}},ExpressionUUID->"29509480-441e-4f12-a1a4-\
+10f894d5748a"],
+
+Cell[BoxData[
+ RowBox[{"$SyncUploads", ":=", "\n", "\t", 
+  RowBox[{"<|", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"\"\<Apps\>\"", "\[Rule]", "\n", "\t\t\t", 
+     RowBox[{"<|", "\n", "\t\t\t\t", 
+      RowBox[{
+       RowBox[{"\"\<BundleFunction\>\"", "\[Rule]", "BundleApp"}], ",", "\n", 
+       "\t", "\t\t\t", 
+       RowBox[{"\"\<BundleFiles\>\"", ":>", "\n", "\t\t\t\t\t", 
+        RowBox[{"Append", "[", "\n", "\t\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"DeleteCases", "[", "\n", "\t\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"Select", "[", 
+             RowBox[{
+              RowBox[{"AppNames", "[", "]"}], ",", 
+              RowBox[{"StringMatchQ", "[", 
+               RowBox[{
+                RowBox[{"Except", "[", 
+                 RowBox[{"WhitespaceCharacter", "|", "\"\<.\>\""}], "]"}], 
+                ".."}], "]"}]}], "]"}], ",", "\n", "\t\t\t\t\t\t\t", 
+            "\"\<ChemTools\>\""}], "\n", "\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+          "\t\t\t\t\t\t\t", 
+          RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+           RowBox[{"\"\<ChemTools\>\"", ",", "\n", "\t\t\t\t\t\t\t\t", 
+            RowBox[{"\"\<RemovePaths\>\"", "\[Rule]", 
+             RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"\"\<Extensions\>\"", ",", "\"\<psi4\>\""}], "}"}], 
+               ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+               RowBox[{"{", 
+                RowBox[{"\"\<Extensions\>\"", ",", "\"\<DVR\>\""}], "}"}], 
+               ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+               RowBox[{"{", 
+                RowBox[{"\"\<Extensions\>\"", ",", "\"\<cmake\>\""}], "}"}], 
+               ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+               RowBox[{"{", 
+                RowBox[{"\"\<Extensions\>\"", ",", "\"\<spcat\>\""}], "}"}], 
+               ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+               RowBox[{"{", 
+                RowBox[{"\"\<Extensions\>\"", ",", "\"\<openbabel\>\""}], 
+                "}"}]}], "\n", "\t\t\t\t\t\t\t\t\t", "}"}]}]}], "\n", 
+           "\t\t\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t", "]"}]}], ",", 
+       "\n", "\t\t\t\t", 
+       RowBox[{"\"\<UploadFunction\>\"", "\[Rule]", "UploadApp"}], ",", "\n", 
+       "\t\t\t\t", 
+       RowBox[{"\"\<DownloadFunction\>\"", "\[Rule]", "DownloadApp"}], ",", 
+       "\n", "\t\t\t\t", 
+       RowBox[{"\"\<UploadLocations\>\"", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{"CloudObject", ",", "\"\<Google Drive\>\""}], "}"}]}]}], 
+      "\n", "\t\t\t\t", "|>"}]}], ",", "\n", "\t\t", 
+    RowBox[{"\"\<Projects\>\"", "->", "\n", "\t\t\t", 
+     RowBox[{"<|", "\n", "\t\t\t\t", 
+      RowBox[{
+       RowBox[{"\"\<BundleFunction\>\"", "\[RuleDelayed]", 
+        RowBox[{"(", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Needs", "[", "\"\<MyProjects`\>\"", "]"}], ";", "\n", 
+          "\t\t\t\t\t", "MyProjects`BundleProject"}], "\n", "\t\t\t\t\t", 
+         ")"}]}], ",", "\n", "\t\t\t\t", 
+       RowBox[{"\"\<BundleFiles\>\"", "\[RuleDelayed]", "\n", "\t\t\t\t\t", 
+        RowBox[{"Select", "[", 
+         RowBox[{
+          RowBox[{"MyProjects`ProjectNames", "[", "]"}], ",", "\n", 
+          "\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Total", "@", 
+             RowBox[{"Cases", "[", "\n", "\t", "\t", "\t", "\t", "\t", "\t", 
+              RowBox[{
+               RowBox[{"FileSystemMap", "[", "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{"FileByteCount", ",", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{"MyProjects`FindProject", "@", "#"}], ",", "\n", 
+                 "\t", "\t", "\t", "\t", "\t", "\t\t", "\[Infinity]"}], "]"}],
+                ",", "\n", "\t", "\t", "\t", "\t", "\t", "\t", "_Integer", 
+               ",", "\[Infinity]"}], "]"}]}], "<", "250000000"}], "&"}]}], 
+         "]"}]}], ",", "\n", "\t\t\t\t", 
+       RowBox[{
+       "\"\<UploadFunction\>\"", "\[Rule]", "MyProjects`UploadProject"}], ",",
+        "\n", "\t\t\t\t", 
+       RowBox[{"\"\<UploadLocations\>\"", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{"CloudObject", ",", "\"\<Google Drive\>\""}], "}"}]}]}], 
+      "\n", "\t\t\t\t", "|>"}]}]}], 
+   RowBox[{"(*", 
+    RowBox[{",", "\n", "\t\t", 
+     RowBox[{"\"\<ACFramework\>\"", "->", "\n", "\t\t\t", 
+      RowBox[{"<|", "\n", "\t\t\t\t", "\n", "\t\t\t\t", "|>"}]}]}], "*)"}], 
+   "\n", "\t\t", "|>"}]}]], "CodeInput",
+ CellChangeTimes->{{3.687206883416293*^9, 3.687206889724923*^9}, {
+   3.687207008825461*^9, 3.687207012054394*^9}, {3.688682927299321*^9, 
+   3.688682928352171*^9}, {3.6891350293613043`*^9, 3.689135036546544*^9}, {
+   3.689135100884199*^9, 3.689135176161371*^9}, 3.68913522230214*^9, {
+   3.691337805028822*^9, 3.691337805241807*^9}, {3.691342441965701*^9, 
+   3.691342583585032*^9}, {3.691344001659783*^9, 3.691344038181404*^9}, {
+   3.6921066869227133`*^9, 3.692106690719981*^9}, {3.692106751097814*^9, 
+   3.692106755265633*^9}, 3.6921068048228397`*^9, {3.694803855282362*^9, 
+   3.694803867629897*^9}, {3.69851157920682*^9, 3.6985115857963963`*^9}, {
+   3.698512990023161*^9, 3.6985131080837812`*^9}, {3.698513221396402*^9, 
+   3.6985133227632847`*^9}, {3.698514199430409*^9, 3.698514202657811*^9}, {
+   3.698514459525489*^9, 3.6985144689810543`*^9}, {3.698514712412964*^9, 
+   3.698514733961061*^9}, {3.698514764362492*^9, 3.698514765821693*^9}, {
+   3.698515401389962*^9, 3.698515428637751*^9}, {3.7003518799034758`*^9, 
+   3.700351955077539*^9}, {3.7003526119683743`*^9, 3.700352617892321*^9}, {
+   3.7003527418234663`*^9, 
+   3.700352773697757*^9}},ExpressionUUID->"a02872b2-e983-42c2-906a-\
+a48e33686ffc"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"SyncUploadWork", "[", 
+    RowBox[{"apps_:", "\"\<Apps\>\""}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Monitor", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"With", "[", 
+        RowBox[{
+         RowBox[{"{", "\n", "\t\t\t", 
+          RowBox[{
+           RowBox[{"bfunc", "=", "#BundleFunction"}], ",", 
+           RowBox[{"files", "=", "#BundleFiles"}], ",", "\n", "\t\t\t", 
+           RowBox[{"ufun", "=", "#UploadFunction"}], ",", 
+           RowBox[{"ulocs", "=", "#UploadLocations"}]}], "\n", "\t\t\t", 
+          "}"}], ",", "\n", "\t\t\t", 
+         RowBox[{"Table", "[", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"With", "[", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"arc", "=", 
+               RowBox[{"bfunc", "@@", 
+                RowBox[{"Flatten", "[", 
+                 RowBox[{
+                  RowBox[{"{", "app", "}"}], ",", "1"}], "]"}]}]}], "}"}], 
+             ",", "\n", "\t\t\t\t\t", 
+             RowBox[{"Table", "[", "\n", "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"If", "[", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"FileByteCount", "@", "arc"}], "<", "25000000"}], "||", 
+                  RowBox[{"to", "=!=", "CloudObject"}]}], ",", "\n", 
+                 "\t\t\t\t\t\t\t", 
+                 RowBox[{"AbsoluteTiming", "@", 
+                  RowBox[{"ufun", "[", 
+                   RowBox[{"arc", ",", 
+                    RowBox[{"\"\<UploadTo\>\"", "->", "to"}]}], "]"}]}]}], 
+                "\n", "\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t", 
+               RowBox[{"{", 
+                RowBox[{"to", ",", "ulocs"}], "}"}]}], "\n", "\t\t\t\t\t\t", 
+              "]"}]}], "\n", "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+           RowBox[{"{", 
+            RowBox[{"app", ",", "files"}], "}"}]}], "\n", "\t\t\t\t", "]"}]}],
+         "\n", "\t\t\t", "]"}], "&"}], "/@", 
+      RowBox[{"Lookup", "[", 
+       RowBox[{"$SyncUploads", ",", 
+        RowBox[{"Flatten", "@", 
+         RowBox[{"{", "apps", "}"}]}]}], "]"}]}], ",", "\n", "\t\t", 
+     RowBox[{"FileBaseName", "@", 
+      RowBox[{"First", "@", 
+       RowBox[{"Flatten", "@", 
+        RowBox[{"{", 
+         RowBox[{"Replace", "[", 
+          RowBox[{"app", ",", 
+           RowBox[{"_Symbol", "\[RuleDelayed]", "\"\<None\>\""}]}], "]"}], 
+         "}"}]}]}]}]}], "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.686348737447459*^9, 3.686348772479056*^9}, {
+   3.686348899130375*^9, 3.686348913691064*^9}, {3.686679598504498*^9, 
+   3.6866796389461613`*^9}, {3.687067685858712*^9, 3.687067707984213*^9}, {
+   3.687206888525955*^9, 3.6872069741295147`*^9}, {3.687207128437002*^9, 
+   3.6872072163433723`*^9}, {3.687207563800787*^9, 3.687207669776456*^9}, 
+   3.687210746246779*^9, {3.6891350525329437`*^9, 3.689135091926901*^9}, {
+   3.6891351846745577`*^9, 3.689135215727928*^9}, {3.6913434846435623`*^9, 
+   3.6913434871601753`*^9}, {3.691343887054675*^9, 3.6913439233315573`*^9}, {
+   3.6913439668890867`*^9, 3.6913439830656443`*^9}, {3.691344303575769*^9, 
+   3.6913443414938374`*^9}, {3.692106736927187*^9, 3.692106796225992*^9}, {
+   3.692107197278118*^9, 3.692107198531867*^9}, {3.692109035732958*^9, 
+   3.692109046112528*^9}, {3.698514318496551*^9, 3.698514512455928*^9}, {
+   3.698514543097002*^9, 3.698514594791054*^9}, 3.6985146932997227`*^9, {
+   3.698514789966007*^9, 3.698514796229064*^9}, {3.6985151233350983`*^9, 
+   3.698515124499445*^9}, 3.698515205874206*^9, {3.698515304110731*^9, 
+   3.698515309262794*^9}, 3.700351761537181*^9, {3.7003521505652933`*^9, 
+   3.700352161409052*^9}, {3.7003522151157007`*^9, 
+   3.700352246871386*^9}},ExpressionUUID->"120db2ac-edb7-49c9-a78a-\
+a614474ab8e4"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"SyncDownloadWork", "[", 
+    RowBox[{"apps_:", "Automatic"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Monitor", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"With", "[", 
+        RowBox[{
+         RowBox[{"{", "\n", "\t\t\t", 
+          RowBox[{
+           RowBox[{"files", "=", "#BundleFiles"}], ",", "\n", "\t\t\t", 
+           RowBox[{"dfun", "=", "#DownloadFunction"}]}], "\n", "\t\t\t", 
+          "}"}], ",", "\n", "\t\t\t", 
+         RowBox[{"Table", "[", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"dfun", "@", "app"}], ",", "\n", "\t\t\t\t", 
+           RowBox[{"{", 
+            RowBox[{"app", ",", "files"}], "}"}]}], "\n", "\t\t\t\t", "]"}]}],
+         "\n", "\t\t\t", "]"}], "&"}], "/@", 
+      RowBox[{"Lookup", "[", 
+       RowBox[{"$SyncUploads", ",", 
+        RowBox[{"Flatten", "@", 
+         RowBox[{"{", "apps", "}"}]}]}], "]"}]}], ",", "\n", "\t\t", 
+     RowBox[{"FileBaseName", "@", 
+      RowBox[{"First", "@", 
+       RowBox[{"Flatten", "@", 
+        RowBox[{"{", 
+         RowBox[{"Replace", "[", 
+          RowBox[{"app", ",", 
+           RowBox[{"_Symbol", "\[RuleDelayed]", "\"\<None\>\""}]}], "]"}], 
+         "}"}]}]}]}]}], "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.686348737447459*^9, 3.686348772479056*^9}, {
+   3.686348899130375*^9, 3.686348913691064*^9}, {3.686679598504498*^9, 
+   3.6866796389461613`*^9}, {3.687067685858712*^9, 3.687067707984213*^9}, {
+   3.687206888525955*^9, 3.6872069741295147`*^9}, {3.687207128437002*^9, 
+   3.6872072163433723`*^9}, {3.687207563800787*^9, 3.687207669776456*^9}, 
+   3.687210746246779*^9, {3.6891350525329437`*^9, 3.689135091926901*^9}, {
+   3.6891351846745577`*^9, 3.689135215727928*^9}, {3.6913434846435623`*^9, 
+   3.6913434871601753`*^9}, {3.691343887054675*^9, 3.6913439233315573`*^9}, {
+   3.6913439668890867`*^9, 3.6913439830656443`*^9}, {3.691344303575769*^9, 
+   3.6913443414938374`*^9}, {3.692106736927187*^9, 3.692106796225992*^9}, {
+   3.692107197278118*^9, 3.692107198531867*^9}, {3.692109035732958*^9, 
+   3.692109046112528*^9}, {3.698514318496551*^9, 3.698514443618547*^9}, {
+   3.698514529614081*^9, 3.698514539278344*^9}, {3.698514604574977*^9, 
+   3.698514649386689*^9}, {3.6985146824043007`*^9, 
+   3.6985146896658278`*^9}},ExpressionUUID->"efbad2e1-6783-4c1d-89cc-\
+05cd825f47f5"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["CreateSyncBundle", "Subsubsection",
+ CellChangeTimes->{{3.691341790379095*^9, 
+  3.691341798105876*^9}},ExpressionUUID->"766106b5-9f62-4970-87db-\
+6820b3b53bbf"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+  "$BundleMetaInformationFile", "=", "\"\<_sync_bundle_metadata.m\>\""}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.691342802938808*^9, 
+  3.6913428097148333`*^9}},ExpressionUUID->"e92ec90f-a122-4123-a2b3-\
+36248ccc8559"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "CreateSyncBundle", "]"}], ":=", 
+   RowBox[{"{", "\n", "\t", 
+    RowBox[{
+     RowBox[{"Root", ":>", "$HomeDirectory"}], ",", "\n", "\t", 
+     RowBox[{"Directory", "\[Rule]", "Automatic"}], ",", "\n", "\t", 
+     RowBox[{"\"\<RemovePaths\>\"", "\[Rule]", 
+      RowBox[{"{", "}"}]}], ",", "\n", "\t", 
+     RowBox[{"\"\<RemovePatterns\>\"", "\[Rule]", "\"\<.DS_Store\>\""}]}], 
+    "\n", "\t", "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"CreateSyncBundle", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"bundleName", ":", 
+      RowBox[{
+       RowBox[{"_String", "?", 
+        RowBox[{"(", 
+         RowBox[{"StringMatchQ", "[", 
+          RowBox[{
+           RowBox[{"Except", "[", "$PathnameSeparator", "]"}], ".."}], "]"}], 
+         ")"}]}], "|", "Automatic"}], ":", "Automatic"}], ",", "\n", "\t", 
+     RowBox[{"paths", ":", 
+      RowBox[{
+       RowBox[{"_String", "?", "FileExistsQ"}], "|", 
+       RowBox[{"{", 
+        RowBox[{"__String", "?", "FileExistsQ"}], "}"}]}]}], ",", "\n", "\t", 
+     
+     RowBox[{"metadata", ":", 
+      RowBox[{
+      "_Rule", "|", "_RuleDelayed", "|", "_List", "|", "_Assocation"}], ":", 
+      RowBox[{"{", "}"}]}], ",", "\n", "\t", 
+     RowBox[{"OptionsPattern", "[", "]"}]}], "\n", "\t", "]"}], ":=", "\n", 
+   "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"fps", "=", 
+        RowBox[{"ExpandFileName", "/@", 
+         RowBox[{"Flatten", "@", 
+          RowBox[{"{", "paths", "}"}]}]}]}], ",", "\n", "\t\t", 
+       RowBox[{"name", "=", 
+        RowBox[{"Replace", "[", 
+         RowBox[{"bundleName", ",", 
+          RowBox[{"Automatic", "\[RuleDelayed]", 
+           RowBox[{"FileBaseName", "@", 
+            RowBox[{"First", "@", 
+             RowBox[{"Flatten", "@", 
+              RowBox[{"{", "paths", "}"}]}]}]}]}]}], "]"}]}], ",", "\n", 
+       "\t\t", 
+       RowBox[{"dir", "=", 
+        RowBox[{"OptionValue", "@", "Directory"}]}], ",", "\n", "\t\t", 
+       RowBox[{"rootPath", "=", 
+        RowBox[{"OptionValue", "@", "Root"}]}]}], "\n", "\t\t", "}"}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"With", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"bundleDir", "=", 
+         RowBox[{"FileNameJoin", "@", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"Replace", "[", 
+             RowBox[{"dir", ",", 
+              RowBox[{"Automatic", "\[Rule]", "$TemporaryDirectory"}]}], 
+             "]"}], ",", "name"}], "}"}]}]}], "}"}], ",", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"dir", "===", "Automatic"}], ",", 
+          RowBox[{"Quiet", "@", 
+           RowBox[{"DeleteDirectory", "[", 
+            RowBox[{"bundleDir", ",", 
+             RowBox[{"DeleteContents", "\[Rule]", "True"}]}], "]"}]}]}], 
+         "]"}], ";", "\n", "\t\t\t", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"!", 
+           RowBox[{"DirectoryQ", "@", "bundleDir"}]}], ",", "\n", "\t\t\t\t", 
+          
+          RowBox[{"Quiet", "@", 
+           RowBox[{"CreateDirectory", "[", 
+            RowBox[{"bundleDir", ",", 
+             RowBox[{"CreateIntermediateDirectories", "\[Rule]", "True"}]}], 
+            "]"}]}]}], "\n", "\t\t\t\t", "]"}], ";", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"With", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"new", "=", "\n", "\t\t\t\t", 
+              RowBox[{"FileNameJoin", "@", 
+               RowBox[{"{", "\n", "\t\t\t\t\t", 
+                RowBox[{"bundleDir", ",", "\n", "\t\t\t\t\t", 
+                 RowBox[{"StringTrim", "[", 
+                  RowBox[{
+                   RowBox[{"StringTrim", "[", 
+                    RowBox[{"#", ",", "rootPath"}], "]"}], ",", 
+                   "$RootDirectory"}], "]"}]}], "}"}]}]}], "\n", "\t\t\t\t", 
+             "}"}], ",", "\n", "\t\t\t\t", 
+            RowBox[{
+             RowBox[{"If", "[", 
+              RowBox[{
+               RowBox[{"!", 
+                RowBox[{"DirectoryQ", "@", 
+                 RowBox[{"DirectoryName", "@", "new"}]}]}], ",", "\n", 
+               "\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"Quiet", "@", 
+                 RowBox[{"CreateDirectory", "[", 
+                  RowBox[{
+                   RowBox[{"DirectoryName", "@", "new"}], ",", 
+                   RowBox[{
+                   "CreateIntermediateDirectories", "\[Rule]", "True"}]}], 
+                  "]"}]}], ";"}]}], "\n", "\t\t\t\t\t", "]"}], ";", "\n", 
+             "\t\t\t\t", 
+             RowBox[{"If", "[", 
+              RowBox[{
+               RowBox[{"DirectoryQ", "@", "new"}], ",", "\n", "\t\t\t\t\t", 
+               RowBox[{"With", "[", 
+                RowBox[{
+                 RowBox[{"{", 
+                  RowBox[{"d", "=", "#"}], "}"}], ",", "\n", "\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"CopyFile", "[", 
+                    RowBox[{"#", ",", "\n", "\t\t\t\t\t\t\t", 
+                    RowBox[{"StringReplace", "[", 
+                    RowBox[{"#", ",", 
+                    RowBox[{"d", "\[Rule]", "new"}]}], "]"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t", 
+                    RowBox[{"OverwriteTarget", "\[Rule]", "True"}]}], "]"}], 
+                   "&"}], "/@", "\n", "\t\t\t\t\t\t\t", 
+                  RowBox[{"FileNames", "[", 
+                   RowBox[{"\"\<*\>\"", ",", "d"}], "]"}]}]}], "\n", 
+                "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t", 
+               RowBox[{"CopyFile", "[", 
+                RowBox[{"#", ",", "new", ",", "\n", "\t", "\t\t\t\t\t", 
+                 RowBox[{"OverwriteTarget", "\[Rule]", "True"}]}], "]"}]}], 
+              "\n", "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", "]"}], "&"}], "/@",
+          "fps"}], ";", "\n", "\t\t\t", 
+        RowBox[{"Export", "[", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"FileNameJoin", "@", 
+           RowBox[{"{", 
+            RowBox[{"bundleDir", ",", "$BundleMetaInformationFile"}], "}"}]}],
+           ",", "\n", "\t\t\t\t", 
+          RowBox[{"Merge", "[", 
+           RowBox[{
+            RowBox[{"{", "\n", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"<|", "\n", "\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"\"\<Files\>\"", "\[Rule]", 
+                 RowBox[{"(", 
+                  RowBox[{"FileNameSplit", "/@", 
+                   RowBox[{"StringReplace", "[", 
+                    RowBox[{"fps", ",", 
+                    RowBox[{"$HomeDirectory", "\[Rule]", "\"\<~\>\""}]}], 
+                    "]"}]}], ")"}]}], ",", "\n", "\t", "\t\t\t\t\t", 
+                RowBox[{"\"\<Time\>\"", "\[Rule]", "Now"}], ",", "\n", "\t", 
+                "\t\t\t\t\t", 
+                RowBox[{"\"\<User\>\"", "\[Rule]", "$UserName"}], ",", "\n", 
+                "\t", "\t\t\t\t\t", 
+                RowBox[{"\"\<System\>\"", "\[Rule]", "$SystemID"}], ",", "\n",
+                 "\t", "\t\t\t\t\t", 
+                RowBox[{"\"\<WolframID\>\"", "->", "$WolframID"}], ",", "\n", 
+                "\t", "\t\t\t\t\t", 
+                RowBox[{"\"\<UUID\>\"", "\[Rule]", "$WolframUUID"}]}], "\n", 
+               "\t\t\t\t\t\t", "|>"}], ",", "\n", "\t\t\t\t\t", 
+              RowBox[{"Association", "@", "metadata"}]}], "\n", "\t\t\t\t\t", 
+             "}"}], ",", "\n", "\t\t\t\t\t", "Last"}], "\n", "\t\t\t\t\t", 
+           "]"}]}], "\n", "\t\t\t\t", "]"}], ";", "\n", "\t\t\t", 
+        RowBox[{"Do", "[", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"With", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"p", "=", 
+              RowBox[{"FileNameJoin", "@", 
+               RowBox[{"Flatten", "@", 
+                RowBox[{"{", 
+                 RowBox[{"bundleDir", ",", "p"}], "}"}]}]}]}], "}"}], ",", 
+            "\n", "\t\t\t\t\t", 
+            RowBox[{"If", "[", 
+             RowBox[{
+              RowBox[{"DirectoryQ", "@", "p"}], ",", "\n", "\t\t\t\t\t\t", 
+              RowBox[{"DeleteDirectory", "[", 
+               RowBox[{"p", ",", "\n", "\t", "\t\t\t\t\t\t", 
+                RowBox[{"DeleteContents", "\[Rule]", "True"}]}], "]"}], ",", 
+              "\n", "\t\t\t\t\t\t", 
+              RowBox[{"If", "[", 
+               RowBox[{
+                RowBox[{"FileExistsQ", "@", "p"}], ",", 
+                RowBox[{"DeleteFile", "[", "p", "]"}]}], "]"}]}], "\n", "\t", 
+             "\t\t\t\t\t", "]"}]}], "\n", "\t", "\t\t\t\t", "]"}], ",", "\n", 
+          "\t", "\t\t\t", 
+          RowBox[{"{", 
+           RowBox[{"p", ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"Join", "[", "\n", "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Flatten", "[", 
+               RowBox[{
+                RowBox[{"{", 
+                 RowBox[{"OptionValue", "[", "\"\<RemovePaths\>\"", "]"}], 
+                 "}"}], ",", "1"}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"FileNameDrop", "[", 
+                 RowBox[{"#", ",", 
+                  RowBox[{"FileNameDepth", "@", "bundleDir"}]}], "]"}], "&"}],
+                "/@", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"FileNames", "[", 
+                RowBox[{
+                 RowBox[{"OptionValue", "[", "\"\<RemovePatterns\>\"", "]"}], 
+                 ",", "bundleDir", ",", "\[Infinity]"}], "]"}]}]}], "\n", 
+             "\t", "\t\t\t\t\t", "]"}]}], "}"}]}], "\n", "\t", "\t\t\t", 
+         "]"}], ";", "\n", "\t\t\t", 
+        RowBox[{"With", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"archiveFile", "=", 
+            RowBox[{"bundleDir", "<>", "\"\<.zip\>\""}]}], "}"}], ",", "\n", 
+          "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Quiet", "@", 
+            RowBox[{"DeleteFile", "@", "archiveFile"}]}], ";", "\n", 
+           "\t\t\t\t", 
+           RowBox[{"RenameFile", "[", "\n", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"CreateArchive", "@", "bundleDir"}], ",", "\n", 
+             "\t\t\t\t\t", "archiveFile"}], "\n", "\t\t\t\t\t", "]"}], ";", 
+           "\n", "\t\t\t\t", 
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{"dir", "===", "Automatic"}], ",", " ", 
+             RowBox[{"DeleteDirectory", "[", 
+              RowBox[{"bundleDir", ",", 
+               RowBox[{"DeleteContents", "\[Rule]", "True"}]}], "]"}]}], 
+            "]"}], ";", "\n", "\t\t\t\t", "archiveFile"}]}], "\n", "\t\t\t\t",
+          "]"}]}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.691338042648683*^9, 3.691338169115374*^9}, {
+   3.691339655924885*^9, 3.691339828224937*^9}, {3.691339877439808*^9, 
+   3.691340106190495*^9}, {3.691340166049118*^9, 3.6913402160483828`*^9}, {
+   3.691340253143816*^9, 3.691340257892146*^9}, {3.691340307798813*^9, 
+   3.691340358535153*^9}, {3.6913404272706223`*^9, 3.691340437486496*^9}, {
+   3.691341760087139*^9, 3.691341762733576*^9}, {3.691341839741102*^9, 
+   3.6913419072458344`*^9}, {3.691341939867758*^9, 3.691341943659416*^9}, {
+   3.691342005257708*^9, 3.691342245751822*^9}, {3.6913422996368647`*^9, 
+   3.6913423472454643`*^9}, {3.6913428072775993`*^9, 3.69134280840795*^9}, {
+   3.691343495317789*^9, 3.691343706421232*^9}, {3.6913437375963383`*^9, 
+   3.691343833909318*^9}, {3.691859930670323*^9, 3.691860029665223*^9}, {
+   3.691860355274189*^9, 3.691860433111845*^9}, 3.698511642221349*^9, {
+   3.6985120065420837`*^9, 3.698512008672513*^9}, {3.6985120539155807`*^9, 
+   3.69851208276274*^9}, {3.698512119313201*^9, 3.698512196211948*^9}, {
+   3.69851224376751*^9, 3.6985122738753967`*^9}, 3.698512310179905*^9, {
+   3.698512373809957*^9, 3.698512478026465*^9}, {3.698512511934016*^9, 
+   3.6985125423460903`*^9}, {3.698512573570705*^9, 3.698512614614437*^9}, {
+   3.698512663743224*^9, 3.698512714250749*^9}, 3.698512772105838*^9, {
+   3.700349688909382*^9, 3.7003496894269657`*^9}, {3.700349756608543*^9, 
+   3.700349810604043*^9}, {3.700349858433527*^9, 3.700349877552972*^9}, {
+   3.700351280922771*^9, 3.70035128716884*^9}, {3.700351339054812*^9, 
+   3.70035135392093*^9}, {3.7003515425386963`*^9, 3.700351544766906*^9}, {
+   3.701788961233329*^9, 3.70178896176492*^9}, {3.7023470592775517`*^9, 
+   3.7023470598843803`*^9}, 
+   3.702347215479927*^9},ExpressionUUID->"7f280f06-f443-410b-a4e6-\
+8c4997d01100"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["UploadFile", "Subsubsection",
+ CellChangeTimes->{{3.6891277813439083`*^9, 3.689127786872459*^9}, {
+  3.6891292054326363`*^9, 
+  3.689129207077573*^9}},ExpressionUUID->"92c6cd54-6f38-40b3-8781-\
+72197159ecdf"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"UploadFile", "::", "filnex"}], "=", 
+   "\"\<File `` doesn't exist\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "UploadFile", "]"}], ":=", "\n", "\t", 
+   RowBox[{"Join", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{"\"\<UploadTo\>\"", "\[Rule]", "CloudObject"}], "\n", "\t\t", 
+      "}"}], ",", "\n", "\t\t", 
+     RowBox[{"Options", "@", "CloudExport"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"UploadFile", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"file", ":", 
+      RowBox[{"_File", "|", "_String"}]}], ",", "\n", "\t", 
+     "directoryExtension_String", ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{"FileExistsQ", "@", "file"}], ",", "\n", "\t\t", 
+     RowBox[{"With", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"arc", "=", "\n", "\t", "\t\t", 
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{"DirectoryQ", "@", "file"}], ",", "\n", "\t", "\t\t\t", 
+           RowBox[{
+            RowBox[{"Quiet", "@", 
+             RowBox[{"DeleteFile", "@", 
+              RowBox[{"FileNameJoin", "@", 
+               RowBox[{"{", 
+                RowBox[{"$TemporaryDirectory", ",", 
+                 RowBox[{
+                  RowBox[{"FileBaseName", "@", "file"}], "<>", 
+                  "\"\<.zip\>\""}]}], "}"}]}]}]}], ";", "\n", "\t", "\t\t\t", 
+            
+            RowBox[{"CreateArchive", "[", 
+             RowBox[{"file", ",", "$TemporaryDirectory"}], "]"}]}], ",", "\n",
+            "\t", "\t\t\t", "file"}], "\n", "\t", "\t\t\t", "]"}]}], "}"}], 
+       ",", "\n", "\t", "\t\t", 
+       RowBox[{"Switch", "[", 
+        RowBox[{
+         RowBox[{"OptionValue", "@", "\"\<UploadTo\>\""}], ",", "\n", 
+         "\t\t\t\t", "CloudObject", ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"With", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"o", "=", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"CloudDeploy", "[", 
+              RowBox[{"None", ",", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"URLBuild", "@", 
+                RowBox[{"{", 
+                 RowBox[{
+                 "directoryExtension", ",", "\n", "\t\t\t\t\t\t\t\t", 
+                  RowBox[{"FileNameTake", "@", "file"}]}], "}"}]}], ",", "\n",
+                "\t\t\t\t\t\t\t", 
+               RowBox[{"FilterRules", "[", 
+                RowBox[{
+                 RowBox[{"{", "ops", "}"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"Options", "@", "CloudDeploy"}]}], "]"}]}], "\n", 
+              "\t\t\t\t\t\t\t", "]"}]}], "}"}], ",", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"CopyFile", "[", 
+            RowBox[{"arc", ",", "o"}], "]"}]}], "\n", "\t", "\t\t\t\t\t", 
+          "]"}], ",", "\n", "\t", "\t\t\t", 
+         RowBox[{
+         "\"\<GitHub\>\"", "|", "\"\<Git\>\"", "|", "\"\<git\>\"", "|", 
+          "\"\<github\>\""}], ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"With", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"repo", "=", 
+             RowBox[{"GitRepositories", "[", "arc", "]"}]}], "}"}], ",", "\n",
+            "\t\t\t\t\t\t", 
+           RowBox[{"Replace", "[", 
+            RowBox[{"repo", ",", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"{", 
+               RowBox[{"r_", ",", "___"}], "}"}], ":>", "\n", 
+              "\t\t\t\t\t\t\t\t", 
+              RowBox[{"GitPushOrigin", "[", 
+               RowBox[{"r", ",", "\"\<*\>\""}], "]"}]}]}], "\n", "\t", 
+            "\t\t\t\t\t\t", "]"}]}], "\n", "\t", "\t\t\t\t\t", "]"}], ",", 
+         "\n", "\t\t\t\t", 
+         RowBox[{"_", "?", "SyncPathQ"}], ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"With", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"d", "=", 
+             RowBox[{"SyncPath", "[", 
+              RowBox[{"OptionValue", "@", "\"\<UploadTo\>\""}], "]"}]}], 
+            "}"}], ",", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{"DirectoryQ", "@", "d"}], ",", "\n", "\t", 
+             "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Quiet", "@", "\n", "\t", "\t\t\t\t\t\t\t", 
+               RowBox[{"CreateDirectory", "[", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"FileNameJoin", "@", 
+                  RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{
+                   "d", ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                    "\"\<Mathematica\>\"", ",", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t", "directoryExtension"}], "\n", "\t", 
+                   "\t\t\t\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t", 
+                 "\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                 "CreateIntermediateDirectories", "\[Rule]", "True"}]}], "\n",
+                 "\t", "\t\t\t\t\t\t\t\t", "]"}]}], ";", "\n", "\t", 
+              "\t\t\t\t\t\t", 
+              RowBox[{"CopyFile", "[", "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{"arc", ",", "\n", "\t\t\t\t\t\t\t\t", 
+                RowBox[{"FileNameJoin", "@", 
+                 RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                  "d", ",", "\n", "\t\t\t\t\t\t\t\t\t", "\"\<Mathematica\>\"",
+                    ",", "\n", "\t\t\t\t\t\t\t\t\t", "directoryExtension", 
+                   ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"FileBaseName", "[", "file", "]"}], "<>", 
+                    "\"\<.zip\>\""}]}], "\n", "\t", "\t\t\t\t\t\t\t\t", 
+                  "}"}]}], ",", "\n", "\t", "\t", "\t\t\t\t\t\t", 
+                RowBox[{"OverwriteTarget", "\[Rule]", "True"}]}], "\n", 
+               "\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}],
+           "\n", "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "]"}]}], "\n", 
+      "\t\t\t", "]"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Message", "[", 
+       RowBox[{
+        RowBox[{"UploadFile", "::", "filnex"}], ",", "file"}], "]"}], ";", 
+      "\n", "\t\t", "$Failed"}]}], "\n", "\t", "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.685298182982854*^9, 3.685298219551343*^9}, {
+   3.6852983477729063`*^9, 3.685298536749753*^9}, {3.6853007002994823`*^9, 
+   3.6853008077239523`*^9}, {3.6853618539285593`*^9, 3.685361855028963*^9}, {
+   3.685361899179545*^9, 3.685361958882598*^9}, {3.685362028266616*^9, 
+   3.685362041223851*^9}, {3.685362072566531*^9, 3.6853620728811407`*^9}, {
+   3.685801879934587*^9, 3.685802166940477*^9}, {3.685802278261047*^9, 
+   3.685802292173287*^9}, {3.68580246801226*^9, 3.685802491135133*^9}, 
+   3.685895978501892*^9, {3.686060936098947*^9, 3.686060958080628*^9}, {
+   3.68606101202945*^9, 3.686061087090007*^9}, {3.6860612554786053`*^9, 
+   3.686061256587261*^9}, {3.687207465882375*^9, 3.687207537682358*^9}, {
+   3.688466073648323*^9, 3.688466196743229*^9}, {3.689125686430933*^9, 
+   3.6891256876923437`*^9}, {3.689126339598526*^9, 3.689126359857565*^9}, 
+   3.689126397096623*^9, {3.6891271614551067`*^9, 3.689127173850684*^9}, {
+   3.6891272177079773`*^9, 3.689127222979721*^9}, {3.6891273574775*^9, 
+   3.6891274246663723`*^9}, {3.6891278348617697`*^9, 
+   3.6891278433800907`*^9}, {3.689127874380715*^9, 3.689127928299769*^9}, {
+   3.6891279604301023`*^9, 3.689128048915072*^9}, 3.689129184023377*^9, {
+   3.689129214977948*^9, 3.6891292766152277`*^9}, {3.689129323469734*^9, 
+   3.689129461311737*^9}, 3.689132719558255*^9, {3.689132838100067*^9, 
+   3.689132838242749*^9}, {3.6913379155652742`*^9, 3.691338007624939*^9}, {
+   3.69851517051298*^9, 3.698515197870914*^9}, {3.698515228132022*^9, 
+   3.698515254131933*^9}, {3.700939624850354*^9, 3.700939634890943*^9}, 
+   3.702347065795632*^9, {3.702379273632563*^9, 3.7023792914211283`*^9}, {
+   3.702379323869706*^9, 3.702379471927011*^9}, {3.7023795040252123`*^9, 
+   3.702379508374833*^9}, {3.702380250552782*^9, 3.702380259712418*^9}},
+ FontWeight->Plain,ExpressionUUID->"dd49c986-85dc-4b23-9632-d48fb11eac8a"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["BackupFile", "Subsubsection",
+ CellChangeTimes->{{3.6891294786394043`*^9, 
+  3.689129480207757*^9}},ExpressionUUID->"0ce08197-2f9c-4d07-98fb-\
+511e5606117b"],
+
+Cell[BoxData[
+ RowBox[{"$BackupDirectoryName", "=", "\"\<_Backups\>\""}]], "CodeInput",
+ CellChangeTimes->{{3.6891294933607264`*^9, 3.689129578482089*^9}, {
+  3.689129609730893*^9, 3.689129665648651*^9}, {3.6891297244939003`*^9, 
+  3.689129822660606*^9}, {3.689132160207202*^9, 
+  3.689132178525325*^9}},ExpressionUUID->"705cda55-a401-4554-afc9-\
+cdd663c237e2"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"BackupFile", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"file", ":", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"_File", "|", "_String"}], ")"}], "?", "FileExistsQ"}]}], ",",
+      "\n", "\t", 
+     RowBox[{"where", ":", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"_File", "|", "_String"}], ")"}], "?", "DirectoryQ"}]}], ",", 
+     "\n", "\t", 
+     RowBox[{"backupsDir", ":", 
+      RowBox[{"_String", "|", "Automatic"}], ":", "Automatic"}]}], "]"}], ":=",
+    "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{"backupFile", "=", "\n", "\t\t\t", 
+       RowBox[{"FileNameJoin", "@", 
+        RowBox[{"{", "\n", "\t\t\t\t", 
+         RowBox[{"where", ",", "\n", "\t\t\t\t", 
+          RowBox[{"Replace", "[", 
+           RowBox[{"backupsDir", ",", 
+            RowBox[{"Automatic", ":>", "$BackupDirectoryName"}]}], "]"}], ",",
+           "\n", "\t\t\t\t", 
+          RowBox[{"TemplateApply", "[", 
+           RowBox[{"\"\<`name`_`now`.zip\>\"", ",", "\n", "\t", "\t\t\t\t", 
+            RowBox[{"<|", 
+             RowBox[{
+              RowBox[{"\"\<name\>\"", "\[Rule]", 
+               RowBox[{"FileBaseName", "@", "file"}]}], ",", "\n", 
+              "\t\t\t\t\t\t", 
+              RowBox[{"\"\<now\>\"", "\[Rule]", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"Block", "[", 
+                RowBox[{
+                 RowBox[{"{", 
+                  RowBox[{
+                  "$DateStringFormat", "=", "\n", "\t", 
+                   "\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<Day\>\"", ",", "\"\<:\>\"", ",", "\"\<Month\>\"", 
+                    ",", "\"\<:\>\"", ",", "\"\<Year\>\"", ",", "\"\<@\>\"", 
+                    ",", "\n", "\t", "\t", "\t", "\t", "\t", "\t", "\t", "\t",
+                     "\t", "\t", "\t", "\"\<Hour\>\"", ",", "\"\<:\>\"", ",", 
+                    "\"\<Minute\>\"", ",", "\"\<:\>\"", ",", 
+                    "\"\<Second\>\""}], "\n", "\t", "\t", "\t", "\t", 
+                    "\t\t\t\t\t\t\t", "}"}]}], "\n", "\t", 
+                  "\t\t\t\t\t\t\t\t\t", "}"}], ",", "\n", "\t", 
+                 "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"DateString", "@", "Now"}]}], "\n", "\t", 
+                "\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t", "|>"}]}], 
+           "\n", "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "}"}]}]}], "\n", 
+      "\t\t", "}"}], ",", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"Not", "@", 
+         RowBox[{"DirectoryQ", "@", 
+          RowBox[{"DirectoryName", "@", "backupFile"}]}]}], ",", "\n", 
+        "\t\t\t\t", 
+        RowBox[{"CreateDirectory", "@", 
+         RowBox[{"DirectoryName", "@", "backupFile"}]}]}], "\n", "\t\t\t\t", 
+       "]"}], ";", "\n", "\t\t\t", 
+      RowBox[{"CreateArchive", "[", 
+       RowBox[{"file", ",", "backupFile"}], "]"}]}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.6891294933607264`*^9, 3.689129578482089*^9}, {
+  3.689129609730893*^9, 3.689129665648651*^9}, {3.6891297244939003`*^9, 
+  3.689129822660606*^9}, {3.689132160207202*^9, 
+  3.689132197108486*^9}},ExpressionUUID->"fefa6566-07ce-4cb2-a31d-\
+99f015588c38"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["FileBackups", "Subsubsection",
+ CellChangeTimes->{{3.6891299449495773`*^9, 
+  3.689129947692643*^9}},ExpressionUUID->"4aabc6de-c397-40f7-b869-\
+18576cc501ef"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"fileBackupInfo", "[", "backupFile_", "]"}], ":=", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"file", "=", 
+      RowBox[{"FileBaseName", "@", "backupFile"}]}], "}"}], ",", "\n", "\t\t", 
+    RowBox[{"Replace", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"StringCases", "[", 
+       RowBox[{"file", ",", 
+        RowBox[{"{", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{
+          "name__", "~~", "\"\<_\>\"", "~~", "date__", "~~", "\"\<@\>\"", "~~",
+            "time__"}], "\[RuleDelayed]", 
+          RowBox[{"{", 
+           RowBox[{"name", ",", "date", ",", "time"}], "}"}]}], "\n", 
+         "\t\t\t\t", "}"}]}], "]"}], ",", 
+      RowBox[{"{", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"name_", ",", "date_", ",", "time_"}], "}"}], ",", 
+           "___"}], "}"}], "\[RuleDelayed]", 
+         RowBox[{"<|", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"\"\<Name\>\"", "\[Rule]", "name"}], ",", "\n", "\t\t\t\t", 
+           RowBox[{"\"\<Date\>\"", "\[Rule]", "\n", "\t\t\t\t\t", 
+            RowBox[{"DateObject", "@", 
+             RowBox[{"Join", "[", "\n", "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Reverse", "@", 
+                RowBox[{"ToExpression", "@", 
+                 RowBox[{"StringSplit", "[", 
+                  RowBox[{"date", ",", "\"\<:\>\""}], "]"}]}]}], ",", "\n", 
+               "\t", "\t\t\t\t\t", 
+               RowBox[{"ToExpression", "@", 
+                RowBox[{"StringSplit", "[", 
+                 RowBox[{"time", ",", "\"\<:\>\""}], "]"}]}]}], "\n", 
+              "\t\t\t\t\t\t", "]"}]}]}], ",", "\n", "\t\t\t\t", 
+           RowBox[{"\"\<File\>\"", "\[Rule]", "backupFile"}]}], "\n", 
+          "\t\t\t\t", "|>"}]}], ",", "\n", "\t\t\t", 
+        RowBox[{"_", "->", "None"}]}], "\n", "\t\t\t", "}"}]}], "]"}]}], "\n",
+    "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.6857112548826103`*^9, 3.685711317986472*^9}, {
+  3.685711370157778*^9, 3.6857114602430696`*^9}, {3.685711528620713*^9, 
+  3.68571153869697*^9}, {3.685711572859426*^9, 3.685711592905734*^9}, {
+  3.685711924692878*^9, 3.685711951939418*^9}, {3.6857120648819313`*^9, 
+  3.685712125246421*^9}, {3.685712179941039*^9, 3.6857121976545563`*^9}, {
+  3.689130002867001*^9, 3.689130003273696*^9}, {3.6891307677061243`*^9, 
+  3.68913082655033*^9}, {3.689130949219604*^9, 3.689130971265136*^9}, {
+  3.689131002341318*^9, 
+  3.6891310113895607`*^9}},ExpressionUUID->"1035921e-ba96-4ab5-9e93-\
+124318569212"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"FileBackups", "[", 
+    RowBox[{
+     RowBox[{"appName_:", "\"\<\>\""}], ",", 
+     RowBox[{"from", ":", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"_File", "|", "_String"}], ")"}], "?", "DirectoryQ"}]}]}], 
+    "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"backups", "=", "\n", "\t\t", 
+       RowBox[{"fileBackupInfo", "/@", 
+        RowBox[{"FileNames", "[", 
+         RowBox[{
+          RowBox[{"appName", "<>", "\"\<*.zip\>\""}], ",", "from"}], 
+         "]"}]}]}], "}"}], ",", "\n", "\t\t", 
+     RowBox[{"Sort", "[", 
+      RowBox[{"backups", ",", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"#", "[", "\"\<Date\>\"", "]"}], ">", 
+          RowBox[{"#2", "[", "\"\<Date\>\"", "]"}]}], ")"}], "&"}]}], "]"}]}],
+     "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.68571051194947*^9, 3.685710539969149*^9}, {
+   3.685711244618392*^9, 3.685711253648775*^9}, {3.685712040137992*^9, 
+   3.68571205746506*^9}, {3.6857121323834877`*^9, 3.6857121720846977`*^9}, {
+   3.685712209595677*^9, 3.685712210195653*^9}, {3.685712240641017*^9, 
+   3.6857122725507393`*^9}, {3.685712303319488*^9, 3.685712303469702*^9}, {
+   3.689129953871533*^9, 3.689129988342861*^9}, 
+   3.689130829136671*^9},ExpressionUUID->"637254dc-6252-4789-a661-\
+de00bd46181e"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["RestoreFile", "Subsubsection",
+ CellChangeTimes->{{3.689129481767207*^9, 
+  3.689129483543601*^9}},ExpressionUUID->"4cca9a10-88b4-4838-a96c-\
+764f0bf7c4cc"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"RestoreFile", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"name", ":", 
+      RowBox[{"_String", "?", 
+       RowBox[{"(", 
+        RowBox[{"StringMatchQ", "[", 
+         RowBox[{
+          RowBox[{"Except", "[", "$PathnameSeparator", "]"}], ".."}], "]"}], 
+        ")"}]}]}], ",", "\n", "\t", 
+     RowBox[{"from", ":", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"_File", "|", "_String"}], ")"}], "?", "DirectoryQ"}]}], ",", 
+     "\n", "\t", 
+     RowBox[{"to", ":", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"_File", "|", "_String"}], ")"}], "?", "DirectoryQ"}]}]}], 
+    "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"backup", "=", "\n", "\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{
+         RowBox[{"FileBackups", "@", "name"}], ",", "\n", "\t\t\t", 
+         RowBox[{"{", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"a_", ",", "___"}], "}"}], "\[RuleDelayed]", "a"}], ",", 
+           "\n", "\t", "\t", "\t", "\t", 
+           RowBox[{"_", "\[RuleDelayed]", "$Failed"}]}], "\n", "\t\t\t", 
+          "}"}]}], "]"}]}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"backup", "[", "\"\<Name\>\"", "]"}], "===", "name"}], ",", 
+       "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"DirectoryQ", "@", 
+           RowBox[{"FileNameJoin", "@", 
+            RowBox[{"{", 
+             RowBox[{"to", ",", "name"}], "}"}]}]}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"DeleteDirectory", "[", 
+           RowBox[{
+            RowBox[{"FileNameJoin", "@", 
+             RowBox[{"{", 
+              RowBox[{"to", ",", "name"}], "}"}]}], ",", 
+            RowBox[{"DeleteContents", "\[Rule]", "True"}]}], "]"}]}], "\n", 
+         "\t", "\t\t\t", "]"}], ";", "\n", "\t\t\t", 
+        RowBox[{"ExtractArchive", "[", 
+         RowBox[{
+          RowBox[{"backup", "[", "\"\<File\>\"", "]"}], ",", "to"}], "]"}], 
+        ";", "\n", "\t\t\t", 
+        RowBox[{"FileNameJoin", "@", 
+         RowBox[{"{", 
+          RowBox[{"to", ",", "name"}], "}"}]}]}], ",", "\n", "\t\t\t", 
+       "$Failed"}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.689129851068618*^9, 3.689129928070628*^9}, {
+  3.6891300155639477`*^9, 3.6891300934406443`*^9}, {3.68913057911283*^9, 
+  3.689130583434827*^9}, {3.689130639762062*^9, 
+  3.689130689154011*^9}},ExpressionUUID->"67c84ebd-3779-4861-8f37-\
+e4bf23e753b8"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"RestoreFile", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"file_String", "?", "FileExistsQ"}], ",", "\n", "\t", 
+     RowBox[{"to_", "?", "DirectoryQ"}]}], "\n", "\t", "]"}], ":=", "\n", 
+   "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"backup", "=", 
+       RowBox[{"fileBackupInfo", "@", "file"}]}], "}"}], ",", "\n", "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"backup", "===", "None"}], ",", "\n", "\t\t\t", "$Failed", ",",
+        "\n", "\t\t\t", 
+       RowBox[{"ExtractArchive", "[", 
+        RowBox[{
+         RowBox[{"backup", "[", "\"\<File\>\"", "]"}], ",", "to"}], "]"}]}], 
+      "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], "\n", "\t\t", "\n", 
+  "\t\t"}], "\n", 
+ RowBox[{"\t\t"}]}], "CodeInput",
+ CellChangeTimes->{{3.689129851068618*^9, 3.689129928070628*^9}, {
+   3.6891300155639477`*^9, 3.6891300934406443`*^9}, {3.68913057911283*^9, 
+   3.689130592117652*^9}, {3.689130626947548*^9, 3.6891306353373823`*^9}, {
+   3.689130697129005*^9, 3.689130701353372*^9}, 3.6891308321268167`*^9, {
+   3.689130988902956*^9, 3.6891310466010933`*^9}, {3.689131145663224*^9, 
+   3.6891312103441277`*^9}},ExpressionUUID->"7cd84dd0-1959-47a2-bf76-\
+f5a4dce758e7"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["BackupCopyFile", "CodeSubsubsection",
+ CellChangeTimes->{{3.6852997765574713`*^9, 3.685299778092309*^9}, {
+   3.689130551163679*^9, 3.689130551674911*^9}, 
+   3.702347387430999*^9},ExpressionUUID->"06890f9e-969a-4ad1-ab56-\
+aa46f309a92b"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "BackupCopyFile", "]"}], ":=", "\n", "\t", 
+   RowBox[{"Options", "@", "CopyFile"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"BackupCopyFile", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"file", ":", 
+      RowBox[{
+       RowBox[{"File", "[", 
+        RowBox[{"_String", "?", "FileExistsQ"}], "]"}], "|", 
+       RowBox[{"_String", "?", "FileExistsQ"}]}]}], ",", "\n", "\t\t", 
+     RowBox[{"givenName", ":", 
+      RowBox[{"(", 
+       RowBox[{"_String", "|", "Automatic"}], ")"}], ":", "Automatic"}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"to", ":", 
+      RowBox[{
+       RowBox[{"File", "[", 
+        RowBox[{"_String", "?", "DirectoryQ"}], "]"}], "|", 
+       RowBox[{"_String", "?", "DirectoryQ"}]}]}], ",", "\n", "\t\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t\t", "]"}], ":=", 
+   "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{"name", "=", 
+       RowBox[{"Replace", "[", 
+        RowBox[{"givenName", ",", 
+         RowBox[{"Automatic", "\[RuleDelayed]", 
+          RowBox[{"FileNameTake", "@", "file"}]}]}], "]"}]}], "\n", "\t\t", 
+      "}"}], ",", "\n", "\t\t", 
+     RowBox[{"With", "[", 
+      RowBox[{
+       RowBox[{"{", "\n", "\t\t\t", 
+        RowBox[{"dest", "=", 
+         RowBox[{"FileNameJoin", "@", 
+          RowBox[{"{", 
+           RowBox[{"to", ",", "name"}], "}"}]}]}], "\n", "\t\t\t", "}"}], ",",
+        "\n", "\t\t\t", 
+       RowBox[{"With", "[", 
+        RowBox[{
+         RowBox[{"{", "\n", "\t\t\t\t", 
+          RowBox[{"backup", "=", 
+           RowBox[{"BackupFile", "[", 
+            RowBox[{"dest", ",", "to"}], "]"}]}], "\n", "\t\t\t\t", "}"}], 
+         ",", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{"DirectoryQ", "@", "dest"}], ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"DeleteDirectory", "[", 
+             RowBox[{"dest", ",", 
+              RowBox[{"DeleteContents", "\[Rule]", "True"}]}], "]"}]}], "\n", 
+           "\t\t\t\t\t", "]"}], ";", "\n", "\t\t\t\t", 
+          RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"CopyFile", "[", "\n", "\t\t\t\t\t\t", 
+             RowBox[{
+             "file", ",", "\n", "\t", "\t\t\t\t\t", "dest", ",", "\n", "\t", 
+              "\t\t\t\t\t", 
+              RowBox[{"OverwriteTarget", "\[Rule]", 
+               RowBox[{"OptionValue", "@", "OverwriteTarget"}]}]}], "\n", 
+             "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"r", ":", 
+              RowBox[{"Except", "[", 
+               RowBox[{"_String", "?", "FileExistsQ"}], "]"}]}], 
+             "\[RuleDelayed]", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"(", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"RestoreFile", "[", 
+                RowBox[{"backup", ",", "to"}], "]"}], ";", "\n", "\t", 
+               "\t\t\t\t\t\t", "r"}], "\n", "\t\t\t\t\t\t", ")"}]}]}], "\n", 
+           "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t",
+       "]"}]}], "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.685037848197392*^9, 3.6850378653400097`*^9}, {
+   3.685038061256736*^9, 3.6850380624163113`*^9}, {3.6850381168169727`*^9, 
+   3.685038148389934*^9}, {3.6852077614365463`*^9, 3.685207785971168*^9}, {
+   3.685207872258298*^9, 3.685208077563286*^9}, {3.685208121832906*^9, 
+   3.6852081558578043`*^9}, {3.685208231000627*^9, 3.685208300203824*^9}, {
+   3.685208331949555*^9, 3.685208498942795*^9}, {3.685208558252833*^9, 
+   3.685208582523769*^9}, {3.6852086978984833`*^9, 3.68520882959624*^9}, {
+   3.685208868236219*^9, 3.685209248862458*^9}, {3.6852092854079523`*^9, 
+   3.685209346453081*^9}, {3.685215673389264*^9, 3.685215792813981*^9}, {
+   3.6852166069717007`*^9, 3.685216666943143*^9}, {3.685216708640036*^9, 
+   3.685216709259941*^9}, 3.68521677700793*^9, {3.6852168252052803`*^9, 
+   3.685216944703206*^9}, 3.6852169755114603`*^9, {3.685217145825389*^9, 
+   3.685217185174069*^9}, {3.685299751664207*^9, 3.685299939330052*^9}, {
+   3.685300051832918*^9, 3.685300249003825*^9}, {3.685300520817349*^9, 
+   3.6853005234684057`*^9}, 3.685301085581482*^9, {3.68530111610857*^9, 
+   3.685301125072*^9}, {3.685301532006896*^9, 3.6853015354122963`*^9}, {
+   3.685709367144841*^9, 3.685709389581813*^9}, {3.685709750468012*^9, 
+   3.685709813669433*^9}, {3.685709882806485*^9, 3.68570988588273*^9}, {
+   3.685710031496574*^9, 3.6857101169837303`*^9}, {3.6857102074380713`*^9, 
+   3.685710353541876*^9}, {3.685712859638726*^9, 3.685712883962655*^9}, {
+   3.685714748837674*^9, 3.6857147616979923`*^9}, {3.685714796259609*^9, 
+   3.6857148324968433`*^9}, {3.685714912137805*^9, 3.685714935960801*^9}, {
+   3.6857149839784*^9, 3.685715065199273*^9}, {3.685715835029771*^9, 
+   3.685715836139505*^9}, {3.6858007680047407`*^9, 3.685800819511217*^9}, {
+   3.6858028087569532`*^9, 3.685802849447628*^9}, {3.685802934862952*^9, 
+   3.6858030338786907`*^9}, {3.689130156529121*^9, 3.6891301574865723`*^9}, {
+   3.689130191083706*^9, 3.689130199905023*^9}, {3.6891302299352703`*^9, 
+   3.6891305687516403`*^9}, {3.689131237320965*^9, 3.689131298795409*^9}, 
+   3.6891314207901506`*^9, {3.689131473428557*^9, 3.6891315295368137`*^9}, 
+   3.7023471214399223`*^9, 3.7023472676769238`*^9, 
+   3.702347378758587*^9},ExpressionUUID->"8f437c6b-1cf1-4af6-8947-\
+b4fd4a25db9a"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["DownloadFile", "CodeSubsubsection",
+ CellChangeTimes->{
+  3.702347376677416*^9},ExpressionUUID->"3dc09643-34a4-4576-b060-\
+827d89d2c726"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "DownloadFile", "]"}], ":=", "\n", "\t", 
+   RowBox[{"Join", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Options", "@", "BackupCopyFile"}], ",", "\n", "\t\t", 
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"Root", ":>", "$HomeDirectory"}], ",", "\n", "\t\t\t", 
+       RowBox[{"MetaInformation", "\[Rule]", "False"}], ",", "\n", "\t\t\t", 
+       RowBox[{"\"\<DownloadFrom\>\"", "->", "CloudObject"}]}], "\n", "\t\t", 
+      "}"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"DownloadFile", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"file", ":", 
+      RowBox[{"(", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"File", "[", 
+         RowBox[{"_String", "?", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"FileExtension", "@", "#"}], "===", "\"\<zip\>\""}], 
+            "&"}], ")"}]}], "]"}], "|", "\n", "\t\t\t\t", 
+        RowBox[{"_String", "?", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"FileExtension", "@", "#"}], "===", "\"\<zip\>\""}], 
+           "&"}], ")"}]}]}], "\n", "\t\t\t\t", ")"}]}], ",", "\n", "\t\t", 
+     RowBox[{"givenName", ":", 
+      RowBox[{"(", 
+       RowBox[{"_String", "|", "Automatic"}], ")"}], ":", "Automatic"}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"to", ":", 
+      RowBox[{
+       RowBox[{"File", "[", 
+        RowBox[{"_String", "?", "DirectoryQ"}], "]"}], "|", 
+       RowBox[{"_String", "?", "DirectoryQ"}], "|", "None"}], ":", "None"}], 
+     ",", "\n", "\t\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t\t", "]"}], ":=", 
+   "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"dir", "=", 
+       RowBox[{"FileNameJoin", "@", 
+        RowBox[{"{", 
+         RowBox[{"$TemporaryDirectory", ",", 
+          RowBox[{"FileBaseName", "@", "file"}]}], "}"}]}]}], "}"}], ",", 
+     "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Quiet", "@", 
+       RowBox[{"DeleteDirectory", "[", 
+        RowBox[{"dir", ",", 
+         RowBox[{"DeleteContents", "\[Rule]", "True"}]}], "]"}]}], ";", "\n", 
+      "\t\t", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Check", "[", 
+          RowBox[{
+           RowBox[{"ExtractArchive", "[", 
+            RowBox[{"file", ",", "$TemporaryDirectory"}], "]"}], ",", 
+           "$Failed"}], "]"}], "=!=", "$Failed"}], ",", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{"!", 
+            RowBox[{"OptionValue", "@", "MetaInformation"}]}], ",", "\n", 
+           "\t\t\t\t", 
+           RowBox[{"Quiet", "@", 
+            RowBox[{"DeleteFile", "[", 
+             RowBox[{"FileNameJoin", "@", 
+              RowBox[{"{", 
+               RowBox[{
+               "$TemporaryDirectory", ",", "$BundleMetaInformationFile"}], 
+               "}"}]}], "]"}]}]}], "\n", "\t\t\t\t", "]"}], ";", "\n", 
+         "\t\t\t", 
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{"to", "=!=", "None"}], ",", "\n", "\t\t\t\t", 
+           RowBox[{"BackupCopyFile", "[", 
+            RowBox[{"dir", ",", "givenName", ",", "to", ",", 
+             RowBox[{"FilterRules", "[", 
+              RowBox[{
+               RowBox[{"{", "ops", "}"}], ",", 
+               RowBox[{"Options", "@", "BackupCopyFile"}]}], "]"}]}], "]"}], 
+           ",", "\n", "\t\t\t\t", "dir"}], "\n", "\t\t\t\t", "]"}]}], ",", 
+        "\n", "\t\t\t", 
+        RowBox[{"Message", "[", 
+         RowBox[{
+          RowBox[{"DownloadFile", "::", "nocont"}], ",", "file"}], "]"}]}], 
+       "\n", "\t\t\t", "]"}]}]}], "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
+ 
+ CellChangeTimes->{{3.685037848197392*^9, 3.6850378653400097`*^9}, {
+   3.685038061256736*^9, 3.6850380624163113`*^9}, {3.6850381168169727`*^9, 
+   3.685038148389934*^9}, {3.6852077614365463`*^9, 3.685207785971168*^9}, {
+   3.685207872258298*^9, 3.685208077563286*^9}, {3.685208121832906*^9, 
+   3.6852081558578043`*^9}, {3.685208231000627*^9, 3.685208300203824*^9}, {
+   3.685208331949555*^9, 3.685208498942795*^9}, {3.685208558252833*^9, 
+   3.685208582523769*^9}, {3.6852086978984833`*^9, 3.68520882959624*^9}, {
+   3.685208868236219*^9, 3.685209248862458*^9}, {3.6852092854079523`*^9, 
+   3.685209346453081*^9}, {3.685215673389264*^9, 3.685215792813981*^9}, {
+   3.6852166069717007`*^9, 3.685216666943143*^9}, {3.685216708640036*^9, 
+   3.685216709259941*^9}, 3.68521677700793*^9, {3.6852168252052803`*^9, 
+   3.685216944703206*^9}, 3.6852169755114603`*^9, {3.685217145825389*^9, 
+   3.685217185174069*^9}, {3.685299751664207*^9, 3.685299939330052*^9}, {
+   3.685300051832918*^9, 3.685300052846786*^9}, {3.685300451087955*^9, 
+   3.6853004715365753`*^9}, {3.685301046174943*^9, 3.6853010771800117`*^9}, {
+   3.6853012954971027`*^9, 3.685301297037488*^9}, {3.685301523031185*^9, 
+   3.6853015254924803`*^9}, {3.68530168654408*^9, 3.6853017133666687`*^9}, 
+   3.6853018889709253`*^9, {3.685712839193809*^9, 3.685712841030007*^9}, {
+   3.68571471134402*^9, 3.6857147394050198`*^9}, 3.685800844712159*^9, {
+   3.6858026240210733`*^9, 3.685802624180359*^9}, {3.6858027904282503`*^9, 
+   3.6858028036471033`*^9}, {3.686674391418399*^9, 3.686674438302258*^9}, {
+   3.686674469368744*^9, 3.686674480278002*^9}, 3.689130152958542*^9, 
+   3.689131319199564*^9, {3.68913149306704*^9, 3.6891316166831207`*^9}, 
+   3.6891318343113337`*^9, {3.691342640674136*^9, 3.691342656117228*^9}, {
+   3.691342700683229*^9, 3.69134276052495*^9}, {3.691343334969318*^9, 
+   3.691343350519492*^9}, {3.6921087019169397`*^9, 3.6921087034493723`*^9}, {
+   3.6921095076080914`*^9, 3.692109539084311*^9}, {3.698511720740308*^9, 
+   3.698511727234774*^9}, 3.698515205830594*^9, {3.698515266989428*^9, 
+   3.698515273016468*^9}, {3.701788985101514*^9, 3.7017889853702583`*^9}, {
+   3.702347127524476*^9, 3.702347128864448*^9}, {3.7023473292515793`*^9, 
+   3.7023473449375677`*^9}, 3.7023474179152822`*^9, 3.7023474642445507`*^9, 
+   3.702347494789487*^9},ExpressionUUID->"12174eb2-d094-41f9-847d-\
+cbbc996da469"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"DownloadFile", "::", "srcerr"}], "=", 
+   "\"\<Unknown source type ``\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"DownloadFile", "::", "filnf"}], "=", 
+   "\"\<File `` not found\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"DownloadFile", "::", "nocont"}], "=", 
+   "\"\<Couldn't extract package contents from ``\>\""}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.685037848197392*^9, 3.6850378653400097`*^9}, {
+   3.685038061256736*^9, 3.6850380624163113`*^9}, {3.6850381168169727`*^9, 
+   3.685038148389934*^9}, {3.6852077614365463`*^9, 3.685207785971168*^9}, {
+   3.685207872258298*^9, 3.685208077563286*^9}, {3.685208121832906*^9, 
+   3.6852081558578043`*^9}, {3.685208231000627*^9, 3.685208300203824*^9}, {
+   3.685208331949555*^9, 3.685208498942795*^9}, {3.685208558252833*^9, 
+   3.685208582523769*^9}, {3.6852086978984833`*^9, 3.68520882959624*^9}, {
+   3.685208868236219*^9, 3.685209248862458*^9}, {3.6852092854079523`*^9, 
+   3.685209346453081*^9}, {3.685215673389264*^9, 3.685215792813981*^9}, {
+   3.6852166069717007`*^9, 3.685216666943143*^9}, {3.685216708640036*^9, 
+   3.685216709259941*^9}, 3.68521677700793*^9, {3.6852168252052803`*^9, 
+   3.685216944703206*^9}, 3.6852169755114603`*^9, {3.685217145825389*^9, 
+   3.685217185174069*^9}, {3.685299751664207*^9, 3.685299939330052*^9}, {
+   3.685300051832918*^9, 3.685300052846786*^9}, {3.685300478233252*^9, 
+   3.685300511757195*^9}, {3.6853008684512663`*^9, 3.6853009402664022`*^9}, {
+   3.685300973081316*^9, 3.685300984399785*^9}, {3.685301057189489*^9, 
+   3.685301064686154*^9}, {3.6853012867888823`*^9, 3.685301288572742*^9}, {
+   3.685301512744282*^9, 3.685301516525076*^9}, {3.685301578037545*^9, 
+   3.685301625982349*^9}, {3.685800838217587*^9, 3.68580099993221*^9}, {
+   3.685801538246249*^9, 3.685801628384241*^9}, {3.685801704243786*^9, 
+   3.685801716066085*^9}, {3.68580175909968*^9, 3.685801843921509*^9}, 
+   3.6858019863302813`*^9, {3.685802602638949*^9, 3.685802620701681*^9}, {
+   3.685802767793255*^9, 3.685802784545246*^9}, {3.6858823348121443`*^9, 
+   3.685882375305808*^9}, {3.686674443370412*^9, 3.686674467821278*^9}, {
+   3.689130149909485*^9, 3.68913015158932*^9}, {3.6891317416944447`*^9, 
+   3.689131742110888*^9}, 
+   3.6891317749150343`*^9},ExpressionUUID->"cb91a745-68ad-489e-8937-\
+03f2d5b92763"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"DownloadFile", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"file", ":", 
+      RowBox[{"_CloudObject", "|", "_URL", "|", "_String"}]}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"givenName", ":", 
+      RowBox[{"(", 
+       RowBox[{"_String", "|", "Automatic"}], ")"}], ":", "Automatic"}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"to", ":", 
+      RowBox[{
+       RowBox[{"File", "[", 
+        RowBox[{"_String", "?", "DirectoryQ"}], "]"}], "|", 
+       RowBox[{"_String", "?", "DirectoryQ"}]}]}], ",", "\n", "\t\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t\t", "]"}], ":=", 
+   "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"f", "=", 
+       RowBox[{"FileNameJoin", "@", 
+        RowBox[{"{", 
+         RowBox[{"$TemporaryDirectory", ",", "\n", "\t\t\t", 
+          RowBox[{
+           RowBox[{"FileBaseName", "@", 
+            RowBox[{"Last", "@", 
+             RowBox[{
+              RowBox[{"URLParse", "[", "file", "]"}], "[", "\"\<Path\>\"", 
+              "]"}]}]}], "<>", "\"\<.zip\>\""}]}], "}"}]}]}], "}"}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"Check", "[", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Switch", "[", 
+         RowBox[{
+          RowBox[{"OptionValue", "@", "\"\<DownloadFrom\>\""}], ",", "\n", 
+          "\t\t\t\t", "CloudObject", ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"Switch", "[", 
+           RowBox[{"file", ",", "\n", "\t\t\t\t\t\t", "_CloudObject", ",", 
+            RowBox[{"CopyFile", "[", 
+             RowBox[{"file", ",", "f", ",", 
+              RowBox[{"OverwriteTarget", "\[Rule]", "True"}]}], "]"}], ",", 
+            "\n", "\t\t\t\t\t\t", "_URL", ",", 
+            RowBox[{"URLDownload", "[", 
+             RowBox[{"file", ",", "f"}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
+            "_String", ",", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{"If", "[", 
+             RowBox[{
+              RowBox[{"MatchQ", "[", 
+               RowBox[{
+                RowBox[{"Quiet", "@", 
+                 RowBox[{"URLRead", "@", "file"}]}], ",", "_Failure"}], "]"}],
+               ",", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{"CopyFile", "[", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"CloudObject", "@", "file"}], ",", "\n", 
+                "\t\t\t\t\t\t\t\t\t\t", "f", ",", "\n", 
+                "\t\t\t\t\t\t\t\t\t\t", 
+                RowBox[{"OverwriteTarget", "\[Rule]", "True"}]}], "\n", 
+               "\t\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{"URLDownload", "[", 
+               RowBox[{"file", ",", "f"}], "]"}]}], "\n", "\t\t\t\t\t\t\t\t", 
+             "]"}]}], "\n", "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"_", "?", "SyncPath"}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Quiet", "@", 
+            RowBox[{"DeleteFile", "@", "f"}]}], ";", "\n", "\t\t\t\t\t", 
+           RowBox[{"CopyFile", "[", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"SyncPath", "[", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"URLBuild", "@", 
+               RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"OptionValue", "@", "\"\<DownloadFrom\>\""}], ",", 
+                 "\n", "\t\t\t\t\t\t\t\t", "\"\<Mathematica\>\"", ",", "\n", 
+                 "\t", "\t\t\t\t\t\t\t", 
+                 RowBox[{"file", "<>", "\"\<.zip\>\""}]}], "\n", 
+                "\t\t\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t\t\t", "]"}], 
+             ",", "\n", "\t\t\t\t\t\t", "f"}], "]"}]}], ",", "\n", "\t\t\t\t",
+           "_", ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"Message", "[", 
+           RowBox[{
+            RowBox[{"DownloadFile", "::", "srcerr"}], ",", 
+            RowBox[{"OptionValue", "@", "\"\<DownloadFrom\>\""}]}], "]"}]}], 
+         "\n", "\t\t\t\t", "]"}], ";", "\n", "\t\t\t", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"FileExistsQ", "@", "f"}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"DownloadFile", "[", 
+           RowBox[{"f", ",", "givenName", ",", "to", ",", "ops"}], "]"}], ",",
+           "\n", "\t\t\t\t", 
+          RowBox[{"Message", "[", 
+           RowBox[{
+            RowBox[{"DownloadFile", "::", "filnf"}], ",", "file"}], "]"}]}], 
+         "\n", "\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t", "$Failed"}], "\n", 
+      "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.685037848197392*^9, 3.6850378653400097`*^9}, {
+   3.685038061256736*^9, 3.6850380624163113`*^9}, {3.6850381168169727`*^9, 
+   3.685038148389934*^9}, {3.6852077614365463`*^9, 3.685207785971168*^9}, {
+   3.685207872258298*^9, 3.685208077563286*^9}, {3.685208121832906*^9, 
+   3.6852081558578043`*^9}, {3.685208231000627*^9, 3.685208300203824*^9}, {
+   3.685208331949555*^9, 3.685208498942795*^9}, {3.685208558252833*^9, 
+   3.685208582523769*^9}, {3.6852086978984833`*^9, 3.68520882959624*^9}, {
+   3.685208868236219*^9, 3.685209248862458*^9}, {3.6852092854079523`*^9, 
+   3.685209346453081*^9}, {3.685215673389264*^9, 3.685215792813981*^9}, {
+   3.6852166069717007`*^9, 3.685216666943143*^9}, {3.685216708640036*^9, 
+   3.685216709259941*^9}, 3.68521677700793*^9, {3.6852168252052803`*^9, 
+   3.685216944703206*^9}, 3.6852169755114603`*^9, {3.685217145825389*^9, 
+   3.685217185174069*^9}, {3.685299751664207*^9, 3.685299939330052*^9}, {
+   3.685300051832918*^9, 3.685300052846786*^9}, {3.685300478233252*^9, 
+   3.685300511757195*^9}, {3.6853008684512663`*^9, 3.6853009402664022`*^9}, {
+   3.685300973081316*^9, 3.685300984399785*^9}, {3.685301057189489*^9, 
+   3.685301064686154*^9}, {3.6853012867888823`*^9, 3.685301288572742*^9}, {
+   3.685301512744282*^9, 3.685301516525076*^9}, {3.685301578037545*^9, 
+   3.685301625982349*^9}, {3.685800838217587*^9, 3.68580099993221*^9}, {
+   3.685801538246249*^9, 3.685801628384241*^9}, {3.685801704243786*^9, 
+   3.685801716066085*^9}, {3.68580175909968*^9, 3.685801843921509*^9}, 
+   3.6858019863302813`*^9, {3.685802602638949*^9, 3.685802620701681*^9}, {
+   3.685802767793255*^9, 3.685802784545246*^9}, {3.6858823348121443`*^9, 
+   3.685882394995192*^9}, {3.685882432436009*^9, 3.6858824562012568`*^9}, {
+   3.685882497328678*^9, 3.6858825217975817`*^9}, {3.685882590725963*^9, 
+   3.685882715291346*^9}, 3.685895976128983*^9, {3.6866743784923077`*^9, 
+   3.6866743872911787`*^9}, {3.689123825632378*^9, 3.68912382647672*^9}, 
+   3.689130146176635*^9, 3.689131641062976*^9, {3.6891316800803432`*^9, 
+   3.689131766353895*^9}, {3.689135663253415*^9, 3.689135737054772*^9}, {
+   3.698515205837598*^9, 3.698515205842176*^9}, {3.698515294763363*^9, 
+   3.698515298760195*^9}, {3.7023474379257393`*^9, 3.7023474391473303`*^9}, {
+   3.702347538568976*^9, 3.702347598660161*^9}, 3.702347663921132*^9, {
+   3.702379113065181*^9, 3.70237911549366*^9}, {3.702379196447878*^9, 
+   3.702379226341044*^9}, {3.7023801118367987`*^9, 3.702380123842793*^9}, {
+   3.70238028850786*^9, 
+   3.702380326688483*^9}},ExpressionUUID->"60194301-93c0-43fe-8726-\
+032a692bc32e"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"DownloadFile", "[", "\n", "\t", 
+    RowBox[{"file_", ",", "\n", "\t", 
+     RowBox[{"givenName", ":", 
+      RowBox[{"(", 
+       RowBox[{"_String", "|", "Automatic"}], ")"}], ":", "Automatic"}], ",", 
+     "\n", "\t", 
+     RowBox[{"to", ":", 
+      RowBox[{
+       RowBox[{"File", "[", 
+        RowBox[{"_String", "?", "DirectoryQ"}], "]"}], "|", 
+       RowBox[{"_String", "?", "DirectoryQ"}]}]}], ",", "\n", "\t", 
+     RowBox[{"source", ":", 
+      RowBox[{"Except", "[", "_Rule", "]"}]}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"DownloadFile", "[", 
+    RowBox[{"file", ",", "givenName", ",", "to", ",", 
+     RowBox[{"\"\<DownloadFrom\>\"", "\[Rule]", "source"}], ",", "ops"}], 
+    "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.685881892380748*^9, 3.6858820013922157`*^9}, {
+   3.685882055309986*^9, 3.685882109792404*^9}, {3.685882154616987*^9, 
+   3.685882156710919*^9}, {3.685882195208709*^9, 3.685882231303459*^9}, 
+   3.685882311739338*^9, {3.6891301427007923`*^9, 3.689130143227363*^9}, {
+   3.6891317887072077`*^9, 3.689131807137598*^9}, 3.698515205846994*^9, {
+   3.698515300038024*^9, 3.698515300743012*^9}, 
+   3.702347433347678*^9},ExpressionUUID->"524899d1-86e6-4dae-8f24-\
+97409a6a9924"]
+}, Closed]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"End", "[", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"52c40ff1-3f19-4e7c-9381-\
+3385a5baee76"]
+}, Open  ]],
+
+Cell["", "SectionSeparator",ExpressionUUID->"4aaff95c-5287-4eb1-8505-\
+3703b4e84c81"]
+},
+WindowSize->{807, 855},
+WindowMargins->{{Automatic, 275}, {Automatic, 0}},
+FontFamily->Automatic,
+FrontEndVersion->"11.1 for Mac OS X x86 (32-bit, 64-bit Kernel) (April 27, \
+2017)",
+StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+

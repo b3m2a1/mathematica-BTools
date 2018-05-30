@@ -1,0 +1,990 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["DocGen", "CodeSection",
+ CellChangeTimes->{{3.728093100954116*^9, 
+  3.728093103294838*^9}},ExpressionUUID->"9c6d89c7-fd62-400d-bf75-\
+44e38d412e6f"],
+
+Cell["\[LeftCeiling]Layer on top of lower-level clumsier implementation\
+\[RightFloor]", "Text",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7280931047349577`*^9, 
+  3.728093113455908*^9}},ExpressionUUID->"0680896b-05a9-4cd8-a167-\
+381c81dcb8e3"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"$DocGenSettings", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Settings for documentation generation\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"DocGen", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Generates various types of documentation\>\""}], ";"}]}], "CodeInput",
+ 
+ CellChangeTimes->{{3.728093047016087*^9, 3.728093087872588*^9}, {
+  3.72809311989826*^9, 3.72809316981244*^9}, {3.7280932726415787`*^9, 
+  3.7280932776542187`*^9}, {3.728094187474597*^9, 
+  3.728094198195692*^9}},ExpressionUUID->"57ae94e1-130f-4fe8-be8a-\
+7eb58dfb813c"],
+
+Cell[BoxData[
+ RowBox[{"PackageScopeBlock", "[", "\n", "\t", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"$DocGenFunction", "::", "usage"}], "=", 
+    "\"\<The proper implementation function for most doc gens\>\""}], ";"}], 
+  "\n", "\t", "]"}]], "CodeInput",
+ CellChangeTimes->{{3.728924832561894*^9, 3.7289248499317913`*^9}, {
+  3.7289251042611847`*^9, 
+  3.7289251081925783`*^9}},ExpressionUUID->"795e8587-142b-48df-b030-\
+5c1a3f8ef904"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"a483afdd-1abe-4145-a406-\
+ff3ad3632570"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Settings\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.728094173287222*^9, 
+  3.728094174755205*^9}},ExpressionUUID->"ab03a908-8e09-4099-a576-\
+3e746659e3cf"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{"!", 
+     RowBox[{"TrueQ", "@", "$docGenInitialized"}]}], ",", "\n", "\t", 
+    RowBox[{
+     RowBox[{"$DocGenBuildPermanent", "=", "\n", "\t\t", "True"}], ";", "\n", 
+     "\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"FileExistsQ", "@", 
+        RowBox[{"PackageFilePath", "[", 
+         RowBox[{"\"\<Private\>\"", ",", " ", "\"\<DocGenConfig.wl\>\""}], 
+         "]"}]}], ",", "\n", "\t\t", 
+       RowBox[{"Get", "@", 
+        RowBox[{"PackageFilePath", "[", 
+         RowBox[{"\"\<Private\>\"", ",", " ", "\"\<DocGenConfig.wl\>\""}], 
+         "]"}]}]}], "\n", "\t\t", "]"}], ";", "\n", "\t", 
+     RowBox[{"$docGenInitialized", "=", "False"}]}]}], "\n", "\t", "]"}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7128397296441402`*^9, 3.712839731653998*^9}, {
+  3.712839769834874*^9, 3.7128398499361887`*^9}, {3.712840085814926*^9, 
+  3.712840088180331*^9}, {3.712840638604863*^9, 3.712840655869977*^9}, {
+  3.713581425733083*^9, 3.713581430313443*^9}, {3.72859383443755*^9, 
+  3.7285938412016687`*^9}, {3.730904922491687*^9, 
+  3.730904923793182*^9}},ExpressionUUID->"a73fff1b-5e3d-48e0-89e6-\
+68529a5774c9"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{"!", 
+     RowBox[{"AssociationQ", "@", "$DocGenSettings"}]}], ",", "\n", "\t", 
+    RowBox[{"$DocGenSettings", "=", "\n", "\t\t", 
+     RowBox[{"<|", "\n", "\t\t\t", 
+      RowBox[{"Default", "\[Rule]", "\n", "\t\t\t\t", 
+       RowBox[{"<|", "\n", "\t\t\t\t\t", 
+        RowBox[{
+         RowBox[{"\"\<RootDirectory\>\"", "->", "\n", "\t\t\t\t\t\t", 
+          RowBox[{"FileNameJoin", "@", 
+           RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{
+            "$UserBaseDirectory", ",", "\n", "\t\t\t\t\t\t\t", 
+             "\"\<ApplicationData\>\"", ",", "\n", "\t", "\t", "\t", 
+             "\t\t\t\t", "\"\<DocGen\>\""}], "\n", "\t\t\t\t\t\t\t", 
+            "}"}]}]}], ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"\"\<TemporaryDirectory\>\"", "->", "\n", "\t\t\t\t\t\t", 
+          RowBox[{"FileNameJoin", "@", 
+           RowBox[{"{", 
+            RowBox[{"$TemporaryDirectory", ",", " ", "\"\<DocGen_tmp\>\""}], 
+            "}"}]}]}], ",", "\n", "\t\t\t\t\t", 
+         RowBox[{
+         "\"\<PacletsExtension\>\"", "->", "\n", "\t\t\t\t\t\t", 
+          "\"\<Paclets\>\""}], ",", "\n", "\t\t\t\t\t", 
+         RowBox[{
+         "\"\<WebExtension\>\"", "->", "\n", "\t\t\t\t\t\t", "\"\<Web\>\""}], 
+         ",", "\n", "\t\t\t\t\t", 
+         RowBox[{
+         "\"\<BuildPermanent\>\"", "->", "\n", "\t\t\t\t\t\t", 
+          "$DocGenBuildPermanent"}], ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"\"\<NameColoring\>\"", "->", "\n", "\t\t\t\t\t\t", 
+          RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"\"\<BUILT-IN SYMBOL\>\"", "\[Rule]", 
+             InterpretationBox[
+              ButtonBox[
+               TooltipBox[
+                GraphicsBox[{
+                  {GrayLevel[0], RectangleBox[{0, 0}]}, 
+                  {GrayLevel[0], RectangleBox[{1, -1}]}, 
+                  {RGBColor[0.023529, 0.427451, 0.729412], 
+                   RectangleBox[{0, -1}, {2, 1}]}},
+                 AspectRatio->1,
+                 Frame->True,
+                 
+                 FrameStyle->RGBColor[
+                  0.015686000000000002`, 0.28496733333333335`, 
+                   0.48627466666666663`],
+                 FrameTicks->None,
+                 
+                 ImageSize->
+                  Dynamic[{
+                   Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}],
+                 PlotRangePadding->None],
+                "RGBColor[0.023529, 0.427451, 0.729412]"],
+               Appearance->None,
+               BaseStyle->{},
+               BaselinePosition->Baseline,
+               ButtonFunction:>With[{Typeset`box$ = EvaluationBox[]}, 
+                 If[
+                  Not[
+                   AbsoluteCurrentValue["Deployed"]], 
+                  SelectionMove[Typeset`box$, All, Expression]; 
+                  FrontEnd`Private`$ColorSelectorInitialAlpha = 1; 
+                  FrontEnd`Private`$ColorSelectorInitialColor = 
+                   RGBColor[0.023529, 0.427451, 0.729412]; 
+                  FrontEnd`Private`$ColorSelectorUseMakeBoxes = True; 
+                  MathLink`CallFrontEnd[
+                    FrontEnd`AttachCell[Typeset`box$, 
+                    FrontEndResource["RGBColorValueSelector"], {
+                    0, {Left, Bottom}}, {Left, Top}, 
+                    "ClosingActions" -> {
+                    "SelectionDeparture", "ParentChanged", 
+                    "EvaluatorQuit"}]]]],
+               DefaultBaseStyle->{},
+               Evaluator->Automatic,
+               Method->"Preemptive"],
+              RGBColor[0.023529, 0.427451, 0.729412],
+              Editable->False,
+              Selectable->False]}], ",", "\n", "\t", "\t", "\t", "\t", "\t", 
+            "\t", "\t", 
+            RowBox[{"\"\<GUIDE\>\"", "->", 
+             InterpretationBox[
+              ButtonBox[
+               TooltipBox[
+                GraphicsBox[{
+                  {GrayLevel[0], RectangleBox[{0, 0}]}, 
+                  {GrayLevel[0], RectangleBox[{1, -1}]}, 
+                  {RGBColor[0.8, 0.4, 0], RectangleBox[{0, -1}, {2, 1}]}},
+                 AspectRatio->1,
+                 Frame->True,
+                 
+                 FrameStyle->RGBColor[
+                  0.5333333333333334, 0.2666666666666667, 0.],
+                 FrameTicks->None,
+                 
+                 ImageSize->
+                  Dynamic[{
+                   Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}],
+                 PlotRangePadding->None],
+                "RGBColor[0.8, 0.4, 0]"],
+               Appearance->None,
+               BaseStyle->{},
+               BaselinePosition->Baseline,
+               ButtonFunction:>With[{Typeset`box$ = EvaluationBox[]}, 
+                 If[
+                  Not[
+                   AbsoluteCurrentValue["Deployed"]], 
+                  SelectionMove[Typeset`box$, All, Expression]; 
+                  FrontEnd`Private`$ColorSelectorInitialAlpha = 1; 
+                  FrontEnd`Private`$ColorSelectorInitialColor = 
+                   RGBColor[0.8, 0.4, 0]; 
+                  FrontEnd`Private`$ColorSelectorUseMakeBoxes = True; 
+                  MathLink`CallFrontEnd[
+                    FrontEnd`AttachCell[Typeset`box$, 
+                    FrontEndResource["RGBColorValueSelector"], {
+                    0, {Left, Bottom}}, {Left, Top}, 
+                    "ClosingActions" -> {
+                    "SelectionDeparture", "ParentChanged", 
+                    "EvaluatorQuit"}]]]],
+               DefaultBaseStyle->{},
+               Evaluator->Automatic,
+               Method->"Preemptive"],
+              RGBColor[0.8, 0.4, 0],
+              Editable->False,
+              Selectable->False]}], ",", "\n", "\t", "\t", "\t", "\t", "\t", 
+            "\t\t", 
+            RowBox[{"\"\<TUTORIAL\>\"", "->", 
+             InterpretationBox[
+              ButtonBox[
+               TooltipBox[
+                GraphicsBox[{
+                  {GrayLevel[0], RectangleBox[{0, 0}]}, 
+                  {GrayLevel[0], RectangleBox[{1, -1}]}, 
+                  {RGBColor[0.641154, 0.223011, 0.0623026], 
+                   RectangleBox[{0, -1}, {2, 1}]}},
+                 AspectRatio->1,
+                 Frame->True,
+                 
+                 FrameStyle->RGBColor[
+                  0.42743600000000004`, 0.148674, 0.04153506666666667],
+                 FrameTicks->None,
+                 
+                 ImageSize->
+                  Dynamic[{
+                   Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}],
+                 PlotRangePadding->None],
+                "RGBColor[0.641154, 0.223011, 0.0623026]"],
+               Appearance->None,
+               BaseStyle->{},
+               BaselinePosition->Baseline,
+               ButtonFunction:>With[{Typeset`box$ = EvaluationBox[]}, 
+                 If[
+                  Not[
+                   AbsoluteCurrentValue["Deployed"]], 
+                  SelectionMove[Typeset`box$, All, Expression]; 
+                  FrontEnd`Private`$ColorSelectorInitialAlpha = 1; 
+                  FrontEnd`Private`$ColorSelectorInitialColor = 
+                   RGBColor[0.641154, 0.223011, 0.0623026]; 
+                  FrontEnd`Private`$ColorSelectorUseMakeBoxes = True; 
+                  MathLink`CallFrontEnd[
+                    FrontEnd`AttachCell[Typeset`box$, 
+                    FrontEndResource["RGBColorValueSelector"], {
+                    0, {Left, Bottom}}, {Left, Top}, 
+                    "ClosingActions" -> {
+                    "SelectionDeparture", "ParentChanged", 
+                    "EvaluatorQuit"}]]]],
+               DefaultBaseStyle->{},
+               Evaluator->Automatic,
+               Method->"Preemptive"],
+              RGBColor[0.641154, 0.223011, 0.0623026],
+              Editable->False,
+              Selectable->False]}], ",", "\n", "\t", "\t", "\t", "\t", "\t", 
+            "\t\t", 
+            RowBox[{"\"\<MESSAGE\>\"", "->", 
+             InterpretationBox[
+              ButtonBox[
+               TooltipBox[
+                GraphicsBox[{
+                  {GrayLevel[0], RectangleBox[{0, 0}]}, 
+                  {GrayLevel[0], RectangleBox[{1, -1}]}, 
+                  {RGBColor[0.86667, 0.06667, 0.], 
+                   RectangleBox[{0, -1}, {2, 1}]}},
+                 AspectRatio->1,
+                 DefaultBaseStyle->"ColorSwatchGraphics",
+                 Frame->True,
+                 
+                 FrameStyle->RGBColor[
+                  0.5777800000000001, 0.04444666666666666, 0.],
+                 FrameTicks->None,
+                 
+                 ImageSize->
+                  Dynamic[{
+                   Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}],
+                 PlotRangePadding->None],
+                "RGBColor[0.86667, 0.06667, 0.]"],
+               Appearance->None,
+               BaseStyle->{},
+               BaselinePosition->Baseline,
+               ButtonFunction:>With[{Typeset`box$ = EvaluationBox[]}, 
+                 If[
+                  Not[
+                   AbsoluteCurrentValue["Deployed"]], 
+                  SelectionMove[Typeset`box$, All, Expression]; 
+                  FrontEnd`Private`$ColorSelectorInitialAlpha = 1; 
+                  FrontEnd`Private`$ColorSelectorInitialColor = 
+                   RGBColor[0.86667, 0.06667, 0.]; 
+                  FrontEnd`Private`$ColorSelectorUseMakeBoxes = True; 
+                  MathLink`CallFrontEnd[
+                    FrontEnd`AttachCell[Typeset`box$, 
+                    FrontEndResource["RGBColorValueSelector"], {
+                    0, {Left, Bottom}}, {Left, Top}, 
+                    "ClosingActions" -> {
+                    "SelectionDeparture", "ParentChanged", 
+                    "EvaluatorQuit"}]]]],
+               DefaultBaseStyle->{},
+               Evaluator->Automatic,
+               Method->"Preemptive"],
+              RGBColor[0.86667, 0.06667, 0.],
+              Editable->False,
+              Selectable->False]}], ",", "\n", "\t", "\t", "\t", "\t", "\t", 
+            "\t\t", 
+            RowBox[{"\"\<PACKAGE\>\"", "->", 
+             InterpretationBox[
+              ButtonBox[
+               TooltipBox[
+                GraphicsBox[{
+                  {GrayLevel[0], RectangleBox[{0, 0}]}, 
+                  {GrayLevel[0], RectangleBox[{1, -1}]}, 
+                  {Hue[0.6, 0.3, 0.7], RectangleBox[{0, -1}, {2, 1}]}},
+                 AspectRatio->1,
+                 Frame->True,
+                 
+                 FrameStyle->Hue[
+                  0.6, 0.30000000000000004`, 0.4666666666666667],
+                 FrameTicks->None,
+                 
+                 ImageSize->
+                  Dynamic[{
+                   Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}],
+                 PlotRangePadding->None],
+                "Hue[0.6, 0.3, 0.7]"],
+               Appearance->None,
+               BaseStyle->{},
+               BaselinePosition->Baseline,
+               ButtonFunction:>With[{Typeset`box$ = EvaluationBox[]}, 
+                 If[
+                  Not[
+                   AbsoluteCurrentValue["Deployed"]], 
+                  SelectionMove[Typeset`box$, All, Expression]; 
+                  FrontEnd`Private`$ColorSelectorInitialAlpha = 1; 
+                  FrontEnd`Private`$ColorSelectorInitialColor = 
+                   Hue[0.6, 0.3, 0.7]; 
+                  FrontEnd`Private`$ColorSelectorUseMakeBoxes = True; 
+                  MathLink`CallFrontEnd[
+                    FrontEnd`AttachCell[Typeset`box$, 
+                    FrontEndResource["HueColorValueSelector"], {
+                    0, {Left, Bottom}}, {Left, Top}, 
+                    "ClosingActions" -> {
+                    "SelectionDeparture", "ParentChanged", 
+                    "EvaluatorQuit"}]]]],
+               DefaultBaseStyle->{},
+               Evaluator->Automatic,
+               Method->"Preemptive"],
+              Hue[0.6, 0.3, 0.7],
+              Editable->False,
+              Selectable->False]}], ",", "\n", "\t", "\t", "\t", "\t", "\t", 
+            "\t\t", 
+            RowBox[{"\"\<IMPORT/EXPORT FORMAT\>\"", "\[Rule]", 
+             InterpretationBox[
+              ButtonBox[
+               TooltipBox[
+                GraphicsBox[{
+                  {GrayLevel[0], RectangleBox[{0, 0}]}, 
+                  {GrayLevel[0], RectangleBox[{1, -1}]}, 
+                  {GrayLevel[0.541176], RectangleBox[{0, -1}, {2, 1}]}},
+                 AspectRatio->1,
+                 DefaultBaseStyle->"ColorSwatchGraphics",
+                 Frame->True,
+                 FrameStyle->GrayLevel[0.360784],
+                 FrameTicks->None,
+                 
+                 ImageSize->
+                  Dynamic[{
+                   Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}],
+                 PlotRangePadding->None],
+                "GrayLevel[0.541176]"],
+               Appearance->None,
+               BaseStyle->{},
+               BaselinePosition->Baseline,
+               ButtonFunction:>With[{Typeset`box$ = EvaluationBox[]}, 
+                 If[
+                  Not[
+                   AbsoluteCurrentValue["Deployed"]], 
+                  SelectionMove[Typeset`box$, All, Expression]; 
+                  FrontEnd`Private`$ColorSelectorInitialAlpha = 1; 
+                  FrontEnd`Private`$ColorSelectorInitialColor = 
+                   GrayLevel[0.541176]; 
+                  FrontEnd`Private`$ColorSelectorUseMakeBoxes = True; 
+                  MathLink`CallFrontEnd[
+                    FrontEnd`AttachCell[Typeset`box$, 
+                    FrontEndResource["GrayLevelColorValueSelector"], {
+                    0, {Left, Bottom}}, {Left, Top}, 
+                    "ClosingActions" -> {
+                    "SelectionDeparture", "ParentChanged", "EvaluatorQuit"}]]]
+                 ],
+               DefaultBaseStyle->{},
+               Evaluator->Automatic,
+               Method->"Preemptive"],
+              GrayLevel[0.541176],
+              Editable->False,
+              Selectable->False]}], ",", "\n", "\t", "\t", "\t", "\t", "\t", 
+            "\t\t", 
+            RowBox[{
+             RowBox[{"_", "?", 
+              RowBox[{"(", 
+               RowBox[{"Evaluate", "@", 
+                RowBox[{"StringStartsQ", "[", "$PackageName", "]"}]}], 
+               ")"}]}], "\[Rule]", 
+             InterpretationBox[
+              ButtonBox[
+               TooltipBox[
+                GraphicsBox[{
+                  {GrayLevel[0], RectangleBox[{0, 0}]}, 
+                  {GrayLevel[0], RectangleBox[{1, -1}]}, 
+                  {Hue[0.5754716981132075, 0.654320987654321, 0.6328125], 
+                   RectangleBox[{0, -1}, {2, 1}]}},
+                 AspectRatio->1,
+                 DefaultBaseStyle->"ColorSwatchGraphics",
+                 Frame->True,
+                 
+                 FrameStyle->Hue[
+                  0.5754716981132075, 0.6543209876543209, 0.421875],
+                 FrameTicks->None,
+                 
+                 ImageSize->
+                  Dynamic[{
+                   Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}],
+                 PlotRangePadding->None],
+                "Hue[0.5754716981132075, 0.654320987654321, 0.6328125]"],
+               Appearance->None,
+               BaseStyle->{},
+               BaselinePosition->Baseline,
+               ButtonFunction:>With[{Typeset`box$ = EvaluationBox[]}, 
+                 If[
+                  Not[
+                   AbsoluteCurrentValue["Deployed"]], 
+                  SelectionMove[Typeset`box$, All, Expression]; 
+                  FrontEnd`Private`$ColorSelectorInitialAlpha = 1; 
+                  FrontEnd`Private`$ColorSelectorInitialColor = 
+                   Hue[0.5754716981132075, 0.654320987654321, 0.6328125]; 
+                  FrontEnd`Private`$ColorSelectorUseMakeBoxes = True; 
+                  MathLink`CallFrontEnd[
+                    FrontEnd`AttachCell[Typeset`box$, 
+                    FrontEndResource["HueColorValueSelector"], {
+                    0, {Left, Bottom}}, {Left, Top}, 
+                    "ClosingActions" -> {
+                    "SelectionDeparture", "ParentChanged", 
+                    "EvaluatorQuit"}]]]],
+               DefaultBaseStyle->{},
+               Evaluator->Automatic,
+               Method->"Preemptive"],
+              Hue[0.5754716981132075, 0.654320987654321, 0.6328125],
+              Editable->False,
+              Selectable->False]}], ",", "\n", "\t", "\t", "\t", "\t", "\t", 
+            "\t\t", 
+            RowBox[{
+            "\"\<Global\>\"", ":>", "\n", "\t", "\t", "\t", "\t", "\t", 
+             "\t\t\t", 
+             RowBox[{
+             "CurrentValue", "[", "\n", "\t", "\t", "\t", "\t", "\t", 
+              "\t\t\t\t", 
+              RowBox[{
+              "$FrontEndSession", ",", "\n", "\t", "\t", "\t", "\t", "\t", 
+               "\t\t\t\t", 
+               RowBox[{"{", 
+                RowBox[{
+                "AutoStyleOptions", ",", " ", "\"\<UndefinedSymbolStyle\>\"", 
+                 ",", " ", "FontColor"}], "}"}], ",", "\n", "\t", "\t", "\t", 
+               "\t", "\t", "\t\t\t\t", 
+               InterpretationBox[
+                ButtonBox[
+                 TooltipBox[
+                  GraphicsBox[{
+                    {GrayLevel[0], RectangleBox[{0, 0}]}, 
+                    {GrayLevel[0], RectangleBox[{1, -1}]}, 
+                    {RGBColor[0., 0.173, 0.765], 
+                    RectangleBox[{0, -1}, {2, 1}]}},
+                   AspectRatio->1,
+                   DefaultBaseStyle->"ColorSwatchGraphics",
+                   Frame->True,
+                   FrameStyle->RGBColor[0., 0.11533333333333333`, 0.51],
+                   FrameTicks->None,
+                   
+                   ImageSize->
+                    Dynamic[{
+                    Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}],
+                   PlotRangePadding->None],
+                  "RGBColor[0., 0.173, 0.765]"],
+                 Appearance->None,
+                 BaseStyle->{},
+                 BaselinePosition->Baseline,
+                 ButtonFunction:>With[{Typeset`box$ = EvaluationBox[]}, 
+                   If[
+                    Not[
+                    AbsoluteCurrentValue["Deployed"]], 
+                    SelectionMove[Typeset`box$, All, Expression]; 
+                    FrontEnd`Private`$ColorSelectorInitialAlpha = 1; 
+                    FrontEnd`Private`$ColorSelectorInitialColor = 
+                    RGBColor[0., 0.173, 0.765]; 
+                    FrontEnd`Private`$ColorSelectorUseMakeBoxes = True; 
+                    MathLink`CallFrontEnd[
+                    FrontEnd`AttachCell[Typeset`box$, 
+                    FrontEndResource["RGBColorValueSelector"], {
+                    0, {Left, Bottom}}, {Left, Top}, 
+                    "ClosingActions" -> {
+                    "SelectionDeparture", "ParentChanged", 
+                    "EvaluatorQuit"}]]]],
+                 DefaultBaseStyle->{},
+                 Evaluator->Automatic,
+                 Method->"Preemptive"],
+                RGBColor[0., 0.173, 0.765],
+                Editable->False,
+                Selectable->False]}], "\n", "\t\t\t\t\t\t\t\t\t", "]"}]}]}], 
+           "\n", "\t\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t\t\t\t\t", 
+         RowBox[{
+         "\"\<CurrentPaclet\>\"", "->", "\n", "\t\t\t\t\t\t", "None"}], ",", 
+         "\n", "\t\t\t\t\t", 
+         RowBox[{"\"\<LinkStyle\>\"", "->", "\n", "\t\t\t\t\t\t", 
+          RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{
+            "\"\<System\>\"", "\[Rule]", "\n", "\t", "\t", "\t", "\t", "\t", 
+             "\t\t\t", "\"\<RefLink\>\""}], ",", "\n", "\t", "\t", "\t", "\t",
+             "\t", "\t\t", 
+            RowBox[{
+            "\"\<Global\>\"", "->", "\n", "\t", "\t", "\t", "\t", "\t", 
+             "\t\t\t", "\"\<RefLink\>\""}], ",", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{
+            "_", "\[Rule]", "\n", "\t\t\t\t\t\t\t\t", 
+             "\"\<PackageLink\>\""}]}], "\n", "\t\t\t\t\t\t\t", "}"}]}], ",", 
+         "\n", "\t\t\t\t\t", 
+         RowBox[{"\"\<LinkBase\>\"", "->", "\n", "\t\t\t\t\t\t", 
+          RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+           RowBox[{
+           "\"\<System\>\"", "->", "\n", "\t\t\t\t\t\t\t\t", "Nothing"}], 
+           "\n", "\t\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"\"\<Footer\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
+         "\t\t\t\t\t", 
+         RowBox[{"\"\<FrontEnd\>\"", "\[Rule]", "None"}]}], "\n", 
+        "\t\t\t\t\t", "|>"}]}], "\n", "\t\t\t", "|>"}]}]}], "\n", "\t", "]"}],
+   ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7280932894328413`*^9, 3.728093340615505*^9}, {
+  3.728093432814344*^9, 3.728093447354056*^9}, {3.728093691847125*^9, 
+  3.728093692790683*^9}, {3.728093724735408*^9, 3.728093744022546*^9}, {
+  3.728093858578884*^9, 3.7280938736512938`*^9}, {3.728093919110886*^9, 
+  3.7280939319111557`*^9}, {3.7280939955072412`*^9, 3.728094002664658*^9}, {
+  3.728094141318901*^9, 3.728094147264741*^9}, {3.7308548039998302`*^9, 
+  3.73085481198164*^9}, {3.730904096280064*^9, 3.730904157848565*^9}, {
+  3.730904331383223*^9, 3.73090443728563*^9}, {3.7309086329113417`*^9, 
+  3.7309086362023077`*^9}},ExpressionUUID->"49961e55-cc5c-4224-9a3e-\
+36d3f4dc0698"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]DocGen\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.728094173287222*^9, 
+  3.728094183888317*^9}},ExpressionUUID->"ac193136-69c0-43a0-9368-\
+4549eb75c1bc"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$DocGenMethodRouter\[RightFloor]", "CodeSubsubsubsection",
+ 
+ Evaluatable->True,ExpressionUUID->"891e8408-bdc5-46e7-a5f5-87bc54120630"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$DocGenMethodRouter", "=", "\n", "\t", 
+   RowBox[{"<|", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"\"\<SymbolPage\>\"", "->", "\n", "\t\t\t", 
+      RowBox[{"<|", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{
+        "Automatic", ":>", "\n", "\t\t\t\t\t", "DocGenGenerateSymbolPages"}], 
+        ",", "\n", "\t\t\t\t", 
+        RowBox[{
+        "\"\<Save\>\"", ":>", "\n", "\t\t\t\t\t", "DocGenSaveSymbolPages"}], 
+        ",", "\n", "\t\t\t\t", 
+        RowBox[{
+        "\"\<Template\>\"", ":>", "\n", "\t\t\t\t\t", "SymbolPageTemplate"}], 
+        ",", "\n", "\t\t\t\t", 
+        RowBox[{
+        "\"\<Notebook\>\"", ":>", "\n", "\t\t\t\t\t", 
+         "SymbolPageNotebook"}]}], "\n", "\t\t\t\t", "|>"}]}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<Guide\>\"", "->", "\n", "\t\t\t", 
+      RowBox[{"<|", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{
+        "Automatic", ":>", "\n", "\t\t\t\t\t", "DocGenGenerateGuide"}], ",", 
+        "\n", "\t\t\t\t", 
+        RowBox[{"\"\<Save\>\"", ":>", "\n", "\t\t\t\t\t", "DocGenSaveGuide"}],
+         ",", "\n", "\t\t\t\t", 
+        RowBox[{
+        "\"\<Template\>\"", ":>", "\n", "\t\t\t\t\t", "GuideTemplate"}], ",", 
+        "\n", "\t\t\t\t", 
+        RowBox[{
+        "\"\<Notebook\>\"", ":>", "\n", "\t\t\t\t\t", "GuideNotebook"}]}], 
+       "\n", "\t\t\t\t", "|>"}]}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<MultiPackageOverview\>\"", "->", "\n", "\t\t\t", 
+      RowBox[{"<|", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{
+        "Automatic", ":>", "\n", "\t\t\t\t\t", 
+         "GenerateMultiPackageOverview"}], ",", "\n", "\t\t\t\t", 
+        RowBox[{
+        "\"\<Save\>\"", ":>", "\n", "\t\t\t\t\t", 
+         "SaveMultiPackageOverview"}], ",", "\n", "\t\t\t\t", 
+        RowBox[{
+        "\"\<Notebook\>\"", ":>", "\n", "\t\t\t\t\t", 
+         "MultiPackageOverviewNotebook"}]}], "\n", "\t\t\t\t", "|>"}]}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"\"\<Tutorial\>\"", "->", "\n", "\t\t\t", 
+      RowBox[{"<|", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{
+        "Automatic", ":>", "\n", "\t\t\t\t\t", "DocGenGenerateTutorial"}], 
+        ",", "\n", "\t\t\t\t", 
+        RowBox[{
+        "\"\<Save\>\"", ":>", "\n", "\t\t\t\t\t", "DocGenGenerateTutorial"}], 
+        ",", "\n", "\t\t\t\t", 
+        RowBox[{
+        "\"\<Template\>\"", ":>", "\n", "\t\t\t\t\t", "TutorialTemplate"}], 
+        ",", "\n", "\t\t\t\t", 
+        RowBox[{
+        "\"\<Notebook\>\"", ":>", "\n", "\t\t\t\t\t", "TutorialNotebook"}]}], 
+       "\n", "\t\t\t\t", "|>"}]}], ",", "\n", "\t\t", 
+     RowBox[{
+     "\"\<Paclet\>\"", ":>", "\n", "\t\t\t", "DocGenGenerateDocumentation"}], 
+     ",", "\n", "\t\t", 
+     RowBox[{"\"\<HTML\>\"", ":>", "\n", "\t\t\t", 
+      RowBox[{"<|", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"Automatic", ":>", "DocGenGenerateHTMLDocumentation"}], ",", 
+        "\n", "\t\t\t\t", 
+        RowBox[{"\"\<Deploy\>\"", ":>", "DocGenHTMLCloudDeploy"}]}], "\n", 
+       "\t\t\t\t", "|>"}]}], ",", "\n", "\t\t", 
+     RowBox[{
+     "\"\<Index\>\"", ":>", "\n", "\t\t\t", "DocGenIndexDocumentation"}]}], 
+    "\n", "\t\t", "|>"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7280933584932404`*^9, 3.7280933770773993`*^9}, {
+   3.728093769785761*^9, 3.728093780629212*^9}, {3.7280942032203503`*^9, 
+   3.728094396988954*^9}, {3.728094476982526*^9, 3.728094626196003*^9}, {
+   3.728094691220998*^9, 3.728094786994048*^9}, {3.72809483450976*^9, 
+   3.7280951294117527`*^9}, {3.728095174844173*^9, 3.728095313288114*^9}, {
+   3.7280953514172707`*^9, 3.728095386168991*^9}, {3.728095499229579*^9, 
+   3.728095502678175*^9}, {3.7280955635816*^9, 3.728095573793127*^9}, {
+   3.728095611922493*^9, 3.7280956173679333`*^9}, {3.7280956994657784`*^9, 
+   3.728095847469552*^9}, {3.7280963177461557`*^9, 3.728096535590355*^9}, {
+   3.728920780374975*^9, 3.728920810230753*^9}, {3.728922077788006*^9, 
+   3.7289220796079073`*^9}, 3.728925122534658*^9, {3.730646041289831*^9, 
+   3.730646062866852*^9}, 3.730648669202209*^9, {3.730648711384398*^9, 
+   3.730648721889882*^9}, {3.730649067086384*^9, 3.7306490981334047`*^9}, {
+   3.730669079395482*^9, 
+   3.730669091608375*^9}},ExpressionUUID->"5f4d59ae-3bf2-48da-ab80-\
+f49cb16d50d2"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]docGenDefault\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"c46a3d52-14a9-4202-963f-5f18b53ae472"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"docGenDefault", "[", 
+    RowBox[{
+    "docObj_", ",", " ", "type_", ",", " ", "fun_", ",", " ", "meth_", ",", 
+     " ", "methOps_", ",", " ", "ops___"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"fun", "[", 
+    RowBox[{"docObj", ",", " ", 
+     RowBox[{"Evaluate", "@", 
+      RowBox[{"FilterRules", "[", 
+       RowBox[{
+        RowBox[{"{", "ops", "}"}], ",", " ", 
+        RowBox[{"Options", "@", "fun"}]}], "]"}]}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{"docGenDefault", "~", "SetAttributes", "~", 
+  "HoldFirst"}]}], "CodeInput",
+ CellChangeTimes->{{3.728924651292453*^9, 3.728924695483219*^9}, {
+   3.72892473199193*^9, 3.728924794899232*^9}, {3.7289251301390963`*^9, 
+   3.728925148488038*^9}, {3.728925196278171*^9, 3.728925199281424*^9}, 
+   3.730645353722147*^9, 3.730646447987097*^9, {3.730647073822497*^9, 
+   3.730647075027094*^9}},ExpressionUUID->"41dbabe8-fb1e-4145-8eb6-\
+0d70a6255287"],
+
+Cell[BoxData[
+ RowBox[{"$DocGenFunction", "=", "\n", "\t", "docGenDefault"}]], "CodeInput",
+ CellChangeTimes->{{3.7289246261866302`*^9, 3.728924712834902*^9}, {
+  3.728924820679443*^9, 
+  3.7289248246160507`*^9}},ExpressionUUID->"c974efa2-c0f7-47d7-a727-\
+1e3d25e34d63"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]DocGen\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"cfe27167-12de-41b8-bd94-4f0d72d58ab1"],
+
+Cell[BoxData[{
+ RowBox[{"DocGen", "//", "Clear"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "DocGen", "]"}], "=", "\n", "\t", 
+   RowBox[{"{", 
+    RowBox[{"Method", "\[Rule]", "Automatic"}], "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"DocGen", "::", "badmeth"}], "=", "\n", "\t", 
+   "\"\<Method `` for documentation type `` unknown. Acceptable methods are \
+``.\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"DocGen", "::", "nogen"}], "=", "\n", "\t", 
+   "\"\<Couldn't generate documentation of type `` for object ``\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"DocGen", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"type", ":", 
+      RowBox[{
+       RowBox[{"_String", "?", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"KeyExistsQ", "[", 
+           RowBox[{"$DocGenMethodRouter", ",", " ", "#"}], "]"}], "&"}], 
+         ")"}]}], "|", "Automatic"}], ":", "Automatic"}], ",", "\n", "\t", 
+     RowBox[{"docObj", ":", "\n", "\t\t", 
+      RowBox[{"Except", "[", "\n", "\t\t\t", 
+       RowBox[{
+       "\"\<Function\>\"", "|", "\"\<Options\>\"", "|", "\"\<Methods\>\"", 
+        "|", "\n", "\t\t\t", "_Rule", "|", "_RuleDelayed", "|", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"_Rule", "|", "_RuleDelayed"}], ")"}], ",", " ", "___"}], 
+         "}"}]}], "\n", "\t\t\t", "]"}]}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"Module", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"typ", "=", "\n", "\t\t\t\t", 
+        RowBox[{"Replace", "[", 
+         RowBox[{"type", ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"Automatic", "\[RuleDelayed]", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{"MatchQ", "[", 
+              RowBox[{
+               RowBox[{"Unevaluated", "[", "docObj", "]"}], ",", " ", 
+               RowBox[{"{", "__String", "}"}]}], "]"}], ",", "\n", 
+             "\t\t\t\t\t\t\t", "\"\<Paclet\>\"", ",", "\n", "\t\t\t\t\t\t\t", 
+             "\"\<SymbolPage\>\""}], "\n", "\t\t\t\t\t\t\t", "]"}]}]}], "\n", 
+         "\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"meth", "=", 
+        RowBox[{"Lookup", "[", 
+         RowBox[{
+          RowBox[{"{", "ops", "}"}], ",", " ", "Method", ",", " ", 
+          "Automatic"}], "]"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"methOps", "=", 
+        RowBox[{"{", "}"}]}], ",", "\n", "\t\t\t", "fun", ",", "\n", "\t\t\t",
+        "res"}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"ListQ", "@", "meth"}], ",", " ", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"methOps", "=", 
+          RowBox[{"Select", "[", 
+           RowBox[{"meth", ",", " ", "OptionQ"}], "]"}]}], ";", "\n", 
+         "\t\t\t", 
+         RowBox[{"meth", "=", 
+          RowBox[{"SelectFirst", "[", 
+           RowBox[{"meth", ",", " ", 
+            RowBox[{"Not", "@*", "OptionQ"}]}], "]"}]}]}]}], "\n", "\t\t\t", 
+       "]"}], ";", "\n", "\t\t", 
+      RowBox[{"fun", "=", 
+       RowBox[{"$DocGenMethodRouter", "[", "typ", "]"}]}], ";", "\n", "\t\t", 
+      
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"AssociationQ", "@", "fun"}], ",", "\n", "\t\t\t", 
+        RowBox[{"fun", "=", 
+         RowBox[{"fun", "[", "meth", "]"}]}]}], "\n", "\t\t\t", "]"}], ";", 
+      "\n", "\t\t", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"MissingQ", "@", "fun"}], ",", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"Message", "[", 
+          RowBox[{
+           RowBox[{"DocGen", "::", "badmeth"}], ",", "\n", "\t\t\t\t", "meth",
+            ",", "\n", "\t\t\t\t", "typ", ",", "\n", "\t\t\t\t", 
+           RowBox[{"Keys", "@", 
+            RowBox[{"$DocGenMethodRouter", "[", "typ", "]"}]}]}], "\n", 
+          "\t\t\t\t", "]"}], ";", "\n", "\t\t\t", 
+         RowBox[{"res", "=", "None"}]}], ",", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"res", "=", 
+          RowBox[{"$DocGenFunction", "[", 
+           RowBox[{
+           "docObj", ",", " ", "typ", ",", " ", "fun", ",", " ", "meth", ",", 
+            " ", "methOps", ",", " ", "ops"}], "]"}]}], ";", "\n", "\t\t\t", 
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Head", "[", "res", "]"}], "===", "fun"}], ",", " ", "\n",
+            "\t", "\t\t\t", 
+           RowBox[{"Message", "[", 
+            RowBox[{
+             RowBox[{"DocGen", "::", "nogen"}], ",", "\n", "\t\t\t\t\t", 
+             "typ", ",", "\n", "\t\t\t\t\t", 
+             RowBox[{"HoldForm", "[", "docObj", "]"}]}], "\n", "\t", 
+            "\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "]"}], ";"}]}], "\n", 
+       "\t\t\t", "]"}], ";", "\n", "\t\t", 
+      RowBox[{"res", "/;", 
+       RowBox[{
+        RowBox[{"res", "=!=", "None"}], "&&", 
+        RowBox[{
+         RowBox[{"Head", "[", "res", "]"}], "=!=", "fun"}]}]}]}]}], "\n", 
+    "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"DocGen", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"type", ":", 
+      RowBox[{"_String", "?", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"KeyExistsQ", "[", 
+          RowBox[{"$DocGenMethodRouter", ",", " ", "#"}], "]"}], "&"}], 
+        ")"}]}]}], ",", "\n", "\t", "\"\<Function\>\"", ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"Module", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"meth", "=", 
+        RowBox[{"Lookup", "[", 
+         RowBox[{
+          RowBox[{"{", "ops", "}"}], ",", " ", "Method", ",", " ", 
+          "Automatic"}], "]"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"methOps", "=", 
+        RowBox[{"{", "}"}]}], ",", "\n", "\t\t\t", "fun", ",", "\n", "\t\t\t",
+        "res"}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"ListQ", "@", "meth"}], ",", " ", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"methOps", "=", 
+          RowBox[{"Select", "[", 
+           RowBox[{"meth", ",", " ", "OptionQ"}], "]"}]}], ";", "\n", 
+         "\t\t\t", 
+         RowBox[{"meth", "=", 
+          RowBox[{"SelectFirst", "[", 
+           RowBox[{"meth", ",", " ", 
+            RowBox[{"Not", "@*", "OptionQ"}]}], "]"}]}]}]}], "\n", "\t\t\t", 
+       "]"}], ";", "\n", "\t\t", 
+      RowBox[{"fun", "=", 
+       RowBox[{"$DocGenMethodRouter", "[", "type", "]"}]}], ";", "\n", "\t\t", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"AssociationQ", "@", "fun"}], ",", "\n", "\t\t\t", 
+        RowBox[{"fun", "=", 
+         RowBox[{"fun", "[", "meth", "]"}]}]}], "\n", "\t\t\t", "]"}], ";", 
+      "\n", "\t\t", "fun"}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"DocGen", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"type", ":", 
+      RowBox[{"_String", "?", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"KeyExistsQ", "[", 
+          RowBox[{"$DocGenMethodRouter", ",", " ", "#"}], "]"}], "&"}], 
+        ")"}]}]}], ",", "\n", "\t", "\"\<Methods\>\"", ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"Module", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", "fun", "\n", "\t\t\t", "}"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{
+      RowBox[{"fun", "=", 
+       RowBox[{"$DocGenMethodRouter", "[", "type", "]"}]}], ";", "\n", "\t\t", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"AssociationQ", "@", "fun"}], ",", "\n", "\t\t\t", 
+        RowBox[{"Keys", "@", "fun"}], ",", "\n", "\t\t\t", "Automatic"}], 
+       "\n", "\t\t\t", "]"}]}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"DocGen", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"type", ":", 
+      RowBox[{"_String", "?", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"KeyExistsQ", "[", 
+          RowBox[{"$DocGenMethodRouter", ",", " ", "#"}], "]"}], "&"}], 
+        ")"}]}]}], ",", "\n", "\t", "\"\<Options\>\"", ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"Options", "@", 
+    RowBox[{"DocGen", "[", 
+     RowBox[{"type", ",", " ", "\"\<Function\>\""}], "]"}]}]}], ";"}], "\n", 
+ RowBox[{"DocGen", "~", "SetAttributes", "~", "HoldAll"}]}], "CodeInput",
+ CellChangeTimes->{{3.7280958528428926`*^9, 3.7280958962141848`*^9}, {
+   3.728096548516302*^9, 3.728096983752798*^9}, {3.7281013129529657`*^9, 
+   3.728101379762391*^9}, {3.728101410942058*^9, 3.728101414356106*^9}, {
+   3.728101484624268*^9, 3.728101499736762*^9}, {3.728150603087816*^9, 
+   3.7281506215601597`*^9}, {3.728159762005135*^9, 3.728159775390707*^9}, {
+   3.72815982690769*^9, 3.728159888330873*^9}, {3.728159920365569*^9, 
+   3.72815995414918*^9}, {3.728924403283744*^9, 3.728924470857273*^9}, {
+   3.7289245241277*^9, 3.728924602267008*^9}, 3.728924728226733*^9, {
+   3.728925136101502*^9, 3.7289251824166803`*^9}, {3.7306418734414597`*^9, 
+   3.73064198771428*^9}, {3.73064202071973*^9, 3.730642037659482*^9}, {
+   3.730649435654778*^9, 3.730649458825819*^9}, {3.7306512231491747`*^9, 
+   3.7306512960199413`*^9}, {3.7306513445808773`*^9, 
+   3.730651357811081*^9}},ExpressionUUID->"e2836bab-a71d-4889-9605-\
+efea3ce1c38f"],
+
+Cell[BoxData[
+ RowBox[{"PackageAddAutocompletions", "[", "\n", "\t", 
+  RowBox[{"\"\<DocGen\>\"", ",", "\n", "\t", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Keys", "@", "$DocGenMethodRouter"}], ",", " ", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\<Function\>\"", ",", " ", "\"\<Options\>\"", ",", " ", 
+       "\"\<Methods\>\""}], "}"}]}], "}"}]}], "\n", "\t", "]"}]], "CodeInput",
+ 
+ CellChangeTimes->{{3.728095401192198*^9, 3.72809541991149*^9}, {
+  3.730641990737522*^9, 
+  3.730642004065667*^9}},ExpressionUUID->"57a3c319-9837-448d-b1bc-\
+f75c90ce2f96"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"End", "[", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"92a8597c-abf7-493f-b1e9-\
+03ec7a36135a"]
+}, Open  ]],
+
+Cell["", "SectionSeparator",ExpressionUUID->"d57c0eb3-d960-435d-986b-\
+601a531f8780"]
+},
+WindowSize->{808, 755},
+WindowMargins->{{Automatic, 287}, {15, Automatic}},
+FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
+2018)",
+StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+
