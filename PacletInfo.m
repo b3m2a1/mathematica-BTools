@@ -1,6 +1,6 @@
 Paclet[
   Name -> "BTools",
-  Version -> "2.1.12",
+  Version -> "2.1.13",
   Creator -> "b3m2a1@gmail.com",
   URL -> "https://github.com/b3m2a1/mathematica-BTools",
   Description -> "A suite of development tools",
@@ -9,9 +9,7 @@ Paclet[
     	{
      		"Kernel",
      		"Root" -> ".",
-     		"Context" -> {"BTools`"},
-     		Root -> ".",
-     		Context -> {"BTools`"}
+     		"Context" -> {"BTools`"}
      	},
     	{
      		"Resource",
