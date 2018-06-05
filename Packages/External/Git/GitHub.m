@@ -14,8 +14,12 @@ $GitHubPassword::usage=
 FormatGitHubPath::usage="";
 GitHubPath::usage=
 	"Represents a github path";
+GitHubPathParse::usage=
+	"Parses a GitHubPath from a string";
 GitHubRepoQ::usage=
 	"Returns if the path could be a github repo";
+GitHubReleaseQ::usage=
+	"Returns if the path could be a GitHub release";
 GitHubPathQ::usage="";
 GitHubCreate::usage="";
 GitHubDelete::usage="";
@@ -279,7 +283,7 @@ FormatGitHubPath[path___String,ops:OptionsPattern[]]:=
 				Replace[OptionValue@"Username",
 					Automatic:>$GitHubUsername
 					],
-				If[Length@{path}>1,
+				If[Length@{path}>1&&!GitHubReleaseQ@{path},
 					Sequence@@Flatten@
 						Insert[{path}, 
 							{OptionValue["Tree"], OptionValue["Branch"]}, 
@@ -311,17 +315,32 @@ GitHubPath[
 				URLParse[#, "Domain"]===None&&
 				Length@URLParse[#, "Path"]>1
 			)||
-		URLParse[#, "Scheme"]==="github"&
+		URLParse[#, "Scheme"]==="github"||
+		URLParse[#, "Scheme"]==="github-release"&
 		),
 	o:OptionsPattern[]
 	]:=
 	GitHubPathParse[
-		If[URLParse[s, "Scheme"]===None&&URLParse[s, "Domain"]===None,
-			"github:"<>s,
-			s
-			],
-		o
-		];
+		Which[
+			URLParse[s, "Scheme"]==="github-release",
+				URLBuild@<|
+					"Scheme"->"github",
+					"Path"->
+						Replace[URLParse[s, "Path"],
+							{
+								r:{___, "releases", "latest"}:>r,
+								{a___, "releases"}:>{a, "latest"},
+								{a___}:>{a, "releases", "latest"}
+								}
+							]
+					|>,
+		URLParse[s, "Scheme"]==="github",
+			s,
+		True,
+			"github:"<>s
+		],
+	o
+	];
 GitHubPath[URL[s_String], ops:OptionsPattern[]]:=GitHubPath[s, ops];
 GitHubPath[GitHubPath[p___String, o___?OptionQ], op:OptionsPattern[]]:=
 	GitHubPath[p, Sequence@@DeleteDuplicatesBy[Flatten@{op, o}, First]]
@@ -348,7 +367,13 @@ Format[g:GitHubPath[path___String,ops:OptionsPattern[]]]:=
 			g,
 			None,
 			{
-				BoxForm`MakeSummaryItem[{"Path: ", URLBuild[{path}]}, StandardForm],
+				BoxForm`MakeSummaryItem[
+					{
+						"Path: ", 
+						If[GitHubReleaseQ@{path}, {path}[[1]], URLBuild[{path}]]
+						},
+					StandardForm
+					],
 				BoxForm`MakeSummaryItem[
 					{"URL: ", 
 						Hyperlink[FormatGitHubPath@@g]
@@ -361,7 +386,10 @@ Format[g:GitHubPath[path___String,ops:OptionsPattern[]]]:=
 						},
 					StandardForm
 					]&,
-				Flatten[Normal/@{ops}]
+				Prepend[
+					Flatten[Normal/@{ops}],
+					"Release"->GitHubReleaseQ@{path}
+					]
 				],
 			StandardForm
 			]
@@ -376,7 +404,7 @@ GitHubPathQ[path:_String|_URL]:=
 	With[{p=URLParse[path]},
 		(
 			(MatchQ[p["Scheme"],"http"|"https"|None]&&p["Domain"]==="github.com")||
-			p["Scheme"]==="github"&&p["Domain"]===None
+			(MatchQ[p["Scheme"], ("github"|"github-release")]&&p["Domain"]===None)
 			)
 			&&
 		Length@p["Path"]>0
@@ -434,9 +462,8 @@ iGitHubRepoQ[path:_String|_URL]:=
 	GitHubPathQ[path]&&
 	With[{p=URLParse[path]},
 		!MatchQ[p["Path"],
-			{"repos",__}|
-			{__,"releases"|"deployments"}|
-			{__,"releases"|"deployments","tag",___}
+			{"repos", __}|
+			{__,"releases", ___}
 			]
 		];
 GitHubRepoQ[p:GitHubPath[___String,___?OptionQ]]:=
@@ -451,20 +478,26 @@ GitHubRepoQ[_]:=False
 
 
 
-GitHubReleaseQ[GitHubPath[p__String,___?OptionQ]]:=
+GitHubReleaseQ//Clear
+
+
+GitHubReleaseQ[{p__String}]:=
 	MatchQ[{p},
-		{__,"releases"}|
-		{__,"releases","tag",_}
+		{__, "releases", "latest"}|
+		{__, "releases", "tag", _}
 		];
+GitHubReleaseQ[GitHubPath[p__String,___?OptionQ]]:=
+	GitHubReleaseQ[{p}];
 GitHubReleaseQ[path:_String|_URL]:=
 	If[GitHubPathQ@path,
-		Replace[GitHubPathParse[path],{
+		Replace[GitHubPath[path],{
 			g_GitHubPath:>
 				GitHubReleaseQ@g,
 			_->False
 			}],
 		False
 		];
+GitHubReleaseQ[___]:=False;
 
 
 (* ::Subsection:: *)
@@ -2098,30 +2131,39 @@ GitHubDeleteFile[
 
 
 
+GitHubReleases//Clear
+
+
 GitHubReleases[
 	repo:(_GitHubPath|_String)?GitHubRepoQ,
-	identifier:_String|_Integer|None:None]:=
+	identifier:_String|_Integer|None:None
+	]:=
 	GitHubReposAPI[
 		repo,
 		Switch[identifier,
 			None,
 				"releases",
 			_Integer|_?(StringMatchQ[ToLowerCase@#,"latest"]&),
-				{"releases",ToLowerCase@ToString@identifier},
+				{"releases", ToLowerCase@ToString@identifier},
 			_,
-				{"releases","tags",ToLowerCase@ToString@identifier}
+				{"releases", "tags", ToLowerCase@ToString@identifier}
 			]
 		];
 GitHubReleases[
-	repo:(_GitHubPath|_String)?GitHubReleaseQ,
-	identifier:_String|_Integer|None:None
+	repo:(_GitHubPath|_String)?(GitHubReleaseQ),
+	identifier:_:None
 	]:=
-	Replace[Replace[repo,s_String:>GitHubPathParse[s]],{
-		GitHubPath[s__,"releases","tag",tag_String,o__?OptionQ]:>
-			GitHubReleases[GitHubPath[s,o],tag],
-		GitHubPath[s__,"releases",o__?OptionQ]:>
-			GitHubReleases[GitHubPath[s,o],identifier]
-		}]
+	Replace[
+		Replace[repo, s_String:>GitHubPath[s]],
+		{
+			GitHubPath[s__, "releases", "tag", tag_String,o__?OptionQ]:>
+				GitHubReleases[GitHubPath[s, o], tag],
+			GitHubPath[s__, "releases", "latest", o__?OptionQ]:>
+				GitHubReleases[GitHubPath[s, o], "latest"],
+			GitHubPath[s__, "releases", o__?OptionQ]:>
+				GitHubReleases[GitHubPath[s, o], identifier]
+			}
+		]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2686,14 +2728,18 @@ GitHubClone[
 		];
 GitHubClone[
 	repo:(_String|_GitHubPath)?GitHubReleaseQ,
-	dir:(_String?(DirectoryQ@*DirectoryName))|Automatic:Automatic
+	dir:(_String?(DirectoryQ@*DirectoryName))|Automatic:Automatic,
+	ops:OptionsPattern[]
 	]:=
-	With[{release=
-		GitHubImport["Releases",
-			repo,
-			"latest"
-			]["Content"]
-		},
+	With[
+		{
+			release=
+				GitHub[
+					"Releases",
+					GitHubPath[repo],
+					"ImportedResult"
+					]["Content"]
+			},
 		If[AssociationQ@release,
 			If[Length@release["Assets"]>0,
 				With[{url=
@@ -2805,6 +2851,9 @@ GitHubPush[
 
 
 
+GitHubImport//Clear
+
+
 GitHubImport[a_Association]:=
 	Association@
 		KeyValueMap[
@@ -2860,7 +2909,7 @@ GitHubImport[e_]:=
 
 
 GitHubImport[
-	command_?(KeyMemberQ[$githubactions,ToLowerCase@#]&),
+	command_?(MemberQ[ToLowerCase/@Keys[$GitHubActions], ToLowerCase@#]&),
 	args__
 	]:=
 	With[{gh=GitHub[command,args]},

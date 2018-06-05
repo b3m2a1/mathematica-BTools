@@ -123,19 +123,11 @@ PacletRemove::usage=
 
 
 (* ::Subsubsection::Closed:: *)
-(*Downloads*)
-
-
-
-(*PacletDownload::usage=
-	"Downloads pieces of a paclet from a server";*)
-
-
-(* ::Subsubsection::Closed:: *)
 (*Install*)
 
 
 
+PacletDownloadPaclet::usage="Downloads a paclet from a URL";
 PacletInstallPaclet::usage="Installs a paclet from a URL";
 
 
@@ -866,7 +858,7 @@ iPacletInfoExpression[
 							With[
 								{
 									baseData=
-										Echo@PacletExtensionData[
+										PacletExtensionData[
 											pacletInfo,
 											dest,
 											FilterRules[{ops},
@@ -3348,44 +3340,6 @@ PacletRemove[pacSpecs:$PacletRemovePatterns,ops:OptionsPattern[]]:=
 
 
 (* ::Subsection:: *)
-(*Download*)
-
-
-
-(* ::Subsubsection::Closed:: *)
-(*PacletDownload*)
-
-
-
-PacletDownload[
-	paclet_CloudObject,
-	components:_String|{__String}:"PacletInfo.m"
-	]:=
-	With[{info=CloudObjectInformation[paclet,{"OwnerWolframUUID","Path"}]},
-CloudEvaluate[
-With[{i=
-Compress@
-Map[Import,Flatten@{#}]},
-Map[DeleteFile,Flatten@{#}];
-i
-]&@
-ExtractArchive[
-FileNameJoin@{
-$RootDirectory,
-"wolframcloud",
-"userfiles",
-StringTake[#OwnerWolframUUID,3],
-#OwnerWolframUUID,
-Sequence@@Rest@URLParse[#Path,"Path"]
-}&@info,
-FileNameJoin@{$HomeDirectory,"trash"},
-Alternatives@@Map["*"<>#&,components]
-]
-]
-]//Uncompress
-
-
-(* ::Subsection:: *)
 (*Install*)
 
 
@@ -3394,10 +3348,12 @@ $PackageDependenciesFile=
 	"DependencyInfo.m";
 
 
-PacletInstallPaclet::howdo="Unsure how to pack a paclet from file type ``";
-PacletInstallPaclet::laywha="Couldn't detect package layout from directory ``";
-PacletInstallPaclet::dumcode="Couldn't generate PacletInfo.m for directory ``";
-PacletInstallPaclet::badbun="Not a real directory ``";
+PacletDownloadPaclet::nopac="Couldn't find paclet at ``";
+PacletDownloadPaclet::howdo="Unsure how to pack a paclet from file type ``";
+PacletDownloadPaclet::laywha="Couldn't detect package layout from directory ``";
+PacletDownloadPaclet::dumcode="Couldn't generate PacletInfo.m for directory ``";
+PacletDownloadPaclet::badbun="Not a real directory ``";
+PacletDownloadPaclet::badgh="Couldn't download paclet at `` from GitHub";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -3577,9 +3533,9 @@ gitPacletPull//Clear
 
 
 gitPacletPull[loc:(_String|_File|_URL)?GitHubPathQ]:=
-	Quiet[GitHub["Clone", loc, OverwriteTarget->True], Git::err];
+	GitHub["Clone", loc, OverwriteTarget->True];
 gitPacletPull[loc:(_String|_File|_URL)?(Not@*GitHubPathQ)]:=
-	Quiet[Git["Clone", loc, OverwriteTarget->True],Git::err];
+	Git["Clone", loc, OverwriteTarget->True];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -3683,93 +3639,57 @@ downloadURLIfExists[urlBase_,{files__},dir_]:=
 
 
 (* ::Subsubsection::Closed:: *)
-(*PacletInstallPaclet*)
+(*PacletDownloadPaclet*)
 
 
 
-Options[PacletInstallPaclet]=
+Options[PacletDownloadPaclet]=
 	{
 		"Verbose"->True,
-		"InstallSite"->True,
-		"InstallDependencies"->
-			Automatic,
 		"Log"->True
 		};
-PacletInstallPaclet[
+PacletDownloadPaclet[
 	loc:(_String|_File)?FileExistsQ,
 	ops:OptionsPattern[]
 	]:=
-	pacletToolsCatchBlock["PacletInstallPaclet"]@
-	Replace[
-		installPacletGenerate[loc,ops],{
-			File[f_]|(f_String?FileExistsQ):>
-				Replace[PacletManager`PacletInstall@f,
-					p_PacletManager`Paclet:>
-						With[{deps=
-							Replace[OptionValue["InstallDependencies"],{
-								Automatic->{"Standard"},
-								True->All
-								}]
-							},
-						If[MatchQ[deps,_List|All],
-							Flatten@{
-								p,
-								With[{l=PacletLookup[p,"Location"]},
-									If[FileExistsQ@FileNameJoin@{l,$PackageDependenciesFile},
-										Replace[Import[$PackageDependenciesFile],{
-											a_Association:>
-												Switch[deps,
-													All,
-														Flatten@
-															Map[Map[PacletInstallPaclet,#]&,a],
-													_,
-														Flatten@
-															Map[PacletInstallPaclet,
-																Flatten@Lookup[a,deps,{}]
-																]
-													],
-											l_List:>
-												Map[PacletInstallPaclet,l]
-											}],
-										{}
-										]
-									]
-								},
-							p
-							]
-						]
-					],
-			_->$Failed
-			}];
-PacletInstallPaclet[
+	installPacletGenerate[loc, ops];
+PacletDownloadPaclet[
 	loc:(_String?(URLParse[#,"Scheme"]=!=None&)|_URL),
 	ops:OptionsPattern[]
 	]:=
 	Which[
 		URLParse[loc, "Domain"]==="github.com"||
-			URLParse[loc, "Scheme"]=="github",
+			URLParse[loc, "Scheme"]=="github"||
+			URLParse[loc, "Scheme"]=="github-release",
 			With[{dir=
-				If[OptionValue@"Verbose"//TrueQ,
-					Monitor[
-						gitPacletPull[loc],
-						Which[GitHubRepoQ@loc,
-							Internal`LoadingPanel[
-								TemplateApply["Cloning repository at ``",loc]
-								],
-							GitHubReleaseQ@loc,
-								Internal`LoadingPanel[
-									TemplateApply["Pulling release at ``",loc]
-									],
-							True,
-								Internal`LoadingPanel[
-									TemplateApply["Downloading from ``",loc]
-									]
-							]
-						],
-					gitPacletPull[loc]
-					]
+				If[!FileExistsQ@#, 
+					Message[PacletDownloadPaclet::badgh, loc];
+					$Failed,
+					If[Head[#]===File, #[[1]], #]
+					]&@
+					If[OptionValue@"Verbose"//TrueQ,
+						Monitor[
+							gitPacletPull[loc],
+							Which[
+								(StringQ@loc&&StringStartsQ[loc, "github-release"])||
+									GitHubReleaseQ@loc,
+										Internal`LoadingPanel[
+											TemplateApply["Pulling release at ``",loc]
+											],
+								GitHubRepoQ@loc,
+									Internal`LoadingPanel[
+										TemplateApply["Cloning repository at ``",loc]
+										],
+								True,
+									Internal`LoadingPanel[
+										TemplateApply["Downloading from ``",loc]
+										]
+								]
+							],
+						gitPacletPull[loc]
+						]
 				},
-				PacletInstallPaclet@dir
+				PacletDownloadPaclet@dir
 				],
 			URLParse[loc,"Domain"]==="library.wolfram.com",
 				With[{dir=
@@ -3783,61 +3703,151 @@ PacletInstallPaclet[
 						gitPacletPull[loc]
 						]
 					},
-					PacletInstallPaclet@dir
+					PacletDownloadPaclet@dir
 					],
 			True,
-				If[
-					And[
-						OptionValue["InstallSite"]//TrueQ,
-						MatchQ[
-							Quiet@PacletSiteInfo[loc],
-							PacletManager`PacletSite[__PacletManager`Paclet]
-							]
-						],
-					PacletSiteInstall[loc],
-					Switch[URLParse[loc,"Path"][[-1]],
-						_?(FileExtension[#]=="paclet"&),
-							PacletInstallPaclet@URLDownload[loc],
-						_?(MatchQ[FileExtension[#],"m"|"wl"]&),
-							PacletInstallPaclet@
-								downloadURLIfExists[
-									URLBuild[
-										ReplacePart[#,
-											"Path"->
-												Drop[#Path,-1]
-											]&@URLParse[loc]
-										],{
+				Switch[
+					URLParse[loc,"Path"][[-1]],
+					_?(FileExtension[#]=="paclet"&),
+						URLDownload[loc],
+					_?(MatchQ[FileExtension[#],"m"|"wl"]&),
+						PacletDownloadPaclet@
+							downloadURLIfExists[
+								URLBuild[
+									ReplacePart[#,
+										"Path"->
+											Drop[#Path,-1]
+										]&@URLParse[loc]
+									],
+								{
 									URLParse[loc,"Path"][[-1]],
 									$PackageDependenciesFile,
 									"PacletInfo.m"
-									}],
-						_,
-							Replace[
-								Quiet@Normal@PacletSiteInfoDataset[loc],{
-									Except[{__Association}]:>
-										(
-											Message[PacletInstallPaclet::nopac,loc];
-											$Failed
-											),
-									a:{__Association}:>
-										PacletInstallPaclet[
-											URLBuild@
-												Flatten@{
-													loc,
-													StringJoin@{
-														Lookup[Last@SortBy[a,#Version&],{
-															"Name",
-															"Version"
-															}],
-														".paclet"
-														}
-													},
-											ops
-											]
-								}]
-						]
+									}
+								],
+					_,
+						Replace[
+							Quiet@Normal@PacletSiteInfoDataset[loc],
+							{
+								Except[{__Association}]:>
+									(
+										Message[PacletDownloadPaclet::nopac, loc];
+										$Failed
+										),
+								a:{__Association}:>
+									PacletDownloadPaclet[
+										URLBuild@
+											Flatten@{
+												loc,
+												StringJoin@{
+													Lookup[Last@SortBy[a, #Version&],{
+														"Name",
+														"Version"
+														}],
+													".paclet"
+													}
+												},
+										ops
+										]
+								}
+							]
 					]
 			];
+
+
+(* ::Subsubsection::Closed:: *)
+(*InstallDeps*)
+
+
+
+PacletInstallProcessDependencies[p_, deps_, ops___]:=
+	If[MatchQ[deps,_List|All],
+			Flatten@{
+				p,
+				With[{l=PacletLookup[p, "Location"]},
+					If[FileExistsQ@FileNameJoin@{l, $PackageDependenciesFile},
+						Replace[
+							Import[FileNameJoin@{l, $PackageDependenciesFile}],
+							{
+								a_Association:>
+									Switch[deps,
+										All,
+											Flatten@
+												Map[
+													Map[PacletInstallPaclet[#, ops]&, #]&, 
+													a
+													],
+										_,
+											Flatten@
+												Map[
+													PacletInstallPaclet[#, ops]&,
+													Flatten@Lookup[a, deps, {}]
+													]
+										],
+								l_List:>
+									Map[PacletInstallPaclet[#, ops]&,l],
+								_->
+									{}
+								}
+							],
+						{}
+						]
+					]
+				},
+			p
+			]
+
+
+(* ::Subsubsection::Closed:: *)
+(*PacletInstallPaclet*)
+
+
+
+Options[PacletInstallPaclet]=
+	{
+		"Verbose"->True,
+		"InstallSite"->True,
+		"InstallDependencies"->
+			Automatic,
+		"Log"->True
+		};
+PacletInstallPaclet[
+	loc:
+		(_String|_File)?FileExistsQ|
+		(_String?(URLParse[#,"Scheme"]=!=None&)|_URL),
+	ops:OptionsPattern[]
+	]:=
+	pacletToolsCatchBlock["PacletInstallPaclet"]@
+		If[
+			And[
+				OptionValue["InstallSite"]//TrueQ,
+				MatchQ[
+					Quiet@PacletSiteInfo[loc],
+					PacletManager`PacletSite[__PacletManager`Paclet]
+					]
+				],
+			PacletSiteInstall[loc],
+				Replace[
+					PacletDownloadPaclet[loc, FilterRules[{ops}, Options[PacletDownloadPaclet]]],
+					{
+						File[f_]|(f_String?FileExistsQ):>
+							Replace[PacletManager`PacletInstall@f,
+								p_PacletManager`Paclet:>
+									With[{deps=
+										Replace[OptionValue["InstallDependencies"],
+											{
+												Automatic->{"Standard"},
+												True->All
+												}
+											]
+										},
+										PacletInstallProcessDependencies[p, deps, ops]
+										]
+								],
+						_->$Failed
+						}
+					]
+				];
 
 
 (* ::Subsection:: *)

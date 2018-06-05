@@ -48,6 +48,8 @@ AppGuides::usage="";
 AppTutorials::usage="";
 
 
+AppPacletContexts::usage="";
+AppMainContext::usage="";
 AppContexts::usage="";
 
 
@@ -77,6 +79,8 @@ AppAddTutorialPage::usage="Adds a tutorial page to the app";
 
 AppRegenerateDirectories::usage=
 	"Regenerates missing directories in the app";
+AppRegenerateContextLoadFiles::usage=
+	"Regenerates missing contex loader files in the app";
 AppRegenerateInit::usage=
 	"Regenerates a default init file";
 AppRegenerateDocInfo::usage=
@@ -410,22 +414,83 @@ AppPackages[
 
 
 (* ::Subsubsection::Closed:: *)
+(*AppPacletContexts*)
+
+
+
+AppPacletContexts[app_]:=
+	With[{pi=AppPacletInfo[app]},
+		Replace[
+			Fold[
+				Lookup[##, <||>]&,
+				If[AssociationQ@pi, pi, <||>],
+				{"Extensions", "Kernel", "Context"}
+				],
+			{
+				Except[{__String}]:>{}
+				}
+			]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppContext*)
+
+
+
+AppMainContext[app_]:=
+	Replace[
+		AppPacletContexts[app],
+		{
+			{s_String, ___}:>s,
+			_:>AppFromFile[app]<>"`"
+			}
+		]
+
+
+(* ::Subsubsection::Closed:: *)
 (*AppContexts*)
 
 
 
+AppContexts//Clear
+
+
+Options[AppContexts]=
+	{
+		"FullContext"->True
+		};
 AppContexts[
-	app:_String
+	app:_String,
+	ops:OptionsPattern[]
 	]:=
-	StringReplace[
-		AppFileNames[app, 
-			"Packages", 
-			WordCharacter..,
-			Infinity,
-			"DropDirectory"->True,
-			Select->DirectoryQ
-			],
-		$PathnameSeparator->"`"
+	With[
+		{
+			subconts=
+				StringReplace[
+					AppFileNames[app, 
+						"Packages", 
+						WordCharacter..,
+						Infinity,
+						"DropDirectory"->True,
+						Select->DirectoryQ
+						],
+					$PathnameSeparator->"`"
+					]
+			},
+		If[Length@subconts==0,
+			If[!TrueQ@OptionValue["FullContext"], 
+				DeleteCases[""]@StringTrim[#, AppMainContext[app]]&, 
+				Identity
+				]@
+				AppPacletContexts[app],
+			If[TrueQ@OptionValue["FullContext"],
+				With[{mc=AppMainContext[app]},
+					Prepend[Map[mc<>#<>"`"&, subconts], mc]
+					],
+				#<>"`"&/@subconts
+				]
+			]
 		];
 
 
@@ -839,6 +904,40 @@ AppRegenerateLoadInfo[app_String,ops:OptionsPattern[]]:=
 				Options@AppRegenerateLoadInfo
 			}
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*RegenerateContextLoadFiles*)
+
+
+
+AppRegenerateContextLoadFiles[app_]:=
+	With[
+		{
+			cts=Rest@AppContexts[app, "FullContext"->True],
+			ctf=
+				Import[
+					PackageFilePath["Resources", "Templates", "ContextLoader.wl"],
+					"Text"
+					]
+			},
+		Map[
+			With[
+				{
+					target=
+						AppPath[app, Sequence@@{#[[;;-2]], #[[-1]]<>".wl"}&@StringSplit[#, "`"]]
+					},
+				Quiet@
+					CreateDirectory[DirectoryName@target, CreateIntermediateDirectories->True];
+				WriteString[
+					target,
+					StringReplace[ctf, "$ContextDepth$"->ToString[StringCount[#, "`"]-1]]
+					];
+				Close[target]
+				]&,
+			cts
+			]
+		]
 
 
 (* ::Subsection:: *)

@@ -35,8 +35,16 @@ Cell[BoxData[{
    "\"\<Represents a github path\>\""}], ";"}], "\n", 
  RowBox[{
   RowBox[{
+   RowBox[{"GitHubPathParse", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Parses a GitHubPath from a string\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
    RowBox[{"GitHubRepoQ", "::", "usage"}], "=", "\n", "\t", 
    "\"\<Returns if the path could be a github repo\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GitHubReleaseQ", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Returns if the path could be a GitHub release\>\""}], ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"GitHubPathQ", "::", "usage"}], "=", "\"\<\>\""}], ";"}], "\n", 
@@ -94,21 +102,9 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{
    RowBox[{"GitHubImport", "::", "usage"}], "=", "\n", "\t", 
-   "\"\<Imports and converts GitHub JSON\>\""}], ";"}]}], "CodeInput",
- CellChangeTimes->{{3.688675572109769*^9, 3.68867559200208*^9}, {
-   3.694810385083003*^9, 3.6948104081354437`*^9}, {3.701557872322133*^9, 
-   3.701557889094434*^9}, {3.701564938566873*^9, 3.701564957294899*^9}, {
-   3.701568223518178*^9, 3.7015682435435953`*^9}, {3.703716532105872*^9, 
-   3.703716546890867*^9}, {3.703722610200573*^9, 3.7037226170789337`*^9}, 
-   3.711984285320714*^9, {3.712115786378891*^9, 3.71211579180195*^9}, {
-   3.7121980824315443`*^9, 3.712198097788693*^9}, {3.727879866380336*^9, 
-   3.7278798753241243`*^9}, {3.727880148601973*^9, 3.7278801512125683`*^9}, {
-   3.7279992658218803`*^9, 3.727999276368215*^9}, {3.729783211370049*^9, 
-   3.729783213662928*^9}, {3.729784371921549*^9, 3.729784441339416*^9}, {
-   3.72978663555352*^9, 3.729786655610365*^9}, 3.733698160333187*^9, {
-   3.733853762143372*^9, 
-   3.7338537757237787`*^9}},ExpressionUUID->"5c8033df-e034-46a7-ab46-\
-5005f5cf126b"]
+   "\"\<Imports and converts GitHub JSON\>\""}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"5c8033df-e034-46a7-ab46-5005f5cf126b"]\
+
 }, Closed]],
 
 Cell[BoxData[
@@ -666,9 +662,12 @@ Cell[BoxData[{
          RowBox[{"If", "[", 
           RowBox[{
            RowBox[{
-            RowBox[{"Length", "@", 
-             RowBox[{"{", "path", "}"}]}], ">", "1"}], ",", "\n", "\t", 
-           "\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Length", "@", 
+              RowBox[{"{", "path", "}"}]}], ">", "1"}], "&&", 
+            RowBox[{"!", 
+             RowBox[{"GitHubReleaseQ", "@", 
+              RowBox[{"{", "path", "}"}]}]}]}], ",", "\n", "\t\t\t\t\t", 
            RowBox[{"Sequence", "@@", 
             RowBox[{"Flatten", "@", "\n", "\t\t\t\t\t\t", 
              RowBox[{"Insert", "[", 
@@ -747,25 +746,65 @@ Cell[BoxData[{
          RowBox[{
           RowBox[{"URLParse", "[", 
            RowBox[{"#", ",", " ", "\"\<Scheme\>\""}], "]"}], "===", 
-          "\"\<github\>\""}]}], "&"}], "\n", "\t\t", ")"}]}], ",", "\n", "\t", 
+          "\"\<github\>\""}], "||", "\n", "\t\t", 
+         RowBox[{
+          RowBox[{"URLParse", "[", 
+           RowBox[{"#", ",", " ", "\"\<Scheme\>\""}], "]"}], "===", 
+          "\"\<github-release\>\""}]}], "&"}], "\n", "\t\t", ")"}]}], ",", 
+     "\n", "\t", 
      RowBox[{"o", ":", 
       RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
     "\t", 
    RowBox[{"GitHubPathParse", "[", "\n", "\t\t", 
     RowBox[{
-     RowBox[{"If", "[", 
+     RowBox[{"Which", "[", "\n", "\t\t\t", 
       RowBox[{
        RowBox[{
-        RowBox[{
-         RowBox[{"URLParse", "[", 
-          RowBox[{"s", ",", " ", "\"\<Scheme\>\""}], "]"}], "===", "None"}], "&&", 
-        RowBox[{
-         RowBox[{"URLParse", "[", 
-          RowBox[{"s", ",", " ", "\"\<Domain\>\""}], "]"}], "===", "None"}]}],
-        ",", "\n", "\t\t\t", 
-       RowBox[{"\"\<github:\>\"", "<>", "s"}], ",", "\n", "\t\t\t", "s"}], 
-      "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", "o"}], "\n", "\t\t", "]"}]}], 
-  ";"}], "\n", 
+        RowBox[{"URLParse", "[", 
+         RowBox[{"s", ",", " ", "\"\<Scheme\>\""}], "]"}], "===", 
+        "\"\<github-release\>\""}], ",", "\n", "\t\t\t\t", 
+       RowBox[{"URLBuild", "@", 
+        RowBox[{"<|", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"\"\<Scheme\>\"", "->", "\"\<github\>\""}], ",", "\n", 
+          "\t\t\t\t\t", 
+          RowBox[{"\"\<Path\>\"", "\[Rule]", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"Replace", "[", 
+            RowBox[{
+             RowBox[{"URLParse", "[", 
+              RowBox[{"s", ",", " ", "\"\<Path\>\""}], "]"}], ",", "\n", 
+             "\t\t\t\t\t\t\t", 
+             RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"r", ":", 
+                 RowBox[{"{", 
+                  RowBox[{
+                  "___", ",", " ", "\"\<releases\>\"", ",", " ", 
+                   "\"\<latest\>\""}], "}"}]}], "\[RuleDelayed]", "r"}], ",", 
+               "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"{", 
+                 RowBox[{"a___", ",", " ", "\"\<releases\>\""}], "}"}], 
+                "\[RuleDelayed]", 
+                RowBox[{"{", 
+                 RowBox[{"a", ",", " ", "\"\<latest\>\""}], "}"}]}], ",", 
+               "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"{", "a___", "}"}], "\[RuleDelayed]", 
+                RowBox[{"{", 
+                 RowBox[{
+                 "a", ",", " ", "\"\<releases\>\"", ",", " ", 
+                  "\"\<latest\>\""}], "}"}]}]}], "\n", "\t\t\t\t\t\t\t\t", 
+              "}"}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t", 
+         "|>"}]}], ",", "\n", "\t\t", 
+       RowBox[{
+        RowBox[{"URLParse", "[", 
+         RowBox[{"s", ",", " ", "\"\<Scheme\>\""}], "]"}], "===", 
+        "\"\<github\>\""}], ",", "\n", "\t\t\t", "s", ",", "\n", "\t\t", 
+       "True", ",", "\n", "\t\t\t", 
+       RowBox[{"\"\<github:\>\"", "<>", "s"}]}], "\n", "\t\t", "]"}], ",", 
+     "\n", "\t", "o"}], "\n", "\t", "]"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"GitHubPath", "[", 
@@ -791,18 +830,9 @@ Cell[BoxData[{
        RowBox[{"Flatten", "@", 
         RowBox[{"{", 
          RowBox[{"op", ",", " ", "o"}], "}"}]}], ",", " ", "First"}], 
-      "]"}]}]}], "]"}]}]}], "CodeInput",
- CellChangeTimes->CompressedData["
-1:eJxTTMoPSmViYGCQAWIQHXTDN81zxmvHS8eOF4DoLt8tJSCacb9BGYg+yLir
-BkRvO83dAKLN2FP1XWa/dnz7v8cSRJ+6fG+az4rXjlErP4Dpbbstd5UAaR0d
-KzBt4HntAIiOeid4BETP6Txmb7PztePm6YJOIHrXm7SVGcdeO1YFsm8A0Sn+
-rQdA9Hzmv8dBtNbcXx+mAekTUp1M04H0CrVOfhDtt+2wAJhfZ2gJogME+K1B
-dKezpS+Izi20zgHRVg16RSD6XtiKehDdcedDC4g2+uHSChaX39gFot+4FPSA
-6G3H/88E0QKdkbNB9AahvGMg+pb+mUsgOsGB6RbYnoQTYHp9e9RDEL09cd4j
-EH1oz9Q3IJrPS+0jiGZguMo/A0ifqncQANEJ0yZqgehWjq8GIFrg2cnZHide
-Oz7y+g2m9/Jx65ZdBPrvJIQWuL72PYiewn0VTHfpcH8F0bWiH7+DaADhffc7
-
-  "],ExpressionUUID->"d58f7077-22b9-478e-a420-ec80ce41dc8f"],
+      "]"}]}]}], 
+   "]"}]}]}], \
+"CodeInput",ExpressionUUID->"d58f7077-22b9-478e-a420-ec80ce41dc8f"],
 
 Cell[BoxData[{
  RowBox[{
@@ -861,13 +891,21 @@ Cell[BoxData[
      "None", ",", "\n", "\t\t\t", 
      RowBox[{"{", "\n", "\t\t\t\t", 
       RowBox[{
-       RowBox[{"BoxForm`MakeSummaryItem", "[", 
+       RowBox[{"BoxForm`MakeSummaryItem", "[", "\n", "\t\t\t\t\t", 
         RowBox[{
-         RowBox[{"{", 
-          RowBox[{"\"\<Path: \>\"", ",", " ", 
-           RowBox[{"URLBuild", "[", 
-            RowBox[{"{", "path", "}"}], "]"}]}], "}"}], ",", " ", 
-         "StandardForm"}], "]"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+          RowBox[{"\"\<Path: \>\"", ",", " ", "\n", "\t", "\t\t\t\t\t", 
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{"GitHubReleaseQ", "@", 
+              RowBox[{"{", "path", "}"}]}], ",", " ", 
+             RowBox[{
+              RowBox[{"{", "path", "}"}], "[", 
+              RowBox[{"[", "1", "]"}], "]"}], ",", " ", 
+             RowBox[{"URLBuild", "[", 
+              RowBox[{"{", "path", "}"}], "]"}]}], "]"}]}], "\n", 
+          "\t\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t", "StandardForm"}], 
+        "\n", "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
        RowBox[{"BoxForm`MakeSummaryItem", "[", "\n", "\t\t\t\t\t", 
         RowBox[{
          RowBox[{"{", 
@@ -893,14 +931,18 @@ Cell[BoxData[
              RowBox[{"[", "2", "]"}], "]"}]}], "\n", "\t\t\t\t\t\t", "}"}], 
           ",", "\n", "\t\t\t\t\t", "StandardForm"}], "\n", "\t\t\t\t\t", 
          "]"}], "&"}], ",", "\n", "\t\t\t\t", 
-       RowBox[{"Flatten", "[", 
-        RowBox[{"Normal", "/@", 
-         RowBox[{"{", "ops", "}"}]}], "]"}]}], "\n", "\t\t\t\t", "]"}], ",", 
-     "\n", "\t\t\t", "StandardForm"}], "\n", "\t\t\t", "]"}]}]}]], "CodeInput",
- CellChangeTimes->{{3.7279010342288933`*^9, 3.7279012979029217`*^9}, 
-   3.727997065947835*^9, {3.727997106499071*^9, 
-   3.727997120857141*^9}},ExpressionUUID->"72b585fd-3c06-4fef-9c60-\
-7ebd354826b6"]
+       RowBox[{"Prepend", "[", "\n", "\t\t\t\t\t", 
+        RowBox[{
+         RowBox[{"Flatten", "[", 
+          RowBox[{"Normal", "/@", 
+           RowBox[{"{", "ops", "}"}]}], "]"}], ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"\"\<Release\>\"", "->", 
+          RowBox[{"GitHubReleaseQ", "@", 
+           RowBox[{"{", "path", "}"}]}]}]}], "\n", "\t\t\t\t\t", "]"}]}], 
+      "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", "StandardForm"}], "\n", 
+    "\t\t\t", 
+    "]"}]}]}]], \
+"CodeInput",ExpressionUUID->"72b585fd-3c06-4fef-9c60-7ebd354826b6"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -935,13 +977,17 @@ Cell[BoxData[{
           RowBox[{
            RowBox[{"p", "[", "\"\<Domain\>\"", "]"}], "===", 
            "\"\<github.com\>\""}]}], ")"}], "||", "\n", "\t\t\t", 
-        RowBox[{
+        RowBox[{"(", 
          RowBox[{
-          RowBox[{"p", "[", "\"\<Scheme\>\"", "]"}], "===", 
-          "\"\<github\>\""}], "&&", 
-         RowBox[{
-          RowBox[{"p", "[", "\"\<Domain\>\"", "]"}], "===", "None"}]}]}], 
-       "\n", "\t\t\t", ")"}], "\n", "\t\t\t", "&&", "\n", "\t\t", 
+          RowBox[{"MatchQ", "[", 
+           RowBox[{
+            RowBox[{"p", "[", "\"\<Scheme\>\"", "]"}], ",", " ", 
+            RowBox[{"(", 
+             RowBox[{"\"\<github\>\"", "|", "\"\<github-release\>\""}], 
+             ")"}]}], "]"}], "&&", 
+          RowBox[{
+           RowBox[{"p", "[", "\"\<Domain\>\"", "]"}], "===", "None"}]}], 
+         ")"}]}], "\n", "\t\t\t", ")"}], "\n", "\t\t\t", "&&", "\n", "\t\t", 
       RowBox[{
        RowBox[{"Length", "@", 
         RowBox[{"p", "[", "\"\<Path\>\"", "]"}]}], ">", "0"}]}]}], "\n", 
@@ -949,12 +995,9 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{
    RowBox[{"GitHubPathQ", "[", "_GitHubPath", "]"}], ":=", "\n", "\t", 
-   "True"}], ";"}]}], "CodeInput",
- CellChangeTimes->{{3.70372223562781*^9, 3.70372226579961*^9}, {
-  3.7037225213575363`*^9, 3.703722532965282*^9}, {3.727901935714941*^9, 
-  3.727901973936831*^9}, {3.7279021632084227`*^9, 
-  3.727902166212924*^9}},ExpressionUUID->"7a0df9eb-b039-49c4-8f3f-\
-244cd5111fa5"]
+   "True"}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"7a0df9eb-b039-49c4-8f3f-244cd5111fa5"]\
+
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -1097,16 +1140,12 @@ Cell[BoxData[{
          RowBox[{"p", "[", "\"\<Path\>\"", "]"}], ",", "\n", "\t\t\t", 
          RowBox[{
           RowBox[{"{", 
-           RowBox[{"\"\<repos\>\"", ",", "__"}], "}"}], "|", "\n", "\t\t\t", 
+           RowBox[{"\"\<repos\>\"", ",", " ", "__"}], "}"}], "|", "\n", 
+          "\t\t\t", 
           RowBox[{"{", 
-           RowBox[{"__", ",", 
-            RowBox[{"\"\<releases\>\"", "|", "\"\<deployments\>\""}]}], "}"}],
-           "|", "\n", "\t\t\t", 
-          RowBox[{"{", 
-           RowBox[{"__", ",", 
-            RowBox[{"\"\<releases\>\"", "|", "\"\<deployments\>\""}], ",", 
-            "\"\<tag\>\"", ",", "___"}], "}"}]}]}], "\n", "\t\t\t", "]"}]}]}],
-      "\n", "\t\t", "]"}]}]}], ";"}], "\n", 
+           RowBox[{"__", ",", "\"\<releases\>\"", ",", " ", "___"}], 
+           "}"}]}]}], "\n", "\t\t\t", "]"}]}]}], "\n", "\t\t", "]"}]}]}], 
+  ";"}], "\n", 
  RowBox[{
   RowBox[{"GitHubRepoQ", "[", 
    RowBox[{"p", ":", 
@@ -1123,17 +1162,9 @@ Cell[BoxData[{
    RowBox[{"GitHubRepoQ", "[", 
     RowBox[{"GitHubPath", "@", "path"}], "]"}]}], ";"}], "\n", 
  RowBox[{
-  RowBox[{"GitHubRepoQ", "[", "_", "]"}], ":=", "False"}]}], "CodeInput",
- CellChangeTimes->{{3.694810294331786*^9, 3.6948103777210712`*^9}, {
-  3.694810413099128*^9, 3.694810416439452*^9}, {3.703613504587809*^9, 
-  3.703613517065475*^9}, {3.703721474663084*^9, 3.703721539026717*^9}, {
-  3.703722085160385*^9, 3.703722123845193*^9}, {3.703722226305732*^9, 
-  3.703722242557352*^9}, {3.7037224937138443`*^9, 3.7037225116610327`*^9}, {
-  3.703757952496969*^9, 3.703757955951865*^9}, {3.72799726484863*^9, 
-  3.7279972790021563`*^9}, {3.727997334693697*^9, 3.7279973547709312`*^9}, {
-  3.728187938189373*^9, 3.7281879474165287`*^9}, {3.7281880764624853`*^9, 
-  3.728188083434938*^9}},ExpressionUUID->"5565db2c-a634-4338-a372-\
-403715aee9c8"]
+  RowBox[{"GitHubRepoQ", "[", "_", "]"}], ":=", 
+  "False"}]}], \
+"CodeInput",ExpressionUUID->"5565db2c-a634-4338-a372-403715aee9c8"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -1144,22 +1175,36 @@ Cell["\[LeftCeiling]GitHubReleaseQ\[RightFloor]", "CodeSubsubsection",
   3.70372030507209*^9}},ExpressionUUID->"77bf77ee-ee90-4534-9bc1-\
 ca15d308b0ad"],
 
+Cell[BoxData[
+ RowBox[{"GitHubReleaseQ", "//", 
+  "Clear"}]], \
+"CodeInput",ExpressionUUID->"651bbf4d-349d-495d-8a3d-ea3cdb7b59d0"],
+
 Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GitHubReleaseQ", "[", 
+    RowBox[{"{", "p__String", "}"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"MatchQ", "[", 
+    RowBox[{
+     RowBox[{"{", "p", "}"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+       "__", ",", " ", "\"\<releases\>\"", ",", " ", "\"\<latest\>\""}], 
+       "}"}], "|", "\n", "\t\t", 
+      RowBox[{"{", 
+       RowBox[{
+       "__", ",", " ", "\"\<releases\>\"", ",", " ", "\"\<tag\>\"", ",", " ", 
+        "_"}], "}"}]}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"GitHubReleaseQ", "[", 
     RowBox[{"GitHubPath", "[", 
      RowBox[{"p__String", ",", 
       RowBox[{"___", "?", "OptionQ"}]}], "]"}], "]"}], ":=", "\n", "\t", 
-   RowBox[{"MatchQ", "[", 
-    RowBox[{
-     RowBox[{"{", "p", "}"}], ",", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{"{", 
-       RowBox[{"__", ",", "\"\<releases\>\""}], "}"}], "|", "\n", "\t\t", 
-      RowBox[{"{", 
-       RowBox[{"__", ",", "\"\<releases\>\"", ",", "\"\<tag\>\"", ",", "_"}], 
-       "}"}]}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+   RowBox[{"GitHubReleaseQ", "[", 
+    RowBox[{"{", "p", "}"}], "]"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"GitHubReleaseQ", "[", 
@@ -1170,22 +1215,18 @@ Cell[BoxData[{
      RowBox[{"GitHubPathQ", "@", "path"}], ",", "\n", "\t\t", 
      RowBox[{"Replace", "[", 
       RowBox[{
-       RowBox[{"GitHubPathParse", "[", "path", "]"}], ",", 
+       RowBox[{"GitHubPath", "[", "path", "]"}], ",", 
        RowBox[{"{", "\n", "\t\t\t", 
         RowBox[{
          RowBox[{"g_GitHubPath", ":>", "\n", "\t\t\t\t", 
           RowBox[{"GitHubReleaseQ", "@", "g"}]}], ",", "\n", "\t\t\t", 
          RowBox[{"_", "\[Rule]", "False"}]}], "\n", "\t\t\t", "}"}]}], "]"}], 
-     ",", "\n", "\t\t", "False"}], "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
- CellChangeTimes->{{3.694810294331786*^9, 3.6948103777210712`*^9}, {
-  3.694810413099128*^9, 3.694810416439452*^9}, {3.703613504587809*^9, 
-  3.703613517065475*^9}, {3.703720319860132*^9, 3.703720336396614*^9}, {
-  3.7037203723157673`*^9, 3.703720478652691*^9}, {3.70372221503036*^9, 
-  3.7037222190128803`*^9}, {3.703722281332644*^9, 3.703722284066514*^9}, {
-  3.703722676368987*^9, 3.703722777248363*^9}, {3.703756801199143*^9, 
-  3.703756814708927*^9}, {3.703756853876775*^9, 
-  3.703756916015964*^9}},ExpressionUUID->"4794e8c1-5b8a-4bdd-96a9-\
-65fee4f39cc1"]
+     ",", "\n", "\t\t", "False"}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GitHubReleaseQ", "[", "___", "]"}], ":=", "False"}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"4794e8c1-5b8a-4bdd-96a9-65fee4f39cc1"]\
+
 }, Closed]]
 }, Open  ]],
 
@@ -4538,10 +4579,7 @@ Cell[BoxData[
 Cell[CellGroupData[{
 
 Cell["\[LeftCeiling]GetFileSHA\[RightFloor]", "CodeSubsubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.73394440942415*^9, 
-  3.733944410879208*^9}},ExpressionUUID->"4af5c9fd-6ac6-4cf4-8671-\
-04e264f9077a"],
+ Evaluatable->True,ExpressionUUID->"4af5c9fd-6ac6-4cf4-8671-04e264f9077a"],
 
 Cell[BoxData[
  RowBox[{
@@ -4583,7 +4621,7 @@ Cell[BoxData[
    3.733944910485894*^9, 3.7339449364834137`*^9}, 
    3.733944993370666*^9},ExpressionUUID->"d5701219-af06-42ee-96f2-\
 0cf769fc8f4c"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -5110,11 +5148,12 @@ Cell["\[LeftCeiling] Releases\[RightFloor]", "CodeSubsection",
 Cell[CellGroupData[{
 
 Cell["\[LeftCeiling]Releases\[RightFloor]", "CodeSubsubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.703612326997533*^9, 3.703612328012097*^9}, {
-  3.7037612487285137`*^9, 
-  3.703761249194271*^9}},ExpressionUUID->"87cf7b82-0b64-46a0-8725-\
-a5fd7e3f1515"],
+ Evaluatable->True,ExpressionUUID->"87cf7b82-0b64-46a0-8725-a5fd7e3f1515"],
+
+Cell[BoxData[
+ RowBox[{"GitHubReleases", "//", 
+  "Clear"}]], \
+"CodeInput",ExpressionUUID->"f15a5f89-f16a-4f10-b37b-92153e58269e"],
 
 Cell[BoxData[{
  RowBox[{
@@ -5128,7 +5167,7 @@ Cell[BoxData[{
        "GitHubRepoQ"}]}], ",", "\n", "\t", 
      RowBox[{"identifier", ":", 
       RowBox[{"_String", "|", "_Integer", "|", "None"}], ":", "None"}]}], 
-    "]"}], ":=", "\n", "\t", 
+    "\n", "\t", "]"}], ":=", "\n", "\t", 
    RowBox[{"GitHubReposAPI", "[", "\n", "\t\t", 
     RowBox[{"repo", ",", "\n", "\t\t", 
      RowBox[{"Switch", "[", 
@@ -5144,12 +5183,12 @@ Cell[BoxData[{
              RowBox[{"ToLowerCase", "@", "#"}], ",", "\"\<latest\>\""}], 
             "]"}], "&"}], ")"}]}]}], ",", "\n", "\t\t\t\t", 
        RowBox[{"{", 
-        RowBox[{"\"\<releases\>\"", ",", 
+        RowBox[{"\"\<releases\>\"", ",", " ", 
          RowBox[{"ToLowerCase", "@", 
           RowBox[{"ToString", "@", "identifier"}]}]}], "}"}], ",", "\n", 
        "\t\t\t", "_", ",", "\n", "\t\t\t\t", 
        RowBox[{"{", 
-        RowBox[{"\"\<releases\>\"", ",", "\"\<tags\>\"", ",", 
+        RowBox[{"\"\<releases\>\"", ",", " ", "\"\<tags\>\"", ",", " ", 
          RowBox[{"ToLowerCase", "@", 
           RowBox[{"ToString", "@", "identifier"}]}]}], "}"}]}], "\n", 
       "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
@@ -5160,51 +5199,50 @@ Cell[BoxData[{
      RowBox[{
       RowBox[{"(", 
        RowBox[{"_GitHubPath", "|", "_String"}], ")"}], "?", 
-      "GitHubReleaseQ"}]}], ",", "\n", "\t", 
-    RowBox[{"identifier", ":", 
-     RowBox[{"_String", "|", "_Integer", "|", "None"}], ":", "None"}]}], "\n",
-    "\t", "]"}], ":=", "\n", "\t", 
-  RowBox[{"Replace", "[", 
+      RowBox[{"(", "GitHubReleaseQ", ")"}]}]}], ",", "\n", "\t", 
+    RowBox[{"identifier", ":", "_", ":", "None"}]}], "\n", "\t", "]"}], ":=", 
+  "\n", "\t", 
+  RowBox[{"Replace", "[", "\n", "\t\t", 
    RowBox[{
     RowBox[{"Replace", "[", 
-     RowBox[{"repo", ",", 
+     RowBox[{"repo", ",", " ", 
       RowBox[{"s_String", "\[RuleDelayed]", 
-       RowBox[{"GitHubPathParse", "[", "s", "]"}]}]}], "]"}], ",", 
-    RowBox[{"{", "\n", "\t\t", 
+       RowBox[{"GitHubPath", "[", "s", "]"}]}]}], "]"}], ",", "\n", "\t\t", 
+    RowBox[{"{", "\n", "\t\t\t", 
      RowBox[{
       RowBox[{
        RowBox[{"GitHubPath", "[", 
         RowBox[{
-        "s__", ",", "\"\<releases\>\"", ",", "\"\<tag\>\"", ",", "tag_String",
-          ",", 
-         RowBox[{"o__", "?", "OptionQ"}]}], "]"}], ":>", "\n", "\t\t\t", 
+        "s__", ",", " ", "\"\<releases\>\"", ",", " ", "\"\<tag\>\"", ",", 
+         " ", "tag_String", ",", 
+         RowBox[{"o__", "?", "OptionQ"}]}], "]"}], ":>", "\n", "\t", "\t\t\t", 
        RowBox[{"GitHubReleases", "[", 
         RowBox[{
          RowBox[{"GitHubPath", "[", 
-          RowBox[{"s", ",", "o"}], "]"}], ",", "tag"}], "]"}]}], ",", "\n", 
-      "\t\t", 
+          RowBox[{"s", ",", " ", "o"}], "]"}], ",", " ", "tag"}], "]"}]}], 
+      ",", "\n", "\t\t\t", 
       RowBox[{
        RowBox[{"GitHubPath", "[", 
-        RowBox[{"s__", ",", "\"\<releases\>\"", ",", 
-         RowBox[{"o__", "?", "OptionQ"}]}], "]"}], ":>", "\n", "\t\t\t", 
+        RowBox[{
+        "s__", ",", " ", "\"\<releases\>\"", ",", " ", "\"\<latest\>\"", ",", 
+         " ", 
+         RowBox[{"o__", "?", "OptionQ"}]}], "]"}], ":>", "\n", "\t\t\t\t", 
        RowBox[{"GitHubReleases", "[", 
         RowBox[{
          RowBox[{"GitHubPath", "[", 
-          RowBox[{"s", ",", "o"}], "]"}], ",", "identifier"}], "]"}]}]}], 
-     "\n", "\t\t", "}"}]}], "]"}]}]}], "CodeInput",
- CellChangeTimes->{{3.7036123327655897`*^9, 3.703612347748983*^9}, 
-   3.703612681142981*^9, {3.70361306153117*^9, 3.703613063732126*^9}, {
-   3.7036132466326313`*^9, 3.703613267536336*^9}, {3.703640683671319*^9, 
-   3.703640698661241*^9}, {3.70364093474997*^9, 3.7036409656682987`*^9}, {
-   3.7036410764108963`*^9, 3.703641077649008*^9}, {3.7036412398932753`*^9, 
-   3.703641285302986*^9}, {3.703715388695413*^9, 3.703715422134029*^9}, {
-   3.703723108109378*^9, 3.703723121781417*^9}, {3.703755512680999*^9, 
-   3.7037555621543903`*^9}, {3.703755657368512*^9, 3.703755686717031*^9}, {
-   3.7037558017559443`*^9, 3.703755870193419*^9}, {3.7037563706483097`*^9, 
-   3.703756573589761*^9}, {3.703756618094254*^9, 3.7037567180312767`*^9}, {
-   3.70375704764434*^9, 3.7037570544259863`*^9}, 
-   3.703757778125736*^9},ExpressionUUID->"5a33b6f3-f287-4f65-9300-\
-8c4bddd4f94c"]
+          RowBox[{"s", ",", " ", "o"}], "]"}], ",", " ", "\"\<latest\>\""}], 
+        "]"}]}], ",", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"GitHubPath", "[", 
+        RowBox[{"s__", ",", " ", "\"\<releases\>\"", ",", " ", 
+         RowBox[{"o__", "?", "OptionQ"}]}], "]"}], ":>", "\n", "\t", "\t\t\t", 
+       RowBox[{"GitHubReleases", "[", 
+        RowBox[{
+         RowBox[{"GitHubPath", "[", 
+          RowBox[{"s", ",", " ", "o"}], "]"}], ",", " ", "identifier"}], 
+        "]"}]}]}], "\n", "\t\t\t", "}"}]}], "\n", "\t\t", 
+   "]"}]}]}], \
+"CodeInput",ExpressionUUID->"5a33b6f3-f287-4f65-9300-8c4bddd4f94c"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -6407,18 +6445,21 @@ Cell[BoxData[{
        RowBox[{"_String", "?", 
         RowBox[{"(", 
          RowBox[{"DirectoryQ", "@*", "DirectoryName"}], ")"}]}], ")"}], "|", 
-      "Automatic"}], ":", "Automatic"}]}], "\n", "\t", "]"}], ":=", "\n", 
+      "Automatic"}], ":", "Automatic"}], ",", "\n", "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
   "\t", 
-  RowBox[{"With", "[", 
+  RowBox[{"With", "[", "\n", "\t\t", 
    RowBox[{
-    RowBox[{"{", 
-     RowBox[{"release", "=", "\n", "\t\t", 
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{"release", "=", "\n", "\t\t\t\t", 
       RowBox[{
-       RowBox[{"GitHubImport", "[", 
-        RowBox[{
-        "\"\<Releases\>\"", ",", "\n", "\t\t\t", "repo", ",", "\n", "\t\t\t", 
-         "\"\<latest\>\""}], "\n", "\t\t\t", "]"}], "[", "\"\<Content\>\"", 
-       "]"}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+       RowBox[{"GitHub", "[", "\n", "\t\t\t\t\t", 
+        RowBox[{"\"\<Releases\>\"", ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"GitHubPath", "[", "repo", "]"}], ",", "\n", "\t\t\t\t\t", 
+         "\"\<ImportedResult\>\""}], "\n", "\t\t\t\t\t", "]"}], "[", 
+       "\"\<Content\>\"", "]"}]}], "\n", "\t", "\t\t", "}"}], ",", "\n", 
+    "\t\t", 
     RowBox[{"If", "[", 
      RowBox[{
       RowBox[{"AssociationQ", "@", "release"}], ",", "\n", "\t\t\t", 
@@ -6702,6 +6743,11 @@ Cell["\[LeftCeiling]GitHubImport\[RightFloor]", "CodeSubsubsection",
   3.703712960982438*^9}},ExpressionUUID->"582f0fec-0f1f-469c-96f9-\
 21b4b2b04fe0"],
 
+Cell[BoxData[
+ RowBox[{"GitHubImport", "//", 
+  "Clear"}]], \
+"CodeInput",ExpressionUUID->"abe34ff3-9522-44d5-bb56-3744f43b04b7"],
+
 Cell[BoxData[{
  RowBox[{
   RowBox[{
@@ -6831,8 +6877,10 @@ Cell[BoxData[{
     RowBox[{"command_", "?", 
      RowBox[{"(", 
       RowBox[{
-       RowBox[{"KeyMemberQ", "[", 
-        RowBox[{"$githubactions", ",", 
+       RowBox[{"MemberQ", "[", 
+        RowBox[{
+         RowBox[{"ToLowerCase", "/@", 
+          RowBox[{"Keys", "[", "$GitHubActions", "]"}]}], ",", " ", 
          RowBox[{"ToLowerCase", "@", "#"}]}], "]"}], "&"}], ")"}]}], ",", 
     "\n", "\t", "args__"}], "\n", "\t", "]"}], ":=", "\n", "\t", 
   RowBox[{"With", "[", 
@@ -6875,11 +6923,8 @@ Cell[BoxData[{
      RowBox[{"GitHubImport", "[", "gh", "]"}], "/;", 
      RowBox[{
       RowBox[{"Head", "[", "gh", "]"}], "=!=", "GitHub"}]}]}], "\n", "\t\t", 
-   "]"}]}]}], "CodeInput",
- CellChangeTimes->{{3.703712971016037*^9, 3.70371303048003*^9}, {
-  3.711984053459033*^9, 
-  3.711984099056719*^9}},ExpressionUUID->"577139cc-b4d3-4c48-9ad3-\
-e74272e80244"]
+   "]"}]}]}], \
+"CodeInput",ExpressionUUID->"577139cc-b4d3-4c48-9ad3-e74272e80244"]
 }, Closed]]
 }, Open  ]],
 
@@ -7073,7 +7118,7 @@ Cell[BoxData[
    3.733863229473895*^9}, {3.733865183993411*^9, 
    3.733865190561104*^9}},ExpressionUUID->"eea65399-e6f3-4dfe-acc4-\
 d3b55ff0b8a3"]
-}, Closed]]
+}, Open  ]]
 }, Open  ]],
 
 Cell[BoxData[

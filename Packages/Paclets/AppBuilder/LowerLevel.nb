@@ -107,11 +107,19 @@ Cell[BoxData[{
    RowBox[{"AppTutorials", "::", "usage"}], "=", "\"\<\>\""}], 
   ";"}]}], "CodeInput",ExpressionUUID->"4c90e16e-0287-4153-994c-55607ef3fa8b"],
 
-Cell[BoxData[
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletContexts", "::", "usage"}], "=", "\"\<\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppMainContext", "::", "usage"}], "=", "\"\<\>\""}], 
+  ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"AppContexts", "::", "usage"}], "=", "\"\<\>\""}], 
-  ";"}]], "CodeInput",ExpressionUUID->"ae428dd8-8c9a-4000-83c2-c13a56464f0c"],
+  ";"}]}], "CodeInput",ExpressionUUID->"ae428dd8-8c9a-4000-83c2-c13a56464f0c"],
 
 Cell[BoxData[{
  RowBox[{
@@ -158,11 +166,7 @@ Cell[BoxData[
 Cell[CellGroupData[{
 
 Cell["\[LeftCeiling]Edit\[RightFloor]", "CodeSubsubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.689133705215311*^9, 3.6891337057268457`*^9}, {
-  3.710173388141284*^9, 
-  3.71017338844742*^9}},ExpressionUUID->"08a1256a-f44d-4e59-8359-\
-e3b7a0f66093"],
+ Evaluatable->True,ExpressionUUID->"08a1256a-f44d-4e59-8359-e3b7a0f66093"],
 
 Cell[BoxData[{
  RowBox[{
@@ -206,6 +210,11 @@ Cell[BoxData[{
    "\"\<Regenerates missing directories in the app\>\""}], ";"}], "\n", 
  RowBox[{
   RowBox[{
+   RowBox[{"AppRegenerateContextLoadFiles", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Regenerates missing contex loader files in the app\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
    RowBox[{"AppRegenerateInit", "::", "usage"}], "=", "\n", "\t", 
    "\"\<Regenerates a default init file\>\""}], ";"}], "\n", 
  RowBox[{
@@ -235,17 +244,9 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{
    RowBox[{"AppRegenerateUploadInfo", "::", "usage"}], "=", "\n", "\t", 
-   "\"\<Regenerates the UploadInfo.m file\>\""}], ";"}]}], "CodeInput",
- CellChangeTimes->{{3.685101997879546*^9, 3.6851020247009153`*^9}, {
-   3.6852021770671167`*^9, 3.685202214543857*^9}, {3.68521052921529*^9, 
-   3.68521053239613*^9}, {3.687031288514077*^9, 3.687031290662361*^9}, 
-   3.700930086619672*^9, {3.711991740636001*^9, 3.7119917646850853`*^9}, {
-   3.723068833797783*^9, 3.723068835348299*^9}, {3.728922302187379*^9, 
-   3.728922326862338*^9}, {3.72892293393439*^9, 3.728922953672969*^9}, {
-   3.72892326871347*^9, 3.72892332886027*^9}, 3.7289233828801126`*^9, {
-   3.728923766156189*^9, 3.7289237719842253`*^9}, {3.730135491053627*^9, 
-   3.7301354975665693`*^9}},ExpressionUUID->"05020352-9782-4953-aff2-\
-6f411ee9a8c0"]
+   "\"\<Regenerates the UploadInfo.m file\>\""}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"05020352-9782-4953-aff2-6f411ee9a8c0"]\
+
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -993,6 +994,72 @@ d37685f61da8"]
 
 Cell[CellGroupData[{
 
+Cell["\[LeftCeiling]AppPacletContexts\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"3944bafa-e728-4c01-ab97-f034474bf1ba"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"AppPacletContexts", "[", "app_", "]"}], ":=", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"pi", "=", 
+      RowBox[{"AppPacletInfo", "[", "app", "]"}]}], "}"}], ",", "\n", "\t\t", 
+    
+    RowBox[{"Replace", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"Fold", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Lookup", "[", 
+          RowBox[{"##", ",", " ", 
+           RowBox[{"<|", "|>"}]}], "]"}], "&"}], ",", "\n", "\t\t\t\t", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"AssociationQ", "@", "pi"}], ",", " ", "pi", ",", " ", 
+          RowBox[{"<|", "|>"}]}], "]"}], ",", "\n", "\t\t\t\t", 
+        RowBox[{"{", 
+         RowBox[{
+         "\"\<Extensions\>\"", ",", " ", "\"\<Kernel\>\"", ",", " ", 
+          "\"\<Context\>\""}], "}"}]}], "\n", "\t", "\t\t\t", "]"}], ",", 
+      "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"Except", "[", 
+         RowBox[{"{", "__String", "}"}], "]"}], "\[RuleDelayed]", 
+        RowBox[{"{", "}"}]}], "\n", "\t\t\t\t", "}"}]}], "\n", "\t\t\t", 
+     "]"}]}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"9e3110e4-7f6a-40b5-ad70-c1441b847d74"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppContext\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"cbc16cd4-caa8-4175-aaf5-732fe1155cf3"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"AppMainContext", "[", "app_", "]"}], ":=", "\n", "\t", 
+  RowBox[{"Replace", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"AppPacletContexts", "[", "app", "]"}], ",", "\n", "\t\t", 
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"s_String", ",", " ", "___"}], "}"}], "\[RuleDelayed]", "s"}],
+       ",", "\n", "\t\t\t", 
+      RowBox[{"_", ":>", 
+       RowBox[{
+        RowBox[{"AppFromFile", "[", "app", "]"}], "<>", "\"\<`\>\""}]}]}], 
+     "\n", "\t\t\t", "}"}]}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"696db23c-f0d2-4bae-b6eb-12c9bf76ea8f"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
 Cell["\[LeftCeiling]AppContexts\[RightFloor]", "CodeSubsubsection",
  Evaluatable->True,
  CellChangeTimes->{{3.7013206551412277`*^9, 3.7013206586916113`*^9}, 
@@ -1000,33 +1067,90 @@ Cell["\[LeftCeiling]AppContexts\[RightFloor]", "CodeSubsubsection",
 c41dd1c58966"],
 
 Cell[BoxData[
+ RowBox[{"AppContexts", "//", 
+  "Clear"}]], \
+"CodeInput",ExpressionUUID->"bc22864f-d19c-4702-8c52-c27b628e6bae"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "AppContexts", "]"}], "=", "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{"\"\<FullContext\>\"", "\[Rule]", "True"}], "\n", "\t\t", "}"}]}],
+   ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"AppContexts", "[", "\n", "\t", 
-    RowBox[{"app", ":", "_String"}], "\n", "\t", "]"}], ":=", "\n", "\t", 
-   RowBox[{"StringReplace", "[", "\n", "\t\t", 
     RowBox[{
-     RowBox[{"AppFileNames", "[", 
+     RowBox[{"app", ":", "_String"}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"With", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{"subconts", "=", "\n", "\t\t\t\t", 
+       RowBox[{"StringReplace", "[", "\n", "\t", "\t", "\t\t\t", 
+        RowBox[{
+         RowBox[{"AppFileNames", "[", 
+          RowBox[{
+          "app", ",", " ", "\n", "\t", "\t", "\t", "\t\t\t", 
+           "\"\<Packages\>\"", ",", " ", "\n", "\t", "\t", "\t", "\t\t\t", 
+           RowBox[{"WordCharacter", ".."}], ",", "\n", "\t", "\t", "\t", 
+           "\t\t\t", "Infinity", ",", "\n", "\t", "\t", "\t", "\t\t\t", 
+           RowBox[{"\"\<DropDirectory\>\"", "\[Rule]", "True"}], ",", "\n", 
+           "\t", "\t", "\t", "\t\t\t", 
+           RowBox[{"Select", "\[Rule]", "DirectoryQ"}]}], "\n", "\t", "\t", 
+          "\t", "\t\t\t", "]"}], ",", "\n", "\t", "\t", "\t", "\t\t", 
+         RowBox[{"$PathnameSeparator", "\[Rule]", "\"\<`\>\""}]}], "\n", 
+        "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{"If", "[", 
       RowBox[{
-      "app", ",", " ", "\n", "\t\t\t", "\"\<Packages\>\"", ",", " ", "\n", 
+       RowBox[{
+        RowBox[{"Length", "@", "subconts"}], "\[Equal]", "0"}], ",", "\n", 
        "\t\t\t", 
-       RowBox[{"WordCharacter", ".."}], ",", "\n", "\t\t\t", "Infinity", ",", 
-       "\n", "\t\t\t", 
-       RowBox[{"\"\<DropDirectory\>\"", "\[Rule]", "True"}], ",", "\n", 
-       "\t\t\t", 
-       RowBox[{"Select", "\[Rule]", "DirectoryQ"}]}], "\n", "\t\t\t", "]"}], 
-     ",", "\n", "\t\t", 
-     RowBox[{"$PathnameSeparator", "\[Rule]", "\"\<`\>\""}]}], "\n", "\t\t", 
-    "]"}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.728498919793124*^9, 3.728498948738021*^9}, {
-   3.7286601232833347`*^9, 3.7286602244899063`*^9}, {3.7286616030533648`*^9, 
-   3.7286616293764343`*^9}, {3.728661843450852*^9, 3.728661879395356*^9}, {
-   3.7286619214216967`*^9, 3.728661931698696*^9}, {3.7286877953253527`*^9, 
-   3.7286878922628937`*^9}, {3.728688373317621*^9, 3.728688450066182*^9}, 
-   3.728691040436056*^9, 
-   3.7344103321802197`*^9},ExpressionUUID->"f821dab4-0bd6-4ae4-9881-\
-a35c7401c5c0"]
-}, Closed]],
+       RowBox[{
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"!", 
+           RowBox[{"TrueQ", "@", 
+            RowBox[{"OptionValue", "[", "\"\<FullContext\>\"", "]"}]}]}], ",",
+           " ", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"DeleteCases", "[", "\"\<\>\"", "]"}], "@", 
+            RowBox[{"StringTrim", "[", 
+             RowBox[{"#", ",", " ", 
+              RowBox[{"AppMainContext", "[", "app", "]"}]}], "]"}]}], "&"}], 
+          ",", " ", "\n", "\t\t\t\t", "Identity"}], "\n", "\t\t\t\t", "]"}], 
+        "@", "\n", "\t\t\t\t", 
+        RowBox[{"AppPacletContexts", "[", "app", "]"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"TrueQ", "@", 
+          RowBox[{"OptionValue", "[", "\"\<FullContext\>\"", "]"}]}], ",", 
+         "\n", "\t\t\t\t", 
+         RowBox[{"With", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"mc", "=", 
+             RowBox[{"AppMainContext", "[", "app", "]"}]}], "}"}], ",", "\n", 
+           "\t\t\t\t\t", 
+           RowBox[{"Prepend", "[", 
+            RowBox[{
+             RowBox[{"Map", "[", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"mc", "<>", "#", "<>", "\"\<`\>\""}], "&"}], ",", " ",
+                "subconts"}], "]"}], ",", " ", "mc"}], "]"}]}], "\n", 
+          "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"#", "<>", "\"\<`\>\""}], "&"}], "/@", "subconts"}]}], 
+        "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+    "]"}]}], ";"}]}], \
+"CodeInput",ExpressionUUID->"f821dab4-0bd6-4ae4-9881-a35c7401c5c0"]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -2065,6 +2189,85 @@ Cell[BoxData[{
   3.712614687299013*^9, 
   3.712614692040378*^9}},ExpressionUUID->"82d5bf01-03b4-4a5e-a74f-\
 f0b400eec22f"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]RegenerateContextLoadFiles\[RightFloor]", \
+"CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"9f8c0050-3985-4e9c-9649-fb04a58de106"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"AppRegenerateContextLoadFiles", "[", "app_", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"With", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"cts", "=", 
+       RowBox[{"Rest", "@", 
+        RowBox[{"AppContexts", "[", 
+         RowBox[{"app", ",", " ", 
+          RowBox[{"\"\<FullContext\>\"", "\[Rule]", "True"}]}], "]"}]}]}], 
+      ",", "\n", "\t\t\t", 
+      RowBox[{"ctf", "=", "\n", "\t\t\t\t", 
+       RowBox[{"Import", "[", "\n", "\t\t\t\t\t", 
+        RowBox[{
+         RowBox[{"PackageFilePath", "[", 
+          RowBox[{
+          "\"\<Resources\>\"", ",", " ", "\"\<Templates\>\"", ",", " ", 
+           "\"\<ContextLoader.wl\>\""}], "]"}], ",", "\n", "\t\t\t\t\t", 
+         "\"\<Text\>\""}], "\n", "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", 
+     "}"}], ",", "\n", "\t\t", 
+    RowBox[{"Map", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"With", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"{", "\n", "\t\t\t\t\t", 
+          RowBox[{"target", "=", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"AppPath", "[", 
+            RowBox[{"app", ",", " ", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Sequence", "@@", 
+                RowBox[{"{", 
+                 RowBox[{
+                  RowBox[{"#", "[", 
+                   RowBox[{"[", 
+                    RowBox[{";;", 
+                    RowBox[{"-", "2"}]}], "]"}], "]"}], ",", " ", 
+                  RowBox[{
+                   RowBox[{"#", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"-", "1"}], "]"}], "]"}], "<>", "\"\<.wl\>\""}]}],
+                  "}"}]}], "&"}], "@", 
+              RowBox[{"StringSplit", "[", 
+               RowBox[{"#", ",", " ", "\"\<`\>\""}], "]"}]}]}], "]"}]}], "\n",
+           "\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Quiet", "@", "\n", "\t\t\t\t\t", 
+           RowBox[{"CreateDirectory", "[", 
+            RowBox[{
+             RowBox[{"DirectoryName", "@", "target"}], ",", " ", 
+             RowBox[{"CreateIntermediateDirectories", "\[Rule]", "True"}]}], 
+            "]"}]}], ";", "\n", "\t\t\t\t", 
+          RowBox[{"WriteString", "[", "\n", "\t\t\t\t\t", 
+           RowBox[{"target", ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"StringReplace", "[", 
+             RowBox[{"ctf", ",", " ", 
+              RowBox[{"\"\<$ContextDepth$\>\"", "\[Rule]", 
+               RowBox[{"ToString", "[", 
+                RowBox[{
+                 RowBox[{"StringCount", "[", 
+                  RowBox[{"#", ",", " ", "\"\<`\>\""}], "]"}], "-", "1"}], 
+                "]"}]}]}], "]"}]}], "\n", "\t\t\t\t\t", "]"}], ";", "\n", 
+          "\t\t\t\t", 
+          RowBox[{"Close", "[", "target", "]"}]}]}], "\n", "\t\t\t\t", "]"}], 
+       "&"}], ",", "\n", "\t\t\t", "cts"}], "\n", "\t\t\t", "]"}]}], "\n", 
+   "\t\t", "]"}]}]], \
+"CodeInput",ExpressionUUID->"c574c805-27d1-45ad-8aa7-17692e55e5d2"]
 }, Closed]]
 }, Open  ]],
 
@@ -7603,7 +7806,7 @@ Cell[BoxData[
    3.7044724051949177`*^9},ExpressionUUID->"aac87cdd-94f4-4ab3-9657-\
 31fc62ec6f37"]
 }, Closed]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -8213,7 +8416,7 @@ Cell[BoxData[{
    3.703565863348185*^9},ExpressionUUID->"f346635c-d626-49e7-8368-\
 93ade2052ae1"]
 }, Closed]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -9310,7 +9513,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"51af92ef-62b7-4e37-bdaf-\
 538e35eb72a6"]
 },
 WindowSize->{798, 765},
-WindowMargins->{{302, Automatic}, {17, Automatic}},
+WindowMargins->{{Automatic, 315}, {Automatic, 8}},
 Visible->True,
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",

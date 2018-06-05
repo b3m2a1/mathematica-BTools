@@ -91,7 +91,17 @@ $AppEditMethods=
 		"FindPalette"->
 			AppPalette,
 		"RegenerateConfig"->
-			AppConfigRegenerate
+			AppConfigRegenerate,
+		"RegeneratePacletInfo"->
+			AppRegeneratePacletInfo,
+		"RegenerateLoaderFile"->
+			AppRegenerateInit,
+		"RegenerateDirectories"->
+			AppRegenerateDirectories,
+		"RegenerateContextLoaders"->
+			AppRegenerateContextLoadFiles,
+		"RegenerateLoadInfo"->
+			AppRegenerateLoadInfo
 		|>;
 
 
@@ -108,6 +118,7 @@ $AppDevMethods=
 		"Needs"->AppNeeds,
 		"OpenPackage"->AppPackageOpen,
 		"ListContexts"->AppContexts,
+		"MainContext"->AppMainContext,
 		"PackageFunctions"->AppPackageFunctions,
 		"PackageDependencies"->AppPackageDependencies,
 		"FunctionDependencies"->AppFunctionDependencies

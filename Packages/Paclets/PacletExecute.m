@@ -148,6 +148,8 @@ $PacletExecuteUploadMethods=
 			PacletAPIUpload,
 		"Install"->
 			PacletInstallPaclet,
+		"Download"->
+			PacletDownloadPaclet,
 		"FindPacletFile"->
 			PacletFindBuiltFile
 		|>;
