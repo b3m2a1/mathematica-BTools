@@ -295,7 +295,11 @@ GitHub[
 	opp___?OptionQ,
 	"HTTPResponse"
 	]:=
-	GitHub[command, args, opp, "GitHubImport"->False];
+	URLRead@
+		GitHub[command, args, opp, 
+			"GitHubImport"->False,
+			"ReturnGitHubQuery"->True
+			];
 
 
 (* ::Subsubsubsection::Closed:: *)

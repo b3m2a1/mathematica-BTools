@@ -747,17 +747,21 @@ GitHubAuthHeader[
 
 
 GitHubUserAPI[
-	type:"users"|"org":"users",
+	type:"users"|"org"|"user"|None:"users",
 	user:_String|Automatic:Automatic,
 	path:{___String}|_String:{},
 	query:(_String->_)|{(_String->_)...}:{},
 	headers:_Association:<||>
 	]:=
-	GitHubQuery[{
-		type,
-		Replace[user, Automatic:>$GitHubUsername],
-		Flatten@path
-		},
+	GitHubQuery[
+		{
+			If[type===None, Nothing, type],
+			Replace[user, 
+				Automatic:>
+					If[type==="user"||type===None, Nothing, $GitHubUsername]
+				],
+			Flatten@path
+			},
 		query,
 		headers
 		];
@@ -1238,6 +1242,361 @@ GitHubFork[
 
 
 (* ::Subsection:: *)
+(*Issues*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*UserIssues*)
+
+
+
+$GitHubActions["ListUserIssues"]=
+	GitHubIssues;
+
+
+GitHubIssues//Clear
+
+
+$GitHubParamMap[GitHubIssues]=
+	{
+		"Filter"->"filter",
+		"State"->"state",
+		"Labels"->"labels",
+		"Sort"->"sort",
+		"SortDirection"->"direction",
+		"Since"->"since"
+		};
+Options[GitHubIssues]=
+	Thread[Keys[$GitHubParamMap[GitHubIssues]]->Automatic];
+GitHubIssues[
+	type:"org"|"user":"user",
+	user:_String|Automatic:Automatic,
+	ops:OptionsPattern[]
+	]:=
+	GitHubUserAPI[
+		If[user==="Assigned", None, type],
+		Which[
+			user==="Assigned",
+				Automatic,
+	 	type==="org", 
+	 		user, 
+	 	True,
+	 		Automatic
+	 	],
+		{"issues"}, 
+		GitHubQueryParamFilter[
+			GitHubIssues,
+			{
+				ops
+				}
+			],
+		<|
+			|>
+		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*RepositoryIssues*)
+
+
+
+$GitHubActions["ListIssues"]=GitHubRepositoryIssues;
+$GitHubParamMap[GitHubRepositoryIssues]=
+	{
+		"Milestone"->"milestone",
+		"State"->"state",
+		"Assignee"->"assignee",
+		"Creator"->"creator",
+		"Mentioned"->"mentioned",
+		"Labels"->"labels",
+		"Sort"->"sort",
+		"SortDirection"->"direction",
+		"Since"->"since"
+		};
+Options[GitHubRepositoryIssues]=
+	Thread[Keys[$GitHubParamMap[GitHubRepositoryIssues]]->Automatic];
+GitHubRepositoryIssues[
+	repo:(_String|_GitHubPath)?GitHubRepoQ,
+	ops:OptionsPattern[]
+	]:=
+	GitHubReposAPI[
+		repo,
+		{"issues"},
+		GitHubQueryParamFilter[
+			GitHubRepositoryIssues,
+			{
+				ops
+				}
+			],
+		<|
+			|>
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*GetIssue*)
+
+
+
+$GitHubActions["GetIssue"]=GitHubGetIssue;
+GitHubGetIssue[
+	repo:(_String|_GitHubPath)?GitHubRepoQ,
+	id:_Integer?IntegerQ,
+	ops:OptionsPattern[]
+	]:=
+	GitHubReposAPI[
+		repo,
+		{"issues", ToString@id}
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*CreateIssue*)
+
+
+
+$GitHubActions["CreateIssue"]=GitHubCreateIssue;
+$GitHubParamMap[GitHubCreateIssue]=
+	{
+		"Title"->"title",
+		"Body"->"body",
+		"Milestone"->"milestone",
+		"Labels"->"labels",
+		"Assignees"->"assignees"
+		};
+Options[GitHubCreateIssue]=
+	Join[
+		FilterRules[
+			Thread[Keys[$GitHubParamMap[GitHubCreateIssue]]->Automatic],
+			Except["Title"|"Body"]
+			],
+		{
+			"Username"->Automatic,
+			"Password"->Automatic
+			}
+		];
+GitHubCreateIssue[
+	repo:(_String|_GitHubPath)?GitHubRepoQ,
+	title_String,
+	body_String,
+	ops:OptionsPattern[]
+	]:=
+	GitHubReposAPI[
+		repo,
+		{"issues"},
+		<|
+			Method->"POST",
+			"Body"->
+				ExportString[
+					GitHubQueryParamFilter[
+						GitHubCreateIssue,
+						{
+							ops,
+							"Title"->title,
+							"Body"->body
+							}
+						],
+					"JSON"
+					],
+			"Headers"->
+				{
+					"Authorization"->
+						OptionValue[{"Username", "Password"}]
+					}
+			|>
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*EditIssue*)
+
+
+
+$GitHubActions["EditIssue"]=GitHubEditIssue;
+$GitHubParamMap[GitHubEditIssue]=
+	{
+		"Title"->"title",
+		"Body"->"body",
+		"State"->"state",
+		"Milestone"->"milestone",
+		"Labels"->"labels",
+		"Assignees"->"assignees"
+		};
+Options[GitHubEditIssue]=
+	Join[
+		Thread[Keys[$GitHubParamMap[GitHubEditIssue]]->Automatic],
+		{
+			"Username"->Automatic,
+			"Password"->Automatic
+			}
+		];
+GitHubEditIssue[
+	repo:(_String|_GitHubPath)?GitHubRepoQ,
+	which:_?IntegerQ,
+	ops:OptionsPattern[]
+	]:=
+	GitHubReposAPI[
+		repo,
+		{"issues", ToString@which},
+		<|
+			Method->"PATCH",
+			"Body"->
+				ExportString[
+					GitHubQueryParamFilter[
+						GitHubEditIssue,
+						{ops}
+						],
+					"JSON"
+					],
+			"Headers"->
+				{
+					"Authorization"->
+						OptionValue[{"Username", "Password"}]
+					}
+			|>
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*ListIssueComments*)
+
+
+
+$GitHubActions["ListIssueComments"]=GitHubListIssueComments;
+$GitHubParamMap[GitHubListIssueComments]=
+	{
+		"Since"->"since"
+		};
+Options[GitHubListIssueComments]=
+	Thread[Keys[$GitHubParamMap[GitHubListIssueComments]]->Automatic];
+GitHubListIssueComments[
+	repo:(_String|_GitHubPath)?GitHubRepoQ,
+	which:_Integer?IntegerQ,
+	ops:OptionsPattern[]
+	]:=
+	GitHubReposAPI[
+		repo,
+		{"issues", ToString@which, "comments"},
+		GitHubQueryParamFilter[
+			GitHubListIssueComments,
+			{
+				ops
+				}
+			],
+		<|
+			|>
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*CreateIssueComment*)
+
+
+
+$GitHubActions["CreateIssueComment"]=GitHubCreateIssueComment;
+Options[GitHubCreateIssueComment]=
+	{
+		"Username"->Automatic,
+		"Password"->Automatic
+		};
+GitHubCreateIssueComment[
+	repo:(_String|_GitHubPath)?GitHubRepoQ,
+	which_?IntegerQ,
+	body_String,
+	ops:OptionsPattern[]
+	]:=
+	GitHubReposAPI[
+		repo,
+		{"issues", ToString@which, "comments"},
+		<|
+			Method->"POST",
+			"Body"->
+				ExportString[
+					{
+						"body"->body
+						},
+					"JSON"
+					],
+			"Headers"->
+				{
+					"Authorization"->
+						OptionValue[{"Username", "Password"}]
+					}
+			|>
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*EditIssueComment*)
+
+
+
+$GitHubActions["EditIssueComment"]=GitHubEditIssueComment;
+Options[GitHubEditIssueComment]=
+	{
+		"Username"->Automatic,
+		"Password"->Automatic
+		};
+GitHubEditIssueComment[
+	repo:(_String|_GitHubPath)?GitHubRepoQ,
+	which_?IntegerQ,
+	subwhich_?IntegerQ,
+	body_String,
+	ops:OptionsPattern[]
+	]:=
+	GitHubReposAPI[
+		repo,
+		{"issues", ToString@which, "comments", ToString@subwhich},
+		<|
+			Method->"PATCH",
+			"Body"->
+				ExportString[
+					{
+						"body"->body
+						},
+					"JSON"
+					],
+			"Headers"->
+				{
+					"Authorization"->
+						OptionValue[{"Username", "Password"}]
+					}
+			|>
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*DeleteIssueComment*)
+
+
+
+$GitHubActions["DeleteIssueComment"]=GitHubDeleteIssueComment;
+Options[GitHubDeleteIssueComment]=
+	{
+		"Username"->Automatic,
+		"Password"->Automatic
+		};
+GitHubDeleteIssueComment[
+	repo:(_String|_GitHubPath)?GitHubRepoQ,
+	subwhich_?IntegerQ,
+	ops:OptionsPattern[]
+	]:=
+	GitHubReposAPI[
+		repo,
+		ToString/@{"issues", "comments", subwhich},
+		<|
+			Method->"DELETE",
+			"Headers"->
+				{
+					"Authorization"->
+						OptionValue[{"Username", "Password"}]
+					}
+			|>
+		]
+
+
+(* ::Subsection:: *)
 (*Blobs*)
 
 
@@ -1713,8 +2072,6 @@ GitHubMerge[
 
 
 $GitHubActions["ListPullRequests"]=GitHubListPullRequests;
-
-
 $GitHubParamMap[GitHubListPullRequests]=
 	{
 		"State"->"state",
@@ -1767,8 +2124,6 @@ GitHubPullRequestInfo[
 
 
 $GitHubActions["CreatePullRequest"]=GitHubCreatePullRequest;
-
-
 $GitHubParamMap[GitHubCreatePullRequest]=
 	{
 		"Title"->"title",

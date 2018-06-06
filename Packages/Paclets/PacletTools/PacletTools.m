@@ -3354,6 +3354,7 @@ PacletDownloadPaclet::laywha="Couldn't detect package layout from directory ``";
 PacletDownloadPaclet::dumcode="Couldn't generate PacletInfo.m for directory ``";
 PacletDownloadPaclet::badbun="Not a real directory ``";
 PacletDownloadPaclet::badgh="Couldn't download paclet at `` from GitHub";
+PacletDownloadPaclet::norem="Couldn't find remote paclet `` on server";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -3639,28 +3640,179 @@ downloadURLIfExists[urlBase_,{files__},dir_]:=
 
 
 (* ::Subsubsection::Closed:: *)
+(*pacletSiteDownload*)
+
+
+
+Options[pacletDownloadFromSite]=
+	Append[
+		Options[PacletManager`PacletFindRemote],
+		"Site"->None
+		];
+pacletDownloadFromSite[
+	paclet_,
+	ops:OptionsPattern[]
+	]:=
+	Block[
+		{
+			pfrData,
+			fromSite=OptionValue["Site"],
+			newSiteQ,
+			pacToLoad,
+			pacFile,
+			targetFile
+			},
+		Internal`WithLocalSettings[
+			If[StringQ@fromSite,
+				newSiteQ=
+					!MemberQ[PacletManager`PacletSites[], PacletManager`PacletSite[fromSite,__]];
+				If[newSiteQ, 
+					PacletManager`PacletSiteAdd@fromSite;
+					PacletManager`PacletSiteUpdate@fromSite;
+					]
+				],
+			pfrData=
+				PacletManager`PacletFindRemote[paclet, 
+					FilterRules[{ops}, Options@PacletManager`PacletFindRemote]
+					];
+			If[Length@pfrData==0,
+				Message[PacletDownloadPaclet::norem, paclet];
+				$Failed,
+				pacToLoad=pfrData[[1]];
+				targetFile=
+					FileNameJoin@{
+						$TemporaryDirectory, 
+						pacToLoad["Name"]<>"-"<>pacToLoad["Version"]<>".paclet"
+						};
+				pacFile=
+					URLDownload[
+						URLBuild@
+							{
+								pacToLoad["Location"], 
+								"Paclets", 
+								FileNameTake[targetFile]
+								},
+						targetFile
+						];
+				Replace[
+					pacFile,
+					File[p_]:>p
+					]
+				],
+			If[newSiteQ, 
+				PacletManager`PacletSiteRemove@fromSite;
+				]
+			]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
 (*PacletDownloadPaclet*)
 
 
 
+PacletDownloadPaclet//Clear
+
+
 Options[PacletDownloadPaclet]=
-	{
-		"Verbose"->True,
-		"Log"->True
-		};
+	Join[
+		{
+			"Verbose"->True,
+			"Log"->True
+			},
+		Options[pacletDownloadFromSite]
+		]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Server*)
+
+
+
+pacletDownloadVersionPattern=
+	DigitCharacter~~(DigitCharacter|".")...;
+pacletDownloadNamePattern=
+	(WordCharacter|"_")..~~
+		(""|("-"~~pacletDownloadVersionPattern));
+
+
+PacletDownloadPaclet[
+	pacletName:
+		_String?(StringMatchQ[pacletDownloadNamePattern])|
+		{
+			_String?(StringMatchQ[(WordCharacter|"_")..]), 
+			_String?(StringMatchQ[pacletDownloadVersionPattern])
+			},
+	ops:OptionsPattern[]
+	]:=
+	With[
+		{
+			pname=
+				If[ListQ@pacletName, pacletName[[1]], 
+					StringSplit[pacletName, "-"][[1]]
+					],
+			pvers=
+				If[ListQ@pacletName, 
+					pacletName[[2]], 
+					Replace[StringSplit[pacletName, "-"],
+						{
+							{_, v_}:>v,
+							{_}:>None
+							}
+						]
+					]
+			},
+		If[OptionValue["Verbose"],
+			Function[Null, 
+				Monitor[
+					#,
+					Internal`LoadingPanel@
+						TemplateApply[
+							"Downloading paclet `` from server",
+							pname
+							]
+					], 
+				HoldAll
+				],
+			Identity
+			]@
+			pacletDownloadFromSite[
+				If[pvers===None,
+					pname,
+					{pname, pvers}
+					],
+				FilterRules[{ops},
+					Options[pacletDownloadFromSite]
+					]
+				]
+		]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Directory*)
+
+
+
 PacletDownloadPaclet[
 	loc:(_String|_File)?FileExistsQ,
 	ops:OptionsPattern[]
 	]:=
 	installPacletGenerate[loc, ops];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*URL*)
+
+
+
 PacletDownloadPaclet[
 	loc:(_String?(URLParse[#,"Scheme"]=!=None&)|_URL),
 	ops:OptionsPattern[]
 	]:=
 	Which[
 		URLParse[loc, "Domain"]==="github.com"||
-			URLParse[loc, "Scheme"]=="github"||
-			URLParse[loc, "Scheme"]=="github-release",
+		URLParse[loc, "Scheme"]=="github"||
+		URLParse[loc, "Scheme"]=="github-release",
 			With[{dir=
 				If[!FileExistsQ@#, 
 					Message[PacletDownloadPaclet::badgh, loc];
@@ -3710,7 +3862,7 @@ PacletDownloadPaclet[
 					URLParse[loc,"Path"][[-1]],
 					_?(FileExtension[#]=="paclet"&),
 						URLDownload[loc],
-					_?(MatchQ[FileExtension[#],"m"|"wl"]&),
+					_?(MatchQ[FileExtension[#], "m"|"wl"]&),
 						PacletDownloadPaclet@
 							downloadURLIfExists[
 								URLBuild[
@@ -3726,31 +3878,33 @@ PacletDownloadPaclet[
 									}
 								],
 					_,
-						Replace[
-							Quiet@Normal@PacletSiteInfoDataset[loc],
-							{
-								Except[{__Association}]:>
-									(
-										Message[PacletDownloadPaclet::nopac, loc];
-										$Failed
-										),
-								a:{__Association}:>
-									PacletDownloadPaclet[
-										URLBuild@
-											Flatten@{
-												loc,
-												StringJoin@{
-													Lookup[Last@SortBy[a, #Version&],{
-														"Name",
-														"Version"
-														}],
-													".paclet"
-													}
-												},
-										ops
-										]
-								}
-							]
+						Message[PacletDownloadPaclet::nopac, loc];
+						$Failed
+						(*Replace[
+					Quiet@Normal@PacletSiteInfoDataset[loc],
+					{
+						Except[{__Association}]:>
+							(
+								Message[PacletDownloadPaclet::nopac, loc];
+								$Failed
+								),
+						a:{__Association}:>
+							PacletDownloadPaclet[
+								URLBuild@
+									Flatten@{
+										loc,
+										StringJoin@{
+											Lookup[Last@SortBy[a, #Version&],{
+												"Name",
+												"Version"
+												}],
+											".paclet"
+											}
+										},
+								ops
+								]
+						}
+					]*)
 					]
 			];
 
