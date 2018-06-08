@@ -533,8 +533,8 @@ WebSiteSetContentAttributes[
 
 
 
-WebSiteCollectContentURLs[]:=
-	
+(*WebSiteCollectContentURLs[]:=
+	*)
 
 
 (* ::Subsection:: *)
@@ -552,37 +552,36 @@ WebSiteCollectContentURLs[]:=
 
 
 
-	xmlTemplateApplyInit[root_, template_]:=
-		(
-			$WSBCachedBuildData["Context"]=$Context;
-			$WSBCachedBuildData["TemplatePath"]=$TemplatePath;
-			$WSBCachedBuildData["Path"]=$Path;
-			$TemplatePath=
-				Join[
-					Flatten@List@
-						Replace[root, Automatic:>DirectoryName@template],
-					{
-						$TemplateLibDirectory
-						},
-					$TemplatePath
-					];
-			$Path=
-				Join[
-					Flatten@List@
-						Replace[root, Automatic:>DirectoryName@template],
-					{
-						$TemplateLibDirectory
-						},
-					$Path
-					];
-			System`Private`NewContextPath[
-				{"Templating`lib`", "System`"};
+xmlTemplateApplyInit[root_, template_]:=
+	(
+		$WSBCachedBuildData["Context"]=$Context;
+		$WSBCachedBuildData["ContextPath"]=$ContextPath;
+		$WSBCachedBuildData["TemplatePath"]=$TemplatePath;
+		$WSBCachedBuildData["Path"]=$Path;
+		$TemplatePath=
+			Join[
+				Flatten@List@
+					Replace[root, Automatic:>DirectoryName@template],
+				{
+					$TemplateLibDirectory
+					},
+				$TemplatePath
 				];
-			$Context="Templating`lib`";
-			Unprotect[Templating`lib`$$templateLib];
-			Clear[Templating`lib`$$templateLib];
-			Get[FileNameJoin@{"include", "lib", "loadTemplateLib.m"}]
-			);
+		$Path=
+			Join[
+				Flatten@List@
+					Replace[root, Automatic:>DirectoryName@template],
+				{
+					$TemplateLibDirectory
+					},
+				$Path
+				];
+		$Context="Templating`lib`";
+		$ContextPath={"Templating`lib`", "System`"};
+		Unprotect[Templating`lib`$$templateLib];
+		Clear[Templating`lib`$$templateLib];
+		Get[FileNameJoin@{"include", "lib", "loadTemplateLib.m"}];
+		);
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -597,6 +596,8 @@ xmlTemplateApplyRestore[]:=
 		$Context=$WSBCachedBuildData["Context"];
 		$TemplatePath=$WSBCachedBuildData["TemplatePath"];
 		$Path=$WSBCachedBuildData["Path"];
+		$ContextPath=$WSBCachedBuildData["ContextPath"];
+		$WSBCachedBuildData//Clear
 		)
 
 
@@ -612,6 +613,9 @@ $TemplateLibDirectory=
 (* ::Subsubsubsection::Closed:: *)
 (*WebSiteXMLTemplateApply*)
 
+
+
+WebSiteXMLTemplateApply//Clear
 
 
 WebSiteXMLTemplateApply[
@@ -1311,7 +1315,6 @@ WebSiteTemplateApply[
 							WebSiteXMLTemplateApply[
 								root,
 								#2,
-								True,
 								WebSiteTemplateGatherArgs[
 									#,
 									args
@@ -2365,23 +2368,35 @@ WebSiteCopyContent[
 
 
 (* ::Subsubsection::Closed:: *)
-(*GenerateSearchIndex*)
+(*GenerateSiteIndex*)
 
 
 
-Options[WebSiteGenerateSearchIndex]=
+Options[WebSiteGenerateSiteIndex]=
 	{
-		"SiteIndexContent"->{"Articles"}
+		"SiteIndexContent"->{"Articles"},
+		Monitor->True
 		};
-WebSiteGenerateSearchIndex[
+WebSiteGenerateSiteIndex[
 	dir_, 
 	outDir_,
 	config_, 
 	ops:OptionsPattern[]
 	]:=
+	If[TrueQ@OptionValue[Monitor], 
+		Function[Null, 
+			Monitor[#, Internal`LoadingPanel@"Generating site index..."], 
+			HoldFirst
+			],
+		Identity
+		]@
 	Module[
 		{
-			contentData=$WebSiteContentStack,
+			contentData=
+				Lookup[
+					Values@$WebSiteBuildContentStack,
+					"Attributes"
+					],
 			siteIndexedContent,
 			selector,
 			pagesForReal
@@ -2410,9 +2425,13 @@ WebSiteGenerateSearchIndex[
 		contentData=
 			Map[
 				AssociationThread[
-					{"title", "tags", "url", "note"},
+					{"title", "text", "tags", "url", "note"},
 					{
 						Lookup[#, "Title", "Untitled"],
+						ImportString[
+							Lookup[#, "Content", "<p>No content...</p>"],
+							"HTML"
+							],
 						Lookup[#, "Tags", {}],
 						Lookup[#, "URL", "??_y_dough_??.html"],
 						Lookup[#, "Summary", "No summary..."]
@@ -2424,7 +2443,7 @@ WebSiteGenerateSearchIndex[
 					]
 				];
 		Export[
-			FileNameJoin@{outDir, "search_index.json"},
+			FileNameJoin@{outDir, "site_index.json"},
 			<|"pages"->contentData|>
 			] 
 		]
@@ -2502,11 +2521,9 @@ iWebSiteBuild[
 	]:=
 	Block[
 		{
-			(* A bunch of parameters to protect -- may get rewritten so this is a safety net *)
-			$TemplatePath=$TemplatePath,
+			(* may get overwritten so this is a safety net *)
 			$Path=$Path,
-			$Context=$Context,
-			$ContextPath=$ContextPath,
+			$TemplatePath=$TemplatePath,
 			(* The stacks to populate *)
 			$WebSiteBuildContentStack=
 				<||>,
@@ -2651,9 +2668,9 @@ iWebSiteBuild[
 					newconf,
 					FilterRules[
 						{ops},
-						Options[WebSiteGenerateIndexPages]
+						Options[WebSiteGenerateSiteIndex]
 						]
-					];
+					]
 				];
 			];
 
