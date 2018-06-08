@@ -26,16 +26,35 @@ $WebSiteThemePath::usage=
 Begin["`Private`"];
 
 
+(* ::Subsubsection::Closed:: *)
+(*$WebSiteDirectory*)
+
+
+
 $WebSiteDirectory=
 	FileNameJoin@{
 		$UserBaseDirectory,
 		"ApplicationData",
 		"WebSites"
 		};
+
+
+(* ::Subsubsection::Closed:: *)
+(*$WebSitePath*)
+
+
+
 $WebSitePath=
 	{
 		$WebSiteDirectory
 		};
+
+
+(* ::Subsubsection::Closed:: *)
+(*$WebSiteThemePath*)
+
+
+
 If[Length@OwnValues[$WebThemesURLBase]===0,
 	$WebThemesURLBase:=
 		$WebThemesURLBase=
@@ -49,6 +68,11 @@ $WebSiteThemePath=
 		FileNameJoin@{$WebSiteDirectory, "Themes"},
 		$WebSiteTempThemeDir
 		};
+
+
+(* ::Subsection:: *)
+(*Site Config*)
+
 
 
 (* ::Subsubsection::Closed:: *)
@@ -477,6 +501,43 @@ WebSiteOpenTheme[dir_, theme:_String|Automatic:Automatic]:=
 
 
 (* ::Subsection:: *)
+(*ContentStack Manipulation*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*WebSiteSetContentAttributes*)
+
+
+
+WebSiteSetContentAttributes[
+	fname_,
+	props_
+	]:=
+	(
+		If[!AssociationQ@$WebSiteBuildContentStack[fname],
+			$WebSiteBuildContentStack[fname]=<||>
+			];
+		If[!AssociationQ@$WebSiteBuildContentStack[fname, "Attributes"],
+			$WebSiteBuildContentStack[fname, "Attributes"]=<||>
+			];
+		AssociateTo[
+			$WebSiteBuildContentStack[fname, "Attributes"],
+			props
+			]
+		)
+
+
+(* ::Subsubsection::Closed:: *)
+(*WebSiteCollectContentURLs*)
+
+
+
+WebSiteCollectContentURLs[]:=
+	
+
+
+(* ::Subsection:: *)
 (*Site Building*)
 
 
@@ -486,8 +547,71 @@ WebSiteOpenTheme[dir_, theme:_String|Automatic:Automatic]:=
 
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*xmlTemplateApplyInit*)
+
+
+
+	xmlTemplateApplyInit[root_, template_]:=
+		(
+			$WSBCachedBuildData["Context"]=$Context;
+			$WSBCachedBuildData["TemplatePath"]=$TemplatePath;
+			$WSBCachedBuildData["Path"]=$Path;
+			$TemplatePath=
+				Join[
+					Flatten@List@
+						Replace[root, Automatic:>DirectoryName@template],
+					{
+						$TemplateLibDirectory
+						},
+					$TemplatePath
+					];
+			$Path=
+				Join[
+					Flatten@List@
+						Replace[root, Automatic:>DirectoryName@template],
+					{
+						$TemplateLibDirectory
+						},
+					$Path
+					];
+			System`Private`NewContextPath[
+				{"Templating`lib`", "System`"};
+				];
+			$Context="Templating`lib`";
+			Unprotect[Templating`lib`$$templateLib];
+			Clear[Templating`lib`$$templateLib];
+			Get[FileNameJoin@{"include", "lib", "loadTemplateLib.m"}]
+			);
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*xmlTemplateApplyRestore*)
+
+
+
+xmlTemplateApplyRestore[]:=
+	(
+		Remove["Templating`lib`*"];
+		System`Private`RestoreContextPath[];
+		$Context=$WSBCachedBuildData["Context"];
+		$TemplatePath=$WSBCachedBuildData["TemplatePath"];
+		$Path=$WSBCachedBuildData["Path"];
+		)
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$TemplateLibDirectory*)
+
+
+
 $TemplateLibDirectory=
 	PackageFilePath["Resources","Themes","template_lib"];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*WebSiteXMLTemplateApply*)
+
 
 
 WebSiteXMLTemplateApply[
@@ -496,42 +620,17 @@ WebSiteXMLTemplateApply[
 	args:_?OptionQ:{}
 	]:=
 	Replace[
-		Block[{
-				$TemplatePath=
-					Join[
-						Flatten@List@
-							Replace[root,Automatic:>DirectoryName@template],
-						{
-							$TemplateLibDirectory
-							},
-						$TemplatePath
-						],
-				$Path=
-					Join[
-						Flatten@List@
-							Replace[root,Automatic:>DirectoryName@template],
-						{
-							$TemplateLibDirectory
-							},
-						$Path
-						],
-				$ContextPath=
-					Join[{"Templating`lib`",$Context},$ContextPath],
-				$Context=
-					"Templating`lib`"
-				},
-			Unprotect[Templating`lib`$$templateLib];
-			Clear[Templating`lib`$$templateLib];
-  		Import[FileNameJoin@{"include","lib","loadTemplateLib.m"}];
-			(Remove["Templating`lib`*"];#)&@
-				Nest[
-					TemplateApply[
-						XMLTemplate[#],
-						args
-						]&,
-					File[template],
-					1
-					]
+		Internal`WithLocalSettings[
+			xmlTemplateApplyInit[root, template],
+			Nest[
+				TemplateApply[
+					XMLTemplate[#],
+					args
+					]&,
+				File[template],
+				1
+				],
+			xmlTemplateApplyRestore[]
 			],
 		{
 			s_String:>
@@ -851,7 +950,7 @@ WebSiteTemplatePreProcess[fileContent_,args_]:=
 			ReplaceAll[
 				#,
 				("src"->f_):>
-					("src"->StringReplace[f,"{filename}"->srcbase])
+					("src"->StringReplace[f, "{filename}"->srcbase])
 				]&,
 			Identity
 			]@
@@ -1203,26 +1302,27 @@ WebSiteTemplateApply[
 					Fold[
 						Lookup[#,#2,<||>]&,
 						$WebSiteBuildContentStack,
-						{content,"Attributes"}
+						{content, "Attributes"}
 						],
 					"Slug",
 					Automatic
 					]->
-					Fold[
-						WebSiteXMLTemplateApply[
-							root,
-							#2,
-							WebSiteTemplateGatherArgs[
-								#,
-								args
-								]
-							]&,
-						If[content=!=None,
-							$WebSiteBuildContentStack[content, "Content"],
-							None
-							],
-						fils
-						]
+						Fold[
+							WebSiteXMLTemplateApply[
+								root,
+								#2,
+								True,
+								WebSiteTemplateGatherArgs[
+									#,
+									args
+									]
+								]&,
+							If[content=!=None,
+								$WebSiteBuildContentStack[content, "Content"],
+								None
+								],
+							fils
+							]
 				],
 		Message[WebSiteBuild::nost];
 		$Failed
@@ -1999,11 +2099,15 @@ WebSiteGenerateContent[
 	outDir_,theme_,config_,
 	ops:OptionsPattern[]
 	]:=
-	With[
+	Module[
 		{
 			longDir=ExpandFileName@dir,
 			thm=WebSiteFindTheme[dir, theme, "DownloadTheme"->True],
-			lb=OptionValue["LastBuild"]
+			lb=OptionValue["LastBuild"],
+			fname,
+			path,
+			fout,
+			conf
 			},
 		Block[
 			{
@@ -2021,75 +2125,67 @@ WebSiteGenerateContent[
 					HoldAllComplete
 					]
 				]@
-				With[
-					{
-						fname=
-							(* In case the file had a path already *)
-							ExpandFileName@
-								Replace[#,Except[_String|_File]:>First[#]],
-						path=
-							(* Use path if provided, else base.html *)
-							Flatten@List@
-								Replace[#,
-									{
-										Except[_String|_File]:>Last[#],
-										_:>
-											WebSiteBuildGetTemplates[
-												ExpandFileName@
-													Replace[#,Except[_String|_File]:>First[#]],
-												longDir
-												]
-										}
-									]
-							},
-					With[
-						{
-							fout=
-								Replace[
-									Fold[
-										Lookup[#, #2, <||>]&,
-										$WebSiteBuildContentStack,
-										{fname, "Attributes", "URL"}
-										],{
-										u_String:>
-											FileNameJoin@
-												Flatten@{
-													outDir,
-													URLParse[u, "Path"]
-													},
-										_:>
-											Function[
-												If[FileExtension[#]=!="html",
-													DirectoryName[#]<>
-														FileBaseName[#]<>".html",
-													#
+				CompoundExpression[
+					fname=
+						(* In case the file had a path already *)
+						ExpandFileName@
+							Replace[#,Except[_String|_File]:>First[#]],
+					path=
+						(* Use path if provided, else base.html *)
+						Flatten@List@
+							Replace[#,
+								{
+									Except[_String|_File]:>Last[#],
+									_:>
+										WebSiteBuildGetTemplates[
+											ExpandFileName@
+												Replace[#,Except[_String|_File]:>First[#]],
+											longDir
+											]
+									}
+								],
+					fout=
+						Replace[
+							Fold[
+								Lookup[#, #2, <||>]&,
+								$WebSiteBuildContentStack,
+								{fname, "Attributes", "URL"}
+								],
+							{
+								u_String:>
+									FileNameJoin@
+										Flatten@{
+											outDir,
+											URLParse[u, "Path"]
+											},
+								_:>
+									Function[
+										If[FileExtension[#]=!="html",
+											DirectoryName[#]<>
+												FileBaseName[#]<>".html",
+											#
+											]
+										]@
+										FileNameJoin@{
+											outDir,
+											WebSiteBuildSlug@
+												Lookup[
+													Lookup[
+														Lookup[$WebSiteBuildContentStack, fname, <||>],
+														"Attributes",
+														<||>
+														],
+													"FilePath",
+													WebSiteBuildFilePath[fname,outDir]
 													]
-												]@
-												FileNameJoin@{
-													outDir,
-													WebSiteBuildSlug@
-														Lookup[
-															Lookup[
-																Lookup[$WebSiteBuildContentStack,fname,<||>],
-																"Attributes",
-																<||>
-																],
-															"FilePath",
-															WebSiteBuildFilePath[fname,outDir]
-															]
-													}
-									}]
-							},
+											}
+								}
+							],
 						genfile=fname;
 						If[!DirectoryQ@DirectoryName@fout,
 							CreateDirectory@DirectoryName@fout
-							];
-						WebSiteTemplateExport[
-							genfile,
-							fout,
-							{FileNameJoin@{thm, "templates"},longDir},
-							fname,
-							path,
+							],
+						conf=
 							Merge[
 								{
 									config,
@@ -2098,11 +2194,21 @@ WebSiteGenerateContent[
 											FileNameDrop[fout, FileNameDepth@outDir]
 									},
 								Last
-								]
-							];
+								],
+						WebSiteSetContentAttributes[
+							fname,
+							"URL"->conf["URL"]
+							],
+						WebSiteTemplateExport[
+							genfile,
+							fout,
+							{FileNameJoin@{thm, "templates"},longDir},
+							fname,
+							path,
+							conf
+							],
 						outfile=.;
-						]
-					]&/@files,
+						]&/@files,
 				Internal`LoadingPanel@
 					TemplateApply[
 						"Exporting ``",
@@ -2195,7 +2301,8 @@ Options[WebSiteCopyContent]=
 	{
 		Monitor->True
 		};
-WebSiteCopyContent[dir_,outDir_,
+WebSiteCopyContent[
+	dir_,outDir_,
 	sel:Except[_?OptionQ]:Automatic,
 	ops:OptionsPattern[]
 	]:=
@@ -2258,6 +2365,72 @@ WebSiteCopyContent[dir_,outDir_,
 
 
 (* ::Subsubsection::Closed:: *)
+(*GenerateSearchIndex*)
+
+
+
+Options[WebSiteGenerateSearchIndex]=
+	{
+		"SiteIndexContent"->{"Articles"}
+		};
+WebSiteGenerateSearchIndex[
+	dir_, 
+	outDir_,
+	config_, 
+	ops:OptionsPattern[]
+	]:=
+	Module[
+		{
+			contentData=$WebSiteContentStack,
+			siteIndexedContent,
+			selector,
+			pagesForReal
+			},
+		siteIndexedContent=
+			Replace[Except[{__String}]->{"Articles"}]@
+				OptionValue["SiteIndexContent"];
+		selector=
+			Evaluate[
+				And@@
+					Table[
+						holdMemQ[
+							#["Templates"], 
+							Replace[t, 
+								{
+									"Articles"->"article.html",
+									"Pages"->"page.html",
+									"Images"|"Themes":>Nothing,
+									s_String:>StringTrim[s, ".html"]<>".html"
+									}
+								]
+							],
+						{t, siteIndexedContent}
+						]
+			]&/.holdMemQ->MemberQ;
+		contentData=
+			Map[
+				AssociationThread[
+					{"title", "tags", "url", "note"},
+					{
+						Lookup[#, "Title", "Untitled"],
+						Lookup[#, "Tags", {}],
+						Lookup[#, "URL", "??_y_dough_??.html"],
+						Lookup[#, "Summary", "No summary..."]
+						}
+					]&,
+				Select[
+					contentData,
+					selector
+					]
+				];
+		Export[
+			FileNameJoin@{outDir, "search_index.json"},
+			<|"pages"->contentData|>
+			] 
+		]
+
+
+(* ::Subsubsection::Closed:: *)
 (*Build*)
 
 
@@ -2305,13 +2478,20 @@ iWebSiteBuildGetFiles[dir_, dirs_, templates_]:=
 
 
 Options[iWebSiteBuild]=
-	{
-		"GenerateContent"->True,
-		"GenerateIndex"->Automatic,
-		"GenerateAggregations"->Automatic,
-		"PageSize"->0,
-		Monitor->True
-		};
+	DeleteDuplicatesBy[First]@
+		Join[
+			{
+				"GenerateContent"->True,
+				"GenerateIndex"->Automatic,
+				"GenerateAggregations"->Automatic,
+				"GenerateSiteIndex"->Automatic,
+				"PageSize"->0
+				},
+			Options[WebSiteGenerateContent],
+			Options[WebSiteGenerateIndex],
+			Options[WebSiteGenerateAggregations],
+			Options[WebSiteGenerateSiteIndex]
+			];
 iWebSiteBuild[
 	dir_,
 	outDir_,
@@ -2321,36 +2501,45 @@ iWebSiteBuild[
 	ops:OptionsPattern[]
 	]:=
 	Block[
-			{
-				$WebSiteBuildContentStack=
-					<||>,
-				$WebSiteBuildContentDataStack=
-					<||>,
-				genCont=
-					OptionValue["GenerateContent"],
-				genAggs=
-					Replace[
-						OptionValue["GenerateAggregations"],
-						Automatic:>
-							OptionValue["GenerateContent"]
-						],
-				genInd=
-					Replace[
-						OptionValue["GenerateIndex"],
-						Automatic:>
-							OptionValue["GenerateContent"]
-						],
-				newconf=
-					KeyDrop[
-						conf,
-						{
-							"GenerateContent",
-							"GenerateAggregations",
-							"GenerateIndex"
-							}
-						]
-				},
-			If[AnyTrue[{genCont,genAggs,genInd},TrueQ],
+		{
+			(* A bunch of parameters to protect -- may get rewritten so this is a safety net *)
+			$TemplatePath=$TemplatePath,
+			$Path=$Path,
+			$Context=$Context,
+			$ContextPath=$ContextPath,
+			(* The stacks to populate *)
+			$WebSiteBuildContentStack=
+				<||>,
+			$WebSiteBuildContentDataStack=
+				<||>,
+			(* Build flags *)
+			genCont=
+				OptionValue["GenerateContent"],
+			genAggs=
+				Replace[
+					OptionValue["GenerateAggregations"],
+					Automatic:>
+						OptionValue["GenerateContent"]
+					],
+			genInd=
+				Replace[
+					OptionValue["GenerateIndex"],
+					Automatic:>
+						OptionValue["GenerateContent"]
+					],
+			genSI=
+				Replace[
+					OptionValue["GenerateSiteIndex"],
+					Automatic:>
+						OptionValue["GenerateContent"]
+					],
+			newconf=
+				KeyDrop[
+					conf,
+					Keys@Options[iWebSiteBuild]
+					]
+			},
+			If[AnyTrue[{genCont, genAggs, genInd, genSI},TrueQ],
 				WebSiteExtractPageData[
 					ExpandFileName@dir,
 					fileNames,
@@ -2451,6 +2640,17 @@ iWebSiteBuild[
 									},
 								First
 								],
+						Options[WebSiteGenerateIndexPages]
+						]
+					];
+				];
+			If[genSI,
+				WebSiteGenerateSiteIndex[
+					dir,
+					outDir,
+					newconf,
+					FilterRules[
+						{ops},
 						Options[WebSiteGenerateIndexPages]
 						]
 					];

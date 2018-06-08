@@ -1958,8 +1958,9 @@ DocGenGenerateSymbolPages[s_Symbol,ops:OptionsPattern[]]:=
 	Block[{
 		$Context=$docGen,
 		$ContextPath=
-			Join[$ContextPath,
-				{Context@s,$Context}
+			Join[
+				$ContextPath,
+				{Context@s, $Context}
 				],
 		makeRefOverrides=
 			Join[
