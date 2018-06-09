@@ -1256,6 +1256,15 @@ WebSiteTemplateApply//ClearAll
 
 
 
+$templateLibTemplateDir=
+	PackageFilePath[
+		"Resources",
+		"Themes",
+		"template_lib",
+		"templates"
+		];
+
+
 WebSiteBuild::nocnt=
 	"Can't export content `` to string";
 WebSiteTemplateApply[
@@ -1267,12 +1276,15 @@ WebSiteTemplateApply[
 	If[AssociationQ@$WebSiteBuildContentStack,
 		With[{
 			fils=
-				Select[
-					FileNameJoin@{
-						First@Flatten@List@root,
-						#}&/@Flatten@List@templates,
-					FileExistsQ
-					],
+				Replace[
+					FileNames[
+						#,
+						Append[root, $templateLibTemplateDir]
+						],
+					{
+						{f_, ___}:>f
+						}
+					]&/@Flatten@List@templates//Flatten,
 			args=
 				If[MemberQ[Lookup[#, "Templates", {}], "article.html"],
 					Merge[{
