@@ -80,13 +80,22 @@
                         Nothing
                       ],
                   "body"->
-                    $$templateLib["getSiteName"][#]
+                    Replace[TemplateSlot["SiteName"],
+                      Except[_String]:>
+                        URLParse[#SiteURL,"Path"][[-1]]
+                      ]
                   |>
                 },
               #
               ]
           </wolfram:expr>
         </h1>
+        <wolfram:get path="include/lib/templates/varTrueBlock.html">
+          <wolfram:slot id="var">EnableSearch</wolfram:slot>
+          <wolfram:slot id="if">
+            <wolfram:get path="include/search.html"></wolfram:get>
+          </wolfram:slot>
+        </wolfram:get>
       </div>
 
       <div class="site-links">
