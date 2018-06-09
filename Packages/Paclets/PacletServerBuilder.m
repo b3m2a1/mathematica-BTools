@@ -1809,13 +1809,18 @@ PacletServerInitialize[server:localPacletServerPatOrDir]:=
 
 
 Options[PacletServerBuild]=
-	Join[
-		Options[WebSiteBuild],
-		{
-			"RegenerateContent"->Automatic,
-			"BuildSite"->True
-			}
-		];
+	Normal@
+		Merge[
+			Join[
+				Options[WebSiteBuild],
+				{
+					"RegenerateContent"->Automatic,
+					"BuildSite"->True,
+					"GenerateSearchPage"->Automatic
+					}
+				],
+			Last
+			];
 PacletServerBuild[
 	server:localPacletServerPatOrDir,
 	ops:OptionsPattern[]
@@ -2002,7 +2007,8 @@ PacletServerBuild[
 											If[GitRepoQ@PacletServerDirectory[server],
 												"docs",
 												Automatic
-												]
+												],
+										"GenerateSearchPage"->Automatic
 										},
 									Options@WebSiteBuild
 									],

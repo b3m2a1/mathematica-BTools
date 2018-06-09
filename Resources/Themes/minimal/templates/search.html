@@ -1,0 +1,53 @@
+<wolfram:get path="base.html">
+
+<wolfram:slot id="head">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css">
+
+  <script src="theme/tipuesearch/tipuesearch_content.js"></script>
+  <link rel="stylesheet" href="theme/tipuesearch/tipuesearch.css">
+  <script src="theme/tipuesearch/tipuesearch_set.js"></script>
+  <script src="theme/tipuesearch/tipuesearch.min.js"></script>
+
+</wolfram:slot>
+
+<wolfram:slot id="PageTitle">
+  Search | <wolfram:expr> $$templateLib["getSiteName"][#] </wolfram:expr>
+</wolfram:slot>
+
+<wolfram:slot id="PrimaryContent">
+
+  <div class="panel panel-default">
+    <div class="panel-body search-results-panel">
+      <div id="tipue_search_content"></div>
+    </div>
+  </div>
+
+  <script>
+    function waitPerformSearch(){
+      var tipuesearch_config = [
+        tipuesearch,
+        tipuesearch_options,
+        tipuesearch_stop_words,
+        tipuesearch_weight,
+        tipuesearch_replace,
+        tipuesearch_stem,
+        tipuesearch_related
+        ];
+      if(tipuesearch_config.every(
+        function(tspar){
+          return typeof tspar !== "undefined"
+          }
+        )){
+        $('#tipue_search_input').tipuesearch(tipuesearch_options)
+      }
+      else{
+        setTimeout(waitPerformSearch, 250);
+      }
+    }
+    $(document).ready(waitPerformSearch);
+  </script>
+
+</wolfram:slot>
+
+</wolfram:get>

@@ -43,4 +43,5 @@ Then the agg stack provides aggregated content. It has the following:
 
 ## Template function library
 
-d
+This is a set of functions accessed via the $$templateLib symbol
+These functions provide cleaner access to higher-level WL features than templates

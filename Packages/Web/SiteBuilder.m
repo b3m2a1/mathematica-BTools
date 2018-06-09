@@ -1274,7 +1274,7 @@ WebSiteTemplateApply[
 					FileExistsQ
 					],
 			args=
-				If[MemberQ[Lookup[#,"Templates",{}], "article.html"],
+				If[MemberQ[Lookup[#, "Templates", {}], "article.html"],
 					Merge[{
 						#,
 						"Categories"->{"misc"}
@@ -1378,7 +1378,7 @@ WebSiteTemplateExport[
 						]
 					],
 			e_:>
-				(Message[WebSiteBuild::genfl,failinput];$Failed)
+				(Message[WebSiteBuild::genfl, failinput];$Failed)
 			}
 		];
 
@@ -1766,6 +1766,149 @@ WebSiteExtractPageData[rootDir_,files_,config_, ops:OptionsPattern[]]:=
 					]
 			]
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*CopyTheme*)
+
+
+
+WebSiteCopyTheme//Clear
+
+
+Options[WebSiteCopyTheme]=
+	{
+		Monitor->True
+		};
+WebSiteCopyTheme[dir_,outDir_, theme_,
+	ops:OptionsPattern[]
+	]:=
+	With[{
+		thm=
+			FileNameJoin@{
+				WebSiteFindTheme[dir, theme, "DownloadTheme"->True],
+				"static"
+				}
+		},
+		Quiet@CreateDirectory[FileNameJoin@{outDir,"theme"}];
+		With[{fils=Select[Not@*DirectoryQ]@FileNames["*",thm,\[Infinity]]},
+			Block[{
+				copyfile,
+				newfile
+				},
+				If[TrueQ@OptionValue[Monitor], Monitor, #&][
+					With[{
+						newf=
+							FileNameJoin@{outDir,"theme",
+								FileNameDrop[#,FileNameDepth[thm]]
+								}
+						},
+						If[!(FileExistsQ[newf]&&FileHash[#]==FileHash[newf]),
+							copyfile=#;
+							newfile=newf;
+							If[!DirectoryQ@DirectoryName@newf,
+								CreateDirectory[DirectoryName@newf,
+									CreateIntermediateDirectories->True
+									]
+								];
+							CopyFile[#,newf,OverwriteTarget->True]
+							];
+						copyfile=.;
+						newfile=.;
+						]&/@fils,
+					Internal`LoadingPanel@
+						If[AllTrue[{copyfile,newfile},StringQ],
+							TemplateApply["Copying `` to ``",
+								{
+									copyfile,
+									newfile
+									}
+								],
+							TemplateApply[
+								"Copying theme ``",
+								thm
+								]
+							]
+					]
+				]
+			];
+		FileNameJoin@{outDir,"theme"}
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*CopyContent*)
+
+
+
+WebSiteCopyContent//Clear
+
+
+Options[WebSiteCopyContent]=
+	{
+		Monitor->True
+		};
+WebSiteCopyContent[
+	dir_,outDir_,
+	sel:Except[_?OptionQ]:Automatic,
+	ops:OptionsPattern[]
+	]:=
+	With[{
+		selPat=
+			Replace[sel,
+				Automatic:>Except["posts"|"pages"]
+				],
+		contDir=
+			FileNameJoin@{dir,"content"},
+		monitor=
+			TrueQ@OptionValue[Monitor]
+		},
+		With[{
+			fils=
+				Select[
+					MatchQ[FileNameTake[#,{FileNameDepth[contDir]+1}],selPat]&
+					]@
+					Select[Not@*DirectoryQ]@
+						FileNames["*",contDir,\[Infinity]]
+			},
+			Block[{
+				copyfile,
+				newfile
+				},
+				If[monitor, Monitor, #&][
+					With[{
+						newf=
+							FileNameJoin@{outDir,
+								FileNameDrop[#,FileNameDepth[contDir]]
+								}
+							},
+						If[!FileExistsQ[newf]||FileHash[#]=!=FileHash[newf],
+							If[!DirectoryQ@DirectoryName@newf,
+								CreateDirectory[DirectoryName@newf,
+									CreateIntermediateDirectories->True
+									]
+								];
+							CopyFile[#,newf,OverwriteTarget->True]
+							]
+						]&/@fils,
+					Internal`LoadingPanel@
+						If[AllTrue[{copyfile,newfile},StringQ],
+							TemplateApply["Copying `` to ``",
+								{
+									copyfile,
+									newfile
+									}
+								],
+							TemplateApply[
+								"Copying content from ``",
+								contDir
+								]
+							]
+					]
+				]
+			];
+		outDir
+		]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2225,171 +2368,20 @@ WebSiteGenerateContent[
 
 
 (* ::Subsubsection::Closed:: *)
-(*CopyTheme*)
+(*WebSiteGenerateSearchPage*)
 
 
 
-WebSiteCopyTheme//Clear
-
-
-Options[WebSiteCopyTheme]=
-	{
-		Monitor->True
-		};
-WebSiteCopyTheme[dir_,outDir_, theme_,
-	ops:OptionsPattern[]
-	]:=
-	With[{
-		thm=
-			FileNameJoin@{
-				WebSiteFindTheme[dir, theme, "DownloadTheme"->True],
-				"static"
-				}
-		},
-		Quiet@CreateDirectory[FileNameJoin@{outDir,"theme"}];
-		With[{fils=Select[Not@*DirectoryQ]@FileNames["*",thm,\[Infinity]]},
-			Block[{
-				copyfile,
-				newfile
-				},
-				If[TrueQ@OptionValue[Monitor], Monitor, #&][
-					With[{
-						newf=
-							FileNameJoin@{outDir,"theme",
-								FileNameDrop[#,FileNameDepth[thm]]
-								}
-						},
-						If[!(FileExistsQ[newf]&&FileHash[#]==FileHash[newf]),
-							copyfile=#;
-							newfile=newf;
-							If[!DirectoryQ@DirectoryName@newf,
-								CreateDirectory[DirectoryName@newf,
-									CreateIntermediateDirectories->True
-									]
-								];
-							CopyFile[#,newf,OverwriteTarget->True]
-							];
-						copyfile=.;
-						newfile=.;
-						]&/@fils,
-					Internal`LoadingPanel@
-						If[AllTrue[{copyfile,newfile},StringQ],
-							TemplateApply["Copying `` to ``",
-								{
-									copyfile,
-									newfile
-									}
-								],
-							TemplateApply[
-								"Copying theme ``",
-								thm
-								]
-							]
-					]
-				]
-			];
-		FileNameJoin@{outDir,"theme"}
-		]
-
-
-(* ::Subsubsection::Closed:: *)
-(*CopyContent*)
+(* ::Subsubsubsection::Closed:: *)
+(*iWebSiteGenerateSearchIndex*)
 
 
 
-WebSiteCopyContent//Clear
-
-
-Options[WebSiteCopyContent]=
-	{
-		Monitor->True
-		};
-WebSiteCopyContent[
-	dir_,outDir_,
-	sel:Except[_?OptionQ]:Automatic,
-	ops:OptionsPattern[]
-	]:=
-	With[{
-		selPat=
-			Replace[sel,
-				Automatic:>Except["posts"|"pages"]
-				],
-		contDir=
-			FileNameJoin@{dir,"content"},
-		monitor=
-			TrueQ@OptionValue[Monitor]
-		},
-		With[{
-			fils=
-				Select[
-					MatchQ[FileNameTake[#,{FileNameDepth[contDir]+1}],selPat]&
-					]@
-					Select[Not@*DirectoryQ]@
-						FileNames["*",contDir,\[Infinity]]
-			},
-			Block[{
-				copyfile,
-				newfile
-				},
-				If[monitor, Monitor, #&][
-					With[{
-						newf=
-							FileNameJoin@{outDir,
-								FileNameDrop[#,FileNameDepth[contDir]]
-								}
-							},
-						If[!FileExistsQ[newf]||FileHash[#]=!=FileHash[newf],
-							If[!DirectoryQ@DirectoryName@newf,
-								CreateDirectory[DirectoryName@newf,
-									CreateIntermediateDirectories->True
-									]
-								];
-							CopyFile[#,newf,OverwriteTarget->True]
-							]
-						]&/@fils,
-					Internal`LoadingPanel@
-						If[AllTrue[{copyfile,newfile},StringQ],
-							TemplateApply["Copying `` to ``",
-								{
-									copyfile,
-									newfile
-									}
-								],
-							TemplateApply[
-								"Copying content from ``",
-								contDir
-								]
-							]
-					]
-				]
-			];
-		outDir
-		]
-
-
-(* ::Subsubsection::Closed:: *)
-(*GenerateSiteIndex*)
-
-
-
-Options[WebSiteGenerateSiteIndex]=
-	{
-		"SiteIndexContent"->{"Articles"},
-		Monitor->True
-		};
-WebSiteGenerateSiteIndex[
+iWebSiteGenerateSearchIndex[
 	dir_, 
 	outDir_,
-	config_, 
-	ops:OptionsPattern[]
+	config_
 	]:=
-	If[TrueQ@OptionValue[Monitor], 
-		Function[Null, 
-			Monitor[#, Internal`LoadingPanel@"Generating site index..."], 
-			HoldFirst
-			],
-		Identity
-		]@
 	Module[
 		{
 			contentData=
@@ -2403,7 +2395,7 @@ WebSiteGenerateSiteIndex[
 			},
 		siteIndexedContent=
 			Replace[Except[{__String}]->{"Articles"}]@
-				OptionValue["SiteIndexContent"];
+				config["SearchedPages"];
 		selector=
 			Evaluate[
 				And@@
@@ -2432,9 +2424,9 @@ WebSiteGenerateSiteIndex[
 							Lookup[#, "Content", "<p>No content...</p>"],
 							"HTML"
 							],
-						Lookup[#, "Tags", {}],
+						StringRiffle[Lookup[#, "Tags", {}]],
 						Lookup[#, "URL", "??_y_dough_??.html"],
-						Lookup[#, "Summary", "No summary..."]
+						""(*Lookup[#, "Summary", "No summary..."]*)
 						}
 					]&,
 				Select[
@@ -2443,9 +2435,336 @@ WebSiteGenerateSiteIndex[
 					]
 				];
 		Export[
-			FileNameJoin@{outDir, "site_index.json"},
+			FileNameJoin@{outDir, "theme", "search", "search_index.json"},
 			<|"pages"->contentData|>
 			] 
+		]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*iWebSiteGenerateSearchConfig*)
+
+
+
+$WebSiteTipueSearchOptions=
+	{
+		"ContextBuffer"->60,
+		"ContextLength"->60,
+		"ContextStart"->90,
+		"Debug"->False,
+		"DescriptiveWords"->25,
+		"FooterPages"->3,
+		"HighlightTerms"->True,
+		"ImageZoom"->True,
+		"MinimumLength"->3,
+		"NewWindow"->False,
+		"Show"->10,
+		"ShowContext"->True,
+		"ShowRelated"->True,
+		"ShowTime"->True,
+		"ShowTitleCount"->True,
+		"ShowURL"->True,
+		"WholeWords"->True
+		};
+
+
+iWebSiteGenerateSearchConfig[
+	dir_, 
+	outDir_,
+	config_
+	]:=
+	Module[
+		{
+			stopWords,
+			reps,
+			weights,
+			stems,
+			includes,
+			related,
+			ops
+			},
+		stopWords=
+			Replace[
+				config["Stopwords"],
+				{
+					Automatic:>
+						DeleteDuplicates@ToLowerCase@WordList["Stopwords"],
+					e:{__String}:>
+						DeleteDuplicates@ToLowerCase@e,
+					_->None
+					}
+				];
+		reps=
+			Replace[
+				config["Replacements"],
+				{
+					s:{(_String->_String)...}:>
+						Map[
+							{"word"->#[[1]], "replace_with"->#[[2]]}&,
+							s
+							],
+					_->None
+					}
+				];
+		weights=
+			Replace[
+				config["URLWeights"],
+				{
+					s:{(_String->_Integer)...}:>
+						Map[
+							{"url"->#[[1]], "score"->#[[2]]}&,
+							s
+							],
+					_->None
+					}
+			];
+		stems=
+			Replace[
+				config["WordStems"],
+				{
+					s:{(_String->_String)...}:>
+						Map[
+							{"word"->#[[1]], "stem"->#[[2]]}&,
+							s
+							],
+					_->None
+					}
+			];
+		includes=
+			Replace[
+				config["IncludedTerms"],
+				{
+					s:{(_String->_String)...}:>
+						Map[
+							{"search"->#[[1]], "related"->#[[2]], "include"->1}&,
+							s
+							],
+					_->None
+					}
+			];
+		related=
+			Replace[
+				config["RelatedTerms"],
+				{
+					s:{(_String->_String)...}:>
+						Map[
+							{"search"->#[[1]], "related"->#[[2]]}&,
+							s
+							],
+					_->None
+					}
+			];
+		related=
+			Which[
+				ListQ@related&&ListQ@includes,
+					DeleteDuplicates@Join[includes, related],
+				ListQ@related,
+					DeleteDuplicates@related,
+				ListQ@includes,
+					DeleteDuplicates@includes,
+				True,
+					None
+				];
+		ops=
+			Replace[config["Options"],
+				{
+					Automatic:>
+						Map[
+							ToLowerCase@StringTake[#[[1]], 1]<>
+								StringDrop[#[[1]], 1]->#[[2]]&,
+							$WebSiteTipueSearchOptions
+							],
+					o:{(_String->_)..}:>
+						Map[
+							ToLowerCase@StringTake[#[[1]], 1]<>
+								StringDrop[#[[1]], 1]->#[[2]]&,
+							o
+							],
+					_->None
+					}
+				];
+		<|
+			"StopWords"->
+				Which[
+					ListQ@stopWords,
+						Export[
+							FileNameJoin@{outDir, "theme", "search", "search_stopwords.json"},
+							stopWords
+							],
+					FileExistsQ@FileNameJoin@{outDir, "theme", "search", "search_stopwords.json"},
+						None,
+					True,
+						Export[
+							FileNameJoin@{outDir, "theme", "search", "search_stopwords.json"},
+							{}
+							]
+					],
+			"Replacements"->
+				Which[
+					ListQ@reps,
+						Export[
+							FileNameJoin@{outDir, "theme", "search", "search_replacements.json"},
+							{"words"->reps}
+							],
+					FileExistsQ@
+						FileNameJoin@{outDir, "theme", "search", "search_replacements.json"},
+						None,
+					True,
+						Export[
+							FileNameJoin@{outDir, "theme", "search", "search_replacements.json"},
+							{"words"->{}}
+							]
+					],
+			"URLWeights"->
+				Which[
+					ListQ@weights,
+						Export[
+							FileNameJoin@{outDir, "theme", "search", "search_weights.json"},
+							{"weight"->weights}
+							],
+					FileExistsQ@FileNameJoin@{outDir, "theme", "search", "search_weights.json"},
+						None,
+					True,
+						Export[
+							FileNameJoin@{outDir, "theme", "search", "search_weights.json"},
+							{"weight"->{}}
+							]
+					],
+			"WordStems"->
+				Which[
+					ListQ@stems,
+						Export[
+							FileNameJoin@{outDir, "theme", "search", "search_stems.json"},
+							{"words"->stems}
+							],
+					FileExistsQ@FileNameJoin@{outDir, "theme", "search", "search_stems.json"},
+						None,
+					True,
+						Export[
+							FileNameJoin@{outDir, "theme", "search", "search_stems.json"},
+							{"words"->{}}
+							]
+					],
+			"RelatedTerms"->
+				Which[
+					ListQ@related,
+						Export[
+							FileNameJoin@{outDir, "theme", "search", "search_related.json"},
+							{"Related"->related}
+							],
+					FileExistsQ@FileNameJoin@{outDir, "theme", "search", "search_related.json"},
+						None,
+					True,
+						Export[
+							FileNameJoin@{outDir, "theme", "search", "search_related.json"},
+							{"Related"->{}}
+							] 
+					],
+			"Options"->
+				Which[
+					ListQ@related,
+						Export[
+							FileNameJoin@{outDir, "theme", "search", "search_options.json"},
+							ops
+							],
+					FileExistsQ@FileNameJoin@{outDir, "theme", "search", "search_options.json"},
+						None,
+					True,
+						Export[
+							FileNameJoin@{outDir, "theme", "search", "search_options.json"},
+							{}
+							] 
+					]
+			|>
+		]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*WebSiteGenerateSearchPage*)
+
+
+
+Options[WebSiteGenerateSearchPage]=
+	{
+		"SearchPageOptions"->{
+			"SearchedPages"->{"Articles"},
+			"Stopwords"->Automatic,
+			"Replacements"->None,
+			"URLWeights"->None,
+			"WordStems"->None,
+			"IncludedTerms"->None,
+			"RelatedTerms"->None,
+			"Options"->$WebSiteTipueSearchOptions
+			},
+		Monitor->True
+		};
+WebSiteGenerateSearchPage[
+	dir_, 
+	outDir_,
+	theme_,
+	config_, 
+	ops:OptionsPattern[]
+	]:=
+	With[
+		{
+			searchOps=
+				Association@
+					Replace[OptionValue["SearchPageOptions"],
+						Except[_?OptionQ]:>Nothing
+						],
+			thm=
+				WebSiteFindTheme[dir, theme, "DownloadTheme"->True]
+			},
+		If[!DirectoryQ@FileNameJoin@{outDir, "theme", "search"},
+			CreateDirectory[
+				FileNameJoin@{outDir, "theme", "search"},
+				CreateIntermediateDirectories->True
+				]
+			];
+		Prepend[
+			If[TrueQ@OptionValue[Monitor], 
+					Function[Null, 
+						Monitor[#, Internal`LoadingPanel@"Generating search config..."], 
+						HoldFirst
+						],
+					Identity
+					]@iWebSiteGenerateSearchConfig[dir, outDir, searchOps],
+			"Index"->
+				If[searchOps["SearchedPages"]=!=None,
+					If[TrueQ@OptionValue[Monitor], 
+						Function[Null, 
+							Monitor[#, Internal`LoadingPanel@"Generating site index..."], 
+							HoldFirst
+							],
+						Identity
+						]@iWebSiteGenerateSearchIndex[dir, outDir, searchOps],
+				Nothing
+				]
+			];
+		If[!DirectoryQ@FileNameJoin@{outDir, "theme", "tipuesearch"},
+			CopyDirectory[
+				PackageFilePath["Resources", "Themes", "template_lib", "tipuesearch"],
+				FileNameJoin@{outDir, "theme", "tipuesearch"}
+				]
+			];
+		If[TrueQ@OptionValue[Monitor], 
+					Function[Null, 
+						Monitor[#, Internal`LoadingPanel@"Generating search.html"], 
+						HoldFirst
+						],
+					Identity
+					]@
+			WebSiteTemplateExport[
+				"search",
+				FileNameJoin@{outDir, "search.html"},
+				{
+					FileNameJoin@{thm, "templates"},
+					dir
+					},
+				None,
+				{"search.html"},
+				config
+				]
 		]
 
 
@@ -2503,13 +2822,13 @@ Options[iWebSiteBuild]=
 				"GenerateContent"->True,
 				"GenerateIndex"->Automatic,
 				"GenerateAggregations"->Automatic,
-				"GenerateSiteIndex"->Automatic,
+				"GenerateSearchPage"->False,
 				"PageSize"->0
 				},
 			Options[WebSiteGenerateContent],
 			Options[WebSiteGenerateIndex],
 			Options[WebSiteGenerateAggregations],
-			Options[WebSiteGenerateSiteIndex]
+			Options[WebSiteGenerateSearchPage]
 			];
 iWebSiteBuild[
 	dir_,
@@ -2544,9 +2863,9 @@ iWebSiteBuild[
 					Automatic:>
 						OptionValue["GenerateContent"]
 					],
-			genSI=
+			genSP=
 				Replace[
-					OptionValue["GenerateSiteIndex"],
+					OptionValue["GenerateSearchPage"],
 					Automatic:>
 						OptionValue["GenerateContent"]
 					],
@@ -2556,7 +2875,7 @@ iWebSiteBuild[
 					Keys@Options[iWebSiteBuild]
 					]
 			},
-			If[AnyTrue[{genCont, genAggs, genInd, genSI},TrueQ],
+			If[AnyTrue[{genCont, genAggs, genInd, genSP},TrueQ],
 				WebSiteExtractPageData[
 					ExpandFileName@dir,
 					fileNames,
@@ -2661,14 +2980,15 @@ iWebSiteBuild[
 						]
 					];
 				];
-			If[genSI,
-				WebSiteGenerateSiteIndex[
+			If[genSP,
+				WebSiteGenerateSearchPage[
 					dir,
 					outDir,
+					thm,
 					newconf,
 					FilterRules[
 						{ops},
-						Options[WebSiteGenerateSiteIndex]
+						Options[WebSiteGenerateSearchPage]
 						]
 					]
 				];

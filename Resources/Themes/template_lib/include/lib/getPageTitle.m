@@ -1,0 +1,16 @@
+With[{
+  tempArgs=
+    (Join@@
+      Flatten@{
+        #,
+        Replace[Templating`$TemplateArgumentStack,{
+            {___,a_}:>a,
+            _-><||>
+          }]
+        })
+  },
+  Replace[tempArgs["Title"],
+    Except[_String]:>
+      FileBaseName[tempArgs["FilePath"]]
+    ]
+  ]&
