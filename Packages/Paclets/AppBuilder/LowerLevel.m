@@ -2321,8 +2321,11 @@ AppGitHubCreateRelease[
 			If[OptionValue["SubmitPaclet"]//TrueQ,
 				paclet=
 					PacletExecute["FindPacletFile", app, "BuildPaclets"->False];
-				If[!(StringQ@paclet&&FileExistsQ@paclet), 
-					paclet=AppPacletExecute["Bundle", app]
+				Which[
+					TrueQ@paclet,
+						paclet=PacletExecute["FindPacletFile", app],
+					!(StringQ@paclet&&FileExistsQ@paclet),
+						paclet=AppPacletExecute["Bundle", app]
 					];
 				asset=
 					GitHub["UploadReleaseAsset",

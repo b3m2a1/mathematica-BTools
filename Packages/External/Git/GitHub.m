@@ -1966,6 +1966,72 @@ GitHubGetTag[
 		]
 
 
+(* ::Subsubsection::Closed:: *)
+(*CreateTag*)
+
+
+
+$GitHubActions["CreateTag"]=GitHubCreateTag;
+
+
+$GitHubParamMap[GitHubCreateTag]=
+	{
+		"Name"->"name",
+		"Email"->"email",
+		"Date"->"date"
+		};
+
+
+Options[GitHubCreateTag]=
+	Thread[Keys[$GitHubParamMap[GitHubCreateTag]]->Automatic];
+GitHubCreateTag[
+	repo:(_GitHubPath|_String)?GitHubRepoQ,
+	tag:_String?(StringFreeQ[WhitespaceCharacter]),
+	message:_String,
+	sha:_String?(StringMatchQ[Repeated[WordCharacter, {30, Infinity}]]),
+	type:"commit"|"tree"|"blob":"commit",
+	ops:OptionsPattern[]
+	]:=
+	GitHubGitDataAPI[
+		repo,
+		"tags",
+		<|
+			"Method"->"POST",
+			"Body"->
+				ExportString[
+					With[
+						{
+							pars=
+								GitHubQueryParamFilter[
+									GitHubCreateTag,
+									{ops}
+									]
+							},
+						{
+							"tag"->tag,
+							"message"->message,
+							"object"->sha,
+							"type"->type,
+							Replace[
+								Lookup[pars, {"name", "email", "date"}],
+								{
+									l:{__String}:>
+										("tagger"->
+											Thread[
+												{"name", "email", "date"}->
+												l
+												]),
+										_->Nothing
+										}
+								]
+							}
+						],
+					"JSON"
+					]
+			|>
+		]
+
+
 (* ::Subsection:: *)
 (*Trees*)
 

@@ -4337,7 +4337,138 @@ Cell[BoxData[
   3.7341432896742487`*^9}, {3.734143331015306*^9, 
   3.734143333577036*^9}},ExpressionUUID->"92d47a33-8e03-4398-8ec0-\
 88295c2f260c"]
-}, Closed]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]CreateTag\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"43c18fbe-5abc-4f9b-81b0-153359d5088b"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"$GitHubActions", "[", "\"\<CreateTag\>\"", "]"}], "=", 
+   "GitHubCreateTag"}], 
+  ";"}]], "CodeInput",ExpressionUUID->"b3461ccf-df74-4044-b51c-52ce7bfff275"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"$GitHubParamMap", "[", "GitHubCreateTag", "]"}], "=", "\n", "\t", 
+   
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"\"\<Name\>\"", "\[Rule]", "\"\<name\>\""}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<Email\>\"", "\[Rule]", "\"\<email\>\""}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<Date\>\"", "\[Rule]", "\"\<date\>\""}]}], "\n", "\t\t", 
+    "}"}]}], ";"}]], \
+"CodeInput",ExpressionUUID->"7df3d105-2c02-479c-a003-4f09869dd33a"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "GitHubCreateTag", "]"}], "=", "\n", "\t", 
+   RowBox[{"Thread", "[", 
+    RowBox[{
+     RowBox[{"Keys", "[", 
+      RowBox[{"$GitHubParamMap", "[", "GitHubCreateTag", "]"}], "]"}], 
+     "\[Rule]", "Automatic"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"GitHubCreateTag", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"repo", ":", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"_GitHubPath", "|", "_String"}], ")"}], "?", "GitHubRepoQ"}]}],
+     ",", "\n", "\t", 
+    RowBox[{"tag", ":", 
+     RowBox[{"_String", "?", 
+      RowBox[{"(", 
+       RowBox[{"StringFreeQ", "[", "WhitespaceCharacter", "]"}], ")"}]}]}], 
+    ",", "\n", "\t", 
+    RowBox[{"message", ":", "_String"}], ",", "\n", "\t", 
+    RowBox[{"sha", ":", 
+     RowBox[{"_String", "?", 
+      RowBox[{"(", 
+       RowBox[{"StringMatchQ", "[", 
+        RowBox[{"Repeated", "[", 
+         RowBox[{"WordCharacter", ",", " ", 
+          RowBox[{"{", 
+           RowBox[{"30", ",", " ", "Infinity"}], "}"}]}], "]"}], "]"}], 
+       ")"}]}]}], ",", "\n", "\t", 
+    RowBox[{"type", ":", 
+     RowBox[{"\"\<commit\>\"", "|", "\"\<tree\>\"", "|", "\"\<blob\>\""}], 
+     ":", "\"\<commit\>\""}], ",", "\n", "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"GitHubGitDataAPI", "[", "\n", "\t\t", 
+   RowBox[{"repo", ",", "\n", "\t\t", "\"\<tags\>\"", ",", "\n", "\t\t", 
+    RowBox[{"<|", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"\"\<Method\>\"", "\[Rule]", "\"\<POST\>\""}], ",", "\n", 
+      "\t\t\t", 
+      RowBox[{"\"\<Body\>\"", "->", "\n", "\t\t\t\t", 
+       RowBox[{"ExportString", "[", "\n", "\t\t\t\t\t", 
+        RowBox[{
+         RowBox[{"With", "[", "\n", "\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{"pars", "=", "\n", "\t\t\t\t\t\t\t\t", 
+             RowBox[{
+             "GitHubQueryParamFilter", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
+              RowBox[{
+              "GitHubCreateTag", ",", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+               RowBox[{"{", "ops", "}"}]}], "\n", "\t", "\t\t\t\t\t\t\t\t", 
+              "]"}]}], "\n", "\t\t\t\t\t\t\t", "}"}], ",", "\n", 
+           "\t\t\t\t\t\t", 
+           RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"\"\<tag\>\"", "\[Rule]", "tag"}], ",", "\n", 
+             "\t\t\t\t\t\t\t", 
+             RowBox[{"\"\<message\>\"", "\[Rule]", "message"}], ",", "\n", 
+             "\t\t\t\t\t\t\t", 
+             RowBox[{"\"\<object\>\"", "\[Rule]", "sha"}], ",", "\n", 
+             "\t\t\t\t\t\t\t", 
+             RowBox[{"\"\<type\>\"", "\[Rule]", "type"}], ",", "\n", 
+             "\t\t\t\t\t\t\t", 
+             RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Lookup", "[", 
+                RowBox[{"pars", ",", " ", 
+                 RowBox[{"{", 
+                  RowBox[{
+                  "\"\<name\>\"", ",", " ", "\"\<email\>\"", ",", " ", 
+                   "\"\<date\>\""}], "}"}]}], "]"}], ",", "\n", 
+               "\t\t\t\t\t\t\t\t", 
+               RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"l", ":", 
+                   RowBox[{"{", "__String", "}"}]}], ":>", "\n", 
+                  "\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"(", 
+                   RowBox[{
+                   "\"\<tagger\>\"", "->", "\n", "\t", "\t", 
+                    "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "Thread", "[", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    "\"\<name\>\"", ",", " ", "\"\<email\>\"", ",", " ", 
+                    "\"\<date\>\""}], "}"}], "->", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", "l"}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", "]"}]}], ")"}]}], ",", "\n", 
+                 "\t\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{"_", "\[Rule]", "Nothing"}]}], "\n", "\t", 
+                "\t\t\t\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t\t\t\t", 
+              "]"}]}], "\n", "\t\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t\t", 
+          "]"}], ",", "\n", "\t\t\t\t\t", "\"\<JSON\>\""}], "\n", 
+        "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "|>"}]}], "\n", "\t\t", 
+   "]"}]}]}], \
+"CodeInput",ExpressionUUID->"490269bd-c607-4636-92cd-320ffeba4a50"]
+}, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -7364,7 +7495,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"67594041-6749-4a9a-8160-\
 1874e8aa2c18"]
 },
 WindowSize->{782, 796},
-WindowMargins->{{Automatic, 175}, {Automatic, 0}},
+WindowMargins->{{Automatic, 0}, {Automatic, 0}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

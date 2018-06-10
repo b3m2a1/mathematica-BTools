@@ -353,14 +353,18 @@ GitHub[
 							}
 						], 
 					Join[
-						If[AssociationQ@rs["Content"], 
-							rs["Content"],
-							<||>
-							],
 						<|
 							"StatusCode"->rs["StatusCode"],
 							"Command"->command
-							|>
+							|>,
+						Which[
+							AssociationQ@rs["Content"], 
+								rs["Content"],
+							rs["Content"]=!=Null,
+								<|"Result"->rs["Content"]|>,
+							_,
+								<||>
+							]
 						]
 					],
 				Failure[
