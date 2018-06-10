@@ -70,6 +70,15 @@ $WebSiteThemePath=
 		};
 
 
+(* ::Subsubsection::Closed:: *)
+(*WebSiteTemplateLibDirectory*)
+
+
+
+$WebSiteTemplateLibDirectory=
+	PackageFilePath["Resources","Themes","template_lib"];
+
+
 (* ::Subsection:: *)
 (*Site Config*)
 
@@ -563,7 +572,7 @@ xmlTemplateApplyInit[root_, template_]:=
 				Flatten@List@
 					Replace[root, Automatic:>DirectoryName@template],
 				{
-					$TemplateLibDirectory
+					$WebSiteTemplateLibDirectory
 					},
 				$TemplatePath
 				];
@@ -572,7 +581,7 @@ xmlTemplateApplyInit[root_, template_]:=
 				Flatten@List@
 					Replace[root, Automatic:>DirectoryName@template],
 				{
-					$TemplateLibDirectory
+					$WebSiteTemplateLibDirectory
 					},
 				$Path
 				];
@@ -599,15 +608,6 @@ xmlTemplateApplyRestore[]:=
 		$ContextPath=$WSBCachedBuildData["ContextPath"];
 		$WSBCachedBuildData//Clear
 		)
-
-
-(* ::Subsubsubsection::Closed:: *)
-(*$TemplateLibDirectory*)
-
-
-
-$TemplateLibDirectory=
-	PackageFilePath["Resources","Themes","template_lib"];
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -1256,15 +1256,6 @@ WebSiteTemplateApply//ClearAll
 
 
 
-$templateLibTemplateDir=
-	PackageFilePath[
-		"Resources",
-		"Themes",
-		"template_lib",
-		"templates"
-		];
-
-
 WebSiteBuild::nocnt=
 	"Can't export content `` to string";
 WebSiteTemplateApply[
@@ -1279,7 +1270,9 @@ WebSiteTemplateApply[
 				Replace[
 					FileNames[
 						#,
-						Append[root, $templateLibTemplateDir]
+						Append[root, 
+							FileNameJoin@{$WebSiteTemplateLibDirectory, "templates"}
+							]
 						],
 					{
 						{f_, ___}:>f
@@ -2476,7 +2469,7 @@ $WebSiteTipueSearchOptions=
 		"ShowTime"->True,
 		"ShowTitleCount"->True,
 		"ShowURL"->True,
-		"WholeWords"->True
+		"WholeWords"->False
 		};
 
 
@@ -2674,7 +2667,7 @@ iWebSiteGenerateSearchConfig[
 					],
 			"Options"->
 				Which[
-					ListQ@related,
+					ListQ@ops,
 						Export[
 							FileNameJoin@{outDir, "theme", "search", "search_options.json"},
 							ops
@@ -2722,7 +2715,7 @@ WebSiteGenerateSearchPage[
 			searchOps=
 				Association@
 					Replace[OptionValue["SearchPageOptions"],
-						Except[_?OptionQ]:>Nothing
+						Except[_?OptionQ]:>{}
 						],
 			thm=
 				WebSiteFindTheme[dir, theme, "DownloadTheme"->True]
@@ -2745,7 +2738,7 @@ WebSiteGenerateSearchPage[
 				If[searchOps["SearchedPages"]=!=None,
 					If[TrueQ@OptionValue[Monitor], 
 						Function[Null, 
-							Monitor[#, Internal`LoadingPanel@"Generating site index..."], 
+							Monitor[#, Internal`LoadingPanel@"Generating search index..."], 
 							HoldFirst
 							],
 						Identity
