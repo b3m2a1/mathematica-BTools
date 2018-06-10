@@ -512,18 +512,13 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{
    RowBox[{"AppGitHubDelete", "::", "usage"}], "=", "\n", "\t", 
-   "\"\<Removes a repo from github\>\""}], ";"}]}], "CodeInput",
- CellChangeTimes->{{3.701491487683692*^9, 3.7014915628656473`*^9}, {
-   3.701552093474284*^9, 3.701552109385537*^9}, {3.701555119775695*^9, 
-   3.701555175772686*^9}, {3.712035726357544*^9, 3.712035739475979*^9}, 
-   3.7120359875168343`*^9, {3.712115830466226*^9, 3.712115841849875*^9}, {
-   3.712117353024836*^9, 3.712117361073113*^9}, {3.712194314853735*^9, 
-   3.712194336620763*^9}, {3.712196543880117*^9, 3.712196560477318*^9}, {
-   3.7230687789051456`*^9, 3.723068781725646*^9}, {3.72892330228684*^9, 
-   3.7289233256281023`*^9}, {3.728931592850637*^9, 3.728931611706839*^9}, {
-   3.730135464025128*^9, 
-   3.730135472441016*^9}},ExpressionUUID->"6ae9f81b-9f33-4505-a015-\
-9d810056de10"]
+   "\"\<Removes a repo from github\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppGitHubCreateRelease", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Creates a release on GitHub\>\""}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"6ae9f81b-9f33-4505-a015-9d810056de10"]\
+
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -1150,7 +1145,7 @@ Cell[BoxData[{
         "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
     "]"}]}], ";"}]}], \
 "CodeInput",ExpressionUUID->"f821dab4-0bd6-4ae4-9881-a35c7401c5c0"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -2507,8 +2502,8 @@ Cell[BoxData[{
                "\t", "\t", "\t", "\t\t\t\t", "]"}], "&"}], ",", "\n", 
              "\t\t\t\t\t\t", "fs"}], "\n", "\t\t\t\t\t\t", "]"}]}]}], "\n", 
          "\t\t\t\t", "]"}]}]}], "\n", "\t\t", "}"}]}], "]"}]}], 
-  ";"}]}], "CodeInput",ExpressionUUID->"58afc305-7899-4507-ac03-5414e27e31ff"]\
-
+  ";"}]}], \
+"CodeInput",ExpressionUUID->"58afc305-7899-4507-ac03-5414e27e31ff"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -5114,14 +5109,14 @@ Cell["\[LeftCeiling]GitHubRepo\[RightFloor]", "CodeSubsubsection",
   3.7015648624331713`*^9}},ExpressionUUID->"1e37cdd0-dca4-4fe0-85a1-\
 879298e8dc94"],
 
-Cell[BoxData[
+Cell[BoxData[{
  RowBox[{
-  RowBox[{"$AppGitHubPrefix", "=", "\n", "\t", "\"\<mathematica-\>\""}], 
-  ";"}]], "CodeInput",
- CellChangeTimes->{{3.70156479526689*^9, 3.701564815889976*^9}, {
-  3.7015648786357327`*^9, 3.701564880025137*^9}, {3.7037687246892014`*^9, 
-  3.703768724854842*^9}},ExpressionUUID->"f1eec7e3-4c08-416f-b53e-\
-d4665a174634"],
+  RowBox[{"$AppGitHubPrefix", "=", "\"\<\>\""}], ";"}], "\n", 
+ RowBox[{"\t", 
+  RowBox[{"(*", 
+   RowBox[{"\"\<mathematica-\>\"", ";"}], 
+   "*)"}]}]}], \
+"CodeInput",ExpressionUUID->"f1eec7e3-4c08-416f-b53e-d4665a174634"],
 
 Cell[BoxData[
  RowBox[{
@@ -5452,7 +5447,106 @@ Cell[BoxData[
        "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"9a5ff247-ba51-4227-af97-9c26e8450482"]
-}, Closed]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]GitHubCreateRelease\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"acd54189-afce-407b-8b6f-ce442e24e2d8"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "AppGitHubCreateRelease", "]"}], ":=", "\n", "\t", 
+   
+   RowBox[{
+    RowBox[{"Options", "[", "AppGitHubCreateRelease", "]"}], "=", "\n", 
+    "\t\t", 
+    RowBox[{"Join", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"GitHub", "[", 
+       RowBox[{"\"\<CreateRelease\>\"", ",", " ", "\"\<Options\>\""}], "]"}], 
+      ",", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{"\"\<SubmitPaclet\>\"", "\[Rule]", "True"}], "\n", "\t\t\t\t", 
+       "}"}]}], "\n", "\t\t\t", "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"AppGitHubCreateRelease", "[", "\n", "\t", 
+   RowBox[{"app_", ",", " ", "\n", "\t", 
+    RowBox[{"rname", ":", 
+     RowBox[{"_String", "|", "Automatic"}], ":", "Automatic"}], ",", " ", 
+    "\n", "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"Module", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"repo", "=", 
+       RowBox[{"URLBuild", "@", 
+        RowBox[{"Normal", "@", 
+         RowBox[{"GitHub", "[", 
+          RowBox[{"\"\<Path\>\"", ",", " ", 
+           RowBox[{"AppGitHubRepo", "[", "app", "]"}]}], "]"}]}]}]}], ",", 
+      "\n", "\t\t\t", "release", ",", "\n", "\t\t\t", "paclet", ",", "\n", 
+      "\t\t\t", "asset"}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"release", "=", "\n", "\t\t\t", 
+      RowBox[{"GitHub", "[", 
+       RowBox[{
+       "\"\<CreateRelease\>\"", ",", " ", "\n", "\t\t\t\t", "repo", ",", " ", 
+        "\n", "\t\t\t\t", 
+        RowBox[{"Replace", "[", 
+         RowBox[{"rname", ",", " ", "\n", "\t\t\t\t\t", 
+          RowBox[{"Automatic", "\[RuleDelayed]", 
+           RowBox[{"\"\<v\>\"", "<>", 
+            RowBox[{
+             RowBox[{"AppPacletExecute", "[", 
+              RowBox[{"\"\<PacletInfo\>\"", ",", " ", "app"}], "]"}], "[", 
+             "\"\<Version\>\"", "]"}]}]}]}], "\n", "\t\t\t\t\t", "]"}], ",", 
+        "\n", "\t\t\t\t", "ops", ",", "\n", "\t\t\t\t", 
+        "\"\<ResultObject\>\""}], "\n", "\t\t\t\t", "]"}]}], ";", "\n", 
+     "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"!", 
+        RowBox[{"FailureQ", "@", "release"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"OptionValue", "[", "\"\<SubmitPaclet\>\"", "]"}], "//", 
+           "TrueQ"}], ",", "\n", "\t", "\t\t\t", 
+          RowBox[{
+           RowBox[{"paclet", "=", "\n", "\t", "\t\t\t\t", 
+            RowBox[{"PacletExecute", "[", 
+             RowBox[{"\"\<FindPacletFile\>\"", ",", " ", "app", ",", " ", 
+              RowBox[{"\"\<BuildPaclets\>\"", "\[Rule]", "False"}]}], "]"}]}],
+            ";", "\n", "\t", "\t\t\t", 
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{"!", 
+              RowBox[{"(", 
+               RowBox[{
+                RowBox[{"StringQ", "@", "paclet"}], "&&", 
+                RowBox[{"FileExistsQ", "@", "paclet"}]}], ")"}]}], ",", " ", 
+             "\n", "\t", "\t\t\t\t", 
+             RowBox[{"paclet", "=", 
+              RowBox[{"AppPacletExecute", "[", 
+               RowBox[{"\"\<Bundle\>\"", ",", " ", "app"}], "]"}]}]}], "\n", 
+            "\t", "\t\t\t\t", "]"}], ";", "\n", "\t", "\t\t\t", 
+           RowBox[{"asset", "=", "\n", "\t", "\t\t\t\t", 
+            RowBox[{"GitHub", "[", 
+             RowBox[{
+             "\"\<UploadReleaseAsset\>\"", ",", "\n", "\t", "\t\t\t\t\t", 
+              RowBox[{"release", "[", "\"\<ID\>\"", "]"}], ",", "\n", 
+              "\t\t\t\t\t\t", "paclet"}], "\n", "\t\t\t\t\t\t", "]"}]}], 
+           ";"}]}], "\n", "\t\t\t\t", "]"}], ";"}]}], "\n", "\t\t\t", "]"}], 
+     ";", "\n", "\t\t", "release"}]}], "\n", "\t\t", 
+   "]"}]}]}], \
+"CodeInput",ExpressionUUID->"0bb11aee-e35a-4a3f-93fd-02f30f12a302"]
+}, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{

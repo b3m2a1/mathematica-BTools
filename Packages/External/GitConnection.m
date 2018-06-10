@@ -331,6 +331,58 @@ GitHub[
 
 
 (* ::Subsubsubsection::Closed:: *)
+(*ResultObject*)
+
+
+
+GitHub[
+	command_String?(KeyMemberQ[$githubactions,ToLowerCase@#]&),
+	args:Except[_?OptionQ]...,
+	opp___?OptionQ,
+	"ResultObject"
+	]:=
+	With[{rs=GitHub[command, args, opp, "GitHubImport"->True]},
+		If[AssociationQ@rs,
+			If[rs["StatusCode"]<400,
+				Success[
+					TemplateApply[
+						"GitHub: `` (``)",
+						{
+							command,
+							rs["StatusCode"]
+							}
+						], 
+					Join[
+						If[AssociationQ@rs["Content"], 
+							rs["Content"],
+							<||>
+							],
+						<|
+							"StatusCode"->rs["StatusCode"],
+							"Command"->command
+							|>
+						]
+					],
+				Failure[
+					TemplateApply[
+						"GitHub: `` (``)",
+						{
+							command,
+							rs["StatusCode"]
+							}
+						],
+					Append[
+						KeyDrop[rs, "Content"],
+						"Command"->command
+						]
+					]
+				],
+			rs
+			]
+		];
+
+
+(* ::Subsubsubsection::Closed:: *)
 (*Main*)
 
 

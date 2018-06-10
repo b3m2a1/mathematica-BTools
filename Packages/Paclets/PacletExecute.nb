@@ -391,7 +391,7 @@ Cell["\<\
 
 Cell[BoxData[{
  RowBox[{
-  RowBox[{"exprPats", "=", 
+  RowBox[{"$PacletExpressionPatterns", "=", "\n", "\t", 
    RowBox[{"_String", "|", 
     RowBox[{"{", 
      RowBox[{"_String", ",", " ", "_String"}], "}"}], "|", 
@@ -407,8 +407,11 @@ Cell[BoxData[{
         RowBox[{"KeyExistsQ", "[", 
          RowBox[{"$PacletExecuteExpressionMethods", ",", " ", "#"}], "]"}], 
         "&"}], ")"}]}], ",", "\n", "\t", 
-     RowBox[{"pac", ":", "exprPats"}], ",", "\n", "\t", "args___"}], "\n", 
-    "\t", "]"}], ":=", "\n", "\t", 
+     RowBox[{"pac", ":", 
+      RowBox[{"_", "?", 
+       RowBox[{"(", 
+        RowBox[{"MatchQ", "[", "$PacletExpressionPatterns", "]"}], ")"}]}]}], 
+     ",", "\n", "\t", "args___"}], "\n", "\t", "]"}], ":=", "\n", "\t", 
    RowBox[{"With", "[", 
     RowBox[{
      RowBox[{"{", 
@@ -425,13 +428,8 @@ Cell[BoxData[{
        RowBox[{"res", "/;", 
         RowBox[{
          RowBox[{"Head", "[", "res", "]"}], "=!=", "fn"}]}]}], "\n", "\t\t\t",
-       "]"}]}], "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
- CellChangeTimes->{{3.728936277334861*^9, 3.728936374192852*^9}, {
-   3.728936469469968*^9, 3.728936524743063*^9}, 3.728940162611144*^9, {
-   3.728940211321*^9, 3.728940220315812*^9}, {3.728940264566772*^9, 
-   3.728940265651082*^9}, 3.728940529726419*^9, {3.7289654582223063`*^9, 
-   3.728965464466839*^9}},ExpressionUUID->"4ec8ee00-4a34-4bfa-bfab-\
-40a86170fbbc"],
+       "]"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"4ec8ee00-4a34-4bfa-bfab-40a86170fbbc"],
 
 Cell["\<\
 \[LeftCeiling]
@@ -443,9 +441,7 @@ Cell["\<\
   3.7289363932499657`*^9}},ExpressionUUID->"5c662d99-148c-4369-ac1f-\
 065d26c8162f"],
 
-Cell[BoxData[{
- RowBox[{
-  RowBox[{"fiPats", "=", "$PacletFilePatterns"}], ";"}], "\n", 
+Cell[BoxData[
  RowBox[{
   RowBox[{
    RowBox[{"PacletExecute", "[", "\n", "\t", 
@@ -457,7 +453,11 @@ Cell[BoxData[{
          RowBox[{"$PacletExecuteSiteMethods", ",", " ", "#"}], "]"}], "&"}], 
        ")"}]}], ",", "\n", "\t", 
      RowBox[{"pac", ":", 
-      RowBox[{"fiPats", "|", "None"}], ":", "None"}], ",", "\n", "\t", 
+      RowBox[{
+       RowBox[{"_", "?", 
+        RowBox[{"(", 
+         RowBox[{"MatchQ", "[", "$PacletFilePatterns", "]"}], ")"}]}], "|", 
+       "None"}], ":", "None"}], ",", "\n", "\t", 
      RowBox[{"args___", "?", "OptionQ"}]}], "\n", "\t", "]"}], ":=", "\n", 
    "\t", 
    RowBox[{"With", "[", 
@@ -488,12 +488,8 @@ Cell[BoxData[{
        RowBox[{
         RowBox[{"Length", "@", 
          RowBox[{"{", "args", "}"}]}], ">", "0"}]}]}]}], "\n", "\t\t", 
-    "]"}]}], ";"}]}], "CodeInput",
- CellChangeTimes->{{3.728936277334861*^9, 3.728936374192852*^9}, 
-   3.728940167584586*^9, 3.728940268581818*^9, {3.72896538354657*^9, 
-   3.7289653846893377`*^9}, {3.728965443879176*^9, 
-   3.7289654499727583`*^9}},ExpressionUUID->"d32ed1e8-8706-41ac-806e-\
-cd916df63950"],
+    "]"}]}], ";"}]], \
+"CodeInput",ExpressionUUID->"d32ed1e8-8706-41ac-806e-cd916df63950"],
 
 Cell["\<\
 \[LeftCeiling]
@@ -505,9 +501,7 @@ Cell["\<\
   3.728936413434317*^9}},ExpressionUUID->"44210c69-e8f2-4b2a-8bdb-\
 91781383ea07"],
 
-Cell[BoxData[{
- RowBox[{
-  RowBox[{"upPats", "=", "$PacletUploadPatterns"}], ";"}], "\n", 
+Cell[BoxData[
  RowBox[{
   RowBox[{
    RowBox[{"PacletExecute", "[", "\n", "\t", 
@@ -518,8 +512,11 @@ Cell[BoxData[{
         RowBox[{"KeyExistsQ", "[", 
          RowBox[{"$PacletExecuteUploadMethods", ",", " ", "#"}], "]"}], "&"}],
         ")"}]}], ",", "\n", "\t", 
-     RowBox[{"pac", ":", "upPats"}], ",", "\n", "\t", "args___"}], "\n", "\t",
-     "]"}], ":=", "\n", "\t", 
+     RowBox[{"pac", ":", 
+      RowBox[{"_", "?", 
+       RowBox[{"(", 
+        RowBox[{"MatchQ", "[", "$PacletUploadPatterns", "]"}], ")"}]}]}], ",",
+      "\n", "\t", "args___"}], "\n", "\t", "]"}], ":=", "\n", "\t", 
    RowBox[{"With", "[", 
     RowBox[{
      RowBox[{"{", 
@@ -537,7 +534,7 @@ Cell[BoxData[{
         RowBox[{
          RowBox[{"Head", "[", "res", "]"}], "=!=", "fn"}]}]}], "\n", "\t\t\t",
        "]"}]}], "\n", "\t\t", "]"}]}], 
-  ";"}]}], "CodeInput",ExpressionUUID->"17a687b2-fe04-43be-8d4e-ec1479647d41"],
+  ";"}]], "CodeInput",ExpressionUUID->"17a687b2-fe04-43be-8d4e-ec1479647d41"],
 
 Cell[BoxData[
  RowBox[{"PackageAddAutocompletions", "[", "\n", "\t", 

@@ -750,7 +750,95 @@ Cell[BoxData[
    3.733804755143784*^9, 3.733804783334958*^9}, 
    3.7338048135523777`*^9},ExpressionUUID->"c33bf931-ef2c-462a-b474-\
 5328a1993d13"]
-}, Closed]],
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]ResultObject\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"6dfa760a-56fb-4a94-9e18-251947db7c06"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"GitHub", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"command_String", "?", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"KeyMemberQ", "[", 
+         RowBox[{"$githubactions", ",", 
+          RowBox[{"ToLowerCase", "@", "#"}]}], "]"}], "&"}], ")"}]}], ",", 
+     "\n", "\t", 
+     RowBox[{"args", ":", 
+      RowBox[{
+       RowBox[{"Except", "[", 
+        RowBox[{"_", "?", "OptionQ"}], "]"}], "..."}]}], ",", "\n", "\t", 
+     RowBox[{"opp___", "?", "OptionQ"}], ",", "\n", "\t", 
+     "\"\<ResultObject\>\""}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"rs", "=", 
+       RowBox[{"GitHub", "[", 
+        RowBox[{"command", ",", " ", "args", ",", " ", "opp", ",", " ", 
+         RowBox[{"\"\<GitHubImport\>\"", "\[Rule]", "True"}]}], "]"}]}], 
+      "}"}], ",", "\n", "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"AssociationQ", "@", "rs"}], ",", "\n", "\t\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"rs", "[", "\"\<StatusCode\>\"", "]"}], "<", "400"}], ",", 
+         "\n", "\t", "\t\t\t", 
+         RowBox[{"Success", "[", "\n", "\t", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"TemplateApply", "[", "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{"\"\<GitHub: `` (``)\>\"", ",", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"command", ",", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"rs", "[", "\"\<StatusCode\>\"", "]"}]}], "\n", "\t", 
+              "\t\t\t\t\t\t", "}"}]}], "\n", "\t", "\t\t\t\t\t", "]"}], ",", 
+           " ", "\n", "\t\t\t\t\t", 
+           RowBox[{"Join", "[", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"If", "[", 
+              RowBox[{
+               RowBox[{"AssociationQ", "@", 
+                RowBox[{"rs", "[", "\"\<Content\>\"", "]"}]}], ",", " ", "\n",
+                "\t", "\t\t\t\t\t\t", 
+               RowBox[{"rs", "[", "\"\<Content\>\"", "]"}], ",", "\n", "\t", 
+               "\t\t\t\t\t\t", 
+               RowBox[{"<|", "|>"}]}], "\n", "\t\t\t\t\t\t\t", "]"}], ",", 
+             "\n", "\t\t\t\t\t\t", 
+             RowBox[{"<|", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"\"\<StatusCode\>\"", "\[Rule]", 
+                RowBox[{"rs", "[", "\"\<StatusCode\>\"", "]"}]}], ",", "\n", 
+               "\t\t\t\t\t\t\t", 
+               RowBox[{"\"\<Command\>\"", "\[Rule]", "command"}]}], "\n", 
+              "\t\t\t\t\t\t\t", "|>"}]}], "\n", "\t\t\t\t\t\t", "]"}]}], "\n",
+           "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"Failure", "[", "\n", "\t", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"TemplateApply", "[", "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{"\"\<GitHub: `` (``)\>\"", ",", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"command", ",", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"rs", "[", "\"\<StatusCode\>\"", "]"}]}], "\n", "\t", 
+              "\t\t\t\t\t\t", "}"}]}], "\n", "\t", "\t\t\t\t\t", "]"}], ",", 
+           "\n", "\t\t\t\t\t", 
+           RowBox[{"Append", "[", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"KeyDrop", "[", 
+              RowBox[{"rs", ",", " ", "\"\<Content\>\""}], "]"}], ",", "\n", 
+             "\t\t\t\t\t\t", 
+             RowBox[{"\"\<Command\>\"", "\[Rule]", "command"}]}], "\n", 
+            "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "]"}]}], "\n", 
+        "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", "rs"}], "\n", "\t\t\t", 
+      "]"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"33bf4f96-9fd2-4d5f-8052-0762c57c5523"]
+}, Open  ]],
 
 Cell[CellGroupData[{
 

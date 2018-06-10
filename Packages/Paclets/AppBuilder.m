@@ -46,6 +46,16 @@ Begin["`Private`"];
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*Methods*)
+
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$AppPathMethods*)
+
+
+
 $AppPathMethods=
 	<|
 		"ListApplications"->
@@ -60,6 +70,11 @@ $AppPathMethods=
 			($AppDirectories&),
 		"GetAppName"->AppFromFile
 		|>;
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$AppEditMethods*)
+
 
 
 $AppEditMethods=
@@ -105,11 +120,21 @@ $AppEditMethods=
 		|>;
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*Distribution*)
+
+
+
 $AppDistMethods=
 	<|
 		"Publish"->
 			AppPublish
 		|>
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$AppDevMethods*)
+
 
 
 $AppDevMethods=
@@ -123,6 +148,11 @@ $AppDevMethods=
 		"PackageDependencies"->AppPackageDependencies,
 		"FunctionDependencies"->AppFunctionDependencies
 		|>
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$AppExecuteMethods*)
+
 
 
 $AppExecuteMethods=
@@ -140,6 +170,13 @@ $appNoAppMethods=
 		};
 validateAppExecCall[app_, meth_]:=
 	StringQ@app||MatchQ[meth, Alternatives@@$appNoAppMethods];
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppExecute*)
+
+
+
 AppExecute//Clear
 AppExecute[
 	method_String?(KeyExistsQ[$AppExecuteMethods, #]&),
@@ -161,9 +198,6 @@ AppExecute[
 	"Options"
 	]:=
 	Options@Evaluate[$AppExecuteMethods[method]];
-
-
-(*AppObject[appName_String]:=*)
 
 
 (* ::Subsection:: *)
@@ -329,7 +363,7 @@ AppDocGen~SetAttributes~HoldRest
 
 
 (* ::Subsubsection::Closed:: *)
-(*Git*)
+(*Router*)
 
 
 
@@ -348,8 +382,15 @@ $AppGitRouter=
 		"GitHubPush"->
 			AppGitHubPush,
 		"GitHubDelete"->
-			AppGitHubDelete
+			AppGitHubDelete,
+		"GitHubCreateRelease"->
+			AppGitHubCreateRelease
 		|>
+
+
+(* ::Subsubsection::Closed:: *)
+(*Git*)
+
 
 
 AppGit//Clear

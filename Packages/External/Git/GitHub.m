@@ -241,6 +241,13 @@ Options[GitHubPath]=
 		"Branch"->"master",
 		"Tree"->"tree"
 		};
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*FormatGitHubPath*)
+
+
+
 Options[FormatGitHubPath]=
 	Options[GitHubPath];
 FormatGitHubPath[path___String,ops:OptionsPattern[]]:=
@@ -293,7 +300,15 @@ FormatGitHubPath[path___String,ops:OptionsPattern[]]:=
 					]
 				}
 		|>;
-GitHubPath[repo_String, 
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*GitHubPath*)
+
+
+
+GitHubPath[
+	repo_String, 
 	t:"tree"|"raw"|"trunk", 
 	branch_String, 
 	p___String, 
@@ -310,8 +325,9 @@ GitHubPath[path___String,ops:OptionsPattern[]]/;(TrueQ@$GitHubPathFormat):=
 	FormatGitHubPath[path,ops];
 GitHubPath[
 	s_String?(
+		URLParse[#, "Domain"]=="github.com"||
 		(
-			URLParse[#, "Scheme"]===None&&
+				URLParse[#, "Scheme"]===None&&
 				URLParse[#, "Domain"]===None&&
 				Length@URLParse[#, "Path"]>1
 			)||
@@ -334,7 +350,8 @@ GitHubPath[
 								}
 							]
 					|>,
-		URLParse[s, "Scheme"]==="github",
+		URLParse[s, "Scheme"]==="github"||
+			URLParse[s, "Domain"]==="github.com",
 			s,
 		True,
 			"github:"<>s
@@ -560,17 +577,31 @@ GitHubQueryAttachAuth[headers_]:=
 
 
 
+$GitHubBodyFormat="Base64";
+
+
 GitHubQueryPrepBody[headers_]:=
 	If[headers["Body"]==={},
 		KeyDrop[headers, "Body"],
 		ReplacePart[headers,
 			"Body":>
-				Replace[o_?OptionQ:>
-					ExportString[o, "JSON"]
+				Replace[
+					o_?OptionQ:>
+						ExportString[o, "JSON"]
 					]@
 				ReplaceAll[
 					headers["Body"],
-					f_File:>Developer`EncodeBase64[ReadString[f]]
+					{
+						File[f_]:>
+							Switch[$GitHubBodyFormat, 
+								"Binary",
+									ReadByteArray[f],
+								"Base64",
+									Developer`EncodeBase64[ReadString[f]],
+								_,
+									ReadString[f]
+								]
+						}
 					]
 			]
 		]
@@ -581,10 +612,18 @@ GitHubQueryPrepBody[headers_]:=
 
 
 
+$GitHubQueryBase=
+	<|
+		"Scheme"->"https",
+		"Domain"->"api.github.com"
+		|>;
+
+
 GitHubQuery[
 	path:_?(MatchQ[Flatten@{#},{___String}]&):{},
 	query:(_String->_)|{(_String->_)...}:{},
-	headers:_Association:<||>]:=
+	headers:_Association:<||>
+	]:=
 	Block[
 		{
 			$GitHubUsername=$GitHubUsername,
@@ -592,12 +631,14 @@ GitHubQuery[
 			},
 		Catch@
 			HTTPRequest[
-				URLBuild@<|
-					"Scheme"->"https",
-					"Domain"->"api.github.com",
-					"Path"->Flatten@{path},
-					"Query"->{query}
-					|>,
+				URLBuild@
+					Join[
+						$GitHubQueryBase,
+						<|
+							"Path"->Flatten@{path},
+							"Query"->{query}
+							|>
+						],
 				Association@Normal@
 					GitHubQueryPrepBody@
 						GitHubQueryAttachAuth@headers
@@ -768,7 +809,7 @@ GitHubUserAPI[
 
 
 (* ::Subsection:: *)
-(*Repos Basics*)
+(*Repos API*)
 
 
 
@@ -825,6 +866,11 @@ GitHubUserReposAPI[
 		query,
 		headers
 		];
+
+
+(* ::Subsection:: *)
+(*Repositories*)
+
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2522,8 +2568,33 @@ GitHubReleases[
 
 
 (* ::Subsubsection::Closed:: *)
+(*GetRelease*)
+
+
+
+$GitHubActions["GetRelease"]=GitHubGetRelease;
+
+
+GitHubGetRelease//Clear
+
+
+GitHubGetRelease[
+	repo_String,
+	tagName:_Integer,
+	ops:OptionsPattern[]
+	]:=
+	GitHubReposAPI[
+		repo,
+		{"releases", ToString@tagName}
+		]
+
+
+(* ::Subsubsection::Closed:: *)
 (*CreateRelease*)
 
+
+
+$GitHubActions["CreateRelease"]=GitHubCreateRelease;
 
 
 $GitHubParamMap[GitHubCreateRelease]=
@@ -2538,56 +2609,52 @@ $GitHubParamMap[GitHubCreateRelease]=
 
 
 Options[GitHubCreateRelease]=
-	{
-		"Username"->Automatic,
-		"Password"->Automatic,
-		"Name"->Automatic,
-		"TargetCommitish"->Automatic,
-		"Description"->Automatic,
-		"Draft"->Automatic,
-		"PreRelease"->Automatic
-		};
+	Join[
+		FilterRules[
+			Thread[Keys[$GitHubParamMap[GitHubCreateRelease]]->Automatic],
+			Except["TagName"]
+			],
+		{
+			"Username"->Automatic,
+			"Password"->Automatic
+			}
+		];
 GitHubCreateRelease[
 	repo_String,
 	tagName_String,
 	ops:OptionsPattern[]
 	]:=
-	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUsername]},
-		GitHubQuery[
-			{
-				"repos",
-				u,
-				repo,
-				"releases"
-				},
-			<|
-				"Method"->"POST",
-				"Body"->
-				ExportString[
-						GitHubQueryParamFilter[
-							GitHubCreateRelease,
-							{
-								"TagName"->tagName,
-								ops
-								}
-							],
-						"JSON"
+	GitHubReposAPI[
+		repo,
+		{"releases"},
+		<|
+			"Method"->"POST",
+			"Body"->
+			ExportString[
+					GitHubQueryParamFilter[
+						GitHubCreateRelease,
+						{
+							"TagName"->tagName,
+							ops
+							}
 						],
-				"Headers"->{
+					"JSON"
+					],
+			"Headers"->
+				{
 					"Authorization"->
-						GitHubAuthHeader[
-							u,
-							OptionValue["Password"]
-							]
-						}
-				|>
+						OptionValue[{"Username", "Password"}]
+					}
+			|>
 			]
-		];
 
 
 (* ::Subsubsection::Closed:: *)
 (*EditRelease*)
 
+
+
+$GitHubActions["EditRelease"]=GitHubEditRelease;
 
 
 $GitHubParamMap[GitHubEditRelease]=
@@ -2601,58 +2668,54 @@ $GitHubParamMap[GitHubEditRelease]=
 		};
 
 
+GitHubEditRelease//Clear
+
+
 Options[GitHubEditRelease]=
-	{
-		"Username"->Automatic,
-		"Password"->Automatic,
-		"TagName"->Automatic,
-		"Name"->Automatic,
-		"TargetCommitish"->Automatic,
-		"Description"->Automatic,
-		"Draft"->Automatic,
-		"PreRelease"->Automatic
-		};
+	Join[
+		Thread[Keys[$GitHubParamMap[GitHubEditRelease]]->Automatic],
+		{
+			"Username"->Automatic,
+			"Password"->Automatic
+			}
+		];
 GitHubEditRelease[
 	repo_String,
-	id_String,
+	id_Integer,
 	ops:OptionsPattern[]
 	]:=
-	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUsername]},
-		GitHubQuery[
-			{
-				"repos",
-				u,
-				repo,
-				"releases",
-				id
-				},
-			<|
-				"Method"->"PATCH",
-				"Body"->
-					ExportString[
-						GitHubQueryParamFilter[
-							GitHubCreateRelease,
-							{
-								ops
-								}
-							],
-						"JSON"
+	GitHubReposAPI[
+		repo,
+		{"releases", ToString@id},
+		<|
+			"Method"->"PATCH",
+			"Body"->
+				ExportString[
+					GitHubQueryParamFilter[
+						GitHubCreateRelease,
+						{
+							ops
+							}
 						],
-				"Headers"->{
-					"Authorization"->
-						GitHubAuthHeader[
-							u,
-							OptionValue["Password"]
-							]
-						}
-				|>
-			]
+					"JSON"
+					],
+			"Headers"->{
+				"Authorization"->
+					OptionValue[{"Username", "Password"}]
+					}
+			|>
 		];
 
 
 (* ::Subsubsection::Closed:: *)
 (*DeleteRelease*)
 
+
+
+$GitHubActions["DeleteRelease"]=GitHubDeleteRelease;
+
+
+GitHubDeleteRelease//Clear
 
 
 Options[GitHubDeleteRelease]=
@@ -2662,35 +2725,28 @@ Options[GitHubDeleteRelease]=
 		};
 GitHubDeleteRelease[
 	repo_String,
-	id_String,
+	id_Integer,
 	ops:OptionsPattern[]
 	]:=
-	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUsername]},
-		GitHubQuery[
-			{
-				"repos",
-				u,
-				repo,
-				"releases",
-				id
-				},
-			<|
-				"Method"->"DELETE",
-				"Headers"->{
-					"Authorization"->
-						GitHubAuthHeader[
-							u,
-							OptionValue["Password"]
-							]
-						}
-				|>
-			]
-		];
+	GitHubReposAPI[
+		repo,
+		{"releases", ToString@id},
+		<|
+			"Method"->"DELETE",
+			"Headers"->{
+				"Authorization"->
+					OptionValue[{"Username", "Password"}]
+					}
+			|>
+		]
 
 
 (* ::Subsubsection::Closed:: *)
 (*ListReleaseAssets*)
 
+
+
+$GitHubActions["ListReleaseAssets"]=GitHubListReleaseAssets;
 
 
 Options[GitHubListReleaseAssets]=
@@ -2700,30 +2756,19 @@ Options[GitHubListReleaseAssets]=
 		};
 GitHubListReleaseAssets[
 	repo_String,
-	id_String,
+	id_Integer,
 	ops:OptionsPattern[]
 	]:=
-	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUsername]},
-		GitHubQuery[
-			{
-				"repos",
-				u,
-				repo,
-				"releases",
-				id,
-				"assets"
-				},
-			<|
-				"Method"->"GET",
-				"Headers"->{
-					"Authorization"->
-						GitHubAuthHeader[
-							u,
-							OptionValue["Password"]
-							]
-						}
-				|>
-			]
+	GitHubReposAPI[
+		repo,
+		{"releases", ToString@id, "assets"},
+		<|
+			"Method"->"GET",
+			"Headers"->{
+				"Authorization"->
+					OptionValue[{"Username", "Password"}]
+					}
+			|>
 		];
 
 
@@ -2732,11 +2777,17 @@ GitHubListReleaseAssets[
 
 
 
+$GitHubActions["UploadReleaseAsset"]=GitHubUploadReleaseAsset;
+
+
 $GitHubParamMap[GitHubUploadReleaseAsset]=
 	{
 		"Name"->Automatic,
 		"Label"->Automatic
 		};
+
+
+GitHubUploadReleaseAsset//Clear
 
 
 Options[GitHubUploadReleaseAsset]=
@@ -2749,20 +2800,19 @@ Options[GitHubUploadReleaseAsset]=
 		};
 GitHubUploadReleaseAsset[
 	repo_String,
-	id_String,
-	asset:(_String|_File)?FileExistsQ,
+	id_Integer,
+	asset:(_String|_File)?FileExistsQ|_ByteArray,
 	ops:OptionsPattern[]
 	]:=
-	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUsername]},
-		GitHubQuery[
-			{
-				"repos",
-				u,
-				repo,
-				"releases",
-				id,
-				"assets"
-				},
+	Block[
+		{
+			$GitHubQueryBase=
+				ReplacePart[$GitHubQueryBase, "Domain"->"uploads.github.com"],
+			$GitHubBodyFormat="Binary"
+			},
+		GitHubReposAPI[
+			repo,
+			{"releases", ToString@id, "assets"},
 			{
 				Replace[OptionValue["Name"],
 					{
@@ -2782,9 +2832,13 @@ GitHubUploadReleaseAsset[
 					]
 				},
 			<|
-				"Method"->"GET",
+				"Method"->"POST",
 				"Body"->
-					ReadString[asset],
+					Replace[
+						asset,
+						_String|_File:>
+							Flatten[File[asset], 1, File]
+						],
 				"Headers"->{
 					Replace[OptionValue["ContentType"],
 						{
@@ -2794,10 +2848,7 @@ GitHubUploadReleaseAsset[
 							}
 						],
 					"Authorization"->
-						GitHubAuthHeader[
-							u,
-							OptionValue["Password"]
-							]
+						OptionValue[{"Username", "Password"}]
 						}
 				|>
 			]
@@ -2816,36 +2867,28 @@ Options[GitHubGetReleaseAsset]=
 		};
 GitHubGetReleaseAsset[
 	repo_String,
-	id_String,
+	id_Integer,
 	ops:OptionsPattern[]
 	]:=
-	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUsername]},
-		GitHubQuery[
-			{
-				"repos",
-				u,
-				repo,
-				"releases",
-				"assets",
-				id
-				},
-			<|
-				"Method"->"GET",
-				"Headers"->{
-					"Authorization"->
-						GitHubAuthHeader[
-							u,
-							OptionValue["Password"]
-							]
-						}
-				|>
-			]
-		];
+	GitHubReposAPI[
+		repo,
+		{"releases", "assets", ToString@id},
+		<|
+			"Method"->"GET",
+			"Headers"->{
+				"Authorization"->
+					OptionValue[{"Username", "Password"}]
+					}
+			|>
+		]
 
 
 (* ::Subsubsection::Closed:: *)
 (*EditReleaseAsset*)
 
+
+
+$GitHubActions["EditReleaseAsset"]=GitHubEditReleaseAsset;
 
 
 $GitHubParamMap[GitHubEditReleaseAsset]=
@@ -2859,70 +2902,34 @@ Options[GitHubEditReleaseAsset]=
 	{
 		"Username"->Automatic,
 		"Password"->Automatic,
-		"ContentType"->Automatic,
 		"Name"->Automatic,
 		"Label"->Automatic
 		};
 GitHubEditReleaseAsset[
 	repo_String,
-	id_String,
-	asset:(_String|_File)?FileExistsQ|None:None,
+	id_Integer,
 	ops:OptionsPattern[]
 	]:=
-	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUsername]},
-		GitHubQuery[
-			{
-				"repos",
-				u,
-				repo,
-				"releases",
-				"assets",
-				id
-				},
-			{
-				Replace[OptionValue["Name"],
-					{
-						s_String:>
-							("name"->s),
-						_:>
-							If[asset=!=None,
-								"name"->FileNameTake[asset],
-								Nothing
-								]
-						}
-					],
-				Replace[OptionValue["Label"],
-					{
-						s_String:>
-							("label"->s),
-						_:>
-							Nothing
-						}
-					]
-				},
-			<|
-				"Method"->"GET",
-				If[asset=!=None,
-					"Body"->
-						ReadString[asset],
-					Nothing
-					],
-				"Headers"->{
-					Replace[OptionValue["ContentType"],
+	GitHubReposAPI[
+		repo,
+		{"releases", "assets", ToString@id},
+		<|
+			"Method"->"PATCH",
+			"Body"->
+				ExportString[
+					GitHubQueryParamFilter[
+						GitHubEditReleaseAsset,
 						{
-							s_String:>
-								"ContentType"->s,
-							_->Nothing
+							ops
 							}
 						],
-					"Authorization"->
-						GitHubAuthHeader[
-							u,
-							OptionValue["Password"]
-							]
-						}
-				|>
-			]
+					"JSON"
+					],
+			"Headers"->{
+				"Authorization"->
+					OptionValue[{"Username", "Password"}]
+					}
+			|>
 		];
 
 
@@ -2931,11 +2938,7 @@ GitHubEditReleaseAsset[
 
 
 
-$GitHubParamMap[GitHubEditReleaseAsset]=
-	{
-		"Name"->Automatic,
-		"Label"->Automatic
-		};
+$GitHubActions["DeleteReleaseAsset"]=GitHubDeleteReleaseAsset;
 
 
 Options[GitHubDeleteReleaseAsset]=
@@ -2943,34 +2946,22 @@ Options[GitHubDeleteReleaseAsset]=
 		"Username"->Automatic,
 		"Password"->Automatic
 		};
-GitHubEditReleaseAsset[
+GitHubDeleteReleaseAsset[
 	repo_String,
-	id_String,
+	id_Integer,
 	ops:OptionsPattern[]
 	]:=
-	With[{u=Replace[OptionValue["Username"], Automatic:>$GitHubUsername]},
-		GitHubQuery[
-			{
-				"repos",
-				u,
-				repo,
-				"releases",
-				"assets",
-				id
-				},
-			<|
-				"Method"->"DELETE",
-				"Headers"->
-					{	
-						"Authorization"->
-							GitHubAuthHeader[
-								u,
-								OptionValue["Password"]
-								]
-							}
-				|>
-			]
-		];
+	GitHubReposAPI[
+		repo,
+		{"releases", "assets", ToString@id},
+		<|
+			"Method"->"DELETE",
+			"Headers"->{
+				"Authorization"->
+					OptionValue[{"Username", "Password"}]
+					}
+			|>
+		]
 
 
 (* ::Subsection:: *)

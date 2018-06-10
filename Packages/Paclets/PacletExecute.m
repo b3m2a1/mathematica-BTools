@@ -192,10 +192,11 @@ PacletExecute[
 
 
 
-exprPats=_String|{_String, _String}|_PacletManager`Paclet|{__PacletManager`Paclet};
+$PacletExpressionPatterns=
+	_String|{_String, _String}|_PacletManager`Paclet|{__PacletManager`Paclet};
 PacletExecute[
 	method_?(KeyExistsQ[$PacletExecuteExpressionMethods, #]&),
-	pac:exprPats,
+	pac:_?(MatchQ[$PacletExpressionPatterns]),
 	args___
 	]:=
 	With[{fn=$PacletExecuteExpressionMethods[method]},
@@ -212,10 +213,9 @@ PacletExecute[
 
 
 
-fiPats=$PacletFilePatterns;
 PacletExecute[
 	method_?(KeyExistsQ[$PacletExecuteSiteMethods, #]&),
-	pac:fiPats|None:None,
+	pac:_?(MatchQ[$PacletFilePatterns])|None:None,
 	args___?OptionQ
 	]:=
 	With[{fn=$PacletExecuteSiteMethods[method]},
@@ -232,10 +232,9 @@ PacletExecute[
 
 
 
-upPats=$PacletUploadPatterns;
 PacletExecute[
 	method_?(KeyExistsQ[$PacletExecuteUploadMethods, #]&),
-	pac:upPats,
+	pac:_?(MatchQ[$PacletUploadPatterns]),
 	args___
 	]:=
 	With[{fn=$PacletExecuteUploadMethods[method]},

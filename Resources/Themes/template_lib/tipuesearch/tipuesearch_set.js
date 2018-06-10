@@ -9,7 +9,7 @@ http://www.tipue.com/search
 // Stop words
 
 var tipuesearch_stop_words;
-$.getJSON("../theme/search/search_stopwords.json",
+$.getJSON(search_SiteURL+"/theme/search/search_stopwords.json",
   function(data) { tipuesearch_stop_words = data }
   );
 
@@ -17,28 +17,29 @@ $.getJSON("../theme/search/search_stopwords.json",
 // Word replace
 
 var tipuesearch_replace;
-$.getJSON("../theme/search/search_replacements.json",
+$.getJSON(search_SiteURL+"/theme/search/search_replacements.json",
   function(data) { tipuesearch_replace = data }
   );
 
 // Weighting
 
 var tipuesearch_weight;
-$.getJSON("../theme/search/search_weights.json",
+$.getJSON(search_SiteURL+"/theme/search/search_weights.json",
   function(data) { tipuesearch_weight = data }
   );
 
 // Illogical stemming
 
 var tipuesearch_stem;
-$.getJSON("../theme/search/search_stems.json",
+$.getJSON(search_SiteURL+"/theme/search/search_stems.json",
   function(data) { tipuesearch_stem = data }
   );
+
 
 // Related
 
 var tipuesearch_related;
-$.getJSON("../theme/search/search_related.json",
+$.getJSON(search_SiteURL+"/theme/search/search_related.json",
   function(data) { tipuesearch_related = data }
   );
 

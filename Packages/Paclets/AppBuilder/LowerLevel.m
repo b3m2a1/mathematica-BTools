@@ -215,6 +215,8 @@ AppGitHubPush::usage=
 	"Pushes the app to its master branch";
 AppGitHubDelete::usage=
 	"Removes a repo from github";
+AppGitHubCreateRelease::usage=
+	"Creates a release on GitHub";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2145,8 +2147,8 @@ AppGitSafeCommit[
 
 
 
-$AppGitHubPrefix=
-	"mathematica-";
+$AppGitHubPrefix="";
+	(*"mathematica-";*)
 
 
 AppGitHubRepo[appName_, password_:None]:=
@@ -2278,6 +2280,58 @@ AppGitHubDelete[appName_]:=
 					]
 				]
 			]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*GitHubCreateRelease*)
+
+
+
+Options[AppGitHubCreateRelease]:=
+	Options[AppGitHubCreateRelease]=
+		Join[
+			GitHub["CreateRelease", "Options"],
+			{
+				"SubmitPaclet"->True
+				}
+			];
+AppGitHubCreateRelease[
+	app_, 
+	rname:_String|Automatic:Automatic, 
+	ops:OptionsPattern[]
+	]:=
+	Module[
+		{
+			repo=URLBuild@Normal@GitHub["Path", AppGitHubRepo[app]],
+			release,
+			paclet,
+			asset
+			},
+		release=
+			GitHub["CreateRelease", 
+				repo, 
+				Replace[rname, 
+					Automatic:>"v"<>AppPacletExecute["PacletInfo", app]["Version"]
+					],
+				ops,
+				"ResultObject"
+				];
+		If[!FailureQ@release,
+			If[OptionValue["SubmitPaclet"]//TrueQ,
+				paclet=
+					PacletExecute["FindPacletFile", app, "BuildPaclets"->False];
+				If[!(StringQ@paclet&&FileExistsQ@paclet), 
+					paclet=AppPacletExecute["Bundle", app]
+					];
+				asset=
+					GitHub["UploadReleaseAsset",
+						release["ID"],
+						paclet
+						];
+				];
+			];
+		release
 		]
 
 

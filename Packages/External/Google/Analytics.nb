@@ -444,7 +444,8 @@ Cell[BoxData[
 
 Cell[CellGroupData[{
 
-Cell["$GAParamMap", "CodeSubsubsubsection",
+Cell["\[LeftCeiling]$GAParamMap\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
  CellChangeTimes->{
   3.734846837972093*^9},ExpressionUUID->"2392bc33-4a0c-499e-bea1-\
 413d49240489"],
@@ -495,7 +496,8 @@ Cell[BoxData[
 
 Cell[CellGroupData[{
 
-Cell["gaaDecapsMet", "CodeSubsubsubsection",
+Cell["\[LeftCeiling]gaaDecapsMet\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
  CellChangeTimes->{
   3.734846832948646*^9},ExpressionUUID->"a7bc450f-e9bf-40f3-b498-\
 c6816bd8f9a5"],
@@ -553,7 +555,8 @@ c4f0b0dc7248"]
 
 Cell[CellGroupData[{
 
-Cell["gaaPrepMetrics", "CodeSubsubsubsection",
+Cell["\[LeftCeiling]gaaPrepMetrics\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
  CellChangeTimes->{{3.734846987370442*^9, 
   3.73484698974647*^9}},ExpressionUUID->"a03bafe6-0047-4852-9e63-\
 70f019d27b1a"],
@@ -581,8 +584,8 @@ Cell[BoxData[
 
 Cell[CellGroupData[{
 
-Cell["gaaPrepDims", "CodeSubsubsubsection",
- Evaluatable->False,
+Cell["\[LeftCeiling]gaaPrepDims\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
  CellChangeTimes->{{3.734847026670411*^9, 
   3.734847028903757*^9}},ExpressionUUID->"7b77c3f0-c522-4ade-a23d-\
 952b3f918752"],
@@ -609,7 +612,8 @@ Cell[BoxData[
 
 Cell[CellGroupData[{
 
-Cell["gaaPrepReportReqs", "CodeSubsubsubsection",
+Cell["\[LeftCeiling]gaaPrepReportReqs\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
  CellChangeTimes->{
   3.734846829338327*^9},ExpressionUUID->"2fa0a541-7e4a-4329-bb07-\
 c9429eb5e2bb"],
@@ -652,7 +656,8 @@ a888f114047e"]
 
 Cell[CellGroupData[{
 
-Cell["GAAGetReport", "CodeSubsubsubsection",
+Cell["\[LeftCeiling]GAAGetReport\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
  CellChangeTimes->{
   3.734846857813251*^9},ExpressionUUID->"3b719cf3-b910-43bf-a2a8-\
 dd3d00828e44"],
@@ -884,6 +889,93 @@ Cell[BoxData[
  CellChangeTimes->{
   3.7348915964453907`*^9},ExpressionUUID->"36ab5fd9-7f93-4eec-a3fb-\
 9da22e674c3b"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]GetPageViewDataset\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"cf950c38-5376-4bcc-a289-66940dae6470"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"$GoogleAnalyticsCalls", "[", "\"\<GetPageViews\>\"", "]"}], "=", 
+   "\n", "\t", "GAAGetPageViews"}], 
+  ";"}]], "CodeInput",ExpressionUUID->"b5e5dc2b-9063-4a9c-ac3e-edcd7473178e"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "GAAGetPageViews", "]"}], "=", "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"\"\<StartDate\>\"", "\[RuleDelayed]", 
+      RowBox[{"DateObject", "[", 
+       RowBox[{"{", 
+        RowBox[{"2005", ",", " ", "1", ",", " ", "1"}], "}"}], "]"}]}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"\"\<EndDate\>\"", "\[RuleDelayed]", "Tomorrow"}]}], "\n", 
+    "\t\t", "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"GAAGetPageViews", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"viewID", ":", 
+     RowBox[{"_String", "|", "_Integer"}]}], ",", "\n", "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"Module", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"rawData", "=", "\n", "\t\t\t\t", 
+       RowBox[{"GoogleAnalytics", "[", "\n", "\t\t\t\t\t", 
+        RowBox[{
+        "\"\<GetReport\>\"", ",", "\n", "\t", "\t", "\t", "\t\t", "viewID", 
+         ",", "\n", "\t", "\t", "\t", "\t\t", 
+         RowBox[{"\"\<Dimensions\>\"", "\[Rule]", "\"\<PagePath\>\""}], ",", 
+         "\n", "\t", "\t", "\t", "\t", "\t", 
+         RowBox[{"\"\<Metrics\>\"", "\[Rule]", "\"\<Pageviews\>\""}], ",", 
+         "\n", "\t\t\t\t\t", "ops"}], "\n", "\t\t\t\t\t", "]"}]}], ",", "\n", 
+      "\t\t\t", "ds"}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"rawData", "[", "\"\<StatusCode\>\"", "]"}], "\[Equal]", 
+        "200"}], ",", "\n", "\t\t\t", 
+       RowBox[{"ds", "=", "\n", "\t\t\t\t", 
+        RowBox[{"Dataset", "@", 
+         RowBox[{"rawData", "[", 
+          RowBox[{"[", 
+           RowBox[{
+           "\"\<Content\>\"", ",", " ", "\"\<Reports\>\"", ",", " ", "1", ",",
+             " ", "\"\<Data\>\"", ",", " ", "\"\<Rows\>\""}], "]"}], 
+          "]"}]}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"ds", "=", "$Failed"}]}], "\n", "\t\t\t", "]"}], ";", "\n", 
+     "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"ds", "=!=", "$Failed"}], ",", "\n", "\t\t\t", 
+       RowBox[{"ds", "[", 
+        RowBox[{"All", ",", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"<|", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"\"\<Page\>\"", "\[Rule]", 
+             RowBox[{"#Dimensions", "[", 
+              RowBox[{"[", "1", "]"}], "]"}]}], ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"\"\<Views\>\"", "\[Rule]", 
+             RowBox[{"Floor", "@", 
+              RowBox[{"Internal`StringToDouble", "@", 
+               RowBox[{"#Metrics", "[", 
+                RowBox[{"[", 
+                 RowBox[{"1", ",", " ", "\"\<Values\>\"", ",", " ", "1"}], 
+                 "]"}], "]"}]}]}]}]}], "\n", "\t\t\t\t\t", "|>"}], "&"}]}], 
+        "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", "$Failed"}], "\n", 
+      "\t\t\t", "]"}]}]}], "\n", "\t\t", 
+   "]"}]}]}], \
+"CodeInput",ExpressionUUID->"6b5b01a7-b55b-43dd-97aa-07740123f5bd"]
 }, Open  ]]
 }, Open  ]],
 
