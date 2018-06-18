@@ -9,23 +9,23 @@
 
 
 Unprotect[$Name`PackageScope`Private`$TopLevelLoad];
-$Name`PackageScope`Private`$TopLevelLoad=
-	MemberQ[$ContextPath, "Global`"];
+$Name`PackageScope`Private`$TopLevelLoad=MemberQ[$ContextPath, "Global`"];
 
 
 BeginPackage["$Name`"];
 
 
-$Name::usage=
-	"$Name is a manager head for the $Name package";
+ClearAll[$Name];
+$Name::usage="$Name is a manager head for the $Name package";
 
 
 (* ::Subsubsection::Closed:: *)
 (*$ContextPath*)
 
 
-$ContextPath=
-	Join[$ContextPath,
+System`Private`NewContextPath@
+	Join[
+		$ContextPath,
 		"$Name`"<>
 			StringReplace[
 				FileNameDrop[#,FileNameDepth@DirectoryName@$InputFileName],
@@ -57,9 +57,7 @@ $ContextPath=
 
 Unprotect["`PackageScope`Private`*"];
 Begin["`PackageScope`Private`"];
-
-
-Clear[$Name];
+AppendTo[$ContextPath, $Context];
 
 
 $InitCode
@@ -67,6 +65,19 @@ $InitCode
 
 (* ::Subsection:: *)
 (*Post-Processing*)
+
+
+PackagePostProcessPrepSpecs::usage="";
+PackagePrepPackageSymbol::usage="";
+PackagePostProcessExposePackages::usage="";
+PackagePostProcessRehidePackages::usage="";
+PackagePostProcessDecontextPackages::usage="";
+PackagePostProcessContextPathReassign::usage="";
+PackageAttachMainAutocomplete::usage="";
+PackagePreemptShadowing::usage="";
+
+
+Begin["`PostProcess`"];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -272,7 +283,30 @@ PackageAttachMainAutocomplete[]:=
 		];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
+(*PreventShadowing*)
+
+
+PackagePreemptShadowing[]:=
+	Replace[
+		Hold[{m___}]:>
+			Off[m]
+			]@
+		Thread[
+			ToExpression[
+				Map[#<>"$"&, Names["`PackageScope`Private`*"]
+				],
+				StandardForm,
+				Function[Null, 
+					Hold[MessageName[#, "shdw"]],
+					HoldAllComplete
+					]
+				],
+			Hold
+			]
+
+
+(* ::Subsubsection::Closed:: *)
 (*PackagePrepPackageSymbol*)
 
 
@@ -287,10 +321,14 @@ PackagePrepPackageSymbol[]:=
 		]
 
 
+End[];
+
+
 (* ::Subsection:: *)
 (*End*)
 
 
+$ContextPath=DeleteCases[$ContextPath, $Context];
 End[];
 
 
@@ -321,7 +359,7 @@ Protect["`PackageScope`Private`*"];
 Unprotect[`PackageScope`Private`$loadAbort];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Post-Process*)
 
 
@@ -340,35 +378,15 @@ Unprotect[`PackageScope`Private`$PackageScopedSymbols];
 Clear[`PackageScope`Private`$PackageScopedSymbols];
 
 
-(* ::Subsubsection::Closed:: *)
-(*Preempt Shadowing*)
-
-
 (* Hide `PackageScope`Private` shadowing *)
-
-
-Replace[
-	Hold[{`PackageScope`Private`m___}]:>
-		Off[`PackageScope`Private`m]
-		]@
-Thread[
-	ToExpression[
-		Map[#<>"$"&, Names["`PackageScope`Private`*"]
-		],
-		StandardForm,
-		Function[Null, 
-			Hold[MessageName[#, "shdw"]],
-			HoldAllComplete
-			]
-		],
-	Hold
-	]
+`PackageScope`Private`PackagePreemptShadowing[]
 
 
 (* ::Subsubsection:: *)
 (*EndPackage / Reset $ContextPath*)
 
 
+System`Private`ResetContextPath[]
 EndPackage[];
 
 

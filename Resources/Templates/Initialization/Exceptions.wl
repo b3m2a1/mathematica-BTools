@@ -4,41 +4,80 @@
 (*Exceptions*)
 
 
+PackageExceptionBlock::usage="";
+
+
+PackageThrowException::usage="";
+PackageCatchException::usage="";
+PackageCatchExceptionCallback::usage="";
+
+
+PackageThrowMessage::usage="";
+PackageCatchMessage::usage="";
+
+
+PackageFailureException::usage="";
+PackageRaiseException::usage="";
+
+
 (* ::Subsubsection::Closed:: *)
-(*PackageThrow*)
+(*Begin*)
 
 
-PackageThrow[value_, tag:_String:"Failure"]:=
+Begin["`Exceptions`Private`"]
+
+
+(* ::Subsubsection::Closed:: *)
+(*PackageThrowException*)
+
+
+PackageThrowException[value:Except[_Failure], tag:_String:"Failure"]:=
 	Throw[value, $PackageName<>tag];
+PackageThrowException[f_Failure]:=
+	Throw[f, f[[1]]];
 
 
 (* ::Subsubsection::Closed:: *)
-(*PackageCatch*)
+(*PackageCatchException*)
 
 
 $PackageCatchCallback=(#&);
 
 
-PackageCatch[expr_, tag:_String:"Failure", callback_:Automatic]:=
-	Catch[expr, $PackageName<>tag, 
-		Replace[callback, Automatic:>$PackageCatchCallback]
+PackageCatchExceptionHandler[tag_]:=
+	$PackageCatchCallback;
+
+
+PackageCatchException[
+	expr:Except[_String], 
+	tag:_String:"Failure", 
+	callback_:Automatic
+	]:=
+	Catch[expr, 
+		$PackageName<>tag, 
+		Replace[callback, Automatic:>PackageCatchExceptionHandler[tag]]
 		];
-PackageCatch~SetAttributes~HoldFirst
+PackageCatchException[tag_String, callback_:Automatic]:=
+	Function[Null,
+		PackageCatchException[#, tag, callback],
+		HoldFirst
+		];
+PackageCatchException~SetAttributes~HoldFirst
 
 
-(* ::Subsubsection:: *)
-(*PackageMessage*)
+(* ::Subsubsection::Closed:: *)
+(*PackageThrowMessage*)
 
 
 $PackageErrorMessage=
 	"$Name encountered exception ``";
 
 
-Options[PackageMessage]=
+Options[PackageThrowMessage]=
 	{
 		"MessageParameters":>{}
 		};
-PackageMessage[
+PackageThrowMessage[
 	msg_MessageName, 
 	body_String,
 	ops:OptionsPattern[]
@@ -47,46 +86,46 @@ PackageMessage[
 		Set[msg, body];
 		Message[msg, Sequence@@OptionValue["MessageParameters"]]
 		);
-PackageMessage[
+PackageThrowMessage[
 	tag_?StringQ,
 	body_String,
 	ops:OptionsPattern[]
 	]:=
-	PackageMessage[
+	PackageThrowMessage[
 		MessageName[$Name, tag],
 		body,
 		ops
 		];
-PackageMessage[
+PackageThrowMessage[
 	tag_?StringQ
 	]:=
-	PackageMessage[
+	PackageThrowMessage[
 		MessageName[$Name, tag],
 		$PackageErrorMessage,
 		"MessageParameters"->{tag}
 		];
-PackageMessage~SetAttributes~HoldAll
+PackageThrowMessage~SetAttributes~HoldAll
 
 
-(* ::Subsubsection:: *)
-(*PackageCheck*)
+(* ::Subsubsection::Closed:: *)
+(*PackageCatchMessage*)
 
 
-$PackageCheckMessage=
+$PackageCatchMessageMessage=
 	"Check caught exceptions ``";
 
 
-$PackageCheckCallback=
+$PackageCatchMessageCallback=
 	Function[
 		PackageRaiseException[
 			"Check",
-			$PackageCheckMessage,
+			$PackageCatchMessageMessage,
 			"MessageParameters"->Thread[HoldForm[$MessageList]]
 			]
 		];
 
 
-PackageCheck[
+PackageCatchMessage[
 	expr_,
 	failexpr_:Automatic,
 	msg:{___String}:{}
@@ -96,32 +135,27 @@ PackageCheck[
 		{
 			{}:>
 				Check[expr, 
-					Replace[failexpr, {Automatic:>$PackageCheckCallback[]}]
+					Replace[failexpr, {Automatic:>$PackageCatchMessageCallback[]}]
 					],
 			Hold[msgs_]:>
 				Check[expr, 
-					Replace[failexpr, {Automatic:>$PackageCheckCallback[]}], 
+					Replace[failexpr, {Automatic:>$PackageCatchMessageCallback[]}], 
 					msgs
 					],
 			_:>
-				Replace[failexpr, {Automatic:>$PackageCheckCallback[]}]
+				Replace[failexpr, {Automatic:>$PackageCatchMessageCallback[]}]
 			}
 		];
-PackageCheck~SetAttributes~HoldAll;
+PackageCatchMessage~SetAttributes~HoldAll;
 
 
-(* ::Subsubsection:: *)
-(*PackageFailure*)
+(* ::Subsubsection::Closed:: *)
+(*PackageFailureException*)
 
 
-Options[PackageFailure]=
-	Join[
-		Options[PackageMessage],
-		{
-			"FailureTag"->Automatic
-			}
-		];
-PackageFailure[
+Options[PackageFailureException]=
+	Options[PackageThrowMessage];
+PackageFailureException[
 	msg_MessageName,
 	body_?StringQ,
 	ops:OptionsPattern[]
@@ -130,10 +164,7 @@ PackageFailure[
 		OptionValue[Automatic, Automatic, "MessageParameters", Hold],
 		Hold[params_]:>
 			Failure[
-				$PackageName<>
-					Replace[OptionValue["FailureTag"], 
-						Automatic:>Hold[msg][[1, 2]]
-						],
+				$PackageName<>Hold[msg][[1, 2]],
 				<|
 					"MessageTemplate":>
 						msg,
@@ -142,39 +173,39 @@ PackageFailure[
 					|>
 				]
 		];
-PackageFailure[
+PackageFailureException[
 	tag:_?StringQ:"Exception",
 	body_?StringQ,
 	ops:OptionsPattern[]
 	]:=
 	(
 		Set[MessageName[$Name, tag], body];
-		PackageFailure[
+		PackageFailureException[
 			MessageName[$Name, tag],
 			body,
 			ops
 			]
 		);
-PackageFailure~SetAttributes~HoldFirst
+PackageFailureException~SetAttributes~HoldFirst
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*PackageRaiseException*)
 
 
 Options[PackageRaiseException]=
-	Options[PackageFailure]
+	Options[PackageFailureException]
 PackageRaiseException[
 	msg_MessageName,
 	body_?StringQ,
 	ops:OptionsPattern[]
 	]:=
 	(
-		PackageMessage[msg, body, 
-			FilterRules[{ops}, Options[PackageMessage]]
+		PackageThrowMessage[msg, body, 
+			Evaluate@FilterRules[{ops}, Options[PackageThrowMessage]]
 			];
-		PackageThrow[
-			PackageFailure[msg, body, ops]
+		PackageThrowException[
+			PackageFailureException[msg, body, ops]
 			]
 		);
 PackageRaiseException[
@@ -194,3 +225,51 @@ PackageRaiseException[tag_?StringQ]:=
 		"MessageParameters"->{tag}
 		];
 PackageRaiseException~SetAttributes~HoldFirst
+
+
+(* ::Subsubsection::Closed:: *)
+(*PackageExceptionBlock*)
+
+
+$PackageErrorStackDepth=0;
+Protect[$PackageErrorStackDepth];
+
+
+PackageExceptionBlock//Clear
+PackageExceptionBlock/:
+	HoldPattern[
+		SetDelayed[lhs_, 
+			peb:PackageExceptionBlock[_, _String]
+			]
+		]:=
+	SetDelayed[lhs,
+		Block[{$PackageExceptionBlockResult},
+			$PackageExceptionBlockResult=peb;
+			peb/;!FailureQ@peb
+			]
+		];
+PackageExceptionBlock[
+	expr_,
+	tag_String
+	]:=
+	Block[
+		{
+			$PackageErrorStackDepth=$PackageErrorStackDepth+1,
+			result
+			},
+		result=PackageCatchException[expr, tag, #&];
+		If[FailureQ@result&&$PackageErrorStackDepth>1,
+			PackageThrowException[result]
+			];
+		result(*/;!FailureQ@result*)
+		];
+PackageExceptionBlock[tag_String]:=
+	Function[Null, PackageExceptionBlock[#, tag], HoldFirst];
+PackageExceptionBlock~SetAttributes~HoldFirst;
+
+
+(* ::Subsubsection::Closed:: *)
+(*End*)
+
+
+End[]

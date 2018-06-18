@@ -726,8 +726,6 @@ appInitTemplate[pkg_]:=
 
 
 
-(*AppRegenerateInit[name]~PackageAddUsage~
-	"regenerates the main package .m file for the application name";*)
 AppRegenerateInit[name_String]:=
 	With[{
 		packageGet=name<>"`"<>name<>"`",
@@ -2293,7 +2291,8 @@ Options[AppGitHubCreateRelease]:=
 		Join[
 			GitHub["CreateRelease", "Options"],
 			{
-				"SubmitPaclet"->True
+				"SubmitPaclet"->True,
+				"UseCachedPaclets"->True
 				}
 			];
 AppGitHubCreateRelease[
@@ -2320,7 +2319,10 @@ AppGitHubCreateRelease[
 		If[!FailureQ@release,
 			If[OptionValue["SubmitPaclet"]//TrueQ,
 				paclet=
-					PacletExecute["FindPacletFile", app, "BuildPaclets"->False];
+					PacletExecute["FindPacletFile", app, 
+						"BuildPaclets"->False,
+						"UseCachedPaclets"->TrueQ@OptionValue["UseCachedPaclets"]
+						];
 				Which[
 					TrueQ@paclet,
 						paclet=PacletExecute["FindPacletFile", app],
@@ -2329,6 +2331,7 @@ AppGitHubCreateRelease[
 					];
 				asset=
 					GitHub["UploadReleaseAsset",
+						repo,
 						release["ID"],
 						paclet
 						];

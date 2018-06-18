@@ -4,6 +4,16 @@
 (*Autocompletion*)
 
 
+PackageAddAutocompletions::usage="";
+
+
+(* ::Subsubsection::Closed:: *)
+(*Begin*)
+
+
+Begin["`Autocomplete`"];
+
+
 (* ::Subsubsection::Closed:: *)
 (*Formats*)
 
@@ -119,7 +129,7 @@ $PackageAutocompletionAliases=
 		};
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*AddAutocompletions Convenience*)
 
 
@@ -203,3 +213,10 @@ PackageSetAutocompletionData[]:=
 						}
 					]
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*End*)
+
+
+End[]

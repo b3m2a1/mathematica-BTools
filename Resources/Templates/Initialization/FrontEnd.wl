@@ -4,6 +4,20 @@
 (*FrontEnd*)
 
 
+PackageFEHiddenBlock::usage="";
+PackageFEUnhideSymbols::usage="";
+PackageFERehideSymbols::usage="";
+PackageFEUnhidePackage::usage="";
+PackageFERehidePackage::usage="";
+
+
+(* ::Subsubsection::Closed:: *)
+(*Begin*)
+
+
+Begin["`FrontEnd`"]
+
+
 (* ::Subsubsection::Closed:: *)
 (*PackageFEInstallStylesheets *)
 
@@ -264,3 +278,10 @@ PackageFERehidePackage[
 		];
 PackageFERehidePackage[spec:_String|_List,a___]/;TrueQ[$AllowPackageRecoloring]:=
 	PackageFERehidePackage[PackageFilePath@Flatten@{"Packages",spec},a];
+
+
+(* ::Subsubsection::Closed:: *)
+(*End*)
+
+
+End[]

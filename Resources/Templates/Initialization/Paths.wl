@@ -4,6 +4,17 @@
 (*Paths*)
 
 
+PackageFilePath::usage="";
+PackageFEFile::usage="";
+
+
+(* ::Subsubsection::Closed:: *)
+(*Begin*)
+
+
+Begin["`Paths`"]
+
+
 (* ::Subsubsection::Closed:: *)
 (*PackageFilePath*)
 
@@ -39,3 +50,10 @@ PackagePathSymbol[parts___String,sym_String]:=
 PackagePathSymbol[parts___String,sym_Symbol]:=
 	PackagePathSymbol[parts,Evaluate@SymbolName@Unevaluated[sym]];
 PackagePathSymbol~SetAttributes~HoldRest;
+
+
+(* ::Subsubsection::Closed:: *)
+(*End*)
+
+
+End[]

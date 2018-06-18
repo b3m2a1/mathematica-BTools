@@ -4,6 +4,30 @@
 (*Loading*)
 
 
+$PackageFileContexts::usage="";
+$DeclaredPackages::usage="";
+$LoadedPackages::usage="";
+
+
+PackageExecute::usage="";
+PackageLoadPackage::usage="";
+PackageLoadDeclare::usage="";
+PackageAppLoad::usage="";
+PackageAppGet::usage="";
+PackageAppNeeds::usage="";
+PackageScopeBlock::usage="";
+PackageFERehideSymbols::usage="Predeclared here...";
+PackageDecontext::usage="";
+PackageRecontext::usage="";
+
+
+(* ::Subsubsection::Closed:: *)
+(*Begin*)
+
+
+Begin["`Loading`"]
+
+
 (* ::Subsubsection::Closed:: *)
 (*Constants*)
 
@@ -52,25 +76,20 @@ PackageFileContext[f_String?FileExistsQ]:=
 
 PackageExecute[expr_]:=
 	CompoundExpression[
-		Block[{$ContextPath={"System`"}},
-			BeginPackage["$Name`"];
+		Internal`WithLocalSettings[
+			BeginPackage["$Name`"],
 			$ContextPath=
 				DeleteDuplicates[
-					Join[$ContextPath,$PackageContexts]
+					Join[$ContextPath, $PackageContexts]
 					];
-			CheckAbort[
-				With[{res=expr},
-					EndPackage[];
-					res
-					],
-				EndPackage[]
-				]
+			expr,
+			EndPackage[]
 			]
 		];
 PackageExecute~SetAttributes~HoldFirst
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*PackagePullDeclarations*)
 
 
@@ -140,32 +159,36 @@ PackageLoadPackage[heldSym_,context_,pkgFile_->syms_]:=
 	Block[{
 		$loadingChain=
 			If[ListQ@$loadingChain,$loadingChain,{}],
-		$inLoad=TrueQ[$inLoad],
-		$ContextPath=$ContextPath
+		$inLoad=TrueQ[$inLoad]
 		},
-		If[!MemberQ[$loadingChain,pkgFile],
-			With[{$$inLoad=$inLoad},
-				$inLoad=True;
-				If[$AllowPackageRecoloring,
-					Internal`SymbolList[False]
-					];
-				Replace[Thread[syms,HoldPattern],
-					Verbatim[HoldPattern][{s__}]:>Clear[s]
-					];
-				If[Not@MemberQ[$ContextPath,context],
-					$ContextPath=Prepend[$ContextPath,context];
-					];
-				Block[{PackageFEHiddenBlock=Null},
-					PackageAppGet[context,pkgFile];
-					];
-				Unprotect[$LoadedPackages];
-				AppendTo[$LoadedPackages,pkgFile];
-				Protect[$LoadedPackages];
-				If[!$$inLoad&&$AllowPackageRecoloring,
-					Internal`SymbolList[True]
-					];
-				ReleaseHold[heldSym]
-				]
+		Internal`WithLocalSettings[
+			System`Private`NewContextPath@$ContextPath,
+			If[!MemberQ[$loadingChain,pkgFile],
+				AppendTo[$loadingChain, pkgFile];
+				With[{$$inLoad=$inLoad},
+					$inLoad=True;
+					If[$AllowPackageRecoloring,
+						Internal`SymbolList[False]
+						];
+					Replace[Thread[syms,HoldPattern],
+						Verbatim[HoldPattern][{s__}]:>Clear[s]
+						];
+					If[Not@MemberQ[$ContextPath,context],
+						$ContextPath=Prepend[$ContextPath,context];
+						];
+					Block[{PackageFEHiddenBlock=Null},
+						PackageAppGet[context,pkgFile];
+						];
+					Unprotect[$LoadedPackages];
+					AppendTo[$LoadedPackages, pkgFile];
+					Protect[$LoadedPackages];
+					If[!$$inLoad&&$AllowPackageRecoloring,
+						Internal`SymbolList[True]
+						];
+					ReleaseHold[heldSym]
+					]
+				],
+			System`Private`RestoreContextPath[]
 			]
 		];
 
@@ -432,3 +455,10 @@ PackageRecontext[
 			1
 			]
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*End*)
+
+
+End[]

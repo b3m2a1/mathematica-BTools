@@ -8,6 +8,23 @@ $Name::nodep="Couldn't load dependency `` of type ``";
 $Name::nodup="Couldn't update dependency `` of type ``";
 
 
+PackageExtendContextPath::usage="";
+PackageInstallPackageDependency::usage="";
+PackageLoadPackageDependency::usage="";
+PackageCheckPacletDependency::usage="";
+PackageInstallPacletDependency::usage="";
+PackageLoadPacletDependency::usage="";
+PackageUpdatePacletDependency::usage="";
+PackageLoadResourceDependency::usage="";
+
+
+(* ::Subsubsection::Closed:: *)
+(*Begin*)
+
+
+Begin["`Dependencies`"];
+
+
 (* ::Subsubsection::Closed:: *)
 (*PackageExtendContextPath*)
 
@@ -287,9 +304,16 @@ PackageUpdatePacletDependency[
 	First@PackageUpdatePacletDependency[{dep}, ops]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*PackageLoadResourceDependency*)
 
 
 (* ::Text:: *)
 (*Nothing I've implemented yet, but could be very useful for installing resources for a paclet*)
+
+
+(* ::Subsubsection:: *)
+(*End*)
+
+
+End[]

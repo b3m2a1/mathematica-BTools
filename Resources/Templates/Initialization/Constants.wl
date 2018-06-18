@@ -4,6 +4,27 @@
 (*Constants*)
 
 
+$PackageDirectory::usage="";
+$PackageName::usage="";
+$PackageListing::usage="";
+$PackageContexts::usage="";
+$PackageDeclared::usage="";
+$PackageFEHiddenSymbols::usage="";
+$PackageScopedSymbols::usage="";
+$PackageLoadSpecs::usage="";
+$AllowPackageSymbolDefinitions::usage="";
+$AllowPackageRescoping::usage="";
+$AllowPackageRecoloring::usage="";
+$AllowPackageAutocompletions::usage="";
+
+
+(* ::Subsubsection::Closed:: *)
+(*Begin*)
+
+
+Begin["`Constants`"];
+
+
 (* ::Subsubsection::Closed:: *)
 (*Naming*)
 
@@ -27,7 +48,8 @@ $PackageName=
 $Name["PackageListing"]:=$PackageListing;
 $PackageListing=<||>;
 $Name["Contexts"]:=$PackageContexts;
-$PackageContexts={
+$PackageContexts=
+	{
 		"$Name`",
 		"$Name`PackageScope`Private`",
 		"$Name`PackageScope`Package`"
@@ -125,3 +147,10 @@ $AllowPackageAutocompletions=
 		Lookup[$PackageLoadSpecs, "AllowAutocompletions"],
 		Except[True|False]->$TopLevelLoad
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*End*)
+
+
+End[]
