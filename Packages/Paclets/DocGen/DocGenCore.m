@@ -214,10 +214,10 @@ findPacletDirectory[f_String]:=
 If[Length@OwnValues@$DocGenActive==0,
 	$DocGenActive:=
 		Replace[
-			s_String:>
+			s_String?(PacletExecute["InstalledQ"]):>
 				Lookup[
 					Lookup[
-						PacletExecute["Lookup", s, "Extensions"],
+						PacletExecute["Lookup", s, "Extensions", <||>],
 						"Documentation",
 						<||>
 						],
@@ -391,7 +391,7 @@ makeRefTest=(
 	MemberQ[makeRefOverrides,#]||(
 		docSymStringPat[#]&&
 			Replace[
-				ToExpression[#,StandardForm,Hold],
+				ToExpression[#, StandardForm, Hold],
 				Hold[s_]:>(
 					MatchQ[
 						dgQuietContext[s],
@@ -1209,13 +1209,11 @@ contextNames[s_String]:=
 
 
 
-relatedFunctionNames[s_String,c:_String|Automatic:Automatic]:=
-	With[{
-		wordStart=
-			With[{trimmed=StringTrim[s,"$"]},
+relatedFunctionNamesTrimmed[s_]:=
+	With[{trimmed=StringTrim[s, "$"]},
 				Replace[StringPosition[trimmed,_?LowerCaseQ],{
 					{{three_?(GreaterThan[2]),_},___}:>
-						StringTake[trimmed,three-2],
+						StringTake[trimmed, three-2],
 					{__}:>
 						Replace[
 							StringPosition[StringDrop[trimmed,1],
@@ -1227,7 +1225,12 @@ relatedFunctionNames[s_String,c:_String|Automatic:Automatic]:=
 							}],
 					_:>If[StringLength[trimmed]>=3,StringTake[trimmed,3],trimmed]
 					}]
-				],
+				]
+
+
+relatedFunctionNames[s_String,c:_String|Automatic:Automatic]:=
+	With[{
+		wordStart=relatedFunctionNamesTrimmed@s,
 		cont=
 			Replace[c,
 				Automatic:>
@@ -1453,11 +1456,16 @@ $usageSymNames =
 		PatternTest -> extractorLocalized["test"],
 		Condition -> extractorLocalized["cond"],
 		s_Symbol :>
-		RuleCondition[
-			extractorLocalized@
-				ToLowerCase[StringTake[SymbolName[Unevaluated@s], UpTo[3]]],
-			True
-			]
+			RuleCondition[
+				extractorLocalized@
+					If[StringStartsQ[#, LetterCharacter?(Not@*LowerCaseQ)], 
+						ToLowerCase@StringTake[#, 1]<>StringDrop[#, 1], 
+						#
+						]&@
+						SymbolName[Unevaluated@s]
+						(*ToLowerCase[StringTake[SymbolName[Unevaluated@s], UpTo[3]]]*),
+				True
+				]
 		};
 symbolUsageReplacementPattern[names_, conts_] :=
 	s_Symbol?(
@@ -2091,13 +2099,14 @@ generateDocumentation//Clear
 Options[generateDocumentation]:=
 	Join[
 		Options@DocGenGenerateSymbolPages,
-		Options@DocGenGenerateGuide,{
-		"Install"->False,
-		"Temporary"->False,
-		"Upload"->False,
-		"Index"->Automatic,
-		"GenerateHTML"->False
-		},
+		Options@DocGenGenerateGuide,
+		{
+			"Install"->False,
+			"Temporary"->False,
+			"Upload"->False,
+			"Index"->Automatic,
+			"GenerateHTML"->False
+			},
 		Options@PacletUpload,
 		Options@PacletInfoExpressionBundle,
 		Options@DocGenGenerateHTMLDocumentation
@@ -2147,35 +2156,40 @@ generateDocumentation[
 				CreateIntermediateDirectories->True
 				];
 			Block[{$DocGenActive=linkbase},
-				docGenSaveSymbolPages[pattern,
-					dir,
+				DocGenSaveSymbolPages[
+					pattern,
 					Sequence@@
 						DeleteDuplicatesBy[First]@
-						FilterRules[{
-							ops,
-							"RelatedGuides"->(linkbase<>"/guide/"<>linkbase)
-							},
-							Options@docGenSaveSymbolPages
+						FilterRules[
+							{
+								"Extension"->True,
+								"Directory"->dir,
+								ops,
+								"RelatedGuides"->(linkbase<>"/guide/"<>linkbase)
+								},
+							Options@DocGenSaveSymbolPages
 							]
 					];
 				Monitor[
-					docGenSaveGuide[pattern,
-						dir,
+					DocGenSaveGuide[
+						pattern,
 						Sequence@@
 							DeleteDuplicatesBy[First]@
-							FilterRules[{
-								"RelatedGuides"->
-									DeleteCases[
-										Replace[OptionValue@"RelatedGuides",Automatic->{}],
-										linkbase->linkbase|(linkbase<>"/guide/"<>linkbase)
-										],
-									ops
-									},
-								Options@docGenSaveGuide
+							FilterRules[
+								{
+									"Directory"->dir,
+									"RelatedGuides"->
+										DeleteCases[
+											Replace[OptionValue@"RelatedGuides",Automatic->{}],
+											linkbase->linkbase|(linkbase<>"/guide/"<>linkbase)
+											],
+										ops
+										},
+								Options@DocGenSaveGuide
 								]
 						],
 					Internal`LoadingPanel[
-						"Generating guide"
+						"Generating guide page"
 						]
 					]
 				];
@@ -2186,10 +2200,11 @@ generateDocumentation[
 				html=
 					DocGenGenerateHTMLDocumentation[
 						FileNameJoin@$DocGenWebDocsDirectory,
-						dir,
-						FilterRules[{
-							ops
-							},
+						FilterRules[
+							{
+								"Directory"->dir,
+								ops
+								},
 							Options@DocGenGenerateHTMLDocumentation
 							]
 						]

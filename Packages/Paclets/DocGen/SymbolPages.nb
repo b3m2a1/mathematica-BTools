@@ -585,7 +585,7 @@ Cell[BoxData[{
    3.7146638758521852`*^9, 3.714663875858348*^9}, {3.723734110215995*^9, 
    3.723734110222066*^9}},ExpressionUUID->"577f0f73-7dde-4782-9b7f-\
 4a6e13f2871a"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -2418,19 +2418,26 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{"usageSplitChunkByName", "[", 
    RowBox[{"u_", ",", " ", "name_"}], "]"}], ":=", "\n", "\t", 
-  RowBox[{"StringSplit", "[", 
-   RowBox[{"u", ",", " ", "\n", "\t\t", 
-    RowBox[{
-     RowBox[{
-      RowBox[{"chunk", ":", "name"}], "~~", 
-      RowBox[{"(", "\n", "\t\t\t", 
-       RowBox[{"Whitespace", "|", "\n", "\t\t\t", 
-        RowBox[{"(", 
-         RowBox[{
+  RowBox[{"Replace", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"StringSplit", "[", 
+     RowBox[{"u", ",", " ", "\n", "\t", "\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"chunk", ":", "name"}], "~~", 
+        RowBox[{"(", "\n", "\t", "\t\t\t", 
+         RowBox[{"Whitespace", "|", "\n", "\t", "\t\t\t", 
           RowBox[{"(", 
-           RowBox[{"\"\<[\>\"", "~~", "b__", "~~", "\"\<]\>\""}], ")"}], "/;", 
-          RowBox[{"usageSplitChunkByNameValidate", "[", "b", "]"}]}], ")"}]}],
-        "\n", "\t\t\t", ")"}]}], "\[RuleDelayed]", "chunk"}]}], "\n", "\t\t", 
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{"\"\<[\>\"", "~~", "b__", "~~", "\"\<]\>\""}], ")"}], "/;", 
+            RowBox[{"usageSplitChunkByNameValidate", "[", "b", "]"}]}], 
+           ")"}]}], "\n", "\t", "\t\t\t", ")"}]}], "\[RuleDelayed]", 
+       "chunk"}]}], "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"s", ":", 
+      RowBox[{"{", "__String", "}"}]}], "\[RuleDelayed]", 
+     RowBox[{"{", "s", "}"}]}]}], "\n", "\t\t", 
    "]"}]}]}], \
 "CodeInput",ExpressionUUID->"a9a8ce8e-581a-4d34-8e75-2fec6fbad4d6"]
 }, Closed]],
@@ -2439,6 +2446,80 @@ Cell[CellGroupData[{
 
 Cell["\[LeftCeiling]autoGenerateUsage\[RightFloor]", "CodeSubsubsubsection",
  Evaluatable->True,ExpressionUUID->"34d3f58c-f59c-458d-8eee-542c0cb3c108"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]autoGenerateUsageValidStart\[RightFloor]", \
+"CodeSubsubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"fa93653d-be11-401a-8335-00d6d1bdb56d"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"autoGenerateUsageValidStart", "[", 
+    RowBox[{"sym_", ",", " ", "name_", ",", " ", "u_String"}], "]"}], ":=", 
+   "\n", "\t", 
+   RowBox[{"With", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{"test", "=", "\n", "\t\t\t\t", 
+       RowBox[{"AnyTrue", "[", "\n", "\t", "\t", "\t\t", 
+        RowBox[{
+         RowBox[{"{", "\n", "\t", "\t", "\t\t\t", 
+          RowBox[{
+          "System`Private`HasDownCodeQ", ",", "\n", "\t", "\t", "\t\t\t", 
+           "System`Private`HasSubCodeQ", ",", "\n", "\t", "\t", "\t\t\t", 
+           "System`Private`HasUpCodeQ", ",", "\n", "\t", "\t", "\t\t\t", 
+           RowBox[{"Function", "[", 
+            RowBox[{"Null", ",", " ", 
+             RowBox[{
+              RowBox[{"Length", "@", 
+               RowBox[{"DownValues", "[", "#", "]"}]}], ">", "0"}], ",", " ", 
+             "HoldFirst"}], "]"}], ",", "\n", "\t", "\t", "\t\t\t", 
+           RowBox[{"Function", "[", 
+            RowBox[{"Null", ",", " ", 
+             RowBox[{
+              RowBox[{"Length", "@", 
+               RowBox[{"SubValues", "[", "#", "]"}]}], ">", "0"}], ",", " ", 
+             "HoldFirst"}], "]"}], ",", "\n", "\t", "\t", "\t\t\t", 
+           RowBox[{"Function", "[", 
+            RowBox[{"Null", ",", " ", 
+             RowBox[{
+              RowBox[{"Length", "@", 
+               RowBox[{"UpValues", "[", "#", "]"}]}], ">", "0"}], ",", " ", 
+             "HoldFirst"}], "]"}]}], "\n", "\t\t\t\t\t", "}"}], ",", "\n", 
+         "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"#", "@", "sym"}], "&"}]}], "\n", "\t\t\t\t", "]"}]}], "\n",
+       "\t\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"test", "&&", 
+        RowBox[{"StringStartsQ", "[", 
+         RowBox[{"u", ",", " ", 
+          RowBox[{"name", "~~", "\"\<[\>\""}]}], "]"}]}], ")"}], "||", "\n", 
+      "\t\t\t", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"!", "test"}], "&&", 
+        RowBox[{"StringStartsQ", "[", 
+         RowBox[{"u", ",", " ", "name"}], "]"}]}], ")"}]}]}], "\n", "\t\t", 
+    "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"autoGenerateUsageValidStart", "[", "___", "]"}], ":=", "False"}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+  "autoGenerateUsageValidStart", "~", "SetAttributes", "~", "HoldFirst"}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"89b18f9e-f7e3-4892-a5be-389d9eae74fe"]\
+
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]autoGenerateUsage\[RightFloor]", "CodeSubsubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"ce2caea6-3100-444c-b1bb-50a7a3092c19"],
 
 Cell[BoxData[{
  RowBox[{
@@ -2458,14 +2539,12 @@ Cell[BoxData[{
        RowBox[{"symName", "=", 
         RowBox[{"SymbolName", "[", 
          RowBox[{"Unevaluated", "@", "sym"}], "]"}]}]}], "\n", "\t\t\t", 
-      "}"}], ",", "\n", "\t", "\t", 
+      "}"}], ",", "\n", "\t\t", 
      RowBox[{"If", "[", 
       RowBox[{
-       RowBox[{
-        RowBox[{"StringQ", "@", "u1"}], "&&", 
-        RowBox[{"StringStartsQ", "[", 
-         RowBox[{"u1", ",", " ", "symName"}], "]"}]}], ",", "\n", "\t", 
-       "\t\t", 
+       RowBox[{"autoGenerateUsageValidStart", "[", 
+        RowBox[{"sym", ",", " ", "symName", ",", " ", "u1"}], "]"}], ",", 
+       "\n", "\t\t\t", 
        RowBox[{"With", "[", "\n", "\t\t\t\t", 
         RowBox[{
          RowBox[{"{", 
@@ -2584,7 +2663,8 @@ Cell[BoxData[{
  RowBox[{"autoGenerateUsage", "~", "SetAttributes", "~", 
   "HoldFirst"}]}], \
 "CodeInput",ExpressionUUID->"a83b27d9-6285-46c2-88c0-c245b14675c3"]
-}, Closed]],
+}, Closed]]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -5599,7 +5679,7 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{
    RowBox[{"Options", "[", "docGenSaveSymbolPages", "]"}], "=", "\n", "\t", 
-   RowBox[{"Options", "[", "docGenGenerateSymbolPages", "]"}]}], 
+   RowBox[{"Options", "[", "DocGenGenerateSymbolPages", "]"}]}], 
   ";"}], "\n", 
  RowBox[{
   RowBox[{
@@ -5793,32 +5873,8 @@ Cell[BoxData[{
          "docGenSaveSymbolPages"}]}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t",
      "]"}]}], ";"}], "\n", 
  RowBox[{"DocGenSaveSymbolPages", "~", "SetAttributes", "~", 
-  "HoldFirst"}]}], "CodeInput",
- CellChangeTimes->{{3.703453540078992*^9, 3.703453553761982*^9}, {
-   3.703453637560761*^9, 3.703453654981711*^9}, {3.703456701771068*^9, 
-   3.7034568154567347`*^9}, {3.7034569619151506`*^9, 
-   3.7034569769342546`*^9}, {3.7034573483003397`*^9, 3.703457353608594*^9}, {
-   3.703457434648039*^9, 3.70345744122893*^9}, {3.703460188841155*^9, 
-   3.7034602564371767`*^9}, {3.703460315806705*^9, 3.703460340603409*^9}, {
-   3.703460413659412*^9, 3.703460456758626*^9}, {3.703461217291169*^9, 
-   3.703461217314633*^9}, {3.703464358561582*^9, 3.703464359938835*^9}, {
-   3.7034644402143993`*^9, 3.7034644413959227`*^9}, {3.7034644878401613`*^9, 
-   3.703464527514925*^9}, {3.703472361997764*^9, 3.703472405371069*^9}, {
-   3.703889877854303*^9, 3.703889900625801*^9}, {3.7045101337923937`*^9, 
-   3.70451019865315*^9}, {3.7045104164865503`*^9, 3.704510456596654*^9}, {
-   3.704510535459796*^9, 3.704510552598612*^9}, {3.706805572996675*^9, 
-   3.7068055730344753`*^9}, {3.707146786529335*^9, 3.707146803412273*^9}, {
-   3.7071468953675613`*^9, 3.707146983138455*^9}, {3.7071477064000998`*^9, 
-   3.707147712922159*^9}, {3.709412092836779*^9, 3.709412106386408*^9}, {
-   3.7094121544183598`*^9, 3.709412157170597*^9}, {3.72407596603826*^9, 
-   3.7240759773562*^9}, {3.730644122458503*^9, 3.730644200665041*^9}, {
-   3.730644458723276*^9, 3.7306445320012293`*^9}, {3.7306445894815693`*^9, 
-   3.7306447179828463`*^9}, {3.730645272747705*^9, 3.7306452752160397`*^9}, {
-   3.730645363778451*^9, 3.730645370522558*^9}, {3.730649940278955*^9, 
-   3.730649957105102*^9}, {3.730649995824645*^9, 3.730650029661489*^9}, 
-   3.7306500646855*^9, {3.730650104244886*^9, 3.730650105321047*^9}, 
-   3.730650151170477*^9},ExpressionUUID->"fbe73a57-ed02-489c-b20a-\
-b60de965c28e"]
+  "HoldFirst"}]}], \
+"CodeInput",ExpressionUUID->"fbe73a57-ed02-489c-b20a-b60de965c28e"]
 }, Open  ]]
 }, Open  ]],
 

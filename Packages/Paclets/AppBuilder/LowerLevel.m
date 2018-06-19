@@ -2717,6 +2717,11 @@ AppFunctionPackage~SetAttributes~HoldAll
 
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*functionCallChain*)
+
+
+
 functionCallChain[conts_,function_]:=
 	With[{cpats=Alternatives@@Map[#<>"*"&,conts]},
 		HoldPattern@@@
@@ -2754,6 +2759,11 @@ functionCallChain[conts_,function_]:=
 functionCallChain~SetAttributes~HoldRest
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*AppFunctionDependencies*)
+
+
+
 AppFunctionDependencies//ClearAll
 
 
@@ -2785,6 +2795,12 @@ AppFunctionDependencies[app_, function:_Symbol|{__Symbol}]:=
 			_:>
 				<||>
 			}]
+		];
+AppFunctionDependencies[app_, Hold[function_Symbol]]:=
+	AppFunctionDependencies[app, function];
+AppFunctionDependencies[app_, functions:{Hold[_Symbol]..}]:=
+	Replace[Thread[functions, Hold],
+		Hold[s_]:>AppFunctionDependencies[app, s]
 		];
 AppFunctionDependencies[app_:Automatic,f_]/;
 	!TrueQ[AppFunctionDependencies$recurseProtect]:=
@@ -2823,7 +2839,7 @@ AppPackageDependencies[app_, pkg:_String|{__String}]:=
 										Hold[#]
 									]==0,
 						Nothing,
-						#
+						Hold@#
 						],
 					HoldFirst
 					]

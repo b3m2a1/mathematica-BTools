@@ -912,15 +912,51 @@ usageSplitChunkByNameValidate[b_]:=
 			StringCount[sc2, "["]!=StringCount[sc2, "]"]
 			]);
 usageSplitChunkByName[u_, name_]:=
-	StringSplit[u, 
-		chunk:name~~(
-			Whitespace|
-			(("["~~b__~~"]")/;usageSplitChunkByNameValidate[b])
-			):>chunk
+	Replace[
+		StringSplit[u, 
+			chunk:name~~(
+				Whitespace|
+				(("["~~b__~~"]")/;usageSplitChunkByNameValidate[b])
+				):>chunk
+			],
+		s:{__String}:>{s}
 		]
 
 
 (* ::Subsubsubsection::Closed:: *)
+(*autoGenerateUsage*)
+
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*autoGenerateUsageValidStart*)
+
+
+
+autoGenerateUsageValidStart[sym_, name_, u_String]:=
+	With[
+		{
+			test=
+				AnyTrue[
+				{
+					System`Private`HasDownCodeQ,
+					System`Private`HasSubCodeQ,
+					System`Private`HasUpCodeQ,
+					Function[Null, Length@DownValues[#]>0, HoldFirst],
+					Function[Null, Length@SubValues[#]>0, HoldFirst],
+					Function[Null, Length@UpValues[#]>0, HoldFirst]
+					},
+				#@sym&
+				]
+			},
+		(test&&StringStartsQ[u, name~~"["])||
+			(!test&&StringStartsQ[u, name])
+		];
+autoGenerateUsageValidStart[___]:=False;
+autoGenerateUsageValidStart~SetAttributes~HoldFirst;
+
+
+(* ::Subsubsubsubsection::Closed:: *)
 (*autoGenerateUsage*)
 
 
@@ -931,7 +967,7 @@ autoGenerateUsage[sym_Symbol]:=
 			u1=Replace[sym::usage, s_String:>StringTrim[s]],
 			symName=SymbolName[Unevaluated@sym]
 			},
-		If[StringQ@u1&&StringStartsQ[u1, symName],
+		If[autoGenerateUsageValidStart[sym, symName, u1],
 			With[
 				{bits=usageSplitChunkByName[u1, symName]},
 				Map[
@@ -2108,7 +2144,7 @@ DocGenGenerateSymbolPages[
 
 
 Options[docGenSaveSymbolPages]=
-	Options[docGenGenerateSymbolPages];
+	Options[DocGenGenerateSymbolPages];
 docGenSaveSymbolPages[
 	doc:_String|_Symbol|{__String}|
 		_NotebookObject|{__NotebookObject}|

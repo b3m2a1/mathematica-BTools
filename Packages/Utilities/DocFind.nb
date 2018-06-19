@@ -14,6 +14,10 @@ Cell[BoxData[{
    "\"\<Finds all the docs for a given pattern\>\""}], ";"}], "\n", 
  RowBox[{
   RowBox[{
+   RowBox[{"CtxFind", "::", "usage"}], "=", 
+   "\"\<Finds all the contexts for a given pattern\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
    RowBox[{"SymbolNameMatchQ", "::", "usage"}], "=", "\n", "\t", 
    "\"\<StringMatchQ on just the SymbolName (also works for strings)\>\""}], 
   ";"}], "\n", 
@@ -30,21 +34,8 @@ Cell[BoxData[{
   RowBox[{
    RowBox[{"MsgFind", "::", "usage"}], "=", 
    "\"\<Finds all the messages for a given object and MessageName \
-pattern\>\""}], ";"}]}], "CodeInput",
- CellChangeTimes->{{3.68510009892509*^9, 3.685100127041299*^9}, 
-   3.685100501032919*^9, {3.685100783161352*^9, 3.685100848997343*^9}, {
-   3.685101893395649*^9, 3.685101939919705*^9}, {3.6852039487661133`*^9, 
-   3.685203969633513*^9}, 3.685215251148951*^9, {3.685663127921234*^9, 
-   3.6856631484454107`*^9}, {3.686667396801878*^9, 3.686667433011346*^9}, 
-   3.6866675610453978`*^9, {3.688232594320879*^9, 3.6882325948063507`*^9}, {
-   3.689128107536085*^9, 3.6891281378734913`*^9}, {3.6905587839985456`*^9, 
-   3.690558794409079*^9}, {3.700400137052853*^9, 3.700400164599638*^9}, {
-   3.7010089082656317`*^9, 3.701008943839563*^9}, 3.701009025306386*^9, {
-   3.702820422512274*^9, 3.702820458688231*^9}, 3.7028271775321283`*^9, 
-   3.7028272804087057`*^9, {3.711841304326089*^9, 3.711841312421163*^9}, {
-   3.711850024347639*^9, 
-   3.711850030846196*^9}},ExpressionUUID->"d9dcd557-20a6-47e5-bb51-\
-46709a7acc49"],
+pattern\>\""}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"d9dcd557-20a6-47e5-bb51-46709a7acc49"],
 
 Cell[BoxData[
  RowBox[{"PackageScopeBlock", "[", "\n", "\t", 
@@ -887,7 +878,6 @@ Cell[BoxData[{
 Cell[CellGroupData[{
 
 Cell["\[LeftCeiling]DocFind\[RightFloor]", "CodeSubsubsection",
- ShowGroupOpener->True,
  Evaluatable->True,
  CellChangeTimes->{{3.684255090752561*^9, 
   3.6842550936328*^9}},ExpressionUUID->"021d2864-a249-4a7f-8252-1f3bace88e27"],
@@ -1553,12 +1543,101 @@ c1eb519c9e41"]
 
 Cell[CellGroupData[{
 
+Cell["\[LeftCeiling]CtxFind\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"37b95076-096f-4a14-b508-447047b9b88a"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "CtxFind", "]"}], "=", "\n", "\t", 
+   RowBox[{"Join", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Options", "[", "Names", "]"}], ",", "\n", "\t\t", 
+     RowBox[{"Options", "[", "PaneColumn", "]"}], ",", "\n", "\t\t", 
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{"\"\<IncludePrivate\>\"", "\[Rule]", "False"}], "\n", "\t\t\t", 
+      "}"}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"CtxFind", "[", 
+   RowBox[{
+    RowBox[{"pat_", "?", "StringPattern`StringPatternQ"}], ",", " ", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"With", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{"patReal", "=", "\n", "\t\t\t\t", 
+      RowBox[{"Replace", "[", 
+       RowBox[{"pat", ",", " ", "\n", "\t", "\t", "\t\t\t", 
+        RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Verbatim", "[", "p_", "]"}], "\[RuleDelayed]", "p"}], ",",
+           "\n", "\t", "\t", "\t\t\t\t", 
+          RowBox[{"e_", "\[RuleDelayed]", 
+           RowBox[{"___", "~~", "e", "~~", "___"}]}]}], "\n", "\t\t\t\t\t\t", 
+         "}"}]}], "\n", "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "}"}], ",", 
+    "\n", "\t\t", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Interpretation", "[", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"PaneColumn", "[", 
+         RowBox[{"#", ",", " ", 
+          RowBox[{"FilterRules", "[", 
+           RowBox[{
+            RowBox[{"{", "ops", "}"}], ",", " ", 
+            RowBox[{"Options", "@", "PaneColumn"}]}], "]"}]}], "]"}], ",", 
+        "\n", "\t\t\t", "#"}], "\n", "\t\t\t", "]"}], "&"}], "@", "\n", 
+     "\t\t\t", 
+     RowBox[{"Select", "[", "\n", "\t\t\t\t", 
+      RowBox[{
+       RowBox[{"Sort", "@", 
+        RowBox[{"DeleteDuplicates", "@", "\n", "\t", "\t", "\t", "\t\t", 
+         RowBox[{
+          RowBox[{"Map", "[", 
+           RowBox[{
+            RowBox[{"StringRiffle", "[", 
+             RowBox[{
+              RowBox[{"Append", "[", 
+               RowBox[{
+                RowBox[{"Most", "[", "#", "]"}], ",", " ", "\"\<\>\""}], 
+               "]"}], ",", " ", "\"\<`\>\""}], "]"}], "&"}], "]"}], "@", "\n",
+           "\t", "\t", "\t", "\t\t\t", 
+          RowBox[{"StringSplit", "[", "\n", "\t\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"Names", "[", 
+             RowBox[{
+              RowBox[{"patReal", "~~", "\"\<`\>\"", "~~", "__"}], ",", " ", 
+              RowBox[{"FilterRules", "[", 
+               RowBox[{
+                RowBox[{"{", "ops", "}"}], ",", " ", 
+                RowBox[{"Options", "[", "Names", "]"}]}], "]"}]}], "]"}], ",",
+             "\n", "\t", "\t", "\t", "\t", "\t", "\t\t", "\"\<`\>\""}], "\n", 
+           "\t\t\t\t\t\t\t", "]"}]}]}]}], ",", "\n", "\t\t\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"TrueQ", "@", 
+          RowBox[{"OptionValue", "[", "\"\<IncludePrivate\>\"", "]"}]}], ",", 
+         "\n", "\t\t\t\t\t", 
+         RowBox[{"StringContainsQ", "[", "patReal", "]"}], ",", " ", "\n", 
+         "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"StringContainsQ", "[", 
+            RowBox[{"#", ",", " ", "patReal"}], "]"}], "&&", 
+           RowBox[{"!", 
+            RowBox[{"StringEndsQ", "[", 
+             RowBox[{"#", ",", " ", "\"\<Private`\>\""}], "]"}]}]}], "&"}]}], 
+        "\n", "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", 
+   "\t\t", "]"}]}]}], \
+"CodeInput",ExpressionUUID->"b95293eb-eded-4db8-bc29-0083ec26ce77"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
 Cell["\[LeftCeiling]OpsFind\[RightFloor]", "CodeSubsubsection",
- ShowGroupOpener->True,
- Evaluatable->True,
- CellChangeTimes->{{3.684255090752561*^9, 3.684255121208126*^9}, 
-   3.6850984325421143`*^9},ExpressionUUID->"06f90c58-0134-4bfc-96c1-\
-aac9b26269a1"],
+ Evaluatable->True,ExpressionUUID->"06f90c58-0134-4bfc-96c1-aac9b26269a1"],
 
 Cell[BoxData[{
  RowBox[{

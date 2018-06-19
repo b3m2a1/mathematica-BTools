@@ -88,7 +88,8 @@ If[!AssociationQ@$DocGenSettings,
 								Nothing
 							},
 					"Footer"->Automatic,
-					"FrontEnd"->None
+					"FrontEnd"->None,
+					"Stack"->$DocGenMessageStack
 					|>
 			|>
 	];
@@ -205,7 +206,18 @@ DocGen[
 							"SymbolPage"
 							]
 					],
-			meth=Lookup[{ops}, Method, Automatic],
+			coloring=
+				Lookup[{ops}, "ContextColoring", Automatic],
+			links=
+				Lookup[{ops}, "LinkStyle", Automatic],
+			active=
+				Lookup[{ops}, "ActiveContext", Automatic],
+			line=
+				Lookup[{ops}, "LineNumber", Automatic],
+			fe=
+				Lookup[{ops}, "FrontEnd", Automatic],
+			meth=
+				Lookup[{ops}, Method, Automatic],
 			methOps={},
 			fun,
 			res

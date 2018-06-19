@@ -29,6 +29,7 @@ PacletExecuteSettingsLookup[key_]:=
 	Lookup[$PacletExecuteSettings, key];
 PacletExecuteSettingsLookup[key_, default_]:=
 	Lookup[$PacletExecuteSettings, key, default];
+PacletExecuteSettingsLookup~SetAttributes~HoldRest
 
 
 (* ::Subsubsection::Closed:: *)

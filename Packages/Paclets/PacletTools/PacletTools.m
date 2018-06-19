@@ -2592,6 +2592,9 @@ PacletSiteUninstall[ops:OptionsPattern[]]:=
 
 
 
+pacletSiteUpload//Clear
+
+
 Options[pacletSiteUpload]=
 	Join[
 		Options[PacletSiteURL],{
@@ -2612,7 +2615,7 @@ pacletSiteUpload[
 				]
 			]
 		},
-		Most[res]/;MatchQ[res,_CloudObject]
+		Take[res, 1]/;MatchQ[res,_CloudObject]
 		]
 pacletSiteUpload[
 	dir:(_String|_File)?DirectoryQ,
