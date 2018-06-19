@@ -167,7 +167,7 @@ $DocGenMethodRouter=
 
 
 docGenDefault[docObj_, type_, fun_, meth_, methOps_, ops___]:=
-	fun[docObj, Evaluate@FilterRules[{ops}, Options@fun]];
+	fun[docObj, Evaluate@FilterRules[{ops, methOps}, Options@fun]];
 docGenDefault~SetAttributes~HoldFirst
 
 
@@ -181,8 +181,7 @@ $DocGenFunction=
 
 
 DocGen//Clear
-Options[DocGen]=
-	{Method->Automatic};
+Options[DocGen]={Method->Automatic};
 DocGen::badmeth=
 	"Method `` for documentation type `` unknown. Acceptable methods are ``.";
 DocGen::nogen=
@@ -216,33 +215,61 @@ DocGen[
 				Lookup[{ops}, "LineNumber", Automatic],
 			fe=
 				Lookup[{ops}, "FrontEnd", Automatic],
+			base=
+				Lookup[{ops}, "LinkBase", Automatic],
+			targ=
+				Lookup[{ops}, "TargetVersion", Automatic],
 			meth=
 				Lookup[{ops}, Method, Automatic],
 			methOps={},
 			fun,
 			res
 			},
-		If[ListQ@meth, 
-			methOps=Select[meth, OptionQ];
-			meth=SelectFirst[meth, Not@*OptionQ]
-			];
-		fun=$DocGenMethodRouter[typ];
-		If[AssociationQ@fun,
-			fun=fun[meth]
-			];
-		If[MissingQ@fun,
-			Message[DocGen::badmeth,
-				meth,
-				typ,
-				Keys@$DocGenMethodRouter[typ]
+		Block[
+			{
+				$DocGenActive=
+					Replace[active, Automatic:>$DocGenActive],
+				$DocGenColoring=
+					Replace[coloring, Automatic:>$DocGenColoring],
+				$DocGenLine=
+					Replace[line, Automatic:>$DocGenLine],
+				$DocGenLinkBase=
+					Replace[base, Automatic:>$DocGenLinkBase],
+				$DocGenLinkStyle=
+					Replace[links, Automatic:>$DocGenLinkStyle],
+				$DocGenVersionNumber=
+					Replace[targ, Automatic:>$VersionNumber],
+				$DocGenFE=
+					Replace[fe,
+						Except[_LinkObject?LinkReadyQ]:>
+							If[!MatchQ[OwnValues[$DocGenFE],{_:>_LinkObject?LinkReadyQ}],
+								Unevaluated[$DocGenFE=DocGenLoadFE[]],
+								$DocGenFE
+								]
+						]
+				},
+			If[ListQ@meth, 
+				methOps=Select[meth, OptionQ];
+				meth=SelectFirst[meth, Not@*OptionQ]
 				];
-			res=None,
-			res=$DocGenFunction[docObj, typ, fun, meth, methOps, ops];
-			If[Head[res]===fun, 
-				Message[DocGen::nogen,
+			fun=$DocGenMethodRouter[typ];
+			If[AssociationQ@fun,
+				fun=fun[meth]
+				];
+			If[MissingQ@fun,
+				Message[DocGen::badmeth,
+					meth,
 					typ,
-					HoldForm[docObj]
-					]
+					Keys@$DocGenMethodRouter[typ]
+					];
+				res=None,
+				res=$DocGenFunction[docObj, typ, fun, meth, methOps, ops];
+				If[Head[res]===fun, 
+					Message[DocGen::nogen,
+						typ,
+						HoldForm[docObj]
+						]
+					];
 				];
 			];
 		res/;res=!=None&&Head[res]=!=fun

@@ -14,16 +14,26 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{
    RowBox[{"$DocGenWebResourceBase", "::", "usage"}], "=", "\n", "\t", 
-   "\"\<\>\""}], ";"}], "\n", 
+   "\"\<\>\""}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"a52e8d1d-71d9-4050-ac25-1f2d88aa9a39"],
+
+Cell[BoxData[{
  RowBox[{
   RowBox[{
-   RowBox[{"$DocGenFE", "::", "usage"}], "=", "\n", "\t", "\"\<\>\""}], 
-  ";"}], "\n", 
+   RowBox[{"$DocGenFE", "::", "usage"}], "=", 
+   "\"\<The front-end to use for web export stuff\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"DocGenLoadFE", "::", "usage"}], "=", 
+   "\"\<Makes a new FE for web export\>\""}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"c3e50317-08bd-40a0-9d87-19e13c900746"],
+
+Cell[BoxData[
  RowBox[{
   RowBox[{
    RowBox[{"$DocGenMessageStack", "::", "usage"}], "=", "\n", "\t", 
    "\"\<Stack for errors\>\""}], 
-  ";"}]}], "CodeInput",ExpressionUUID->"a52e8d1d-71d9-4050-ac25-1f2d88aa9a39"],
+  ";"}]], "CodeInput",ExpressionUUID->"f7f49aa1-9342-4985-9e27-5eb917b48933"],
 
 Cell[BoxData[{
  RowBox[{
@@ -74,6 +84,44 @@ Cell[BoxData[
 73a8dbe5bd14"],
 
 Cell[BoxData[
+ RowBox[{
+  RowBox[{"DocGenLoadFE", "[", "]"}], ":=", "\n", "\t", 
+  RowBox[{"Replace", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"DocGenSettingsLookup", "[", "\"\<DocGenFrontEnd\>\"", "]"}], ",",
+     "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Except", "[", 
+      RowBox[{"_LinkObject", "?", "LinkReadyQ"}], "]"}], ":>", "\n", "\t", 
+     "\t\t", 
+     RowBox[{"With", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"fe", "=", "\n", "\t", "\t\t\t", 
+         RowBox[{"Block", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"System`UseFrontEndDump`LocalFEQ", "=", 
+             RowBox[{"(", 
+              RowBox[{"False", "&"}], ")"}]}], "}"}], ",", "\n", "\t", 
+           "\t\t\t\t", 
+           RowBox[{"Developer`InstallFrontEnd", "[", "]"}]}], "\n", "\t", 
+          "\t\t\t\t", "]"}]}], "\n", "\t", "\t\t\t", "}"}], ",", "\n", "\t", 
+       "\t\t\t", 
+       RowBox[{
+        RowBox[{"MathLink`FrontEndBlock", "[", "\n", "\t", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"FrontEndResource", "[", "\"\<GetFEKernelInit\>\"", "]"}], 
+          ",", "\n", "\t", "\t\t\t\t", "fe"}], "\n", "\t", "\t\t\t\t", "]"}], 
+        ";", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"$DocGenSettings", "[", 
+          RowBox[{"Default", ",", " ", "\"\<FrontEnd\>\""}], "]"}], "=", 
+         "fe"}]}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"23b55a27-5741-46c2-804a-168de4622c30"],
+
+Cell[BoxData[
  RowBox[{"If", "[", 
   RowBox[{
    RowBox[{"!", 
@@ -85,47 +133,8 @@ Cell[BoxData[
         RowBox[{"_LinkObject", "?", "LinkReadyQ"}]}], "}"}]}], "]"}]}], ",", 
    "\n", "\t", 
    RowBox[{"$DocGenFE", ":=", "\n", "\t\t", 
-    RowBox[{"Replace", "[", "\n", "\t\t\t", 
-     RowBox[{
-      RowBox[{"DocGenSettingsLookup", "[", "\"\<DocGenFrontEnd\>\"", "]"}], 
-      ",", "\n", "\t", "\t\t", 
-      RowBox[{
-       RowBox[{"Except", "[", 
-        RowBox[{"_LinkObject", "?", "LinkReadyQ"}], "]"}], ":>", "\n", "\t", 
-       "\t", "\t\t", 
-       RowBox[{"With", "[", 
-        RowBox[{
-         RowBox[{"{", 
-          RowBox[{"fe", "=", "\n", "\t", "\t", "\t\t\t", 
-           RowBox[{"Block", "[", 
-            RowBox[{
-             RowBox[{"{", 
-              RowBox[{"System`UseFrontEndDump`LocalFEQ", "=", 
-               RowBox[{"(", 
-                RowBox[{"False", "&"}], ")"}]}], "}"}], ",", "\n", "\t", "\t",
-              "\t\t\t\t", 
-             RowBox[{"Developer`InstallFrontEnd", "[", "]"}]}], "\n", "\t", 
-            "\t", "\t\t\t\t", "]"}]}], "\n", "\t", "\t", "\t\t\t", "}"}], ",",
-          "\n", "\t", "\t", "\t\t\t", 
-         RowBox[{
-          RowBox[{"MathLink`FrontEndBlock", "[", "\n", "\t", "\t", "\t\t\t\t", 
-           RowBox[{
-            RowBox[{"FrontEndResource", "[", "\"\<GetFEKernelInit\>\"", "]"}],
-             ",", "\n", "\t", "\t", "\t\t\t\t", "fe"}], "\n", "\t", "\t", 
-           "\t\t\t\t", "]"}], ";", "\n", "\t", "\t\t\t\t", 
-          RowBox[{
-           RowBox[{"$DocGenSettings", "[", 
-            RowBox[{"Default", ",", " ", "\"\<FrontEnd\>\""}], "]"}], "=", 
-           "fe"}]}]}], "\n", "\t", "\t\t\t\t", "]"}]}]}], "\n", "\t", "\t\t", 
-     "]"}]}]}], "\n", "\t", "]"}]], "CodeInput",
- CellChangeTimes->{{3.7132006949601192`*^9, 3.713200734793742*^9}, {
-  3.713200784838653*^9, 3.713200785528927*^9}, {3.713202142939039*^9, 
-  3.7132021539106007`*^9}, {3.7132022245366983`*^9, 3.713202227408812*^9}, {
-  3.713215629205496*^9, 3.7132156336232843`*^9}, {3.7136228478526287`*^9, 
-  3.7136228481517076`*^9}, {3.713623643739992*^9, 3.7136237149920597`*^9}, {
-  3.7309083126602583`*^9, 3.730908418850412*^9}, {3.730908567714468*^9, 
-  3.730908574110806*^9}},ExpressionUUID->"f29b637b-c3c4-41c8-87d9-\
-149e2422c84f"],
+    RowBox[{"DocGenLoadFE", "[", "]"}]}]}], "\n", "\t", 
+  "]"}]], "CodeInput",ExpressionUUID->"f29b637b-c3c4-41c8-87d9-149e2422c84f"],
 
 Cell[CellGroupData[{
 

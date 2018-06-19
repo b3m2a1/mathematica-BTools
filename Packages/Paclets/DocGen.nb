@@ -560,7 +560,7 @@ Cell[BoxData[
         "\t\t\t\t\t", "|>"}]}], "\n", "\t\t\t", "|>"}]}]}], "\n", "\t", "]"}],
    ";"}]], "CodeInput",ExpressionUUID->"49961e55-cc5c-4224-9a3e-36d3f4dc0698"]\
 
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -687,16 +687,12 @@ Cell[BoxData[{
      RowBox[{"Evaluate", "@", 
       RowBox[{"FilterRules", "[", 
        RowBox[{
-        RowBox[{"{", "ops", "}"}], ",", " ", 
+        RowBox[{"{", 
+         RowBox[{"ops", ",", " ", "methOps"}], "}"}], ",", " ", 
         RowBox[{"Options", "@", "fun"}]}], "]"}]}]}], "]"}]}], ";"}], "\n", 
  RowBox[{"docGenDefault", "~", "SetAttributes", "~", 
-  "HoldFirst"}]}], "CodeInput",
- CellChangeTimes->{{3.728924651292453*^9, 3.728924695483219*^9}, {
-   3.72892473199193*^9, 3.728924794899232*^9}, {3.7289251301390963`*^9, 
-   3.728925148488038*^9}, {3.728925196278171*^9, 3.728925199281424*^9}, 
-   3.730645353722147*^9, 3.730646447987097*^9, {3.730647073822497*^9, 
-   3.730647075027094*^9}},ExpressionUUID->"41dbabe8-fb1e-4145-8eb6-\
-0d70a6255287"],
+  "HoldFirst"}]}], \
+"CodeInput",ExpressionUUID->"41dbabe8-fb1e-4145-8eb6-0d70a6255287"],
 
 Cell[BoxData[
  RowBox[{"$DocGenFunction", "=", "\n", "\t", "docGenDefault"}]], "CodeInput",
@@ -715,7 +711,7 @@ Cell[BoxData[{
  RowBox[{"DocGen", "//", "Clear"}], "\n", 
  RowBox[{
   RowBox[{
-   RowBox[{"Options", "[", "DocGen", "]"}], "=", "\n", "\t", 
+   RowBox[{"Options", "[", "DocGen", "]"}], "=", 
    RowBox[{"{", 
     RowBox[{"Method", "\[Rule]", "Automatic"}], "}"}]}], ";"}], "\n", 
  RowBox[{
@@ -795,6 +791,16 @@ Cell[BoxData[{
          RowBox[{
           RowBox[{"{", "ops", "}"}], ",", " ", "\"\<FrontEnd\>\"", ",", " ", 
           "Automatic"}], "]"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"base", "=", "\n", "\t\t\t\t", 
+        RowBox[{"Lookup", "[", 
+         RowBox[{
+          RowBox[{"{", "ops", "}"}], ",", " ", "\"\<LinkBase\>\"", ",", " ", 
+          "Automatic"}], "]"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"targ", "=", "\n", "\t\t\t\t", 
+        RowBox[{"Lookup", "[", 
+         RowBox[{
+          RowBox[{"{", "ops", "}"}], ",", " ", "\"\<TargetVersion\>\"", ",", 
+          " ", "Automatic"}], "]"}]}], ",", "\n", "\t\t\t", 
        RowBox[{"meth", "=", "\n", "\t\t\t\t", 
         RowBox[{"Lookup", "[", 
          RowBox[{
@@ -804,58 +810,119 @@ Cell[BoxData[{
         RowBox[{"{", "}"}]}], ",", "\n", "\t\t\t", "fun", ",", "\n", "\t\t\t",
         "res"}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
      RowBox[{
-      RowBox[{"If", "[", 
+      RowBox[{"Block", "[", "\n", "\t\t\t", 
        RowBox[{
-        RowBox[{"ListQ", "@", "meth"}], ",", " ", "\n", "\t\t\t", 
+        RowBox[{"{", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"$DocGenActive", "=", "\n", "\t\t\t\t\t", 
+           RowBox[{"Replace", "[", 
+            RowBox[{"active", ",", " ", 
+             RowBox[{"Automatic", ":>", "$DocGenActive"}]}], "]"}]}], ",", 
+          "\n", "\t\t\t\t", 
+          RowBox[{"$DocGenColoring", "=", "\n", "\t\t\t\t\t", 
+           RowBox[{"Replace", "[", 
+            RowBox[{"coloring", ",", " ", 
+             RowBox[{"Automatic", ":>", "$DocGenColoring"}]}], "]"}]}], ",", 
+          "\n", "\t\t\t\t", 
+          RowBox[{"$DocGenLine", "=", "\n", "\t\t\t\t\t", 
+           RowBox[{"Replace", "[", 
+            RowBox[{"line", ",", " ", 
+             RowBox[{"Automatic", ":>", "$DocGenLine"}]}], "]"}]}], ",", "\n",
+           "\t\t\t\t", 
+          RowBox[{"$DocGenLinkBase", "=", "\n", "\t\t\t\t\t", 
+           RowBox[{"Replace", "[", 
+            RowBox[{"base", ",", " ", 
+             RowBox[{"Automatic", "\[RuleDelayed]", "$DocGenLinkBase"}]}], 
+            "]"}]}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"$DocGenLinkStyle", "=", "\n", "\t\t\t\t\t", 
+           RowBox[{"Replace", "[", 
+            RowBox[{"links", ",", " ", 
+             RowBox[{"Automatic", ":>", "$DocGenLinkStyle"}]}], "]"}]}], ",", 
+          "\n", "\t\t\t\t", 
+          RowBox[{"$DocGenVersionNumber", "=", "\n", "\t\t\t\t\t", 
+           RowBox[{"Replace", "[", 
+            RowBox[{"targ", ",", " ", 
+             RowBox[{"Automatic", "\[RuleDelayed]", "$VersionNumber"}]}], 
+            "]"}]}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"$DocGenFE", "=", "\n", "\t\t\t\t\t", 
+           RowBox[{"Replace", "[", 
+            RowBox[{"fe", ",", "\n", "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Except", "[", 
+               RowBox[{"_LinkObject", "?", "LinkReadyQ"}], "]"}], ":>", "\n", 
+              "\t\t\t\t\t\t\t", 
+              RowBox[{"If", "[", 
+               RowBox[{
+                RowBox[{"!", 
+                 RowBox[{"MatchQ", "[", 
+                  RowBox[{
+                   RowBox[{"OwnValues", "[", "$DocGenFE", "]"}], ",", 
+                   RowBox[{"{", 
+                    RowBox[{"_", "\[RuleDelayed]", 
+                    RowBox[{"_LinkObject", "?", "LinkReadyQ"}]}], "}"}]}], 
+                  "]"}]}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                RowBox[{"Unevaluated", "[", 
+                 RowBox[{"$DocGenFE", "=", 
+                  RowBox[{"DocGenLoadFE", "[", "]"}]}], "]"}], ",", "\n", 
+                "\t\t\t\t\t\t\t\t", "$DocGenFE"}], "\n", "\t\t\t\t\t\t\t\t", 
+               "]"}]}]}], "\n", "\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", 
+         "}"}], ",", "\n", "\t\t\t", 
         RowBox[{
-         RowBox[{"methOps", "=", 
-          RowBox[{"Select", "[", 
-           RowBox[{"meth", ",", " ", "OptionQ"}], "]"}]}], ";", "\n", 
-         "\t\t\t", 
-         RowBox[{"meth", "=", 
-          RowBox[{"SelectFirst", "[", 
-           RowBox[{"meth", ",", " ", 
-            RowBox[{"Not", "@*", "OptionQ"}]}], "]"}]}]}]}], "\n", "\t\t\t", 
-       "]"}], ";", "\n", "\t\t", 
-      RowBox[{"fun", "=", 
-       RowBox[{"$DocGenMethodRouter", "[", "typ", "]"}]}], ";", "\n", "\t\t", 
-      
-      RowBox[{"If", "[", 
-       RowBox[{
-        RowBox[{"AssociationQ", "@", "fun"}], ",", "\n", "\t\t\t", 
-        RowBox[{"fun", "=", 
-         RowBox[{"fun", "[", "meth", "]"}]}]}], "\n", "\t\t\t", "]"}], ";", 
-      "\n", "\t\t", 
-      RowBox[{"If", "[", 
-       RowBox[{
-        RowBox[{"MissingQ", "@", "fun"}], ",", "\n", "\t\t\t", 
-        RowBox[{
-         RowBox[{"Message", "[", 
-          RowBox[{
-           RowBox[{"DocGen", "::", "badmeth"}], ",", "\n", "\t\t\t\t", "meth",
-            ",", "\n", "\t\t\t\t", "typ", ",", "\n", "\t\t\t\t", 
-           RowBox[{"Keys", "@", 
-            RowBox[{"$DocGenMethodRouter", "[", "typ", "]"}]}]}], "\n", 
-          "\t\t\t\t", "]"}], ";", "\n", "\t\t\t", 
-         RowBox[{"res", "=", "None"}]}], ",", "\n", "\t\t\t", 
-        RowBox[{
-         RowBox[{"res", "=", 
-          RowBox[{"$DocGenFunction", "[", 
-           RowBox[{
-           "docObj", ",", " ", "typ", ",", " ", "fun", ",", " ", "meth", ",", 
-            " ", "methOps", ",", " ", "ops"}], "]"}]}], ";", "\n", "\t\t\t", 
          RowBox[{"If", "[", 
           RowBox[{
+           RowBox[{"ListQ", "@", "meth"}], ",", " ", "\n", "\t\t\t\t", 
            RowBox[{
-            RowBox[{"Head", "[", "res", "]"}], "===", "fun"}], ",", " ", "\n",
+            RowBox[{"methOps", "=", 
+             RowBox[{"Select", "[", 
+              RowBox[{"meth", ",", " ", "OptionQ"}], "]"}]}], ";", "\n", "\t",
+             "\t\t\t", 
+            RowBox[{"meth", "=", 
+             RowBox[{"SelectFirst", "[", 
+              RowBox[{"meth", ",", " ", 
+               RowBox[{"Not", "@*", "OptionQ"}]}], "]"}]}]}]}], "\n", "\t", 
+          "\t\t\t", "]"}], ";", "\n", "\t", "\t\t", 
+         RowBox[{"fun", "=", 
+          RowBox[{"$DocGenMethodRouter", "[", "typ", "]"}]}], ";", "\n", "\t",
+          "\t\t", 
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{"AssociationQ", "@", "fun"}], ",", "\n", "\t\t\t\t", 
+           RowBox[{"fun", "=", 
+            RowBox[{"fun", "[", "meth", "]"}]}]}], "\n", "\t", "\t\t\t", 
+          "]"}], ";", "\n", "\t", "\t\t", 
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{"MissingQ", "@", "fun"}], ",", "\n", "\t", "\t\t\t", 
+           RowBox[{
+            RowBox[{"Message", "[", 
+             RowBox[{
+              RowBox[{"DocGen", "::", "badmeth"}], ",", "\n", "\t", 
+              "\t\t\t\t", "meth", ",", "\n", "\t", "\t\t\t\t", "typ", ",", 
+              "\n", "\t", "\t\t\t\t", 
+              RowBox[{"Keys", "@", 
+               RowBox[{"$DocGenMethodRouter", "[", "typ", "]"}]}]}], "\n", 
+             "\t", "\t\t\t\t", "]"}], ";", "\n", "\t", "\t\t\t", 
+            RowBox[{"res", "=", "None"}]}], ",", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"res", "=", 
+             RowBox[{"$DocGenFunction", "[", 
+              RowBox[{
+              "docObj", ",", " ", "typ", ",", " ", "fun", ",", " ", "meth", 
+               ",", " ", "methOps", ",", " ", "ops"}], "]"}]}], ";", "\n", 
             "\t", "\t\t\t", 
-           RowBox[{"Message", "[", 
-            RowBox[{
-             RowBox[{"DocGen", "::", "nogen"}], ",", "\n", "\t\t\t\t\t", 
-             "typ", ",", "\n", "\t\t\t\t\t", 
-             RowBox[{"HoldForm", "[", "docObj", "]"}]}], "\n", "\t", 
-            "\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "]"}], ";"}]}], "\n", 
-       "\t\t\t", "]"}], ";", "\n", "\t\t", 
+            RowBox[{"If", "[", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Head", "[", "res", "]"}], "===", "fun"}], ",", " ", 
+              "\n", "\t\t\t\t\t", 
+              RowBox[{"Message", "[", 
+               RowBox[{
+                RowBox[{"DocGen", "::", "nogen"}], ",", "\n", "\t", 
+                "\t\t\t\t\t", "typ", ",", "\n", "\t", "\t\t\t\t\t", 
+                RowBox[{"HoldForm", "[", "docObj", "]"}]}], "\n", "\t", "\t", 
+               "\t\t\t\t", "]"}]}], "\n", "\t", "\t\t\t\t", "]"}], ";"}]}], 
+          "\n", "\t", "\t\t\t", "]"}], ";"}]}], "\n", "\t", "\t\t", "]"}], 
+      ";", "\n", "\t\t", 
       RowBox[{"res", "/;", 
        RowBox[{
         RowBox[{"res", "=!=", "None"}], "&&", 
@@ -987,7 +1054,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"d57c0eb3-d960-435d-986b-\
 601a531f8780"]
 },
 WindowSize->{808, 755},
-WindowMargins->{{Automatic, 287}, {15, Automatic}},
+WindowMargins->{{217, Automatic}, {Automatic, 2}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

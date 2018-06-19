@@ -451,15 +451,19 @@ iDocGenGenerateGuide[guideName_,guideLink_,abstract_,functions_,subsections_,
 
 
 
-Options[GuideNotebook]={
-	"Title"->None,
-	"Abstract"->None,
-	"Functions"->{},
-	"Subsections"->{},
-	"RelatedGuides"->{},
-	"RelatedTutorials"->{},
-	"RelatedLinks"->{}
-	};
+Options[GuideNotebook]=
+	Join[
+		{
+			"Title"->None,
+			"Abstract"->None,
+			"Functions"->{},
+			"Subsections"->{},
+			"RelatedGuides"->{},
+			"RelatedTutorials"->{},
+			"RelatedLinks"->{}
+			},
+		Options[Notebook]
+		];
 GuideNotebook[ops:OptionsPattern[]]:=
 	With[{
 		t=Replace[OptionValue@"Title",Except[_String|_Rule]:>"No Title"],
@@ -476,21 +480,25 @@ GuideNotebook[ops:OptionsPattern[]]:=
 		rt=Replace[OptionValue@"RelatedTutorials",Except[_List]:>{}],
 		l=Replace[OptionValue@"RelatedLinks",Except[_List]:>{}]
 		},
-		docGenBlock@
-			iDocGenGenerateGuide[
-				Replace[t,{(n_->_):>n}],
-				Replace[t,{
-					s_String:>
-						StringReplace[s,Except[WordCharacter]->""],
-					(_->n_):>
-						n
-					}],
-				a,
-				f,
-				s,
-				g,
-				rt,
-				l]
+		Join[
+			docGenBlock@
+				iDocGenGenerateGuide[
+					Replace[t,{(n_->_):>n}],
+					Replace[t,{
+						s_String:>
+							StringReplace[s,Except[WordCharacter]->""],
+						(_->n_):>
+							n
+						}],
+					a,
+					f,
+					s,
+					g,
+					rt,
+					l],
+			Notebook@
+				FilterRules[{ops}, Options@Notebook]
+			]
 		];
 
 
@@ -509,6 +517,11 @@ GuideNotebook[namePattern_String, ops:OptionsPattern[]]:=
 
 (* ::Subsection:: *)
 (*Generators*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*DocGenExtractGuidePageParameters*)
 
 
 
@@ -553,13 +566,15 @@ DocGenGenerateGuide::gfail=
 
 
 Options[DocGenGenerateGuide]=
-	Join[
-		Options[GuideNotebook],
-		Options[CreateDocument],{
-			"PostFunction"->None,
-			Monitor->False
-			}
-		];
+	DeleteDuplicatesBy[First]@
+		Join[
+			Options[GuideNotebook],
+			Options[CreateDocument],
+			{
+				"PostFunction"->None,
+				Monitor->False
+				}
+			];
 DocGenGenerateGuide[ops:OptionsPattern[]]:=
 	Replace[OptionValue["PostFunction"],None->Identity]@
 		CreateDocument[
@@ -1544,6 +1559,14 @@ GenerateMultiPackageOverview[
 			FilterRules[{ops}, Options[MultiPackageOverviewNotebook]]
 			],
 		FilterRules[{ops}, Options[CreateDocument]]
+		];
+GenerateMultiPackageOverview[
+	Automatic,
+	ops:OptionsPattern[]
+	]:=
+	GenerateMultiPackageOverview[
+		$DocGenDirectory,
+		ops
 		]
 
 
@@ -1600,7 +1623,12 @@ SaveMultiPackageOverview[
 				];
 			res/;MatchQ[res, _String?(FileExistsQ)]
 			]
-		]
+		];
+SaveMultiPackageOverview[
+	Automatic,
+	ops:OptionsPattern[]
+	]:=
+	SaveMultiPackageOverview[$DocGenDirectory, ops]
 
 
 End[];

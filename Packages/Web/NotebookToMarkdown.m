@@ -1751,7 +1751,7 @@ NotebookToMarkdown[
 		exportRiffle=
 			StringRiffle[
 				ReplaceAll[
-					Pick[exportStrings, exportPick],
+					exportStrings,
 					RawBoxes[s_]|
 						ExportPacket[s_, ___]:>s
 					],

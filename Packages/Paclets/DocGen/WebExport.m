@@ -6,8 +6,12 @@ $DocGenURLBase::usage=
 	"The default URL base for web docs";
 $DocGenWebResourceBase::usage=
 	"";
-$DocGenFE::usage=
-	"";
+
+
+$DocGenFE::usage="The front-end to use for web export stuff";
+DocGenLoadFE::usage="Makes a new FE for web export";
+
+
 $DocGenMessageStack::usage=
 	"Stack for errors";
 
@@ -30,23 +34,27 @@ $DocGenWebResourceBase=
 			|>;
 
 
+DocGenLoadFE[]:=
+	Replace[
+		DocGenSettingsLookup["DocGenFrontEnd"],
+		Except[_LinkObject?LinkReadyQ]:>
+			With[{fe=
+				Block[{System`UseFrontEndDump`LocalFEQ=(False&)},
+					Developer`InstallFrontEnd[]
+					]
+				},
+				MathLink`FrontEndBlock[
+					FrontEndResource["GetFEKernelInit"],
+					fe
+					];
+				$DocGenSettings[Default, "FrontEnd"]=fe
+				]
+		]
+
+
 If[!MatchQ[OwnValues[$DocGenFE],{_:>_LinkObject?LinkReadyQ}],
 	$DocGenFE:=
-		Replace[
-			DocGenSettingsLookup["DocGenFrontEnd"],
-			Except[_LinkObject?LinkReadyQ]:>
-				With[{fe=
-					Block[{System`UseFrontEndDump`LocalFEQ=(False&)},
-						Developer`InstallFrontEnd[]
-						]
-					},
-					MathLink`FrontEndBlock[
-						FrontEndResource["GetFEKernelInit"],
-						fe
-						];
-					$DocGenSettings[Default, "FrontEnd"]=fe
-					]
-			]
+		DocGenLoadFE[]
 	]
 
 

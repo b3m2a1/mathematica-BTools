@@ -2,7 +2,7 @@
 
 # BTools
 
-[![release](http://img.shields.io/badge/release-v1.0.0-green.svg)](https://github.com/b3m2a1/mathematica-BTools/releases/latest) ![version](http://img.shields.io/badge/version-2.1.0-orange.svg)   [![license](http://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![release](http://img.shields.io/badge/release-v1.0.0-green.svg)](https://github.com/b3m2a1/mathematica-BTools/releases/latest)   [![version](http://img.shields.io/badge/version-2.1.0-orange.svg)](https://github.com/b3m2a1/mathematica-BTools/PacletInfo.m)   [![license](http://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 The BTools application is a multi-use Mathematica application, largely devoted to simplifying the development process. The application has an autoloader primary file that exposed package-scoped helper functions and loads all of the packages in the  [Packages](Packages)  directory into the main context.
 
@@ -16,20 +16,20 @@ The easiest way to install these packages is using a paclet server installation:
 
 ```mathematica
  PacletInstall[
- "BTools",
- "Site"->
-  "http://www.wolframcloud.com/objects/b3m2a1.paclets/PacletServer"
- ]
+  "BTools",
+  "Site"->
+    "http://www.wolframcloud.com/objects/b3m2a1.paclets/PacletServer"
+  ]
 ```
 
 If you've already installed it you can update using:
 
 ```mathematica
  PacletUpdate[
- "BTools",
- "Site"->
-  "http://www.wolframcloud.com/objects/b3m2a1.paclets/PacletServer"
- ]
+  "BTools",
+  "Site"->
+    "http://www.wolframcloud.com/objects/b3m2a1.paclets/PacletServer"
+  ]
 ```
 
 Alternately you can download this repo as a ZIP file and put extract it in  ```$UserBaseDirectory/Applications```
@@ -80,8 +80,6 @@ It integrates with the rest of  BTools to allow paclet deployment, documentation
 
 [PacletTools](Packages/PacletTools.m)  makes it easy to create, distribute, and work with paclets. It provides automatic creation and updating of PacletInfo.m files, paclet packing and upload, paclet installation from a non-paclet source, etc. It also supports a different paclet front-end format for easier inspection.
 
-
-
 <a id="examples" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
 
 ## Examples
@@ -99,9 +97,9 @@ Create a new application
  AppConfigure["NewApp"]
 ```
 
-	(*Out:*)
-	
-	"/private/var/folders/9t/tqc70b7d61v753jkdbjkvd640000gp/T/Applications/NewApp"
+    (*Out:*)
+    
+    "/private/var/folders/9t/tqc70b7d61v753jkdbjkvd640000gp/T/Applications/NewApp"
 
 Install a paclet from GitHub:
 
@@ -109,8 +107,8 @@ Install a paclet from GitHub:
  PacletInstallPaclet@"https://github.com/szhorvat/MaTex"
 ```
 
-	(*Out:*)
-	
+    (*Out:*)
+    
 ![readme-7434877519484664965](project/img/readme-7434877519484664965.png)
 
 Autogenerate documentation:
@@ -119,8 +117,8 @@ Autogenerate documentation:
  DocGen[DocGen]
 ```
 
-	(*Out:*)
-	
+    (*Out:*)
+    
 ![readme-3555623215494686127](project/img/readme-3555623215494686127.png)
 
 ![readme-2335057591968686920](project/img/readme-2335057591968686920.png)
@@ -165,26 +163,26 @@ More info can be found in the  [Paclet examples](project/examples/Paclets.md) .
  GradientButtonBar[{1:>2, 3:>4, 5:>6}, FrameMargins->5]
 ```
 
-	(*Out:*)
-	
+    (*Out:*)
+    
 ![readme-9046101401840380990](project/img/readme-9046101401840380990.png)
 
 * ```NinePatchCreate```  turns anything into a nine-patch to be used as an  ```Appearance``` . It's used, for example, in  ```NinePatchNameTag```  to make a nice name-tag appearances.
 
 ```mathematica
  Panel[
- StringTake[ExampleData[{"Text", "LoremIpsum"}], 1000],
- Appearance->
- NinePatchNameTag[
-  {Background->Hue[.6,.5,.5], RoundingRadius->5},
-  {Background->White},
-  {Background->Hue[.6,.5,.5], RoundingRadius->5}
+  StringTake[ExampleData[{"Text", "LoremIpsum"}], 1000],
+  Appearance->
+  NinePatchNameTag[
+    {Background->Hue[.6,.5,.5], RoundingRadius->5},
+    {Background->White},
+    {Background->Hue[.6,.5,.5], RoundingRadius->5}
+    ]
   ]
- ]
 ```
 
-	(*Out:*)
-	
+    (*Out:*)
+    
 ![readme-2260547031847133199](project/img/readme-2260547031847133199.png)
 
 * ```StoreExpression```  generates a compressed form of a variable (only  ```OwnValues```  are currently supported) and writes a cell to restore that variable:
@@ -194,8 +192,8 @@ More info can be found in the  [Paclet examples](project/examples/Paclets.md) .
  StoreExpression@var
 ```
 
-	(*Out:*)
-	
+    (*Out:*)
+    
 ![readme-1601186910705832175](project/img/readme-1601186910705832175.png)
 
 More info can be found in the  [FrontEnd examples](project/examples/FrontEnd.md) .
@@ -266,8 +264,8 @@ Search for functions with  ```"Do"```  in them anywhere in a context starting wi
  DocFind["Do", "Int*", Select->"Function"]
 ```
 
-	(*Out:*)
-	
+    (*Out:*)
+    
 ![readme-2281886144100136916](project/img/readme-2281886144100136916.png)
 
 Search a directory for a regex pattern:
@@ -276,24 +274,24 @@ Search a directory for a regex pattern:
  GrepDirectory[FileNameJoin@{$InstallationDirectory, "AddOns"}, "EntityValue"]
 ```
 
-	(*Out:*)
-	
-	{"/Applications/Mathematica.app/Contents/AddOns/Applications/StandardOceanData/Kernel/StandardOceanData.m","/Applications/Mathematica.app/Contents/AddOns/Applications/DataDropClient/Kernel/DataDropClientAdd.m","/Applications/Mathematica.app/Contents/AddOns/Applications/EntityFramework/Resources/FunctionalFrequency/specialArgFunctions.tr","/Applications/Mathematica.app/Contents/AddOns/Applications/AstronomyConvenienceFunctions/Kernel/AstronomyConvenienceFunctions.m"}
+    (*Out:*)
+    
+    {"/Applications/Mathematica.app/Contents/AddOns/Applications/StandardOceanData/Kernel/StandardOceanData.m","/Applications/Mathematica.app/Contents/AddOns/Applications/DataDropClient/Kernel/DataDropClientAdd.m","/Applications/Mathematica.app/Contents/AddOns/Applications/EntityFramework/Resources/FunctionalFrequency/specialArgFunctions.tr","/Applications/Mathematica.app/Contents/AddOns/Applications/AstronomyConvenienceFunctions/Kernel/AstronomyConvenienceFunctions.m"}
 
 ```FEAddAutocompletions```  provides a wrapper for adding autocompletions to a function:
 
 ```mathematica
  f[x:"A"|"B"|"C",b_Notebook]:=x; 
  FEAddAutocompletions[f,
- {
-  {"A","B","C"},
-  Notebook
-  }
- ];
+  {
+    {"A","B","C"},
+    Notebook
+    }
+  ];
 ```
 
-	(*Out:*)
-	
+    (*Out:*)
+    
 ![readme-5436828446961647922](project/img/readme-5436828446961647922.png)
 
 Add an attached cell to the evaluation cell:
@@ -302,8 +300,8 @@ Add an attached cell to the evaluation cell:
  FEAttachCell[Graphics[Disk[],ImageSize->Tiny]]
 ```
 
-	(*Out:*)
-	
+    (*Out:*)
+    
 ![readme-4499149176453005575](project/img/readme-4499149176453005575.png)
 
 ---
@@ -356,13 +354,13 @@ Create a repository in GitHub
 
 ```mathematica
  GitHub["Create", "test-repo",
- "Description"->"a test repo",
- "GitHubImport"->False
- ]
+  "Description"->"a test repo",
+  "GitHubImport"->False
+  ]
 ```
 
-	(*Out:*)
-	
+    (*Out:*)
+    
 ![readme-1488024117533531756](project/img/readme-1488024117533531756.png)
 
 More info can be found in the  [External examples](project/examples/External.md) .

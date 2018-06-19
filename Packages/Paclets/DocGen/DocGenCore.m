@@ -516,12 +516,12 @@ If[MatchQ[$DocGenColoring,{Except[_Rule]..}|Except[_List]],
 
 
 (* ::Subsubsection::Closed:: *)
-(*$DocumentationLinkStyle*)
+(*$DocGenLinkStyle*)
 
 
 
-If[MatchQ[$DocumentationLinkStyle,{Except[_Rule]..}|Except[_List]],
-	$DocumentationLinkStyle:=
+If[MatchQ[$DocGenLinkStyle,{Except[_Rule]..}|Except[_List]],
+	$DocGenLinkStyle:=
 		DocGenSettingsLookup["LinkStyle"]
 	];
 
@@ -567,7 +567,7 @@ docLinkType[sym_Symbol]:=
 	Replace[DocLinkBase[sym],
 		Nothing->"System"
 		]/.
-		Append[$DocumentationLinkStyle,
+		Append[$DocGenLinkStyle,
 			_->"PackageLink"];
 docLinkType~SetAttributes~HoldFirst;
 
