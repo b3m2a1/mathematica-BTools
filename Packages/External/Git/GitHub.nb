@@ -105,7 +105,7 @@ Cell[BoxData[{
    "\"\<Imports and converts GitHub JSON\>\""}], 
   ";"}]}], "CodeInput",ExpressionUUID->"5c8033df-e034-46a7-ab46-5005f5cf126b"]\
 
-}, Closed]],
+}, Open  ]],
 
 Cell[BoxData[
  RowBox[{
@@ -685,20 +685,29 @@ Cell[BoxData[{
                 RowBox[{
                  RowBox[{"OptionValue", "[", "\"\<Tree\>\"", "]"}], ",", " ", 
                  
-                 RowBox[{"OptionValue", "[", "\"\<Branch\>\"", "]"}]}], "}"}],
-                ",", " ", "\n", "\t\t\t\t\t\t\t", "2"}], "\n", 
+                 RowBox[{"Replace", "[", 
+                  RowBox[{
+                   RowBox[{"OptionValue", "[", "\"\<Branch\>\"", "]"}], ",", 
+                   " ", 
+                   RowBox[{"None", "\[Rule]", "Nothing"}]}], "]"}]}], "}"}], 
+               ",", " ", "\n", "\t\t\t\t\t\t\t", "2"}], "\n", 
               "\t\t\t\t\t\t\t", "]"}]}]}], ",", "\n", "\t\t\t\t\t", 
            RowBox[{"Sequence", "@@", 
             RowBox[{"{", "path", "}"}]}]}], "\n", "\t\t\t\t\t", "]"}]}], "\n",
          "\t\t\t\t", "}"}]}]}], "\n", "\t\t", "|>"}]}]}], 
   ";"}]}], "CodeInput",ExpressionUUID->"5846b90e-b7e3-4109-b885-cfc98b1381ab"]\
 
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell["\[LeftCeiling]GitHubPath\[RightFloor]", "CodeSubsubsubsection",
  Evaluatable->True,ExpressionUUID->"0ce41eb9-30ce-4dc2-a696-d80abd491b68"],
+
+Cell[BoxData[
+ RowBox[{"GitHubPath", "//", 
+  "Clear"}]], \
+"CodeInput",ExpressionUUID->"2ac3098e-9e42-40dd-bead-20279849b0ce"],
 
 Cell[BoxData[{
  RowBox[{
@@ -706,9 +715,10 @@ Cell[BoxData[{
    RowBox[{"GitHubPath", "[", "\n", "\t", 
     RowBox[{"repo_String", ",", " ", "\n", "\t", 
      RowBox[{"t", ":", 
-      RowBox[{"\"\<tree\>\"", "|", "\"\<raw\>\"", "|", "\"\<trunk\>\""}]}], 
-     ",", " ", "\n", "\t", "branch_String", ",", " ", "\n", "\t", 
-     "p___String", ",", " ", "\n", "\t", 
+      RowBox[{
+      "\"\<tree\>\"", "|", "\"\<raw\>\"", "|", "\"\<trunk\>\"", "|", 
+       "\"\<releases\>\""}]}], ",", " ", "\n", "\t", "branch_String", ",", 
+     " ", "\n", "\t", "p___String", ",", " ", "\n", "\t", 
      RowBox[{"ops", ":", 
       RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
     "\t", 
@@ -720,20 +730,23 @@ Cell[BoxData[{
        RowBox[{"Sequence", "@@", 
         RowBox[{"{", "}"}]}]}], "]"}], ",", "\n", "\t\t", "p", ",", " ", "\n",
       "\t\t", 
-     RowBox[{"\"\<Branch\>\"", "\[Rule]", 
+     RowBox[{"\"\<Branch\>\"", "\[Rule]", "\n", "\t\t\t", 
       RowBox[{"If", "[", 
        RowBox[{
-        RowBox[{"t", "===", "\"\<trunk\>\""}], ",", " ", "Nothing", ",", " ", 
-        "branch"}], "]"}]}], ",", "\n", "\t\t", 
+        RowBox[{"MemberQ", "[", 
+         RowBox[{
+          RowBox[{"{", "\"\<trunk\>\"", "}"}], ",", " ", "t"}], "]"}], ",", 
+        "\n", "\t\t\t\t", "None", ",", "\n", "\t\t\t\t", "branch"}], "\n", 
+       "\t\t\t\t", "]"}]}], ",", "\n", "\t\t", 
      RowBox[{"\"\<Tree\>\"", "\[Rule]", "t"}], ",", "\n", "\t\t", "ops"}], 
     "\n", "\t\t", "]"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{
-    RowBox[{"GitHubPath", "[", 
-     RowBox[{"path___String", ",", 
+    RowBox[{"GitHubPath", "[", "\n", "\t", 
+     RowBox[{"path___String", ",", "\n", "\t", 
       RowBox[{"ops", ":", 
-       RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], "/;", 
+       RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], "/;", 
     RowBox[{"(", 
      RowBox[{"TrueQ", "@", "$GitHubPathFormat"}], ")"}]}], ":=", "\n", "\t", 
    RowBox[{"FormatGitHubPath", "[", 
@@ -1070,21 +1083,10 @@ Cell[BoxData[{
           RowBox[{"parts", ",", " ", 
            RowBox[{"\"\<Username\>\"", "\[Rule]", "user"}], ",", " ", "o"}], 
           "]"}]}], "\n", "\t\t\t\t", "}"}]}], "\n", "\t\t\t", "]"}], ",", 
-     "\n", "\t\t", "$Failed"}], "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
- CellChangeTimes->{{3.694810294331786*^9, 3.6948103777210712`*^9}, {
-   3.694810413099128*^9, 3.694810416439452*^9}, {3.703613376835516*^9, 
-   3.7036133964656677`*^9}, {3.703640728534438*^9, 3.7036407355761223`*^9}, {
-   3.703640785931487*^9, 3.7036409242108927`*^9}, {3.703641325798572*^9, 
-   3.703641341708761*^9}, {3.7037191888068237`*^9, 3.7037192262391644`*^9}, {
-   3.70372049732635*^9, 3.7037205097975883`*^9}, 3.703722200866172*^9, {
-   3.703722291032866*^9, 3.703722419095654*^9}, {3.703756958975666*^9, 
-   3.703756989317684*^9}, {3.703757157608769*^9, 3.70375716345623*^9}, {
-   3.72790190427516*^9, 3.727901920783272*^9}, {3.7279970026874*^9, 
-   3.72799703319788*^9}, {3.7279980594386053`*^9, 3.72799807814779*^9}, {
-   3.73380235802652*^9, 
-   3.733802365768489*^9}},ExpressionUUID->"a1606034-8b60-4c38-9780-\
-965f75d6ce29"]
-}, Closed]],
+     "\n", "\t\t", "$Failed"}], "\n", "\t\t", "]"}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"a1606034-8b60-4c38-9780-965f75d6ce29"]\
+
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -4337,7 +4339,7 @@ Cell[BoxData[
   3.7341432896742487`*^9}, {3.734143331015306*^9, 
   3.734143333577036*^9}},ExpressionUUID->"92d47a33-8e03-4398-8ec0-\
 88295c2f260c"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -4468,8 +4470,8 @@ Cell[BoxData[{
         "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "|>"}]}], "\n", "\t\t", 
    "]"}]}]}], \
 "CodeInput",ExpressionUUID->"490269bd-c607-4636-92cd-320ffeba4a50"]
-}, Open  ]]
-}, Open  ]],
+}, Closed]]
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -4563,7 +4565,7 @@ Cell[BoxData[{
   3.7341434924303293`*^9}},ExpressionUUID->"59c98b38-215a-42d7-968c-\
 4ade9bf9de7d"]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -4757,7 +4759,7 @@ Cell[BoxData[{
   3.7345613681381474`*^9}},ExpressionUUID->"2c87f5d2-b68f-4fc1-a9d8-\
 4dd5083dad7b"]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -5047,7 +5049,7 @@ Cell[BoxData[{
    "]"}]}]}], \
 "CodeInput",ExpressionUUID->"7a11a489-45dd-4c26-a732-00fb3e8752ea"]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -5138,7 +5140,7 @@ Cell[BoxData[
    3.733802039938456*^9}},ExpressionUUID->"43dea0b5-a517-4954-9ff0-\
 82d5f9ff4b02"]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -5770,7 +5772,7 @@ Cell[BoxData[{
    3.7339448715878153`*^9}},ExpressionUUID->"cd6dc98e-cc83-4317-b63b-\
 69bc5d572149"]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -6569,7 +6571,7 @@ Cell[BoxData[{
    "]"}]}]}], \
 "CodeInput",ExpressionUUID->"d8c8e75e-c146-4e29-82cb-fb0cb36ff15c"]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -6747,8 +6749,9 @@ Cell[BoxData[{
             "\t\t\t\t\t\t", 
             RowBox[{"OverwriteTarget", "\[Rule]", 
              RowBox[{"OptionValue", "[", "OverwriteTarget", "]"}]}]}], "\n", 
-           "\t", "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", "\"\<raw\>\"", 
-          ",", "\n", "\t\t\t\t\t", 
+           "\t", "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"\"\<raw\>\"", "|", "\"\<releases\>\""}], ",", "\n", 
+          "\t\t\t\t\t", 
           RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t", 
            RowBox[{
             RowBox[{"URLDownload", "[", "\n", "\t\t\t\t\t\t\t", 
@@ -6910,7 +6913,7 @@ Cell[BoxData[{
      "]"}]}], "\n", "\t\t", 
    "]"}]}]}], \
 "CodeInput",ExpressionUUID->"dbb23741-fcab-49d5-bb83-16d75a28b679"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 

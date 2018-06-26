@@ -293,7 +293,7 @@ FormatGitHubPath[path___String,ops:OptionsPattern[]]:=
 				If[Length@{path}>1&&!GitHubReleaseQ@{path},
 					Sequence@@Flatten@
 						Insert[{path}, 
-							{OptionValue["Tree"], OptionValue["Branch"]}, 
+							{OptionValue["Tree"], Replace[OptionValue["Branch"], None->Nothing]}, 
 							2
 							],
 					Sequence@@{path}
@@ -307,9 +307,12 @@ FormatGitHubPath[path___String,ops:OptionsPattern[]]:=
 
 
 
+GitHubPath//Clear
+
+
 GitHubPath[
 	repo_String, 
-	t:"tree"|"raw"|"trunk", 
+	t:"tree"|"raw"|"trunk"|"releases", 
 	branch_String, 
 	p___String, 
 	ops:OptionsPattern[]
@@ -317,11 +320,18 @@ GitHubPath[
 	GitHubPath[repo,
 		If[t==="trunk", branch, Sequence@@{}],
 		p, 
-		"Branch"->If[t==="trunk", Nothing, branch],
+		"Branch"->
+			If[MemberQ[{"trunk"}, t],
+				None,
+				branch
+				],
 		"Tree"->t,
 		ops
 		];
-GitHubPath[path___String,ops:OptionsPattern[]]/;(TrueQ@$GitHubPathFormat):=
+GitHubPath[
+	path___String,
+	ops:OptionsPattern[]
+	]/;(TrueQ@$GitHubPathFormat):=
 	FormatGitHubPath[path,ops];
 GitHubPath[
 	s_String?(
@@ -3113,7 +3123,7 @@ GitHubClone[
 						"TrustServer"->True,
 						OverwriteTarget->OptionValue[OverwriteTarget]
 						],
-				"raw",
+				"raw"|"releases",
 					Replace[
 						URLDownload[
 							URL[path],
