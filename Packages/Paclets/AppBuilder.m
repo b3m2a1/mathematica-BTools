@@ -220,7 +220,7 @@ AppExecute[
 
 
 
-$AppDocGenMethodRouter=
+$AppDocGenMethodRouter:=
 	<|
 		"SymbolPages"->
 			<|
@@ -367,7 +367,7 @@ AppDocGen~SetAttributes~HoldRest
 
 
 
-$AppGitRouter=
+$AppGitRouter:=
 	<|
 		"Init"->
 			AppGitInit,

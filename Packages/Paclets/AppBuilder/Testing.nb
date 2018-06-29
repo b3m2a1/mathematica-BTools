@@ -1,0 +1,157 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Testing", \
+"CodeSection",ExpressionUUID->"55beeb7a-edca-4957-8c15-934274187826"],
+
+Cell["\<\
+\[LeftCeiling]
+\tHelper utilities for writing tests for a package
+\[RightFloor]\
+\>", "Text",
+ Evaluatable->True,ExpressionUUID->"433eccba-7903-46e0-8d95-74c10ac12b3d"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppFindTestingNotebook", "::", "usage"}], "=", 
+   "\"\<Finds the testing notebook for an app\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppNewTestingNotebook", "::", "usage"}], "=", 
+   "\"\<Makes a new testing notebook for an app\>\""}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"b498c609-4951-4e82-9078-d3424d52a721"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppExportTests", "::", "usage"}], "=", 
+   "\"\<Exports the tests in the testing notebook\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppListTests", "::", "usage"}], "=", 
+   "\"\<Lists the tests in the testing notebook\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppAddTest", "::", "usage"}], "=", 
+   "\"\<Adds a test to the testing notebook\>\""}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"f377bf40-8438-40dd-9fce-9feaa135893f"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"0076075b-020a-4ff8-8889-\
+1ee60ec60c85"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppFindTestingNotebook\[RightFloor]", "CodeSubsubsection",
+ 
+ Evaluatable->True,ExpressionUUID->"91395a40-f980-4329-976f-57ad995b21bf"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"AppFindTestingNotebook", "[", 
+   RowBox[{"app_", ",", " ", 
+    RowBox[{"name_:", "\"\<Testing.nb\>\""}]}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Replace", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"AppFileNames", "[", 
+     RowBox[{"app", ",", " ", "name", ",", " ", "\n", "\t\t\t", 
+      RowBox[{"AppPath", "/@", "\n", "\t\t\t\t", 
+       RowBox[{"{", "\n", "\t\t\t\t\t", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"\"\<Resources\>\"", ",", " ", "\"\<Testing\>\""}], "}"}], 
+         ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"{", "\"\<Testing\>\"", "}"}], ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"{", 
+          RowBox[{"\"\<Private\>\"", ",", " ", "\"\<Testing\>\""}], "}"}], 
+         ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"{", "\"\<Private\>\"", "}"}]}], "\n", "\t\t\t\t\t", 
+        "}"}]}]}], "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"f_", ",", " ", "___"}], "}"}], "\[RuleDelayed]", "f"}], ",", 
+      "\n", "\t\t\t", 
+      RowBox[{"_", "\[Rule]", "None"}]}], "\n", "\t\t\t", "}"}]}], "\n", 
+   "\t\t", "]"}]}]], \
+"CodeInput",ExpressionUUID->"e0fa2883-963c-4c91-8444-e455f286a492"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppNewTestingNotebook\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"00fea951-66d0-4678-97d1-cabd470c9e79"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"AppNewTestingNotebook", "[", 
+   RowBox[{"app_", ",", " ", 
+    RowBox[{"name_:", "\"\<Testing.nb\>\""}], ",", " ", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"NotebookPut", "[", "\n", "\t\t", 
+   RowBox[{"Notebook", "[", "\n", "\t\t\t", 
+    RowBox[{
+     RowBox[{"{", "}"}], ",", "\n", "\t\t\t", 
+     RowBox[{"StyleDefinitions", "\[Rule]", "\n", "\t\t\t\t", 
+      RowBox[{"FrontEnd`FileName", "[", 
+       RowBox[{
+        RowBox[{"{", "\"\<MUnit\>\"", "}"}], ",", " ", "\"\<MUnit.nb\>\"", 
+        ",", 
+        RowBox[{"CharacterEncoding", "\[Rule]", "\"\<UTF-8\>\""}]}], "]"}]}], 
+     ",", "\n", "\t\t\t", "ops", ",", "\n", "\t\t\t", 
+     RowBox[{"NotebookFileName", "->", "\n", "\t\t\t\t", 
+      RowBox[{"AppPath", "[", 
+       RowBox[{
+       "app", ",", " ", "\"\<Resources\>\"", ",", " ", "\"\<Testing\>\"", ",",
+         " ", "name"}], "]"}]}]}], "\n", "\t\t\t", "]"}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"4d23049e-64ec-4bf2-8f80-19bad06eb0f6"]
+}, Open  ]],
+
+Cell["AppExportTests", \
+"CodeSubsubsection",ExpressionUUID->"0a430332-b063-4378-b142-518cef2895e1"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppListTests\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"202af156-0fe0-4680-b52e-4650b25521fa"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"AppListTests", "[", "app_", "]"}], ":=", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"nb", "=", 
+      RowBox[{"AppFindTestingNotebook", "[", "app", "]"}]}], "}"}], ","}], 
+   "\n", "\t\t", "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"1f2cf864-9eaf-4687-ac89-01c83406c583"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"End", "[", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"38d2c67a-b87b-44a1-9caf-\
+004fb2ea1760"]
+}, Open  ]],
+
+Cell["", "SectionSeparator",ExpressionUUID->"a1df6b53-cdf0-4251-ab03-\
+17e5fa92de1d"]
+},
+WindowSize->{808, 755},
+WindowMargins->{{251, Automatic}, {Automatic, 8}},
+FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
+2018)",
+StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+

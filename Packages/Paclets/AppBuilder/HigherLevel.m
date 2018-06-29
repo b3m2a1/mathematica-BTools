@@ -483,21 +483,22 @@ configureResources[app_,
 
 
 
-Options[AppConfigure]={
-	Directory->Automatic,
-	Extension->Automatic,
-	"Documentation"->{},
-	"StyleSheets"->{},
-	"Palettes"->{},
-	"TextResources"->{},
-	"SystemResources"->{},
-	"AutoCompletionData"->{},
-	"Resources"->{},
-	"PacletInfo"->{},
-	"BundleInfo"->{},
-	"LoadInfo"->None,
-	"UploadInfo"->None
-	};
+Options[AppConfigure]=
+	{
+		Directory->Automatic,
+		Extension->Automatic,
+		"Documentation"->{},
+		"StyleSheets"->{},
+		"Palettes"->{},
+		"TextResources"->{},
+		"SystemResources"->{},
+		"AutoCompletionData"->{},
+		"Resources"->{},
+		"PacletInfo"->{},
+		"BundleInfo"->{},
+		"LoadInfo"->None,
+		"UploadInfo"->None
+		};
 AppConfigure[
 	name_?StringQ,
 	packages:
@@ -873,7 +874,7 @@ AppReconfigureSubapp[
 
 
 
-$AppRegenRouter=
+$AppRegenRouter:=
 	<|
 			"PacletInfo"->
 				AppRegeneratePacletInfo,

@@ -386,7 +386,7 @@ Clear[`PackageScope`Private`$PackageScopedSymbols];
 (*EndPackage / Reset $ContextPath*)
 
 
-System`Private`ResetContextPath[]
+System`Private`RestoreContextPath[]
 EndPackage[];
 
 

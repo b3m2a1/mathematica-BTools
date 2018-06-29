@@ -1,0 +1,1339 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Paclets", "CodeSection",
+ Evaluatable->False,ExpressionUUID->"35e9f255-009c-40e8-a806-7e9270dadbbb"],
+
+Cell["\<\
+\[LeftCeiling]Internal paclets cruft that\[CloseCurlyQuote]s been pushed to a \
+lower-context\[RightFloor]\
+\>", "Text",
+ Evaluatable->True,ExpressionUUID->"6ada322a-99ef-4866-8b38-15857e7fab15"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Paclets\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"27411c5e-93e8-4bd5-a24c-c73603e44edf"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletBundle", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Packs the .paclet file, removing the specified paths first\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPaclet", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Generates the paclet expression for app\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletInfo", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Gathers paclet info as an association\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppRegeneratePacletInfo", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Regenerates the PacletInfo file\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletSiteBundle", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Generates the PacletSite.mz file for a collection of apps\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletSiteInfo", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Pulls PacletSite expressions\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletBackup", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Backs up an app to a server\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletDirectoryAdd", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<PacletDirectoryAdd on an app name\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletSiteURL", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Gets an app paclet site to add\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletInstallerURL", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Gets the URL to the auto-configured installer\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletUninstallerURL", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Gets the URL to the auto-configure uninstaller\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletServerPage", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Uploads a paclet access page to a server\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletUpload", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Uploads paclet files to a server\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppSubpacletUpload", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Uploads a sub-app\>\""}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.728931761757098*^9, 3.728931796778688*^9}, {
+  3.7289468222694607`*^9, 3.728946823584116*^9}, {3.728950345059712*^9, 
+  3.728950346171731*^9}, {3.728963194487829*^9, 3.728963197438025*^9}, {
+  3.730135446914118*^9, 
+  3.730135460688072*^9}},ExpressionUUID->"187714d8-d3bb-44dd-a283-\
+76d8ff44704f"]
+}, Closed]],
+
+Cell["Begin[\"`Private`\"];", "InputSection",
+ CellChangeTimes->{
+  3.685210287621406*^9, {3.685715455771615*^9, 3.6857154569760227`*^9}, 
+   3.6857157710626783`*^9},ExpressionUUID->"355f7143-a0e6-4158-9039-\
+14190d847d29"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Paclet Dist\[RightFloor]", "CodeSubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.700343780606978*^9, 
+  3.700343782429674*^9}},ExpressionUUID->"d6f79f80-0d62-4dd9-b36c-\
+3fec6790b0f3"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppPacletDocs\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.699937524084502*^9, 
+  3.699937526611079*^9}},ExpressionUUID->"0ace8fcd-5c67-4648-90d1-\
+f358f981efb9"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Options", "[", "AppPacletDocs", "]"}], "=", "\n", "\t", 
+  RowBox[{"Options", "[", "PacletDocsInfo", "]"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletDocs", "[", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"PacletDocsInfo", "[", "ops", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletDocs", "[", 
+    RowBox[{"app_String", ",", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"PacletDocsInfo", "[", 
+    RowBox[{
+     RowBox[{"AppDirectory", "[", "app", "]"}], ",", "ops"}], "]"}]}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.6999361246522417`*^9, 3.699936168111586*^9}, {
+  3.699936224716886*^9, 3.6999367021908817`*^9}, {3.699936733491693*^9, 
+  3.699936855579096*^9}, {3.699936895543201*^9, 3.6999371580700827`*^9}, {
+  3.7003424948546047`*^9, 3.700342508410424*^9}, {3.7027311365512*^9, 
+  3.702731177730299*^9}},ExpressionUUID->"8fe15dbc-7619-4841-b1cd-\
+5984759d2f8c"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppPaclet\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.69993520784684*^9, 
+  3.699935209336134*^9}},ExpressionUUID->"2900eed8-be22-41ff-8055-\
+f95c45b5617c"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "AppPaclet", "]"}], "=", "\n", "\t", 
+   RowBox[{"Options", "[", "PacletInfoExpression", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPaclet", "[", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"PacletInfoExpression", "[", "ops", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPaclet", "[", 
+    RowBox[{"app_String", ",", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"PacletInfoExpression", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"AppDirectory", "[", "app", "]"}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<Kernel\>\"", "\[Rule]", 
+      RowBox[{"{", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"\"\<Root\>\"", " ", "->", " ", "\"\<.\>\""}], ",", "\n", 
+        "\t\t\t", 
+        RowBox[{"\"\<Context\>\"", " ", "->", " ", "\n", "\t\t\t\t", 
+         RowBox[{"Join", "[", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"app", "<>", "\"\<`\>\""}], "}"}], ",", "\n", 
+           "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{"StringRiffle", "[", "\n", "\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Prepend", "[", "app", "]"}], "@", "\n", 
+                 "\t\t\t\t\t\t\t", 
+                 RowBox[{"FileNameSplit", "[", "\n", "\t\t\t\t\t\t\t\t", 
+                  RowBox[{"FileNameDrop", "[", 
+                   RowBox[{"#", ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"FileNameDepth", "@", 
+                    RowBox[{"AppDirectory", "[", 
+                    RowBox[{"app", ",", "\"\<Packages\>\""}], "]"}]}]}], "\n",
+                    "\t\t\t\t\t\t\t\t\t", "]"}], "\n", "\t\t\t\t\t\t\t\t", 
+                  "]"}]}], ",", "\n", "\t\t\t\t\t\t", "\"\<`\>\""}], "]"}], 
+              "<>", "\"\<`\>\""}], "\n", "\t\t\t\t\t\t", "&"}], "/@", "\n", 
+            "\t\t\t\t\t\t", 
+            RowBox[{"Select", "[", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"FileNames", "[", 
+               RowBox[{"\"\<*\>\"", ",", 
+                RowBox[{"AppDirectory", "[", 
+                 RowBox[{"app", ",", "\"\<Packages\>\""}], "]"}], ",", 
+                "\[Infinity]"}], "]"}], ",", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"DirectoryQ", "@", "#"}], "&&", "\n", 
+                "\t\t\t\t\t\t\t\t", 
+                RowBox[{"AllTrue", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{
+                  "FileNameSplit", "@", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"FileNameDrop", "[", 
+                    RowBox[{"#", ",", 
+                    RowBox[{"FileNameDepth", "@", 
+                    RowBox[{"AppDirectory", "[", 
+                    RowBox[{"app", ",", "\"\<Packages\>\""}], "]"}]}]}], 
+                    "]"}]}], ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"StringMatchQ", "[", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"#", ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{"WordCharacter", "|", "\"\<$\>\""}], ")"}], 
+                    ".."}]}], "\n", "\t\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", 
+                 "\t\t\t\t\t\t\t\t\t", "]"}]}], "&"}]}], "\n", 
+             "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t", "]"}]}]}], "\n",
+        "\t\t\t", "}"}]}], ",", "\n", "\t\t", "ops"}], "]"}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"6d735560-0620-48fc-8a5f-95f9d03d5e91"]\
+
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppPacletInfo\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"fe3ed535-ba64-479c-8ca4-45f2c430bd25"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletInfo", "[", "app_String", "]"}], ":=", "\n", "\t", 
+   RowBox[{"PacletInfoAssociation", "@", 
+    RowBox[{"AppDirectory", "[", "app", "]"}]}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.699937576561064*^9, 3.699937842671096*^9}, {
+  3.699937980781375*^9, 3.699937981170021*^9}, {3.6999380430549593`*^9, 
+  3.699938109137146*^9}, {3.6999409404964237`*^9, 3.699940944162681*^9}, {
+  3.700356113008729*^9, 3.700356161020547*^9}, {3.7003563778199*^9, 
+  3.700356384326764*^9}, {3.700363907511817*^9, 3.7003639180829287`*^9}, {
+  3.702731889609241*^9, 
+  3.702731899203977*^9}},ExpressionUUID->"4df4f02b-bd44-4b41-a9e5-\
+6f8b59796347"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppRegeneratePacletInfo\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.685102082628367*^9, 3.685102084907218*^9}, 
+   3.700354512070013*^9, 3.700930053487925*^9, {3.701485756868527*^9, 
+   3.701485757269836*^9}},ExpressionUUID->"2c74287f-a485-410d-a681-\
+e0be480a4f2e"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "AppRegeneratePacletInfo", "]"}], "=", "\n", "\t", 
+   
+   RowBox[{"Options", "[", "AppPaclet", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppRegeneratePacletInfo", "[", 
+    RowBox[{"name_", ",", "\n", "\t", 
+     RowBox[{"pacletOps", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"PacletInfoExpressionBundle", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"AppPaclet", "[", 
+      RowBox[{"name", ",", "pacletOps"}], "]"}], ",", "\n", "\t\t", 
+     RowBox[{"AppDirectory", "[", "name", "]"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.685039599360207*^9, 3.685039675225831*^9}, {
+   3.6850397118653717`*^9, 3.685039849069923*^9}, {3.688490812818986*^9, 
+   3.688490819552066*^9}, 3.6891264190672293`*^9, 3.689126849034919*^9, {
+   3.694802951819882*^9, 3.694802993577046*^9}, {3.694803030720038*^9, 
+   3.69480309052289*^9}, {3.69480330406078*^9, 3.694803320162407*^9}, {
+   3.6999379072030697`*^9, 3.699937914341833*^9}, 3.699938745718205*^9, {
+   3.69993888729753*^9, 3.6999389090578938`*^9}, {3.699939071666533*^9, 
+   3.6999390737706823`*^9}, 3.6999393293534117`*^9, {3.699939403547092*^9, 
+   3.69993940378253*^9}, 3.7003424160181293`*^9, {3.700354831243281*^9, 
+   3.700354850777516*^9}, {3.700930053497631*^9, 3.700930053501218*^9}, {
+   3.701485762867939*^9, 3.70148576386922*^9}, {3.7027319709955397`*^9, 
+   3.702731989569721*^9}, {3.727894200380642*^9, 3.727894215737052*^9}, 
+   3.727894331664851*^9},ExpressionUUID->"5bdaa0cd-bea7-4d3a-ac1c-\
+76d6e373dda1"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppPacletSiteURL\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.700356892069475*^9, 3.700356897692925*^9}, 
+   3.700948604645566*^9},ExpressionUUID->"b98d4485-88f1-4871-abfa-\
+3769c3d92250"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "AppPacletSiteURL", "]"}], "=", "\n", "\t", 
+   RowBox[{"Options", "[", "PacletSiteURL", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletSiteURL", "[", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"PacletSiteURL", "[", "ops", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletSiteURL", "[", 
+    RowBox[{"app_String", ",", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"AppPacletSiteURL", "[", 
+    RowBox[{"ops", ",", 
+     RowBox[{"\"\<ServerName\>\"", "->", "app"}]}], "]"}]}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.700356898437212*^9, 3.7003569062159*^9}, {
+   3.700356940982669*^9, 3.700357184225485*^9}, {3.700357278691249*^9, 
+   3.700357334207659*^9}, {3.700357419905889*^9, 3.700357425161813*^9}, {
+   3.700358690503769*^9, 3.700358690924345*^9}, {3.700359059454694*^9, 
+   3.7003590633246403`*^9}, {3.700947738810235*^9, 3.7009479088710537`*^9}, {
+   3.700947944050974*^9, 3.7009479843026457`*^9}, {3.700948057093266*^9, 
+   3.7009480590441504`*^9}, {3.70094810280492*^9, 3.7009482701469593`*^9}, {
+   3.700948300182213*^9, 3.700948331746276*^9}, {3.7009501913033543`*^9, 
+   3.700950196420114*^9}, {3.700950274538126*^9, 3.700950313025159*^9}, 
+   3.70095104413268*^9, {3.7009510809985037`*^9, 3.700951126143899*^9}, 
+   3.700972619717342*^9, {3.701119831979903*^9, 3.7011198376100073`*^9}, {
+   3.701119936729576*^9, 3.7011199669270267`*^9}, {3.701120043711705*^9, 
+   3.701120070383938*^9}, {3.701120765691243*^9, 3.7011207667633333`*^9}, {
+   3.702378117980686*^9, 3.702378181353755*^9}, {3.702378307220546*^9, 
+   3.702378329839768*^9}, 3.702380379035228*^9, {3.702381020027467*^9, 
+   3.7023810982254*^9}, {3.70238119070126*^9, 3.702381194420513*^9}, {
+   3.702383867095355*^9, 3.702383873997476*^9}, {3.702384215803722*^9, 
+   3.7023844346590357`*^9}, {3.7023850987833*^9, 3.702385132770481*^9}, {
+   3.702385170995171*^9, 3.702385215808181*^9}, {3.7023858762315817`*^9, 
+   3.7023859242787037`*^9}, {3.7023859560976057`*^9, 3.702386011615451*^9}, {
+   3.702386073530644*^9, 3.702386186487706*^9}, {3.702388043554528*^9, 
+   3.702388082730942*^9}, {3.7023881345834312`*^9, 3.702388140801422*^9}, {
+   3.702388179525758*^9, 3.702388182555286*^9}, {3.702604776761034*^9, 
+   3.70260482297019*^9}, {3.702605527832361*^9, 3.702605565332391*^9}, {
+   3.7026097261950207`*^9, 3.7026097516169786`*^9}, {3.702675996139595*^9, 
+   3.702676055197928*^9}, {3.702678993693514*^9, 3.702679010543841*^9}, {
+   3.705622794803792*^9, 3.705622886812811*^9}, {3.7056939010916967`*^9, 
+   3.70569390946314*^9}, {3.705693958007099*^9, 
+   3.70569396327663*^9}},ExpressionUUID->"9a8e9242-44d7-4661-a001-\
+60f8c2cd3811"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppPacletSiteInfo\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.700972301268733*^9, 
+  3.700972303338254*^9}},ExpressionUUID->"4bd3f7ad-872b-4f19-bd1a-\
+a9ed67993194"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "AppPacletSiteInfo", "]"}], "=", "\n", "\t", 
+   RowBox[{"Options", "@", "AppPacletSiteURL"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletSiteInfo", "[", 
+    RowBox[{"app_String", ",", 
+     RowBox[{"o", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"PacletSiteInfo", "@", "\n", "\t\t", 
+    RowBox[{"StringReplace", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"URLBuild", "@", 
+       RowBox[{"{", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"AppPacletSiteURL", "[", 
+          RowBox[{"app", ",", "o"}], "]"}], ",", "\n", "\t", "\t", "\t\t", 
+         "\"\<PacletSite.mz\>\""}], "\n", "\t\t\t\t", "}"}]}], ",", "\n", 
+      "\t\t\t", 
+      RowBox[{
+       RowBox[{"StartOfString", "~~", "\"\<file:\>\""}], "\[RuleDelayed]", 
+       "\"\<file://\>\""}]}], "\n", "\t\t\t", "]"}]}]}], ";"}]}], "CodeInput",
+ 
+ CellChangeTimes->{{3.7009723086979218`*^9, 3.7009723087019672`*^9}, {
+   3.700972341498904*^9, 3.700972434145322*^9}, {3.700972511097521*^9, 
+   3.7009725202780867`*^9}, {3.700972681573906*^9, 3.700972686296485*^9}, {
+   3.700972762187269*^9, 3.70097281424666*^9}, {3.700972895443489*^9, 
+   3.7009728974908333`*^9}, 3.7009729630582037`*^9, {3.700973645078268*^9, 
+   3.7009736477648363`*^9}, {3.7009742265200977`*^9, 3.700974333716351*^9}, {
+   3.700974369731587*^9, 3.700974372633882*^9}, {3.702378047047859*^9, 
+   3.702378050976297*^9}, {3.702386917228644*^9, 3.7023869422831593`*^9}, {
+   3.7026760937743673`*^9, 
+   3.7026760941412697`*^9}},ExpressionUUID->"98662784-cf82-4458-9c9d-\
+e1b6a12e6ce5"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppPacletSiteBundle\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.700343686320286*^9, 3.700343689966804*^9}, {
+   3.70035031266064*^9, 3.700350315637197*^9}, 3.700350601540348*^9, {
+   3.702676111069964*^9, 
+   3.7026761118109703`*^9}},ExpressionUUID->"30b08c56-f17e-43b1-bb56-\
+48eac286ba13"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "AppPacletSiteBundle", "]"}], "=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"DeleteDuplicatesBy", "[", "First", "]"}], "@", "\n", "\t\t", 
+    RowBox[{"Join", "[", 
+     RowBox[{
+      RowBox[{"{", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"\"\<BuildRoot\>\"", "\[RuleDelayed]", "$AppDirectory"}], ",",
+         "\n", "\t\t\t", 
+        RowBox[{"\"\<FilePrefix\>\"", "->", "Automatic"}]}], "\n", "\t\t\t", 
+       "}"}], ",", "\n", "\t\t\t", 
+      RowBox[{"Options", "[", "PacletSiteBundle", "]"}]}], "\n", "\t", "\t\t",
+      "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"AppPacletSiteBundle", "[", 
+   RowBox[{"apps__String", ",", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"PacletSiteBundle", "[", 
+   RowBox[{
+    RowBox[{"Sequence", "@@", 
+     RowBox[{"Map", "[", 
+      RowBox[{"AppDirectory", ",", 
+       RowBox[{"{", "apps", "}"}]}], "]"}]}], ",", "\n", "\t\t", 
+    RowBox[{"FilterRules", "[", 
+     RowBox[{
+      RowBox[{"{", "\n", "\t\t\t", 
+       RowBox[{"ops", ",", "\n", "\t\t\t", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"OptionValue", "[", "\"\<FilePrefix\>\"", "]"}], "===", 
+           "Automatic"}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"\"\<FilePrefix\>\"", "->", 
+           RowBox[{"First", "@", 
+            RowBox[{"{", "apps", "}"}]}]}], ",", "\n", "\t\t\t\t", 
+          "Nothing"}], "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
+        RowBox[{"Options", "[", "AppPacletSiteBundle", "]"}]}], "\n", 
+       "\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+      RowBox[{"Options", "[", "PacletSiteBundle", "]"}]}], "\n", "\t\t\t", 
+     "]"}]}], "\n", "\t\t", "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.7003472296896*^9, 3.700347255143701*^9}, {
+   3.700347287633541*^9, 3.700347290788151*^9}, {3.700348659465954*^9, 
+   3.7003488932995462`*^9}, {3.7003490079612722`*^9, 3.7003490377275877`*^9}, 
+   3.700350317266458*^9, {3.7003503659623003`*^9, 3.7003503660977907`*^9}, {
+   3.7003543385344343`*^9, 3.700354341032318*^9}, {3.7003543772748137`*^9, 
+   3.700354448271137*^9}, {3.700356437560307*^9, 3.700356445494524*^9}, {
+   3.700949430161083*^9, 3.700949598719902*^9}, {3.700949663196308*^9, 
+   3.700949755395381*^9}, {3.700949792093093*^9, 3.700949826881092*^9}, {
+   3.70094987174445*^9, 3.7009499639618073`*^9}, {3.70095001645188*^9, 
+   3.700950084676703*^9}, {3.700950359706697*^9, 3.7009504442263393`*^9}, {
+   3.700950597565639*^9, 3.700950701171177*^9}, {3.70095076620091*^9, 
+   3.700950932834963*^9}, {3.700950965193717*^9, 3.70095096626495*^9}, {
+   3.700951509304246*^9, 3.700951509833455*^9}, {3.701119702962751*^9, 
+   3.7011197328500347`*^9}, {3.701120185134898*^9, 3.701120195901688*^9}, {
+   3.701120626969775*^9, 3.701120677016549*^9}, 3.701121854612069*^9, {
+   3.7023778772621098`*^9, 3.702377884521391*^9}, {3.70238654535608*^9, 
+   3.702386553442919*^9}, {3.702386615579289*^9, 3.702386654388694*^9}, {
+   3.702387126607806*^9, 3.7023871494307547`*^9}, {3.702605641893111*^9, 
+   3.7026056571907663`*^9}, {3.702609801129025*^9, 3.702609821343575*^9}, {
+   3.702676114349063*^9, 3.70267619458633*^9}, {3.702677800224743*^9, 
+   3.7026778299802628`*^9}, {3.7026778894086227`*^9, 3.702677890016036*^9}, {
+   3.702678280671789*^9, 
+   3.7026783562784452`*^9}},ExpressionUUID->"17f580c8-7a7a-4ffb-a89f-\
+ca763555e53e"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppPacletBundle\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.700343606485742*^9, 3.7003436174519567`*^9}, 
+   3.700350623037321*^9},ExpressionUUID->"075c5122-0183-411d-99aa-\
+937704e21337"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "AppPacletBundle", "]"}], "=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"DeleteDuplicatesBy", "[", "First", "]"}], "@", "\n", "\t\t", 
+    RowBox[{"Join", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"\"\<BuildRoot\>\"", "\[RuleDelayed]", "$AppDirectory"}], ",",
+         "\n", "\t", "\t\t\t", 
+        RowBox[{"\"\<BundleInfo\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
+        "\t", "\t\t\t", 
+        RowBox[{"\"\<AppRegeneratePacletInfo\>\"", "\[Rule]", "False"}]}], 
+       "\n", "\t", "\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+      RowBox[{"Options", "[", "PacletBundle", "]"}]}], "\n", "\t\t\t", 
+     "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletBundle", "[", 
+    RowBox[{
+     RowBox[{"app_String", "?", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"FileExistsQ", "[", 
+         RowBox[{"AppDirectory", "[", "#", "]"}], "]"}], "&"}], ")"}]}], ",", 
+     "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Replace", "[", 
+    RowBox[{
+     RowBox[{"OptionValue", "[", "\"\<BundleInfo\>\"", "]"}], ",", 
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"Automatic", ":>", "\n", "\t\t\t", 
+        RowBox[{"AppPacletBundle", "[", 
+         RowBox[{"app", ",", "\n", "\t\t\t\t", 
+          RowBox[{"\"\<BundleInfo\>\"", "\[Rule]", "\n", "\t\t\t\t\t", 
+           RowBox[{"Replace", "[", 
+            RowBox[{
+             RowBox[{"AppPath", "[", 
+              RowBox[{
+               RowBox[{"First", "@", 
+                RowBox[{"{", "app", "}"}]}], ",", "\"\<Config\>\"", ",", 
+               "\"\<BundleInfo.m\>\""}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Except", "[", 
+               RowBox[{"_String", "?", "FileExistsQ"}], "]"}], ":>", "\n", 
+              "\t\t\t\t\t\t\t", 
+              RowBox[{"AppPath", "[", 
+               RowBox[{
+                RowBox[{"First", "@", 
+                 RowBox[{"{", "app", "}"}]}], ",", "\"\<BundleInfo.wl\>\""}], 
+               "]"}]}]}], "\n", "\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+          "\t\t\t\t", "ops"}], "\n", "\t\t\t\t", "]"}]}], ",", "\n", "\t\t", 
+       RowBox[{
+        RowBox[{"f", ":", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{"_String", "|", "_File"}], ")"}], "?", "FileExistsQ"}], 
+          "|", "_URL"}]}], ":>", "\n", "\t\t\t", 
+        RowBox[{"AppPacletBundle", "[", 
+         RowBox[{"app", ",", "\n", "\t\t\t\t", 
+          RowBox[{"\"\<BundleInfo\>\"", "\[Rule]", "None"}], ",", "\n", 
+          "\t\t\t\t", "ops", ",", "\n", "\t\t\t\t", 
+          RowBox[{"Replace", "[", 
+           RowBox[{
+            RowBox[{"Import", "[", "f", "]"}], ",", 
+            RowBox[{"{", "\n", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"o", ":", 
+                RowBox[{"{", 
+                 RowBox[{"__", "?", "OptionQ"}], "}"}]}], "\[RuleDelayed]", 
+               "\n", "\t\t\t\t\t\t", 
+               RowBox[{"(", 
+                RowBox[{"Sequence", "@@", 
+                 RowBox[{"FilterRules", "[", 
+                  RowBox[{"o", ",", 
+                   RowBox[{"Options", "@", "AppPacletBundle"}]}], "]"}]}], 
+                ")"}]}], ",", "\n", "\t\t\t\t\t", 
+              RowBox[{"_", "\[RuleDelayed]", 
+               RowBox[{"(", 
+                RowBox[{"Sequence", "@@", 
+                 RowBox[{"{", "}"}]}], ")"}]}]}], "\n", "\t\t\t\t\t", "}"}]}],
+            "]"}]}], "\n", "\t\t\t\t", "]"}]}], ",", "\n", "\t\t", 
+       RowBox[{"_", ":>", "\n", "\t\t\t", 
+        RowBox[{"PacletBundle", "[", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"AppDirectory", "[", "app", "]"}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"FilterRules", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"ops", ",", 
+              RowBox[{"Options", "[", "AppPacletBundle", "]"}]}], "}"}], ",", 
+            "\n", "\t\t\t\t\t", 
+            RowBox[{"Options", "[", "PacletBundle", "]"}]}], "\n", 
+           "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t", 
+      "}"}]}], "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.700343920134439*^9, 3.70034392013544*^9}, {
+   3.700346503511764*^9, 3.700346564301044*^9}, 3.700346607867813*^9, {
+   3.7003467162396193`*^9, 3.700346940786789*^9}, {3.7003470302401333`*^9, 
+   3.700347030726852*^9}, {3.700347136749069*^9, 3.70034717997465*^9}, {
+   3.7003473092721033`*^9, 3.700347438083044*^9}, {3.700347490608177*^9, 
+   3.700347504789124*^9}, {3.700347625402205*^9, 3.700347628201865*^9}, {
+   3.700349176895845*^9, 3.700349177820567*^9}, {3.700349821242158*^9, 
+   3.7003498421200743`*^9}, {3.700350622923695*^9, 3.700350622928952*^9}, {
+   3.700350709468611*^9, 3.700350756661366*^9}, {3.7003511691532183`*^9, 
+   3.700351191810205*^9}, {3.700351308979813*^9, 3.700351315374024*^9}, {
+   3.7003521924515142`*^9, 3.700352192944735*^9}, {3.700354225408046*^9, 
+   3.700354296041238*^9}, 3.700354977895813*^9, {3.70093005351534*^9, 
+   3.700930053523767*^9}, {3.700945718903007*^9, 3.700945819285322*^9}, 
+   3.7009458684348373`*^9, {3.701485821298882*^9, 3.7014858220107193`*^9}, {
+   3.7026762383235292`*^9, 3.702676266326995*^9}, {3.702676510512631*^9, 
+   3.702676533605948*^9}, {3.702677268420308*^9, 3.702677280451673*^9}, {
+   3.702677786793818*^9, 3.702677791350938*^9}, 3.708006003614738*^9, {
+   3.708006086683235*^9, 3.708006105726721*^9}, 3.708040576947028*^9, {
+   3.7126148167196836`*^9, 3.712614818150403*^9}, {3.732845621839706*^9, 
+   3.7328456237858686`*^9}},ExpressionUUID->"3e0be53e-cc9d-4df6-b0c9-\
+985df57bda76"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppPacletInstallerURL\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7009717822645073`*^9, 3.700971784919827*^9}, {
+  3.7009721546134787`*^9, 
+  3.700972154924354*^9}},ExpressionUUID->"7a449b04-dfaa-485b-be3f-\
+7f836fd2d2d3"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "AppPacletInstallerURL", "]"}], "=", "\n", "\t", 
+   RowBox[{"Options", "@", "PacletInstallerURL"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletInstallerURL", "[", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"PacletInstallerURL", "[", "ops", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletInstallerURL", "[", 
+    RowBox[{"app_String", ",", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"PacletInstallerURL", "[", 
+    RowBox[{"ops", ",", 
+     RowBox[{"\"\<ServerName\>\"", "\[Rule]", "app"}]}], "]"}]}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.700971787449051*^9, 3.700971843775531*^9}, {
+  3.700972015671761*^9, 3.700972042255151*^9}, {3.702386803369734*^9, 
+  3.702386830279127*^9}, {3.702677340762755*^9, 
+  3.702677372606173*^9}},ExpressionUUID->"71cab944-b202-457e-9e3d-\
+d65d5a3b8b38"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppPacletInstaller\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.700972739757182*^9, 
+  3.70097274208416*^9}},ExpressionUUID->"c6e1b53c-5096-4cb6-a98d-\
+214ef17ac566"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "AppPacletUploadInstaller", "]"}], ":=", "\n", 
+   "\t", 
+   RowBox[{"Options", "[", "PacletUploadInstaller", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletUploadInstaller", "[", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"PacletUploadInstaller", "[", "ops", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"AppPacletUploadInstaller", "[", 
+   RowBox[{"app_", ",", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"PacletUploadInstaller", "[", 
+   RowBox[{"ops", ",", 
+    RowBox[{"\"\<ServerName\>\"", "\[Rule]", "app"}]}], "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.7009721567101727`*^9, 3.700972292107675*^9}, {
+   3.7009724566029787`*^9, 3.700972499052837*^9}, {3.700972533559046*^9, 
+   3.700972553130219*^9}, {3.700972857060454*^9, 3.7009728634333773`*^9}, {
+   3.700972975640667*^9, 3.700972994540977*^9}, {3.700973075860573*^9, 
+   3.700973248461289*^9}, {3.700973419814704*^9, 3.700973474517311*^9}, 
+   3.700973726926506*^9, {3.700973893765027*^9, 3.7009738991086283`*^9}, {
+   3.7009739843407288`*^9, 3.700973990775153*^9}, {3.70097444595676*^9, 
+   3.700974461654437*^9}, {3.7023759838240957`*^9, 3.702375991996975*^9}, {
+   3.702376029523059*^9, 3.7023760376075373`*^9}, {3.7023763941195717`*^9, 
+   3.702376430700653*^9}, {3.702381255134572*^9, 3.7023812685469913`*^9}, {
+   3.702383203591671*^9, 3.702383229916767*^9}, {3.702384486001823*^9, 
+   3.702384518054439*^9}, {3.7023846053737717`*^9, 3.702384622387917*^9}, {
+   3.702384666338855*^9, 3.7023850219953833`*^9}, {3.702387160903186*^9, 
+   3.702387182749042*^9}, {3.702387237795574*^9, 3.702387266731907*^9}, {
+   3.7023873096218033`*^9, 3.702387523549361*^9}, {3.702387555117073*^9, 
+   3.702387590288093*^9}, {3.70238764067528*^9, 3.702387647333397*^9}, {
+   3.702387707235812*^9, 3.702387734051278*^9}, {3.702388221147695*^9, 
+   3.702388260097321*^9}, 3.7023882967889147`*^9, {3.7023883402782307`*^9, 
+   3.702388375704012*^9}, {3.702388608167692*^9, 3.702388913660747*^9}, {
+   3.7023889460444727`*^9, 3.702388973066383*^9}, {3.7026095089574833`*^9, 
+   3.702609519933188*^9}, {3.702609933631839*^9, 3.702609935995234*^9}, {
+   3.70261015328293*^9, 3.702610155171983*^9}, {3.70261049678281*^9, 
+   3.7026105607833548`*^9}, {3.7026697808772793`*^9, 
+   3.7026697908776207`*^9}, {3.702677378778755*^9, 
+   3.7026774275401707`*^9}},ExpressionUUID->"9999aeec-a67f-4238-8484-\
+d193d99d178d"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppPacletUninstallerURL\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7009717822645073`*^9, 3.700971784919827*^9}, {
+  3.7009721546134787`*^9, 3.700972154924354*^9}, {3.7026774455950737`*^9, 
+  3.702677446443254*^9}},ExpressionUUID->"cffc7b0f-1fa9-4fc1-88a1-\
+f831b0344a42"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "AppPacletUninstallerURL", "]"}], "=", "\n", "\t", 
+   
+   RowBox[{"Options", "@", "PacletUninstallerURL"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletUninstallerURL", "[", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"PacletUninstallerURL", "[", "ops", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletUninstallerURL", "[", 
+    RowBox[{"app_String", ",", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"PacletUninstallerURL", "[", 
+    RowBox[{"ops", ",", 
+     RowBox[{"\"\<ServerName\>\"", "\[Rule]", "app"}]}], "]"}]}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.700971787449051*^9, 3.700971843775531*^9}, {
+  3.700972015671761*^9, 3.700972042255151*^9}, {3.702386803369734*^9, 
+  3.702386830279127*^9}, {3.702677340762755*^9, 3.702677372606173*^9}, {
+  3.702677448840075*^9, 
+  3.7026774638352623`*^9}},ExpressionUUID->"a14cc4c5-13cf-44dc-a7d9-\
+505b505dbcbd"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppPacletUninstaller\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.700972739757182*^9, 3.70097274208416*^9}, {
+  3.70284203603196*^9, 
+  3.7028420370680733`*^9}},ExpressionUUID->"0de74599-6f8b-4a78-a95a-\
+7c19464099c7"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "AppPacletUploadUninstaller", "]"}], ":=", "\n", 
+   "\t", 
+   RowBox[{"Options", "[", "PacletUploadUninstaller", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletUploadUninstaller", "[", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"PacletUploadUninstaller", "[", "ops", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"AppPacletUploadUninstaller", "[", 
+   RowBox[{"app_", ",", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"PacletUploadUninstaller", "[", 
+   RowBox[{"ops", ",", 
+    RowBox[{"\"\<ServerName\>\"", "\[Rule]", "app"}]}], "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.7009721567101727`*^9, 3.700972292107675*^9}, {
+   3.7009724566029787`*^9, 3.700972499052837*^9}, {3.700972533559046*^9, 
+   3.700972553130219*^9}, {3.700972857060454*^9, 3.7009728634333773`*^9}, {
+   3.700972975640667*^9, 3.700972994540977*^9}, {3.700973075860573*^9, 
+   3.700973248461289*^9}, {3.700973419814704*^9, 3.700973474517311*^9}, 
+   3.700973726926506*^9, {3.700973893765027*^9, 3.7009738991086283`*^9}, {
+   3.7009739843407288`*^9, 3.700973990775153*^9}, {3.70097444595676*^9, 
+   3.700974461654437*^9}, {3.7023759838240957`*^9, 3.702375991996975*^9}, {
+   3.702376029523059*^9, 3.7023760376075373`*^9}, {3.7023763941195717`*^9, 
+   3.702376430700653*^9}, {3.702381255134572*^9, 3.7023812685469913`*^9}, {
+   3.702383203591671*^9, 3.702383229916767*^9}, {3.702384486001823*^9, 
+   3.702384518054439*^9}, {3.7023846053737717`*^9, 3.702384622387917*^9}, {
+   3.702384666338855*^9, 3.7023850219953833`*^9}, {3.702387160903186*^9, 
+   3.702387182749042*^9}, {3.702387237795574*^9, 3.702387266731907*^9}, {
+   3.7023873096218033`*^9, 3.702387523549361*^9}, {3.702387555117073*^9, 
+   3.702387590288093*^9}, {3.70238764067528*^9, 3.702387647333397*^9}, {
+   3.702387707235812*^9, 3.702387734051278*^9}, {3.702388221147695*^9, 
+   3.702388260097321*^9}, 3.7023882967889147`*^9, {3.7023883402782307`*^9, 
+   3.702388375704012*^9}, {3.702388608167692*^9, 3.702388913660747*^9}, {
+   3.7023889460444727`*^9, 3.702388973066383*^9}, {3.7026095089574833`*^9, 
+   3.702609519933188*^9}, {3.702609933631839*^9, 3.702609935995234*^9}, {
+   3.70261015328293*^9, 3.702610155171983*^9}, {3.70261049678281*^9, 
+   3.7026105607833548`*^9}, {3.7026697808772793`*^9, 
+   3.7026697908776207`*^9}, {3.702677378778755*^9, 3.7026774275401707`*^9}, {
+   3.702677468916828*^9, 
+   3.702677476419272*^9}},ExpressionUUID->"71271eb9-3a7f-4c13-acdb-\
+3791b06cd5dc"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppPacletUpload\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.700343595837702*^9, 3.700343624931553*^9}, 
+   3.700350637461567*^9, {3.7301360557502117`*^9, 
+   3.730136055940034*^9}},ExpressionUUID->"da1d14b0-4022-4db7-a364-\
+1e1549ff343d"],
+
+Cell["\<\
+\[LeftCeiling]
+\tThis is pretty much deprecated now, but it shows up in too many spots to \
+kill just yet
+\[RightFloor]\
+\>", "Text",
+ Evaluatable->True,
+ CellChangeTimes->{{3.732845474096615*^9, 
+  3.732845490616766*^9}},ExpressionUUID->"7c2a00b1-77ea-4101-876f-\
+08970281f9d0"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "AppPacletUpload", "]"}], "=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"DeleteDuplicatesBy", "[", "First", "]"}], "@", "\n", "\t\t", 
+    RowBox[{"Join", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"\"\<PacletFiles\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
+        "\t\t\t\t", 
+        RowBox[{"\"\<UploadInfo\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
+        "\t", "\t\t\t", 
+        RowBox[{"\"\<RebundlePaclets\>\"", "\[Rule]", "True"}], ",", "\n", 
+        "\t\t\t\t", 
+        RowBox[{"\"\<UploadSiteFile\>\"", "\[Rule]", "True"}], ",", "\n", 
+        "\t\t\t\t", 
+        RowBox[{"\"\<UploadInstaller\>\"", "\[Rule]", "False"}], ",", "\n", 
+        "\t\t\t\t", 
+        RowBox[{"\"\<UploadInstallLink\>\"", "\[Rule]", "False"}], ",", "\n", 
+        "\t\t\t\t", 
+        RowBox[{"\"\<UploadUninstaller\>\"", "\[Rule]", "False"}]}], "\n", 
+       "\t\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+      RowBox[{"Options", "[", "PacletUpload", "]"}], ",", "\n", "\t\t\t", 
+      RowBox[{"Options", "[", "AppPacletBundle", "]"}]}], "\n", "\t\t\t", 
+     "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletUpload", "[", 
+    RowBox[{"apps__String", ",", " ", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Replace", "[", 
+    RowBox[{
+     RowBox[{"OptionValue", "[", "\"\<UploadInfo\>\"", "]"}], ",", " ", 
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"Automatic", ":>", "\n", "\t\t\t\t", 
+        RowBox[{"AppPacletUpload", "[", 
+         RowBox[{"apps", ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"\"\<UploadInfo\>\"", "\[Rule]", "\n", "\t", "\t\t\t\t\t", 
+           RowBox[{"With", "[", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"app", "=", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"If", "[", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"Length", "@", 
+                   RowBox[{"{", "apps", "}"}]}], ">", "0"}], ",", "\n", 
+                 "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"First", "@", 
+                  RowBox[{"{", "apps", "}"}]}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"OptionValue", "@", "\"\<ServerName\>\""}]}], 
+                "]"}]}], "\n", "\t\t\t\t\t\t\t", "}"}], ",", "\n", 
+             "\t\t\t\t\t\t\t", 
+             RowBox[{"If", "[", 
+              RowBox[{
+               RowBox[{"StringQ", "@", "app"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{"Replace", "[", 
+                RowBox[{
+                 RowBox[{"AppPath", "[", 
+                  RowBox[{
+                  "app", ",", "\"\<Config\>\"", ",", "\"\<UploadInfo.m\>\""}],
+                   "]"}], ",", "\n", "\t", "\t", "\t", "\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"Except", "[", 
+                   RowBox[{"_String", "?", "FileExistsQ"}], "]"}], ":>", "\n",
+                   "\t", "\t", "\t\t\t\t\t\t\t\t", 
+                  RowBox[{"AppPath", "[", 
+                   RowBox[{"app", ",", "\"\<UploadInfo.wl\>\""}], "]"}]}]}], 
+                "\n", "\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+               "\t\t\t\t\t\t\t\t", "None"}], "\n", "\t\t\t\t\t\t\t\t", 
+              "]"}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+          "\t\t\t\t\t", "ops"}], "\n", "\t\t\t\t\t", "]"}]}], ",", "\n", 
+       "\t\t\t", 
+       RowBox[{
+        RowBox[{"f", ":", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{"_String", "|", "_File"}], ")"}], "?", "FileExistsQ"}], 
+          "|", "_URL"}]}], ":>", "\n", "\t\t\t\t", 
+        RowBox[{"AppPacletUpload", "[", 
+         RowBox[{"apps", ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"Sequence", "@@", 
+           RowBox[{"FilterRules", "[", 
+            RowBox[{
+             RowBox[{"{", "ops", "}"}], ",", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"Except", "[", "\"\<UploadInfo\>\"", "]"}]}], "\n", 
+            "\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"\"\<UploadInfo\>\"", "\[Rule]", "None"}], ",", "\n", 
+          "\t\t\t\t\t", 
+          RowBox[{"Replace", "[", 
+           RowBox[{
+            RowBox[{"Import", "[", "f", "]"}], ",", 
+            RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"o", ":", 
+                RowBox[{"{", 
+                 RowBox[{"__", "?", "OptionQ"}], "}"}]}], "\[RuleDelayed]", 
+               "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"(", 
+                RowBox[{"Sequence", "@@", "\n", "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"FilterRules", "[", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"DeleteCases", "[", 
+                    RowBox[{"o", ",", 
+                    RowBox[{"Alternatives", "@@", 
+                    RowBox[{"Options", "@", "AppPacletUpload"}]}]}], "]"}], 
+                   ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"Options", "@", "AppPacletUpload"}]}], "]"}]}], 
+                ")"}]}], ",", "\n", "\t", "\t\t\t\t\t", 
+              RowBox[{"_", "\[RuleDelayed]", 
+               RowBox[{"(", 
+                RowBox[{"Sequence", "@@", 
+                 RowBox[{"{", "}"}]}], ")"}]}]}], "\n", "\t\t\t\t\t\t", 
+             "}"}]}], "]"}]}], "\n", "\t\t\t\t\t", "]"}]}], ",", "\n", 
+       "\t\t\t", 
+       RowBox[{"_", "\[RuleDelayed]", "\n", "\t\t\t\t", 
+        RowBox[{"With", "[", 
+         RowBox[{
+          RowBox[{"{", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"pacletFiles", "=", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"Replace", "[", 
+              RowBox[{
+               RowBox[{"OptionValue", "[", "\"\<PacletFiles\>\"", "]"}], ",", 
+               "\n", "\t", "\t", "\t", "\t\t\t\t", 
+               RowBox[{
+               "Automatic", ":>", "\n", "\t", "\t", "\t", "\t\t\t\t\t", 
+                RowBox[{"If", "[", 
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{
+                   "OptionValue", "[", "\"\<RebundlePaclets\>\"", "]"}], "//",
+                    "TrueQ"}], ",", "\n", "\t", "\t", "\t", "\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{
+                    RowBox[{"AppPacletBundle", "[", 
+                    RowBox[{"#", ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"FilterRules", "[", 
+                    RowBox[{
+                    RowBox[{"{", "ops", "}"}], ",", 
+                    RowBox[{"Options", "@", "AppPacletBundle"}]}], "]"}]}], 
+                    "\n", "\t", "\t", "\t", "\t\t\t\t\t\t\t", "]"}], "&"}], "/@", 
+                   RowBox[{"{", "apps", "}"}]}], ",", "\n", "\t", "\t", "\t", 
+                  "\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{
+                    RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{
+                    "FileExistsQ", "@", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"AppPath", "[", 
+                    RowBox[{"$PacletBuildExtension", ",", 
+                    RowBox[{"#", "<>", "\"\<.paclet\>\""}]}], "]"}]}], ",", 
+                    "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"AppPath", "[", 
+                    RowBox[{"$PacletBuildExtension", ",", 
+                    RowBox[{"#", "<>", "\"\<.paclet\>\""}]}], "]"}], ",", 
+                    "\n", "\t", "\t", "\t", "\t\t\t\t\t\t\t", 
+                    RowBox[{"AppPacletBundle", "[", 
+                    RowBox[{"#", ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"FilterRules", "[", 
+                    RowBox[{
+                    RowBox[{"{", "ops", "}"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Options", "@", "AppPacletBundle"}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", "]"}]}], "]"}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", "]"}], "&"}], "/@", 
+                   RowBox[{"{", "apps", "}"}]}]}], "\n", "\t\t\t\t\t\t\t\t\t",
+                  "]"}]}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"site", "=", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"Replace", "[", 
+              RowBox[{
+               RowBox[{"OptionValue", "[", "\"\<SiteFile\>\"", "]"}], ",", 
+               "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"Except", "[", 
+                 RowBox[{"_String", "?", "FileExistsQ"}], "]"}], ":>", "\n", 
+                "\t\t\t\t\t\t\t\t", 
+                RowBox[{"If", "[", 
+                 RowBox[{
+                  RowBox[{"Not", "@", 
+                   RowBox[{"FileExistsQ", "@", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"AppPath", "[", 
+                    RowBox[{
+                    "$PacletBuildExtension", ",", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"First", "@", 
+                    RowBox[{"{", "apps", "}"}]}], "<>", 
+                    "\"\<-PacletSite.mz\>\""}]}], "]"}]}]}], ",", "\n", 
+                  "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"AppPacletSiteBundle", "[", "apps", "]"}], ",", 
+                  "\n", "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"AppPath", "[", 
+                   RowBox[{
+                   "$PacletBuildExtension", ",", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"First", "@", 
+                    RowBox[{"{", "apps", "}"}]}], "<>", 
+                    "\"\<-PacletSite.mz\>\""}]}], "]"}]}], "\n", 
+                 "\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t\t", 
+              "]"}]}]}], "\n", "\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"PacletUpload", "[", 
+           RowBox[{"pacletFiles", ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"FilterRules", "[", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Flatten", "@", 
+               RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{
+                 "\"\<ServerName\>\"", "\[Rule]", "\n", "\t", 
+                  "\t\t\t\t\t\t\t\t", 
+                  RowBox[{"Replace", "[", 
+                   RowBox[{
+                    RowBox[{"OptionValue", "[", "\"\<ServerName\>\"", "]"}], 
+                    ",", 
+                    RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Automatic", ":>", 
+                    RowBox[{"First", "@", 
+                    RowBox[{"{", "apps", "}"}]}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", "}"}]}], "]"}]}], ",", "\n", 
+                 "\t\t\t\t\t\t\t\t", "ops", ",", "\n", "\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                 "\"\<ServerBase\>\"", "->", "\n", "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"Replace", "[", 
+                   RowBox[{
+                    RowBox[{"OptionValue", "[", "\"\<ServerBase\>\"", "]"}], 
+                    ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Automatic", ":>", "$AppUploadDefault"}]}], "\n", 
+                   "\t", "\t\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+                 "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"Options", "[", "AppPacletUpload", "]"}], ",", "\n", 
+                 "\t", "\t\t\t\t\t\t\t", 
+                 RowBox[{"\"\<SiteFile\>\"", "\[Rule]", "site"}]}], "\n", 
+                "\t", "\t\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t\t\t\t\t\t\t", 
+              
+              RowBox[{"Options", "@", "PacletUpload"}]}], "\n", 
+             "\t\t\t\t\t\t\t", "]"}]}], "]"}]}], "\n", "\t\t\t\t\t", 
+         "]"}]}]}], "\n", "\t\t\t", "}"}]}], "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.7003475196167707`*^9, 3.7003475822739058`*^9}, {
+   3.700347620460416*^9, 3.700347638360899*^9}, {3.700348636252537*^9, 
+   3.700348654984584*^9}, {3.700349047823296*^9, 3.700349082779016*^9}, {
+   3.700349187454259*^9, 3.700349361069911*^9}, {3.700349458760274*^9, 
+   3.700349485998021*^9}, {3.7003495405070353`*^9, 3.700349541279105*^9}, {
+   3.7003495804038982`*^9, 3.700349583992872*^9}, {3.7003500136904984`*^9, 
+   3.70035006711705*^9}, {3.70035011140554*^9, 3.7003503212630663`*^9}, {
+   3.700350352282341*^9, 3.700350512716062*^9}, {3.700350607941867*^9, 
+   3.7003506373821497`*^9}, {3.700356634927548*^9, 3.7003566909165907`*^9}, {
+   3.700356931952051*^9, 3.700356935688918*^9}, {3.700357218627989*^9, 
+   3.700357264290853*^9}, {3.700357349814098*^9, 3.7003574305862103`*^9}, {
+   3.700357577729507*^9, 3.700357665676919*^9}, {3.7003581933919067`*^9, 
+   3.7003582204014683`*^9}, {3.700358339811221*^9, 3.700358470662908*^9}, {
+   3.7003586992251167`*^9, 3.700358744259471*^9}, {3.700358810301602*^9, 
+   3.70035898719256*^9}, {3.7003590720903997`*^9, 3.700359081903613*^9}, {
+   3.700360084619255*^9, 3.700360232197928*^9}, {3.700362767118709*^9, 
+   3.7003627684165287`*^9}, {3.7003628221552553`*^9, 3.700362874297333*^9}, {
+   3.700366904157681*^9, 3.700366932816622*^9}, {3.700368773523013*^9, 
+   3.7003687831704607`*^9}, {3.700928906437158*^9, 3.700929325681266*^9}, {
+   3.7009323646358232`*^9, 3.7009323855037613`*^9}, {3.700938348580696*^9, 
+   3.700938350783678*^9}, {3.700938415558395*^9, 3.7009384202755136`*^9}, {
+   3.700940324137265*^9, 3.7009403250036297`*^9}, 3.7009456675287*^9, 
+   3.7009457375218143`*^9, {3.700945875303227*^9, 3.700945887413797*^9}, {
+   3.7009489793493633`*^9, 3.700949169552621*^9}, {3.700950345517717*^9, 
+   3.70095035627357*^9}, {3.700951054686673*^9, 3.7009510679464493`*^9}, {
+   3.700951162577722*^9, 3.700951289098155*^9}, 3.700951361096271*^9, 
+   3.700951566797844*^9, {3.701120350014718*^9, 3.701120352576501*^9}, {
+   3.7011203940165653`*^9, 3.701120495771401*^9}, {3.701120529722651*^9, 
+   3.7011205356380053`*^9}, {3.701120573428484*^9, 3.701120576022428*^9}, {
+   3.7013030090307913`*^9, 3.701303015942582*^9}, {3.702604946296702*^9, 
+   3.70260497641084*^9}, {3.702677549113155*^9, 3.702677633111706*^9}, {
+   3.702677682870755*^9, 3.702677721944387*^9}, {3.7026777643476763`*^9, 
+   3.702677773968891*^9}, {3.702678010662897*^9, 3.702678099456584*^9}, {
+   3.702678139977951*^9, 3.7026782417478867`*^9}, 3.702842122956078*^9, {
+   3.7028428798323402`*^9, 3.7028428882362223`*^9}, {3.702842921062055*^9, 
+   3.702842936562958*^9}, {3.7028430162175817`*^9, 3.702843086521203*^9}, {
+   3.702843131249514*^9, 3.702843134142308*^9}, {3.702843194315486*^9, 
+   3.702843194985392*^9}, {3.70284329039327*^9, 3.702843296508812*^9}, 
+   3.702843422732972*^9, {3.702843541792706*^9, 3.7028435456708937`*^9}, {
+   3.702843632248206*^9, 3.702843664769884*^9}, {3.702843727959311*^9, 
+   3.702843789429284*^9}, {3.70284421632146*^9, 3.702844249402253*^9}, {
+   3.705621209507217*^9, 3.70562122176159*^9}, {3.705621258657405*^9, 
+   3.705621356705928*^9}, {3.7056249129312477`*^9, 3.7056249172297*^9}, {
+   3.7056249624801693`*^9, 3.705625055281918*^9}, {3.705693912586896*^9, 
+   3.7056939225165977`*^9}, {3.706377812009534*^9, 3.7063778126957827`*^9}, {
+   3.706377995829515*^9, 3.706377999252555*^9}, {3.7063782207171173`*^9, 
+   3.706378222885585*^9}, {3.707091401459778*^9, 3.707091403043749*^9}, {
+   3.708001501041794*^9, 3.708001505439631*^9}, 3.708005390395842*^9, {
+   3.708005431571438*^9, 3.708005433362582*^9}, 3.708005989416987*^9, {
+   3.712197012751603*^9, 3.71219703100848*^9}, {3.712614821723477*^9, 
+   3.712614823016245*^9}, {3.727895381809764*^9, 3.7278953829617147`*^9}, 
+   3.7328454594004908`*^9, 
+   3.73284553342914*^9},ExpressionUUID->"060ec933-baa2-43dc-a5ee-17487e618b3a"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppPacletBackup\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.712196839838861*^9, 
+  3.712196845686316*^9}},ExpressionUUID->"e1891afc-080f-412b-822f-\
+ed5c7dfd0f5d"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "AppPacletBackup", "]"}], "=", "\n", "\t", 
+   RowBox[{"Options", "[", "AppPacletUpload", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"AppPacletBackup", "[", "\n", "\t", 
+   RowBox[{"app_", ",", "\n", "\t", 
+    RowBox[{"server", ":", 
+     RowBox[{
+     "Automatic", "|", "\"\<Cloud\>\"", "|", "\"\<GoogleDrive\>\"", "|", 
+      "\"\<DropBox\>\"", "|", "\"\<OneDrive\>\""}], ":", "Automatic"}], ",", 
+    "\n", "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"AppPacletUpload", "[", "\n", "\t\t", 
+   RowBox[{"app", ",", "\n", "\t\t", 
+    RowBox[{"\"\<ServerBase\>\"", "\[Rule]", "\n", "\t\t\t", 
+     RowBox[{"Replace", "[", 
+      RowBox[{"server", ",", "\n", "\t\t\t\t", 
+       RowBox[{"Automatic", ":>", "$AppBackupDefault"}]}], "\n", "\t\t\t\t", 
+      "]"}]}], ",", "\n", "\t\t", "ops", ",", "\n", "\t\t", 
+    RowBox[{"\"\<ServerExtension\>\"", "\[Rule]", "\"\<backups\>\""}], ",", 
+    "\n", "\t\t", 
+    RowBox[{"\"\<RemovePaths\>\"", "\[Rule]", 
+     RowBox[{"{", "}"}]}], ",", "\n", "\t\t", 
+    RowBox[{"\"\<RemovePatterns\>\"", "\[Rule]", "\"\<.DS_Store\>\""}], ",", 
+    "\n", "\t\t", 
+    RowBox[{"\"\<UploadSiteFile\>\"", "\[Rule]", "False"}], ",", "\n", "\t\t", 
+    RowBox[{"\"\<UploadInstaller\>\"", "\[Rule]", "False"}], ",", "\n", 
+    "\t\t", 
+    RowBox[{"\"\<UploadUninstaller\>\"", "\[Rule]", "False"}], ",", "\n", 
+    "\t\t", 
+    RowBox[{"\"\<UploadInstallLink\>\"", "\[Rule]", "False"}]}], "\n", "\t\t",
+    "]"}]}]}], "CodeInput",
+ CellChangeTimes->{{3.712196847419236*^9, 3.712196929356606*^9}, {
+  3.712196969909933*^9, 3.712196980893174*^9}, {3.71219739850176*^9, 
+  3.712197405994589*^9}, {3.712199050281849*^9, 
+  3.7121990727924623`*^9}},ExpressionUUID->"bcac1400-cae2-4fca-821c-\
+768fded87bfe"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppPacletDirectoryAdd\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.700356526888412*^9, 
+  3.700356527498356*^9}},ExpressionUUID->"bee8cdf3-fcca-466e-b519-\
+0c4e86b2db9a"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletDirectoryAdd", "[", "app_", "]"}], ":=", "\n", "\t", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{"DirectoryQ", "@", 
+      RowBox[{"AppDirectory", "[", "app", "]"}]}], ",", "\t", "\n", "\t\t", 
+     RowBox[{"PacletDirectoryAdd", "@", 
+      RowBox[{"AppDirectory", "[", "app", "]"}]}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.7003565536158257`*^9, 
+  3.700356580110003*^9}},ExpressionUUID->"7f441e77-a46f-411d-9bd5-\
+82988c13b84a"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppSubpacletUpload\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.7044841531729527`*^9, 3.704484157706702*^9}, 
+   3.704484248175103*^9},ExpressionUUID->"8bd0a5e9-ffde-4e4c-911f-\
+7dc0bb0d38d2"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "AppSubpacletUpload", "]"}], "=", "\n", "\t", 
+   RowBox[{"Join", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Options", "@", "AppPacletUpload"}], ",", "\n", "\t\t", 
+     RowBox[{"Options", "@", "AppConfigureSubapp"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppSubpacletUpload", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"app_:", "Automatic"}], ",", "\n", "\t", 
+     RowBox[{"name", ":", 
+      RowBox[{"_String", "|", 
+       RowBox[{"{", "__String", "}"}]}]}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{"dir", "=", "\n", "\t\t\t", 
+       RowBox[{"AppConfigureSubapp", "[", 
+        RowBox[{"app", ",", "name", ",", "\n", "\t\t\t\t", 
+         RowBox[{"FilterRules", "[", 
+          RowBox[{
+           RowBox[{"{", "\n", "\t\t\t\t\t", 
+            RowBox[{"ops", ",", "\n", "\t\t\t\t\t", 
+             RowBox[{"\"\<PacletInfo\>\"", "\[Rule]", 
+              RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+               RowBox[{
+               "\"\<Description\>\"", "\[Rule]", "\n", "\t", "\t\t\t\t\t\t", 
+                RowBox[{"TemplateApply", "[", 
+                 RowBox[{"\"\<A subpaclet of ``\>\"", ",", 
+                  RowBox[{"AppFromFile", "[", "app", "]"}]}], "]"}]}], "\n", 
+               "\t\t\t\t\t\t", "}"}]}]}], "\n", "\t\t\t\t\t", "}"}], ",", 
+           "\n", "\t\t\t\t\t", 
+           RowBox[{"Options", "@", "AppConfigureSubapp"}]}], "\n", 
+          "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t", 
+      "}"}], ",", "\n", "\t\t", 
+     RowBox[{"Block", "[", 
+      RowBox[{
+       RowBox[{"{", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"$AppDirectoryRoot", "=", 
+          RowBox[{"DirectoryName", "@", "dir"}]}], ",", "\n", "\t\t\t", 
+         RowBox[{"$AppDirectoryName", "=", "Nothing"}], ",", "\n", "\t\t\t", 
+         RowBox[{"appName", "=", 
+          RowBox[{"FileBaseName", "@", "dir"}]}]}], "\n", "\t\t\t", "}"}], 
+       ",", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"AppPacletBundle", "[", "appName", "]"}], ";", "\n", "\t\t\t", 
+        RowBox[{"AppPacletUpload", "[", 
+         RowBox[{"appName", ",", "\n", "\t\t\t\t", 
+          RowBox[{"FilterRules", "[", 
+           RowBox[{
+            RowBox[{"{", "\n", "\t\t\t\t\t", "ops", "\n", "\t\t\t\t\t", "}"}],
+             ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"Options", "@", "AppPacletUpload"}]}], "\n", "\t\t\t\t\t",
+            "]"}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "]"}]}], 
+    "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.704484160201771*^9, 3.7044841605334997`*^9}, {
+  3.7044841966805973`*^9, 3.7044843793809843`*^9}, {3.704686378897379*^9, 
+  3.7046863810951*^9}, {3.706377604875722*^9, 3.706377655475224*^9}, {
+  3.706377981466091*^9, 3.706377982024322*^9}, {3.7063781882197027`*^9, 
+  3.7063781945333138`*^9}, {3.706378303306796*^9, 
+  3.7063783215394278`*^9}},ExpressionUUID->"d189bead-7c40-4613-bf5c-\
+6eab0e5cae37"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppPacletServerPage\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.705635389224498*^9, 
+  3.7056353968470097`*^9}},ExpressionUUID->"d37b5d5f-9fc6-4f57-b803-\
+ff72f66b8fa1"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "AppPacletServerPage", "]"}], "=", "\n", "\t", 
+   RowBox[{"Options", "[", "PacletServerPage", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletServerPage", "[", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"PacletServerPage", "[", "ops", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppPacletServerPage", "[", 
+    RowBox[{
+     RowBox[{"app", ":", 
+      RowBox[{"Except", "[", 
+       RowBox[{"_", "?", "OptionQ"}], "]"}]}], ",", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"AppPacletServerPage", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"\"\<ServerName\>\"", "\[Rule]", "\n", "\t\t\t", 
+      RowBox[{"Lookup", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"Association", "@", 
+         RowBox[{"Flatten", "@", 
+          RowBox[{"{", "ops", "}"}]}]}], ",", "\n", "\t\t\t\t", 
+        "\"\<ServerName\>\"", ",", "\n", "\t\t\t\t", 
+        RowBox[{"AppFromFile", "@", "app"}]}], "\n", "\t\t\t\t", "]"}]}], ",",
+      "\n", "\t\t", "ops"}], "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.705635400273293*^9, 3.7056354522637787`*^9}, {
+  3.705635547271549*^9, 3.705635609116993*^9}, {3.705635682084025*^9, 
+  3.705635822230558*^9}, {3.705693930282629*^9, 
+  3.705693937367464*^9}},ExpressionUUID->"3d83d099-db2f-4d9e-9957-\
+17e73b850721"]
+}, Closed]]
+}, Open  ]],
+
+Cell["End[];", \
+"InputSection",ExpressionUUID->"ae4ea9b2-bc1a-4a9b-bb62-b529c5dd407d"]
+}, Open  ]],
+
+Cell["", "SectionSeparator",ExpressionUUID->"51af92ef-62b7-4e37-bdaf-\
+538e35eb72a6"]
+},
+WindowSize->{798, 765},
+WindowMargins->{{Automatic, 315}, {Automatic, 8}},
+Visible->True,
+FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
+2018)",
+StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+

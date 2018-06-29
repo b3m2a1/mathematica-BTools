@@ -75,16 +75,16 @@ PackageFileContext[f_String?FileExistsQ]:=
 
 
 PackageExecute[expr_]:=
-	CompoundExpression[
-		Internal`WithLocalSettings[
-			BeginPackage["$Name`"],
-			$ContextPath=
-				DeleteDuplicates[
-					Join[$ContextPath, $PackageContexts]
-					];
-			expr,
-			EndPackage[]
-			]
+	Internal`WithLocalSettings[
+		Begin[$PackageContexts[[1]]];
+		System`Private`NewContextPath@
+			Prepend[
+				$PackageContexts,
+				"System`"
+				];,
+		expr,
+		System`Private`RestoreContextPath[];
+		End[];
 		];
 PackageExecute~SetAttributes~HoldFirst
 

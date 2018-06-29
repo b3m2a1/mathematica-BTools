@@ -223,7 +223,7 @@ Options[PackageLoadPacletDependency]=
 		];
 PackageLoadPacletDependency[dep_String?(StringEndsQ["`"]), ops:OptionsPattern[]]:=
 	Internal`WithLocalSettings[
-		System`Private`NewContextPath[{"System`", dep}];,
+		System`Private`NewContextPath[{dep, "System`"}];,
 		If[PackageCheckPacletDependency[dep],
 			If[TrueQ@OptionValue["Update"],
 				PackageUpdatePacletDependency[dep,
@@ -234,7 +234,9 @@ PackageLoadPacletDependency[dep_String?(StringEndsQ["`"]), ops:OptionsPattern[]]
 			];
 		Needs[dep];
 		PackageExtendContextPath@
-			Select[$Packages, StringStartsQ[dep]];,
+			Select[$Packages, 
+				StringStartsQ[#, dep]&&StringFreeQ[#, "`Private`"]&
+				];,
 		System`Private`RestoreContextPath[];
 		]
 

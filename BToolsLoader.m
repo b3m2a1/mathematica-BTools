@@ -344,16 +344,16 @@ PackageFileContext[f_String?FileExistsQ]:=
 
 
 PackageExecute[expr_]:=
-	CompoundExpression[
-		Internal`WithLocalSettings[
-			BeginPackage["BTools`"],
-			$ContextPath=
-				DeleteDuplicates[
-					Join[$ContextPath, $PackageContexts]
-					];
-			expr,
-			EndPackage[]
-			]
+	Internal`WithLocalSettings[
+		Begin[$PackageContexts[[1]]];
+		System`Private`NewContextPath@
+			Prepend[
+				$PackageContexts,
+				"System`"
+				];,
+		expr,
+		System`Private`RestoreContextPath[];
+		End[];
 		];
 PackageExecute~SetAttributes~HoldFirst
 
@@ -954,7 +954,7 @@ Options[PackageLoadPacletDependency]=
 		];
 PackageLoadPacletDependency[dep_String?(StringEndsQ["`"]), ops:OptionsPattern[]]:=
 	Internal`WithLocalSettings[
-		System`Private`NewContextPath[{"System`", dep}];,
+		System`Private`NewContextPath[{dep, "System`"}];,
 		If[PackageCheckPacletDependency[dep],
 			If[TrueQ@OptionValue["Update"],
 				PackageUpdatePacletDependency[dep,
@@ -965,7 +965,9 @@ PackageLoadPacletDependency[dep_String?(StringEndsQ["`"]), ops:OptionsPattern[]]
 			];
 		Needs[dep];
 		PackageExtendContextPath@
-			Select[$Packages, StringStartsQ[dep]];,
+			Select[$Packages, 
+				StringStartsQ[#, dep]&&StringFreeQ[#, "`Private`"]&
+				];,
 		System`Private`RestoreContextPath[];
 		]
 
@@ -2151,7 +2153,7 @@ Clear[`PackageScope`Private`$PackageScopedSymbols];
 (*EndPackage / Reset $ContextPath*)
 
 
-System`Private`ResetContextPath[]
+System`Private`RestoreContextPath[]
 EndPackage[];
 
 
