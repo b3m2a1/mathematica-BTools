@@ -26,6 +26,11 @@ $WebSiteThemePath::usage=
 Begin["`Private`"];
 
 
+(* ::Subsection:: *)
+(*Config*)
+
+
+
 (* ::Subsubsection::Closed:: *)
 (*$WebSiteDirectory*)
 
@@ -201,8 +206,8 @@ webSiteNewContentAutoname[dir_, place_]:=
 		(
 			1+Length@
 				DeleteDuplicatesBy[FileBaseName]@
-					FileNames["*.nb"|"*.md"|"*.html",
-						FileNameJoin@{dir, "content",place}]
+					FileNames["*.nb"|"*.md"|"*.html"|"*.xml",
+						FileNameJoin@{dir, "content", place}]
 			)
 
 
@@ -344,7 +349,7 @@ WebSiteNewTableOfContents[dir_String?DirectoryQ]:=
 										Flatten@{
 											"..",
 											Most@FileNameSplit@StringTrim[#, outdir],
-											#2["Slug"]<>".html"
+											WebSiteBuildAttachExtension@#2["Slug"]
 											}
 										],
 								"Title"->
@@ -650,13 +655,28 @@ WebSiteXMLTemplateApply[
 
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*WebSiteBuildSlug*)
+
+
+
 WebSiteBuildSlug[fname_]:=
 	StringReplace[StringTrim[fname],WhitespaceCharacter->"-"]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*WebSiteBuildURL*)
+
 
 
 WebSiteBuildURL[fname_]:=
 	URLBuild@FileNameSplit@
 		WebSiteBuildSlug@fname
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*WebSiteBuildContentType*)
+
 
 
 WebSiteBuildContentType[fname_,dir_]:=
@@ -680,12 +700,22 @@ WebSiteBuildContentType[fname_,dir_]:=
 		]
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*$WebSiteContentDirectoryTemplateMap*)
+
+
+
 $WebSiteContentDirectoryTemplateMap=
 	<|
 		"post"->"article.html",
 		"page"->"page.html",
 		"misc"->"base.html"
 		|>;
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*WebSiteBuildGetTemplates*)
+
 
 
 WebSiteBuildGetTemplates[content_,dir_]:=
@@ -709,6 +739,11 @@ WebSiteBuildGetTemplates[content_,dir_]:=
 		]
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*WebSiteBuildFilePath*)
+
+
+
 WebSiteBuildFilePath[fname_,dir_]:=
 	If[StringStartsQ[fname, dir],
 		If[FileNameTake[#,1]=="posts",
@@ -724,11 +759,23 @@ WebSiteBuildFilePath[fname_,dir_]:=
 		]
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*$WebSiteBuildSafeExportXMLElements*)
+
+
+
 $WebSiteBuildSafeExportXMLElements=
 	Alternatives@@{
 		"script",
 		"style"
 		};
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$WebSiteBuildSafeExportXMLMap*)
+
+
+
 $WebSiteBuildSafeExportXMLMap=
 	{
 		"\""->"safeXMLExportProtectedCharacterQuot",
@@ -737,6 +784,11 @@ $WebSiteBuildSafeExportXMLMap=
 		"&"->"safeXMLExportProtectedCharacterAmp",
 		"'"->"safeXMLExportProtectedCharacterApos"
 		};
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*WebSiteBuildSafeExportXML*)
+
 
 
 WebSiteBuildSafeExportXML[xml_]:=
@@ -748,6 +800,18 @@ WebSiteBuildSafeExportXML[xml_]:=
 			"XML"
 			],
 		Reverse/@$WebSiteBuildSafeExportXMLMap
+		]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*WebSiteBuildAttachExtension*)
+
+
+
+WebSiteBuildAttachExtension[s_]:=
+	If[!MemberQ[{"html", "xml"}, ToLowerCase@FileExtension@s],
+		StringTrim[s, "."<>FileExtension[s]]<>".html",
+		s
 		]
 
 
@@ -1047,18 +1111,42 @@ WebSiteTemplatePreProcess[fileContent_,args_]:=
 
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*$WebSiteSummaryBaseUnits*)
+
+
+
 $WebSiteSummaryBaseUnits=
 	{
 		"Characters","Words","Characters",
 		"Sentences","Paragraphs","Lines"
 		};
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$WebSiteSummaryIndependentUnits*)
+
+
+
 $WebSiteSummaryIndependentUnits:=
 	$WebSiteSummaryIndependentUnits=
 		Quantity/@$WebSiteSummaryBaseUnits//QuantityUnit;
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$WebSiteSummaryUnits*)
+
+
+
 $WebSiteSummaryUnits:=
 	$WebSiteSummaryUnits=
 		Alternatives@@
 			Join[$WebSiteSummaryBaseUnits,$WebSiteSummaryIndependentUnits]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*WebSiteTemplateGatherArgs*)
+
 
 
 WebSiteTemplateGatherArgs[fileContent_, args_]:=
@@ -1214,11 +1302,12 @@ WebSiteTemplateGatherArgs[fileContent_, args_]:=
 									]
 								]
 						],
-				With[{
-					url=Lookup[args, "URL"],
-					slug=Lookup[args, "Slug"],
-					fp=Lookup[args, "FilePath"]
-					},
+				With[
+					{
+						url=Lookup[args, "URL"],
+						slug=Lookup[args, "Slug"],
+						fp=Lookup[args, "FilePath"]
+						},
 					Which[
 						StringQ@url,
 							"URL"->url,
@@ -1226,8 +1315,8 @@ WebSiteTemplateGatherArgs[fileContent_, args_]:=
 							"URL"->
 								If[StringQ[fp],
 									URLBuild@
-										Append[Most@FileNameSplit[fp],slug<>".html"],
-									slug<>".html"
+										Append[Most@FileNameSplit[fp], WebSiteBuildAttachExtension@slug],
+									WebSiteBuildAttachExtension@slug
 									],
 						True,	
 							Nothing
@@ -1364,12 +1453,13 @@ WebSiteTemplateExport[
 						fil=
 							Replace[f,
 								{
-									Automatic:>fout,
+									Automatic:>
+										WebSiteBuildAttachExtension@fout,
 									s_String:>
 										FileNameJoin@
 											Append[
 												Most@FileNameSplit[fout],
-												FileBaseName@s<>".html"
+												WebSiteBuildAttachExtension@s
 												]
 									}]
 							},
@@ -1416,13 +1506,13 @@ WebSiteTemplateExportPaginated[
 			page=""
 			},
 			If[TrueQ@OptionValue[Monitor], Monitor, #&][
-				If[IntegerQ[pageSize]&&pageSize>0,
+				If[IntegerQ[pageSize]&&pageSize>0&&MemberQ[{"html", ""}, FileExtension[baseName]],
 					Table[
 						WebSiteTemplateExport[
 							failInput<>If[i>1, ", page "<>ToString[i], ""],
 							FileNameJoin@{
 								dir, 
-								baseName<>If[i>1, ToString[i], ""]<>".html"
+								StringTrim[baseName, ".html"]<>If[i>1, ToString[i], ""]<>".html"
 								},
 							root,
 							None,
@@ -1485,7 +1575,7 @@ WebSiteTemplateExportPaginated[
 						failInput,
 						FileNameJoin@{
 								dir, 
-								baseName<>".html"
+								WebSiteBuildAttachExtension@baseName
 								},
 						root,
 						None,
@@ -1502,7 +1592,7 @@ WebSiteTemplateExportPaginated[
 											FileNameDrop[
 												FileNameJoin@{
 													dir, 
-													baseName<>".html"
+													WebSiteBuildAttachExtension@baseName
 													},
 												FileNameDepth[outDir]
 												]
@@ -2015,7 +2105,7 @@ WebSiteGenerateAggregationPages[
 				*)
 					FileNameJoin@{"aggregations", FileBaseName[#]}&/@
 						FileNames[
-							"*.html",
+							"*.html"|"*.xml",
 							FileNameJoin@{
 								thm,
 								"templates",
@@ -2182,13 +2272,8 @@ WebSiteGenerateAggregationPages[
 
 
 
-WebSiteGenerateIndexPages//ClearAll
-
-
-(* ::Text:: *)
-(*
-	Need support for multiple indexes, rather than just the global one
-*)
+(* ::Subsubsubsection::Closed:: *)
+(*WebSiteGatherIndexTemplates*)
 
 
 
@@ -2198,8 +2283,16 @@ WebSiteGatherIndexTemplates[thm_]:=
 			{
 				FileNameJoin[{thm, "templates", "index.html"}]
 				},
-			FileNames["*.html", FileNameJoin@{thm, "templates", "indexes"}]
+			FileNames["*.html"|"*.xml", FileNameJoin@{thm, "templates", "indexes"}]
 			]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*WebSiteGenerateIndexPages*)
+
+
+
+WebSiteGenerateIndexPages//ClearAll
 
 
 Options[WebSiteGenerateIndexPages]=
@@ -2207,7 +2300,7 @@ Options[WebSiteGenerateIndexPages]=
 		"PageSize"->0,
 		Monitor->True
 		};
-WebSiteGenerateIndexPages[dir_,outDir_,theme_,config_, ops:OptionsPattern[]]:=
+WebSiteGenerateIndexPages[dir_, outDir_, theme_, config_, ops:OptionsPattern[]]:=
 	With[
 		{
 			longDir=ExpandFileName@dir,
@@ -2310,13 +2403,7 @@ WebSiteGenerateContent[
 											URLParse[u, "Path"]
 											},
 								_:>
-									Function[
-										If[FileExtension[#]=!="html",
-											DirectoryName[#]<>
-												FileBaseName[#]<>".html",
-											#
-											]
-										]@
+									WebSiteBuildAttachExtension@
 										FileNameJoin@{
 											outDir,
 											WebSiteBuildSlug@
@@ -2799,7 +2886,7 @@ iWebSiteBuildGetFiles[dir_, dirs_, templates_]:=
 		Join@@
 			Map[
 				Thread[
-					FileNames["*.html"|"*.md",
+					FileNames["*.html"|"*.md"|"*.xml",
 						FileNameJoin@{dir, "content", #},
 						\[Infinity]
 						]->
