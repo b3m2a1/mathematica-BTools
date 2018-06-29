@@ -1161,7 +1161,7 @@ pacletMarkdownNotebookMetadataSection[a_]:=
 			<|
 				"DisplayName"->
 					pacletMarkdownNotebookMakeName[a["Name"]],
-				"LastModified"->
+				"Modified"->
 					pacletMarkdownNotebookMetadataGetFileModificationDate[
 						Lookup[a, {"Name", "Version", "LastModified"}, Missing["NotAvailable"]]
 						]
@@ -1546,7 +1546,7 @@ PacletMarkdownNotebook[p_PacletManager`Paclet]:=
 		PacletMarkdownNotebook[a]
 		];
 PacletMarkdownNotebook[f_String?FileExistsQ,a_,regen_:Automatic]:=
-	PacletMarkdownNotebookUpdate[f,a,regen];
+	PacletMarkdownNotebookUpdate[f, a, regen];
 PacletMarkdownNotebook[f_String, a_, regen_:Automatic]:=
 	With[{nb=PacletMarkdownNotebook[a]},
 		Switch[nb,

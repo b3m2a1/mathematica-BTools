@@ -1194,7 +1194,8 @@ WebSiteTemplateGatherArgs[fileContent_, args_]:=
 					With[{
 						sl=
 							Replace[
-								Lookup[args,"SummaryLength"],{
+								Lookup[args,"SummaryLength"],
+								{
 									i_Integer?Positive:>
 										{i, "Characters"},
 									_[i_Integer?Positive, u:Alternatives@@$WebSiteSummaryBaseUnits]:>
@@ -1203,7 +1204,8 @@ WebSiteTemplateGatherArgs[fileContent_, args_]:=
 										{i, u},
 									_:>
 										{1,"Paragraph"}
-								}]
+									}
+								]
 						},
 						With[
 							{
