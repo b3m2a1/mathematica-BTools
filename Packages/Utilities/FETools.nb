@@ -454,6 +454,19 @@ Cell[BoxData[
 58383bd59c95"]
 }, Closed]],
 
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Export\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"ce2af819-4489-41d6-9ea7-faa73dfbd030"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"FEExport", "::", "usage"}], "=", 
+   "\"\<Exports FE stuff as text\>\""}], 
+  ";"}]], "CodeInput",ExpressionUUID->"a12b3e88-61ea-4977-89fd-bd95909ce67f"]
+}, Closed]],
+
 Cell[BoxData[
  RowBox[{
   RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
@@ -3105,7 +3118,7 @@ Cell[BoxData[{
   3.7259904118077707`*^9}},ExpressionUUID->"3d1ab134-f6e5-47e6-812b-\
 4107d0498ebe"]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -3559,7 +3572,7 @@ Cell[BoxData[{
    3.703708793489304*^9}},ExpressionUUID->"47964a9c-948c-4b6f-baf6-\
 5dfcc35a45ba"]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -4055,7 +4068,7 @@ Cell[BoxData[
 b48912c4bd51"]
 }, Open  ]]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -4574,7 +4587,7 @@ Cell[BoxData[
   3.708432208816972*^9}},ExpressionUUID->"56c08c4a-bed0-4350-9fd0-\
 262aec863e7d"]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -4977,6 +4990,75 @@ Cell[BoxData[{
 }, Closed]]
 }, Open  ]],
 
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Export\[RightFloor]", "CodeSubsection",
+ Evaluatable->True,ExpressionUUID->"21c120e1-cb11-4d74-9f7c-15b58d4e4ec7"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$FEExportFormats", "=", "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{
+    "\"\<PlainText\>\"", ",", " ", "\"\<InputText\>\"", ",", "\n", " \t", 
+     "\"\<PostScript\>\"", ",", " ", "\"\<InputForm\>\"", ",", " ", 
+     "\"\<GIF\>\"", ",", "\n", "\t", " ", "\"\<BoundingBox\>\"", ",", " ", 
+     "\"\<NotebookString\>\"", ",", "\n", "\t", " ", 
+     "\"\<EnhancedMetafile\>\"", ",", " ", "\"\<Metafile\>\"", ",", " ", 
+     "\"\<MGF\>\"", ",", " ", "\n", "\t", " ", "\"\<CDFNotebookString\>\"", 
+     ",", " ", "\"\<PDF\>\"", ",", "\n", "\t", " ", "\"\<PICT\>\"", ",", " ", 
+     "\"\<BitmapPacket\>\""}], "\n", "\t ", "}"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"a6fe1d0e-099b-4e0a-9703-61e7fa156a9a"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"FEExportPrep", "[", "c_Cell", "]"}], ":=", "\n", "\t", "c"}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"FEExportPrep", "[", "c_CellObject", "]"}], ":=", "\n", "\t", 
+   RowBox[{"NotebookRead", "@", "c"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"FEExportPrep", "[", "b_BoxData", "]"}], ":=", "\n", "\t", 
+   RowBox[{"Cell", "[", "b", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"FEExportPrep", "[", 
+    RowBox[{"r_", "?", "BoxQ"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Cell", "[", 
+    RowBox[{"BoxData", "@", "r"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"FEExportPrep", "[", "e_", "]"}], ":=", "\n", "\t", 
+   RowBox[{"Cell", "[", 
+    RowBox[{"BoxData", "@", 
+     RowBox[{"ToBoxes", "@", "e"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"FEExport", "[", 
+    RowBox[{"thing_", ",", " ", 
+     RowBox[{"fmt", ":", 
+      RowBox[{"Alternatives", "@@", "$FEExportFormats"}], ":", 
+      "\"\<PlainText\>\""}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"First", "@", 
+    RowBox[{"FrontEndExecute", "@", 
+     RowBox[{"ExportPacket", "[", 
+      RowBox[{
+       RowBox[{"FEExportPrep", "@", "thing"}], ",", " ", "fmt"}], "]"}]}]}]}],
+   ";"}]}], \
+"CodeInput",ExpressionUUID->"723fe0fa-3405-4f7b-aed8-041e65b725b1"],
+
+Cell[BoxData[
+ RowBox[{"PackageAddAutocompletions", "[", "\n", "\t", 
+  RowBox[{"FEExport", ",", "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{"None", ",", "\n", "\t\t", "$FEExportFormats"}], "\n", "\t\t", 
+    "}"}]}], "\n", "\t", 
+  "]"}]], "CodeInput",ExpressionUUID->"c484955b-3c8a-4291-91ad-221aad2d1f06"]
+}, Open  ]],
+
 Cell[BoxData[
  RowBox[{
   RowBox[{"End", "[", "]"}], 
@@ -4988,7 +5070,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"9dd4df20-43b5-48b7-9dd8-\
 bf604e9b342a"]
 },
 WindowSize->{684, 735},
-WindowMargins->{{327, Automatic}, {Automatic, 0}},
+WindowMargins->{{Automatic, 317}, {Automatic, 0}},
 TaggingRules->{
  "DocuToolsSettingsInternal" -> {"$CondensedBlogMenus" -> "True"}, 
   "$testsRun" -> False},

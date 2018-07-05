@@ -4,17 +4,21 @@
 (*Loading*)
 
 
-$PackageFileContexts::usage="";
-$DeclaredPackages::usage="";
-$LoadedPackages::usage="";
+$PackageFileContexts::usage="The contexts for files in the package";
+$DeclaredPackages::usage="The set of packages found and declared via the autoloader";
+$LoadedPackages::usage="The set of loaded packages";
 
 
-PackageExecute::usage="";
-PackageLoadPackage::usage="";
-PackageLoadDeclare::usage="";
+PackageExecute::usage="Executes something with the package contexts exposed";
+PackageLoadPackage::usage="Loads a package via PackageExecute";
+PackageLoadDeclare::usage="Declares a package";
+
+
 PackageAppLoad::usage="";
 PackageAppGet::usage="";
 PackageAppNeeds::usage="";
+
+
 PackageScopeBlock::usage="";
 PackageFERehideSymbols::usage="Predeclared here...";
 PackageDecontext::usage="";
@@ -258,7 +262,7 @@ packageAppLoad[dir_, listing_]:=
 			Select[fileNames, 
 				StringMatchQ[
 					ToLowerCase@FileNameTake[#], 
-					"__Post__."~~("m"|"wl")
+					"__post__."~~("m"|"wl")
 					]&
 				],
 			{f_}:>Get[f]
@@ -268,16 +272,21 @@ packageAppLoad[dir_, listing_]:=
 
 PackageAppLoad[dir_String?DirectoryQ]:=
 	If[StringMatchQ[FileBaseName@dir,(WordCharacter|"$")..],
-		Begin["`"<>FileBaseName[dir]<>"`"];
-		AppendTo[$PackageContexts, $Context];
-		packageAppLoad[dir, FileNameDrop[dir,FileNameDepth[$PackageDirectory]+1]];
-		End[];
+		Internal`WithLocalSettings[
+			Begin["`"<>FileBaseName[dir]<>"`"],
+			AppendTo[$PackageContexts, $Context];
+			packageAppLoad[dir, FileNameDrop[dir,FileNameDepth[$PackageDirectory]+1]],
+			End[];
+			]
 		];
 PackageAppLoad[file_String?FileExistsQ]:=
 	PackageLoadDeclare[file];
 PackageAppLoad[]:=
 	PackageExecute@
-		packageAppLoad[FileNameJoin@{$PackageDirectory,"Packages"}, $PackageName];
+		packageAppLoad[
+			FileNameJoin@{$PackageDirectory, $PackagePackagesDirectory}, 
+			$PackageName
+			];
 PackageAppLoad~SetAttributes~Listable;
 
 
@@ -292,13 +301,15 @@ PackageAppGet[f_]:=
 		With[{fBase = 
 			If[FileExistsQ@f,
 				f,
-				PackageFilePath["Packages",f<>".m"]
+				PackageFilePath[$PackagePackagesDirectory, f<>".m"]
 				]
 			},
 			With[{cont = 
 				Most@
 					FileNameSplit[
-						FileNameDrop[fBase, FileNameDepth[PackageFilePath["Packages"]]]
+						FileNameDrop[fBase, 
+							FileNameDepth[PackageFilePath[$PackagePackagesDirectory]]
+							]
 						]},
 				If[Length[cont]>0,
 					Begin[StringRiffle[Append[""]@Prepend[""]@cont, "`"]];
@@ -313,7 +324,7 @@ PackageAppGet[c_,f_]:=
 		(End[];#)&@
 			If[FileExistsQ@f,
 				Get@f;,
-				Get@PackageFilePath["Packages",f<>".m"]
+				Get@PackageFilePath[$PackagePackagesDirectory, f<>".m"]
 				]
 		];
 
@@ -336,8 +347,8 @@ PackageAppNeeds[pkgFile_String?FileExistsQ]:=
 
 
 PackageAppNeeds[pkg_String]:=
-	If[FileExistsQ@PackageFilePath["Packages",pkg<>".m"],
-		PackageAppNeeds[PackageFilePath["Packages",pkg<>".m"]],
+	If[FileExistsQ@PackageFilePath[$PackagePackagesDirectory, pkg<>".m"],
+		PackageAppNeeds[PackageFilePath[$PackagePackagesDirectory, pkg<>".m"]],
 		$Failed
 		];
 

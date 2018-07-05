@@ -64,9 +64,10 @@ AppendTo[$ContextPath, $Context];
 
 $PackageDirectory::usage="";
 $PackageName::usage="";
-$PackageListing::usage="";
-$PackageContexts::usage="";
-$PackageDeclared::usage="";
+$PackageListing::usage="The listing of packages";
+$PackagePackagesDirectory::usage="The directory to look for packages under";
+$PackageContexts::usage="The list of contexts exposed to all packages";
+$PackageDeclared::usage="Whether the package has been auto-loaded or not";
 $PackageFEHiddenSymbols::usage="";
 $PackageScopedSymbols::usage="";
 $PackageLoadSpecs::usage="";
@@ -100,30 +101,9 @@ $PackageName=
 
 
 (* ::Subsubsection::Closed:: *)
-(*Loading*)
+(*Load Specs*)
 
 
-BTools["PackageListing"]:=$PackageListing;
-$PackageListing=<||>;
-BTools["Contexts"]:=$PackageContexts;
-$PackageContexts=
-	{
-		"BTools`",
-		"BTools`PackageScope`Private`",
-		"BTools`PackageScope`Package`"
-		};
-$PackageDeclared=
-	TrueQ[$PackageDeclared];
-
-
-(* ::Subsubsection::Closed:: *)
-(*Scoping*)
-
-
-BTools["FEScopedSymbols"]:=$PackageFEHiddenSymbols;
-$PackageFEHiddenSymbols={};
-BTools["PackageScopedSymbols"]:=$PackageScopedSymbols;
-$PackageScopedSymbols={};
 BTools["LoadingParameters"]:=$PackageLoadSpecs
 $PackageLoadSpecs=
 	Merge[
@@ -176,6 +156,42 @@ $PackageLoadSpecs=
 			},
 		Last
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Loading*)
+
+
+BTools["PackageListing"]:=$PackageListing;
+$PackageListing=<||>;
+BTools["Contexts"]:=$PackageContexts;
+If[!ListQ@$PackageContexts,
+	$PackageContexts=
+		{
+			"BTools`",
+			"BTools`PackageScope`Private`",
+			"BTools`PackageScope`Package`"
+			}
+	];
+$PackageDeclared=
+	TrueQ[$PackageDeclared];
+
+
+$PackagePackagesDirectory=
+	Replace[
+		Lookup[$PackageLoadSpecs, "PackagesDirectory"],
+		Except[s_String?(Directory@FileNameJoin@{$PackageDirectory, #}&)]->"Packages"
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Scoping*)
+
+
+BTools["FEScopedSymbols"]:=$PackageFEHiddenSymbols;
+$PackageFEHiddenSymbols={};
+BTools["PackageScopedSymbols"]:=$PackageScopedSymbols;
+$PackageScopedSymbols={};
 
 
 (* ::Subsubsection::Closed:: *)
@@ -273,17 +289,21 @@ End[]
 (*Loading*)
 
 
-$PackageFileContexts::usage="";
-$DeclaredPackages::usage="";
-$LoadedPackages::usage="";
+$PackageFileContexts::usage="The contexts for files in the package";
+$DeclaredPackages::usage="The set of packages found and declared via the autoloader";
+$LoadedPackages::usage="The set of loaded packages";
 
 
-PackageExecute::usage="";
-PackageLoadPackage::usage="";
-PackageLoadDeclare::usage="";
+PackageExecute::usage="Executes something with the package contexts exposed";
+PackageLoadPackage::usage="Loads a package via PackageExecute";
+PackageLoadDeclare::usage="Declares a package";
+
+
 PackageAppLoad::usage="";
 PackageAppGet::usage="";
 PackageAppNeeds::usage="";
+
+
 PackageScopeBlock::usage="";
 PackageFERehideSymbols::usage="Predeclared here...";
 PackageDecontext::usage="";
@@ -527,7 +547,7 @@ packageAppLoad[dir_, listing_]:=
 			Select[fileNames, 
 				StringMatchQ[
 					ToLowerCase@FileNameTake[#], 
-					"__Post__."~~("m"|"wl")
+					"__post__."~~("m"|"wl")
 					]&
 				],
 			{f_}:>Get[f]
@@ -537,16 +557,21 @@ packageAppLoad[dir_, listing_]:=
 
 PackageAppLoad[dir_String?DirectoryQ]:=
 	If[StringMatchQ[FileBaseName@dir,(WordCharacter|"$")..],
-		Begin["`"<>FileBaseName[dir]<>"`"];
-		AppendTo[$PackageContexts, $Context];
-		packageAppLoad[dir, FileNameDrop[dir,FileNameDepth[$PackageDirectory]+1]];
-		End[];
+		Internal`WithLocalSettings[
+			Begin["`"<>FileBaseName[dir]<>"`"],
+			AppendTo[$PackageContexts, $Context];
+			packageAppLoad[dir, FileNameDrop[dir,FileNameDepth[$PackageDirectory]+1]],
+			End[];
+			]
 		];
 PackageAppLoad[file_String?FileExistsQ]:=
 	PackageLoadDeclare[file];
 PackageAppLoad[]:=
 	PackageExecute@
-		packageAppLoad[FileNameJoin@{$PackageDirectory,"Packages"}, $PackageName];
+		packageAppLoad[
+			FileNameJoin@{$PackageDirectory, $PackagePackagesDirectory}, 
+			$PackageName
+			];
 PackageAppLoad~SetAttributes~Listable;
 
 
@@ -561,13 +586,15 @@ PackageAppGet[f_]:=
 		With[{fBase = 
 			If[FileExistsQ@f,
 				f,
-				PackageFilePath["Packages",f<>".m"]
+				PackageFilePath[$PackagePackagesDirectory, f<>".m"]
 				]
 			},
 			With[{cont = 
 				Most@
 					FileNameSplit[
-						FileNameDrop[fBase, FileNameDepth[PackageFilePath["Packages"]]]
+						FileNameDrop[fBase, 
+							FileNameDepth[PackageFilePath[$PackagePackagesDirectory]]
+							]
 						]},
 				If[Length[cont]>0,
 					Begin[StringRiffle[Append[""]@Prepend[""]@cont, "`"]];
@@ -582,7 +609,7 @@ PackageAppGet[c_,f_]:=
 		(End[];#)&@
 			If[FileExistsQ@f,
 				Get@f;,
-				Get@PackageFilePath["Packages",f<>".m"]
+				Get@PackageFilePath[$PackagePackagesDirectory, f<>".m"]
 				]
 		];
 
@@ -605,8 +632,8 @@ PackageAppNeeds[pkgFile_String?FileExistsQ]:=
 
 
 PackageAppNeeds[pkg_String]:=
-	If[FileExistsQ@PackageFilePath["Packages",pkg<>".m"],
-		PackageAppNeeds[PackageFilePath["Packages",pkg<>".m"]],
+	If[FileExistsQ@PackageFilePath[$PackagePackagesDirectory, pkg<>".m"],
+		PackageAppNeeds[PackageFilePath[$PackagePackagesDirectory, pkg<>".m"]],
 		$Failed
 		];
 
@@ -1054,6 +1081,7 @@ End[]
 (*Exceptions*)
 
 
+$PackageExceptionTag::usage="";
 PackageExceptionBlock::usage="";
 
 
@@ -1239,10 +1267,11 @@ PackageFailureException[
 PackageFailureException~SetAttributes~HoldFirst
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*PackageRaiseException*)
 
 
+PackageRaiseException//Clear;
 Options[PackageRaiseException]=
 	Options[PackageFailureException]
 PackageRaiseException[
@@ -1260,7 +1289,7 @@ PackageRaiseException[
 		);
 PackageRaiseException[
 	tag_?StringQ,
-	body_String,
+	body_?StringQ,
 	ops:OptionsPattern[]
 	]:=
 	PackageRaiseException[
@@ -1268,25 +1297,50 @@ PackageRaiseException[
 		body,
 		ops
 		];
-PackageRaiseException[tag_?StringQ]:=
+PackageRaiseException[
+	tag:_?(StringQ[#]&&StringMatchQ[#, WordCharacter..]&),
+	ops:OptionsPattern[]
+	]:=
 	PackageRaiseException[
 		tag,
 		$PackageErrorMessage,
-		"MessageParameters"->{tag}
+		{
+			ops,
+			"MessageParameters"->{tag}
+			}
 		];
+PackageRaiseException[
+	Optional[Automatic, Automatic],
+	body:_?StringQ,
+	ops:OptionsPattern[]
+	]:=
+	PackageRaiseException[
+		Evaluate@$PackageExceptionTag,
+		body,
+		ops
+		];
+PackageRaiseException[
+	tag:Automatic|_String,
+	body_String,
+	args:__?(Not@*OptionQ)
+	]:=
+	PackageRaiseException[tag, body, "MessageParameters"->{args}];
 PackageRaiseException~SetAttributes~HoldFirst
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*PackageExceptionBlock*)
 
 
-$PackageErrorStackDepth=0;
-Protect[$PackageErrorStackDepth];
+$PackageExceptionStack={};
+Protect[$PackageExceptionStack];
+
+
+$PackageExceptionTag="Failure";
 
 
 PackageExceptionBlock//Clear
-PackageExceptionBlock/:
+(*PackageExceptionBlock/:
 	HoldPattern[
 		SetDelayed[lhs_, 
 			peb:PackageExceptionBlock[_, _String]
@@ -1297,24 +1351,29 @@ PackageExceptionBlock/:
 			$PackageExceptionBlockResult=peb;
 			peb/;!FailureQ@peb
 			]
-		];
+		];*)
 PackageExceptionBlock[
 	expr_,
-	tag_String
+	tag:_String
 	]:=
 	Block[
 		{
-			$PackageErrorStackDepth=$PackageErrorStackDepth+1,
+			$PackageExceptionTag=tag,
+			$PackageExceptionStack=
+				Append[$PackageExceptionStack, tag],
 			result
 			},
 		result=PackageCatchException[expr, tag, #&];
-		If[FailureQ@result&&$PackageErrorStackDepth>1,
+		If[MatchQ[result, Failure[_String?(StringEndsQ[tag]), _]]&&
+			MemberQ[Most@$PackageExceptionStack, tag],
 			PackageThrowException[result]
 			];
 		result(*/;!FailureQ@result*)
 		];
 PackageExceptionBlock[tag_String]:=
 	Function[Null, PackageExceptionBlock[#, tag], HoldFirst];
+PackageExceptionBlock[Optional[Automatic, Automatic]]:=
+	Function[Null, PackageExceptionBlock[#, $PackageExceptionTag], HoldFirst];
 PackageExceptionBlock~SetAttributes~HoldFirst;
 
 

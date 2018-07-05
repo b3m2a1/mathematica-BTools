@@ -221,6 +221,62 @@ SVN[
 
 
 (* ::Subsubsection::Closed:: *)
+(*GitHubPostProcess*)
+
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*ResultObject*)
+
+
+
+GitHubPostProcess[command_, res_, "ResultObject"]:=
+	With[{rs=res},
+		If[AssociationQ@rs,
+			If[rs["StatusCode"]<400,
+				Success[
+					TemplateApply[
+						"GitHub: `` (``)",
+						{
+							command,
+							rs["StatusCode"]
+							}
+						], 
+					Join[
+						<|
+							"StatusCode"->rs["StatusCode"],
+							"Command"->command
+							|>,
+						Which[
+							AssociationQ@rs["Content"], 
+								rs["Content"],
+							rs["Content"]=!=Null,
+								<|"Result"->rs["Content"]|>,
+							True,
+								<||>
+							]
+						]
+					],
+				Failure[
+					TemplateApply[
+						"GitHub: `` (``)",
+						{
+							command,
+							rs["StatusCode"]
+							}
+						],
+					Append[
+						KeyDrop[rs, "Content"],
+						"Command"->command
+						]
+					]
+				],
+			rs
+			]
+		]
+
+
+(* ::Subsubsection::Closed:: *)
 (*GitHub*)
 
 
@@ -341,49 +397,11 @@ GitHub[
 	opp___?OptionQ,
 	"ResultObject"
 	]:=
-	With[{rs=GitHub[command, args, opp, "GitHubImport"->True]},
-		If[AssociationQ@rs,
-			If[rs["StatusCode"]<400,
-				Success[
-					TemplateApply[
-						"GitHub: `` (``)",
-						{
-							command,
-							rs["StatusCode"]
-							}
-						], 
-					Join[
-						<|
-							"StatusCode"->rs["StatusCode"],
-							"Command"->command
-							|>,
-						Which[
-							AssociationQ@rs["Content"], 
-								rs["Content"],
-							rs["Content"]=!=Null,
-								<|"Result"->rs["Content"]|>,
-							_,
-								<||>
-							]
-						]
-					],
-				Failure[
-					TemplateApply[
-						"GitHub: `` (``)",
-						{
-							command,
-							rs["StatusCode"]
-							}
-						],
-					Append[
-						KeyDrop[rs, "Content"],
-						"Command"->command
-						]
-					]
-				],
-			rs
-			]
-		];
+	GitHubPostProcess[
+		command,
+		GitHub[command, args, opp, "GitHubImport"->True],
+		"ResultObject"
+		]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -415,20 +433,24 @@ GitHub[
 								]
 							]
 					},
-				Replace[r,
-					h_HTTPRequest:>
-						Which[
-							TrueQ@Lookup[{opp}, "ReturnGitHubQuery", False],
-								r,
-							Lookup[{opp}, "GitHubImport", $GitHubImport]===False, 
+				If[TrueQ@Lookup[{opp}, "ReturnGitHubQuery", False],
+					r,
+					Replace[r,
+						h_HTTPRequest:>
+							If[Lookup[{opp}, "GitHubImport", $GitHubImport]===False,
 								h, 
-							True,
 								GitHubImport@URLRead[h]
-							]
+								]
+						]
 					]/;Head[r]=!=cmd
 				]
 			]
 		];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Raw Request*)
+
 
 
 GitHub[
@@ -438,19 +460,113 @@ GitHub[
 	opp___?OptionQ
 	]:=
 	Block[{$GitHubRepoFormat=True},
-		If[
-			Lookup[{opp}, "GitHubImport", $GitHubImport]=!=False, 
-			GitHubImport, 
-			Identity
-			]@
-			URLRead[
+		If[TrueQ@Lookup[{opp}, "ReturnGitHubQuery", False],
+			GitHubQuery[
+				path,
+				query,
+				headers
+				],
+			Replace[
 				GitHubQuery[
 					path,
 					query,
 					headers
-					]
+					],
+				{
+					h_HTTPRequest:>
+						If[Lookup[{opp}, "GitHubImport", $GitHubImport]===False, 
+							h, 
+							GitHubImport@URLRead[h]
+							]
+					}
 				]
+			]
 		];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*HTTPRequest*)
+
+
+
+GitHub[
+	path:{___String}|_String:{},
+	query:(_String->_)|{(_String->_)...}:{},
+	headers:_Association:<||>,
+	opp___?OptionQ,
+	"HTTPRequest"
+	]:=
+	GitHub[path, query, headers, opp, 
+		"GitHubImport"->False
+		];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*HTTPResponse*)
+
+
+
+GitHub[
+	path:{___String}|_String:{},
+	query:(_String->_)|{(_String->_)...}:{},
+	headers:_Association:<||>,
+	opp___?OptionQ,
+	"HTTPResponse"
+	]:=
+	URLRead@
+		GitHub[path, query, headers, opp, 
+			"GitHubImport"->False,
+			"ReturnGitHubQuery"->True
+			];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*ResultJSON*)
+
+
+
+GitHub[
+	path:{___String}|_String:{},
+	query:(_String->_)|{(_String->_)...}:{},
+	headers:_Association:<||>,
+	opp___?OptionQ,
+	"ResultJSON"
+	]:=
+	Import[GitHub[path, query, headers, opp, "HTTPResponse"], "JSON"];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*ImportedResult*)
+
+
+
+GitHub[
+	path:{___String}|_String:{},
+	query:(_String->_)|{(_String->_)...}:{},
+	headers:_Association:<||>,
+	opp___?OptionQ,
+	"ImportedResult"
+	]:=
+	GitHub[path, query, headers, opp, "GitHubImport"->True];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*ResultObject*)
+
+
+
+GitHub[
+	path:{___String}|_String:{},
+	query:(_String->_)|{(_String->_)...}:{},
+	headers:_Association:<||>,
+	opp___?OptionQ,
+	"ResultObject"
+	]:=
+	GitHubPostProcess[
+		URLBuild@Flatten@{path},
+		GitHub[path, query, headers, opp, "GitHubImport"->True],
+		"ResultObject"
+		]
 
 
 End[];

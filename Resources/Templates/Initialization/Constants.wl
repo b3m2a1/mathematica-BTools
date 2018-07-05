@@ -6,9 +6,10 @@
 
 $PackageDirectory::usage="";
 $PackageName::usage="";
-$PackageListing::usage="";
-$PackageContexts::usage="";
-$PackageDeclared::usage="";
+$PackageListing::usage="The listing of packages";
+$PackagePackagesDirectory::usage="The directory to look for packages under";
+$PackageContexts::usage="The list of contexts exposed to all packages";
+$PackageDeclared::usage="Whether the package has been auto-loaded or not";
 $PackageFEHiddenSymbols::usage="";
 $PackageScopedSymbols::usage="";
 $PackageLoadSpecs::usage="";
@@ -42,30 +43,9 @@ $PackageName=
 
 
 (* ::Subsubsection::Closed:: *)
-(*Loading*)
+(*Load Specs*)
 
 
-$Name["PackageListing"]:=$PackageListing;
-$PackageListing=<||>;
-$Name["Contexts"]:=$PackageContexts;
-$PackageContexts=
-	{
-		"$Name`",
-		"$Name`PackageScope`Private`",
-		"$Name`PackageScope`Package`"
-		};
-$PackageDeclared=
-	TrueQ[$PackageDeclared];
-
-
-(* ::Subsubsection::Closed:: *)
-(*Scoping*)
-
-
-$Name["FEScopedSymbols"]:=$PackageFEHiddenSymbols;
-$PackageFEHiddenSymbols={};
-$Name["PackageScopedSymbols"]:=$PackageScopedSymbols;
-$PackageScopedSymbols={};
 $Name["LoadingParameters"]:=$PackageLoadSpecs
 $PackageLoadSpecs=
 	Merge[
@@ -118,6 +98,42 @@ $PackageLoadSpecs=
 			},
 		Last
 		];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Loading*)
+
+
+$Name["PackageListing"]:=$PackageListing;
+$PackageListing=<||>;
+$Name["Contexts"]:=$PackageContexts;
+If[!ListQ@$PackageContexts,
+	$PackageContexts=
+		{
+			"$Name`",
+			"$Name`PackageScope`Private`",
+			"$Name`PackageScope`Package`"
+			}
+	];
+$PackageDeclared=
+	TrueQ[$PackageDeclared];
+
+
+$PackagePackagesDirectory=
+	Replace[
+		Lookup[$PackageLoadSpecs, "PackagesDirectory"],
+		Except[s_String?(Directory@FileNameJoin@{$PackageDirectory, #}&)]->"Packages"
+		]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Scoping*)
+
+
+$Name["FEScopedSymbols"]:=$PackageFEHiddenSymbols;
+$PackageFEHiddenSymbols={};
+$Name["PackageScopedSymbols"]:=$PackageScopedSymbols;
+$PackageScopedSymbols={};
 
 
 (* ::Subsubsection::Closed:: *)

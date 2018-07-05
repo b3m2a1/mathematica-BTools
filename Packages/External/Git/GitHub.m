@@ -35,6 +35,7 @@ GitHubReleases::usage="";
 GitHubRepositories::usage="";
 $GitHubActions::usage=
 	"A collection of known calls for the GitHub function";
+GitHubQuery::usage="Makes an HTTPRequest to GitHub";
 GitHubImport::usage=
 	"Imports and converts GitHub JSON";
 
@@ -973,6 +974,7 @@ GitHubRepositoryInfo[
 
 
 
+$GitHubActions["Create"]=GitHubCreate;
 $GitHubActions["CreateRepository"]=GitHubCreate;
 
 
@@ -1036,6 +1038,7 @@ GitHubCreate[
 
 
 $GitHubActions["EditRepository"]=GitHubEdit;
+$GitHubActions["Edit"]=GitHubEdit;
 
 
 $GitHubParamMap[GitHubEdit]=
@@ -1048,7 +1051,7 @@ Options[GitHubEdit]=
 			"Password"->Automatic
 			}
 		];
-GitHubEditRepository[
+GitHubEdit[
 	repo:(_String|_GitHubPath)?GitHubRepoQ,
 	ops:OptionsPattern[]
 	]:=
@@ -1080,6 +1083,7 @@ GitHubEditRepository[
 
 
 
+$GitHubActions["Delete"]=GitHubDelete;
 $GitHubActions["DeleteRepository"]=GitHubDelete;
 
 
@@ -3372,12 +3376,6 @@ $GitHubActions=
 					GitHubListMyRepositories,
 				"Clone"->
 					GitHubClone,
-				"Create"->
-					GitHubCreate,
-				"Delete"->
-					GitHubDelete,
-				"Edit"->
-					GitHubEditRepository,
 				"ListContributors"->
 					GitHubRepositoryContributors,
 				"ListBranches"->

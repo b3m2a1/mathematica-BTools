@@ -2151,7 +2151,14 @@ notebookToMarkdownFEExport[
 	Replace[
 		FrontEndExecute[
 			FrontEnd`ExportPacket[
-				Cell[t, First@Flatten@{style}],
+				Cell[
+					If[type=="InputText",
+						t/.TextData->BoxData,
+						t
+						], 
+					First@Flatten@{style}, 
+					Flatten@{ops}
+					],
 				type
 				]
 			][[1]],
@@ -2164,6 +2171,11 @@ notebookToMarkdownFEExport[
 
 (* ::Subsubsubsection::Closed:: *)
 (*markdownCodeCellIOReformat*)
+
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*flags*)
 
 
 
@@ -2190,6 +2202,11 @@ $iNotebookToMarkdownUnIndentedLine=
 	"\"<!NO_INDENT>\"";
 
 
+(* ::Subsubsubsubsection::Closed:: *)
+(*notebookToMarkdownStripBlock*)
+
+
+
 (* ::Text:: *)
 (*
 	StripBlock
@@ -2206,6 +2223,11 @@ notebookToMarkdownStripBlock[s_]:=
 				StringTrim@s<>
 			$iNotebookToMarkdownToStripEnd<>
 	$iNotebookToMarkdownToStripEndBlockFlag
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*markdownCodeCellIOReformatPreClean*)
+
 
 
 (* ::Text:: *)
@@ -2227,6 +2249,7 @@ markdownCodeCellIOReformatPreClean[pathInfo_, e_, style_]:=
 						pathInfo,b,
 						Replace[style,
 							{
+								"PlainText"->"Text",
 								"InputText"->"Input",
 								_->Last@Flatten@{style}
 								}
@@ -2253,11 +2276,24 @@ markdownCodeCellIOReformatPreClean[pathInfo_, e_, style_]:=
 		];
 
 
+(* ::Subsubsubsubsection::Closed:: *)
+(*markdownCodeCellIOReformatBaseExport*)
+
+
+
 (* ::Text:: *)
 (*
 	BaseExport
 	
 	Performs the basic export to string for the IO data
+*)
+
+
+
+(* ::Text:: *)
+(*
+	This is currently super kludgy. 
+	I need a better way to handle what should and what should not be exported via ExportPacket...
 *)
 
 
@@ -2270,16 +2306,19 @@ markdownCodeCellIOReformatBaseExport[
 	Hold[stack_],
 	ops:OptionsPattern[]
 	]:=
-	Replace[iNotebookToMarkdown[##],
-		Except[_String]:>
-			notebookToMarkdownFEExport[
-				##,
-				First@Flatten@{style},
-				{
-					ops,
-					PageWidth->700
-					}
-				]
+	Replace[If[Length@Flatten@{ops}>0, $$pass, iNotebookToMarkdown[##]],
+		{
+			Except[_String]:>
+				notebookToMarkdownFEExport[
+					#,
+					#2,
+					First@Flatten@{style},
+					Rest@Flatten@{style},
+					Flatten@{
+						ops
+						}
+					]
+			}
 		]&[
 			pathInfo,
 			ReplaceAll[
@@ -2299,6 +2338,11 @@ markdownCodeCellIOReformatBaseExport[
 				style
 				]
 			];
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*markdownCodeCellIOReformatReinsertStack*)
+
 
 
 (* ::Text:: *)
@@ -2333,6 +2377,11 @@ markdownCodeCellIOReformatReinsertStack[Hold[stack_]][s_]:=
 	markdownCodeCellIOReformatReinsertStack[s, stack];
 
 
+(* ::Subsubsubsubsection::Closed:: *)
+(*markdownCodeCellIOReformatStripIndents*)
+
+
+
 (* ::Text:: *)
 (*
 	StripIndents:
@@ -2362,6 +2411,11 @@ markdownCodeCellIOReformatStripIndents[s_]:=
 		];
 
 
+(* ::Subsubsubsubsection::Closed:: *)
+(*markdownCodeCellIOReformatStripFlags*)
+
+
+
 (* ::Text:: *)
 (*
 	StripFlags:
@@ -2384,6 +2438,32 @@ markdownCodeCellIOReformatStripFlags[s_]:=
 						StartOfLine->$iNotebookToMarkdownUnIndentedLine
 						}]
 			}];
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*markdownCodeCellIOReformatHaveEffectCellStyles*)
+
+
+
+(* ::Text:: *)
+(*
+	HaveEffectCellStyles:
+	
+	The cell styles that do something and should not be ignored
+*)
+
+
+
+markdownCodeCellIOReformatHaveEffectCellStyles=
+	{
+		ShowStringCharacters, ShowSpecialCharacters,
+		ShowShortBoxForm
+		};
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*markdownCodeCellIOReformat*)
+
 
 
 (* ::Text:: *)
@@ -2436,7 +2516,9 @@ markdownCodeCellIOReformat[
 					style,
 					postFormat,
 					Hold[stack],
-					ops
+					FilterRules[Flatten@{ops},
+						Alternatives@@markdownCodeCellIOReformatHaveEffectCellStyles
+						]
 				]
 		];
 
@@ -2472,6 +2554,18 @@ markdownLinkAnchor[t_, style_]:=
 
 
 (* ::Subsubsubsection::Closed:: *)
+(*skipConversion*)
+
+
+
+iNotebookToMarkdownRegister[
+	pathInfo_, 
+	skipConversion[e_]
+	]:=
+	e
+
+
+(* ::Subsubsubsection::Closed:: *)
 (*Input / Output *)
 
 
@@ -2482,12 +2576,13 @@ markdownLinkAnchor[t_, style_]:=
 
 
 iNotebookToMarkdownRegister[pathInfo_, 
-	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "ExternalLanguage", o___]]:=
+	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "ExternalLanguage", o___]
+	]:=
 	With[{cl=Lookup[{o}, CellEvaluationLanguage, "Python"]},
 		markdownCodeCellIOReformat[
 			pathInfo,
 			ReplaceAll[e, BoxData->TextData],
-			"PlainText",
+			{"PlainText", "Code"},
 			Which[
 				StringContainsQ[cl, "Python", IgnoreCase->True],
 					"```python\n"<>#<>"\n"<>"```",
@@ -2495,7 +2590,8 @@ iNotebookToMarkdownRegister[pathInfo_,
 					"```javascript\n"<>#<>"\n"<>"```",
 				True,
 					"```"<>ToLowerCase[cl]<>"\n"<>#<>"\n"<>"```"
-				]&
+				]&,
+			Select[{o, PageWidth->10000}, OptionQ]
 			]
 		];
 
@@ -2506,11 +2602,11 @@ iNotebookToMarkdownRegister[pathInfo_,
 
 
 iNotebookToMarkdownRegister[pathInfo_, 
-	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "FencedCode",___]]:=
+	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "FencedCode", o___]]:=
 	markdownCodeCellIOReformat[
 		pathInfo,
 		ReplaceAll[e, BoxData->TextData],
-		"PlainText",
+		{"PlainText", "Code"},
 		Replace[
 			ReplacePart[#, 
 				1->StringTrim@StringTrim[#[[1]], "(*"|"*)"]
@@ -2530,7 +2626,8 @@ iNotebookToMarkdownRegister[pathInfo_,
 				_:>
 					"```\n"<>#<>"\n"<>"```"
 				}
-			]&
+			]&,
+		Select[{o, PageWidth->10000}, OptionQ]
 		];
 
 
@@ -2540,12 +2637,13 @@ iNotebookToMarkdownRegister[pathInfo_,
 
 
 iNotebookToMarkdownRegister[pathInfo_, 
-	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "MathematicaLanguageCode",___]]:=
+	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "MathematicaLanguageCode", o___]]:=
 	markdownCodeCellIOReformat[
 		pathInfo,
-		ReplaceAll[e, BoxData->TextData],
-		"PlainText",
-		"```mathematica\n"<>#<>"\n```"&
+		e,
+		{"InputText", "Code"},
+		"```mathematica\n"<>StringDelete[#, "\\\n"]<>"\n```"&,
+		Select[{o}, OptionQ]
 		];
 
 
@@ -2555,11 +2653,16 @@ iNotebookToMarkdownRegister[pathInfo_,
 
 
 iNotebookToMarkdownRegister[pathInfo_,
-	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "Code"|"Input",___]]:=
+	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "Code"|"Input", o___]]:=
 	markdownCodeCellIOReformat[pathInfo,
 		e,
-		"InputText",
-		StringReplace[#,StartOfLine->"    "]&
+		{"InputText", "Code"},
+		StringReplace[#, 
+			{
+				StartOfLine->"    ",
+				"\\\n"->""
+				}]&,
+		Select[{o}, OptionQ]
 		];
 
 
@@ -2569,13 +2672,14 @@ iNotebookToMarkdownRegister[pathInfo_,
 
 
 iNotebookToMarkdownRegister[pathInfo_,
-	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms],"InlineInput",___]]:=
+	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "InlineInput", o___]]:=
 	markdownCodeCellIOReformat[pathInfo,
 		Replace[e,
 			BoxData@FormBox[expr_, _]:>BoxData@expr
 			],
-		"InputText",
-		"```"<>#<>If[StringEndsQ[#,"`"], " ", ""]<>"```"&
+		{"InputText", "Code"},
+		"```"<>#<>If[StringEndsQ[#,"`"], " ", ""]<>"```"&,
+		Select[{o}, OptionQ]
 		];
 
 
@@ -2585,7 +2689,7 @@ iNotebookToMarkdownRegister[pathInfo_,
 
 
 iNotebookToMarkdownRegister[pathInfo_,
-	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms],"InlineText",___]]:=
+	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms],"InlineText", o___]]:=
 	markdownCodeCellIOReformat[pathInfo,
 		Replace[e,
 			{
@@ -2593,8 +2697,9 @@ iNotebookToMarkdownRegister[pathInfo_,
 				BoxData@FormBox[expr_, _]:>TextData@expr
 				}
 			],
-		"PlainText",
-		"```"<>#<>If[StringEndsQ[#,"`"]," ",""]<>"```"&
+		{"PlainText", "Text"},
+		"```"<>#<>If[StringEndsQ[#,"`"]," ",""]<>"```"&,
+		Select[{o}, OptionQ]
 		];
 
 
@@ -2604,7 +2709,7 @@ iNotebookToMarkdownRegister[pathInfo_,
 
 
 iNotebookToMarkdownRegister[pathInfo_,
-	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "Output",___]]:=
+	Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "Output", o___]]:=
 	markdownCodeCellIOReformat[pathInfo, 
 		e,
 		{"InputText", "Output"},
@@ -2612,7 +2717,8 @@ iNotebookToMarkdownRegister[pathInfo_,
 			{
 				StartOfLine->"    "
 				}
-			]&
+			]&,
+		Select[{o}, OptionQ]
 		];
 
 
@@ -2626,9 +2732,9 @@ iNotebookToMarkdownRegister[pathInfo_,
 		(e:Except[$iNotebookToMarkdownIgnoredIOForms])|
 			OutputFormData[_, e_],
 		"FormattedOutput",
-		___
+		o___
 		]|
-		Cell[OutputFormData[_, e_],___]
+		Cell[OutputFormData[_, e_], o___]
 	]:=
 	markdownCodeCellIOReformat[pathInfo,
 		e,
@@ -2645,7 +2751,13 @@ iNotebookToMarkdownRegister[pathInfo_,
 				],
 			"<html><body>"|"</body></html"
 			]&,
-		ShowStringCharacters->False
+		Select[
+			{
+				o,
+				ShowStringCharacters->False
+				}, 
+			OptionQ
+			]
 		]
 
 

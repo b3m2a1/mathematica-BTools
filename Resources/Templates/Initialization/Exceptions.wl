@@ -4,6 +4,7 @@
 (*Exceptions*)
 
 
+$PackageExceptionTag::usage="";
 PackageExceptionBlock::usage="";
 
 
@@ -193,6 +194,7 @@ PackageFailureException~SetAttributes~HoldFirst
 (*PackageRaiseException*)
 
 
+PackageRaiseException//Clear;
 Options[PackageRaiseException]=
 	Options[PackageFailureException]
 PackageRaiseException[
@@ -210,7 +212,7 @@ PackageRaiseException[
 		);
 PackageRaiseException[
 	tag_?StringQ,
-	body_String,
+	body_?StringQ,
 	ops:OptionsPattern[]
 	]:=
 	PackageRaiseException[
@@ -218,12 +220,34 @@ PackageRaiseException[
 		body,
 		ops
 		];
-PackageRaiseException[tag_?StringQ]:=
+PackageRaiseException[
+	tag:_?(StringQ[#]&&StringMatchQ[#, WordCharacter..]&),
+	ops:OptionsPattern[]
+	]:=
 	PackageRaiseException[
 		tag,
 		$PackageErrorMessage,
-		"MessageParameters"->{tag}
+		{
+			ops,
+			"MessageParameters"->{tag}
+			}
 		];
+PackageRaiseException[
+	Optional[Automatic, Automatic],
+	body:_?StringQ,
+	ops:OptionsPattern[]
+	]:=
+	PackageRaiseException[
+		Evaluate@$PackageExceptionTag,
+		body,
+		ops
+		];
+PackageRaiseException[
+	tag:Automatic|_String,
+	body_String,
+	args:__?(Not@*OptionQ)
+	]:=
+	PackageRaiseException[tag, body, "MessageParameters"->{args}];
 PackageRaiseException~SetAttributes~HoldFirst
 
 
@@ -231,12 +255,15 @@ PackageRaiseException~SetAttributes~HoldFirst
 (*PackageExceptionBlock*)
 
 
-$PackageErrorStackDepth=0;
-Protect[$PackageErrorStackDepth];
+$PackageExceptionStack={};
+Protect[$PackageExceptionStack];
+
+
+$PackageExceptionTag="Failure";
 
 
 PackageExceptionBlock//Clear
-PackageExceptionBlock/:
+(*PackageExceptionBlock/:
 	HoldPattern[
 		SetDelayed[lhs_, 
 			peb:PackageExceptionBlock[_, _String]
@@ -247,24 +274,29 @@ PackageExceptionBlock/:
 			$PackageExceptionBlockResult=peb;
 			peb/;!FailureQ@peb
 			]
-		];
+		];*)
 PackageExceptionBlock[
 	expr_,
-	tag_String
+	tag:_String
 	]:=
 	Block[
 		{
-			$PackageErrorStackDepth=$PackageErrorStackDepth+1,
+			$PackageExceptionTag=tag,
+			$PackageExceptionStack=
+				Append[$PackageExceptionStack, tag],
 			result
 			},
 		result=PackageCatchException[expr, tag, #&];
-		If[FailureQ@result&&$PackageErrorStackDepth>1,
+		If[MatchQ[result, Failure[_String?(StringEndsQ[tag]), _]]&&
+			MemberQ[Most@$PackageExceptionStack, tag],
 			PackageThrowException[result]
 			];
 		result(*/;!FailureQ@result*)
 		];
 PackageExceptionBlock[tag_String]:=
 	Function[Null, PackageExceptionBlock[#, tag], HoldFirst];
+PackageExceptionBlock[Optional[Automatic, Automatic]]:=
+	Function[Null, PackageExceptionBlock[#, $PackageExceptionTag], HoldFirst];
 PackageExceptionBlock~SetAttributes~HoldFirst;
 
 
