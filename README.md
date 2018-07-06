@@ -24,7 +24,8 @@ PacletInstall[
 
 If you've already installed it you can update using:
 
-```PacletUpdate[
+```mathematica
+PacletUpdate[
   "BTools",
   "Site"->
     "http://www.wolframcloud.com/objects/b3m2a1.paclets/PacletServer"
