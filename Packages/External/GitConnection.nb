@@ -509,6 +509,60 @@ Cell["\[LeftCeiling]GitHubPostProcess\[RightFloor]", "CodeSubsubsection",
 
 Cell[CellGroupData[{
 
+Cell["\[LeftCeiling]ResultJSON\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"7bdd9d14-ac08-42e6-9b8a-9022a280768f"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"GitHubPostProcess", "[", 
+   RowBox[{
+    RowBox[{"command_:", "None"}], ",", " ", "res_", ",", " ", 
+    "\"\<ResultJSON\>\""}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Module", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"u", "=", 
+       RowBox[{"URLRead", "[", "res", "]"}]}], ",", "\n", "\t\t\t", "status", 
+      ",", "\n", "\t\t\t", "cont", ",", "\n", "\t\t\t", "mess"}], "\n", 
+     "\t\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"status", "=", 
+      RowBox[{"u", "[", "\"\<StatusCode\>\"", "]"}]}], ";", "\n", "\t\t", 
+     RowBox[{"cont", "=", 
+      RowBox[{"Quiet", "@", 
+       RowBox[{"Import", "[", 
+        RowBox[{"u", ",", " ", "\"\<JSON\>\""}], "]"}]}]}], ";", "\n", "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"status", "<", "400"}], ",", "\n", "\t\t\t", 
+       RowBox[{"<|", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"\"\<StatusCode\>\"", "\[Rule]", "status"}], ",", "\n", "\t",
+          "\t\t\t", 
+         RowBox[{"\"\<Content\>\"", "\[Rule]", 
+          RowBox[{"Replace", "[", 
+           RowBox[{"cont", ",", " ", 
+            RowBox[{"$Failed", "\[Rule]", "None"}]}], "]"}]}]}], "\n", 
+        "\t\t\t\t", "|>"}], ",", "\n", "\t\t\t", 
+       RowBox[{"<|", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"\"\<StatusCode\>\"", "\[Rule]", "status"}], ",", "\n", 
+         "\t\t\t\t", 
+         RowBox[{"\"\<Content\>\"", "\[Rule]", "$Failed"}], ",", "\n", 
+         "\t\t\t\t", 
+         RowBox[{"\"\<Message\>\"", "\[Rule]", 
+          RowBox[{"Quiet", "@", 
+           RowBox[{"Lookup", "[", 
+            RowBox[{"cont", ",", " ", "\"\<message\>\"", ",", " ", "None"}], 
+            "]"}]}]}]}], "\n", "\t\t\t\t", "|>"}]}], "\n", "\t\t\t", 
+      "]"}]}]}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"a9a2e544-5303-4091-9f08-d126a54f9dda"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
 Cell["\[LeftCeiling]ResultObject\[RightFloor]", "CodeSubsubsubsection",
  Evaluatable->True,ExpressionUUID->"d38eec83-00dd-4075-92fd-d2da08c900b2"],
 
@@ -584,6 +638,26 @@ Cell[BoxData[
      "]"}]}], "\n", "\t\t", 
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"8598ea61-00c1-4d6c-853f-1d3783c025e1"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]ResultJSONObject\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"a5464543-3c49-499f-89a1-8f66c363d2e9"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"GitHubPostProcess", "[", 
+   RowBox[{
+   "command_", ",", " ", "res_", ",", " ", "\"\<ResultJSONObject\>\""}], 
+   "]"}], ":=", "\n", "\t", 
+  RowBox[{"GitHubPostProcess", "[", "\n", "\t\t", 
+   RowBox[{"command", ",", "\n", "\t\t", 
+    RowBox[{"GitHubPostProcess", "[", 
+     RowBox[{"command", ",", " ", "res", ",", " ", "\"\<ResultJSON\>\""}], 
+     "]"}], ",", "\n", "\t\t", "\"\<ResultObject\>\""}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"b1a1b91c-b0e1-417c-8b62-35abaacc7ddf"]
 }, Closed]]
 }, Open  ]],
 
@@ -785,18 +859,14 @@ Cell[BoxData[
         RowBox[{"_", "?", "OptionQ"}], "]"}], "..."}]}], ",", "\n", "\t", 
      RowBox[{"opp___", "?", "OptionQ"}], ",", "\n", "\t", 
      "\"\<ResultJSON\>\""}], "\n", "\t", "]"}], ":=", "\n", "\t", 
-   RowBox[{"Import", "[", 
-    RowBox[{
+   RowBox[{"GitHubPostProcess", "[", "\n", "\t\t", 
+    RowBox[{"\"\<Command\>\"", ",", "\n", "\t\t", 
      RowBox[{"GitHub", "[", 
       RowBox[{
       "command", ",", " ", "args", ",", " ", "opp", ",", " ", 
-       "\"\<HTTPResponse\>\""}], "]"}], ",", " ", "\"\<JSON\>\""}], "]"}]}], 
-  ";"}]], "CodeInput",
- CellChangeTimes->{{3.73380388169977*^9, 3.733803932528809*^9}, {
-   3.733804755143784*^9, 3.733804783334958*^9}, 3.7338048135523777`*^9, {
-   3.733865660190065*^9, 
-   3.733865685281375*^9}},ExpressionUUID->"9599bf73-a93d-46a2-b2b2-\
-35297442393a"]
+       "\"\<HTTPRequest\>\""}], "]"}], ",", " ", "\n", "\t\t", 
+     "\"\<ResultJSON\>\""}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"9599bf73-a93d-46a2-b2b2-35297442393a"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -867,6 +937,38 @@ Cell[BoxData[
      "\t\t", "\"\<ResultObject\>\""}], "\n", "\t\t", 
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"33bf4f96-9fd2-4d5f-8052-0762c57c5523"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]ResultJSONObject\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"f93cab78-0463-417d-a73d-3914781c1fbe"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"GitHub", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"command_String", "?", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"KeyMemberQ", "[", 
+        RowBox[{"$githubactions", ",", 
+         RowBox[{"ToLowerCase", "@", "#"}]}], "]"}], "&"}], ")"}]}], ",", 
+    "\n", "\t", 
+    RowBox[{"args", ":", 
+     RowBox[{
+      RowBox[{"Except", "[", 
+       RowBox[{"_", "?", "OptionQ"}], "]"}], "..."}]}], ",", "\n", "\t", 
+    RowBox[{"opp___", "?", "OptionQ"}], ",", "\n", "\t", 
+    "\"\<ResultJSONObject\>\""}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+  RowBox[{"GitHubPostProcess", "[", "\n", "\t\t", 
+   RowBox[{"command", ",", "\n", "\t\t", 
+    RowBox[{"GitHub", "[", 
+     RowBox[{"command", ",", " ", "args", ",", " ", "opp", ",", " ", 
+      RowBox[{"\"\<GitHubImport\>\"", "\[Rule]", "False"}]}], "]"}], ",", 
+    "\n", "\t\t", "\"\<ResultJSONObject\>\""}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"89b95382-b268-4f4c-b909-3849467ce970"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -1041,7 +1143,7 @@ Cell[BoxData[
             "]"}]}], "\n", "\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t", "]"}]}], 
       "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"27a0eee8-c513-4578-ab45-b8777ea67e9c"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -1150,15 +1252,15 @@ Cell[BoxData[
       RowBox[{"<|", "|>"}]}], ",", "\n", "\t", 
      RowBox[{"opp___", "?", "OptionQ"}], ",", "\n", "\t", 
      "\"\<ResultJSON\>\""}], "\n", "\t", "]"}], ":=", "\n", "\t", 
-   RowBox[{"Import", "[", 
+   RowBox[{"GitHubPostProcess", "[", "\n", "\t\t", 
     RowBox[{
      RowBox[{"GitHub", "[", 
       RowBox[{
       "path", ",", " ", "query", ",", " ", "headers", ",", " ", "opp", ",", 
-       " ", "\"\<HTTPResponse\>\""}], "]"}], ",", " ", "\"\<JSON\>\""}], 
-    "]"}]}], ";"}]], \
-"CodeInput",ExpressionUUID->"a73ea59e-cfff-4c52-bece-f4f08ee440d9"]
-}, Closed]],
+       " ", "\"\<HTTPRequest\>\""}], "]"}], ",", " ", "\n", "\t\t", 
+     "\"\<ResultJSON\>\""}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"a73ea59e-cfff-4c52-bece-f4f08ee440d9"]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1238,7 +1340,48 @@ Cell[BoxData[
      "\t\t", "\"\<ResultObject\>\""}], "\n", "\t\t", 
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"f77c8d64-1153-405b-8245-a09fa5440afe"]
-}, Closed]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]ResultObject\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"8649243c-38ac-407c-a634-e79f95a3cb4d"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"GitHub", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"path", ":", 
+     RowBox[{
+      RowBox[{"{", "___String", "}"}], "|", "_String"}], ":", 
+     RowBox[{"{", "}"}]}], ",", "\n", "\t", 
+    RowBox[{"query", ":", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"_String", "->", "_"}], ")"}], "|", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"_String", "->", "_"}], ")"}], "..."}], "}"}]}], ":", 
+     RowBox[{"{", "}"}]}], ",", "\n", "\t", 
+    RowBox[{"headers", ":", "_Association", ":", 
+     RowBox[{"<|", "|>"}]}], ",", "\n", "\t", 
+    RowBox[{"opp___", "?", "OptionQ"}], ",", "\n", "\t", 
+    "\"\<ResultObject\>\""}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+  RowBox[{"GitHubPostProcess", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"URLBuild", "@", 
+     RowBox[{"Flatten", "@", 
+      RowBox[{"{", "path", "}"}]}]}], ",", "\n", "\t\t", 
+    RowBox[{"GitHub", "[", 
+     RowBox[{
+     "path", ",", " ", "query", ",", " ", "headers", ",", " ", "opp", ",", 
+      " ", 
+      RowBox[{"\"\<GitHubImport\>\"", "\[Rule]", "False"}]}], "]"}], ",", 
+    "\n", "\t\t", "\"\<ResultJSONObject\>\""}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"f77891d5-f374-4ed1-9e6f-a7c3352e9324"]
+}, Open  ]]
 }, Open  ]]
 }, Open  ]],
 

@@ -226,6 +226,35 @@ SVN[
 
 
 (* ::Subsubsubsection::Closed:: *)
+(*ResultJSON*)
+
+
+
+GitHubPostProcess[command_:None, res_, "ResultJSON"]:=
+	Module[
+		{
+			u=URLRead[res],
+			status,
+			cont,
+			mess
+			},
+		status=u["StatusCode"];
+		cont=Quiet@Import[u, "JSON"];
+		If[status<400,
+			<|
+				"StatusCode"->status,
+				"Content"->Replace[cont, $Failed->None]
+				|>,
+			<|
+				"StatusCode"->status,
+				"Content"->$Failed,
+				"Message"->Quiet@Lookup[cont, "message", None]
+				|>
+			]
+		]
+
+
+(* ::Subsubsubsection::Closed:: *)
 (*ResultObject*)
 
 
@@ -273,6 +302,19 @@ GitHubPostProcess[command_, res_, "ResultObject"]:=
 				],
 			rs
 			]
+		]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*ResultJSONObject*)
+
+
+
+GitHubPostProcess[command_, res_, "ResultJSONObject"]:=
+	GitHubPostProcess[
+		command,
+		GitHubPostProcess[command, res, "ResultJSON"],
+		"ResultObject"
 		]
 
 
@@ -369,7 +411,11 @@ GitHub[
 	opp___?OptionQ,
 	"ResultJSON"
 	]:=
-	Import[GitHub[command, args, opp, "HTTPResponse"], "JSON"];
+	GitHubPostProcess[
+		"Command",
+		GitHub[command, args, opp, "HTTPRequest"], 
+		"ResultJSON"
+		];
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -401,6 +447,24 @@ GitHub[
 		command,
 		GitHub[command, args, opp, "GitHubImport"->True],
 		"ResultObject"
+		]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*ResultJSONObject*)
+
+
+
+GitHub[
+	command_String?(KeyMemberQ[$githubactions,ToLowerCase@#]&),
+	args:Except[_?OptionQ]...,
+	opp___?OptionQ,
+	"ResultJSONObject"
+	]:=
+	GitHubPostProcess[
+		command,
+		GitHub[command, args, opp, "GitHubImport"->False],
+		"ResultJSONObject"
 		]
 
 
@@ -532,7 +596,10 @@ GitHub[
 	opp___?OptionQ,
 	"ResultJSON"
 	]:=
-	Import[GitHub[path, query, headers, opp, "HTTPResponse"], "JSON"];
+	GitHubPostProcess[
+		GitHub[path, query, headers, opp, "HTTPRequest"], 
+		"ResultJSON"
+		];
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -566,6 +633,25 @@ GitHub[
 		URLBuild@Flatten@{path},
 		GitHub[path, query, headers, opp, "GitHubImport"->True],
 		"ResultObject"
+		]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*ResultObject*)
+
+
+
+GitHub[
+	path:{___String}|_String:{},
+	query:(_String->_)|{(_String->_)...}:{},
+	headers:_Association:<||>,
+	opp___?OptionQ,
+	"ResultObject"
+	]:=
+	GitHubPostProcess[
+		URLBuild@Flatten@{path},
+		GitHub[path, query, headers, opp, "GitHubImport"->False],
+		"ResultJSONObject"
 		]
 
 
