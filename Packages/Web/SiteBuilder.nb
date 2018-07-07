@@ -1254,11 +1254,11 @@ Cell[BoxData[
            RowBox[{"root", ",", " ", 
             RowBox[{"Automatic", "\[RuleDelayed]", 
              RowBox[{"DirectoryName", "@", "template"}]}]}], "]"}]}]}], ",", 
-        "\n", "\t\t\t\t", 
+        "\n", "\t\t\t\t", "$TemplatePath", ",", "\n", "\t\t\t\t", 
         RowBox[{
         "{", "\n", "\t\t\t\t\t", "$WebSiteTemplateLibDirectory", "\n", 
-         "\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t", "$TemplatePath"}], "\n", 
-       "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
+         "\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
+     
      RowBox[{"$Path", "=", "\n", "\t\t\t", 
       RowBox[{"Join", "[", "\n", "\t\t\t\t", 
        RowBox[{
@@ -1268,11 +1268,11 @@ Cell[BoxData[
            RowBox[{"root", ",", " ", 
             RowBox[{"Automatic", "\[RuleDelayed]", 
              RowBox[{"DirectoryName", "@", "template"}]}]}], "]"}]}]}], ",", 
-        "\n", "\t\t\t\t", 
+        "\n", "\t\t\t\t", "$Path", ",", "\n", "\t\t\t\t", 
         RowBox[{
         "{", "\n", "\t\t\t\t\t", "$WebSiteTemplateLibDirectory", "\n", 
-         "\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t", "$Path"}], "\n", 
-       "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
+         "\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
+     
      RowBox[{"$Context", "=", "\"\<Templating`lib`\>\""}], ";", "\n", "\t\t", 
      
      RowBox[{"$ContextPath", "=", 
@@ -1390,8 +1390,8 @@ Cell[BoxData[
      "}"}]}], "\n", "\t\t", 
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"488dd539-a30d-4b38-83df-b813cf4873af"]
-}, Open  ]]
-}, Closed]],
+}, Closed]]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -2857,8 +2857,8 @@ Cell[BoxData[
      "\t\t", "]"}]}], "\n", "\t", "\t", 
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"17b78b98-9484-4a98-800f-2bbd2202e38f"]
-}, Open  ]]
-}, Open  ]],
+}, Closed]]
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -2922,17 +2922,39 @@ Cell[BoxData[{
            RowBox[{
             RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
              RowBox[{
-              RowBox[{"FileNames", "[", "\n", "\t\t\t\t\t\t", 
-               RowBox[{"#", ",", "\n", "\t\t\t\t\t\t", 
-                RowBox[{"Append", "[", 
-                 RowBox[{"root", ",", " ", "\n", "\t\t\t\t\t\t\t", 
-                  RowBox[{"FileNameJoin", "@", 
-                   RowBox[{"{", 
+              RowBox[{"With", "[", "\n", "\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{"dp", "=", "\n", "\t\t\t\t\t\t\t\t", 
+                  RowBox[{"Map", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"FileNameJoin", "@*", "FileNameSplit"}], ",", 
+                    "\n", "\t", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Append", "[", 
+                    RowBox[{
+                    "root", ",", " ", "\n", "\t", "\t", "\t", 
+                    "\t\t\t\t\t\t\t", 
+                    RowBox[{"FileNameJoin", "@", 
+                    RowBox[{"{", 
                     RowBox[{
                     "$WebSiteTemplateLibDirectory", ",", " ", 
-                    "\"\<templates\>\""}], "}"}]}]}], "\n", "\t\t\t\t\t\t\t", 
-                 "]"}]}], "\n", "\t\t\t\t\t\t", "]"}], ",", "\n", 
-              "\t\t\t\t\t", 
+                    "\"\<templates\>\""}], "}"}]}]}], "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t", 
+                   "\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t", "}"}],
+                 ",", "\n", "\t\t\t\t\t\t", 
+                RowBox[{"SortBy", "[", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"FileNames", "[", 
+                   RowBox[{"#", ",", " ", "dp"}], "]"}], ",", "\n", 
+                  "\t\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"Position", "[", 
+                    RowBox[{"dp", ",", " ", 
+                    RowBox[{"FileNameJoin", "@", 
+                    RowBox[{"FileNameSplit", "@", 
+                    RowBox[{"DirectoryName", "@", "#"}]}]}]}], "]"}], "&"}]}],
+                  "\n", "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t", 
+               "]"}], ",", "\n", "\t\t\t\t\t", 
               RowBox[{"{", "\n", "\t\t\t\t\t\t", 
                RowBox[{
                 RowBox[{"{", 
@@ -3191,7 +3213,7 @@ Cell[BoxData[{
           RowBox[{
            RowBox[{
             RowBox[{"IntegerQ", "[", "pageSize", "]"}], "&&", 
-            RowBox[{"pageSize", ">", "0"}], "&&", 
+            RowBox[{"pageSize", ">", "0"}], "&&", "\n", "\t\t\t\t\t", 
             RowBox[{"MemberQ", "[", 
              RowBox[{
               RowBox[{"{", 
@@ -3215,7 +3237,8 @@ Cell[BoxData[{
                  RowBox[{"dir", ",", " ", "\n", "\t\t\t\t\t\t\t\t", 
                   RowBox[{
                    RowBox[{"StringTrim", "[", 
-                    RowBox[{"baseName", ",", " ", "\"\<.html\>\""}], "]"}], "<>", 
+                    RowBox[{"baseName", ",", " ", "\"\<.html\>\""}], "]"}], "<>",
+                    "\n", "\t\t\t\t\t\t\t\t\t", 
                    RowBox[{"If", "[", 
                     RowBox[{
                     RowBox[{"i", ">", "1"}], ",", " ", 
@@ -4473,7 +4496,7 @@ Cell[BoxData[
  CellChangeTimes->{{3.7336808675733967`*^9, 3.7336808773060503`*^9}, 
    3.733706902345438*^9},ExpressionUUID->"19112d96-c958-43a1-b561-\
 d690f8f28430"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -4756,16 +4779,18 @@ Cell[BoxData[{
                     RowBox[{"{", 
                     RowBox[{"1", ",", " ", 
                     RowBox[{"-", "2"}]}], "}"}]}], "]"}], ",", "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t\t", "outDir", ",", "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"{", 
-                    RowBox[{
+                    "\t\t\t\t\t\t\t\t\t", "outDir", ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"thm", ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"FileNameJoin", "@", 
                     RowBox[{"{", 
-                    RowBox[{"thm", ",", "\"\<templates\>\""}], "}"}]}], ",", 
-                    "longDir"}], "}"}], ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t",
-                     "None", ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
-                    "templates", ",", " ", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"thm", ",", " ", "\"\<templates\>\""}], "}"}]}], 
+                    ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t", "longDir"}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", "}"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", "None", ",", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t", "templates", ",", " ", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"Append", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"config", ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"aggsingular", "\[Rule]", "#"}]}], "\n", "\t", 
@@ -4838,7 +4863,8 @@ Cell[BoxData[{
                     "templates", "=", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"Flatten", "@", 
                     RowBox[{"List", "@", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"aggdata", "[", "\"\<AggregationTemplates\>\"", 
+                    RowBox[{
+                    "aggdata", "[", "\"\<AggregationTemplates\>\"", 
                     "]"}]}]}]}]}], "\n", "\t", "\t\t\t\t\t\t\t\t", "}"}], ",",
                      "\n", "\t", "\t\t\t\t\t\t\t\t", 
                     RowBox[{
@@ -4982,14 +5008,15 @@ Cell[BoxData[
         "thm", ",", " ", "\"\<templates\>\"", ",", " ", 
          "\"\<index.html\>\""}], "}"}], "]"}], "\n", "\t\t\t\t", "}"}], ",", 
      "\n", "\t\t\t", 
-     RowBox[{"FileNames", "[", 
+     RowBox[{"FileNames", "[", "\n", "\t\t\t\t", 
       RowBox[{
-       RowBox[{"\"\<*.html\>\"", "|", "\"\<*.xml\>\""}], ",", " ", 
+       RowBox[{"\"\<*.html\>\"", "|", "\"\<*.xml\>\""}], ",", " ", "\n", 
+       "\t\t\t\t", 
        RowBox[{"FileNameJoin", "@", 
         RowBox[{"{", 
          RowBox[{
          "thm", ",", " ", "\"\<templates\>\"", ",", " ", "\"\<indexes\>\""}], 
-         "}"}]}]}], "]"}]}], "\n", "\t\t\t", 
+         "}"}]}]}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", 
     "]"}]}]}]], \
 "CodeInput",ExpressionUUID->"3914f1c0-21ac-46a1-b01d-09407de773b1"]
 }, Closed]],
@@ -5046,13 +5073,13 @@ Cell[BoxData[{
            RowBox[{"\"\<indexes\>\"", "\[Rule]", "\"\<index\>\""}]}], "]"}], 
          ",", "\n", "\t\t\t\t", "outDir", ",", " ", "outDir", ",", "\n", 
          "\t\t\t\t", 
-         RowBox[{"{", 
-          RowBox[{
+         RowBox[{"{", "\n", "\t\t\t\t\t", 
+          RowBox[{"thm", ",", "\n", "\t\t\t\t\t", 
            RowBox[{"FileNameJoin", "@", 
             RowBox[{"{", 
              RowBox[{"thm", ",", " ", "\"\<templates\>\""}], "}"}]}], ",", 
-           " ", "longDir"}], "}"}], ",", "\n", "\t\t\t\t", "None", ",", "\n", 
-         "\t\t\t\t", 
+           " ", "\n", "\t\t\t\t\t", "longDir"}], "\n", "\t\t\t\t\t", "}"}], 
+         ",", "\n", "\t\t\t\t", "None", ",", "\n", "\t\t\t\t", 
          RowBox[{"{", "#", "}"}], ",", " ", "\n", "\t\t\t\t", "config", ",", 
          "\n", "\t\t\t\t", 
          RowBox[{"$WebSiteBuildAggStack", "[", "\"\<Articles\>\"", "]"}], ",",
@@ -5066,8 +5093,8 @@ Cell[BoxData[{
     "\t\t", "]"}]}], 
   ";"}]}], "CodeInput",ExpressionUUID->"f339f2ab-a4e8-46be-938a-c120fba97ac3"]\
 
-}, Open  ]]
-}, Closed]],
+}, Closed]]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -6896,7 +6923,7 @@ Cell[BoxData[{
   ";"}]}], "CodeInput",ExpressionUUID->"9d4353a9-dbe4-477d-b228-d70bbae52773"]\
 
 }, Open  ]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -7137,14 +7164,11 @@ Cell[BoxData[
  RowBox[{
   RowBox[{"$WebFileFormats", "=", "\n", "\t", 
    RowBox[{
-   "\"\<html\>\"", "|", "\"\<css\>\"", "|", "\"\<js\>\"", "|", "\n", "\t", 
-    "\"\<png\>\"", "|", "\"\<jpg\>\"", "|", "\"\<gif\>\"", "|", "\n", "\t", 
-    "\"\<woff\>\"", "|", "\"\<tff\>\"", "|", "\"\<eot\>\"", "|", 
-    "\"\<svg\>\""}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.709921207501466*^9, 3.709921218117272*^9}, 
-   3.709921298818039*^9, {3.709924245458589*^9, 
-   3.7099242893255653`*^9}},ExpressionUUID->"f28bee9c-269d-41b5-a11c-\
-af6be094a7e3"],
+   "\"\<html\>\"", "|", "\"\<css\>\"", "|", "\"\<js\>\"", "|", "\"\<xml\>\"", 
+    "|", "\"\<json\>\"", "|", "\n", "\t", "\"\<png\>\"", "|", "\"\<jpg\>\"", 
+    "|", "\"\<gif\>\"", "|", "\n", "\t", "\"\<woff\>\"", "|", "\"\<tff\>\"", 
+    "|", "\"\<eot\>\"", "|", "\"\<svg\>\""}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"f28bee9c-269d-41b5-a11c-af6be094a7e3"],
 
 Cell[BoxData[{
  RowBox[{
@@ -7437,7 +7461,7 @@ Cell[BoxData[
    3.733697337051263*^9},ExpressionUUID->"737c592b-3f6d-4b32-8e1a-\
 eebb939a6ef5"]
 }, Open  ]]
-}, Closed]]
+}, Open  ]]
 }, Open  ]],
 
 Cell[BoxData[
@@ -7451,7 +7475,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"4900c668-e5de-468b-908d-\
 3bbe427549a1"]
 },
 WindowSize->{808, 756},
-WindowMargins->{{Automatic, 74}, {Automatic, 20}},
+WindowMargins->{{170, Automatic}, {Automatic, 22}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

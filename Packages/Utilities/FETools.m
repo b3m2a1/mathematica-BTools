@@ -1957,7 +1957,12 @@ FEExportPrep[r_?BoxQ]:=
 	Cell[BoxData@r];
 FEExportPrep[e_]:=
 	Cell[BoxData@ToBoxes@e];
-FEExport[thing_, fmt:Alternatives@@$FEExportFormats:"PlainText"]:=
+
+
+FEExport[
+	thing_, 
+	fmt:Alternatives@@$FEExportFormats:"PlainText"
+	]:=
 	First@FrontEndExecute@ExportPacket[FEExportPrep@thing, fmt];
 
 

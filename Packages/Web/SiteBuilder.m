@@ -576,19 +576,19 @@ xmlTemplateApplyInit[root_, template_]:=
 			Join[
 				Flatten@List@
 					Replace[root, Automatic:>DirectoryName@template],
+				$TemplatePath,
 				{
 					$WebSiteTemplateLibDirectory
-					},
-				$TemplatePath
+					}
 				];
 		$Path=
 			Join[
 				Flatten@List@
 					Replace[root, Automatic:>DirectoryName@template],
+				$Path,
 				{
 					$WebSiteTemplateLibDirectory
-					},
-				$Path
+					}
 				];
 		$Context="Templating`lib`";
 		$ContextPath={"Templating`lib`", "System`"};
@@ -1359,10 +1359,19 @@ WebSiteTemplateApply[
 		With[{
 			fils=
 				Replace[
-					FileNames[
-						#,
-						Append[root, 
-							FileNameJoin@{$WebSiteTemplateLibDirectory, "templates"}
+					With[
+						{
+							dp=
+								Map[
+									FileNameJoin@*FileNameSplit,
+									Append[root, 
+										FileNameJoin@{$WebSiteTemplateLibDirectory, "templates"}
+										]
+									]
+							},
+						SortBy[
+							FileNames[#, dp],
+							Position[dp, FileNameJoin@FileNameSplit@DirectoryName@#]&
 							]
 						],
 					{
@@ -1508,13 +1517,15 @@ WebSiteTemplateExportPaginated[
 			page=""
 			},
 			If[TrueQ@OptionValue[Monitor], Monitor, #&][
-				If[IntegerQ[pageSize]&&pageSize>0&&MemberQ[{"html", ""}, FileExtension[baseName]],
+				If[IntegerQ[pageSize]&&pageSize>0&&
+					MemberQ[{"html", ""}, FileExtension[baseName]],
 					Table[
 						WebSiteTemplateExport[
 							failInput<>If[i>1, ", page "<>ToString[i], ""],
 							FileNameJoin@{
 								dir, 
-								StringTrim[baseName, ".html"]<>If[i>1, ToString[i], ""]<>".html"
+								StringTrim[baseName, ".html"]<>
+									If[i>1, ToString[i], ""]<>".html"
 								},
 							root,
 							None,
@@ -2183,7 +2194,11 @@ WebSiteGenerateAggregationPages[
 										FileBaseName[fout],
 										FileNameTake[fout, {1, -2}],
 										outDir,
-										{FileNameJoin@{thm,"templates"},longDir},
+										{
+											thm,
+											FileNameJoin@{thm, "templates"},
+											longDir
+											},
 										None,
 										templates, 
 										Append[
@@ -2285,7 +2300,10 @@ WebSiteGatherIndexTemplates[thm_]:=
 			{
 				FileNameJoin[{thm, "templates", "index.html"}]
 				},
-			FileNames["*.html"|"*.xml", FileNameJoin@{thm, "templates", "indexes"}]
+			FileNames[
+				"*.html"|"*.xml", 
+				FileNameJoin@{thm, "templates", "indexes"}
+				]
 			]
 
 
@@ -2312,7 +2330,11 @@ WebSiteGenerateIndexPages[dir_, outDir_, theme_, config_, ops:OptionsPattern[]]:
 				#,
 				StringReplace[StringTrim[#, ".html"], "indexes"->"index"],
 				outDir, outDir,
-				{FileNameJoin@{thm, "templates"}, longDir},
+				{
+					thm,
+					FileNameJoin@{thm, "templates"}, 
+					longDir
+					},
 				None,
 				{#}, 
 				config,
@@ -3439,7 +3461,7 @@ webSiteDeployFile[f_, uri_, outDir_, trueDir_, stripDirs_, ops___?OptionQ]:=
 
 
 $WebFileFormats=
-	"html"|"css"|"js"|
+	"html"|"css"|"js"|"xml"|"json"|
 	"png"|"jpg"|"gif"|
 	"woff"|"tff"|"eot"|"svg";
 

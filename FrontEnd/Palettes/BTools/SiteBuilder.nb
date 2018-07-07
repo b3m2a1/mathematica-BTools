@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     80144,       1655]
-NotebookOptionsPosition[     79716,       1636]
-NotebookOutlinePosition[     80130,       1655]
-CellTagsIndexPosition[     80087,       1652]
+NotebookDataLength[     93211,       1890]
+NotebookOptionsPosition[     91910,       1855]
+NotebookOutlinePosition[     93197,       1890]
+CellTagsIndexPosition[     93154,       1887]
 WindowTitle->Site Builder
 WindowFrame->Palette*)
 
@@ -183,7 +183,7 @@ s2fPCGI6qWcgQT3DYFVPSnlFoCxEKRMB+xLGWw==
                     SiteBuilderPalette`Private`ListPages[]; Null)& ], {
                    "webpages"}, 
                    "/Users/Mark/Library/Mathematica/ApplicationData/WebSites/\
-blog", 
+tutorial", 
                    Button[
                    "", Null, Appearance -> {"Default" -> Image[CompressedData["
 1:eJxTTMoPSmNiYGAo5gASQYnljkVFiZXBAkBOaF5xZnpeaopnXklqemqRRRIz
@@ -322,7 +322,7 @@ z/+r03cY0Xn8Ad19LLo=
                 Enabled -> Length[SiteBuilderPalette`Private`$PostList] > 0, 
                  TrackedSymbols :> {SiteBuilderPalette`Private`$PostList}}, 
                 Options[Button]], {1, 1, -1}], StandardForm], {
-             Enabled -> False, 
+             Enabled -> True, 
               TrackedSymbols :> {SiteBuilderPalette`Private`$PostList}},
              ImageSizeCache->{200., {8., 19.}}]},
            {
@@ -405,7 +405,7 @@ z/+r03cY0Xn8Ad19LLo=
                 Enabled -> Length[SiteBuilderPalette`Private`$PageList] > 0, 
                  TrackedSymbols :> {SiteBuilderPalette`Private`$PageList}}, 
                 Options[Button]], {1, 1, -1}], StandardForm], {
-             Enabled -> False, 
+             Enabled -> True, 
               TrackedSymbols :> {SiteBuilderPalette`Private`$PageList}},
              ImageSizeCache->{200., {8., 19.}}]},
            {
@@ -454,37 +454,52 @@ mEXTyg==
                   "], "Byte", ColorSpace -> "RGB", Interleaving -> 
                   True], 
                 Dynamic[
-                 If[
-                  TrueQ[
-                   BTools`FrontEnd`Private`UUIDActive[
-                   "Button-543e7c87-98e5-4b2e-8ad6-e1bfd92c44f5"]], "Pressed",
-                   Automatic]]},
-              ButtonFunction:>(CheckAll[Block[{$ContextPath = {"System`"}}, 
-                   Needs[
+                 FEPrivate`If[
+                  FrontEnd`CurrentValue[
+                   FrontEnd`EvaluationNotebook[], {
+                   TaggingRules, "UUIDButtons", "Active", 
+                    "Button-77ddeb2c-d9e7-42d8-9037-024d9580ff75"}, False], 
+                  "Pressed", Automatic, Automatic]]},
+              
+              ButtonFunction:>(
+               With[{BTools`Formatting`Private`nb$ = EvaluationNotebook[]}, 
+                 Internal`WithLocalSettings[CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-77ddeb2c-d9e7-42d8-9037-024d9580ff75"}] = True, 
+                   Block[{$ContextPath = {"System`"}}, 
+                    Needs[
                     StringJoin[SiteBuilderPalette`Private`$AppName, "`"]]]; 
-                 SystemOpen[
-                   
-                   FileNameJoin[{
+                   SystemOpen[
+                    
+                    FileNameJoin[{
                     SiteBuilderPalette`Private`$CurrentProject, 
-                    "SiteConfig.wl"}]], 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-543e7c87-98e5-4b2e-8ad6-e1bfd92c44f5"] = False]; 
-               BTools`FrontEnd`Private`UUIDActive[
-                 "Button-543e7c87-98e5-4b2e-8ad6-e1bfd92c44f5"] = False),
+                    "SiteConfig.wl"}]], CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-77ddeb2c-d9e7-42d8-9037-024d9580ff75"}] = False]; 
+                 Null]; Null),
               Evaluator->Automatic,
               FrameMargins->{{5, 5}, {2, 0}},
               ImageSize->200,
               Method->"Queued"],
-             EventHandlerTag[{"MouseClicked" :> If[
-                 TrueQ[
-                  Replace[
-                   Replace[Automatic, Pattern[BTools`PackageScope`Private`d, 
-                    Blank[Dynamic]] :> First[BTools`PackageScope`Private`d]], 
-                   Automatic -> True]], 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-543e7c87-98e5-4b2e-8ad6-e1bfd92c44f5"] = True], 
-               PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
-               True}]]},
+             EventHandlerTag[{"MouseClicked" :> Internal`WithLocalSettings[
+                 FrontEndExecute[
+                  FrontEnd`NotebookSuspendScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]], 
+                 If[
+                  TrueQ[
+                   Replace[
+                    Replace[Automatic, Pattern[BTools`Formatting`Private`d, 
+                    Blank[Dynamic]] :> First[BTools`Formatting`Private`d]], 
+                    Automatic -> True]], CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-77ddeb2c-d9e7-42d8-9037-024d9580ff75"}] = True], 
+                 FrontEndExecute[
+                  FrontEnd`NotebookResumeScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]]], PassEventsDown -> True, 
+               Method -> "Preemptive", PassEventsUp -> True}]]},
            {
             TagBox[
              ButtonBox[
@@ -520,35 +535,50 @@ mEXTyg==
                   "], "Byte", ColorSpace -> "RGB", Interleaving -> 
                   True], 
                 Dynamic[
-                 If[
-                  TrueQ[
-                   BTools`FrontEnd`Private`UUIDActive[
-                   "Button-d1d833ca-ff3d-45e4-b68f-71e66d682423"]], "Pressed",
-                   Automatic]]},
-              ButtonFunction:>(CheckAll[Block[{$ContextPath = {"System`"}}, 
-                   Needs[
+                 FEPrivate`If[
+                  FrontEnd`CurrentValue[
+                   FrontEnd`EvaluationNotebook[], {
+                   TaggingRules, "UUIDButtons", "Active", 
+                    "Button-2f99905a-050a-4cd6-a049-ada976f1631f"}, False], 
+                  "Pressed", Automatic, Automatic]]},
+              
+              ButtonFunction:>(
+               With[{BTools`Formatting`Private`nb$ = EvaluationNotebook[]}, 
+                 Internal`WithLocalSettings[CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-2f99905a-050a-4cd6-a049-ada976f1631f"}] = True, 
+                   Block[{$ContextPath = {"System`"}}, 
+                    Needs[
                     StringJoin[SiteBuilderPalette`Private`$AppName, "`"]]]; 
-                 SystemOpen[
-                   SiteBuilderPalette`Private`whichPacF["WebSiteFindTheme"][
-                   SiteBuilderPalette`Private`$CurrentProject]], 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-d1d833ca-ff3d-45e4-b68f-71e66d682423"] = False]; 
-               BTools`FrontEnd`Private`UUIDActive[
-                 "Button-d1d833ca-ff3d-45e4-b68f-71e66d682423"] = False),
+                   SystemOpen[
+                    SiteBuilderPalette`Private`whichPacF["WebSiteFindTheme"][
+                    SiteBuilderPalette`Private`$CurrentProject]], CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-2f99905a-050a-4cd6-a049-ada976f1631f"}] = False]; 
+                 Null]; Null),
               Evaluator->Automatic,
               FrameMargins->{{5, 5}, {2, 0}},
               ImageSize->200,
               Method->"Queued"],
-             EventHandlerTag[{"MouseClicked" :> If[
-                 TrueQ[
-                  Replace[
-                   Replace[Automatic, Pattern[BTools`PackageScope`Private`d, 
-                    Blank[Dynamic]] :> First[BTools`PackageScope`Private`d]], 
-                   Automatic -> True]], 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-d1d833ca-ff3d-45e4-b68f-71e66d682423"] = True], 
-               PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
-               True}]]},
+             EventHandlerTag[{"MouseClicked" :> Internal`WithLocalSettings[
+                 FrontEndExecute[
+                  FrontEnd`NotebookSuspendScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]], 
+                 If[
+                  TrueQ[
+                   Replace[
+                    Replace[Automatic, Pattern[BTools`Formatting`Private`d, 
+                    Blank[Dynamic]] :> First[BTools`Formatting`Private`d]], 
+                    Automatic -> True]], CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-2f99905a-050a-4cd6-a049-ada976f1631f"}] = True], 
+                 FrontEndExecute[
+                  FrontEnd`NotebookResumeScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]]], PassEventsDown -> True, 
+               Method -> "Preemptive", PassEventsUp -> True}]]},
            {
             TagBox[
              ButtonBox[
@@ -584,37 +614,52 @@ mEXTyg==
                   "], "Byte", ColorSpace -> "RGB", Interleaving -> 
                   True], 
                 Dynamic[
-                 If[
-                  TrueQ[
-                   BTools`FrontEnd`Private`UUIDActive[
-                   "Button-c31402e7-80af-49b1-9a44-653d2c9fe56f"]], "Pressed",
-                   Automatic]]},
-              ButtonFunction:>(CheckAll[Block[{$ContextPath = {"System`"}}, 
-                   Needs[
+                 FEPrivate`If[
+                  FrontEnd`CurrentValue[
+                   FrontEnd`EvaluationNotebook[], {
+                   TaggingRules, "UUIDButtons", "Active", 
+                    "Button-76b97735-9957-4381-926b-2badfee795ec"}, False], 
+                  "Pressed", Automatic, Automatic]]},
+              
+              ButtonFunction:>(
+               With[{BTools`Formatting`Private`nb$ = EvaluationNotebook[]}, 
+                 Internal`WithLocalSettings[CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-76b97735-9957-4381-926b-2badfee795ec"}] = True, 
+                   Block[{$ContextPath = {"System`"}}, 
+                    Needs[
                     StringJoin[SiteBuilderPalette`Private`$AppName, "`"]]]; 
-                 SystemOpen[
-                   
-                   FileNameJoin[{
+                   SystemOpen[
+                    
+                    FileNameJoin[{
                     SiteBuilderPalette`Private`$CurrentProject, 
-                    "BuildInfo.wl"}]], 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-c31402e7-80af-49b1-9a44-653d2c9fe56f"] = False]; 
-               BTools`FrontEnd`Private`UUIDActive[
-                 "Button-c31402e7-80af-49b1-9a44-653d2c9fe56f"] = False),
+                    "BuildInfo.wl"}]], CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-76b97735-9957-4381-926b-2badfee795ec"}] = False]; 
+                 Null]; Null),
               Evaluator->Automatic,
               FrameMargins->{{5, 5}, {2, 0}},
               ImageSize->200,
               Method->"Queued"],
-             EventHandlerTag[{"MouseClicked" :> If[
-                 TrueQ[
-                  Replace[
-                   Replace[Automatic, Pattern[BTools`PackageScope`Private`d, 
-                    Blank[Dynamic]] :> First[BTools`PackageScope`Private`d]], 
-                   Automatic -> True]], 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-c31402e7-80af-49b1-9a44-653d2c9fe56f"] = True], 
-               PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
-               True}]]},
+             EventHandlerTag[{"MouseClicked" :> Internal`WithLocalSettings[
+                 FrontEndExecute[
+                  FrontEnd`NotebookSuspendScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]], 
+                 If[
+                  TrueQ[
+                   Replace[
+                    Replace[Automatic, Pattern[BTools`Formatting`Private`d, 
+                    Blank[Dynamic]] :> First[BTools`Formatting`Private`d]], 
+                    Automatic -> True]], CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-76b97735-9957-4381-926b-2badfee795ec"}] = True], 
+                 FrontEndExecute[
+                  FrontEnd`NotebookResumeScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]]], PassEventsDown -> True, 
+               Method -> "Preemptive", PassEventsUp -> True}]]},
            {
             TagBox[
              ButtonBox[
@@ -650,37 +695,52 @@ mEXTyg==
                   "], "Byte", ColorSpace -> "RGB", Interleaving -> 
                   True], 
                 Dynamic[
-                 If[
-                  TrueQ[
-                   BTools`FrontEnd`Private`UUIDActive[
-                   "Button-a41f0dc5-4b71-4416-b194-492f9d81105d"]], "Pressed",
-                   Automatic]]},
-              ButtonFunction:>(CheckAll[Block[{$ContextPath = {"System`"}}, 
-                   Needs[
+                 FEPrivate`If[
+                  FrontEnd`CurrentValue[
+                   FrontEnd`EvaluationNotebook[], {
+                   TaggingRules, "UUIDButtons", "Active", 
+                    "Button-fc8364ed-c41f-4c7a-bddf-68517cc06d5b"}, False], 
+                  "Pressed", Automatic, Automatic]]},
+              
+              ButtonFunction:>(
+               With[{BTools`Formatting`Private`nb$ = EvaluationNotebook[]}, 
+                 Internal`WithLocalSettings[CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-fc8364ed-c41f-4c7a-bddf-68517cc06d5b"}] = True, 
+                   Block[{$ContextPath = {"System`"}}, 
+                    Needs[
                     StringJoin[SiteBuilderPalette`Private`$AppName, "`"]]]; 
-                 SystemOpen[
-                   
-                   FileNameJoin[{
+                   SystemOpen[
+                    
+                    FileNameJoin[{
                     SiteBuilderPalette`Private`$CurrentProject, 
-                    "DeploymentInfo.wl"}]], 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-a41f0dc5-4b71-4416-b194-492f9d81105d"] = False]; 
-               BTools`FrontEnd`Private`UUIDActive[
-                 "Button-a41f0dc5-4b71-4416-b194-492f9d81105d"] = False),
+                    "DeploymentInfo.wl"}]], CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-fc8364ed-c41f-4c7a-bddf-68517cc06d5b"}] = False]; 
+                 Null]; Null),
               Evaluator->Automatic,
               FrameMargins->{{5, 5}, {2, 0}},
               ImageSize->200,
               Method->"Queued"],
-             EventHandlerTag[{"MouseClicked" :> If[
-                 TrueQ[
-                  Replace[
-                   Replace[Automatic, Pattern[BTools`PackageScope`Private`d, 
-                    Blank[Dynamic]] :> First[BTools`PackageScope`Private`d]], 
-                   Automatic -> True]], 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-a41f0dc5-4b71-4416-b194-492f9d81105d"] = True], 
-               PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
-               True}]]},
+             EventHandlerTag[{"MouseClicked" :> Internal`WithLocalSettings[
+                 FrontEndExecute[
+                  FrontEnd`NotebookSuspendScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]], 
+                 If[
+                  TrueQ[
+                   Replace[
+                    Replace[Automatic, Pattern[BTools`Formatting`Private`d, 
+                    Blank[Dynamic]] :> First[BTools`Formatting`Private`d]], 
+                    Automatic -> True]], CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-fc8364ed-c41f-4c7a-bddf-68517cc06d5b"}] = True], 
+                 FrontEndExecute[
+                  FrontEnd`NotebookResumeScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]]], PassEventsDown -> True, 
+               Method -> "Preemptive", PassEventsUp -> True}]]},
            {
             PanelBox["\<\"\"\>",
              Appearance->Image[CompressedData["
@@ -727,35 +787,50 @@ mEXTyg==
                   "], "Byte", ColorSpace -> "RGB", Interleaving -> 
                   True], 
                 Dynamic[
-                 If[
-                  TrueQ[
-                   BTools`FrontEnd`Private`UUIDActive[
-                   "Button-63222513-da0e-4978-ac11-16f46ccad735"]], "Pressed",
-                   Automatic]]},
-              ButtonFunction:>(CheckAll[Block[{$ContextPath = {"System`"}}, 
-                   Needs[
+                 FEPrivate`If[
+                  FrontEnd`CurrentValue[
+                   FrontEnd`EvaluationNotebook[], {
+                   TaggingRules, "UUIDButtons", "Active", 
+                    "Button-4feb3bcf-9f87-4746-95be-2a9d01e27d82"}, False], 
+                  "Pressed", Automatic, Automatic]]},
+              
+              ButtonFunction:>(
+               With[{BTools`Formatting`Private`nb$ = EvaluationNotebook[]}, 
+                 Internal`WithLocalSettings[CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-4feb3bcf-9f87-4746-95be-2a9d01e27d82"}] = True, 
+                   Block[{$ContextPath = {"System`"}}, 
+                    Needs[
                     StringJoin[SiteBuilderPalette`Private`$AppName, "`"]]]; (
-                  SiteBuilderPalette`Private`whichPacF["WebSiteNewContent"][
-                   SiteBuilderPalette`Private`$CurrentProject, "posts"]; 
-                  SiteBuilderPalette`Private`ListPosts[]), 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-63222513-da0e-4978-ac11-16f46ccad735"] = False]; 
-               BTools`FrontEnd`Private`UUIDActive[
-                 "Button-63222513-da0e-4978-ac11-16f46ccad735"] = False),
+                    SiteBuilderPalette`Private`whichPacF["WebSiteNewContent"][
+                    SiteBuilderPalette`Private`$CurrentProject, "posts"]; 
+                    SiteBuilderPalette`Private`ListPosts[]), CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-4feb3bcf-9f87-4746-95be-2a9d01e27d82"}] = False]; 
+                 Null]; Null),
               Evaluator->Automatic,
               FrameMargins->{{5, 5}, {2, 0}},
               ImageSize->200,
               Method->"Queued"],
-             EventHandlerTag[{"MouseClicked" :> If[
-                 TrueQ[
-                  Replace[
-                   Replace[Automatic, Pattern[BTools`PackageScope`Private`d, 
-                    Blank[Dynamic]] :> First[BTools`PackageScope`Private`d]], 
-                   Automatic -> True]], 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-63222513-da0e-4978-ac11-16f46ccad735"] = True], 
-               PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
-               True}]]},
+             EventHandlerTag[{"MouseClicked" :> Internal`WithLocalSettings[
+                 FrontEndExecute[
+                  FrontEnd`NotebookSuspendScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]], 
+                 If[
+                  TrueQ[
+                   Replace[
+                    Replace[Automatic, Pattern[BTools`Formatting`Private`d, 
+                    Blank[Dynamic]] :> First[BTools`Formatting`Private`d]], 
+                    Automatic -> True]], CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-4feb3bcf-9f87-4746-95be-2a9d01e27d82"}] = True], 
+                 FrontEndExecute[
+                  FrontEnd`NotebookResumeScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]]], PassEventsDown -> True, 
+               Method -> "Preemptive", PassEventsUp -> True}]]},
            {
             TagBox[
              ButtonBox[
@@ -791,35 +866,50 @@ mEXTyg==
                   "], "Byte", ColorSpace -> "RGB", Interleaving -> 
                   True], 
                 Dynamic[
-                 If[
-                  TrueQ[
-                   BTools`FrontEnd`Private`UUIDActive[
-                   "Button-0f4aba51-ce0d-408a-8124-e2a70e41c336"]], "Pressed",
-                   Automatic]]},
-              ButtonFunction:>(CheckAll[Block[{$ContextPath = {"System`"}}, 
-                   Needs[
+                 FEPrivate`If[
+                  FrontEnd`CurrentValue[
+                   FrontEnd`EvaluationNotebook[], {
+                   TaggingRules, "UUIDButtons", "Active", 
+                    "Button-0e5eb330-e6ce-45d5-9800-41e6e3bff350"}, False], 
+                  "Pressed", Automatic, Automatic]]},
+              
+              ButtonFunction:>(
+               With[{BTools`Formatting`Private`nb$ = EvaluationNotebook[]}, 
+                 Internal`WithLocalSettings[CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-0e5eb330-e6ce-45d5-9800-41e6e3bff350"}] = True, 
+                   Block[{$ContextPath = {"System`"}}, 
+                    Needs[
                     StringJoin[SiteBuilderPalette`Private`$AppName, "`"]]]; (
-                  SiteBuilderPalette`Private`whichPacF["WebSiteNewContent"][
-                   SiteBuilderPalette`Private`$CurrentProject, "pages"]; 
-                  SiteBuilderPalette`Private`ListPages[]), 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-0f4aba51-ce0d-408a-8124-e2a70e41c336"] = False]; 
-               BTools`FrontEnd`Private`UUIDActive[
-                 "Button-0f4aba51-ce0d-408a-8124-e2a70e41c336"] = False),
+                    SiteBuilderPalette`Private`whichPacF["WebSiteNewContent"][
+                    SiteBuilderPalette`Private`$CurrentProject, "pages"]; 
+                    SiteBuilderPalette`Private`ListPages[]), CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-0e5eb330-e6ce-45d5-9800-41e6e3bff350"}] = False]; 
+                 Null]; Null),
               Evaluator->Automatic,
               FrameMargins->{{5, 5}, {2, 0}},
               ImageSize->200,
               Method->"Queued"],
-             EventHandlerTag[{"MouseClicked" :> If[
-                 TrueQ[
-                  Replace[
-                   Replace[Automatic, Pattern[BTools`PackageScope`Private`d, 
-                    Blank[Dynamic]] :> First[BTools`PackageScope`Private`d]], 
-                   Automatic -> True]], 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-0f4aba51-ce0d-408a-8124-e2a70e41c336"] = True], 
-               PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
-               True}]]},
+             EventHandlerTag[{"MouseClicked" :> Internal`WithLocalSettings[
+                 FrontEndExecute[
+                  FrontEnd`NotebookSuspendScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]], 
+                 If[
+                  TrueQ[
+                   Replace[
+                    Replace[Automatic, Pattern[BTools`Formatting`Private`d, 
+                    Blank[Dynamic]] :> First[BTools`Formatting`Private`d]], 
+                    Automatic -> True]], CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-0e5eb330-e6ce-45d5-9800-41e6e3bff350"}] = True], 
+                 FrontEndExecute[
+                  FrontEnd`NotebookResumeScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]]], PassEventsDown -> True, 
+               Method -> "Preemptive", PassEventsUp -> True}]]},
            {
             TagBox[
              ButtonBox[
@@ -855,36 +945,50 @@ mEXTyg==
                   "], "Byte", ColorSpace -> "RGB", Interleaving -> 
                   True], 
                 Dynamic[
-                 If[
-                  TrueQ[
-                   BTools`FrontEnd`Private`UUIDActive[
-                   "Button-223393b0-7b00-4455-b8ab-f06860f33398"]], "Pressed",
-                   Automatic]]},
-              ButtonFunction:>(CheckAll[Block[{$ContextPath = {"System`"}}, 
-                   Needs[
+                 FEPrivate`If[
+                  FrontEnd`CurrentValue[
+                   FrontEnd`EvaluationNotebook[], {
+                   TaggingRules, "UUIDButtons", "Active", 
+                    "Button-cdbde8b5-3b08-4f0b-ade8-a9d4ed8dfbf6"}, False], 
+                  "Pressed", Automatic, Automatic]]},
+              ButtonFunction:>(
+               With[{BTools`Formatting`Private`nb$ = EvaluationNotebook[]}, 
+                 Internal`WithLocalSettings[CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-cdbde8b5-3b08-4f0b-ade8-a9d4ed8dfbf6"}] = True, 
+                   Block[{$ContextPath = {"System`"}}, 
+                    Needs[
                     StringJoin[SiteBuilderPalette`Private`$AppName, "`"]]]; (
-                  SiteBuilderPalette`Private`whichPacF[
-                   "WebSiteNewTableOfContents"][
-                   SiteBuilderPalette`Private`$CurrentProject]; 
-                  SiteBuilderPalette`Private`ListPages[]), 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-223393b0-7b00-4455-b8ab-f06860f33398"] = False]; 
-               BTools`FrontEnd`Private`UUIDActive[
-                 "Button-223393b0-7b00-4455-b8ab-f06860f33398"] = False),
+                    SiteBuilderPalette`Private`whichPacF[
+                    "WebSiteNewTableOfContents"][
+                    SiteBuilderPalette`Private`$CurrentProject]; 
+                    SiteBuilderPalette`Private`ListPages[]), CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-cdbde8b5-3b08-4f0b-ade8-a9d4ed8dfbf6"}] = False]; 
+                 Null]; Null),
               Evaluator->Automatic,
               FrameMargins->{{5, 5}, {2, 0}},
               ImageSize->200,
               Method->"Queued"],
-             EventHandlerTag[{"MouseClicked" :> If[
-                 TrueQ[
-                  Replace[
-                   Replace[Automatic, Pattern[BTools`PackageScope`Private`d, 
-                    Blank[Dynamic]] :> First[BTools`PackageScope`Private`d]], 
-                   Automatic -> True]], 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-223393b0-7b00-4455-b8ab-f06860f33398"] = True], 
-               PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
-               True}]]},
+             EventHandlerTag[{"MouseClicked" :> Internal`WithLocalSettings[
+                 FrontEndExecute[
+                  FrontEnd`NotebookSuspendScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]], 
+                 If[
+                  TrueQ[
+                   Replace[
+                    Replace[Automatic, Pattern[BTools`Formatting`Private`d, 
+                    Blank[Dynamic]] :> First[BTools`Formatting`Private`d]], 
+                    Automatic -> True]], CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-cdbde8b5-3b08-4f0b-ade8-a9d4ed8dfbf6"}] = True], 
+                 FrontEndExecute[
+                  FrontEnd`NotebookResumeScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]]], PassEventsDown -> True, 
+               Method -> "Preemptive", PassEventsUp -> True}]]},
            {
             PanelBox["\<\"\"\>",
              Appearance->Image[CompressedData["
@@ -931,16 +1035,24 @@ mEXTyg==
                   "], "Byte", ColorSpace -> "RGB", Interleaving -> 
                   True], 
                 Dynamic[
-                 If[
-                  TrueQ[
-                   BTools`FrontEnd`Private`UUIDActive[
-                   "Button-92b55b17-8643-45d6-92f0-87a7c9883ebd"]], "Pressed",
-                   Automatic]]},
-              ButtonFunction:>(CheckAll[Block[{$ContextPath = {"System`"}}, 
-                   Needs[
+                 FEPrivate`If[
+                  FrontEnd`CurrentValue[
+                   FrontEnd`EvaluationNotebook[], {
+                   TaggingRules, "UUIDButtons", "Active", 
+                    "Button-918ffd91-1368-4c80-a1bb-4a835d4e4ce6"}, False], 
+                  "Pressed", Automatic, Automatic]]},
+              
+              ButtonFunction:>(
+               With[{BTools`Formatting`Private`nb$ = EvaluationNotebook[]}, 
+                 Internal`WithLocalSettings[CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-918ffd91-1368-4c80-a1bb-4a835d4e4ce6"}] = True, 
+                   Block[{$ContextPath = {"System`"}}, 
+                    Needs[
                     StringJoin[SiteBuilderPalette`Private`$AppName, "`"]]]; (
-                  SiteBuilderPalette`Private`whichPacF["WebSiteBuild"][
-                   SiteBuilderPalette`Private`$CurrentProject, Monitor -> 
+                    SiteBuilderPalette`Private`whichPacF["WebSiteBuild"][
+                    SiteBuilderPalette`Private`$CurrentProject, Monitor -> 
                     TrueQ[
                     Not[SiteBuilderPalette`Private`$buildSilentFlag]], 
                     "GenerateAggregations" -> 
@@ -951,38 +1063,51 @@ mEXTyg==
                     SiteBuilderPalette`Private`$generatContentFlag =!= False, 
                     "CopyTheme" -> 
                     SiteBuilderPalette`Private`$copyThemeFlag =!= False, 
+                    "GenerateSearchPage" -> 
+                    SiteBuilderPalette`Private`$generateSearchFlag =!= False, 
+                    
                     If[
                     TrueQ[SiteBuilderPalette`Private`$rebuildAllFlag], 
                     "LastBuild" -> None, 
                     Apply[Sequence, {}]]]; 
-                  If[SiteBuilderPalette`Private`$openOnGenerateFlag =!= False, 
-                    If[Length[
-                    Join[
-                    DownValues[BTools`PySimpleServerOpen], 
-                    OwnValues[BTools`PySimpleServerOpen]]] > 0, 
-                    BTools`PySimpleServerOpen, RunProcess[
-                    TemplateApply["open `` -a \"Google Chrome\"", #]]& ][
-                    
+                    If[SiteBuilderPalette`Private`$openOnGenerateFlag =!= 
+                    False, 
+                    Replace[
+                    SiteBuilderPalette`Private`whichPacF[
+                    "PySimpleServerOpen"], {PatternTest[
+                    Pattern[SiteBuilderPalette`Private`s, 
+                    Blank[Symbol]], Length[
+                    DownValues[#]] > 0& ] :> SiteBuilderPalette`Private`s, 
+                    Blank[] :> (RunProcess[
+                    TemplateApply["open `` -a \"Google Chrome\"", #]]& )}][
                     FileNameJoin[{
                     SiteBuilderPalette`Private`$CurrentProject, "output"}]]]),
-                  BTools`FrontEnd`Private`UUIDActive[
-                  "Button-92b55b17-8643-45d6-92f0-87a7c9883ebd"] = False]; 
-               BTools`FrontEnd`Private`UUIDActive[
-                 "Button-92b55b17-8643-45d6-92f0-87a7c9883ebd"] = False),
+                    CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-918ffd91-1368-4c80-a1bb-4a835d4e4ce6"}] = False]; 
+                 Null]; Null),
               Evaluator->Automatic,
               FrameMargins->{{5, 5}, {2, 0}},
               ImageSize->200,
               Method->"Queued"],
-             EventHandlerTag[{"MouseClicked" :> If[
-                 TrueQ[
-                  Replace[
-                   Replace[Automatic, Pattern[BTools`PackageScope`Private`d, 
-                    Blank[Dynamic]] :> First[BTools`PackageScope`Private`d]], 
-                   Automatic -> True]], 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-92b55b17-8643-45d6-92f0-87a7c9883ebd"] = True], 
-               PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
-               True}]]},
+             EventHandlerTag[{"MouseClicked" :> Internal`WithLocalSettings[
+                 FrontEndExecute[
+                  FrontEnd`NotebookSuspendScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]], 
+                 If[
+                  TrueQ[
+                   Replace[
+                    Replace[Automatic, Pattern[BTools`Formatting`Private`d, 
+                    Blank[Dynamic]] :> First[BTools`Formatting`Private`d]], 
+                    Automatic -> True]], CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-918ffd91-1368-4c80-a1bb-4a835d4e4ce6"}] = True], 
+                 FrontEndExecute[
+                  FrontEnd`NotebookResumeScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]]], PassEventsDown -> True, 
+               Method -> "Preemptive", PassEventsUp -> True}]]},
            {
             TagBox[
              ButtonBox[
@@ -1018,38 +1143,53 @@ mEXTyg==
                   "], "Byte", ColorSpace -> "RGB", Interleaving -> 
                   True], 
                 Dynamic[
-                 If[
-                  TrueQ[
-                   BTools`FrontEnd`Private`UUIDActive[
-                   "Button-e0a48c31-0205-4eaa-83d0-c163f03e71e8"]], "Pressed",
-                   Automatic]]},
-              ButtonFunction:>(CheckAll[Block[{$ContextPath = {"System`"}}, 
-                   Needs[
+                 FEPrivate`If[
+                  FrontEnd`CurrentValue[
+                   FrontEnd`EvaluationNotebook[], {
+                   TaggingRules, "UUIDButtons", "Active", 
+                    "Button-02c3cb8b-ec23-492d-837d-d71d9879ea4a"}, False], 
+                  "Pressed", Automatic, Automatic]]},
+              
+              ButtonFunction:>(
+               With[{BTools`Formatting`Private`nb$ = EvaluationNotebook[]}, 
+                 Internal`WithLocalSettings[CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-02c3cb8b-ec23-492d-837d-d71d9879ea4a"}] = True, 
+                   Block[{$ContextPath = {"System`"}}, 
+                    Needs[
                     StringJoin[SiteBuilderPalette`Private`$AppName, "`"]]]; 
-                 SystemOpen[
-                   StringReplace[
+                   SystemOpen[
+                    StringReplace[
                     NotebookFileName[
                     InputNotebook[]], {
                     StringExpression[".nb", EndOfString] -> ".md", "*" -> 
-                    "_"}]], 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-e0a48c31-0205-4eaa-83d0-c163f03e71e8"] = False]; 
-               BTools`FrontEnd`Private`UUIDActive[
-                 "Button-e0a48c31-0205-4eaa-83d0-c163f03e71e8"] = False),
+                    "_"}]], CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-02c3cb8b-ec23-492d-837d-d71d9879ea4a"}] = False]; 
+                 Null]; Null),
               Evaluator->Automatic,
               FrameMargins->{{5, 5}, {2, 0}},
               ImageSize->200,
               Method->"Queued"],
-             EventHandlerTag[{"MouseClicked" :> If[
-                 TrueQ[
-                  Replace[
-                   Replace[Automatic, Pattern[BTools`PackageScope`Private`d, 
-                    Blank[Dynamic]] :> First[BTools`PackageScope`Private`d]], 
-                   Automatic -> True]], 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-e0a48c31-0205-4eaa-83d0-c163f03e71e8"] = True], 
-               PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
-               True}]]},
+             EventHandlerTag[{"MouseClicked" :> Internal`WithLocalSettings[
+                 FrontEndExecute[
+                  FrontEnd`NotebookSuspendScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]], 
+                 If[
+                  TrueQ[
+                   Replace[
+                    Replace[Automatic, Pattern[BTools`Formatting`Private`d, 
+                    Blank[Dynamic]] :> First[BTools`Formatting`Private`d]], 
+                    Automatic -> True]], CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-02c3cb8b-ec23-492d-837d-d71d9879ea4a"}] = True], 
+                 FrontEndExecute[
+                  FrontEnd`NotebookResumeScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]]], PassEventsDown -> True, 
+               Method -> "Preemptive", PassEventsUp -> True}]]},
            {
             TagBox[GridBox[{
                {
@@ -1076,15 +1216,14 @@ mEXTyg==
                {
                 TemplateBox[{CheckboxBox[
                    Dynamic[
-                   SiteBuilderPalette`Private`$generateAggregationsFlag =!= 
-                    False, If[
+                   SiteBuilderPalette`Private`$generatContentFlag =!= False, 
+                    If[
                     Not[
-                    BooleanQ[
-                    SiteBuilderPalette`Private`$generateAggregationsFlag]], 
-                    SiteBuilderPalette`Private`$generateAggregationsFlag = 
-                    False, SiteBuilderPalette`Private`$\
-generateAggregationsFlag = #]& ]],StyleBox[
-                  "\"Aggregations\"", 12, "Gray", StripOnInput -> False]},
+                    BooleanQ[SiteBuilderPalette`Private`$generatContentFlag]],
+                     SiteBuilderPalette`Private`$generatContentFlag = False, 
+                    SiteBuilderPalette`Private`$generatContentFlag = #]& ]],
+                  StyleBox["\"Content\"", 12, "Gray", StripOnInput -> False]},
+                 
                  "RowDefault"], 
                 TemplateBox[{CheckboxBox[
                    Dynamic[
@@ -1099,15 +1238,27 @@ generateAggregationsFlag = #]& ]],StyleBox[
                {
                 TemplateBox[{CheckboxBox[
                    Dynamic[
-                   SiteBuilderPalette`Private`$generatContentFlag =!= False, 
+                   SiteBuilderPalette`Private`$generateSearchFlag =!= False, 
                     If[
                     Not[
-                    BooleanQ[SiteBuilderPalette`Private`$generatContentFlag]],
-                     SiteBuilderPalette`Private`$generatContentFlag = False, 
-                    SiteBuilderPalette`Private`$generatContentFlag = #]& ]],
-                  StyleBox["\"Content\"", 12, "Gray", StripOnInput -> False]},
-                 
+                    BooleanQ[SiteBuilderPalette`Private`$generateSearchFlag]],
+                     SiteBuilderPalette`Private`$generateSearchFlag = False, 
+                    SiteBuilderPalette`Private`$generateSearchFlag = #]& ]],
+                  StyleBox["\"Search\"", 12, "Gray", StripOnInput -> False]},
                  "RowDefault"], 
+                TemplateBox[{CheckboxBox[
+                   Dynamic[
+                   SiteBuilderPalette`Private`$generateAggregationsFlag =!= 
+                    False, If[
+                    Not[
+                    BooleanQ[
+                    SiteBuilderPalette`Private`$generateAggregationsFlag]], 
+                    SiteBuilderPalette`Private`$generateAggregationsFlag = 
+                    False, SiteBuilderPalette`Private`$\
+generateAggregationsFlag = #]& ]],StyleBox[
+                  "\"Aggregations\"", 12, "Gray", StripOnInput -> False]},
+                 "RowDefault"]},
+               {"", 
                 TemplateBox[{CheckboxBox[
                    Dynamic[
                    SiteBuilderPalette`Private`$copyThemeFlag =!= False, If[
@@ -1192,26 +1343,32 @@ mEXTyg==
                   "], "Byte", ColorSpace -> "RGB", Interleaving -> 
                   True], 
                 Dynamic[
-                 If[
-                  TrueQ[
-                   BTools`FrontEnd`Private`UUIDActive[
-                   "Button-3e1eb4cd-f145-41b5-a179-1a1f1b53c9dc"]], "Pressed",
-                   Automatic]]},
-              ButtonFunction:>(CheckAll[Block[{$ContextPath = {"System`"}}, 
-                   Needs[
+                 FEPrivate`If[
+                  FrontEnd`CurrentValue[
+                   FrontEnd`EvaluationNotebook[], {
+                   TaggingRules, "UUIDButtons", "Active", 
+                    "Button-a1509cb2-0c95-4247-9a10-6309ce4cb923"}, False], 
+                  "Pressed", Automatic, Automatic]]},
+              
+              ButtonFunction:>(
+               With[{BTools`Formatting`Private`nb$ = EvaluationNotebook[]}, 
+                 Internal`WithLocalSettings[CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-a1509cb2-0c95-4247-9a10-6309ce4cb923"}] = True, 
+                   Block[{$ContextPath = {"System`"}}, 
+                    Needs[
                     StringJoin[SiteBuilderPalette`Private`$AppName, "`"]]]; ((
-                   If[
+                    If[
                     And[
                     Length[#] > 0, 
                     SiteBuilderPalette`Private`$openOnGenerateFlag =!= False], 
                     SystemOpen[
-                    StringReplace[
                     SelectFirst[
                     MinimalBy[
                     Map[First, #], Length[
                     URLParse[#, "Path"]]& ], 
-                    StringEndsQ["/index.html"]], "/index.html" -> 
-                    "/main.html"]]]& )[
+                    StringEndsQ["/index.html"]]]]& )[
                     
                     With[{SiteBuilderPalette`Private`s = 
                     SiteBuilderPalette`Private`whichPacF["WebSiteDeploy"]}, 
@@ -1231,25 +1388,32 @@ mEXTyg==
                     If[
                     TrueQ[SiteBuilderPalette`Private`$redeployAllFlag], 
                     "LastDeployment" -> None, 
-                    Apply[Sequence, {}]]]]]]; Null), 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-3e1eb4cd-f145-41b5-a179-1a1f1b53c9dc"] = False]; 
-               BTools`FrontEnd`Private`UUIDActive[
-                 "Button-3e1eb4cd-f145-41b5-a179-1a1f1b53c9dc"] = False),
+                    Apply[Sequence, {}]]]]]]; Null), CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-a1509cb2-0c95-4247-9a10-6309ce4cb923"}] = False]; 
+                 Null]; Null),
               Evaluator->Automatic,
               FrameMargins->{{5, 5}, {2, 0}},
               ImageSize->200,
               Method->"Queued"],
-             EventHandlerTag[{"MouseClicked" :> If[
-                 TrueQ[
-                  Replace[
-                   Replace[Automatic, Pattern[BTools`PackageScope`Private`d, 
-                    Blank[Dynamic]] :> First[BTools`PackageScope`Private`d]], 
-                   Automatic -> True]], 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-3e1eb4cd-f145-41b5-a179-1a1f1b53c9dc"] = True], 
-               PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
-               True}]]},
+             EventHandlerTag[{"MouseClicked" :> Internal`WithLocalSettings[
+                 FrontEndExecute[
+                  FrontEnd`NotebookSuspendScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]], 
+                 If[
+                  TrueQ[
+                   Replace[
+                    Replace[Automatic, Pattern[BTools`Formatting`Private`d, 
+                    Blank[Dynamic]] :> First[BTools`Formatting`Private`d]], 
+                    Automatic -> True]], CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-a1509cb2-0c95-4247-9a10-6309ce4cb923"}] = True], 
+                 FrontEndExecute[
+                  FrontEnd`NotebookResumeScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]]], PassEventsDown -> True, 
+               Method -> "Preemptive", PassEventsUp -> True}]]},
            {
             TagBox[
              ButtonBox[
@@ -1285,36 +1449,52 @@ mEXTyg==
                   "], "Byte", ColorSpace -> "RGB", Interleaving -> 
                   True], 
                 Dynamic[
-                 If[
-                  TrueQ[
-                   BTools`FrontEnd`Private`UUIDActive[
-                   "Button-c49328b7-8192-437a-8255-ec77471c0b0c"]], "Pressed",
-                   Automatic]]},
-              ButtonFunction:>(CheckAll[Block[{$ContextPath = {"System`"}}, 
-                   Needs[
+                 FEPrivate`If[
+                  FrontEnd`CurrentValue[
+                   FrontEnd`EvaluationNotebook[], {
+                   TaggingRules, "UUIDButtons", "Active", 
+                    "Button-cf52065d-b72a-4e38-9677-489ad6cf2fd5"}, False], 
+                  "Pressed", Automatic, Automatic]]},
+              
+              ButtonFunction:>(
+               With[{BTools`Formatting`Private`nb$ = EvaluationNotebook[]}, 
+                 Internal`WithLocalSettings[CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-cf52065d-b72a-4e38-9677-489ad6cf2fd5"}] = True, 
+                   Block[{$ContextPath = {"System`"}}, 
+                    Needs[
                     StringJoin[SiteBuilderPalette`Private`$AppName, "`"]]]; 
-                 BTools`PySimpleServerOpen[
-                   
-                   FileNameJoin[{
+                   BTools`PySimpleServerOpen[
+                    
+                    FileNameJoin[{
                     SiteBuilderPalette`Private`$CurrentProject, "output"}]], 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-c49328b7-8192-437a-8255-ec77471c0b0c"] = False]; 
-               BTools`FrontEnd`Private`UUIDActive[
-                 "Button-c49328b7-8192-437a-8255-ec77471c0b0c"] = False),
+                   CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-cf52065d-b72a-4e38-9677-489ad6cf2fd5"}] = False]; 
+                 Null]; Null),
               Evaluator->Automatic,
               FrameMargins->{{5, 5}, {2, 0}},
               ImageSize->200,
               Method->"Queued"],
-             EventHandlerTag[{"MouseClicked" :> If[
-                 TrueQ[
-                  Replace[
-                   Replace[Automatic, Pattern[BTools`PackageScope`Private`d, 
-                    Blank[Dynamic]] :> First[BTools`PackageScope`Private`d]], 
-                   Automatic -> True]], 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-c49328b7-8192-437a-8255-ec77471c0b0c"] = True], 
-               PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
-               True}]]}
+             EventHandlerTag[{"MouseClicked" :> Internal`WithLocalSettings[
+                 FrontEndExecute[
+                  FrontEnd`NotebookSuspendScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]], 
+                 If[
+                  TrueQ[
+                   Replace[
+                    Replace[Automatic, Pattern[BTools`Formatting`Private`d, 
+                    Blank[Dynamic]] :> First[BTools`Formatting`Private`d]], 
+                    Automatic -> True]], CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-cf52065d-b72a-4e38-9677-489ad6cf2fd5"}] = True], 
+                 FrontEndExecute[
+                  FrontEnd`NotebookResumeScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]]], PassEventsDown -> True, 
+               Method -> "Preemptive", PassEventsUp -> True}]]}
           },
           DefaultBaseStyle->"Column",
           GridBoxAlignment->{"Columns" -> {{Left}}},
@@ -1380,16 +1560,24 @@ mEXTyg==
                   "], "Byte", ColorSpace -> "RGB", Interleaving -> 
                   True], 
                 Dynamic[
-                 If[
-                  TrueQ[
-                   BTools`FrontEnd`Private`UUIDActive[
-                   "Button-9e061640-8959-4b54-9625-dfdd568adcc1"]], "Pressed",
-                   Automatic]]},
-              ButtonFunction:>(CheckAll[Block[{$ContextPath = {"System`"}}, 
-                   Needs[
+                 FEPrivate`If[
+                  FrontEnd`CurrentValue[
+                   FrontEnd`EvaluationNotebook[], {
+                   TaggingRules, "UUIDButtons", "Active", 
+                    "Button-46c0bbd1-fbdb-462f-a0cc-9ccecd8514eb"}, False], 
+                  "Pressed", Automatic, Automatic]]},
+              
+              ButtonFunction:>(
+               With[{BTools`Formatting`Private`nb$ = EvaluationNotebook[]}, 
+                 Internal`WithLocalSettings[CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-46c0bbd1-fbdb-462f-a0cc-9ccecd8514eb"}] = True, 
+                   Block[{$ContextPath = {"System`"}}, 
+                    Needs[
                     StringJoin[SiteBuilderPalette`Private`$AppName, "`"]]]; 
-                 Replace[
-                   DialogInput[{SiteBuilderPalette`Private`name}, 
+                   Replace[
+                    DialogInput[{SiteBuilderPalette`Private`name}, 
                     Column[{"Provide a name for the site:", 
                     InputField[
                     Dynamic[SiteBuilderPalette`Private`name], String, BoxID -> 
@@ -1405,24 +1593,32 @@ mEXTyg==
                     SiteBuilderPalette`Private`whichPacF["WebSiteInitialize"][
                     SiteBuilderPalette`Private`s]; 
                     SiteBuilderPalette`Private`ListProjects[])], 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-9e061640-8959-4b54-9625-dfdd568adcc1"] = False]; 
-               BTools`FrontEnd`Private`UUIDActive[
-                 "Button-9e061640-8959-4b54-9625-dfdd568adcc1"] = False),
+                   CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-46c0bbd1-fbdb-462f-a0cc-9ccecd8514eb"}] = False]; 
+                 Null]; Null),
               Evaluator->Automatic,
               FrameMargins->{{5, 5}, {2, 0}},
               ImageSize->200,
               Method->"Queued"],
-             EventHandlerTag[{"MouseClicked" :> If[
-                 TrueQ[
-                  Replace[
-                   Replace[Automatic, Pattern[BTools`PackageScope`Private`d, 
-                    Blank[Dynamic]] :> First[BTools`PackageScope`Private`d]], 
-                   Automatic -> True]], 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-9e061640-8959-4b54-9625-dfdd568adcc1"] = True], 
-               PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
-               True}]]},
+             EventHandlerTag[{"MouseClicked" :> Internal`WithLocalSettings[
+                 FrontEndExecute[
+                  FrontEnd`NotebookSuspendScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]], 
+                 If[
+                  TrueQ[
+                   Replace[
+                    Replace[Automatic, Pattern[BTools`Formatting`Private`d, 
+                    Blank[Dynamic]] :> First[BTools`Formatting`Private`d]], 
+                    Automatic -> True]], CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-46c0bbd1-fbdb-462f-a0cc-9ccecd8514eb"}] = True], 
+                 FrontEndExecute[
+                  FrontEnd`NotebookResumeScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]]], PassEventsDown -> True, 
+               Method -> "Preemptive", PassEventsUp -> True}]]},
            {
             TagBox[
              ButtonBox[
@@ -1458,36 +1654,51 @@ mEXTyg==
                   "], "Byte", ColorSpace -> "RGB", Interleaving -> 
                   True], 
                 Dynamic[
-                 If[
-                  TrueQ[
-                   BTools`FrontEnd`Private`UUIDActive[
-                   "Button-17492470-8733-419f-84d1-38bd09a34c4a"]], "Pressed",
-                   Automatic]]},
-              ButtonFunction:>(CheckAll[Block[{$ContextPath = {"System`"}}, 
-                   Needs[
+                 FEPrivate`If[
+                  FrontEnd`CurrentValue[
+                   FrontEnd`EvaluationNotebook[], {
+                   TaggingRules, "UUIDButtons", "Active", 
+                    "Button-c96fab89-1715-46bd-9b5f-a1433c43034c"}, False], 
+                  "Pressed", Automatic, Automatic]]},
+              
+              ButtonFunction:>(
+               With[{BTools`Formatting`Private`nb$ = EvaluationNotebook[]}, 
+                 Internal`WithLocalSettings[CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-c96fab89-1715-46bd-9b5f-a1433c43034c"}] = True, 
+                   Block[{$ContextPath = {"System`"}}, 
+                    Needs[
                     StringJoin[SiteBuilderPalette`Private`$AppName, "`"]]]; 
-                 SystemOpen[
-                   First[
+                   SystemOpen[
+                    First[
                     SiteBuilderPalette`Private`whichPacF[
-                    "$WebSiteThemePath"]]], 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-17492470-8733-419f-84d1-38bd09a34c4a"] = False]; 
-               BTools`FrontEnd`Private`UUIDActive[
-                 "Button-17492470-8733-419f-84d1-38bd09a34c4a"] = False),
+                    "$WebSiteThemePath"]]], CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-c96fab89-1715-46bd-9b5f-a1433c43034c"}] = False]; 
+                 Null]; Null),
               Evaluator->Automatic,
               FrameMargins->{{5, 5}, {2, 0}},
               ImageSize->200,
               Method->"Queued"],
-             EventHandlerTag[{"MouseClicked" :> If[
-                 TrueQ[
-                  Replace[
-                   Replace[Automatic, Pattern[BTools`PackageScope`Private`d, 
-                    Blank[Dynamic]] :> First[BTools`PackageScope`Private`d]], 
-                   Automatic -> True]], 
-                 BTools`FrontEnd`Private`UUIDActive[
-                  "Button-17492470-8733-419f-84d1-38bd09a34c4a"] = True], 
-               PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
-               True}]]}
+             EventHandlerTag[{"MouseClicked" :> Internal`WithLocalSettings[
+                 FrontEndExecute[
+                  FrontEnd`NotebookSuspendScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]], 
+                 If[
+                  TrueQ[
+                   Replace[
+                    Replace[Automatic, Pattern[BTools`Formatting`Private`d, 
+                    Blank[Dynamic]] :> First[BTools`Formatting`Private`d]], 
+                    Automatic -> True]], CurrentValue[
+                    FrontEnd`EvaluationNotebook[], {
+                    TaggingRules, "UUIDButtons", "Active", 
+                    "Button-c96fab89-1715-46bd-9b5f-a1433c43034c"}] = True], 
+                 FrontEndExecute[
+                  FrontEnd`NotebookResumeScreenUpdates[
+                   FrontEnd`EvaluationNotebook[]]]], PassEventsDown -> True, 
+               Method -> "Preemptive", PassEventsUp -> True}]]}
           },
           DefaultBaseStyle->"Column",
           GridBoxAlignment->{"Columns" -> {{Center}}},
@@ -1625,6 +1836,14 @@ mEXTyg==
  CellHorizontalScrolling->True,
  PageBreakAbove->True,
  PageBreakWithin->False,
+ CellChangeTimes->{{3.739937666390027*^9, 3.739937694466996*^9}, 
+   3.7399396216730747`*^9, 3.739940792526298*^9, {3.7399419976046257`*^9, 
+   3.739942002288547*^9}, {3.739942442305635*^9, 3.7399424449996243`*^9}, {
+   3.7399429214366083`*^9, 3.73994292491899*^9}, {3.7399431240390368`*^9, 
+   3.739943138958682*^9}, {3.739943890709477*^9, 3.739943897439735*^9}, {
+   3.739944696893794*^9, 3.739944698951911*^9}, {3.739944887411908*^9, 
+   3.7399448935903997`*^9}, 3.739945167435197*^9, {3.739945649979663*^9, 
+   3.73994565573543*^9}, {3.739945762657569*^9, 3.739945765857574*^9}},
  ShowAutoStyles->True,
  LineSpacing->{1.25, 0},
  AutoItalicWords->{},
@@ -1632,13 +1851,29 @@ mEXTyg==
  ShowStringCharacters->False,
  FontFamily:>CurrentValue["PanelFontFamily"],
  FontSize:>CurrentValue[
-  "PanelFontSize"],ExpressionUUID->"3744cdb9-66ea-4cb5-8323-33b7c3d58aaf"]
+  "PanelFontSize"],ExpressionUUID->"0916ac53-ab61-4a22-928a-04353824a1c8"]
 },
 WindowSize->{All, 
   Scaled[1]},
 WindowMargins->{{Automatic, 0}, {0, 0}},
 WindowElements->{"StatusArea"},
 WindowTitle->"Site Builder",
+TaggingRules->{
+ "UUIDButtons" -> {
+   "Active" -> {
+     "Button-77ddeb2c-d9e7-42d8-9037-024d9580ff75" -> False, 
+      "Button-2f99905a-050a-4cd6-a049-ada976f1631f" -> False, 
+      "Button-76b97735-9957-4381-926b-2badfee795ec" -> False, 
+      "Button-fc8364ed-c41f-4c7a-bddf-68517cc06d5b" -> False, 
+      "Button-4feb3bcf-9f87-4746-95be-2a9d01e27d82" -> False, 
+      "Button-0e5eb330-e6ce-45d5-9800-41e6e3bff350" -> False, 
+      "Button-cdbde8b5-3b08-4f0b-ade8-a9d4ed8dfbf6" -> False, 
+      "Button-918ffd91-1368-4c80-a1bb-4a835d4e4ce6" -> False, 
+      "Button-02c3cb8b-ec23-492d-837d-d71d9879ea4a" -> False, 
+      "Button-a1509cb2-0c95-4247-9a10-6309ce4cb923" -> False, 
+      "Button-cf52065d-b72a-4e38-9677-489ad6cf2fd5" -> False, 
+      "Button-46c0bbd1-fbdb-462f-a0cc-9ccecd8514eb" -> False, 
+      "Button-c96fab89-1715-46bd-9b5f-a1433c43034c" -> False}}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->"Palette.nb"
@@ -1654,12 +1889,10 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[585, 21, 79127, 1613, 868, InheritFromParent,ExpressionUUID->"3744cdb9-66ea-4cb5-8323-33b7c3d58aaf",
+Cell[585, 21, 91321, 1832, 868, InheritFromParent,ExpressionUUID->"0916ac53-ab61-4a22-928a-04353824a1c8",
  PageBreakAbove->True,
  PageBreakWithin->False]
 }
 ]
 *)
-
-(* End of internal cache information *)
 
