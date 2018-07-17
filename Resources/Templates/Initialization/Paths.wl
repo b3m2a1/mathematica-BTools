@@ -20,10 +20,10 @@ Begin["`Paths`"]
 
 
 PackageFilePath[p__]:=
-	FileNameJoin[Flatten@{
-		$PackageDirectory,
-		p
-		}];
+  FileNameJoin[Flatten@{
+    $PackageDirectory,
+    p
+    }];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -31,14 +31,14 @@ PackageFilePath[p__]:=
 
 
 PackageFEFile[p___,f_]:=
-	FrontEnd`FileName[
-		Evaluate@
-		Flatten@{
-			$PackageName,
-			p
-			},
-		f
-		];
+  FrontEnd`FileName[
+    Evaluate@
+    Flatten@{
+      $PackageName,
+      p
+      },
+    f
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -46,9 +46,9 @@ PackageFEFile[p___,f_]:=
 
 
 PackagePathSymbol[parts___String,sym_String]:=
-	ToExpression[StringRiffle[{$PackageName,parts,sym},"`"],StandardForm,HoldPattern];
+  ToExpression[StringRiffle[{$PackageName,parts,sym},"`"],StandardForm,HoldPattern];
 PackagePathSymbol[parts___String,sym_Symbol]:=
-	PackagePathSymbol[parts,Evaluate@SymbolName@Unevaluated[sym]];
+  PackagePathSymbol[parts,Evaluate@SymbolName@Unevaluated[sym]];
 PackagePathSymbol~SetAttributes~HoldRest;
 
 

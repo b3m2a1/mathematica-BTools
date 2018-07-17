@@ -89,9 +89,9 @@ $$serviceconnectionclientid:=
 		Replace[$ServiceConnectionClientID,{
 			f_Function:>f[],
 			Automatic:>
-				$serviceconnectionclearclientdata["ClientID"],
+				$serviceconnectiongetclientdata["ClientID"],
 			Key[k_]:>
-				$serviceconnectionclearclientdata[k]
+				$serviceconnectiongetclientdata[k]
 			}],{
 		Except[_String]:>
 			"not_supported"
@@ -103,9 +103,9 @@ $$serviceconnectionclientsecret:=
 		Replace[$ServiceConnectionClientSecret,{
 			f_Function:>f[],
 			Automatic:>
-				$serviceconnectionclearclientdata["ClientSecret"],
+				$serviceconnectiongetclientdata["ClientSecret"],
 			Key[k_]:>
-				$serviceconnectionclearclientdata[k]
+				$serviceconnectiongetclientdata[k]
 			}],{
 		Except[_String]:>
 			"not_supported"
@@ -214,11 +214,11 @@ $$serviceconnectionaccesstokenextractor:=
 (*Primary auth information*)
 
 
-$serviceconnectiondata[] = 
+$serviceconnectiondata[] =
 	DeleteDuplicatesBy[First]@Flatten@{
 		"ServiceName" -> "$ServiceConnection",
 		"URLFetchFun" :> $serviceconnectionurlfetchfun,
-		"ClientInfo" :> 
+		"ClientInfo" :>
 			Replace[$serviceconnectionclientinfo,
 				{
 					{}|Except[_List]:>
@@ -300,7 +300,7 @@ $serviceconnectiondata[] =
 				Normal[
 					DeleteCases[Except[{__}]]@
 						<|
-							"Gets" -> 
+							"Gets" ->
 								Flatten@{
 									"RequestParameters","RequestData",
 									$$serviceconnectiongetrequests
@@ -369,7 +369,7 @@ $$serviceconnectioncalls=$ServiceConnectionCalls;
 
 KeyValueMap[
 	Function[
-		$serviceconnectiondata[#] := 
+		$serviceconnectiondata[#] :=
 			ReplacePart[
 				Association@#2
 				(*Join[
@@ -404,7 +404,7 @@ $serviceconnectioncookeddata["RequestData",id_, {_->query_}]:=
 	$serviceconnectioncookeddata["RequestData",id,query];
 $serviceconnectioncookeddata["RequestParameters",id_, {_->query_}]:=
 	$serviceconnectioncookeddata["RequestParameters",id,query];
-	
+
 $serviceconnectioncookeddata["RequestData",id_, _->query_]:=
 	$serviceconnectioncookeddata["RequestData",id,query]
 $serviceconnectioncookeddata["RequestParameters",id_, _->query_]:=
@@ -423,13 +423,13 @@ $serviceconnectioncookeddata["RequestParameters",id_, queries:{__String}]:=
 	AssociationThread[
 		queries,
 		$serviceconnectioncookeddata["RequestParameters",id,#]&/@Flatten@queries
-		];		
+		];
 $serviceconnectioncookeddata["RequestData",id_,queries:{__String}]:=
 	AssociationThread[
 		queries,
 		$serviceconnectioncookeddata["RequestData",id,#]&/@Flatten@queries
 		];
-	
+
 
 $serviceconnectioncookeddata["RequestParameters",id_, query_String]:=
 	Replace[$serviceconnectioncookeddata["RequestData",id,query],
@@ -487,7 +487,7 @@ $serviceconnectioncookeddata["RequestData",id_, query_String]:=
 									Check[$serviceconnectionpsuedodata[id,query], Missing["UnknownRequest"]],
 									Lookup::invrl
 									],
-								Infinity	
+								Infinity
 								]
 						]
 			],
@@ -623,7 +623,7 @@ KeyValueMap[
 			 	basePseudo;
 			 $serviceconnectioncookeddata[
 	 			"RequestData",
- 				_, 
+ 				_,
  				callName]:=
  				<|
  					"URL"->Missing["NotAvailable"],
@@ -639,8 +639,8 @@ KeyValueMap[
  					"IncludeAuth"->Missing["NotAvailable"]
  					|>;
 			 $serviceconnectioncookeddata[callName, id_,args_] :=
-			 	Block[{ 
-			 		params = 
+			 	Block[{
+			 		params =
 			 			preFunction[
 				 			callName,
 				 			id,

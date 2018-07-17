@@ -1,6 +1,6 @@
 Paclet[
   Name -> "BTools",
-  Version -> "2.1.25",
+  Version -> "2.1.26",
   Creator -> "b3m2a1@gmail.com",
   URL -> "https://github.com/b3m2a1/mathematica-BTools",
   Description -> "A suite of development tools",
@@ -18,9 +18,156 @@ Paclet[
        			"Icons",
        			"PaletteGenerators",
        			"Templates",
-       			"Themes"
-       		},
-     		"SystemID" -> "*"
+       			"Themes",
+       			{
+        				"PacletIcon",
+        				"Icons/PacletIcon.png"
+        			},
+       			{
+        				"PacletSiteIcon",
+        				"Icons/PacletSiteIcon.png"
+        			},
+       			{
+        				"AppManagerPaletteGenerator",
+        				"PaletteGenerators/AppManagerPaletteGenerator.nb"
+        			},
+       			{
+        				"CuratedDataHelperGenerator",
+        				"PaletteGenerators/CuratedDataHelperGenerator.nb"
+        			},
+       			{
+        				"DocumentationGenerator",
+        				"PaletteGenerators/DocumentationGenerator.nb"
+        			},
+       			{
+        				"EncodedCacheManagerGenerator",
+        				"PaletteGenerators/EncodedCacheManagerGenerator.nb"
+        			},
+       			{
+        				"HTMLHelperGenerator",
+        				"PaletteGenerators/HTMLHelperGenerator.nb"
+        			},
+       			{
+        				"PacletServerManagerGenerator",
+        				"PaletteGenerators/PacletServerManagerGenerator.nb"
+        			},
+       			{
+        				"PaletteTemplate",
+        				"PaletteGenerators/PaletteTemplate.nb"
+        			},
+       			{
+        				"PelicanHelperGenerator",
+        				"PaletteGenerators/PelicanHelperGenerator.nb"
+        			},
+       			{
+        				"ServiceConnectionHelperGenerator",
+        				"PaletteGenerators/ServiceConnectionHelperGenerator.nb"
+        			},
+       			{
+        				"SiteBuilderGenerator",
+        				"PaletteGenerators/SiteBuilderGenerator.nb"
+        			},
+       			{
+        				"ContextLoader",
+        				"Templates/ContextLoader.wl"
+        			},
+       			{
+        				"CuratedDataTemplate",
+        				"Templates/CuratedDataTemplate.nb"
+        			},
+       			{
+        				"Autocomplete",
+        				"Templates/Initialization/Autocomplete.wl"
+        			},
+       			{
+        				"Constants",
+        				"Templates/Initialization/Constants.wl"
+        			},
+       			{
+        				"Dependencies",
+        				"Templates/Initialization/Dependencies.wl"
+        			},
+       			{
+        				"Exceptions",
+        				"Templates/Initialization/Exceptions.wl"
+        			},
+       			{
+        				"FrontEnd",
+        				"Templates/Initialization/FrontEnd.wl"
+        			},
+       			{
+        				"init",
+        				"Templates/Initialization/init.wl"
+        			},
+       			{
+        				"Loading",
+        				"Templates/Initialization/Loading.wl"
+        			},
+       			{
+        				"Paths",
+        				"Templates/Initialization/Paths.wl"
+        			},
+       			{
+        				"README",
+        				"Templates/README.nb"
+        			},
+       			{
+        				"ServiceConnectionTemplate",
+        				"Templates/ServiceConnectionTemplate.nb"
+        			},
+       			{
+        				"Frameworks",
+        				"Templates/Frameworks"
+        			},
+       			{
+        				"CuratedData",
+        				"Templates/Frameworks/CuratedData"
+        			},
+       			{
+        				"$ServiceConnection",
+        				"Templates/Frameworks/$ServiceConnection"
+        			},
+       			{
+        				"Initialization",
+        				"Templates/Initialization"
+        			},
+       			{
+        				"SiteBuilder",
+        				"Templates/SiteBuilder"
+        			},
+       			{
+        				"DocumentationSite",
+        				"Templates/SiteBuilder/DocumentationSite"
+        			},
+       			{
+        				"PacletServer",
+        				"Templates/SiteBuilder/PacletServer"
+        			},
+       			{
+        				"TutorialSite",
+        				"Templates/SiteBuilder/TutorialSite"
+        			},
+       			{
+        				"WebSite",
+        				"Templates/SiteBuilder/WebSite"
+        			},
+       			{
+        				"template_lib",
+        				"Themes/template_lib"
+        			},
+       			{
+        				"include",
+        				"Themes/template_lib/include"
+        			},
+       			{
+        				"templates",
+        				"Themes/template_lib/templates"
+        			},
+       			{
+        				"tipuesearch",
+        				"Themes/template_lib/tipuesearch"
+        			}
+       		}
      	},
     	{
      		"FrontEnd",

@@ -131,7 +131,7 @@ $serviceconnectionprivateoauthtokenfile[tokenName_:"access_token"]:=
 		];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Cloud Loopback*)
 
 
@@ -561,7 +561,7 @@ $$serviceconnectionclientdatacaching=
 	Length@PacletManager`PacletFind["BTools"]>0
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Auth Credentials Get*)
 
 
@@ -591,7 +591,26 @@ $serviceconnectiongetclientdatafallback[cred_]:=
 
 
 $serviceconnectiongetclientdatakeychain[cred_]:=
-	BTools`KeyChainGet[
+	Replace[
+		ToExpression[
+			Join[
+				Names["*`KeychainGet"],
+				Names["*`*`KeychainGet"]
+				],
+			StandardForm,
+			Function[Null,
+				If[Length@DownValues[#]==0,
+					Nothing,
+					#
+					],
+				HoldFirst
+				]
+			],
+		{
+			{s_, ___}:>s,
+			_->$Failed
+			}
+		][
 		"$ServiceConnection"->{None, StringJoin@Flatten@{cred}},
 		True
 		];
