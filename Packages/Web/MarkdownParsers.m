@@ -479,20 +479,24 @@ markdownToXMLFormat[t_,text_String]:=
 
 markdownToXMLValidateXMLBlock[block_, start_, end_]:=
   start==end&&
-    With[{
-      splits=
-        StringCases[block,
-          {
-            ("<"~~(Whitespace|"")~~(Whitespace|"")~~start)->
-              "Open",
-            ("<"~~(Whitespace|"")~~"/"~~(Whitespace|"")~~end)->
-              "Close"
-            }
-          ]
-      },
+    With[
+      {
+        splits=
+          StringCases[block,
+            {
+              ("<"~~(Whitespace|"")~~(Whitespace|"")~~start)->
+                "Open",
+              ("<"~~(Whitespace|"")~~"/"~~(Whitespace|"")~~end)->
+                "Close"
+              }
+            ]
+        },
       Count[splits, "Open"]==Count[splits, "Close"]&&
-        ((Length[splits]==2)||
-          (Count[splits[[3;;]], "Open"]!=Count[splits[[3;;]], "Close"]))
+      AllTrue[
+        Accumulate@
+          Replace[Most@splits, {"Open"->{1, 0}, "Close"->{0, 1}}, 1],
+        #[[1]]>#[[2]]&
+        ]
       ]
 
 
@@ -596,8 +600,8 @@ $markdownToXMLDelimiter=
   t:(
     (StartOfString|StartOfLine)~~
       (Whitespace|"")~~
-      Repeated["-"|"_",{3,\[Infinity]}]~~
-      Except["\n"]...
+      Repeated["-"|"_", {3,\[Infinity]}]~~
+      (Whitespace|"")~~(EndOfLine|EndOfString)
       ):>
     "Delimiter"->t
 
@@ -810,7 +814,7 @@ $markdownToXMLRawXMLBlock=
 
 
 $markdownToXMLItalBold=
-  o:(Longest[a:("*"|"_")..]~~Shortest[t:Except["\n"]..]~~a_):>
+  o:(a:(("*"|"_")..)~~Shortest[t:Except["\n"]..]~~a_):>
     "ItalBold"->o
 
 
@@ -882,7 +886,7 @@ markdownToXMLPrep[text_String, rules:_List|Automatic:Automatic]:=
                 ],
               {
                 baseString_String:>
-                  Replace[StringReplace[baseString,#2],
+                  Replace[StringReplace[baseString, #2],
                     StringExpression[l__]:>
                       List[l]
                     ]
@@ -942,27 +946,23 @@ markdownToXML[
   Block[
     {
       $markdownToXMLBlockRules=
-        Join[
-          Complement[
-            Join[extraBlockRules, $markdownToXMLBlockRules],
-            Replace[$markdownToXMLOneTimeBlockRules,
-              Except[_List]->{}
-              ]
+        DeleteDuplicates@Flatten@{
+          Join[extraBlockRules, $markdownToXMLBlockRules],
+          Replace[$markdownToXMLOneTimeBlockRules,
+            Except[_List]->{}
             ],
           oneTimeBlockRules
-          ],
+          },
       $markdownToXMLOneTimeBlockRules=
         oneTimeBlockRules,
       $markdownToXMLElementRules=
-        Join[
-          Complement[
-            Join[extraElementRules, $markdownToXMLElementRules],
-            Replace[$markdownToXMLOneTimeElementRules,
-              Except[_List]->{}
-              ]
+        DeleteDuplicates@Flatten@{
+          Join[extraElementRules, $markdownToXMLElementRules],
+          Replace[$markdownToXMLOneTimeElementRules,
+            Except[_List]->{}
             ],
           oneTimeElementRules
-          ],
+          },
       $markdownToXMLOneTimeElementRules=
         oneTimeElementRules
       },

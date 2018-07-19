@@ -5,18 +5,18 @@
   var disqus_config = function() {
     this.page.url = '<wolfram:slot id="SiteURL"/>/<wolfram:slot id="URL"/>';
     <wolfram:which>
-      <wolfram:if test="MatchQ[#DisqusID,_String]">
-        this.page.identifier = '<wolfram:slot id="#DisqusID"/>';
+      <wolfram:if test='MatchQ[#DisqusID, Except["", _String]]'>
+    this.page.identifier = '<wolfram:slot id="#DisqusID"/>';
       </wolfram:if>
       <wolfram:else>
-        this.page.identifier = '<wolfram:slot id="#Slug"/>';
+    this.page.identifier = '<wolfram:slot id="Slug"/>';
       </wolfram:else>
     </wolfram:which>
   };
   (function() {
     var d = document;
     var s = d.createElement('script');
-    s.src = '//<wolfram:slot id="DisqusSiteName" />/.disqus.com/embed.js';
+    s.src = '//<wolfram:slot id="DisqusSiteName" />.disqus.com/embed.js';
     s.setAttribute('data-timestamp', +new Date());
     (d.head || d.body).appendChild(s);
   })();

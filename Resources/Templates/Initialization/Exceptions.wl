@@ -80,7 +80,7 @@ Options[PackageThrowMessage]=
     };
 PackageThrowMessage[
   msg_MessageName, 
-  body_String,
+  body:_?StringQ,
   ops:OptionsPattern[]
   ]:=
   (

@@ -69,12 +69,12 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{
    RowBox[{"$WebSiteThemePath", "::", "usage"}], "=", "\n", "\t", 
-   "\"\<The path for website themes\>\""}], ";"}]}], "CodeInput",
- CellChangeTimes->{{3.722960975867227*^9, 3.722960990054515*^9}, {
-  3.723002781998982*^9, 3.723002791484479*^9}, {3.723003074884307*^9, 
-  3.723003094513769*^9}, {3.723004683730218*^9, 
-  3.723004692761199*^9}},ExpressionUUID->"a8b22438-fdbf-4e43-aaec-\
-d7363519d0dc"],
+   "\"\<The path for website themes\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"$WebSiteBuildErrors", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<A stack of errors encountered in the build process\>\""}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"a8b22438-fdbf-4e43-aaec-d7363519d0dc"],
 
 Cell[BoxData[
  RowBox[{
@@ -645,7 +645,7 @@ for it.\>\"", ",", "\n", "\t", "\t", "\t", "\t", "\t", "\t", "\t\t\t\t\t",
    3.723603830849003*^9, 
    3.723603838976552*^9}},ExpressionUUID->"62e19140-903e-4a3d-8e5e-\
 7421cb5f3b99"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -671,8 +671,9 @@ Cell[BoxData[
      RowBox[{"outdir", "=", "\n", "\t\t\t", 
       RowBox[{"FileNameJoin", "@", 
        RowBox[{"{", 
-        RowBox[{"dir", ",", " ", "\"\<posts\>\""}], "}"}]}]}], ";", "\n", 
-     "\t\t", 
+        RowBox[{
+        "dir", ",", " ", "\"\<content\>\"", ",", " ", "\"\<posts\>\""}], 
+        "}"}]}]}], ";", "\n", "\t\t", 
      RowBox[{"metas", "=", "\n", "\t\t\t", 
       RowBox[{"SortBy", "[", "\n", "\t\t\t\t", 
        RowBox[{
@@ -695,13 +696,13 @@ Cell[BoxData[
                  RowBox[{"StringSplit", "[", 
                   RowBox[{
                    RowBox[{"Import", "[", 
-                    RowBox[{"#", ",", "\"\<Text\>\""}], "]"}], ",", 
+                    RowBox[{"#", ",", "\"\<Text\>\""}], "]"}], ",", " ", 
                    "\"\<\\n\\n\>\"", ",", "2"}], "]"}], "[", 
                  RowBox[{"[", "1", "]"}], "]"}], ",", "\n", "\t", "\t", "\t", 
                 "\t\t\t\t", "\"\<\\n\>\""}], "\n", "\t", "\t", "\t", 
                "\t\t\t\t", "]"}]}], "\n", "\t", "\t", "\t", "\t\t\t", "]"}]}],
-            "&"}], ",", "\n", "\t", "\t", "\t", "\t\t", 
-          RowBox[{"Select", "[", "\n", "\t", "\t", "\t", "\t\t\t", 
+            "&"}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"Select", "[", "\n", "\t\t\t\t\t\t", 
            RowBox[{
             RowBox[{"FileNames", "[", 
              RowBox[{"\"\<*.md\>\"", ",", "outdir", ",", "\[Infinity]"}], 
@@ -884,7 +885,7 @@ Cell[BoxData[
          "}"}]}], "\n", "\t\t", "]"}]}]}], "\n", "\t", 
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"567337c4-9ffc-43a8-8680-a3ad95484478"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1327,6 +1328,46 @@ Cell[BoxData[
 
 Cell[CellGroupData[{
 
+Cell["\[LeftCeiling]xmlTemplatePostProcessWhitespace\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"0312b2ee-6bdc-4ba6-ab5b-d73f07e3308f"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"xmlTemplatePostProcessWhitespace", "[", "s_", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"StringReplace", "[", 
+   RowBox[{"s", ",", "\n", "\t\t", 
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"pre", ":", 
+        RowBox[{"(", "\n", "\t\t\t\t", 
+         RowBox[{"Shortest", "[", 
+          RowBox[{"\"\<<pre\>\"", "~~", "___", "~~", "\"\<</pre>\>\""}], 
+          "]"}], "\n", "\t\t\t\t", ")"}]}], "\[RuleDelayed]", "pre"}], ",", 
+      "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"Repeated", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"Whitespace", "?", 
+             RowBox[{"(", 
+              RowBox[{"StringFreeQ", "[", "\"\<\\n\>\"", "]"}], ")"}]}], "|", 
+            "\"\<\>\""}], ")"}], "~~", "\"\<\\n\>\""}], ",", " ", "\n", "\t", 
+         "\t", "\t\t", 
+         RowBox[{"{", 
+          RowBox[{"2", ",", " ", "\[Infinity]"}], "}"}]}], "\n", "\t", "\t", 
+        "\t\t", "]"}], "\[Rule]", "\"\<\\n\>\""}]}], "\n", "\t\t\t", "}"}]}], 
+   "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"4e41dc0e-c4a4-4a96-96a0-a3715d09e73f"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
 Cell["\[LeftCeiling]WebSiteXMLTemplateApply\[RightFloor]", \
 "CodeSubsubsubsection",
  Evaluatable->True,ExpressionUUID->"faae77da-5f27-4a48-844e-50fba77066f2"],
@@ -1372,26 +1413,12 @@ Cell[BoxData[
     ",", "\n", "\t\t", 
     RowBox[{"{", "\n", "\t\t\t", 
      RowBox[{"s_String", ":>", "\n", "\t\t\t\t", 
-      RowBox[{"StringReplace", "[", 
-       RowBox[{"s", ",", "\n", "\t\t\t\t\t", 
-        RowBox[{
-         RowBox[{"Repeated", "[", 
-          RowBox[{
-           RowBox[{
-            RowBox[{"(", 
-             RowBox[{
-              RowBox[{"Whitespace", "?", 
-               RowBox[{"(", 
-                RowBox[{"StringFreeQ", "[", "\"\<\\n\>\"", "]"}], ")"}]}], 
-              "|", "\"\<\>\""}], ")"}], "~~", "\"\<\\n\>\""}], ",", 
-           RowBox[{"{", 
-            RowBox[{"2", ",", "\[Infinity]"}], "}"}]}], "]"}], "\[Rule]", 
-         "\"\<\\n\>\""}]}], "\n", "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t", 
-     "}"}]}], "\n", "\t\t", 
+      RowBox[{"xmlTemplatePostProcessWhitespace", "[", "s", "]"}]}], "\n", 
+     "\t\t\t", "}"}]}], "\n", "\t\t", 
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"488dd539-a30d-4b38-83df-b813cf4873af"]
-}, Closed]]
-}, Open  ]],
+}, Open  ]]
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -1671,10 +1698,8 @@ Cell[BoxData[
             "]"}]}]}], ")"}]}]}], ",", "\n", "\t", "\t\t", "\"\<XML\>\""}], 
      "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
     RowBox[{"Reverse", "/@", "$WebSiteBuildSafeExportXMLMap"}]}], "\n", 
-   "\t\t", "]"}]}]], "CodeInput",
- CellChangeTimes->{{3.7331556473885593`*^9, 
-  3.733155816346561*^9}},ExpressionUUID->"67ba5c36-5362-4fb3-ad74-\
-b0f1549d6234"]
+   "\t\t", "]"}]}]], \
+"CodeInput",ExpressionUUID->"67ba5c36-5362-4fb3-ad74-b0f1549d6234"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -1719,6 +1744,12 @@ Cell["\[LeftCeiling]HTML Reps\[RightFloor]", "CodeSubsubsubsection",
   3.723258072701812*^9, 
   3.723258073212553*^9}},ExpressionUUID->"84272232-eec3-4e12-a12f-\
 9bc75d10cf20"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$XMLFontPatchDumbSpecialCharListLong\[RightFloor]", \
+"CodeSubsubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"f9329c2a-e459-4823-955e-59fcd266026a"],
 
 Cell[BoxData[{
  RowBox[{
@@ -2043,7 +2074,173 @@ Cell[BoxData[{
    3.7232613507512417`*^9, 3.7232613514632874`*^9}, {3.723261592615275*^9, 
    3.723261600664452*^9}, {3.723489481175343*^9, 
    3.723489484439087*^9}},ExpressionUUID->"0a36944b-8c59-4975-988d-\
-c627cfd822d3"],
+c627cfd822d3"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$XMLFontPatchKeyboardElements\[RightFloor]", \
+"CodeSubsubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"465e0649-9ef9-49e1-bcf6-91eb3ae7d4a8"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$XMLKBDPatchStyles", "=", "\n", "\t", 
+   RowBox[{"{", 
+    RowBox[{
+    "\"\<style\>\"", "\[Rule]", 
+     "\"\<color: gray; font-size: 10px; border: solid 1px gray;\>\""}], 
+    "}"}]}], ";"}]], \
+"CodeInput",ExpressionUUID->"52ae8549-100f-4142-bb93-47681a81afc4"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"xmlFontPatchKBDEl", "[", "k_", "]"}], ":=", "\n", "\t", 
+   RowBox[{"XMLElement", "[", 
+    RowBox[{"\"\<span\>\"", ",", "\n", "\t\t", 
+     RowBox[{"Flatten", "@", 
+      RowBox[{"{", 
+       RowBox[{"$XMLKBDPatchStyles", ",", " ", "$XMLFontPatchFlag"}], "}"}]}],
+      ",", "\n", "\t\t", 
+     RowBox[{"{", 
+      RowBox[{"XMLElement", "[", 
+       RowBox[{"\"\<kbd\>\"", ",", 
+        RowBox[{"{", "$XMLFontPatchFlag", "}"}], ",", 
+        RowBox[{"{", "k", "}"}]}], "]"}], "}"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"4767dca0-aa21-4fc4-acd4-3793cef8824a"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$XMLFontPatchKeyboardElements", "=", "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"\"\<\\\\[AltKey]\>\"", "|", "\"\<\[AltKey]\>\""}], "\[Rule]", 
+      "\n", "\t\t\t", 
+      RowBox[{"xmlFontPatchKBDEl", "@", "\"\<ALT\>\""}]}], ",", "\n", "\t\t", 
+     
+     RowBox[{
+      RowBox[{"\"\<\\\\[CommandKey]\>\"", "|", "\"\<\[CommandKey]\>\""}], 
+      "\[Rule]", "\n", "\t\t\t", 
+      RowBox[{"xmlFontPatchKBDEl", "[", "\"\<CMD\>\"", "]"}]}], ",", "\n", 
+     "\t\t", 
+     RowBox[{
+      RowBox[{"\"\<\\\\[ControlKey]\>\"", "|", "\"\<\[ControlKey]\>\""}], 
+      "\[Rule]", "\n", "\t\t\t", 
+      RowBox[{"xmlFontPatchKBDEl", "@", "\"\<CTRL\>\""}]}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"\"\<\\\\[DeleteKey]\>\"", "|", "\"\<\[DeleteKey]\>\""}], 
+      "\[Rule]", "\n", "\t\t\t", 
+      RowBox[{"xmlFontPatchKBDEl", "@", "\"\<DEL\>\""}]}], ",", "\n", "\t\t", 
+     
+     RowBox[{
+      RowBox[{"\"\<\\\\[EnterKey]\>\"", "|", "\"\<\[EnterKey]\>\""}], 
+      "\[Rule]", "\n", "\t\t\t", 
+      RowBox[{"xmlFontPatchKBDEl", "@", "\"\<ENTER\>\""}]}], ",", "\n", 
+     "\t\t", 
+     RowBox[{
+      RowBox[{"\"\<\\\\[EscapeKey]\>\"", "|", "\"\<\[EscapeKey]\>\""}], 
+      "\[Rule]", "\n", "\t\t\t", 
+      RowBox[{"xmlFontPatchKBDEl", "@", "\"\<ESC\>\""}]}], ",", "\n", "\t\t", 
+     
+     RowBox[{
+      RowBox[{"\"\<\\\\[OptionKey]\>\"", "|", "\"\<\[OptionKey]\>\""}], 
+      "\[Rule]", "\n", "\t\t\t", 
+      RowBox[{"xmlFontPatchKBDEl", "@", "\"\<OPTION\>\""}]}], ",", "\n", 
+     "\t\t", 
+     RowBox[{
+      RowBox[{"\"\<\\\\[ReturnKey]\>\"", "|", "\"\<\[ReturnKey]\>\""}], 
+      "\[Rule]", "\n", "\t\t\t", 
+      RowBox[{"xmlFontPatchKBDEl", "@", "\"\<RET\>\""}]}], ",", "\n", "\t\t", 
+     
+     RowBox[{
+      RowBox[{"\"\<\\\\[ShiftKey]\>\"", "|", "\"\<\[ShiftKey]\>\""}], 
+      "\[Rule]", "\n", "\t\t\t", 
+      RowBox[{"xmlFontPatchKBDEl", "@", "\"\<SHIFT\>\""}]}], ",", "\n", 
+     "\t\t", 
+     RowBox[{
+      RowBox[{"\"\<\\\\[SpaceKey]\>\"", "|", "\"\<\[SpaceKey]\>\""}], 
+      "\[Rule]", "\n", "\t\t\t", 
+      RowBox[{"xmlFontPatchKBDEl", "@", "\"\<SPACE\>\""}]}], ",", "\n", 
+     "\t\t", 
+     RowBox[{
+      RowBox[{
+      "\"\<\\\\[SystemEnterKey]\>\"", "|", "\"\<\[SystemEnterKey]\>\""}], 
+      "\[Rule]", "\n", "\t\t\t", 
+      RowBox[{"xmlFontPatchKBDEl", "@", "\"\<RET\>\""}]}], ",", "\n", "\t\t", 
+     
+     RowBox[{
+      RowBox[{"\"\<\\\\[TabKey]\>\"", "|", "\"\<\[TabKey]\>\""}], "\[Rule]", 
+      "\n", "\t\t\t", 
+      RowBox[{"xmlFontPatchKBDEl", "@", "\"\<TAB\>\""}]}]}], "\n", "\t\t", 
+    "}"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"9d45318c-dedb-43a9-8d92-8220784191e0"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$XMLFontPatchManualUnicodeReassignments\[RightFloor]", \
+"CodeSubsubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"14d04a13-3195-4a3a-8de4-33a9a128e6eb"],
+
+Cell[BoxData[
+ RowBox[{"\n", 
+  RowBox[{
+   RowBox[{"$XMLFontPatchManualUnicodeReassignments", "=", "\n", "\t", 
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"\"\<\\\\[KeyBar]\>\"", "|", "\"\<\[KeyBar]\>\""}], "\[Rule]", 
+       "\n", "\t\t\t", 
+       RowBox[{"XMLElement", "[", 
+        RowBox[{"\"\<span\>\"", ",", " ", "\n", "\t\t\t\t", 
+         RowBox[{"Flatten", "@", 
+          RowBox[{"{", 
+           RowBox[{"$XMLFontPatchFlag", ",", " ", 
+            RowBox[{
+            "\"\<style\>\"", "\[Rule]", 
+             "\"\<font-weight: bold; font-size: 8px;\>\""}]}], "}"}]}], ",", 
+         "\n", "\t\t\t\t", 
+         RowBox[{"{", "\"\<\:2011\>\"", "}"}]}], "\n", "\t\t\t\t", "]"}]}], 
+      ",", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"\"\<\\\\[RightPointer]\>\"", "|", "\"\<\[RightPointer]\>\""}],
+        "\[Rule]", "\n", "\t\t\t", 
+       RowBox[{"XMLElement", "[", 
+        RowBox[{"\"\<span\>\"", ",", " ", "\n", "\t\t\t\t", 
+         RowBox[{"Flatten", "@", 
+          RowBox[{"{", 
+           RowBox[{"$XMLFontPatchFlag", ",", " ", 
+            RowBox[{
+            "\"\<style\>\"", "\[Rule]", 
+             "\"\<font-weight: bold; font-size: 8px;\>\""}]}], "}"}]}], ",", 
+         "\n", "\t\t\t\t", 
+         RowBox[{"{", "\"\<\[FilledRightTriangle]\>\"", "}"}]}], "\n", 
+        "\t\t\t\t", "]"}]}], ",", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"\"\<\\\\[LeftPointer]\>\"", "|", "\"\<\[LeftPointer]\>\""}], 
+       "\[Rule]", "\n", "\t\t\t", 
+       RowBox[{"XMLElement", "[", 
+        RowBox[{"\"\<span\>\"", ",", " ", "\n", "\t\t\t\t", 
+         RowBox[{"Flatten", "@", 
+          RowBox[{"{", 
+           RowBox[{"$XMLFontPatchFlag", ",", " ", 
+            RowBox[{
+            "\"\<style\>\"", "\[Rule]", 
+             "\"\<font-weight: bold; font-size: 8px;\>\""}]}], "}"}]}], ",", 
+         "\n", "\t\t\t\t", 
+         RowBox[{"{", "\"\<\[FilledLeftTriangle]\>\"", "}"}]}], "\n", 
+        "\t\t\t\t", "]"}]}]}], "\n", "\t\t", "}"}]}], 
+   ";"}]}]], \
+"CodeInput",ExpressionUUID->"5c7c8b18-d1fb-4ce7-b2ee-238a2613b057"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$XMLFontPatchStringToXMLElementRules\[RightFloor]", \
+"CodeSubsubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"b821743f-e09a-4fcb-8d26-6f6278c1c163"],
 
 Cell[BoxData[
  RowBox[{
@@ -2071,142 +2268,49 @@ Cell[BoxData[{
 Cell[BoxData[
  RowBox[{
   RowBox[{"$XMLFontPatchStringToXMLElementRules", "=", "\n", "\t", 
-   RowBox[{"{", "\n", "\t\t", 
-    RowBox[{
+   RowBox[{"Flatten", "@", "\n", "\t\t", 
+    RowBox[{"{", "\n", "\t\t\t", 
      RowBox[{
-      RowBox[{"\"\<\\\\[AltKey]\>\"", "|", "\"\<\[AltKey]\>\""}], "\[Rule]", 
-      "\n", "\t\t\t", 
-      RowBox[{"XMLElement", "[", 
-       RowBox[{"\"\<kbd\>\"", ",", 
-        RowBox[{"{", "$XMLFontPatchFlag", "}"}], ",", 
-        RowBox[{"{", "\"\<ALT\>\"", "}"}]}], "]"}]}], ",", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{"\"\<\\\\[CommandKey]\>\"", "|", "\"\<\[CommandKey]\>\""}], 
-      "\[Rule]", "\n", "\t\t\t", 
-      RowBox[{"XMLElement", "[", 
-       RowBox[{"\"\<kbd\>\"", ",", 
-        RowBox[{"{", "$XMLFontPatchFlag", "}"}], ",", 
-        RowBox[{"{", "\"\<CMD\>\"", "}"}]}], "]"}]}], ",", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{"\"\<\\\\[ControlKey]\>\"", "|", "\"\<\[ControlKey]\>\""}], 
-      "\[Rule]", "\n", "\t\t\t", 
-      RowBox[{"XMLElement", "[", 
-       RowBox[{"\"\<kbd\>\"", ",", 
-        RowBox[{"{", "$XMLFontPatchFlag", "}"}], ",", 
-        RowBox[{"{", "\"\<CTRL\>\"", "}"}]}], "]"}]}], ",", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{"\"\<\\\\[DeleteKey]\>\"", "|", "\"\<\[DeleteKey]\>\""}], 
-      "\[Rule]", "\n", "\t\t\t", 
-      RowBox[{"XMLElement", "[", 
-       RowBox[{"\"\<kbd\>\"", ",", 
-        RowBox[{"{", "$XMLFontPatchFlag", "}"}], ",", 
-        RowBox[{"{", "\"\<DEL\>\"", "}"}]}], "]"}]}], ",", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{"\"\<\\\\[EnterKey]\>\"", "|", "\"\<\[EnterKey]\>\""}], 
-      "\[Rule]", "\n", "\t\t\t", 
-      RowBox[{"XMLElement", "[", 
-       RowBox[{"\"\<kbd\>\"", ",", 
-        RowBox[{"{", "$XMLFontPatchFlag", "}"}], ",", 
-        RowBox[{"{", "\"\<ENTER\>\"", "}"}]}], "]"}]}], ",", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{"\"\<\\\\[EscapeKey]\>\"", "|", "\"\<\[EscapeKey]\>\""}], 
-      "\[Rule]", "\n", "\t\t\t", 
-      RowBox[{"XMLElement", "[", 
-       RowBox[{"\"\<kbd\>\"", ",", 
-        RowBox[{"{", "$XMLFontPatchFlag", "}"}], ",", 
-        RowBox[{"{", "\"\<ESC\>\"", "}"}]}], "]"}]}], ",", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{"\"\<\\\\[OptionKey]\>\"", "|", "\"\<\[OptionKey]\>\""}], 
-      "\[Rule]", "\n", "\t\t\t", 
-      RowBox[{"XMLElement", "[", 
-       RowBox[{"\"\<kbd\>\"", ",", 
-        RowBox[{"{", "$XMLFontPatchFlag", "}"}], ",", 
-        RowBox[{"{", "\"\<OPTION\>\"", "}"}]}], "]"}]}], ",", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{"\"\<\\\\[ReturnKey]\>\"", "|", "\"\<\[ReturnKey]\>\""}], 
-      "\[Rule]", "\n", "\t\t\t", 
-      RowBox[{"XMLElement", "[", 
-       RowBox[{"\"\<kbd\>\"", ",", 
-        RowBox[{"{", "$XMLFontPatchFlag", "}"}], ",", 
-        RowBox[{"{", "\"\<RET\>\"", "}"}]}], "]"}]}], ",", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{"\"\<\\\\[ShiftKey]\>\"", "|", "\"\<\[ShiftKey]\>\""}], 
-      "\[Rule]", "\n", "\t\t\t", 
-      RowBox[{"XMLElement", "[", 
-       RowBox[{"\"\<kbd\>\"", ",", 
-        RowBox[{"{", "$XMLFontPatchFlag", "}"}], ",", 
-        RowBox[{"{", "\"\<SHIFT\>\"", "}"}]}], "]"}]}], ",", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{"\"\<\\\\[SpaceKey]\>\"", "|", "\"\<\[SpaceKey]\>\""}], 
-      "\[Rule]", "\n", "\t\t\t", 
-      RowBox[{"XMLElement", "[", 
-       RowBox[{"\"\<kbd\>\"", ",", 
-        RowBox[{"{", "$XMLFontPatchFlag", "}"}], ",", 
-        RowBox[{"{", "\"\<SPACE\>\"", "}"}]}], "]"}]}], ",", "\n", "\t\t", 
-     RowBox[{
+     "$XMLFontPatchKeyboardElements", ",", "\n", "\t\t\t", 
+      "$XMLFontPatchManualUnicodeReassignments", ",", "\n", "\t\t\t", 
       RowBox[{
-      "\"\<\\\\[SystemEnterKey]\>\"", "|", "\"\<\[SystemEnterKey]\>\""}], 
-      "\[Rule]", "\n", "\t\t\t", 
-      RowBox[{"XMLElement", "[", 
-       RowBox[{"\"\<kbd\>\"", ",", 
-        RowBox[{"{", "$XMLFontPatchFlag", "}"}], ",", 
-        RowBox[{"{", "\"\<RET\>\"", "}"}]}], "]"}]}], ",", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{"\"\<\\\\[TabKey]\>\"", "|", "\"\<\[TabKey]\>\""}], "\[Rule]", 
-      "\n", "\t\t\t", 
-      RowBox[{"XMLElement", "[", 
-       RowBox[{"\"\<kbd\>\"", ",", 
-        RowBox[{"{", "$XMLFontPatchFlag", "}"}], ",", 
-        RowBox[{"{", "\"\<TAB\>\"", "}"}]}], "]"}]}], ",", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{"\"\<\\\\[\>\"", "~~", 
-       RowBox[{"s", ":", 
-        RowBox[{"(", "$XMLFontPatchDumbSpecialCharListLong", ")"}]}], "~~", 
-       "\"\<]\>\""}], ":>", "\n", "\t\t\t", 
-      RowBox[{"XMLElement", "[", 
-       RowBox[{"\"\<span\>\"", ",", "\n", "\t\t\t\t", 
-        RowBox[{"{", "\n", "\t\t\t\t\t", 
+       RowBox[{"\"\<\\\\[\>\"", "~~", 
+        RowBox[{"s", ":", 
+         RowBox[{"(", "$XMLFontPatchDumbSpecialCharListLong", ")"}]}], "~~", 
+        "\"\<]\>\""}], ":>", "\n", "\t", "\t\t\t", 
+       RowBox[{"XMLElement", "[", 
+        RowBox[{"\"\<span\>\"", ",", "\n", "\t", "\t\t\t\t", 
+         RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"\"\<class\>\"", "\[Rule]", 
+            RowBox[{"\"\<special-character \>\"", "<>", "s"}]}], ",", "\n", 
+           "\t", "\t\t\t\t\t", "$XMLFontPatchFlag"}], "\n", "\t", 
+          "\t\t\t\t\t", "}"}], ",", "\n", "\t", "\t\t\t\t", 
+         RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
+          RowBox[{"ToExpression", "[", 
+           RowBox[{"\"\<\\\"\\\\[\>\"", "<>", "s", "<>", "\"\<]\\\"\>\""}], 
+           "]"}], "\n", "\t", "\t\t\t\t\t", "}"}]}], "\n", "\t", "\t\t\t\t", 
+        "]"}]}], ",", "\n", "\t", "\t\t", 
+      RowBox[{
+       RowBox[{"char", ":", "$XMLFontPatchDumbSpecialCharListConv"}], ":>", 
+       "\n", "\t", "\t\t\t", 
+       RowBox[{"XMLElement", "[", 
+        RowBox[{"\"\<span\>\"", ",", "\n", "\t", "\t\t\t\t", 
+         RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"\"\<class\>\"", "\[Rule]", 
+            RowBox[{"\"\<special-character \>\"", "<>", 
+             RowBox[{"CharacterName", "[", "char", "]"}]}]}], ",", " ", "\n", 
+           "\t", "\t\t\t\t\t", "$XMLFontPatchFlag"}], "\n", "\t", 
+          "\t\t\t\t\t", "}"}], ",", "\n", "\t", "\t\t\t\t", 
          RowBox[{
-          RowBox[{"\"\<class\>\"", "\[Rule]", 
-           RowBox[{"\"\<special-character \>\"", "<>", "s"}]}], ",", "\n", 
-          "\t\t\t\t\t", "$XMLFontPatchFlag"}], "\n", "\t\t\t\t\t", "}"}], ",",
-         "\n", "\t\t\t\t", 
-        RowBox[{"{", "\n", "\t\t\t\t\t", 
-         RowBox[{"ToExpression", "[", 
-          RowBox[{"\"\<\\\"\\\\[\>\"", "<>", "s", "<>", "\"\<]\\\"\>\""}], 
-          "]"}], "\n", "\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t", "]"}]}], ",", 
-     "\n", "\t\t", 
-     RowBox[{
-      RowBox[{"char", ":", "$XMLFontPatchDumbSpecialCharListConv"}], ":>", 
-      "\n", "\t\t\t", 
-      RowBox[{"XMLElement", "[", 
-       RowBox[{"\"\<span\>\"", ",", "\n", "\t\t\t\t", 
-        RowBox[{"{", "\n", "\t\t\t\t\t", 
-         RowBox[{
-          RowBox[{"\"\<class\>\"", "\[Rule]", 
-           RowBox[{"\"\<special-character \>\"", "<>", 
-            RowBox[{"CharacterName", "[", "char", "]"}]}]}], ",", " ", "\n", 
-          "\t\t\t\t\t", "$XMLFontPatchFlag"}], "\n", "\t\t\t\t\t", "}"}], ",",
-         "\n", "\t\t\t\t", 
-        RowBox[{"{", "\n", "\t\t\t\t\t", "char", "\n", "\t\t\t\t\t", "}"}]}], 
-       "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t", "}"}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.723256199032009*^9, 3.723256204326704*^9}, {
-   3.7232562645777483`*^9, 3.723256272209765*^9}, {3.723256304943675*^9, 
-   3.723256314638413*^9}, {3.7232565015251293`*^9, 3.723256567394794*^9}, {
-   3.723256634405017*^9, 3.723256680804195*^9}, {3.7232569448929777`*^9, 
-   3.723256949240799*^9}, {3.7232572229378242`*^9, 3.7232573132076483`*^9}, {
-   3.723257370083354*^9, 3.723257375908923*^9}, {3.7232580770738*^9, 
-   3.7232580859219093`*^9}, {3.723258215209025*^9, 3.7232582173494253`*^9}, {
-   3.7232582493678513`*^9, 3.7232582538134317`*^9}, {3.723258305330114*^9, 
-   3.723258378571213*^9}, 3.7232584755757627`*^9, 3.7232616289778423`*^9, 
-   3.723341143219803*^9, {3.7234888197892637`*^9, 3.7234889915176353`*^9}, {
-   3.7234894868269987`*^9, 3.723489488088566*^9}, 3.723489525255625*^9, {
-   3.723489864916601*^9, 3.723489895988003*^9}, {3.723489991241427*^9, 
-   3.723489991353057*^9}, {3.723493493114785*^9, 
-   3.723493507494334*^9}},ExpressionUUID->"ecbc7746-c53a-4486-9c36-\
-216f1e067078"]
-}, Closed]]
-}, Open  ]],
+         "{", "\n", "\t", "\t\t\t\t\t", "char", "\n", "\t", "\t\t\t\t\t", 
+          "}"}]}], "\n", "\t", "\t\t\t\t", "]"}]}]}], "\n", "\t", "\t\t", 
+     "}"}]}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"ecbc7746-c53a-4486-9c36-216f1e067078"]
+}, Open  ]]
+}, Open  ]]
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -2216,219 +2320,776 @@ Cell["\[LeftCeiling]TemplatePreProcess\[RightFloor]", "CodeSubsubsection",
    3.71268299564373*^9},ExpressionUUID->"5790e13e-94a3-485d-90c9-\
 12e6dada52cb"],
 
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]webSiteTemplatePreProcessPrettyPrint\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"5ee87c1e-ef6b-404c-8c2e-95065d53a325"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"webSiteTemplatePreProcessPrettyPrint", "[", "xml_", "]"}], ":=", 
+  "\n", "\t", 
+  RowBox[{"ReplaceRepeated", "[", "\n", "\t\t", 
+   RowBox[{"xml", ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"XMLElement", "[", 
+      RowBox[{"\"\<pre\>\"", ",", "\n", "\t\t\t", 
+       RowBox[{"c_", "?", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"StringFreeQ", "[", 
+           RowBox[{
+            RowBox[{"Lookup", "[", 
+             RowBox[{"#", ",", "\"\<class\>\"", ",", "\"\<\>\""}], "]"}], ",",
+             " ", "\"\<prettyprint\>\""}], "]"}], "&"}], ")"}]}], ",", "\n", 
+       "\t\t\t", 
+       RowBox[{"e", ":", 
+        RowBox[{"{", "\n", "\t\t\t\t", 
+         RowBox[{"XMLElement", "[", 
+          RowBox[{"\"\<code\>\"", ",", "\n", "\t\t\t\t\t", 
+           RowBox[{"_", "?", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"!", 
+               RowBox[{"StringEndsQ", "[", 
+                RowBox[{
+                 RowBox[{"Lookup", "[", 
+                  RowBox[{
+                  "#", ",", " ", "\"\<language\>\"", ",", " ", "\"\<\>\""}], 
+                  "]"}], ",", " ", 
+                 RowBox[{"\"\<-\>\"", "|", "\"\<-none\>\""}]}], "]"}]}], 
+              "&"}], ")"}]}], ",", "\n", "\t\t\t\t\t", "_"}], "]"}], "\n", 
+         "\t\t\t\t", "}"}]}]}], "\n", "\t\t\t", "]"}], ":>", "\n", "\t\t\t\t", 
+     RowBox[{"XMLElement", "[", 
+      RowBox[{"\"\<pre\>\"", ",", "\n", "\t\t\t\t\t", 
+       RowBox[{"Normal", "@", "\n", "\t\t\t\t\t\t", 
+        RowBox[{"Append", "[", "\n", "\t\t\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Association", "@", "c"}], ",", "\n", "\t\t\t\t\t\t\t", 
+          RowBox[{"\"\<class\>\"", "->", "\n", "\t\t\t\t\t\t\t\t", 
+           RowBox[{"StringTrim", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Lookup", "[", 
+              RowBox[{"c", ",", "\"\<class\>\"", ",", "\"\<\>\""}], "]"}], "<>",
+              "\n", "\t\t\t\t\t\t\t\t\t\t", "\"\< prettyprint\>\""}], "\n", 
+            "\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}], 
+       ",", "\n", "\t\t\t\t\t", "e"}], "\n", "\t\t\t\t\t", "]"}]}]}], "\n", 
+   "\t\t", "]"}]}]], \
+"CodeInput",ExpressionUUID->"c240c6c8-1525-4ad4-b2d1-a795e1e4bd29"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]webSiteTemplatePreProcessFonts\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"a26ca9c9-e2fd-492a-a280-0c39374722a4"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"webSiteTemplatePreProcessFonts", "[", "xml_", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"ReplaceRepeated", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"ReplaceRepeated", "[", "\n", "\t\t\t", 
+     RowBox[{"xml", ",", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"XMLElement", "[", 
+        RowBox[{"a_", ",", " ", 
+         RowBox[{"b_", "?", 
+          RowBox[{"(", 
+           RowBox[{"FreeQ", "[", "$XMLFontPatchFlag", "]"}], ")"}]}], ",", 
+         " ", "d_"}], "]"}], ":>", "\n", "\t\t\t\t", 
+       RowBox[{"XMLElement", "[", 
+        RowBox[{"a", ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"Append", "[", 
+          RowBox[{"b", ",", " ", "$XMLFontPatchFlag"}], "]"}], ",", "\n", 
+         "\t\t\t\t\t", 
+         RowBox[{"Replace", "[", 
+          RowBox[{"d", ",", "\n", "\t", "\t\t\t\t\t", 
+           RowBox[{"s_String", ":>", "\n", "\t", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Replace", "[", 
+              RowBox[{
+               RowBox[{"StringExpression", "[", "expr___", "]"}], 
+               "\[RuleDelayed]", "expr"}], "]"}], "@", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{"StringReplace", "[", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{
+              "s", ",", "\n", "\t\t\t\t\t\t\t\t", 
+               "$XMLFontPatchStringToXMLElementRules"}], "\n", 
+              "\t\t\t\t\t\t\t\t", "]"}]}]}], ",", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"{", "1", "}"}]}], "\n", "\t\t\t\t\t\t", "]"}]}], "\n", 
+        "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"XMLElement", "[", 
+      RowBox[{"a_", ",", " ", 
+       RowBox[{"b_", "?", 
+        RowBox[{"(", 
+         RowBox[{"MemberQ", "[", "$XMLFontPatchFlag", "]"}], ")"}]}], ",", 
+       " ", "c_"}], "]"}], ":>", "\n", "\t\t\t", 
+     RowBox[{"XMLElement", "[", 
+      RowBox[{"a", ",", " ", 
+       RowBox[{"Most", "[", "b", "]"}], ",", " ", "c"}], "]"}]}]}], "\n", 
+   "\t\t", "]"}]}]], \
+"CodeInput",ExpressionUUID->"e4b3528f-bdc9-421d-b2ea-29e906313b36"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]webSiteTemplatePreProcessInOut\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"6e6378de-e3c5-4151-b9b5-6133fdc21fdb"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+  "$WebSiteTemplatePreProcessInOutToken", "=", "\n", "\t", 
+   "\"\<(*Out:*)\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+  "$WebSiteTemplatePreProcessInOutInTag", "=", "\n", "\t", 
+   "\"\<mma-input\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+  "$WebSiteTemplatePreProcessInOutOutTag", "=", "\n", "\t", 
+   "\"\<mma-output\>\""}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"a4e78f22-fbbb-4eea-9832-53fbbfd863fe"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]webSiteTemplatePreProcessSplitOutput\[RightFloor]", \
+"CodeSubsubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"300e6a04-d220-4f2a-93dd-1f9687aa218c"],
+
+Cell["\<\
+\[LeftCeiling]
+\twebSiteTemplatePreProcessProcessSplitString
+\t\tdoes the actual dirty work of splitting the cells
+\[RightFloor]\
+\>", "Text",
+ Evaluatable->True,ExpressionUUID->"cbb4f766-f680-492a-955c-53c97f0a6106"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"webSiteTemplatePreProcessProcessSplitString", "[", 
+   RowBox[{
+   "splits_", ",", " ", "pc_", ",", " ", "cc_", ",", " ", "head_", ",", " ", 
+    "tail_"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Length", "@", 
+      RowBox[{"DeleteCases", "[", 
+       RowBox[{"splits", ",", " ", "\"\<\>\""}], "]"}]}], "\[Equal]", "0"}], 
+    ",", "\n", "\t\t", "Nothing", ",", "\n", "\t\t", 
+    RowBox[{"Sequence", "@@", "\n", "\t\t\t", 
+     RowBox[{"Flatten", "@", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{"StringLength", "@", 
+             RowBox[{"splits", "[", 
+              RowBox[{"[", "1", "]"}], "]"}]}], ">", "0"}], "||", 
+           RowBox[{
+            RowBox[{"Length", "@", "head"}], ">", "0"}]}], ",", "\n", 
+          "\t\t\t\t\t", 
+          RowBox[{"XMLElement", "[", 
+           RowBox[{"\"\<pre\>\"", ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"DeleteDuplicatesBy", "[", "First", "]"}], "@", "\n", 
+             "\t\t\t\t\t\t\t", 
+             RowBox[{"Prepend", "[", 
+              RowBox[{"pc", ",", "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{"\"\<class\>\"", "->", "\n", "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{"StringTrim", "[", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"Lookup", "[", 
+                   RowBox[{
+                   "pc", ",", " ", "\"\<class\>\"", ",", " ", "\"\<\>\""}], 
+                   "]"}], "<>", "\"\< \>\"", "<>", "\n", 
+                  "\t\t\t\t\t\t\t\t\t\t\t", 
+                  "$WebSiteTemplatePreProcessInOutInTag"}], "\n", 
+                 "\t\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t\t\t", 
+              "]"}]}], ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"List", "@", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{"XMLElement", "[", 
+              RowBox[{
+              "\"\<code\>\"", ",", "\n", "\t\t\t\t\t\t\t\t", "cc", ",", "\n", 
+               "\t\t\t\t\t\t\t\t", 
+               RowBox[{"Flatten", "@", 
+                RowBox[{"{", 
+                 RowBox[{"head", ",", " ", 
+                  RowBox[{"splits", "[", 
+                   RowBox[{"[", "1", "]"}], "]"}]}], "}"}]}]}], "\n", 
+              "\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t", "]"}], ",",
+           "\n", "\t\t\t\t\t", "Nothing"}], "\n", "\t\t\t\t\t", "]"}], ",", 
+        "\n", "\t\t\t\t", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Length", "@", "splits"}], ">", "2"}], ",", "\n", 
+          "\t\t\t\t\t", 
+          RowBox[{"Map", "[", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"If", "[", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"StringLength", "@", "#"}], ">", "0"}], ",", "\n", 
+               "\t\t\t\t\t\t\t", 
+               RowBox[{"XMLElement", "[", 
+                RowBox[{"\"\<pre\>\"", ",", "\n", "\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"DeleteDuplicatesBy", "[", "First", "]"}], "@", 
+                  "\n", "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"Prepend", "[", 
+                   RowBox[{"pc", ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<class\>\"", "->", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "StringTrim", "[", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"Lookup", "[", 
+                    RowBox[{
+                    "pc", ",", " ", "\"\<class\>\"", ",", " ", "\"\<\>\""}], 
+                    "]"}], "<>", "\"\< \>\"", "<>", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    "$WebSiteTemplatePreProcessInOutOutTag"}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", 
+                   "\t\t\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+                 "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"List", "@", "\n", "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"XMLElement", "[", 
+                   RowBox[{
+                   "\"\<code\>\"", ",", "\n", "\t\t\t\t\t\t\t\t\t\t", "cc", 
+                    ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"{", "#", "}"}]}], "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                   "]"}]}]}], "\n", "\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+               "\t\t\t\t\t\t\t", "Nothing"}], "\n", "\t\t\t\t\t\t\t", "]"}], 
+             "&"}], ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"Most", "@", 
+             RowBox[{"Rest", "@", "splits"}]}]}], "\n", "\t\t\t\t\t\t", "]"}],
+           ",", "\n", "\t\t\t\t\t", "Nothing"}], "\n", "\t\t\t\t\t", "]"}], 
+        ",", "\n", "\t\t\t\t", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"Length", "@", "splits"}], ">", "1"}], "&&", 
+             RowBox[{
+              RowBox[{"StringLength", "@", 
+               RowBox[{"Last", "@", "splits"}]}], ">", "0"}]}], ")"}], "||", 
+           RowBox[{
+            RowBox[{"Length", "@", 
+             RowBox[{"Flatten", "@", 
+              RowBox[{"{", "tail", "}"}]}]}], ">", "0"}]}], ",", "\n", 
+          "\t\t\t\t\t", 
+          RowBox[{"XMLElement", "[", 
+           RowBox[{"\"\<pre\>\"", ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"DeleteDuplicatesBy", "[", "First", "]"}], "@", "\n", 
+             "\t\t\t\t\t\t\t", 
+             RowBox[{"Prepend", "[", 
+              RowBox[{"pc", ",", "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{"\"\<class\>\"", "->", "\n", "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{"StringTrim", "[", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"Lookup", "[", 
+                   RowBox[{
+                   "pc", ",", " ", "\"\<class\>\"", ",", " ", "\"\<\>\""}], 
+                   "]"}], "<>", "\"\< \>\"", "<>", "\n", 
+                  "\t\t\t\t\t\t\t\t\t\t\t", 
+                  "$WebSiteTemplatePreProcessInOutOutTag"}], "\n", 
+                 "\t\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t\t\t", 
+              "]"}]}], ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"List", "@", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{"XMLElement", "[", 
+              RowBox[{
+              "\"\<code\>\"", ",", "\n", "\t\t\t\t\t\t\t\t", "cc", ",", "\n", 
+               "\t\t\t\t\t\t\t\t", 
+               RowBox[{"Flatten", "@", 
+                RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"If", "[", 
+                   RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", "splits"}], ">", "1"}], "&&", 
+                    RowBox[{
+                    RowBox[{"StringLength", "@", 
+                    RowBox[{"Last", "@", "splits"}]}], ">", "0"}]}], ")"}], 
+                    ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Last", "@", "splits"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", "Nothing"}], "\n", 
+                   "\t\t\t\t\t\t\t\t\t\t", "]"}], ",", " ", "\n", 
+                  "\t\t\t\t\t\t\t\t\t", "tail"}], "\n", "\t\t\t\t\t\t\t\t\t", 
+                 "}"}]}]}], "\n", "\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", 
+           "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t", "Nothing"}], "\n", 
+         "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "}"}]}]}]}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"1d655464-7e18-41cc-9fe3-8eec4d65b692"],
+
+Cell["\<\
+\[LeftCeiling]
+\twebSiteTemplatePreProcessSplitOutput
+\t\tthe more general function that delegates to the lower-level splitter
+\[RightFloor]\
+\>", "Text",
+ Evaluatable->True,ExpressionUUID->"726a0465-3eee-4f54-9218-ba58132abb0b"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"webSiteTemplatePreProcessSplitOutput", "[", 
+   RowBox[{
+   "pc_", ",", " ", "cc_", ",", " ", "head_", ",", " ", "c_", ",", " ", 
+    "tail_"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Module", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"splits", "=", "\n", "\t\t\t\t", 
+       RowBox[{"Block", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"groupUpFlag", "=", "False"}], "}"}], ",", "\n", 
+         "\t\t\t\t\t", 
+         RowBox[{"SplitBy", "[", 
+          RowBox[{
+           RowBox[{"Flatten", "@", 
+            RowBox[{"{", "tail", "}"}]}], ",", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"Function", "[", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"If", "[", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"MatchQ", "[", 
+                RowBox[{"#", ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{"_String", "?", 
+                  RowBox[{"(", 
+                   RowBox[{
+                   "StringContainsQ", "[", 
+                    "$WebSiteTemplatePreProcessInOutToken", "]"}], ")"}]}]}], 
+                "\n", "\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+               "\t\t\t\t\t\t\t\t", 
+               RowBox[{"groupUpFlag", "=", 
+                RowBox[{"Not", "@", "groupUpFlag"}]}]}], "\n", 
+              "\t\t\t\t\t\t\t\t", "]"}], ";", "\n", "\t\t\t\t\t\t\t", 
+             "groupUpFlag"}], "\n", "\t\t\t\t\t\t\t", "]"}]}], "\n", 
+          "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "]"}]}], ",", "\n", 
+      "\t\t\t", 
+      RowBox[{"firstSplit", "=", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"StringStartsQ", "[", 
+           RowBox[{"c", ",", " ", "$WebSiteTemplatePreProcessInOutToken"}], 
+           "]"}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"Prepend", "[", "\"\<\>\"", "]"}], ",", "\n", "\t\t\t\t\t", 
+          "Identity"}], "\n", "\t\t\t\t\t", "]"}], "@", "\n", "\t\t\t\t", 
+        RowBox[{"StringTrim", "@", 
+         RowBox[{"StringSplit", "[", 
+          RowBox[{"c", ",", " ", "$WebSiteTemplatePreProcessInOutToken"}], 
+          "]"}]}]}]}]}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        RowBox[{"Length", "@", 
+         RowBox[{"DeleteCases", "[", 
+          RowBox[{"splits", ",", " ", 
+           RowBox[{"{", "}"}]}], "]"}]}], "==", "0"}], "&&", 
+       RowBox[{
+        RowBox[{"Length", "@", 
+         RowBox[{"DeleteCases", "[", 
+          RowBox[{"firstSplit", ",", " ", "\"\<\>\""}], "]"}]}], "\[Equal]", 
+        "0"}]}], ",", "\n", "\t\t\t", "Nothing", ",", "\n", "\t\t\t", 
+      RowBox[{"Sequence", "@@", "\n", "\t\t\t\t", 
+       RowBox[{"Flatten", "@", 
+        RowBox[{"{", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{"Length", "@", "splits"}], "==", "0"}], "||", 
+             RowBox[{"StringQ", "@", 
+              RowBox[{"splits", "[", 
+               RowBox[{"[", 
+                RowBox[{"1", ",", " ", "1"}], "]"}], "]"}]}]}], ",", "\n", 
+            "\t\t\t\t\t\t", 
+            RowBox[{"webSiteTemplatePreProcessProcessSplitString", "[", 
+             RowBox[{
+             "firstSplit", ",", " ", "\n", "\t\t\t\t\t\t\t", "pc", ",", " ", 
+              "cc", ",", " ", "head", ",", " ", 
+              RowBox[{"{", "}"}]}], "\n", "\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+            "\t\t\t\t\t\t", 
+            RowBox[{"With", "[", 
+             RowBox[{
+              RowBox[{"{", 
+               RowBox[{"sp", "=", 
+                RowBox[{"splits", "[", 
+                 RowBox[{"[", "1", "]"}], "]"}]}], "}"}], ",", "\n", 
+              "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"splits", "=", 
+                RowBox[{"Rest", "@", "splits"}]}], ";", "\n", 
+               "\t\t\t\t\t\t\t", 
+               RowBox[{"webSiteTemplatePreProcessProcessSplitString", "[", 
+                RowBox[{
+                "firstSplit", ",", " ", "\n", "\t\t\t\t\t\t\t\t", "pc", ",", 
+                 " ", "cc", ",", " ", 
+                 RowBox[{"Join", "[", 
+                  RowBox[{"head", ",", " ", "sp"}], "]"}]}], "\n", 
+                "\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t\t", 
+             "]"}]}], "\n", "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"Map", "[", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{
+             "webSiteTemplatePreProcessProcessSplitString", "[", "\n", 
+              "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"If", "[", 
+                RowBox[{
+                 RowBox[{"StringQ", "@", 
+                  RowBox[{"#", "[", 
+                   RowBox[{"[", "1", "]"}], "]"}]}], ",", "\n", 
+                 "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"(*", 
+                  RowBox[{
+                   RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{"StringStartsQ", "[", 
+                    RowBox[{
+                    RowBox[{"#", "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], ",", " ", 
+                    "$WebSiteTemplatePreProcessInOutToken"}], "]"}], ",", 
+                    "\n", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Prepend", "[", "\"\<\>\"", "]"}], ",", "\n", 
+                    "\t", "\t", "\t", "\t", "\t\t\t\t\t", "Identity"}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t", "]"}], "@"}], "*)"}], "\n", 
+                 "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"StringSplit", "[", 
+                  RowBox[{
+                   RowBox[{"#", "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], ",", " ", 
+                   "$WebSiteTemplatePreProcessInOutToken"}], "]"}], ",", "\n",
+                  "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"{", "}"}]}], "\n", "\t\t\t\t\t\t\t\t", "]"}], ",", 
+               " ", "\n", "\t\t\t\t\t\t\t", "pc", ",", " ", "\n", 
+               "\t\t\t\t\t\t\t", "cc", ",", " ", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"{", "}"}], ",", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"If", "[", 
+                RowBox[{
+                 RowBox[{"StringQ", "@", 
+                  RowBox[{"#", "[", 
+                   RowBox[{"[", "1", "]"}], "]"}]}], ",", " ", 
+                 RowBox[{"Rest", "@", "#"}], ",", " ", "#"}], "]"}]}], "\n", 
+              "\t\t\t\t\t\t\t", "]"}], "&"}], ",", "\n", "\t\t\t\t\t\t", 
+            "splits"}], "\n", "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", 
+         "}"}]}]}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"c4f2043e-98dc-4af3-9445-320d3a6db2ca"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]webSiteTemplatePreProcessInOut\[RightFloor]", \
+"CodeSubsubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"0367bb86-8635-43bc-b1b3-c98173b6f7f3"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"webSiteTemplatePreProcessInOut", "[", "xml_", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"ReplaceRepeated", "[", "\n", "\t\t", 
+   RowBox[{"xml", ",", "\n", "\t\t", 
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"XMLElement", "[", 
+        RowBox[{
+        "\"\<pre\>\"", ",", "\n", "\t", "\t\t\t", "pc_", ",", "\n", "\t", 
+         "\t\t\t", 
+         RowBox[{"{", "\n", "\t", "\t\t\t\t", 
+          RowBox[{"___", ",", "\n", "\t", "\t\t\t\t", 
+           RowBox[{"XMLElement", "[", 
+            RowBox[{
+            "\"\<code\>\"", ",", "\n", "\t", "\t\t\t\t\t", "cc_", ",", "\n", 
+             "\t\t\t\t\t\t", 
+             RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"head", ":", 
+                RowBox[{"Shortest", "[", "___", "]"}]}], ",", "\n", 
+               "\t\t\t\t\t\t\t", 
+               RowBox[{"c_String", "?", 
+                RowBox[{"(", 
+                 RowBox[{
+                 "StringContainsQ", "[", 
+                  "$WebSiteTemplatePreProcessInOutToken", "]"}], ")"}]}], ",",
+                "\n", "\t\t\t\t\t\t\t", "tail___"}], "\n", "\t\t\t\t\t\t\t", 
+              "}"}]}], "\n", "\t\t\t\t\t\t", "]"}], ",", "\n", "\t", 
+           "\t\t\t\t", "___"}], "\n", "\t", "\t\t\t\t", "}"}]}], "\n", "\t", 
+        "\t\t\t", "]"}], ":>", "\n", "\t", "\t\t\t", 
+       RowBox[{"webSiteTemplatePreProcessSplitOutput", "[", 
+        RowBox[{"pc", ",", " ", "cc", ",", " ", 
+         RowBox[{"{", "head", "}"}], ",", " ", "c", ",", " ", 
+         RowBox[{"{", "tail", "}"}]}], "]"}]}], ",", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"XMLElement", "[", 
+        RowBox[{"\"\<pre\>\"", ",", "\n", "\t\t\t\t", 
+         RowBox[{"pc_", "?", 
+          RowBox[{"(", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"StringFreeQ", "[", 
+             RowBox[{
+              RowBox[{"Lookup", "[", 
+               RowBox[{"#", ",", " ", "\"\<class\>\"", ",", " ", "\"\<\>\""}],
+                "]"}], ",", " ", "\n", "\t\t\t\t\t\t", 
+              RowBox[{
+              "$WebSiteTemplatePreProcessInOutInTag", "|", "\n", 
+               "\t\t\t\t\t\t", "$WebSiteTemplatePreProcessInOutOutTag"}]}], 
+             "\n", "\t\t\t\t\t\t", "]"}], "&"}], "\n", "\t\t\t\t\t", ")"}]}], 
+         ",", "\n", "\t\t\t\t", 
+         RowBox[{"c", ":", 
+          RowBox[{"{", "\n", "\t\t\t\t\t", 
+           RowBox[{"___", ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"XMLElement", "[", 
+             RowBox[{
+             "\"\<code\>\"", ",", "\n", "\t\t\t\t\t\t", "_", ",", "\n", 
+              "\t\t\t\t\t\t", 
+              RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"_String", "?", 
+                RowBox[{"(", 
+                 RowBox[{
+                 "StringFreeQ", "[", "$WebSiteTemplatePreProcessInOutToken", 
+                  "]"}], ")"}]}], "\n", "\t\t\t\t\t\t\t", "}"}]}], "\n", 
+             "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t", "___"}], "\n", 
+           "\t\t\t\t\t", "}"}]}]}], "\n", "\t\t\t\t", "]"}], ":>", "\n", 
+       "\t\t\t\t", 
+       RowBox[{"XMLElement", "[", 
+        RowBox[{"\"\<pre\>\"", ",", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"DeleteDuplicatesBy", "[", "First", "]"}], "@", "\n", 
+          "\t\t\t\t\t\t", 
+          RowBox[{"Prepend", "[", 
+           RowBox[{"pc", ",", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{"\"\<class\>\"", "->", "\n", "\t\t\t\t\t\t\t\t", 
+             RowBox[{"StringTrim", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Lookup", "[", 
+                RowBox[{
+                "pc", ",", " ", "\"\<class\>\"", ",", " ", "\"\<\>\""}], 
+                "]"}], "<>", "\"\< \>\"", "<>", "\n", "\t", 
+               "\t\t\t\t\t\t\t\t\t", "$WebSiteTemplatePreProcessInOutInTag"}],
+               "\n", "\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t\t", 
+           "]"}]}], ",", "\n", "\t\t\t\t\t", "c"}], "\n", "\t\t\t\t\t", 
+        "]"}]}]}], "\n", "\t\t\t", "}"}]}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"a8e3bf81-8121-4c02-bfb0-332bbe476ddb"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]webSiteTemplatePreProcessCodeLanguage\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"c948309b-633b-4bad-af37-a984ac55a412"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"webSiteTemplatePreProcessCodeLanguage", "[", "lang_", "]"}], "[", 
+   "xml_", "]"}], ":=", "\n", "\t", 
+  RowBox[{"ReplaceRepeated", "[", "\n", "\t\t\t", 
+   RowBox[{"xml", ",", "\n", "\t\t\t", 
+    RowBox[{
+     RowBox[{"XMLElement", "[", 
+      RowBox[{"\"\<code\>\"", ",", "\n", "\t\t\t\t", 
+       RowBox[{"c_", "?", 
+        RowBox[{"(", "\n", "\t\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"StringFreeQ", "[", 
+            RowBox[{
+             RowBox[{"Lookup", "[", 
+              RowBox[{"#", ",", "\"\<class\>\"", ",", "\"\<\>\""}], "]"}], 
+             ",", "\"\<language-\>\""}], "]"}], ")"}], "\n", "\t\t\t\t\t\t", 
+          "&"}], ")"}]}], ",", "\n", "\t\t\t\t", "e_"}], "]"}], ":>", "\n", 
+     "\t\t\t\t", 
+     RowBox[{"XMLElement", "[", 
+      RowBox[{"\"\<code\>\"", ",", "\n", "\t\t\t\t\t", 
+       RowBox[{"Normal", "@", "\n", "\t\t\t\t\t\t", 
+        RowBox[{"Append", "[", "\n", "\t\t\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Association", "@", "c"}], ",", "\n", "\t\t\t\t\t\t\t", 
+          RowBox[{"\"\<class\>\"", "->", "\n", "\t\t\t\t\t\t\t\t", 
+           RowBox[{"StringTrim", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Lookup", "[", 
+              RowBox[{"c", ",", "\"\<class\>\"", ",", "\"\<\>\""}], "]"}], "<>",
+              "\n", "\t\t\t\t\t\t\t\t\t\t", "\"\< language-\>\"", "<>", 
+             RowBox[{"ToLowerCase", "@", "lang"}]}], "\n", 
+            "\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}], 
+       ",", "\n", "\t\t\t\t\t", "e"}], "\n", "\t\t\t\t\t", "]"}]}]}], "\n", 
+   "\t\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"3a7088f8-44e6-4115-86bb-a822af9e0ad9"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]WebSiteTemplatePreProcess\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"45eb2671-d5b0-423d-953c-f8c3fb17c6bc"],
+
 Cell[BoxData[
  RowBox[{
   RowBox[{"WebSiteTemplatePreProcess", "[", 
    RowBox[{"fileContent_", ",", "args_"}], "]"}], ":=", "\n", "\t", 
-  RowBox[{"With", "[", 
+  RowBox[{"Module", "[", "\n", "\t\t", 
    RowBox[{
-    RowBox[{"{", "\n", "\t\t", 
+    RowBox[{"{", "\n", "\t\t\t", 
      RowBox[{
-      RowBox[{"lang", "=", "\n", "\t\t\t", 
+      RowBox[{"lang", "=", "\n", "\t\t\t\t", 
        RowBox[{"Lookup", "[", 
         RowBox[{"args", ",", " ", "\"\<CodeLanguage\>\""}], "]"}]}], ",", 
-      "\n", "\t\t", 
-      RowBox[{"prettyprint", "=", "\n", "\t\t\t", 
+      "\n", "\t", "\t\t", 
+      RowBox[{"prettyprint", "=", "\n", "\t", "\t\t\t", 
        RowBox[{"Lookup", "[", 
         RowBox[{"args", ",", " ", "\"\<PrettyPrint\>\""}], "]"}]}], ",", "\n",
-       "\t\t", 
-      RowBox[{"patchfonts", "=", "\n", "\t\t\t", 
+       "\t", "\t\t", 
+      RowBox[{"patchfonts", "=", "\n", "\t", "\t\t\t", 
        RowBox[{"Lookup", "[", 
         RowBox[{"args", ",", " ", "\"\<PatchFonts\>\""}], "]"}]}], ",", "\n", 
-      "\t\t", 
-      RowBox[{"srcbase", "=", "\n", "\t\t\t", 
+      "\t\t\t", 
+      RowBox[{"splitout", "=", "\n", "\t\t\t\t", 
+       RowBox[{"Lookup", "[", 
+        RowBox[{"args", ",", " ", "\"\<SplitInOut\>\""}], "]"}]}], ",", "\n", 
+      "\t\t\t", "splittags", ",", "\n", "\t\t\t", 
+      RowBox[{"srcbase", "=", "\n", "\t\t\t\t", 
        RowBox[{"Replace", "[", 
         RowBox[{
          RowBox[{"Lookup", "[", 
           RowBox[{"args", ",", " ", "\"\<SiteURL\>\""}], "]"}], ",", " ", 
          RowBox[{
           RowBox[{"Except", "[", "_String", "]"}], "\[RuleDelayed]", 
-          "\"\<\>\""}]}], "]"}]}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+          "\"\<\>\""}]}], "]"}]}]}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
     RowBox[{
      RowBox[{"If", "[", 
       RowBox[{
-       RowBox[{"StringQ", "[", "srcbase", "]"}], ",", "\n", "\t\t\t", 
-       RowBox[{
-        RowBox[{"ReplaceAll", "[", "\n", "\t\t\t\t", 
-         RowBox[{"#", ",", "\n", "\t\t\t\t", 
+       RowBox[{"OptionQ", "@", "splitout"}], ",", "\n", "\t\t\t", 
+       RowBox[{"splittags", "=", "\n", "\t\t\t\t", 
+        RowBox[{"MapThread", "[", "\n", "\t\t\t\t\t", 
+         RowBox[{
           RowBox[{
-           RowBox[{"(", 
-            RowBox[{"\"\<src\>\"", "\[Rule]", "f_"}], ")"}], "\[RuleDelayed]",
-            "\n", "\t\t\t\t\t", 
-           RowBox[{"(", 
-            RowBox[{"\"\<src\>\"", "\[Rule]", 
-             RowBox[{"StringReplace", "[", 
-              RowBox[{"f", ",", " ", 
-               RowBox[{"\"\<{filename}\>\"", "\[Rule]", "srcbase"}]}], 
-              "]"}]}], ")"}]}]}], "\n", "\t\t\t\t", "]"}], "&"}], ",", "\n", 
-       "\t\t\t", "Identity"}], "\n", "\t\t\t", "]"}], "@", "\n", "\t\t", 
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{"StringQ", "@", "#"}], ",", " ", "#", ",", " ", "#2"}], 
+            "]"}], "&"}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"Lookup", "[", 
+             RowBox[{"splitout", ",", " ", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{
+               "\"\<Token\>\"", ",", "\n", "\t\t\t\t\t\t\t\t", 
+                "\"\<OutTag\>\"", ",", "\n", "\t", "\t", "\t\t\t\t\t\t", 
+                "\"\<InTag\>\""}], "\n", "\t\t\t\t\t\t\t\t", "}"}]}], "\n", 
+             "\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{
+             "$WebSiteTemplatePreProcessInOutToken", ",", "\n", 
+              "\t\t\t\t\t\t\t", "$WebSiteTemplatePreProcessInOutInTag", ",", 
+              "\n", "\t\t\t\t\t\t\t", 
+              "$WebSiteTemplatePreProcessInOutOutTag"}], "\n", 
+             "\t\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t\t", "}"}]}], "\n", 
+         "\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"splittags", "=", "\n", "\t\t\t\t", 
+        RowBox[{"{", "\n", "\t\t\t\t\t", 
+         RowBox[{
+         "$WebSiteTemplatePreProcessInOutToken", ",", "\n", "\t\t\t\t\t", 
+          "$WebSiteTemplatePreProcessInOutInTag", ",", "\n", "\t\t\t\t\t", 
+          "$WebSiteTemplatePreProcessInOutOutTag"}], "\n", "\t\t\t\t\t", 
+         "}"}]}]}], "\n", "\t\t\t", "]"}], ";", "\n", "\t\t", 
      RowBox[{
       RowBox[{"If", "[", 
        RowBox[{
-        RowBox[{"TrueQ", "[", "patchfonts", "]"}], ",", "\n", "\t\t\t", 
+        RowBox[{"StringQ", "[", "srcbase", "]"}], ",", "\n", "\t\t\t", 
         RowBox[{
-         RowBox[{"ReplaceRepeated", "[", "\n", "\t\t\t\t", 
-          RowBox[{
-           RowBox[{"ReplaceRepeated", "[", "\n", "\t\t\t\t\t", 
-            RowBox[{"#", ",", "\n", "\t", "\t\t\t\t", 
-             RowBox[{
-              RowBox[{"XMLElement", "[", 
-               RowBox[{"a_", ",", " ", 
-                RowBox[{"b_", "?", 
-                 RowBox[{"(", 
-                  RowBox[{"FreeQ", "[", "$XMLFontPatchFlag", "]"}], ")"}]}], 
-                ",", " ", "d_"}], "]"}], ":>", "\n", "\t", "\t\t\t\t\t", 
-              RowBox[{"XMLElement", "[", 
-               RowBox[{"a", ",", "\n", "\t", "\t\t\t\t\t\t", 
-                RowBox[{"Append", "[", 
-                 RowBox[{"b", ",", " ", "$XMLFontPatchFlag"}], "]"}], ",", 
-                "\n", "\t\t\t\t\t\t\t", 
-                RowBox[{"Replace", "[", 
-                 RowBox[{"d", ",", "\n", "\t", "\t", "\t", "\t\t\t\t\t", 
-                  RowBox[{
-                  "s_String", ":>", "\n", "\t", "\t", "\t", "\t\t\t\t\t\t", 
-                   RowBox[{
-                    RowBox[{"Replace", "[", 
-                    RowBox[{
-                    RowBox[{"StringExpression", "[", "expr___", "]"}], 
-                    "\[RuleDelayed]", "expr"}], "]"}], "@", "\n", 
-                    "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "StringReplace", "[", "\n", "\t", "\t", 
-                    "\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "s", ",", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
-                    "$XMLFontPatchStringToXMLElementRules"}], "\n", "\t", 
-                    "\t", "\t\t\t\t\t\t\t\t", "]"}]}]}], ",", "\n", "\t", 
-                  "\t", "\t\t\t\t\t\t", 
-                  RowBox[{"{", "1", "}"}]}], "\n", "\t", "\t\t\t\t\t\t\t", 
-                 "]"}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}]}], "\n", 
-            "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"ReplaceAll", "[", "\n", "\t\t\t\t", 
+          RowBox[{"#", ",", "\n", "\t\t\t\t", 
            RowBox[{
-            RowBox[{"XMLElement", "[", 
-             RowBox[{"a_", ",", " ", 
-              RowBox[{"b_", "?", 
-               RowBox[{"(", 
-                RowBox[{"MemberQ", "[", "$XMLFontPatchFlag", "]"}], ")"}]}], 
-              ",", " ", "c_"}], "]"}], ":>", "\n", "\t\t\t\t\t", 
-            RowBox[{"XMLElement", "[", 
-             RowBox[{"a", ",", " ", 
-              RowBox[{"Most", "[", "b", "]"}], ",", " ", "c"}], "]"}]}]}], 
-          "\n", "\t\t\t\t", "]"}], "&"}], ",", "\n", "\t\t\t", "Identity"}], 
-       "\n", "\t\t\t", "]"}], "@", "\n", "\t\t", 
+            RowBox[{"(", 
+             RowBox[{"\"\<src\>\"", "\[Rule]", "f_"}], ")"}], 
+            "\[RuleDelayed]", "\n", "\t\t\t\t\t", 
+            RowBox[{"(", 
+             RowBox[{"\"\<src\>\"", "\[Rule]", 
+              RowBox[{"StringReplace", "[", 
+               RowBox[{"f", ",", " ", 
+                RowBox[{"\"\<{filename}\>\"", "\[Rule]", "srcbase"}]}], 
+               "]"}]}], ")"}]}]}], "\n", "\t\t\t\t", "]"}], "&"}], ",", "\n", 
+        "\t\t\t", "Identity"}], "\n", "\t\t\t", "]"}], "@", "\n", "\t\t", 
       RowBox[{
        RowBox[{"If", "[", 
         RowBox[{
          RowBox[{"TrueQ", "[", "prettyprint", "]"}], ",", "\n", "\t\t\t", 
-         RowBox[{
-          RowBox[{"ReplaceRepeated", "[", "\n", "\t\t\t\t", 
-           RowBox[{"#", ",", "\n", "\t\t\t\t", 
-            RowBox[{
-             RowBox[{"XMLElement", "[", 
-              RowBox[{"\"\<pre\>\"", ",", "\n", "\t\t\t\t\t", 
-               RowBox[{"c_", "?", 
-                RowBox[{"(", 
-                 RowBox[{
-                  RowBox[{"StringFreeQ", "[", 
-                   RowBox[{
-                    RowBox[{"Lookup", "[", 
-                    RowBox[{"#", ",", "\"\<class\>\"", ",", "\"\<\>\""}], 
-                    "]"}], ",", " ", "\"\<prettyprint\>\""}], "]"}], "&"}], 
-                 ")"}]}], ",", "\n", "\t\t\t\t\t", 
-               RowBox[{"e", ":", 
-                RowBox[{"{", "\n", "\t\t\t\t\t\t", 
-                 RowBox[{"XMLElement", "[", 
-                  RowBox[{"\"\<code\>\"", ",", "\n", "\t\t\t\t\t\t\t", 
-                   RowBox[{"_", "?", 
-                    RowBox[{"(", 
-                    RowBox[{
-                    RowBox[{"!", 
-                    RowBox[{"StringEndsQ", "[", 
-                    RowBox[{
-                    RowBox[{"Lookup", "[", 
-                    RowBox[{
-                    "#", ",", " ", "\"\<language\>\"", ",", " ", "\"\<\>\""}],
-                     "]"}], ",", " ", 
-                    RowBox[{"\"\<-\>\"", "|", "\"\<-none\>\""}]}], "]"}]}], 
-                    "&"}], ")"}]}], ",", "\n", "\t\t\t\t\t\t\t", "_"}], "]"}],
-                  "\n", "\t\t\t\t\t\t", "}"}]}]}], "\n", "\t\t\t\t\t", "]"}], 
-             ":>", "\n", "\t\t\t\t\t\t", 
-             RowBox[{"XMLElement", "[", 
-              RowBox[{"\"\<pre\>\"", ",", "\n", "\t\t\t\t\t\t\t", 
-               RowBox[{"Normal", "@", "\n", "\t\t\t\t\t\t\t\t", 
-                RowBox[{"Append", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
-                 RowBox[{
-                  RowBox[{"Association", "@", "c"}], ",", "\n", 
-                  "\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{"\"\<class\>\"", "->", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                   RowBox[{
-                   "StringTrim", "[", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"Lookup", "[", 
-                    RowBox[{"c", ",", "\"\<class\>\"", ",", "\"\<\>\""}], 
-                    "]"}], "<>", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    "\"\<prettyprint\>\""}], "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
-                    "]"}]}]}], "\n", "\t\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n",
-                "\t\t\t\t\t\t\t", "e"}], "\n", "\t\t\t\t\t\t\t", "]"}]}]}], 
-           "\n", "\t\t\t\t", "]"}], "&"}], ",", "\n", "\t\t\t", "Identity"}], 
-        "\n", "\t\t\t", "]"}], "@", "\n", "\t\t", 
+         "webSiteTemplatePreProcessPrettyPrint", ",", "\n", "\t\t\t", 
+         "Identity"}], "\n", "\t\t\t", "]"}], "@", "\n", "\t\t", 
        RowBox[{
         RowBox[{"If", "[", 
          RowBox[{
           RowBox[{"StringQ", "[", "lang", "]"}], ",", "\n", "\t\t\t", 
+          RowBox[{"webSiteTemplatePreProcessCodeLanguage", "[", "lang", "]"}],
+           ",", "\n", "\t\t\t", "Identity"}], "\n", "\t\t\t", "]"}], "@", 
+        "\n", "\t\t", 
+        RowBox[{
+         RowBox[{"If", "[", 
           RowBox[{
-           RowBox[{"ReplaceRepeated", "[", "\n", "\t\t\t\t", 
-            RowBox[{"#", ",", "\n", "\t\t\t\t", 
-             RowBox[{
-              RowBox[{"XMLElement", "[", 
-               RowBox[{"\"\<code\>\"", ",", "\n", "\t\t\t\t\t", 
-                RowBox[{"c_", "?", 
-                 RowBox[{"(", "\n", "\t\t\t\t\t\t\t", 
-                  RowBox[{
-                   RowBox[{"(", 
-                    RowBox[{
-                    RowBox[{"StringQ", "[", "lang", "]"}], "&&", "\n", 
-                    "\t\t\t\t\t\t\t\t", 
-                    RowBox[{"StringFreeQ", "[", 
-                    RowBox[{
-                    RowBox[{"Lookup", "[", 
-                    RowBox[{"#", ",", "\"\<class\>\"", ",", "\"\<\>\""}], 
-                    "]"}], ",", "\"\<language-\>\""}], "]"}]}], "\n", 
-                    "\t\t\t\t\t\t\t\t", ")"}], "\n", "\t\t\t\t\t\t\t", "&"}], 
-                  ")"}]}], ",", "\n", "\t\t\t\t\t", "e_"}], "]"}], ":>", "\n",
-               "\t\t\t\t\t", 
-              RowBox[{"XMLElement", "[", 
-               RowBox[{"\"\<code\>\"", ",", "\n", "\t\t\t\t\t\t", 
-                RowBox[{"Normal", "@", "\n", "\t\t\t\t\t\t\t", 
-                 RowBox[{"Append", "[", "\n", "\t\t\t\t\t\t\t\t", 
-                  RowBox[{
-                   RowBox[{"Association", "@", "c"}], ",", "\n", 
-                   "\t\t\t\t\t\t\t\t", 
-                   RowBox[{
-                   "\"\<class\>\"", "->", "\n", "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"StringTrim", "[", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"Lookup", "[", 
-                    RowBox[{"c", ",", "\"\<class\>\"", ",", "\"\<\>\""}], 
-                    "]"}], "<>", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
-                    "\"\< language-\>\"", "<>", 
-                    RowBox[{"ToLowerCase", "@", "lang"}]}], "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", 
-                  "\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t\t\t", 
-                "e"}], "\n", "\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", 
-            "]"}], "&"}], ",", "\n", "\t\t\t", "Identity"}], "\n", "\t\t\t", 
-         "]"}], "@", "\n", "\t\t\t", 
-        RowBox[{"FirstCase", "[", "\n", "\t\t\t\t", 
-         RowBox[{"fileContent", ",", "\n", "\t\t\t\t", 
-          RowBox[{
-           RowBox[{"XMLElement", "[", 
-            RowBox[{"\"\<body\>\"", ",", "_", ",", "b_"}], "]"}], 
-           "\[RuleDelayed]", "\n", "\t\t\t\t\t", "b"}], ",", "\n", "\t\t\t\t",
-           "fileContent", ",", "\n", "\t\t\t\t", "\[Infinity]"}], "\n", 
-         "\t\t\t\t", "]"}]}]}]}]}]}], "\n", "\t\t", 
+           RowBox[{"TrueQ", "[", "patchfonts", "]"}], ",", "\n", "\t\t\t", 
+           "webSiteTemplatePreProcessFonts", ",", "\n", "\t\t\t", 
+           "Identity"}], "\n", "\t\t\t", "]"}], "@", "\n", "\t\t", 
+         RowBox[{
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{"TrueQ", "[", "splitout", "]"}], ",", "\n", "\t\t\t", 
+            RowBox[{
+             RowBox[{"Block", "[", "\n", "\t\t\t\t", 
+              RowBox[{
+               RowBox[{"{", "\n", "\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"$WebSiteTemplatePreProcessInOutToken", "=", 
+                  RowBox[{"splittags", "[", 
+                   RowBox[{"[", "1", "]"}], "]"}]}], ",", "\n", "\t\t\t\t\t", 
+                 
+                 RowBox[{"$WebSiteTemplatePreProcessInOutInTag", "=", 
+                  RowBox[{"splittags", "[", 
+                   RowBox[{"[", "2", "]"}], "]"}]}], ",", "\n", "\t\t\t\t\t", 
+                 
+                 RowBox[{"$WebSiteTemplatePreProcessInOutOutTag", "=", 
+                  RowBox[{"splittags", "[", 
+                   RowBox[{"[", "3", "]"}], "]"}]}]}], "\n", "\t\t\t\t\t", 
+                "}"}], ",", "\n", "\t\t\t\t", 
+               RowBox[{"webSiteTemplatePreProcessInOut", "[", "#", "]"}]}], 
+              "\n", "\t\t\t\t", "]"}], "&"}], ",", "\n", "\t\t\t", 
+            "Identity"}], "\n", "\t\t\t", "]"}], "@", "\n", "\t\t\t", 
+          RowBox[{"FirstCase", "[", "\n", "\t\t\t\t", 
+           RowBox[{"fileContent", ",", "\n", "\t\t\t\t", 
+            RowBox[{
+             RowBox[{"XMLElement", "[", 
+              RowBox[{"\"\<body\>\"", ",", "_", ",", "b_"}], "]"}], 
+             "\[RuleDelayed]", "\n", "\t\t\t\t\t", "b"}], ",", "\n", 
+            "\t\t\t\t", "fileContent", ",", "\n", "\t\t\t\t", "\[Infinity]"}],
+            "\n", "\t\t\t\t", "]"}]}]}]}]}]}]}]}], "\n", "\t\t", 
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"833b78ee-1c86-42e6-991f-4fcdaded7366"]
-}, Open  ]],
+}, Open  ]]
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -2489,6 +3150,120 @@ Cell[BoxData[
 
 Cell[CellGroupData[{
 
+Cell["\[LeftCeiling]webSiteTemplateGatherSummary\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"e2911d5d-802b-4914-ac15-bf57ef5fd57d"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"webSiteTemplateGatherSummary", "[", 
+   RowBox[{"len_", ",", " ", "content_"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Module", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{"sl", ",", "\n", "\t\t\t", "cont"}], "\n", "\t\t\t", "}"}], ",", 
+    "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"sl", "=", "\n", "\t\t\t", 
+      RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
+       RowBox[{"len", ",", "\n", "\t\t\t\t", 
+        RowBox[{"{", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"i_Integer", "?", "Positive"}], ":>", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"{", 
+            RowBox[{"i", ",", " ", "\"\<Characters\>\""}], "}"}]}], ",", "\n",
+           "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"_", "[", 
+            RowBox[{
+             RowBox[{"i_Integer", "?", "Positive"}], ",", " ", 
+             RowBox[{"u", ":", 
+              RowBox[{"Alternatives", "@@", "$WebSiteSummaryBaseUnits"}]}]}], 
+            "]"}], ":>", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"{", 
+            RowBox[{"i", ",", " ", "u"}], "}"}]}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"_", ":>", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"{", 
+            RowBox[{"1", ",", "\"\<Paragraph\>\""}], "}"}]}]}], "\n", 
+         "\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
+     
+     RowBox[{"cont", "=", 
+      RowBox[{"ImportString", "[", 
+       RowBox[{"content", ",", " ", "\"\<HTML\>\""}], "]"}]}], ";", "\n", 
+     "\t\t", 
+     RowBox[{"Replace", "[", 
+      RowBox[{"sl", ",", "\n", "\t\t\t", 
+       RowBox[{"{", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"{", "\n", "\t\t\t\t\t", 
+           RowBox[{"i_", ",", "\n", "\t", "\t\t\t\t", 
+            RowBox[{"\"\<Characters\>\"", "|", 
+             RowBox[{"IndependentUnit", "[", "\"\<characters\>\"", "]"}]}]}], 
+           "\n", "\t", "\t\t\t\t", "}"}], ":>", "\n", "\t", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Function", "[", "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{"If", "[", "\n", "\t", "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"StringLength", "[", "#", "]"}], ">", "i"}], ",", "\n",
+               "\t", "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"StringTake", "[", 
+                RowBox[{"#", ",", 
+                 RowBox[{"i", "-", "3"}]}], "]"}], "<>", "\"\<...\>\""}], ",",
+               "\n", "\t", "\t\t\t\t\t\t", "#"}], "\n", "\t", "\t\t\t\t\t\t", 
+             "]"}], "\n", "\t", "\t\t\t\t\t", "]"}], "@", "\n", "\t", 
+           "\t\t\t\t\t", 
+           RowBox[{"StringReplace", "[", 
+            RowBox[{"cont", ",", 
+             RowBox[{"Whitespace", "\[Rule]", "\"\< \>\""}]}], "]"}]}]}], ",",
+          "\n", "\t", "\t\t\t", 
+         RowBox[{
+          RowBox[{"{", "\n", "\t", "\t\t\t\t", 
+           RowBox[{"i_", ",", "\n", "\t", "\t\t\t\t", 
+            RowBox[{"\"\<Lines\>\"", "|", 
+             RowBox[{"IndependentUnit", "[", 
+              RowBox[{"\"\<lines\>\"", "|", "\"\<lines of code\>\""}], 
+              "]"}]}]}], "\n", "\t", "\t\t\t\t", "}"}], ":>", "\n", "\t", 
+          "\t\t\t\t", 
+          RowBox[{"StringRiffle", "@", "\n", "\t", "\t\t\t\t\t", 
+           RowBox[{"Take", "[", "\n", "\t", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"StringSplit", "[", 
+              RowBox[{"cont", ",", "\"\<\\n\>\""}], "]"}], ",", "\n", "\t", 
+             "\t\t\t\t\t\t", 
+             RowBox[{"UpTo", "[", "i", "]"}]}], "\n", "\t", "\t\t\t\t\t\t", 
+            "]"}]}]}], ",", "\n", "\t", "\t\t\t", 
+         RowBox[{
+          RowBox[{"{", "\n", "\t", "\t\t\t\t", 
+           RowBox[{"i_", ",", "\n", "\t", "\t\t\t\t", 
+            RowBox[{
+             RowBox[{"IndependentUnit", "[", "t_", "]"}], "|", "t_String"}]}],
+            "\n", "\t", "\t\t\t\t", "}"}], ":>", "\n", "\t", "\t\t\t\t", 
+          RowBox[{"StringRiffle", "[", "\n", "\t", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"TextCases", "[", 
+             RowBox[{"cont", ",", "\n", "\t", "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                 RowBox[{"ToUpperCase", "[", 
+                  RowBox[{"StringTake", "[", 
+                   RowBox[{"#", ",", "1"}], "]"}], "]"}], "<>", "\n", "\t", 
+                 "\t\t\t\t\t\t\t", 
+                 RowBox[{"StringDrop", "[", 
+                  RowBox[{"#", ",", "1"}], "]"}]}], "&"}], "@", "t"}], ",", 
+              "\n", "\t", "\t\t\t\t\t\t", "i"}], "]"}], ",", "\n", "\t", 
+            "\t\t\t\t\t", "\"\< \>\""}], "\n", "\t\t\t\t\t\t", "]"}]}]}], 
+        "\n", "\t\t\t\t", "}"}]}], "\n", "\t\t", "]"}]}]}], "\n", "\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"6d546be1-374b-4956-839b-492721faec72"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
 Cell["\[LeftCeiling]WebSiteTemplateGatherArgs\[RightFloor]", \
 "CodeSubsubsubsection",
  Evaluatable->True,ExpressionUUID->"b1bb0eb9-126d-4524-a0fc-83c3193a01ac"],
@@ -2497,376 +3272,294 @@ Cell[BoxData[
  RowBox[{
   RowBox[{"WebSiteTemplateGatherArgs", "[", 
    RowBox[{"fileContent_", ",", " ", "args_"}], "]"}], ":=", "\n", "\t", 
-  RowBox[{"With", "[", "\n", "\t\t", 
+  RowBox[{"Module", "[", "\n", "\t\t", 
    RowBox[{
     RowBox[{"{", "\n", "\t\t\t", 
-     RowBox[{"content", "=", "\n", "\t\t\t\t", 
+     RowBox[{
+     "url", ",", "\n", "\t\t\t", "slug", ",", "\n", "\t\t\t", "fp", ",", "\n",
+       "\t\t\t", "title", ",", "\n", "\t\t\t", "content", ",", "\n", "\t\t\t",
+       "summary", ",", "\n", "\t\t\t", "date", ",", "\n", "\t\t\t", 
+      "modified", ",", "\n", "\t\t\t", "siteURL", ",", "\n", "\t\t\t", 
+      "siteName"}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"url", "=", 
+      RowBox[{"Lookup", "[", 
+       RowBox[{"args", ",", " ", "\"\<URL\>\""}], "]"}]}], ";", "\n", "\t\t", 
+     
+     RowBox[{"slug", "=", 
+      RowBox[{"Lookup", "[", 
+       RowBox[{"args", ",", " ", "\"\<Slug\>\""}], "]"}]}], ";", "\n", "\t\t", 
+     RowBox[{"fp", "=", 
+      RowBox[{"Lookup", "[", 
+       RowBox[{"args", ",", " ", "\"\<FilePath\>\""}], "]"}]}], ";", "\n", 
+     "\t\t", 
+     RowBox[{"content", "=", "\n", "\t\t\t", 
       RowBox[{"Replace", "[", 
-       RowBox[{"fileContent", ",", "\n", "\t\t\t\t\t", 
-        RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+       RowBox[{"fileContent", ",", "\n", "\t\t\t\t", 
+        RowBox[{"{", "\n", "\t\t\t\t\t", 
          RowBox[{
           RowBox[{
            RowBox[{"l", ":", 
             RowBox[{"{", "__XMLElement", "}"}]}], "\[RuleDelayed]", "\n", 
-           "\t\t\t\t\t\t\t\t", 
-           RowBox[{"StringRiffle", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
+           "\t\t\t\t\t\t", 
+           RowBox[{"StringRiffle", "[", "\n", "\t\t\t\t\t\t\t", 
             RowBox[{
              RowBox[{"WebSiteBuildSafeExportXML", "/@", "l"}], ",", "\n", 
-             "\t\t\t\t\t\t\t\t\t", "\"\<\\n\>\""}], "\n", "\t", "\t", 
-            "\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t\t\t\t", 
-          RowBox[{"x_XMLElement", ":>", "\n", "\t\t\t\t\t\t\t\t", 
+             "\t\t\t\t\t\t\t", "\"\<\\n\>\""}], "\n", "\t\t\t\t\t\t\t", 
+            "]"}]}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"x_XMLElement", ":>", "\n", "\t\t\t\t\t\t", 
            RowBox[{"WebSiteBuildSafeExportXML", "[", "x", "]"}]}], ",", "\n", 
-          "\t\t\t\t\t\t\t", 
+          "\t\t\t\t\t", 
           RowBox[{
-          "None", "->", "\n", "\t", "\t", "\t\t\t\t\t\t", "\"\<\>\""}], ",", 
-          "\n", "\t", "\t", "\t\t\t\t\t", 
+          "None", "->", "\n", "\t\t\t\t\t\t", 
+           "\"\<<html><body>No content...</body><html>\>\""}], ",", "\n", 
+          "\t\t\t\t\t", 
           RowBox[{
            RowBox[{"e", ":", 
-            RowBox[{"Except", "[", "_String", "]"}]}], ":>", "\n", "\t", "\t",
-            "\t\t\t\t\t\t", 
-           RowBox[{"(", 
-            RowBox[{"Message", "[", 
-             RowBox[{
-              RowBox[{"WebSiteBuild", "::", "nocnt"}], ",", 
-              RowBox[{"Short", "[", "e", "]"}]}], "]"}], ")"}]}]}], "\n", 
-         "\t\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t", "]"}]}], "\n", 
-     "\t\t\t", "}"}], ",", "\n", "\t\t", 
-    RowBox[{"Merge", "[", "\n", "\t\t\t", 
-     RowBox[{
-      RowBox[{"{", "\n", "\t\t\t\t", 
+            RowBox[{"Except", "[", "_String", "]"}]}], ":>", "\n", 
+           "\t\t\t\t\t\t", 
+           RowBox[{"(", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"WebSiteBuildLogError", "[", 
+              RowBox[{"fp", ",", " ", "\"\<BadContent\>\"", ",", " ", "e"}], 
+              "]"}], ";", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{"PackageThrowMessage", "[", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{"\"\<SiteBuilder\>\"", ",", "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{"WebSiteBuild", "::", "nocnt"}], ",", "\n", 
+               "\t\t\t\t\t\t\t\t", 
+               RowBox[{"Short", "[", "e", "]"}]}], "\n", "\t\t\t\t\t\t\t\t", 
+              "]"}]}], "\n", "\t\t\t\t\t\t\t", ")"}]}]}], "\n", "\t\t\t\t\t", 
+         "}"}]}], "\n", "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
+     RowBox[{"title", "=", "\n", "\t\t\t", 
+      RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
        RowBox[{
-        RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t", 
+        RowBox[{"FirstCase", "[", "\n", "\t\t\t\t\t", 
          RowBox[{
-          RowBox[{"FirstCase", "[", "\n", "\t", "\t\t\t\t\t", 
+          RowBox[{"If", "[", 
            RowBox[{
-            RowBox[{"If", "[", 
-             RowBox[{
-              RowBox[{"StringQ", "[", "fileContent", "]"}], ",", "\n", "\t", 
-              "\t\t\t\t\t\t", 
-              RowBox[{"ImportString", "[", 
-               RowBox[{"fileContent", ",", "\"\<HTML\>\""}], "]"}], ",", "\n",
-               "\t", "\t\t\t\t\t\t", "fileContent"}], "\n", "\t", 
-             "\t\t\t\t\t\t", "]"}], ",", "\n", "\t", "\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{"t", ":", 
-              RowBox[{"XMLElement", "[", 
-               RowBox[{"\"\<title\>\"", ",", "_", ",", "_"}], "]"}]}], 
-             "\[RuleDelayed]", "\n", "\t", "\t\t\t\t\t\t", 
-             RowBox[{
-             "System`Convert`XMLDump`getSymbolicXMLPlaintext", "@", "\n", 
-              "\t", "\t\t\t\t\t\t\t", 
-              RowBox[{"XMLElement", "[", 
-               RowBox[{"\"\<body\>\"", ",", 
-                RowBox[{"{", "}"}], ",", "t"}], "]"}]}]}], ",", "\n", "\t", 
-            "\t\t\t\t\t", "None", ",", "\n", "\t", "\t\t\t\t\t", 
-            "\[Infinity]"}], "\n", "\t", "\t\t\t\t\t", "]"}], ",", "\n", "\t",
-           "\t\t\t\t", 
-          RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{"StringQ", "[", "fileContent", "]"}], ",", "\n", 
+            "\t\t\t\t\t\t", 
+            RowBox[{"ImportString", "[", 
+             RowBox[{"fileContent", ",", " ", 
+              RowBox[{"{", 
+               RowBox[{"\"\<HTML\>\"", ",", " ", "\"\<XMLObject\>\""}], 
+               "}"}]}], "]"}], ",", "\n", "\t\t\t\t\t\t", "fileContent"}], 
+           "\n", "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"t", ":", 
+            RowBox[{"XMLElement", "[", 
+             RowBox[{"\"\<title\>\"", ",", " ", "_", ",", " ", "_"}], "]"}]}],
+            "\[RuleDelayed]", "\n", "\t\t\t\t\t\t", 
            RowBox[{
+           "System`Convert`XMLDump`getSymbolicXMLPlaintext", "@", "\n", 
+            "\t\t\t\t\t\t\t", 
+            RowBox[{"XMLElement", "[", 
+             RowBox[{"\"\<body\>\"", ",", 
+              RowBox[{"{", "}"}], ",", " ", "t"}], "]"}]}]}], ",", "\n", 
+          "\t\t\t\t\t", "None", ",", "\n", "\t\t\t\t\t", "\[Infinity]"}], 
+         "\n", "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+        RowBox[{"{", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Except", "[", "_String", "]"}], "\[Rule]", "\n", 
+           "\t\t\t\t\t\t", "None"}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"s_String", "\[RuleDelayed]", "\n", "\t\t\t\t\t\t", "s"}]}],
+          "\n", "\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t", "]"}]}], ";", "\n", 
+     "\t\t", 
+     RowBox[{"summary", "=", "\n", "\t\t\t", 
+      RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"Lookup", "[", 
+         RowBox[{"args", ",", " ", "\"\<Summary\>\""}], "]"}], ",", "\n", 
+        "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"Except", "[", 
+          RowBox[{"_String", "?", 
+           RowBox[{"(", 
             RowBox[{
-             RowBox[{"Except", "[", "_String", "]"}], "\[Rule]", "\n", "\t", 
-             "\t\t\t\t\t\t", "Nothing"}], ",", "\n", "\t", "\t\t\t\t\t", 
-            RowBox[{
-            "s_String", "\[RuleDelayed]", "\n", "\t", "\t\t\t\t\t\t", 
-             RowBox[{"(", 
-              RowBox[{"\"\<Title\>\"", "->", "s"}], ")"}]}]}], "\n", "\t", 
-           "\t\t\t\t\t", "}"}]}], "\n", "\t", "\t\t\t\t", "]"}], ",", "\n", 
-        "\t", "\t\t\t", 
-        RowBox[{"\"\<Summary\>\"", "->", "\n", "\t", "\t\t\t\t", 
+             RowBox[{
+              RowBox[{"StringLength", "[", "#", "]"}], ">", "0"}], "&"}], 
+            ")"}]}], "]"}], ":>", "\n", "\t\t\t\t\t", 
+         RowBox[{"webSiteTemplateGatherSummary", "[", "\n", "\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Lookup", "[", 
+            RowBox[{"args", ",", " ", "\"\<SummaryLength\>\""}], "]"}], ",", 
+           "\n", "\t\t\t\t\t\t", "content"}], "\n", "\t\t\t\t\t\t", "]"}]}]}],
+        "\n", "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
+     RowBox[{"date", "=", "\n", "\t\t\t", 
+      RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"Lookup", "[", 
+         RowBox[{"args", ",", "\"\<Date\>\"", ",", "Now"}], "]"}], ",", "\n", 
+        "\t\t\t\t", 
+        RowBox[{"s_String", "\[RuleDelayed]", 
+         RowBox[{"Quiet", "@", 
+          RowBox[{"Check", "[", 
+           RowBox[{
+            RowBox[{"DateObject", "[", "s", "]"}], ",", " ", "s"}], 
+           "]"}]}]}]}], "\n", "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
+     RowBox[{"modified", "=", "\n", "\t\t\t", 
+      RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"Lookup", "[", 
+         RowBox[{"args", ",", "\"\<Modified\>\"", ",", "Now"}], "]"}], ",", 
+        "\n", "\t\t\t\t", 
+        RowBox[{"s_String", "\[RuleDelayed]", 
+         RowBox[{"Quiet", "@", 
+          RowBox[{"Check", "[", 
+           RowBox[{
+            RowBox[{"DateObject", "[", "s", "]"}], ",", " ", "s"}], 
+           "]"}]}]}]}], "\n", "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
+     RowBox[{"siteURL", "=", "\n", "\t\t\t", 
+      RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"Lookup", "[", 
+         RowBox[{"args", ",", " ", "\"\<SiteURL\>\"", ",", " ", "Automatic"}],
+          "]"}], ",", "\n", "\t\t\t\t", 
+        RowBox[{"Automatic", ":>", "\n", "\t\t\t\t\t", 
          RowBox[{"With", "[", 
           RowBox[{
            RowBox[{"{", "\n", "\t\t\t\t\t\t", 
-            RowBox[{"sl", "=", "\n", "\t\t\t\t\t\t\t", 
-             RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t\t\t", 
-              RowBox[{
-               RowBox[{"Lookup", "[", 
-                RowBox[{"args", ",", "\"\<SummaryLength\>\""}], "]"}], ",", 
-               "\n", "\t\t\t\t\t\t\t\t", 
-               RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
-                RowBox[{
-                 RowBox[{
-                  RowBox[{"i_Integer", "?", "Positive"}], ":>", "\n", 
-                  "\t\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{"{", 
-                   RowBox[{"i", ",", " ", "\"\<Characters\>\""}], "}"}]}], 
-                 ",", "\n", "\t\t\t\t\t\t\t\t\t", 
-                 RowBox[{
-                  RowBox[{"_", "[", 
-                   RowBox[{
-                    RowBox[{"i_Integer", "?", "Positive"}], ",", " ", 
-                    RowBox[{"u", ":", 
-                    RowBox[{
-                    "Alternatives", "@@", "$WebSiteSummaryBaseUnits"}]}]}], 
-                   "]"}], ":>", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{"{", 
-                   RowBox[{"i", ",", " ", "u"}], "}"}]}], ",", "\n", 
-                 "\t\t\t\t\t\t\t\t\t", 
-                 RowBox[{
-                  RowBox[{"_", "[", 
-                   RowBox[{
-                    RowBox[{"i_Integer", "?", "Positive"}], ",", " ", 
-                    RowBox[{"u_String", "?", 
-                    RowBox[{"(", 
-                    RowBox[{"MatchQ", "[", 
-                    RowBox[{"u", ",", " ", "$WebSiteSummaryBaseUnits"}], 
-                    "]"}], ")"}]}]}], "]"}], ":>", "\n", 
-                  "\t\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{"{", 
-                   RowBox[{"i", ",", " ", "u"}], "}"}]}], ",", "\n", 
-                 "\t\t\t\t\t\t\t\t\t", 
-                 RowBox[{"_", ":>", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{"{", 
-                   RowBox[{"1", ",", "\"\<Paragraph\>\""}], "}"}]}]}], "\n", 
-                "\t\t\t\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t\t\t\t", 
-              "]"}]}], "\n", "\t\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t\t", 
-           RowBox[{"With", "[", "\n", "\t\t\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
-              RowBox[{"cont", "=", 
-               RowBox[{"ImportString", "[", 
-                RowBox[{"content", ",", "\"\<HTML\>\""}], "]"}]}], "\n", 
-              "\t\t\t\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t\t\t", 
-             RowBox[{"Replace", "[", 
-              RowBox[{"sl", ",", 
-               RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
-                RowBox[{
-                 RowBox[{
-                  RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
-                   RowBox[{"i_", ",", "\n", "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"\"\<Characters\>\"", "|", 
-                    RowBox[{
-                    "IndependentUnit", "[", "\"\<characters\>\"", "]"}]}]}], 
-                   "\n", "\t\t\t\t\t\t\t\t\t", "}"}], ":>", "\n", 
-                  "\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{
-                   RowBox[{"Function", "[", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"If", "[", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{"StringLength", "[", "#", "]"}], ">", "i"}], ",", 
-                    "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"StringTake", "[", 
-                    RowBox[{"#", ",", 
-                    RowBox[{"i", "-", "3"}]}], "]"}], "<>", "\"\<...\>\""}], 
-                    ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t", "#"}], "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t\t", "]"}], "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t", "]"}], "@", "\n", 
-                   "\t\t\t\t\t\t\t\t\t\t", 
-                   RowBox[{"StringReplace", "[", 
-                    RowBox[{"cont", ",", 
-                    RowBox[{"Whitespace", "\[Rule]", "\"\< \>\""}]}], 
-                    "]"}]}]}], ",", "\n", "\t\t\t\t\t\t\t\t", 
-                 RowBox[{
-                  RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
-                   RowBox[{"i_", ",", "\n", "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"\"\<Lines\>\"", "|", 
-                    RowBox[{"IndependentUnit", "[", 
-                    RowBox[{"\"\<lines\>\"", "|", "\"\<lines of code\>\""}], 
-                    "]"}]}]}], "\n", "\t\t\t\t\t\t\t\t\t", "}"}], ":>", "\n", 
-                  "\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{"StringRiffle", "@", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                   RowBox[{"Take", "[", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"StringSplit", "[", 
-                    RowBox[{"cont", ",", "\"\<\\n\>\""}], "]"}], ",", "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"UpTo", "[", "i", "]"}]}], "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t\t", "]"}]}]}], ",", "\n", 
-                 "\t\t\t\t\t\t\t\t", 
-                 RowBox[{
-                  RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
-                   RowBox[{"i_", ",", "\n", "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"IndependentUnit", "[", "t_", "]"}], "|", 
-                    "t_String"}]}], "\n", "\t\t\t\t\t\t\t\t\t", "}"}], ":>", 
-                  "\n", "\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{"StringRiffle", "[", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                   RowBox[{
-                    RowBox[{"TextCases", "[", 
-                    RowBox[{"cont", ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{"ToUpperCase", "[", 
-                    RowBox[{"StringTake", "[", 
-                    RowBox[{"#", ",", "1"}], "]"}], "]"}], "<>", "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"StringDrop", "[", 
-                    RowBox[{"#", ",", "1"}], "]"}]}], "&"}], "@", "t"}], ",", 
-                    "\n", "\t\t\t\t\t\t\t\t\t\t\t", "i"}], "]"}], ",", "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t", "\"\< \>\""}], "\n", 
-                   "\t\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", 
-                "\t\t\t\t\t\t\t\t", "}"}]}], "]"}]}], "\n", "\t\t\t\t\t\t\t", 
-            "]"}]}], "\n", "\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t", 
-        RowBox[{"\"\<Date\>\"", "->", "\n", "\t", "\t\t\t\t", 
-         RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t\t", 
-          RowBox[{
-           RowBox[{"Lookup", "[", 
-            RowBox[{"args", ",", "\"\<Date\>\"", ",", "Now"}], "]"}], ",", 
-           "\n", "\t", "\t\t\t\t\t", 
-           RowBox[{"s_String", "\[RuleDelayed]", 
-            RowBox[{"DateObject", "[", "s", "]"}]}]}], "\n", "\t\t\t\t\t\t", 
-          "]"}]}], ",", "\n", "\t\t\t\t", "args", ",", "\n", "\t\t\t\t", 
-        RowBox[{"\"\<SiteName\>\"", "->", "\n", "\t", "\t\t\t\t", 
-         RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t\t", 
-          RowBox[{
-           RowBox[{"Lookup", "[", 
-            RowBox[{"args", ",", "\"\<SiteName\>\"", ",", "Automatic"}], 
-            "]"}], ",", "\n", "\t", "\t\t\t\t\t", 
-           RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{"s_String", ":>", "\n", "\t", "\t\t\t\t\t\t\t", 
-              RowBox[{
-               RowBox[{"URLParse", "[", 
-                RowBox[{"s", ",", "\"\<Path\>\""}], "]"}], "[", 
-               RowBox[{"[", 
-                RowBox[{"-", "1"}], "]"}], "]"}]}], ",", "\n", "\t", 
-             "\t\t\t\t\t\t", 
-             RowBox[{
-              RowBox[{"Except", "[", "_String", "]"}], ":>", "\n", "\t", "\t",
-               "\t\t\t\t\t\t", 
-              RowBox[{"Replace", "[", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
+            RowBox[{"bit", "=", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{"Length", "@", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
                RowBox[{
                 RowBox[{"Lookup", "[", 
-                 RowBox[{"args", ",", "\"\<SiteURL\>\""}], "]"}], ",", "\n", 
-                "\t\t\t\t\t\t\t\t\t", 
-                RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t\t", 
                  RowBox[{
-                  RowBox[{"s_String", ":>", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
-                   RowBox[{
-                    RowBox[{"URLParse", "[", 
-                    RowBox[{"s", ",", "\"\<Path\>\""}], "]"}], "[", 
-                    RowBox[{"[", 
-                    RowBox[{"-", "1"}], "]"}], "]"}]}], ",", "\n", 
+                 "args", ",", "\"\<URL\>\"", ",", "\n", 
                   "\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                  "FileNameSplit", "@", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"Lookup", "[", 
+                    RowBox[{
+                    "args", ",", " ", "\"\<FilePath\>\"", ",", " ", 
+                    "\"\<??\>\""}], "]"}]}]}], "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                 "]"}], ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{"s_String", ":>", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{"URLParse", "[", 
+                  RowBox[{"s", ",", "\"\<Path\>\""}], "]"}]}]}], "\n", 
+               "\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t", "}"}], 
+           ",", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{"bit", ",", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"1", "\[Rule]", "\"\<.\>\""}], ",", "\n", 
+               "\t\t\t\t\t\t\t\t", 
+               RowBox[{"n_", ":>", "\n", "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{"URLBuild", "@", 
+                 RowBox[{"ConstantArray", "[", 
+                  RowBox[{"\"\<..\>\"", ",", 
+                   RowBox[{"n", "-", "1"}]}], "]"}]}]}]}], "\n", 
+              "\t\t\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}], 
+          "\n", "\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", "]"}]}], ";", 
+     "\n", "\t\t", 
+     RowBox[{"siteName", "=", "\n", "\t\t\t", 
+      RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"Lookup", "[", 
+         RowBox[{"args", ",", "\"\<SiteName\>\"", ",", "Automatic"}], "]"}], 
+        ",", "\n", "\t\t\t\t", 
+        RowBox[{"{", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"s_String", ":>", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"URLParse", "[", 
+             RowBox[{"s", ",", "\"\<Path\>\""}], "]"}], "[", 
+            RowBox[{"[", 
+             RowBox[{"-", "1"}], "]"}], "]"}]}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Except", "[", "_String", "]"}], ":>", "\n", 
+           "\t\t\t\t\t\t", 
+           RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Lookup", "[", 
+              RowBox[{"args", ",", "\"\<SiteURL\>\""}], "]"}], ",", "\n", 
+             "\t\t\t\t\t\t\t", 
+             RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"s_String", ":>", "\n", "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"URLParse", "[", 
+                  RowBox[{"s", ",", "\"\<Path\>\""}], "]"}], "[", 
+                 RowBox[{"[", 
+                  RowBox[{"-", "1"}], "]"}], "]"}]}], ",", "\n", 
+               "\t\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"Except", "[", "_String", "]"}], ":>", "\n", 
+                "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{"Replace", "[", 
+                 RowBox[{
+                  RowBox[{"Lookup", "[", 
+                   RowBox[{"args", ",", " ", "\"\<SiteDirectory\>\""}], "]"}],
+                   ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
                   RowBox[{
                    RowBox[{"Except", "[", "_String", "]"}], ":>", "\n", 
                    "\t\t\t\t\t\t\t\t\t\t\t", 
                    RowBox[{"Replace", "[", 
-                    RowBox[{
-                    RowBox[{"Lookup", "[", 
-                    RowBox[{"args", ",", " ", "\"\<SiteDirectory\>\""}], 
-                    "]"}], ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"Except", "[", "_String", "]"}], ":>", "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"Replace", "[", 
                     RowBox[{"$WolframID", ",", 
+                    RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{
-                    "{", "\n", "\t", "\t", "\t", "\t", "\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{
-                    RowBox[{
-                    "s_String", ":>", "\n", "\t", "\t", "\t", "\t", 
+                    "s_String", ":>", "\n", "\t", "\t", 
                     "\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{
                     RowBox[{"StringSplit", "[", 
                     RowBox[{"s", ",", "\"\<@\>\""}], "]"}], "[", 
                     RowBox[{"[", "1", "]"}], "]"}]}], ",", "\n", "\t", "\t", 
-                    "\t", "\t", "\t\t\t\t\t\t\t\t\t\t", 
+                    "\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"_", "\[Rule]", "$UserName"}]}], "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "}"}]}], "]"}]}]}], "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", 
-                 "\t\t\t\t\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t\t\t\t\t", 
-               "]"}]}]}], "\n", "\t\t\t\t\t\t\t", "}"}]}], "\n", 
-          "\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t", "\t\t\t", 
-        RowBox[{"\"\<SiteURL\>\"", "\[Rule]", "\n", "\t\t\t\t\t", 
-         RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", "}"}]}], "]"}]}]}], "\n", 
+                 "\t\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t\t\t", 
+              "}"}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t", 
+         "}"}]}], "\n", "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
+     RowBox[{"Merge", "[", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"{", "\n", "\t\t\t\t", 
+        RowBox[{"args", ",", "\n", "\t\t\t\t", 
+         RowBox[{"If", "[", 
           RowBox[{
-           RowBox[{"Lookup", "[", 
-            RowBox[{
-            "args", ",", " ", "\"\<SiteURL\>\"", ",", " ", "Automatic"}], 
-            "]"}], ",", "\n", "\t\t\t\t\t\t", 
-           RowBox[{"Automatic", ":>", "\n", "\t", "\t\t\t\t\t\t", 
-            RowBox[{"With", "[", 
+           RowBox[{"StringQ", "@", "title"}], ",", " ", 
+           RowBox[{"\"\<Title\>\"", "->", "title"}], ",", " ", "Nothing"}], 
+          "]"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"\"\<Summary\>\"", "\[Rule]", "summary"}], ",", "\n", 
+         "\t\t\t\t", 
+         RowBox[{"\"\<Date\>\"", "->", "date"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"\"\<Modified\>\"", "\[Rule]", "modified"}], ",", "\n", 
+         "\t\t\t\t", 
+         RowBox[{"\"\<SiteName\>\"", "\[Rule]", "siteName"}], ",", "\n", 
+         "\t\t\t\t", 
+         RowBox[{"\"\<SiteURL\>\"", "\[Rule]", "siteURL"}], ",", "\n", 
+         "\t\t\t\t", 
+         RowBox[{"Which", "[", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"StringQ", "@", "url"}], ",", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"\"\<URL\>\"", "->", "url"}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{"StringQ", "@", "slug"}], ",", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"\"\<URL\>\"", "->", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{"If", "[", 
              RowBox[{
-              RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t", 
-               RowBox[{"bit", "=", "\n", "\t", "\t\t\t\t\t\t\t\t", 
-                RowBox[{"Length", "@", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
-                 RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{
-                   RowBox[{"Lookup", "[", 
-                    RowBox[{
-                    "args", ",", "\"\<URL\>\"", ",", "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "FileNameSplit", "@", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    
-                    RowBox[{"Lookup", "[", 
-                    RowBox[{
-                    "args", ",", " ", "\"\<FilePath\>\"", ",", " ", 
-                    "\"\<??\>\""}], "]"}]}]}], "\n", "\t", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t", "\t", 
-                   "\t\t\t\t\t\t\t\t\t", 
-                   RowBox[{
-                   "s_String", ":>", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"URLParse", "[", 
-                    RowBox[{"s", ",", "\"\<Path\>\""}], "]"}]}]}], "\n", "\t",
-                   "\t", "\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t", 
-               "\t\t\t\t\t\t\t", "}"}], ",", "\n", "\t", "\t\t\t\t\t\t\t", 
-              RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t\t\t\t\t", 
-               RowBox[{"bit", ",", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
-                RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
-                 RowBox[{
-                  RowBox[{"1", "\[Rule]", "\"\<.\>\""}], ",", "\n", "\t", 
-                  "\t", "\t\t\t\t\t\t\t\t", 
-                  RowBox[{
-                  "n_", ":>", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t", 
-                   RowBox[{"URLBuild", "@", 
-                    RowBox[{"ConstantArray", "[", 
-                    RowBox[{"\"\<..\>\"", ",", 
-                    RowBox[{"n", "-", "1"}]}], "]"}]}]}]}], "\n", "\t", "\t", 
-                 "\t\t\t\t\t\t\t\t", "}"}]}], "\n", "\t", "\t", 
-               "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t", "\t", "\t\t\t\t\t\t", 
-             "]"}]}]}], "\n", "\t", "\t\t\t\t\t", "]"}]}], ",", "\n", 
-        "\t\t\t\t", 
-        RowBox[{"With", "[", "\n", "\t\t\t\t\t", 
+              RowBox[{"StringQ", "[", "fp", "]"}], ",", "\n", "\t", 
+              "\t\t\t\t\t\t\t", 
+              RowBox[{"URLBuild", "@", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+               RowBox[{"Append", "[", 
+                RowBox[{
+                 RowBox[{"Most", "@", 
+                  RowBox[{"FileNameSplit", "[", "fp", "]"}]}], ",", " ", 
+                 RowBox[{"WebSiteBuildAttachExtension", "@", "slug"}]}], 
+                "]"}]}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{"WebSiteBuildAttachExtension", "@", "slug"}]}], "\n", 
+             "\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t\t", "True", 
+           ",", "\t", "\n", "\t\t\t\t\t\t", "Nothing"}], "\n", "\t\t\t\t\t", 
+          "]"}], ",", "\n", "\t\t\t\t", 
          RowBox[{
-          RowBox[{"{", "\n", "\t\t\t\t\t\t", 
-           RowBox[{
-            RowBox[{"url", "=", 
-             RowBox[{"Lookup", "[", 
-              RowBox[{"args", ",", " ", "\"\<URL\>\""}], "]"}]}], ",", "\n", 
-            "\t", "\t\t\t\t\t", 
-            RowBox[{"slug", "=", 
-             RowBox[{"Lookup", "[", 
-              RowBox[{"args", ",", " ", "\"\<Slug\>\""}], "]"}]}], ",", "\n", 
-            "\t", "\t\t\t\t\t", 
-            RowBox[{"fp", "=", 
-             RowBox[{"Lookup", "[", 
-              RowBox[{"args", ",", " ", "\"\<FilePath\>\""}], "]"}]}]}], "\n",
-            "\t", "\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t", 
-          RowBox[{"Which", "[", "\n", "\t", "\t\t\t\t\t", 
-           RowBox[{
-            RowBox[{"StringQ", "@", "url"}], ",", "\n", "\t\t\t\t\t\t\t", 
-            RowBox[{"\"\<URL\>\"", "->", "url"}], ",", "\n", "\t\t\t\t\t\t", 
-            RowBox[{"StringQ", "@", "slug"}], ",", "\n", "\t\t\t\t\t\t\t", 
-            RowBox[{"\"\<URL\>\"", "->", "\n", "\t\t\t\t\t\t\t\t", 
-             RowBox[{"If", "[", 
-              RowBox[{
-               RowBox[{"StringQ", "[", "fp", "]"}], ",", "\n", "\t", "\t", 
-               "\t\t\t\t\t\t\t", 
-               RowBox[{
-               "URLBuild", "@", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
-                RowBox[{"Append", "[", 
-                 RowBox[{
-                  RowBox[{"Most", "@", 
-                   RowBox[{"FileNameSplit", "[", "fp", "]"}]}], ",", " ", 
-                  RowBox[{"WebSiteBuildAttachExtension", "@", "slug"}]}], 
-                 "]"}]}], ",", "\n", "\t\t\t\t\t\t\t\t\t", 
-               RowBox[{"WebSiteBuildAttachExtension", "@", "slug"}]}], "\n", 
-              "\t\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t\t\t", 
-            "True", ",", "\t", "\n", "\t", "\t\t\t\t\t\t", "Nothing"}], "\n", 
-           "\t", "\t\t\t\t\t", "]"}]}], "\n", "\t", "\t\t\t\t", "]"}], ",", 
-        "\n", "\t", "\t\t\t", 
-        RowBox[{
-        "\"\<Content\>\"", "->", "\n", "\t", "\t\t\t\t", "content"}]}], "\n", 
-       "\t", "\t\t\t", "}"}], ",", "\n", "\t", "\t\t", "Last"}], "\n", "\t", 
-     "\t\t", "]"}]}], "\n", "\t", "\t", 
+         "\"\<Content\>\"", "->", "\n", "\t", "\t\t\t\t", "content"}]}], "\n",
+         "\t", "\t\t\t", "}"}], ",", "\n", "\t", "\t\t", "Last"}], "\n", "\t",
+       "\t\t", "]"}]}]}], "\n", "\t", "\t", 
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"17b78b98-9484-4a98-800f-2bbd2202e38f"]
-}, Closed]]
-}, Closed]],
+}, Open  ]]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -3129,17 +3822,26 @@ Cell[BoxData[
                     "\t\t\t\t\t\t\t\t\t\t\t\t", "]"}]}]}]}], "\n", 
                "\t\t\t\t\t\t\t\t\t", "}"}]}], "]"}]}], "\n", "\t\t\t\t\t\t\t",
             "}"}], ",", "\n", "\t\t\t\t\t", 
-          RowBox[{"If", "[", 
+          RowBox[{"If", "[", "\n", "\t\t\t\t\t\t", 
            RowBox[{
             RowBox[{
              RowBox[{"!", 
               RowBox[{"FileExistsQ", "[", "fil", "]"}]}], "||", 
+             RowBox[{"(*", " ", 
+              RowBox[{
+              "to", " ", "preserve", " ", "the", " ", "modification", " ", 
+               "date"}], " ", "*)"}], "\n", "\t\t\t\t\t\t\t", 
              RowBox[{"(", 
               RowBox[{"html", "=!=", 
-               RowBox[{"Import", "[", 
-                RowBox[{"fil", ",", " ", "\"\<Text\>\""}], "]"}]}], ")"}]}], 
-            ",", "\n", "\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                "System`Convert`TextDump`PlaintextImport", "[", "fil", "]"}], 
+                "[", 
+                RowBox[{"[", "2", "]"}], "]"}]}], ")"}]}], ",", "\n", 
+            "\t\t\t\t\t\t", 
             RowBox[{
+             RowBox[{"Quiet", "@", 
+              RowBox[{"Close", "[", "fil", "]"}]}], ";", "\n", "\t\t\t\t\t\t", 
              RowBox[{"If", "[", 
               RowBox[{
                RowBox[{"!", 
@@ -3159,13 +3861,17 @@ Cell[BoxData[
               "]"}]}]}], "\n", "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", 
          "]"}]}], ",", "\n", "\t\t\t", 
        RowBox[{"e_", ":>", "\n", "\t\t\t\t", 
-        RowBox[{"(", 
+        RowBox[{"(", "\n", "\t\t\t\t\t", 
          RowBox[{
+          RowBox[{"WebSiteBuildLogError", "[", 
+           RowBox[{
+           "failinput", ",", " ", "\"\<GenerationFailed\>\"", ",", " ", "e"}],
+            "]"}], ";", " ", "\n", "\t\t\t\t\t", 
           RowBox[{"Message", "[", 
            RowBox[{
             RowBox[{"WebSiteBuild", "::", "genfl"}], ",", " ", "failinput"}], 
-           "]"}], ";", "$Failed"}], ")"}]}]}], "\n", "\t\t\t", "}"}]}], "\n", 
-    "\t\t", "]"}]}], 
+           "]"}], ";", "$Failed"}], "\n", "\t\t\t\t\t", ")"}]}]}], "\n", 
+      "\t\t\t", "}"}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"a4acfcfa-a2aa-4e40-bf79-a25ab7cf40d6"]
 }, Closed]],
 
@@ -4718,9 +5424,10 @@ Cell[BoxData[{
                     "use"}], "*)"}], "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"Flatten", "@", 
                     RowBox[{"List", "@", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"aggdata", "[", "\"\<Templates\>\"", 
-                    "]"}]}]}]}]}], "\n", "\t", "\t\t\t\t\t\t\t\t", "}"}], ",",
-                     "\n", "\t", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "aggdata", "[", "\"\<Templates\>\"", "]"}]}]}]}]}], "\n", 
+                    "\t", "\t\t\t\t\t\t\t\t", "}"}], ",", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t", 
                     RowBox[{
                     RowBox[{
                     RowBox[{"$aggregationFiles", "[", "#", "]"}], "=", "\n", 
@@ -4733,8 +5440,8 @@ Cell[BoxData[{
                     "\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"\"\<Articles\>\"", "\[Rule]", "#2"}], ",", "\n", 
                     "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "\"\<URL\>\"", "->", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"\"\<URL\>\"", "->", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{
                     "WebSiteBuildURL", "@", "\n", "\t", 
                     "\t\t\t\t\t\t\t\t\t\t\t\t", 
@@ -4939,8 +5646,8 @@ Cell[BoxData[{
                     "Merge", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{
                     RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "config", ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"config", ",", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{
                     "aggthing", "->", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t\t", 
                     
@@ -5101,7 +5808,7 @@ Cell[BoxData[{
   ";"}]}], "CodeInput",ExpressionUUID->"f339f2ab-a4e8-46be-938a-c120fba97ac3"]\
 
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -5155,14 +5862,14 @@ Cell[BoxData[{
        RowBox[{"lb", "=", 
         RowBox[{"OptionValue", "[", "\"\<LastBuild\>\"", "]"}]}], ",", "\n", 
        "\t\t\t", "fname", ",", "\n", "\t\t\t", "path", ",", "\n", "\t\t\t", 
-       "fout", ",", "\n", "\t\t\t", "conf"}], "\n", "\t\t\t", "}"}], ",", 
-     "\n", "\t\t", 
+       "fout", ",", "\n", "\t\t\t", "conf", ",", "\n", "\t\t\t", "mod"}], 
+      "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
      RowBox[{
       RowBox[{"Block", "[", "\n", "\t\t\t", 
        RowBox[{
         RowBox[{"{", "\n", "\t\t\t\t", 
-         RowBox[{"genfile", ",", "\n", "\t\t\t\t", "outfile"}], "\n", "\t", 
-         "\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+         RowBox[{"genfile", ",", "\n", "\t\t\t\t", "outfile"}], "\n", 
+         "\t\t\t\t", "}"}], ",", "\n", "\t\t\t", 
         RowBox[{
          RowBox[{"If", "[", 
           RowBox[{
@@ -5174,7 +5881,7 @@ Cell[BoxData[{
           RowBox[{
            RowBox[{
             RowBox[{
-             RowBox[{"With", "[", 
+             RowBox[{"With", "[", "\n", "\t\t\t\t", 
               RowBox[{
                RowBox[{"{", 
                 RowBox[{"f", "=", 
@@ -5183,19 +5890,29 @@ Cell[BoxData[{
                "\t\t\t\t", 
                RowBox[{"Function", "[", "\n", "\t\t\t\t\t", 
                 RowBox[{"Null", ",", "\n", "\t\t\t\t\t", 
-                 RowBox[{"If", "[", 
-                  RowBox[{
+                 RowBox[{
+                  RowBox[{"mod", "=", "\n", "\t\t\t\t\t\t", 
+                   RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{"DateObjectQ", "@", 
+                    RowBox[{"conf", "[", "\"\<Modified\>\"", "]"}]}], ",", 
+                    " ", "\n", "\t\t\t\t\t\t\t", 
+                    RowBox[{"conf", "[", "\"\<Modified\>\"", "]"}], ",", " ", 
+                    "\n", "\t\t\t\t\t\t\t", 
+                    RowBox[{"FileDate", "[", 
+                    RowBox[{"f", ",", " ", "\"\<Modification\>\""}], "]"}]}], 
+                    "\n", "\t\t\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t\t\t", 
+                  
+                  RowBox[{"If", "[", 
                    RowBox[{
+                    RowBox[{
                     RowBox[{"!", 
                     RowBox[{"DateObjectQ", "@", "lb"}]}], "||", 
-                    RowBox[{
-                    RowBox[{"FileDate", "[", 
-                    RowBox[{"f", ",", " ", "\"\<Modification\>\""}], "]"}], 
-                    "\[GreaterEqual]", "lb"}]}], ",", "\n", "\t\t\t\t\t\t", 
-                   "#", ",", "\n", "\t\t\t\t\t\t", "Nothing"}], "\n", 
-                  "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t", 
-                 "HoldAllComplete"}], "\n", "\t\t\t\t\t", "]"}]}], "\n", 
-              "\t\t\t\t", "]"}], "@", "\n", "\t\t\t\t", 
+                    RowBox[{"mod", "\[GreaterEqual]", "lb"}]}], ",", "\n", 
+                    "\t\t\t\t\t\t", "#", ",", "\n", "\t\t\t\t\t\t", 
+                    "Nothing"}], "\n", "\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+                 "\t\t\t\t\t", "HoldAllComplete"}], "\n", "\t\t\t\t\t", 
+                "]"}]}], "\n", "\t\t\t\t", "]"}], "@", "\n", "\t\t\t\t", 
              RowBox[{"CompoundExpression", "[", "\n", "\t\t\t\t\t", 
               RowBox[{
                RowBox[{"fname", "=", "\n", "\t\t\t\t\t\t", 
@@ -6186,6 +6903,39 @@ Cell[BoxData[{
 
 Cell[CellGroupData[{
 
+Cell["\[LeftCeiling]Logging\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"5bb7fd3f-9f66-42dc-90d8-d995d9291d0a"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]WebSiteBuildLogError\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"7f9c43cb-71c3-4870-b479-64fc22146c67"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"WebSiteBuildLogError", "[", 
+   RowBox[{"file_", ",", " ", "key_", ",", " ", "body_"}], "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{"!", 
+     RowBox[{"KeyExistsQ", "[", 
+      RowBox[{"$WebSiteBuildErrors", ",", " ", "file"}], "]"}]}], ",", "\n", 
+    "\t\t", 
+    RowBox[{
+     RowBox[{"$WebSiteBuildErrors", "[", "file", "]"}], "=", 
+     RowBox[{"<|", 
+      RowBox[{"key", "\[Rule]", "body"}], "|>"}]}], ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"$WebSiteBuildErrors", "[", 
+      RowBox[{"file", ",", " ", "key"}], "]"}], "=", "body"}]}], "\n", "\t\t",
+    "]"}]}]], \
+"CodeInput",ExpressionUUID->"06f8f14f-8860-40a7-b24b-bd5f201bc66f"]
+}, Closed]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
 Cell["\[LeftCeiling]Build\[RightFloor]", "CodeSubsubsection",
  Evaluatable->True,
  CellChangeTimes->{{3.7125377389844522`*^9, 3.712537740845558*^9}, 
@@ -6610,8 +7360,11 @@ Cell[BoxData[{
       RowBox[{
       "outDir", ",", "\n", "\t\t\t", "fileNames", ",", "\n", "\t\t\t", 
        "config", ",", "\n", "\t\t\t", "confOps", ",", "\n", "\t\t\t", 
-       "buildOps"}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+       "buildOps", ",", "\n", "\t\t\t", "res"}], "\n", "\t\t\t", "}"}], ",", 
+     "\n", "\t\t", 
      RowBox[{
+      RowBox[{"$WebSiteBuildErrors", "=", 
+       RowBox[{"<|", "|>"}]}], ";", "\n", "\t\t", 
       RowBox[{"config", "=", "\n", "\t\t\t", 
        RowBox[{"Join", "[", "\n", "\t\t\t\t", 
         RowBox[{
@@ -6878,55 +7631,68 @@ Cell[BoxData[{
             "]"}]}], ",", " ", "\n", "\t\t\t\t", 
           RowBox[{"Options", "@", "iWebSiteBuild"}]}], "\n", "\t\t\t\t", 
          "]"}]}], "\n", "\t\t\t", "]"}], ";", "\n", "\t\t", 
+      RowBox[{"res", "=", "\n", "\t\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"TrueQ", "[", 
+           RowBox[{"OptionValue", "[", "\"\<AutoDeploy\>\"", "]"}], "]"}], "||",
+           "\n", "\t", "\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"OptionValue", "[", "\"\<AutoDeploy\>\"", "]"}], "===", 
+            "Automatic"}], "&&", "\n", "\t", "\t\t\t\t", 
+           RowBox[{"OptionQ", "@", 
+            RowBox[{"OptionValue", "[", "\"\<DeployOptions\>\"", "]"}]}]}]}], 
+         ",", "\n", "\t", "\t\t\t", 
+         RowBox[{"WebSiteDeploy", "[", "\n", "\t", "\t\t\t\t", 
+          RowBox[{"outDir", ",", "\n", "\t", "\t\t\t\t", 
+           RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Lookup", "[", 
+              RowBox[{"config", ",", " ", "\"\<SiteURL\>\""}], "]"}], ",", 
+             "\n", "\t", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Except", "[", "_String", "]"}], ":>", "\n", "\t", 
+              "\t\t\t\t\t\t", 
+              RowBox[{"Replace", "[", 
+               RowBox[{
+                RowBox[{"FileBaseName", "[", "dir", "]"}], ",", "\n", "\t", 
+                "\t", "\t\t\t\t\t\t", 
+                RowBox[{
+                "\"\<output\>\"", ":>", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
+                 RowBox[{"FileBaseName", "@", 
+                  RowBox[{"DirectoryName", "[", "dir", "]"}]}]}]}], "\n", 
+               "\t", "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t", "\t\t\t\t\t", 
+            "]"}], ",", "\n", "\t", "\t\t\t\t", 
+           RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Replace", "[", 
+              RowBox[{
+               RowBox[{"OptionValue", "[", "\"\<DeployOptions\>\"", "]"}], 
+               ",", "\n", "\t", "\t\t\t\t\t\t", 
+               RowBox[{"Automatic", ":>", 
+                RowBox[{"Lookup", "[", 
+                 RowBox[{"config", ",", "\"\<DeployOptions\>\"", ",", 
+                  RowBox[{"{", "}"}]}], "]"}]}]}], "\n", "\t", "\t\t\t\t\t\t",
+               "]"}], ",", "\n", "\t", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Except", "[", 
+               RowBox[{"_", "?", "OptionQ"}], "]"}], "\[Rule]", 
+              RowBox[{"{", "}"}]}]}], "\n", "\t", "\t\t\t\t\t", "]"}]}], "\n",
+           "\t", "\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", "outDir"}], "\n", 
+        "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
       RowBox[{"If", "[", 
        RowBox[{
         RowBox[{
-         RowBox[{"TrueQ", "[", 
-          RowBox[{"OptionValue", "[", "\"\<AutoDeploy\>\"", "]"}], "]"}], "||",
-          "\n", "\t\t\t", 
+         RowBox[{"Length", "@", "$WebSiteBuildErrors"}], ">", "0"}], ",", 
+        "\n", "\t\t\t", 
+        RowBox[{"PackageThrowMessage", "[", "\n", "\t\t\t\t", 
          RowBox[{
-          RowBox[{
-           RowBox[{"OptionValue", "[", "\"\<AutoDeploy\>\"", "]"}], "===", 
-           "Automatic"}], "&&", "\n", "\t\t\t\t", 
-          RowBox[{"OptionQ", "@", 
-           RowBox[{"OptionValue", "[", "\"\<DeployOptions\>\"", "]"}]}]}]}], 
-        ",", "\n", "\t\t\t", 
-        RowBox[{"WebSiteDeploy", "[", "\n", "\t\t\t\t", 
-         RowBox[{"outDir", ",", "\n", "\t\t\t\t", 
-          RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
-           RowBox[{
-            RowBox[{"Lookup", "[", 
-             RowBox[{"config", ",", " ", "\"\<SiteURL\>\""}], "]"}], ",", 
-            "\n", "\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{"Except", "[", "_String", "]"}], ":>", "\n", 
-             "\t\t\t\t\t\t", 
-             RowBox[{"Replace", "[", 
-              RowBox[{
-               RowBox[{"FileBaseName", "[", "dir", "]"}], ",", "\n", "\t", 
-               "\t\t\t\t\t\t", 
-               RowBox[{"\"\<output\>\"", ":>", "\n", "\t", "\t\t\t\t\t\t\t", 
-                RowBox[{"FileBaseName", "@", 
-                 RowBox[{"DirectoryName", "[", "dir", "]"}]}]}]}], "\n", 
-              "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t", "]"}], ",", 
-          "\n", "\t\t\t\t", 
-          RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
-           RowBox[{
-            RowBox[{"Replace", "[", 
-             RowBox[{
-              RowBox[{"OptionValue", "[", "\"\<DeployOptions\>\"", "]"}], ",",
-               "\n", "\t\t\t\t\t\t", 
-              RowBox[{"Automatic", ":>", 
-               RowBox[{"Lookup", "[", 
-                RowBox[{"config", ",", "\"\<DeployOptions\>\"", ",", 
-                 RowBox[{"{", "}"}]}], "]"}]}]}], "\n", "\t\t\t\t\t\t", "]"}],
-             ",", "\n", "\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{"Except", "[", 
-              RowBox[{"_", "?", "OptionQ"}], "]"}], "\[Rule]", 
-             RowBox[{"{", "}"}]}]}], "\n", "\t\t\t\t\t", "]"}]}], "\n", 
-         "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", "outDir"}], "\n", "\t\t\t", 
-       "]"}]}]}], "\n", "\t\t", "]"}]}], 
+         "\"\<SiteBuilder\>\"", ",", "\n", "\t\t\t\t", 
+          "\"\<WebSiteBuild encountered errors. Check \
+$WebSiteBuildErrors.\>\""}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}],
+       ";", "\n", "\t\t", "res"}]}], "\n", "\t\t", "]"}]}], 
   ";"}]}], "CodeInput",ExpressionUUID->"9d4353a9-dbe4-477d-b228-d70bbae52773"]\
 
 }, Open  ]]
@@ -7390,7 +8156,13 @@ Cell[BoxData[{
    3.723525539591341*^9, 3.7235255662288523`*^9}, 3.723525611455661*^9, {
    3.723525690597156*^9, 3.7235257420522757`*^9}, {3.7235258921959133`*^9, 
    3.723525893305635*^9}},ExpressionUUID->"967ab656-4fa9-41d0-93a8-\
-c47292ee5832"],
+c47292ee5832"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]webSiteDeploy\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"50a570fe-6981-4b6b-a304-5fe80e9ba4d0"],
 
 Cell[BoxData[
  RowBox[{
@@ -7482,7 +8254,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"4900c668-e5de-468b-908d-\
 3bbe427549a1"]
 },
 WindowSize->{808, 756},
-WindowMargins->{{170, Automatic}, {Automatic, 22}},
+WindowMargins->{{Automatic, 314}, {Automatic, 27}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

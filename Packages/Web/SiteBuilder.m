@@ -21,6 +21,8 @@ $WebSitePath::usage=
   "The path for finding websites";
 $WebSiteThemePath::usage=
   "The path for website themes";
+$WebSiteBuildErrors::usage=
+  "A stack of errors encountered in the build process";
 
 
 Begin["`Private`"];
@@ -311,7 +313,7 @@ WebSiteNewTableOfContents[dir_String?DirectoryQ]:=
       postCounter=1
       },
     outdir=
-      FileNameJoin@{dir, "posts"};
+      FileNameJoin@{dir, "content", "posts"};
     metas=
       SortBy[
         AssociationMap[
@@ -319,7 +321,7 @@ WebSiteNewTableOfContents[dir_String?DirectoryQ]:=
           Map[
             Rule@@StringTrim@StringSplit[#, ":",2]&,
             StringSplit[
-              StringSplit[Import[#,"Text"],"\n\n",2][[1]],
+              StringSplit[Import[#,"Text"], "\n\n",2][[1]],
               "\n"
               ]
             ]&,
@@ -616,6 +618,25 @@ xmlTemplateApplyRestore[]:=
 
 
 (* ::Subsubsubsection::Closed:: *)
+(*xmlTemplatePostProcessWhitespace*)
+
+
+
+xmlTemplatePostProcessWhitespace[s_]:=
+  StringReplace[s,
+    {
+      pre:(
+        Shortest["<pre"~~___~~"</pre>"]
+        ):>pre,
+      Repeated[
+        (Whitespace?(StringFreeQ["\n"])|"")~~"\n", 
+        {2, \[Infinity]}
+        ]->"\n"
+      }
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
 (*WebSiteXMLTemplateApply*)
 
 
@@ -643,9 +664,7 @@ WebSiteXMLTemplateApply[
       ],
     {
       s_String:>
-        StringReplace[s,
-          Repeated[(Whitespace?(StringFreeQ["\n"])|"")~~"\n",{2,\[Infinity]}]->"\n"
-          ]
+        xmlTemplatePostProcessWhitespace[s]
       }
     ]
 
@@ -825,6 +844,11 @@ WebSiteBuildAttachExtension[s_]:=
 
 
 
+(* ::Subsubsubsubsection::Closed:: *)
+(*$XMLFontPatchDumbSpecialCharListLong*)
+
+
+
 $XMLFontPatchDumbSpecialCharListLong=
   {
     "AliasDelimiter","AliasIndicator","Alpha","AltKey","And","AquariusSign",
@@ -939,6 +963,82 @@ $XMLFontPatchDumbSpecialCharListConv=
       ];
 
 
+(* ::Subsubsubsubsection::Closed:: *)
+(*$XMLFontPatchKeyboardElements*)
+
+
+
+$XMLKBDPatchStyles=
+  {"style"->"color: gray; font-size: 10px; border: solid 1px gray;"};
+
+
+xmlFontPatchKBDEl[k_]:=
+  XMLElement["span",
+    Flatten@{$XMLKBDPatchStyles, $XMLFontPatchFlag},
+    {XMLElement["kbd",{$XMLFontPatchFlag},{k}]}
+    ];
+
+
+$XMLFontPatchKeyboardElements=
+  {
+    "\\[AltKey]"|"\[AltKey]"->
+      xmlFontPatchKBDEl@"ALT",
+    "\\[CommandKey]"|"\[CommandKey]"->
+      xmlFontPatchKBDEl["CMD"],
+    "\\[ControlKey]"|"\[ControlKey]"->
+      xmlFontPatchKBDEl@"CTRL",
+    "\\[DeleteKey]"|"\[DeleteKey]"->
+      xmlFontPatchKBDEl@"DEL",
+    "\\[EnterKey]"|"\[EnterKey]"->
+      xmlFontPatchKBDEl@"ENTER",
+    "\\[EscapeKey]"|"\[EscapeKey]"->
+      xmlFontPatchKBDEl@"ESC",
+    "\\[OptionKey]"|"\[OptionKey]"->
+      xmlFontPatchKBDEl@"OPTION",
+    "\\[ReturnKey]"|"\[ReturnKey]"->
+      xmlFontPatchKBDEl@"RET",
+    "\\[ShiftKey]"|"\[ShiftKey]"->
+      xmlFontPatchKBDEl@"SHIFT",
+    "\\[SpaceKey]"|"\[SpaceKey]"->
+      xmlFontPatchKBDEl@"SPACE",
+    "\\[SystemEnterKey]"|"\[SystemEnterKey]"->
+      xmlFontPatchKBDEl@"RET",
+    "\\[TabKey]"|"\[TabKey]"->
+      xmlFontPatchKBDEl@"TAB"
+    };
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*$XMLFontPatchManualUnicodeReassignments*)
+
+
+
+
+$XMLFontPatchManualUnicodeReassignments=
+  {
+    "\\[KeyBar]"|"\[KeyBar]"->
+      XMLElement["span", 
+        Flatten@{$XMLFontPatchFlag, "style"->"font-weight: bold; font-size: 8px;"},
+        {"\:2011"}
+        ],
+    "\\[RightPointer]"|"\[RightPointer]"->
+      XMLElement["span", 
+        Flatten@{$XMLFontPatchFlag, "style"->"font-weight: bold; font-size: 8px;"},
+        {"\[FilledRightTriangle]"}
+        ],
+    "\\[LeftPointer]"|"\[LeftPointer]"->
+      XMLElement["span", 
+        Flatten@{$XMLFontPatchFlag, "style"->"font-weight: bold; font-size: 8px;"},
+        {"\[FilledLeftTriangle]"}
+        ]
+    };
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*$XMLFontPatchStringToXMLElementRules*)
+
+
+
 $XMLFontPatchFlag=
   "-fake-attr-fonts-patched"->"true";
 
@@ -950,52 +1050,31 @@ $XMLFontPatchDumbSpecialCharListConv=
 
 
 $XMLFontPatchStringToXMLElementRules=
-  {
-    "\\[AltKey]"|"\[AltKey]"->
-      XMLElement["kbd",{$XMLFontPatchFlag},{"ALT"}],
-    "\\[CommandKey]"|"\[CommandKey]"->
-      XMLElement["kbd",{$XMLFontPatchFlag},{"CMD"}],
-    "\\[ControlKey]"|"\[ControlKey]"->
-      XMLElement["kbd",{$XMLFontPatchFlag},{"CTRL"}],
-    "\\[DeleteKey]"|"\[DeleteKey]"->
-      XMLElement["kbd",{$XMLFontPatchFlag},{"DEL"}],
-    "\\[EnterKey]"|"\[EnterKey]"->
-      XMLElement["kbd",{$XMLFontPatchFlag},{"ENTER"}],
-    "\\[EscapeKey]"|"\[EscapeKey]"->
-      XMLElement["kbd",{$XMLFontPatchFlag},{"ESC"}],
-    "\\[OptionKey]"|"\[OptionKey]"->
-      XMLElement["kbd",{$XMLFontPatchFlag},{"OPTION"}],
-    "\\[ReturnKey]"|"\[ReturnKey]"->
-      XMLElement["kbd",{$XMLFontPatchFlag},{"RET"}],
-    "\\[ShiftKey]"|"\[ShiftKey]"->
-      XMLElement["kbd",{$XMLFontPatchFlag},{"SHIFT"}],
-    "\\[SpaceKey]"|"\[SpaceKey]"->
-      XMLElement["kbd",{$XMLFontPatchFlag},{"SPACE"}],
-    "\\[SystemEnterKey]"|"\[SystemEnterKey]"->
-      XMLElement["kbd",{$XMLFontPatchFlag},{"RET"}],
-    "\\[TabKey]"|"\[TabKey]"->
-      XMLElement["kbd",{$XMLFontPatchFlag},{"TAB"}],
-    "\\["~~s:($XMLFontPatchDumbSpecialCharListLong)~~"]":>
-      XMLElement["span",
-        {
-          "class"->"special-character "<>s,
-          $XMLFontPatchFlag
-          },
-        {
-          ToExpression["\"\\["<>s<>"]\""]
-          }
-        ],
-    char:$XMLFontPatchDumbSpecialCharListConv:>
-      XMLElement["span",
-        {
-          "class"->"special-character "<>CharacterName[char], 
-          $XMLFontPatchFlag
-          },
-        {
-          char
-          }
-        ]
-    };
+  Flatten@
+    {
+      $XMLFontPatchKeyboardElements,
+      $XMLFontPatchManualUnicodeReassignments,
+      "\\["~~s:($XMLFontPatchDumbSpecialCharListLong)~~"]":>
+        XMLElement["span",
+          {
+            "class"->"special-character "<>s,
+            $XMLFontPatchFlag
+            },
+          {
+            ToExpression["\"\\["<>s<>"]\""]
+            }
+          ],
+      char:$XMLFontPatchDumbSpecialCharListConv:>
+        XMLElement["span",
+          {
+            "class"->"special-character "<>CharacterName[char], 
+            $XMLFontPatchFlag
+            },
+          {
+            char
+            }
+          ]
+      };
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1003,17 +1082,367 @@ $XMLFontPatchStringToXMLElementRules=
 
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*webSiteTemplatePreProcessPrettyPrint*)
+
+
+
+webSiteTemplatePreProcessPrettyPrint[xml_]:=
+  ReplaceRepeated[
+    xml,
+    XMLElement["pre",
+      c_?(StringFreeQ[Lookup[#,"class",""], "prettyprint"]&),
+      e:{
+        XMLElement["code",
+          _?(!StringEndsQ[Lookup[#, "language", ""], "-"|"-none"]&),
+          _]
+        }
+      ]:>
+        XMLElement["pre",
+          Normal@
+            Append[
+              Association@c,
+              "class"->
+                StringTrim[
+                  Lookup[c,"class",""]<>
+                    " prettyprint"
+                  ]
+              ],
+          e
+          ]
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*webSiteTemplatePreProcessFonts*)
+
+
+
+webSiteTemplatePreProcessFonts[xml_]:=
+  ReplaceRepeated[
+    ReplaceRepeated[
+      xml,
+      XMLElement[a_, b_?(FreeQ[$XMLFontPatchFlag]), d_]:>
+        XMLElement[a,
+          Append[b, $XMLFontPatchFlag],
+          Replace[d,
+            s_String:>
+              Replace[StringExpression[expr___]:>expr]@
+              StringReplace[
+                s,
+                $XMLFontPatchStringToXMLElementRules
+                ],
+            {1}
+            ]
+          ]
+      ],
+    XMLElement[a_, b_?(MemberQ[$XMLFontPatchFlag]), c_]:>
+      XMLElement[a, Most[b], c]
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*webSiteTemplatePreProcessInOut*)
+
+
+
+$WebSiteTemplatePreProcessInOutToken=
+  "(*Out:*)";
+$WebSiteTemplatePreProcessInOutInTag=
+  "mma-input";
+$WebSiteTemplatePreProcessInOutOutTag=
+  "mma-output";
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*webSiteTemplatePreProcessSplitOutput*)
+
+
+
+(* ::Text:: *)
+(*
+	webSiteTemplatePreProcessProcessSplitString
+		does the actual dirty work of splitting the cells
+*)
+
+
+
+webSiteTemplatePreProcessProcessSplitString[splits_, pc_, cc_, head_, tail_]:=
+  If[Length@DeleteCases[splits, ""]==0,
+    Nothing,
+    Sequence@@
+      Flatten@{
+        If[StringLength@splits[[1]]>0||Length@head>0,
+          XMLElement["pre",
+            DeleteDuplicatesBy[First]@
+              Prepend[pc,
+                "class"->
+                  StringTrim[
+                    Lookup[pc, "class", ""]<>" "<>
+                      $WebSiteTemplatePreProcessInOutInTag
+                    ]
+                ],
+            List@
+              XMLElement["code",
+                cc,
+                Flatten@{head, splits[[1]]}
+                ]
+            ],
+          Nothing
+          ],
+        If[Length@splits>2,
+          Map[
+            If[StringLength@#>0,
+              XMLElement["pre",
+                DeleteDuplicatesBy[First]@
+                  Prepend[pc,
+                    "class"->
+                      StringTrim[
+                        Lookup[pc, "class", ""]<>" "<>
+                          $WebSiteTemplatePreProcessInOutOutTag
+                        ]
+                    ],
+                List@
+                  XMLElement["code",
+                    cc,
+                    {#}
+                    ]
+                ],
+              Nothing
+              ]&,
+            Most@Rest@splits
+            ],
+          Nothing
+          ],
+        If[(Length@splits>1&&StringLength@Last@splits>0)||Length@Flatten@{tail}>0,
+          XMLElement["pre",
+            DeleteDuplicatesBy[First]@
+              Prepend[pc,
+                "class"->
+                  StringTrim[
+                    Lookup[pc, "class", ""]<>" "<>
+                      $WebSiteTemplatePreProcessInOutOutTag
+                    ]
+                ],
+            List@
+              XMLElement["code",
+                cc,
+                Flatten@{
+                  If[(Length@splits>1&&StringLength@Last@splits>0),
+                    Last@splits,
+                    Nothing
+                    ], 
+                  tail
+                  }
+                ]
+            ],
+          Nothing
+          ]
+        }
+    ]
+
+
+(* ::Text:: *)
+(*
+	webSiteTemplatePreProcessSplitOutput
+		the more general function that delegates to the lower-level splitter
+*)
+
+
+
+webSiteTemplatePreProcessSplitOutput[pc_, cc_, head_, c_, tail_]:=
+  Module[
+    {
+      splits=
+        Block[{groupUpFlag=False},
+          SplitBy[Flatten@{tail},
+            Function[
+              If[
+                MatchQ[#,
+                  _String?(StringContainsQ[$WebSiteTemplatePreProcessInOutToken])
+                  ],
+                groupUpFlag=Not@groupUpFlag
+                ];
+              groupUpFlag
+              ]
+            ]
+          ],
+      firstSplit=
+        If[StringStartsQ[c, $WebSiteTemplatePreProcessInOutToken],
+          Prepend[""],
+          Identity
+          ]@
+        StringTrim@StringSplit[c, $WebSiteTemplatePreProcessInOutToken]
+      },
+    If[Length@DeleteCases[splits, {}]==0&&Length@DeleteCases[firstSplit, ""]==0,
+      Nothing,
+      Sequence@@
+        Flatten@{
+          If[Length@splits==0||StringQ@splits[[1, 1]],
+            webSiteTemplatePreProcessProcessSplitString[firstSplit, 
+              pc, cc, head, {}
+              ],
+            With[{sp=splits[[1]]},
+              splits=Rest@splits;
+              webSiteTemplatePreProcessProcessSplitString[firstSplit, 
+                pc, cc, Join[head, sp]
+                ]
+              ]
+            ],
+          Map[
+            webSiteTemplatePreProcessProcessSplitString[
+              If[StringQ@#[[1]],
+                (*If[StringStartsQ[#[[1]], $WebSiteTemplatePreProcessInOutToken],
+									Prepend[""],
+									Identity
+									]@*)
+                StringSplit[#[[1]], $WebSiteTemplatePreProcessInOutToken],
+                {}
+                ], 
+              pc, 
+              cc, 
+              {},
+              If[StringQ@#[[1]], Rest@#, #]
+              ]&,
+            splits
+            ]
+          }
+      ]
+    ]
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*webSiteTemplatePreProcessInOut*)
+
+
+
+webSiteTemplatePreProcessInOut[xml_]:=
+  ReplaceRepeated[
+    xml,
+    {
+      XMLElement["pre",
+        pc_,
+        {
+          ___,
+          XMLElement["code",
+            cc_,
+            {
+              head:Shortest[___],
+              c_String?(StringContainsQ[$WebSiteTemplatePreProcessInOutToken]),
+              tail___
+              }
+            ],
+          ___
+          }
+        ]:>
+        webSiteTemplatePreProcessSplitOutput[pc, cc, {head}, c, {tail}],
+      XMLElement["pre",
+        pc_?(
+          StringFreeQ[Lookup[#, "class", ""], 
+            $WebSiteTemplatePreProcessInOutInTag|
+            $WebSiteTemplatePreProcessInOutOutTag
+            ]&
+          ),
+        c:{
+          ___,
+          XMLElement["code",
+            _,
+            {
+              _String?(StringFreeQ[$WebSiteTemplatePreProcessInOutToken])
+              }
+            ],
+          ___
+          }
+        ]:>
+        XMLElement["pre",
+          DeleteDuplicatesBy[First]@
+            Prepend[pc,
+              "class"->
+                StringTrim[
+                  Lookup[pc, "class", ""]<>" "<>
+                    $WebSiteTemplatePreProcessInOutInTag
+                  ]
+              ],
+          c
+          ]
+      }
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*webSiteTemplatePreProcessCodeLanguage*)
+
+
+
+webSiteTemplatePreProcessCodeLanguage[lang_][xml_]:=
+  ReplaceRepeated[
+      xml,
+      XMLElement["code",
+        c_?(
+            (StringFreeQ[Lookup[#,"class",""],"language-"])
+            &),
+        e_]:>
+        XMLElement["code",
+          Normal@
+            Append[
+              Association@c,
+              "class"->
+                StringTrim[
+                  Lookup[c,"class",""]<>
+                    " language-"<>ToLowerCase@lang
+                  ]
+              ],
+          e
+          ]
+      ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*WebSiteTemplatePreProcess*)
+
+
+
 WebSiteTemplatePreProcess[fileContent_,args_]:=
-  With[{
-    lang=
-      Lookup[args, "CodeLanguage"],
-    prettyprint=
-      Lookup[args, "PrettyPrint"],
-    patchfonts=
-      Lookup[args, "PatchFonts"],
-    srcbase=
-      Replace[Lookup[args, "SiteURL"], Except[_String]:>""]
-    },
+  Module[
+    {
+      lang=
+        Lookup[args, "CodeLanguage"],
+      prettyprint=
+        Lookup[args, "PrettyPrint"],
+      patchfonts=
+        Lookup[args, "PatchFonts"],
+      splitout=
+        Lookup[args, "SplitInOut"],
+      splittags,
+      srcbase=
+        Replace[Lookup[args, "SiteURL"], Except[_String]:>""]
+      },
+    If[OptionQ@splitout,
+      splittags=
+        MapThread[
+          If[StringQ@#, #, #2]&,
+          {
+            Lookup[splitout, 
+              {
+                "Token",
+                "OutTag",
+                "InTag"
+                }
+              ],
+            {
+              $WebSiteTemplatePreProcessInOutToken,
+              $WebSiteTemplatePreProcessInOutInTag,
+              $WebSiteTemplatePreProcessInOutOutTag
+              }
+            }
+          ],
+      splittags=
+        {
+          $WebSiteTemplatePreProcessInOutToken,
+          $WebSiteTemplatePreProcessInOutInTag,
+          $WebSiteTemplatePreProcessInOutOutTag
+          }
+      ];
     If[StringQ[srcbase],
       ReplaceAll[
         #,
@@ -1022,77 +1451,26 @@ WebSiteTemplatePreProcess[fileContent_,args_]:=
         ]&,
       Identity
       ]@
-    If[TrueQ[patchfonts],
-      ReplaceRepeated[
-        ReplaceRepeated[
-          #,
-          XMLElement[a_, b_?(FreeQ[$XMLFontPatchFlag]), d_]:>
-            XMLElement[a,
-              Append[b, $XMLFontPatchFlag],
-              Replace[d,
-                s_String:>
-                  Replace[StringExpression[expr___]:>expr]@
-                  StringReplace[
-                    s,
-                    $XMLFontPatchStringToXMLElementRules
-                    ],
-                {1}
-                ]
-              ]
-          ],
-        XMLElement[a_, b_?(MemberQ[$XMLFontPatchFlag]), c_]:>
-          XMLElement[a, Most[b], c]
-        ]&,
-      Identity
-      ]@
     If[TrueQ[prettyprint],
-      ReplaceRepeated[
-        #,
-        XMLElement["pre",
-          c_?(StringFreeQ[Lookup[#,"class",""], "prettyprint"]&),
-          e:{
-            XMLElement["code",
-              _?(!StringEndsQ[Lookup[#, "language", ""], "-"|"-none"]&),
-              _]
-            }
-          ]:>
-            XMLElement["pre",
-              Normal@
-                Append[
-                  Association@c,
-                  "class"->
-                    StringTrim[
-                      Lookup[c,"class",""]<>
-                        "prettyprint"
-                      ]
-                  ],
-              e
-              ]
-        ]&,
+      webSiteTemplatePreProcessPrettyPrint,
       Identity
       ]@
     If[StringQ[lang],
-      ReplaceRepeated[
-        #,
-        XMLElement["code",
-          c_?(
-              (StringQ[lang]&&
-                StringFreeQ[Lookup[#,"class",""],"language-"]
-                )
-              &),
-          e_]:>
-          XMLElement["code",
-            Normal@
-              Append[
-                Association@c,
-                "class"->
-                  StringTrim[
-                    Lookup[c,"class",""]<>
-                      " language-"<>ToLowerCase@lang
-                    ]
-                ],
-            e
-            ]
+      webSiteTemplatePreProcessCodeLanguage[lang],
+      Identity
+      ]@
+    If[TrueQ[patchfonts],
+      webSiteTemplatePreProcessFonts,
+      Identity
+      ]@
+    If[TrueQ[splitout],
+      Block[
+        {
+          $WebSiteTemplatePreProcessInOutToken=splittags[[1]],
+          $WebSiteTemplatePreProcessInOutInTag=splittags[[2]],
+          $WebSiteTemplatePreProcessInOutOutTag=splittags[[3]]
+          },
+        webSiteTemplatePreProcessInOut[#]
         ]&,
       Identity
       ]@
@@ -1145,184 +1523,224 @@ $WebSiteSummaryUnits:=
 
 
 (* ::Subsubsubsection::Closed:: *)
+(*webSiteTemplateGatherSummary*)
+
+
+
+webSiteTemplateGatherSummary[len_, content_]:=
+  Module[
+    {
+      sl,
+      cont
+      },
+    sl=
+      Replace[
+        len,
+        {
+          i_Integer?Positive:>
+            {i, "Characters"},
+          _[i_Integer?Positive, u:Alternatives@@$WebSiteSummaryBaseUnits]:>
+            {i, u},
+          _:>
+            {1,"Paragraph"}
+          }
+        ];
+    cont=ImportString[content, "HTML"];
+    Replace[sl,
+      {
+        {
+          i_,
+          "Characters"|IndependentUnit["characters"]
+          }:>
+          Function[
+            If[
+              StringLength[#]>i,
+              StringTake[#,i-3]<>"...",
+              #
+              ]
+            ]@
+            StringReplace[cont,Whitespace->" "],
+        {
+          i_,
+          "Lines"|IndependentUnit["lines"|"lines of code"]
+          }:>
+          StringRiffle@
+            Take[
+              StringSplit[cont,"\n"],
+              UpTo[i]
+              ],
+        {
+          i_,
+          IndependentUnit[t_]|t_String
+          }:>
+          StringRiffle[
+            TextCases[cont,
+              ToUpperCase[StringTake[#,1]]<>
+                StringDrop[#,1]&@t,
+              i],
+            " "
+            ]
+        }
+    ]
+  ]
+
+
+(* ::Subsubsubsection::Closed:: *)
 (*WebSiteTemplateGatherArgs*)
 
 
 
 WebSiteTemplateGatherArgs[fileContent_, args_]:=
-  With[
+  Module[
     {
-      content=
-        Replace[fileContent,
-          {
-              l:{__XMLElement}:>
-                StringRiffle[
-                  WebSiteBuildSafeExportXML/@l,
-                  "\n"
-                  ],
-              x_XMLElement:>
-                WebSiteBuildSafeExportXML[x],
-              None->
-                "",
-              e:Except[_String]:>
-                (Message[WebSiteBuild::nocnt,Short[e]])
-              }
-          ]
+      url,
+      slug,
+      fp,
+      title,
+      content,
+      summary,
+      date,
+      modified,
+      siteURL,
+      siteName
       },
+    url=Lookup[args, "URL"];
+    slug=Lookup[args, "Slug"];
+    fp=Lookup[args, "FilePath"];
+    content=
+      Replace[fileContent,
+        {
+          l:{__XMLElement}:>
+            StringRiffle[
+              WebSiteBuildSafeExportXML/@l,
+              "\n"
+              ],
+          x_XMLElement:>
+            WebSiteBuildSafeExportXML[x],
+          None->
+            "<html><body>No content...</body><html>",
+          e:Except[_String]:>
+            (
+              WebSiteBuildLogError[fp, "BadContent", e];
+              PackageThrowMessage[
+                "SiteBuilder",
+                WebSiteBuild::nocnt,
+                Short[e]
+                ]
+              )
+          }
+        ];
+    title=
+      Replace[
+        FirstCase[
+          If[StringQ[fileContent],
+            ImportString[fileContent, {"HTML", "XMLObject"}],
+            fileContent
+            ],
+          t:XMLElement["title", _, _]:>
+            System`Convert`XMLDump`getSymbolicXMLPlaintext@
+              XMLElement["body",{}, t],
+          None,
+          \[Infinity]
+          ],
+        {
+          Except[_String]->
+            None,
+          s_String:>
+            s
+          }
+        ];
+    summary=
+      Replace[
+        Lookup[args, "Summary"],
+        Except[_String?(StringLength[#]>0&)]:>
+          webSiteTemplateGatherSummary[
+            Lookup[args, "SummaryLength"],
+            content
+            ]
+        ];
+    date=
+      Replace[
+        Lookup[args,"Date",Now],
+        s_String:>Quiet@Check[DateObject[s], s]
+        ];
+    modified=
+      Replace[
+        Lookup[args,"Modified",Now],
+        s_String:>Quiet@Check[DateObject[s], s]
+        ];
+    siteURL=
+      Replace[
+        Lookup[args, "SiteURL", Automatic],
+        Automatic:>
+          With[{
+            bit=
+              Length@
+                Replace[
+                  Lookup[args,"URL",
+                    FileNameSplit@
+                      Lookup[args, "FilePath", "??"]
+                    ],
+                  s_String:>
+                    URLParse[s,"Path"]
+                  ]
+            },
+            Replace[
+              bit,
+              {
+                1->".",
+                n_:>
+                  URLBuild@ConstantArray["..",n-1]
+                }
+              ]
+            ]
+        ];
+    siteName=
+      Replace[
+        Lookup[args,"SiteName",Automatic],
+        {
+          s_String:>
+            URLParse[s,"Path"][[-1]],
+          Except[_String]:>
+            Replace[
+              Lookup[args,"SiteURL"],
+              {
+                s_String:>
+                  URLParse[s,"Path"][[-1]],
+                Except[_String]:>
+                  Replace[Lookup[args, "SiteDirectory"],
+                    Except[_String]:>
+                      Replace[$WolframID,{
+                        s_String:>
+                          StringSplit[s,"@"][[1]],
+                        _->$UserName
+                        }]
+                    ]
+                }
+              ]
+          }
+        ];
     Merge[
       {
-        Replace[
-          FirstCase[
-            If[StringQ[fileContent],
-              ImportString[fileContent,"HTML"],
-              fileContent
-              ],
-            t:XMLElement["title",_,_]:>
-              System`Convert`XMLDump`getSymbolicXMLPlaintext@
-                XMLElement["body",{},t],
-            None,
-            \[Infinity]
-            ],
-          {
-            Except[_String]->
-              Nothing,
-            s_String:>
-              ("Title"->s)
-            }
-          ],
-        "Summary"->
-          With[{
-            sl=
-              Replace[
-                Lookup[args,"SummaryLength"],
-                {
-                  i_Integer?Positive:>
-                    {i, "Characters"},
-                  _[i_Integer?Positive, u:Alternatives@@$WebSiteSummaryBaseUnits]:>
-                    {i, u},
-                  _[i_Integer?Positive, u_String?(MatchQ[u, $WebSiteSummaryBaseUnits])]:>
-                    {i, u},
-                  _:>
-                    {1,"Paragraph"}
-                  }
-                ]
-            },
-            With[
-              {
-                cont=ImportString[content,"HTML"]
-                },
-              Replace[sl,{
-                {
-                  i_,
-                  "Characters"|IndependentUnit["characters"]
-                  }:>
-                  Function[
-                    If[
-                      StringLength[#]>i,
-                      StringTake[#,i-3]<>"...",
-                      #
-                      ]
-                    ]@
-                    StringReplace[cont,Whitespace->" "],
-                {
-                  i_,
-                  "Lines"|IndependentUnit["lines"|"lines of code"]
-                  }:>
-                  StringRiffle@
-                    Take[
-                      StringSplit[cont,"\n"],
-                      UpTo[i]
-                      ],
-                {
-                  i_,
-                  IndependentUnit[t_]|t_String
-                  }:>
-                  StringRiffle[
-                    TextCases[cont,
-                      ToUpperCase[StringTake[#,1]]<>
-                        StringDrop[#,1]&@t,
-                      i],
-                    " "
-                    ]
-                }]
-              ]
-            ],
-        "Date"->
-          Replace[
-            Lookup[args,"Date",Now],
-            s_String:>DateObject[s]
-            ],
         args,
-        "SiteName"->
-          Replace[
-            Lookup[args,"SiteName",Automatic],
-            {
-              s_String:>
-                URLParse[s,"Path"][[-1]],
-              Except[_String]:>
-                Replace[
-                  Lookup[args,"SiteURL"],
-                  {
-                    s_String:>
-                      URLParse[s,"Path"][[-1]],
-                    Except[_String]:>
-                      Replace[Lookup[args, "SiteDirectory"],
-                        Except[_String]:>
-                          Replace[$WolframID,{
-                            s_String:>
-                              StringSplit[s,"@"][[1]],
-                            _->$UserName
-                            }]
-                        ]
-                    }
-                  ]
-              }
-            ],
-        "SiteURL"->
-          Replace[
-            Lookup[args, "SiteURL", Automatic],
-            Automatic:>
-              With[{
-                bit=
-                  Length@
-                    Replace[
-                      Lookup[args,"URL",
-                        FileNameSplit@
-                          Lookup[args, "FilePath", "??"]
-                        ],
-                      s_String:>
-                        URLParse[s,"Path"]
-                      ]
-                },
-                Replace[
-                  bit,
-                  {
-                    1->".",
-                    n_:>
-                      URLBuild@ConstantArray["..",n-1]
-                    }
-                  ]
-                ]
-            ],
-        With[
-          {
-            url=Lookup[args, "URL"],
-            slug=Lookup[args, "Slug"],
-            fp=Lookup[args, "FilePath"]
-            },
-          Which[
-            StringQ@url,
-              "URL"->url,
-            StringQ@slug,
-              "URL"->
-                If[StringQ[fp],
-                  URLBuild@
-                    Append[Most@FileNameSplit[fp], WebSiteBuildAttachExtension@slug],
-                  WebSiteBuildAttachExtension@slug
-                  ],
-            True,  
-              Nothing
-            ]
+        If[StringQ@title, "Title"->title, Nothing],
+        "Summary"->summary,
+        "Date"->date,
+        "Modified"->modified,
+        "SiteName"->siteName,
+        "SiteURL"->siteURL,
+        Which[
+          StringQ@url,
+            "URL"->url,
+          StringQ@slug,
+            "URL"->
+              If[StringQ[fp],
+                URLBuild@
+                  Append[Most@FileNameSplit[fp], WebSiteBuildAttachExtension@slug],
+                WebSiteBuildAttachExtension@slug
+                ],
+          True,  
+            Nothing
           ],
         "Content"->
           content
@@ -1474,7 +1892,10 @@ WebSiteTemplateExport[
                         ]
                   }]
               },
-          If[!FileExistsQ[fil]||(html=!=Import[fil, "Text"]),
+          If[
+            !FileExistsQ[fil]||(* to preserve the modification date *)
+              (html=!=System`Convert`TextDump`PlaintextImport[fil][[2]]),
+            Quiet@Close[fil];
             If[!DirectoryQ@DirectoryName[fil],
               CreateDirectory[DirectoryName[fil], 
                 CreateIntermediateDirectories->True
@@ -1484,7 +1905,10 @@ WebSiteTemplateExport[
             ]
           ],
       e_:>
-        (Message[WebSiteBuild::genfl, failinput];$Failed)
+        (
+          WebSiteBuildLogError[failinput, "GenerationFailed", e]; 
+          Message[WebSiteBuild::genfl, failinput];$Failed
+          )
       }
     ];
 
@@ -2375,7 +2799,8 @@ WebSiteGenerateContent[
       fname,
       path,
       fout,
-      conf
+      conf,
+      mod
       },
     Block[
       {
@@ -2383,10 +2808,16 @@ WebSiteGenerateContent[
         outfile
         },
       If[TrueQ@OptionValue[Monitor], Monitor, #&][
-      With[{f=#[[1]]},
+      With[
+        {f=#[[1]]},
         Function[
           Null,
-          If[!DateObjectQ@lb||FileDate[f, "Modification"]>=lb,
+          mod=
+            If[DateObjectQ@conf["Modified"], 
+              conf["Modified"], 
+              FileDate[f, "Modification"]
+              ];
+          If[!DateObjectQ@lb||mod>=lb,
             #,
             Nothing
             ],
@@ -2885,6 +3316,23 @@ WebSiteGenerateSearchPage[
 
 
 (* ::Subsubsection::Closed:: *)
+(*Logging*)
+
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*WebSiteBuildLogError*)
+
+
+
+WebSiteBuildLogError[file_, key_, body_]:=
+  If[!KeyExistsQ[$WebSiteBuildErrors, file],
+    $WebSiteBuildErrors[file]=<|key->body|>,
+    $WebSiteBuildErrors[file, key]=body
+    ]
+
+
+(* ::Subsubsection::Closed:: *)
 (*Build*)
 
 
@@ -3149,8 +3597,10 @@ WebSiteBuild[
       fileNames,
       config,
       confOps,
-      buildOps
+      buildOps,
+      res
       },
+    $WebSiteBuildErrors=<||>;
     config=
       Join[
         Replace[
@@ -3305,28 +3755,36 @@ WebSiteBuild[
         Options@iWebSiteBuild
         ]
       ];
-    If[TrueQ[OptionValue["AutoDeploy"]]||
-      OptionValue["AutoDeploy"]===Automatic&&
-        OptionQ@OptionValue["DeployOptions"],
-      WebSiteDeploy[
-        outDir,
-        Replace[
-          Lookup[config, "SiteURL"],
-          Except[_String]:>
-            Replace[FileBaseName[dir],
-              "output":>
-                FileBaseName@DirectoryName[dir]
-              ]
-          ],
-        Replace[
-          Replace[OptionValue["DeployOptions"],
-            Automatic:>Lookup[config,"DeployOptions",{}]
+    res=
+      If[TrueQ[OptionValue["AutoDeploy"]]||
+        OptionValue["AutoDeploy"]===Automatic&&
+          OptionQ@OptionValue["DeployOptions"],
+        WebSiteDeploy[
+          outDir,
+          Replace[
+            Lookup[config, "SiteURL"],
+            Except[_String]:>
+              Replace[FileBaseName[dir],
+                "output":>
+                  FileBaseName@DirectoryName[dir]
+                ]
             ],
-          Except[_?OptionQ]->{}
-          ]
-        ],
-      outDir
-      ]
+          Replace[
+            Replace[OptionValue["DeployOptions"],
+              Automatic:>Lookup[config,"DeployOptions",{}]
+              ],
+            Except[_?OptionQ]->{}
+            ]
+          ],
+        outDir
+        ];
+    If[Length@$WebSiteBuildErrors>0,
+      PackageThrowMessage[
+        "SiteBuilder",
+        "WebSiteBuild encountered errors. Check $WebSiteBuildErrors."
+        ]
+      ];
+    res
     ];
 
 
@@ -3549,6 +4007,11 @@ WebSiteDeploy[
         }
       ]
     ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*webSiteDeploy*)
+
 
 
 webSiteDeploy[

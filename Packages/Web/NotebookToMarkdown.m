@@ -71,11 +71,21 @@ MarkdownOutputPath[f_String]:=
 
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*Template*)
+
+
+
 $markdownnewmdfiletemplate=
 "`headers`
 
 `body`
 ";
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Metadata*)
+
 
 
 (* ::Subsubsubsubsection::Closed:: *)
@@ -273,7 +283,9 @@ $NotebookToMarkdownCellStyles["Text"]=
   {
     "Text",
     "RawMarkdown","RawHTML",
-    "RawPre","Program"
+    "RawPre","Program",
+    "DisplayFormula",
+    "DisplayFormulaNumbered"
     };
 $NotebookToMarkdownCellStyles["Print"]=
   {
@@ -1683,7 +1695,9 @@ Options[NotebookToMarkdown]=
     "Context"->Automatic,
     "CellStyles"->Automatic,
     "IncludeStyleDefinitions"->Automatic,
-    "IncludeLinkAnchors"->Automatic
+    "IncludeLinkAnchors"->Automatic,
+    "UseHTMLFormatting"->Automatic,
+    "UseMathJAX"->False
     };
 NotebookToMarkdown[
   nb_Notebook,
@@ -1702,7 +1716,8 @@ NotebookToMarkdown[
           ],
       exportStrings,
       exportPick,
-      exportRiffle
+      exportRiffle,
+      $iNotebookToMarkdownCounters=<||>
       },
   With[
     {
@@ -1713,7 +1728,8 @@ NotebookToMarkdown[
       meta=Replace[Except[_Association?AssociationQ]-><||>]@OptionValue["Metadata"],
       cont=Replace[Except[_String]->"Global`"]@OptionValue["Context"],
       nbo=OptionValue["NotebookObject"],
-      cells=OptionValue["CellObjects"]
+      cells=OptionValue["CellObjects"],
+      ps=OptionValue["UseHTMLFormatting"]
       },
     If[!DirectoryQ@dir, Throw[$Failed]];
     If[!StringQ@path, Throw[$Failed]];
@@ -1727,7 +1743,8 @@ NotebookToMarkdown[
           "Meta"->meta,
           "NotebookObject"->nbo,
           "CellObjects"->cells,
-          "Context"->cont
+          "Context"->cont,
+          "UseHTML"->ps
           |>,
         #
         ]&/@First@nb;
@@ -1848,8 +1865,16 @@ NotebookToMarkdown[nb_NotebookObject, ops:OptionsPattern[]]:=
               "ContentExtension"->cext,
               "NotebookObject"->nb,
               "CellObjects"->cells,
-              "Metadata"->meta,
+              "Metadata"->
+                Association@
+                  FilterRules[Normal@meta,
+                    Except[Alternatives@@Keys@Options@NotebookToMarkdown]
+                    ],
               "Context"->cont,
+              Sequence@@
+                FilterRules[Normal@meta,
+                  Options@NotebookToMarkdown
+                  ],
               ops
               }
             ]
@@ -1922,13 +1947,22 @@ $iNotebookToMarkdownBasicBoxHeads=
 
 
 (* ::Subsubsubsection::Closed:: *)
+(*Math*)
+
+
+
+$iNotebookToMarkdownMathBoxHeads=
+  _SubscriptBox|_SuperscriptBox|_FractionBox|_OverscriptBox|
+  _SubsuperscriptBox
+
+
+(* ::Subsubsubsection::Closed:: *)
 (*IgnoredOutput Forms*)
 
 
 
 $iNotebookToMarkdownIgnoredIOBaseForms=
   OutputFormData[_, _]|
-    _SuperscriptBox|_SubscriptBox|_SubsuperscriptBox|_FractionBox|
     TemplateBox[__, "EmbeddedHTML", ___];
 $iNotebookToMarkdownIgnoredIOForms=
   $iNotebookToMarkdownIgnoredIOBaseForms|
@@ -1942,7 +1976,7 @@ $iNotebookToMarkdownIgnoredIOForms=
 
 
 $iNotebookToMarkdownIgnoredBoxHeads=
-  TooltipBox|InterpretationBox|FormBox;
+  TooltipBox|InterpretationBox|FormBox|FrameBox;
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -2003,12 +2037,48 @@ $iNotebookToMarkdownRasterizeForms=
 
 
 (* ::Subsubsubsection::Closed:: *)
+(*notebookToMarkdownCleanStringExport*)
+
+
+
+notebookToMarkdownCleanStringExport[s_String]:=
+  If[StringStartsQ[s, "\""]&&StringContainsQ[s, "\!\("|"\\!\\("],
+    ToExpression@s,
+    s
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*notebookToMarkdownMathJAXExport*)
+
+
+
+notebookToMarkdownNoMathJAX[ass_]:=
+  ass["UseMathJAX"]===False
+
+
+notebookToMarkdownMathJAXExport[
+  pathInfo_,
+  boxes_
+  ]:=
+  "$$``$$"~TemplateApply~
+  System`FEDump`transformProcessedBoxesToTeX@
+    System`FEDump`TransformBoxesToTraditionalFormBoxes@
+      System`FEDump`processBoxesForCopyAsTeX[TraditionalForm, boxes]
+
+
+(* ::Subsubsubsection::Closed:: *)
 (*notebookToMarkdownHTMLExport*)
 
 
 
+(* ::Subsubsubsubsection::Closed:: *)
+(*HTML Allowed*)
+
+
+
 notebookToMarkdownHTMLExport[
-  pathInfo_, 
+  pathInfo_?(#["UseHTML"]=!=False&),
   expr_,
   part_,
   repSpec_,
@@ -2053,7 +2123,7 @@ notebookToMarkdownHTMLExport[
         Replace[
           iNotebookToMarkdown[pathInfo, ToBoxes@#],
           {
-            s_String:>
+            s:Except["", _String]:>
               StringTrim[
                 With[{x=MarkdownToXML[s]},
                   Replace[
@@ -2079,8 +2149,33 @@ notebookToMarkdownHTMLExport[
     ];
 
 
+(* ::Subsubsubsubsection::Closed:: *)
+(*HTML Not Allowed*)
+
+
+
+notebookToMarkdownHTMLExport[
+  pathInfo_?(#["UseHTML"]===False&), 
+  expr_,
+  part_,
+  repSpec_,
+  repLevel_
+  ]:=
+  notebookToMarkdownFEExport[
+    pathInfo,
+    BoxData@ToBoxes@expr,
+    "InputText",
+    "Code"
+    ]
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*ToExpression HTML Allowed*)
+
+
+
 notebookToMarkdownHTMLToExpressionExport[
-  pathInfo_, 
+  pathInfo_?(#["UseHTML"]=!=False&), 
   boxes_,
   part_,
   repSpec_,
@@ -2124,6 +2219,26 @@ notebookToMarkdownHTMLToExpressionExport[
         }
       ]
     ];
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*ToExpression HTML Not Allowed*)
+
+
+
+notebookToMarkdownHTMLToExpressionExport[
+  pathInfo_?(#["UseHTML"]===False&), 
+  boxes_,
+  part_,
+  repSpec_,
+  repLevel_
+  ]:=
+  notebookToMarkdownFEExport[
+    pathInfo,
+    BoxData@boxes,
+    "InputText",
+    "Code"
+    ]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -2263,7 +2378,7 @@ markdownCodeCellIOReformatPreClean[pathInfo_, e_, style_]:=
 			*)
       g:$iNotebookToMarkdownOutputStringForms:>
         Replace[
-          iNotebookToMarkdown[pathInfo,g],
+          iNotebookToMarkdown[pathInfo, g],
           s:Except["", _String]:>
             RawBoxes[s]
           ],
@@ -2271,7 +2386,9 @@ markdownCodeCellIOReformatPreClean[pathInfo_, e_, style_]:=
 			Converts tabs into spaces because it looks better		
 			*)
       s_String?(StringMatchQ["\t"..]):>
-        StringReplace[s, "\t"->"  "]
+        StringReplace[s, "\t"->"  "],
+      s_String:>
+        notebookToMarkdownCleanStringExport@s
       }
     ];
 
@@ -2480,20 +2597,24 @@ markdownCodeCellIOReformat[
   e_,
   style_,
   postFormat_,
+  postFormat2_,
   ops:OptionsPattern[]
   ]:=
   Module[{stack=<|"Raw"-><||>|>},
     Replace[
       {
         s_String?(StringContainsQ["<"~~__~~">"~~___~~"</"~~__~~">"]):>
-          With[{baseWhitespace=StringCases[s, StartOfString~~Whitespace, 1]},
-            "<pre >\n<code>\n"<>
-              If[Length@baseWhitespace>0,
-                StringReplace[s, StartOfLine~~baseWhitespace[[1]]->""],
-                s
-                ]<>
-            "\n</code>\n</pre>"
-            ],
+          postFormat2@
+            With[{baseWhitespace=StringCases[s, StartOfString~~Whitespace, 1]},
+              "<pre >\n<code>\n"<>
+                If[Length@baseWhitespace>0,
+                  StringReplace[s, 
+                    StartOfLine~~baseWhitespace[[1]]->""
+                    ],
+                  s
+                  ]<>
+              "\n</code>\n</pre>"
+              ],
         s:Except["", _String]:>
           StringReplace[postFormat@s,
             {
@@ -2578,18 +2699,27 @@ iNotebookToMarkdownRegister[
 iNotebookToMarkdownRegister[pathInfo_, 
   Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "ExternalLanguage", o___]
   ]:=
-  With[{cl=Lookup[{o}, CellEvaluationLanguage, "Python"]},
+  With[
+    {
+      cl=
+        Replace[Lookup[{o}, CellEvaluationLanguage, "Python"],
+          {
+            s_String?(StringContainsQ[#, "Python", IgnoreCase->True]&):>
+              "python",
+            s_String?(StringContainsQ[#, "NodeJS", IgnoreCase->True]&)
+              "javascript",
+            s_String:>ToLowerCase[s]
+            }
+          ]
+      },
     markdownCodeCellIOReformat[
       pathInfo,
       ReplaceAll[e, BoxData->TextData],
       {"PlainText", "Code"},
-      Which[
-        StringContainsQ[cl, "Python", IgnoreCase->True],
-          "```python\n"<>#<>"\n"<>"```",
-        StringContainsQ[cl, "NodeJS", IgnoreCase->True],
-          "```javascript\n"<>#<>"\n"<>"```",
-        True,
-          "```"<>ToLowerCase[cl]<>"\n"<>#<>"\n"<>"```"
+      "```"<>cl<>"\n"<>#<>"\n"<>"```"&,
+      StringReplace[#, 
+        "<code>"->"<code class='language-"<>cl<>"'>",
+        1
         ]&,
       Select[{o, PageWidth->10000}, OptionQ]
       ]
@@ -2627,6 +2757,7 @@ iNotebookToMarkdownRegister[pathInfo_,
           "```\n"<>#<>"\n"<>"```"
         }
       ]&,
+    Identity,
     Select[{o, PageWidth->10000}, OptionQ]
     ];
 
@@ -2643,6 +2774,10 @@ iNotebookToMarkdownRegister[pathInfo_,
     e,
     {"InputText", "Code"},
     "```mathematica\n"<>StringDelete[#, "\\\n"]<>"\n```"&,
+    StringReplace[#, 
+      "<code>"->"<code class='language-mathematica'>",
+      1
+      ]&,
     Select[{o}, OptionQ]
     ];
 
@@ -2662,6 +2797,7 @@ iNotebookToMarkdownRegister[pathInfo_,
         StartOfLine->"    ",
         "\\\n"->""
         }]&,
+    Identity,
     Select[{o}, OptionQ]
     ];
 
@@ -2675,10 +2811,11 @@ iNotebookToMarkdownRegister[pathInfo_,
   Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "InlineInput", o___]]:=
   markdownCodeCellIOReformat[pathInfo,
     Replace[e,
-      BoxData@FormBox[expr_, _]:>BoxData@expr
+      BoxData@$iNotebookToMarkdownIgnoredBoxHeads[expr_, ___]:>BoxData@expr
       ],
     {"InputText", "Code"},
     "```"<>#<>If[StringEndsQ[#,"`"], " ", ""]<>"```"&,
+    Identity,
     Select[{o}, OptionQ]
     ];
 
@@ -2699,6 +2836,7 @@ iNotebookToMarkdownRegister[pathInfo_,
       ],
     {"PlainText", "Text"},
     "```"<>#<>If[StringEndsQ[#,"`"]," ",""]<>"```"&,
+    Identity,
     Select[{o}, OptionQ]
     ];
 
@@ -2717,6 +2855,10 @@ iNotebookToMarkdownRegister[pathInfo_,
       {
         StartOfLine->"    "
         }
+      ]&,
+    StringReplace[#, 
+      "<code>"->"<code>\n(*Out:*)\n",
+      1
       ]&,
     Select[{o}, OptionQ]
     ];
@@ -2744,12 +2886,16 @@ iNotebookToMarkdownRegister[pathInfo_,
         XMLElement["pre",{"class"->"program"},{
           XMLElement["code",
             {"style"->"width: 100%; white-space: pre-wrap;"},
-            {"-----------Out-----------\n"<>#}
+            {"(*Out:*)\n"<>#}
             ]
           }],
         "HTMLFragment"
         ],
       "<html><body>"|"</body></html"
+      ]&,
+    StringReplace[#, 
+      "<code>"->"<code>\n(*Out:*)",
+      1
       ]&,
     Select[
       {
@@ -2892,10 +3038,7 @@ notebookToMarkdownCleanPrintStyle//Clear
 
 
 notebookToMarkdownCleanPrintStyle[s_String]:=
-  If[StringStartsQ[s, "\""]&&StringContainsQ[s, "\!\("|"\\!\\("],
-    ToExpression@s,
-    s
-    ];
+  notebookToMarkdownCleanStringExport[s];
 notebookToMarkdownCleanPrintStyle[_[s_String, ___]]:=
   notebookToMarkdownCleanPrintStyle[s];
 notebookToMarkdownCleanPrintStyle[BoxData[a_]]:=
@@ -2912,7 +3055,13 @@ notebookToMarkdownBasicXMLExport[e_]:=
   StringTrim[
     ExportString[
       ReplaceRepeated[
-        MarkdownToXML@StringReplace[e, $NotebookToMarkdownHTMLCharReplacements],
+        MarkdownToXML@
+          StringReplace[e, 
+            Append[
+              $NotebookToMarkdownHTMLCharReplacements,
+              "\n"->"</br>"
+              ]
+            ],
         XMLElement["p", _, {a___}]:>a
         ],
       "HTMLFragment"
@@ -2922,8 +3071,57 @@ notebookToMarkdownBasicXMLExport[e_]:=
 
 
 (* ::Subsubsubsubsection::Closed:: *)
+(*notebookToMarkdownExportPrintStyle*)
+
+
+
+notebookToMarkdownExportPrintStyle[
+  pathInfo_,
+  template1_,
+  template2_,
+  expr_,
+  otherArgs:_Association:<||>,
+  postProcess2:Except[_Association]:Identity
+  ]:=
+  If[pathInfo["UseHTML"]=!=False, 
+    Identity,
+    postProcess2
+    ]@
+  TemplateApply[
+    If[pathInfo["UseHTML"]=!=False,
+      template1,
+      template2
+      ],
+    <|
+      "body"->
+        notebookToMarkdownBasicXMLExport@
+          iNotebookToMarkdown[pathInfo, 
+            notebookToMarkdownCleanPrintStyle@expr
+            ],
+      otherArgs
+      |>
+    ]
+
+
+(* ::Subsubsubsubsection::Closed:: *)
 (*MessageTemplate*)
 
+
+
+$notebookToMarkdownMessagePrintTemplate=
+  StringTrim@
+  "
+<div style='font-size: 12px; font-family: monospace;'>
+	<div class='mma-message'>
+		<span style='color: #dd0000'>
+			<span class='mma-message-name'>`head`::`name`:</span>
+		</span>
+		<span style='color: gray'>
+			<span class='mma-message-text'>`body`</span>
+		</span>
+	</div>
+</div>
+";
 
 
 iNotebookToMarkdownRegister[pathInfo_,
@@ -2932,22 +3130,17 @@ iNotebookToMarkdownRegister[pathInfo_,
     ___
     ]
   ]:=
-  "
-<div class='mma-message'>
-	<span class='mma-message-name'>`head`::`name`:</span>
-	<span class='mma-message-text'>`body`</span>
-</div>"~
-  TemplateApply~
-  <|
-    "head"->msgHead,
-    "name"->msgName,
-    "body"->
-      notebookToMarkdownBasicXMLExport@
-      iNotebookToMarkdown[pathInfo,
-        notebookToMarkdownCleanPrintStyle@
-          Replace[text, RowBox[{a_, ___, _ButtonBox}]:>a, {1}]
-        ]
-    |>;
+  notebookToMarkdownExportPrintStyle[
+    pathInfo,
+    $notebookToMarkdownMessagePrintTemplate,
+    "(*message*)\n`head`::`name`: `body`",
+    Replace[text, RowBox[{a_, ___, _ButtonBox}]:>a, {1}],
+    <|
+      "head"->msgHead,
+      "name"->msgName
+      |>,
+    StringReplace[(StartOfLine|StartOfString)->"    "]
+    ];
 
 
 (* ::Subsubsubsubsection::Closed:: *)
@@ -2955,15 +3148,26 @@ iNotebookToMarkdownRegister[pathInfo_,
 
 
 
+$notebookToMarkdownUsagePrintTemplate=
+  StringTrim@
+"
+<div 
+	style='margin-top: -2px; padding: 0px; font-size: 12px; color: rgb(128, 128, 128); background-color: aliceblue; border-top : solid 2px lightblue; padding: 5px 0 5px 0;'>
+	<div class='mma-print-usage'>
+		`body`
+	</div>
+</div>
+";
+
+
 iNotebookToMarkdownRegister[pathInfo_, Cell[t_, "Print", "PrintUsage", ___]]:=
-  "<div class='mma-print-usage'>
-	``
-</div>"~TemplateApply~
-  notebookToMarkdownBasicXMLExport@
-  iNotebookToMarkdown[pathInfo,
-    notebookToMarkdownCleanPrintStyle@
-      Replace[t, RowBox[{a_, ___, _ButtonBox}]:>a, {1}]
-    ];
+  notebookToMarkdownExportPrintStyle[
+    pathInfo,
+    $notebookToMarkdownUsagePrintTemplate,
+    "(*Usage*)\n`body`",
+    Replace[t, RowBox[{a_, ___, _ButtonBox}]:>a, {1}],
+    StringReplace[(StartOfLine|StartOfString)->"    "]
+    ]
 
 
 (* ::Subsubsubsubsection::Closed:: *)
@@ -2971,16 +3175,26 @@ iNotebookToMarkdownRegister[pathInfo_, Cell[t_, "Print", "PrintUsage", ___]]:=
 
 
 
+$notebookToMarkdownPrintPrintTemplate=
+  StringTrim@
+"
+<div style='font-size 12px; color : rgb(55, 55, 55);'>	
+	<div class='mma-print'>
+		`body`
+	</div>
+</div>
+";
+
+
 iNotebookToMarkdownRegister[pathInfo_, 
   Cell[t_,"Print",___]
   ]:=
-  "<div class='mma-print'>
-	``
-</div>"~TemplateApply~
-  notebookToMarkdownBasicXMLExport@
-  iNotebookToMarkdown[pathInfo, 
-    notebookToMarkdownCleanPrintStyle@
-      Replace[t, RowBox[{a_, ___, _ButtonBox}]:>a, {1}]
+  notebookToMarkdownExportPrintStyle[
+    pathInfo,
+    $notebookToMarkdownPrintPrintTemplate,
+    "`body`",
+    Replace[t, RowBox[{a_, ___, _ButtonBox}]:>a, {1}],
+    StringReplace[(StartOfLine|StartOfString)->"> "]
     ];
 
 
@@ -2989,15 +3203,27 @@ iNotebookToMarkdownRegister[pathInfo_,
 
 
 
-iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Echo",___]]:=
-  "<div style='font-size:10; color:rgb(128, 128, 128);'>
-	<span style='color:orange'> >> </span>``
-</div>"~TemplateApply~
-  notebookToMarkdownBasicXMLExport@
-  iNotebookToMarkdown[pathInfo,
-    notebookToMarkdownCleanPrintStyle@
-      Replace[t, RowBox[{a_, ___, _ButtonBox}]:>a, {1}]
-    ];
+$notebookToMarkdownEchoPrintTemplate=
+  StringTrim@
+"
+<div style='font-size 12px; color : rgb(55, 55, 55);'>
+	<div class='mma-echo mma-print'>
+		<span style='color:orange;'>
+			<span class='mma-echo-prompt' > >> </span>
+		</span>
+		`body`
+</div>
+";
+
+
+iNotebookToMarkdownRegister[pathInfo_, Cell[t_,"Echo",___]]:=
+  notebookToMarkdownExportPrintStyle[
+    pathInfo,
+    $notebookToMarkdownEchoPrintTemplate,
+    ">> `body`",
+    Replace[t, RowBox[{a_, ___, _ButtonBox}]:>a, {1}],
+    StringReplace[(StartOfLine|StartOfString)->"> "]
+    ]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -3128,6 +3354,11 @@ iNotebookToMarkdownRegister[pathInfo_,Cell[a___,FontWeight->"Bold"|Bold,b___]]:=
 
 
 
+(* ::Subsubsubsubsection::Closed:: *)
+(*FullForm|InputForm*)
+
+
+
 iNotebookToMarkdownRegister[
   pathInfo_, 
   TagBox[g_, FullForm|InputForm]
@@ -3138,6 +3369,11 @@ iNotebookToMarkdownRegister[
     ];
 
 
+(* ::Subsubsubsubsection::Closed:: *)
+(*StyleBox*)
+
+
+
 iNotebookToMarkdownRegister[
   pathInfo_, 
   TagBox[StyleBox[g_, ___],__]
@@ -3146,6 +3382,11 @@ iNotebookToMarkdownRegister[
     pathInfo,
     g
     ];
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*Fallback*)
+
 
 
 iNotebookToMarkdownRegister[
@@ -3159,34 +3400,153 @@ iNotebookToMarkdownRegister[
 
 
 (* ::Subsubsubsection::Closed:: *)
-(*Sub/Super/Subsuper/scripts*)
+(*Math Cells*)
+
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*SuperscriptBox*)
 
 
 
 iNotebookToMarkdownRegister[pathInfo_, 
-  SuperscriptBox[a_, b_]
+  box:SuperscriptBox[a_, b_]
   ]:=
-  TemplateApply[
-    "``<sup>``</sup>",
-    iNotebookToMarkdown[pathInfo]/@{
-      a, 
-      b
-      }
+  If[notebookToMarkdownNoMathJAX[pathInfo],
+    TemplateApply[
+      "``<sup>``</sup>",
+      iNotebookToMarkdown[pathInfo]/@{
+        a, 
+        b
+        }
+      ],
+    notebookToMarkdownFEExport[
+      pathInfo,
+      BoxData@box,
+      "InputText",
+      "Output"
+      ]
     ];
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*SubscriptBox*)
+
+
+
 iNotebookToMarkdownRegister[pathInfo_, 
-  SubscriptBox[a_, b_]
+  box:SubscriptBox[a_, b_]
   ]:=
-  TemplateApply[
-    "``<sub>``</sub>",
-    iNotebookToMarkdown[pathInfo]/@{a,b}
-    ];
+  If[notebookToMarkdownNoMathJAX[pathInfo],
+    TemplateApply[
+      "``<sub>``</sub>",
+      iNotebookToMarkdown[pathInfo]/@{a,b}
+      ],
+    notebookToMarkdownFEExport[
+      pathInfo,
+      BoxData@box,
+      "InputText",
+      "Output"
+      ]
+    ]
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*SubsuperscriptBox*)
+
+
+
 iNotebookToMarkdownRegister[pathInfo_, 
-  SubsuperscriptBox[a_, b_, c_]
+  box:SubsuperscriptBox[a_, b_, c_]
   ]:=
-  TemplateApply[
-    "``<sub>``</sub><sup>``</sup>",
-    iNotebookToMarkdown[pathInfo]/@{a,b,c}
+  If[notebookToMarkdownNoMathJAX[pathInfo],
+    TemplateApply[
+      "``<sub>``</sub><sup>``</sup>",
+      iNotebookToMarkdown[pathInfo]/@{a,b,c}
+      ],
+    notebookToMarkdownFEExport[
+      pathInfo,
+      BoxData@box,
+      "InputText",
+      "Output"
+      ]
     ];
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*FractionBox*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_, 
+  box:FractionBox[a_, b_]
+  ]:=
+  If[notebookToMarkdownNoMathJAX[pathInfo],
+    TemplateApply[
+      "<sup>``</sup>&frasl;<sub>``</sub>",
+      iNotebookToMarkdown[pathInfo]/@{a, b}
+      ],
+    notebookToMarkdownFEExport[
+      pathInfo,
+      BoxData@box,
+      "InputText",
+      "Output"
+      ]
+    ];
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*DisplayFormula*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  Cell[
+    e_,
+    "InlineFormula"|"DisplayFormula", 
+    o___
+    ]
+  ]:=
+  If[pathInfo["UseMathJAX"]=!=False,
+    notebookToMarkdownMathJAXExport[
+      pathInfo,
+      e
+      ],
+    iNotebookToMarkdownExport[pathInfo, e]
+    ];
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*DisplayFormulaNumbered*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  Cell[
+    e_,
+    "DisplayFormulaNumbered", 
+    o___
+    ]
+  ]:=
+  With[{cv=$iNotebookToMarkdownCounters["DisplayFormulaNumbered"]},
+    If[!IntegerQ@cv,
+      $iNotebookToMarkdownCounters["DisplayFormulaNumbered"]=1,
+      $iNotebookToMarkdownCounters["DisplayFormulaNumbered"]++
+      ];
+    If[pathInfo["UseMathJAX"]=!=False,
+      StringReplace[
+        notebookToMarkdownMathJAXExport[
+          pathInfo,
+          e
+          ],
+        "$$"~~EndOfString->"\\quad ("<>ToString[cv+1]<>")$$"
+        ],
+      iNotebookToMarkdownExport[pathInfo, e]
+      ];
+    ]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -3246,6 +3606,11 @@ iNotebookToMarkdownRegister[pathInfo_, RowBox[g_, ___]]:=
 
 
 
+(* ::Subsubsubsubsection::Closed:: *)
+(*formatDownloadLink*)
+
+
+
 formatDownloadLink[pathInfo_, t_, s_]:=
   With[{parse=URLParse[s]},
     If[MatchQ[Lookup[parse["Query"],"_download",False],True|"True"],
@@ -3262,6 +3627,11 @@ formatDownloadLink[pathInfo_, t_, s_]:=
     ];
 formatStandardLink[pathInfo_, t_, e_]:=
   "["<>t<>"]("<>URLBuild@URLParse[iNotebookToMarkdown[pathInfo,e]]<>")"
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*Hyperlink*)
+
 
 
 iNotebookToMarkdownRegister[
@@ -3293,6 +3663,11 @@ iNotebookToMarkdownRegister[
 
 (* ::Subsubsubsection::Closed:: *)
 (*Paclet Links*)
+
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*notebookToMarkdownResolvePacletURL*)
 
 
 
@@ -3347,6 +3722,11 @@ notebookToMarkdownResolvePacletURL[s_String]:=
     ]
 
 
+(* ::Subsubsubsubsection::Closed:: *)
+(*Link*)
+
+
+
 iNotebookToMarkdownRegister[
   pathInfo_,
   ButtonBox[d_,
@@ -3354,8 +3734,12 @@ iNotebookToMarkdownRegister[
     BaseStyle->"Link",
     r___
     ]]:=
-  With[{t=iNotebookToMarkdown[pathInfo,d]},
-    "[```"<>t<>If[StringEndsQ[t,"`"]," ",""]<>"```]("<>
+  Module[
+    {
+      t=iNotebookToMarkdown[pathInfo,d],
+      url
+      },
+    url=
       Replace[
         FirstCase[
           Flatten@{Lookup[{o,r},ButtonData,t]},
@@ -3364,8 +3748,11 @@ iNotebookToMarkdownRegister[
           ],
         s_String:>
           notebookToMarkdownResolvePacletURL[s]
-        ]
-      <>")"
+        ];
+    If[StringEndsQ[url, "ref/"~~Except["/"].. ],
+      "[```"<>t<>If[StringEndsQ[t,"`"]," ",""]<>"```]("<>url<>")",
+      "["<>t<>"]("<>url<>")"
+      ]
     ];
 
 
@@ -3724,7 +4111,10 @@ iNotebookToMarkdownRegister[pathInfo_, s_String]:=
   s;
 iNotebookToMarkdownRegister[pathInfo_, s_TextData]:=
   StringRiffle[
-    Map[iNotebookToMarkdown[pathInfo, #]&, List@@s//Flatten]
+    Map[
+      StringTrim[iNotebookToMarkdown[pathInfo, #], StartOfString~~" "]&, 
+      List@@s//Flatten
+      ]
     ];
 iNotebookToMarkdownRegister[pathInfo_, b_BoxData]:=
   Replace[
@@ -3737,8 +4127,18 @@ iNotebookToMarkdownRegister[pathInfo_, b_BoxData]:=
         "Text"
         ]
     ];
-iNotebookToMarkdownRegister[pathInfo_, e__]:=
-  "";
+iNotebookToMarkdownRegister[pathInfo_, $iNotebookToMarkdownIgnoredBoxHeads[e_,___]]:=
+  iNotebookToMarkdown[pathInfo, e]
+iNotebookToMarkdownRegister[pathInfo_, e_, ___]:=
+  If[BoxQ@e,
+    notebookToMarkdownFEExport[
+      pathInfo,
+      BoxData@e,
+      "InputText",
+      "Output"
+      ],
+    ""
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
