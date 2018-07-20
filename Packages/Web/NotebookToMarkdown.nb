@@ -9194,7 +9194,7 @@ Cell[BoxData[{
     "]"}]}], ";"}]}], \
 "CodeInput",ExpressionUUID->"906b2bbd-9687-4ac6-8834-e801998830b4"]
 }, Open  ]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -9363,245 +9363,202 @@ Cell[BoxData[
     RowBox[{"nbObj", ":", 
      RowBox[{"_NotebookObject", "|", "Automatic"}], ":", "Automatic"}], "\n", 
     "\t", "]"}], ":=", "\n", "\t", 
-   RowBox[{"Catch", "@", "\n", "\t\t", 
-    RowBox[{"Module", "[", "\n", "\t\t\t", 
+   RowBox[{"Catch", "@", "\n", "\t", 
+    RowBox[{
      RowBox[{
-      RowBox[{"{", "\n", "\t\t\t\t", 
-       RowBox[{
-        RowBox[{"nb", "=", 
-         RowBox[{"Replace", "[", 
-          RowBox[{"nbObj", ",", 
-           RowBox[{"Automatic", "\[RuleDelayed]", 
-            RowBox[{"InputNotebook", "[", "]"}]}]}], "]"}]}], ",", "\n", "\t",
-         "\t\t\t", "meta", ",", "\n", "\t\t\t\t", "expOps", ",", "\n", 
-        "\t\t\t\t", "md", ",", "\n", "\t\t\t\t", "root", ",", "\n", 
-        "\t\t\t\t", "expDir", ",", "\n", "\t\t\t\t", "expName", ",", "\n", 
-        "\t\t\t\t", "nbDir", ",", "\n", "\t\t\t\t", "siteBase"}], "\n", 
-       "\t\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+     "PackageExceptionBlock", "[", "\"\<NotebookMarkdownSave\>\"", "]"}], "@",
+      "\n", "\t\t", 
+     RowBox[{"Module", "[", "\n", "\t\t\t", 
       RowBox[{
-       RowBox[{"meta", "=", 
-        RowBox[{"MarkdownNotebookMetadata", "[", "nb", "]"}]}], ";", "\n", 
-       "\t\t\t", 
-       RowBox[{"expOps", "=", "\n", "\t\t\t\t", 
-        RowBox[{"Replace", "[", 
-         RowBox[{
-          RowBox[{"Lookup", "[", 
-           RowBox[{"meta", ",", " ", "\"\<ExportOptions\>\"", ",", " ", 
-            RowBox[{"<|", "|>"}]}], "]"}], ",", "\n", "\t\t\t\t\t", 
-          RowBox[{
-           RowBox[{"Except", "[", 
-            RowBox[{"_", "?", "OptionQ"}], "]"}], "\[Rule]", 
-           RowBox[{"<|", "|>"}]}]}], "\n", "\t\t\t\t\t", "]"}]}], ";", "\n", 
-       "\t\t\t", 
-       RowBox[{"If", "[", "\n", "\t\t\t\t", 
+       RowBox[{"{", "\n", "\t\t\t\t", 
         RowBox[{
-         RowBox[{
+         RowBox[{"nb", "=", 
+          RowBox[{"Replace", "[", 
+           RowBox[{"nbObj", ",", 
+            RowBox[{"Automatic", "\[RuleDelayed]", 
+             RowBox[{"InputNotebook", "[", "]"}]}]}], "]"}]}], ",", "\n", 
+         "\t", "\t\t\t", "meta", ",", "\n", "\t\t\t\t", "expOps", ",", "\n", 
+         "\t\t\t\t", "md", ",", "\n", "\t\t\t\t", "root", ",", "\n", 
+         "\t\t\t\t", "expDir", ",", "\n", "\t\t\t\t", "expName", ",", "\n", 
+         "\t\t\t\t", "nbDir", ",", "\n", "\t\t\t\t", "siteBase"}], "\n", 
+        "\t\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"meta", "=", 
+         RowBox[{"MarkdownNotebookMetadata", "[", "nb", "]"}]}], ";", "\n", 
+        "\t\t\t", 
+        RowBox[{"expOps", "=", "\n", "\t\t\t\t", 
+         RowBox[{"Replace", "[", 
           RowBox[{
            RowBox[{"Lookup", "[", 
-            RowBox[{"expOps", ",", " ", "\"\<Save\>\"", ",", " ", "True"}], 
-            "]"}], "===", "False"}], "||", "\n", "\t\t\t\t\t", 
-          RowBox[{
-           RowBox[{"Lookup", "[", 
-            RowBox[{"meta", ",", " ", "\"\<_Save\>\"", ",", " ", "True"}], 
-            "]"}], "===", "False"}]}], " ", 
-         RowBox[{"(*", "Legacy", "*)"}], ",", " ", "\n", "\t\t\t\t", 
-         RowBox[{"Throw", "[", "Null", "]"}]}], "\n", "\t\t\t\t", "]"}], ";", 
-       "\n", "\t\t\t", 
-       RowBox[{"md", "=", "\n", "\t\t\t\t", 
-        RowBox[{"Reap", "[", "\n", "\t\t\t\t\t", 
+            RowBox[{"meta", ",", " ", "\"\<ExportOptions\>\"", ",", " ", 
+             RowBox[{"<|", "|>"}]}], "]"}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"Except", "[", 
+             RowBox[{"_", "?", "OptionQ"}], "]"}], "\[Rule]", 
+            RowBox[{"<|", "|>"}]}]}], "\n", "\t\t\t\t\t", "]"}]}], ";", "\n", 
+        "\t\t\t", 
+        RowBox[{"If", "[", "\n", "\t\t\t\t", 
          RowBox[{
-          RowBox[{"NotebookToMarkdown", "[", 
-           RowBox[{"nb", ",", " ", "\n", "\t", "\t\t\t\t\t", 
-            RowBox[{"FilterRules", "[", 
-             RowBox[{
-              RowBox[{"Normal", "@", "expOps"}], ",", " ", 
-              RowBox[{"Options", "[", "NotebookToMarkdown", "]"}]}], "]"}]}], 
-           "]"}], ",", "\n", "\t\t\t\t\t", "\"\<MarkdownExport\>\""}], "\n", 
-         "\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t", 
-       RowBox[{"If", "[", 
-        RowBox[{
-         RowBox[{
-          RowBox[{"!", 
-           RowBox[{"StringQ", "@", 
-            RowBox[{"md", "[", 
-             RowBox[{"[", "1", "]"}], "]"}]}]}], "||", 
           RowBox[{
-           RowBox[{"StringLength", "@", 
-            RowBox[{"StringTrim", "@", 
+           RowBox[{
+            RowBox[{"Lookup", "[", 
+             RowBox[{"expOps", ",", " ", "\"\<Save\>\"", ",", " ", "True"}], 
+             "]"}], "===", "False"}], "||", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"Lookup", "[", 
+             RowBox[{"meta", ",", " ", "\"\<_Save\>\"", ",", " ", "True"}], 
+             "]"}], "===", "False"}]}], " ", 
+          RowBox[{"(*", "Legacy", "*)"}], ",", " ", "\n", "\t\t\t\t", 
+          RowBox[{"Throw", "[", "Null", "]"}]}], "\n", "\t\t\t\t", "]"}], ";",
+         "\n", "\t\t\t", 
+        RowBox[{"md", "=", "\n", "\t\t\t\t", 
+         RowBox[{"Reap", "[", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"NotebookToMarkdown", "[", 
+            RowBox[{"nb", ",", " ", "\n", "\t", "\t\t\t\t\t", 
+             RowBox[{"FilterRules", "[", 
+              RowBox[{
+               RowBox[{"Normal", "@", "expOps"}], ",", " ", 
+               RowBox[{"Options", "[", "NotebookToMarkdown", "]"}]}], "]"}]}],
+             "]"}], ",", "\n", "\t\t\t\t\t", "\"\<MarkdownExport\>\""}], "\n",
+           "\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"!", 
+            RowBox[{"StringQ", "@", 
              RowBox[{"md", "[", 
-              RowBox[{"[", "1", "]"}], "]"}]}]}], "==", "0"}]}], ",", " ", 
-         RowBox[{"Throw", "[", "Null", "]"}]}], "]"}], ";", "\n", "\t\t\t", 
-       RowBox[{"nbDir", "=", 
-        RowBox[{"MarkdownNotebookDirectory", "[", "nb", "]"}]}], ";", "\n", 
-       "\t\t\t", 
-       RowBox[{"siteBase", "=", 
-        RowBox[{"MarkdownSiteBase", "@", "nbDir"}]}], ";", "\n", "\t\t\t", 
-       RowBox[{"root", "=", "\n", "\t\t\t\t", 
-        RowBox[{"Replace", "[", 
-         RowBox[{
-          RowBox[{"Lookup", "[", 
+              RowBox[{"[", "1", "]"}], "]"}]}]}], "||", 
            RowBox[{
-           "expOps", ",", " ", "\"\<RootDirectory\>\"", ",", " ", 
-            "Automatic"}], "]"}], ",", "\n", "\t\t\t\t\t", 
-          RowBox[{"{", "\n", "\t\t\t\t\t\t", 
-           RowBox[{
+            RowBox[{"StringLength", "@", 
+             RowBox[{"StringTrim", "@", 
+              RowBox[{"md", "[", 
+               RowBox[{"[", "1", "]"}], "]"}]}]}], "==", "0"}]}], ",", " ", 
+          RowBox[{"Throw", "[", "Null", "]"}]}], "]"}], ";", "\n", "\t\t\t", 
+        RowBox[{"nbDir", "=", 
+         RowBox[{"MarkdownNotebookDirectory", "[", "nb", "]"}]}], ";", "\n", 
+        "\t\t\t", 
+        RowBox[{"siteBase", "=", 
+         RowBox[{"MarkdownSiteBase", "@", "nbDir"}]}], ";", "\n", "\t\t\t", 
+        RowBox[{"root", "=", "\n", "\t\t\t\t", 
+         RowBox[{"Replace", "[", 
+          RowBox[{
+           RowBox[{"Lookup", "[", 
             RowBox[{
-             RowBox[{"f_String", "?", 
-              RowBox[{"(", 
-               RowBox[{"Not", "@*", "DirectoryQ"}], ")"}]}], ":>", "\n", 
-             "\t\t\t\t\t\t\t", 
-             RowBox[{"ExpandFileName", "@", "\n", "\t\t\t\t\t\t\t\t", 
-              RowBox[{"FileNameJoin", "@", 
-               RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
-                RowBox[{"siteBase", ",", "\n", "\t\t\t\t\t\t\t\t\t", "f"}], 
-                "\n", "\t\t\t\t\t\t\t\t\t", "}"}]}]}]}], ",", "\n", 
-            "\t\t\t\t\t\t", 
+            "expOps", ",", " ", "\"\<RootDirectory\>\"", ",", " ", 
+             "Automatic"}], "]"}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{"{", "\n", "\t\t\t\t\t\t", 
             RowBox[{
-             RowBox[{"{", "f__String", "}"}], ":>", "\n", "\t\t\t\t\t\t\t", 
-             RowBox[{"ExpandFileName", "@", "\n", "\t\t\t\t\t\t\t\t", 
-              RowBox[{"FileNameJoin", "@", 
-               RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
-                RowBox[{"siteBase", ",", "\n", "\t\t\t\t\t\t\t\t\t", "f"}], 
-                "\n", "\t\t\t\t\t\t\t\t\t", "}"}]}]}]}], ",", "\n", 
-            "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"f_String", "?", 
+               RowBox[{"(", 
+                RowBox[{"Not", "@*", "DirectoryQ"}], ")"}]}], ":>", "\n", 
+              "\t\t\t\t\t\t\t", 
+              RowBox[{"ExpandFileName", "@", "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{"FileNameJoin", "@", 
+                RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{"siteBase", ",", "\n", "\t\t\t\t\t\t\t\t\t", "f"}], 
+                 "\n", "\t\t\t\t\t\t\t\t\t", "}"}]}]}]}], ",", "\n", 
+             "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"{", "f__String", "}"}], ":>", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"ExpandFileName", "@", "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{"FileNameJoin", "@", 
+                RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{"siteBase", ",", "\n", "\t\t\t\t\t\t\t\t\t", "f"}], 
+                 "\n", "\t\t\t\t\t\t\t\t\t", "}"}]}]}]}], ",", "\n", 
+             "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Except", "[", 
+               RowBox[{"_String", "?", 
+                RowBox[{"(", "DirectoryQ", ")"}]}], "]"}], ":>", "\n", 
+              "\t\t\t\t\t\t\t", "siteBase"}]}], "\n", "\t\t\t\t\t\t", "}"}]}],
+           "\n", "\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t", 
+        RowBox[{"expDir", "=", "\n", "\t\t\t\t", 
+         RowBox[{"Replace", "[", 
+          RowBox[{
+           RowBox[{"Lookup", "[", 
             RowBox[{
-             RowBox[{"Except", "[", 
-              RowBox[{"_String", "?", 
-               RowBox[{"(", "DirectoryQ", ")"}]}], "]"}], ":>", "\n", 
-             "\t\t\t\t\t\t\t", "siteBase"}]}], "\n", "\t\t\t\t\t\t", "}"}]}], 
-         "\n", "\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t", 
-       RowBox[{"expDir", "=", "\n", "\t\t\t\t", 
-        RowBox[{"Replace", "[", 
-         RowBox[{
-          RowBox[{"Lookup", "[", 
-           RowBox[{
-           "expOps", ",", " ", "\"\<Directory\>\"", ",", " ", "Automatic"}], 
-           "]"}], ",", "\n", "\t\t\t\t\t", 
-          RowBox[{"{", "\n", "\t\t\t\t\t\t", 
-           RowBox[{
+            "expOps", ",", " ", "\"\<Directory\>\"", ",", " ", "Automatic"}], 
+            "]"}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{"{", "\n", "\t\t\t\t\t\t", 
             RowBox[{
-             RowBox[{"f_String", "?", 
-              RowBox[{"(", 
-               RowBox[{
+             RowBox[{
+              RowBox[{"f_String", "?", 
+               RowBox[{"(", 
                 RowBox[{
                  RowBox[{
-                  RowBox[{"ExpandFileName", "[", "#", "]"}], "!=", "#"}], "||", 
-                 RowBox[{"Not", "@", 
-                  RowBox[{"DirectoryQ", "[", "#", "]"}]}]}], "&"}], ")"}]}], ":>",
-              "\n", "\t\t\t\t\t\t\t", 
-             RowBox[{"ExpandFileName", "@", "\n", "\t\t\t\t\t\t\t\t", 
-              RowBox[{"FileNameJoin", "@", 
-               RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
-                RowBox[{"nbDir", ",", "\n", "\t\t\t\t\t\t\t\t\t", "f"}], "\n",
-                 "\t\t\t\t\t\t\t\t\t", "}"}]}]}]}], ",", "\n", "\t\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{"{", "f__String", "}"}], ":>", "\n", "\t\t\t\t\t\t\t", 
-             RowBox[{"ExpandFileName", "@", "\n", "\t\t\t\t\t\t\t\t", 
-              RowBox[{"FileNameJoin", "@", 
-               RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
-                RowBox[{"nbDir", ",", "\n", "\t\t\t\t\t\t\t\t\t", "f"}], "\n",
-                 "\t\t\t\t\t\t\t\t\t", "}"}]}]}]}], ",", "\n", "\t\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{"Except", "[", 
-              RowBox[{"_String", "?", 
-               RowBox[{"(", "DirectoryQ", ")"}]}], "]"}], ":>", "\n", 
-             "\t\t\t\t\t\t\t", "nbDir"}]}], "\n", "\t\t\t\t\t\t", "}"}]}], 
-         "\n", "\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t", 
-       RowBox[{"expName", "=", "\n", "\t\t\t\t", 
-        RowBox[{"Replace", "[", 
-         RowBox[{
-          RowBox[{"Lookup", "[", 
-           RowBox[{
-           "expOps", ",", " ", "\"\<Name\>\"", ",", " ", "Automatic"}], "]"}],
-           ",", "\n", "\t\t\t\t\t", 
-          RowBox[{"{", "\n", "\t\t\t\t\t\t", 
-           RowBox[{
-            RowBox[{"f_String", ":>", "\n", "\t\t\t\t\t\t\t", 
-             RowBox[{"If", "[", 
-              RowBox[{
-               RowBox[{
-                RowBox[{"FileExtension", "[", "f", "]"}], "\[Equal]", 
-                "\"\<\>\""}], ",", " ", 
-               RowBox[{"f", "<>", "\"\<.md\>\""}], ",", " ", "f"}], "]"}]}], 
-            ",", "\n", "\t\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{"Except", "[", 
-              RowBox[{"_String", "?", 
-               RowBox[{"(", "DirectoryQ", ")"}]}], "]"}], ":>", "\n", 
-             "\t\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"ExpandFileName", "[", "#", "]"}], "!=", "#"}], "||", 
+                  RowBox[{"Not", "@", 
+                   RowBox[{"DirectoryQ", "[", "#", "]"}]}]}], "&"}], ")"}]}], 
+              ":>", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"ExpandFileName", "@", "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{"FileNameJoin", "@", 
+                RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{"nbDir", ",", "\n", "\t\t\t\t\t\t\t\t\t", "f"}], 
+                 "\n", "\t\t\t\t\t\t\t\t\t", "}"}]}]}]}], ",", "\n", 
+             "\t\t\t\t\t\t", 
              RowBox[{
-              RowBox[{"FileBaseName", "@", "\n", "\t\t\t\t\t\t\t\t", 
-               RowBox[{"Quiet", "[", 
-                RowBox[{"Replace", "[", 
-                 RowBox[{
-                  RowBox[{"NotebookFileName", "[", "nb", "]"}], ",", " ", 
-                  RowBox[{"$Failed", "->", "\"\<Notebook\>\""}]}], "]"}], 
-                "]"}]}], "<>", "\"\<.md\>\""}]}]}], "\n", "\t\t\t\t\t\t", 
-           "}"}]}], "\n", "\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t", 
-       RowBox[{"NotebookMarkdownSaveExportSown", "[", 
-        RowBox[{"root", ",", " ", 
-         RowBox[{"Last", "[", "md", "]"}]}], "]"}], ";", "\n", "\t\t\t", 
-       RowBox[{"NotebookMarkdownSaveExportMDFile", "[", "\n", "\t\t\t\t", 
-        RowBox[{
-         RowBox[{"FileNameJoin", "@", 
-          RowBox[{"{", "\n", "\t\t\t\t\t", 
-           RowBox[{"expDir", ",", "\n", "\t\t\t\t\t", "expName"}], "\n", 
-           "\t\t\t\t\t", "}"}]}], ",", "\n", "\t\t\t\t", 
-         RowBox[{"md", "[", 
-          RowBox[{"[", "1", "]"}], "]"}], ",", "\n", "\t\t\t\t", 
-         RowBox[{"KeyDrop", "[", 
-          RowBox[{"meta", ",", " ", "$NotebookMarkdownSaveIgnoredMeta"}], 
-          "]"}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "]"}]}]}], 
-  ";"}]], "CodeInput",
- CellChangeTimes->{{3.709780020690102*^9, 3.7097800576927843`*^9}, {
-   3.709780098743793*^9, 3.709780180162344*^9}, {3.709780269197137*^9, 
-   3.709780271896779*^9}, {3.7097803048527193`*^9, 3.709780315247953*^9}, {
-   3.7097816154871683`*^9, 3.709781632323477*^9}, {3.709782554606657*^9, 
-   3.709782637354363*^9}, {3.709782766597509*^9, 3.709782821095028*^9}, {
-   3.7097828577790403`*^9, 3.709782859448186*^9}, {3.7097831903331223`*^9, 
-   3.709783191749112*^9}, {3.709783885821287*^9, 3.709783947191688*^9}, {
-   3.709784088329618*^9, 3.709784099845759*^9}, {3.7097841975961847`*^9, 
-   3.709784201098426*^9}, 3.709834815471691*^9, 3.7098349286618967`*^9, {
-   3.709911027343178*^9, 3.7099110289688168`*^9}, {3.71003176325414*^9, 
-   3.710031821673098*^9}, 3.710163716168831*^9, 3.710300545360434*^9, {
-   3.7126191329442587`*^9, 3.7126191407112703`*^9}, 3.712619540050724*^9, {
-   3.712619679798102*^9, 3.712619679805181*^9}, 3.712714883059497*^9, {
-   3.7129298255870237`*^9, 3.712929860040524*^9}, {3.712929944384673*^9, 
-   3.712929960838821*^9}, {3.712930023033133*^9, 3.712930056262088*^9}, {
-   3.7129304556753273`*^9, 3.7129305466667767`*^9}, {3.7129305801470747`*^9, 
-   3.712930582401876*^9}, {3.712932096597921*^9, 3.712932098379356*^9}, {
-   3.712934300493252*^9, 3.712934346105652*^9}, {3.712934443070773*^9, 
-   3.7129345491409082`*^9}, 3.712934826090493*^9, {3.712935131382553*^9, 
-   3.7129351432720633`*^9}, 3.712936542162587*^9, {3.712938200975946*^9, 
-   3.712938249275551*^9}, {3.712938298144767*^9, 3.7129383355828333`*^9}, {
-   3.712938370511526*^9, 3.712938396669919*^9}, {3.712942776609303*^9, 
-   3.7129427777379923`*^9}, {3.712943206602789*^9, 3.71294320813864*^9}, {
-   3.7129432585042152`*^9, 3.712943259592798*^9}, {3.712943294015456*^9, 
-   3.71294334055519*^9}, {3.718246530623392*^9, 3.71824659457248*^9}, {
-   3.72133578679665*^9, 3.7213358403682823`*^9}, 3.7213358738019867`*^9, {
-   3.7226542150044537`*^9, 3.722654237422741*^9}, {3.7226543206161737`*^9, 
-   3.722654327218609*^9}, {3.7226543586281013`*^9, 3.722654367457048*^9}, {
-   3.7226544965640717`*^9, 3.722654504473608*^9}, {3.7226547459071207`*^9, 
-   3.722654747702258*^9}, {3.722654838246818*^9, 3.72265485226379*^9}, {
-   3.7226551007478037`*^9, 3.7226551017903*^9}, {3.723256958856412*^9, 
-   3.7232569598715277`*^9}, {3.723257187688191*^9, 3.723257189155011*^9}, {
-   3.723389932248249*^9, 3.72338995546249*^9}, {3.723418576560906*^9, 
-   3.723418601581539*^9}, {3.732829908969586*^9, 3.7328301224706783`*^9}, {
-   3.732830161602496*^9, 3.732830182673439*^9}, {3.7328302441948833`*^9, 
-   3.7328302707461987`*^9}, {3.7328305051792393`*^9, 3.732830516565703*^9}, {
-   3.732830553069943*^9, 3.732830560360361*^9}, {3.732830711047764*^9, 
-   3.732830754117611*^9}, {3.7328308458097963`*^9, 3.7328308766151123`*^9}, {
-   3.73283091288488*^9, 3.73283120809973*^9}, {3.73283130287901*^9, 
-   3.7328313950236464`*^9}, {3.732831486894109*^9, 3.732831523849656*^9}, {
-   3.732831661901058*^9, 3.732831740931983*^9}, {3.732831805001605*^9, 
-   3.732831831264*^9}, {3.7328318743759108`*^9, 3.732831934445842*^9}, {
-   3.732832011628875*^9, 3.732832190326009*^9}, {3.7328322595611*^9, 
-   3.7328322723670807`*^9}, {3.732832307925702*^9, 3.7328323163819237`*^9}, {
-   3.732832374515374*^9, 3.732832579480893*^9}, {3.732843843510929*^9, 
-   3.732843988359819*^9}, {3.733032258130567*^9, 3.73303225942453*^9}, {
-   3.733032324876178*^9, 3.733032347283886*^9}, {3.7330328218420343`*^9, 
-   3.733032834742805*^9}},ExpressionUUID->"48057806-ccf9-44ea-9205-\
-568729567131"]
+              RowBox[{"{", "f__String", "}"}], ":>", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"ExpandFileName", "@", "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{"FileNameJoin", "@", 
+                RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{"nbDir", ",", "\n", "\t\t\t\t\t\t\t\t\t", "f"}], 
+                 "\n", "\t\t\t\t\t\t\t\t\t", "}"}]}]}]}], ",", "\n", 
+             "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Except", "[", 
+               RowBox[{"_String", "?", 
+                RowBox[{"(", "DirectoryQ", ")"}]}], "]"}], ":>", "\n", 
+              "\t\t\t\t\t\t\t", "nbDir"}]}], "\n", "\t\t\t\t\t\t", "}"}]}], 
+          "\n", "\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t", 
+        RowBox[{"expName", "=", "\n", "\t\t\t\t", 
+         RowBox[{"Replace", "[", 
+          RowBox[{
+           RowBox[{"Lookup", "[", 
+            RowBox[{
+            "expOps", ",", " ", "\"\<Name\>\"", ",", " ", "Automatic"}], 
+            "]"}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"f_String", ":>", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"If", "[", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"FileExtension", "[", "f", "]"}], "\[Equal]", 
+                 "\"\<\>\""}], ",", " ", 
+                RowBox[{"f", "<>", "\"\<.md\>\""}], ",", " ", "f"}], "]"}]}], 
+             ",", "\n", "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Except", "[", 
+               RowBox[{"_String", "?", 
+                RowBox[{"(", "DirectoryQ", ")"}]}], "]"}], ":>", "\n", 
+              "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"FileBaseName", "@", "\n", "\t\t\t\t\t\t\t\t", 
+                RowBox[{"Quiet", "[", 
+                 RowBox[{"Replace", "[", 
+                  RowBox[{
+                   RowBox[{"NotebookFileName", "[", "nb", "]"}], ",", " ", 
+                   RowBox[{"$Failed", "->", "\"\<Notebook\>\""}]}], "]"}], 
+                 "]"}]}], "<>", "\"\<.md\>\""}]}]}], "\n", "\t\t\t\t\t\t", 
+            "}"}]}], "\n", "\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t", 
+        RowBox[{"NotebookMarkdownSaveExportSown", "[", 
+         RowBox[{"root", ",", " ", 
+          RowBox[{"Last", "[", "md", "]"}]}], "]"}], ";", "\n", "\t\t\t", 
+        RowBox[{"NotebookMarkdownSaveExportMDFile", "[", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"FileNameJoin", "@", 
+           RowBox[{"{", "\n", "\t\t\t\t\t", 
+            RowBox[{"expDir", ",", "\n", "\t\t\t\t\t", "expName"}], "\n", 
+            "\t\t\t\t\t", "}"}]}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"md", "[", 
+           RowBox[{"[", "1", "]"}], "]"}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"KeyDrop", "[", 
+           RowBox[{"meta", ",", " ", "$NotebookMarkdownSaveIgnoredMeta"}], 
+           "]"}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "]"}]}]}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"48057806-ccf9-44ea-9205-568729567131"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],

@@ -4231,6 +4231,7 @@ NotebookMarkdownSave[
   nbObj:_NotebookObject|Automatic:Automatic
   ]:=
   Catch@
+  PackageExceptionBlock["NotebookMarkdownSave"]@
     Module[
       {
         nb=Replace[nbObj,Automatic:>InputNotebook[]],

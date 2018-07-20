@@ -502,6 +502,11 @@ Cell["\[LeftCeiling]GitHub\[RightFloor]", "CodeSubsection",
   3.688675000056259*^9}},ExpressionUUID->"8c8adc61-eb08-416b-b2ce-\
 2fedf184c7e9"],
 
+Cell[BoxData[
+ RowBox[{"GitHub", "//", 
+  "Clear"}]], \
+"CodeInput",ExpressionUUID->"f23e73d0-d158-460a-b7a7-a5a1c615aefd"],
+
 Cell[CellGroupData[{
 
 Cell["\[LeftCeiling]GitHubPostProcess\[RightFloor]", "CodeSubsubsection",
@@ -1004,90 +1009,97 @@ Cell[BoxData[
     RowBox[{
      RowBox[{"{", 
       RowBox[{"$GitHubRepoFormat", "=", "True"}], "}"}], ",", "\n", "\t\t", 
-     RowBox[{"With", "[", "\n", "\t\t\t", 
+     RowBox[{"Module", "[", "\n", "\t\t\t", 
       RowBox[{
        RowBox[{"{", "\n", "\t\t\t\t", 
         RowBox[{
          RowBox[{"cmd", "=", 
           RowBox[{"$githubactions", "[", 
            RowBox[{"ToLowerCase", "@", "command"}], "]"}]}], ",", "\n", 
-         "\t\t\t\t", 
-         RowBox[{"ropp", "=", "\n", "\t\t\t\t\t", 
-          RowBox[{"Sequence", "@@", "\n", "\t\t\t\t\t\t", 
-           RowBox[{"FilterRules", "[", 
-            RowBox[{
-             RowBox[{"{", "opp", "}"}], ",", " ", "\n", "\t\t\t\t\t\t\t", 
-             RowBox[{"Except", "[", "$gitHubOptions", "]"}]}], "\n", 
-            "\t\t\t\t\t\t\t", "]"}]}]}]}], "\n", "\t\t\t\t", "}"}], ",", "\n",
-        "\t\t\t", 
-       RowBox[{"With", "[", "\n", "\t\t\t\t", 
-        RowBox[{
-         RowBox[{"{", "\n", "\t\t\t\t\t", 
-          RowBox[{"r", "=", "\n", "\t\t\t\t\t\t", 
+         "\t\t\t\t", "ropp", ",", "\n", "\t\t\t\t", "r"}], "\n", "\t\t\t\t", 
+        "}"}], ",", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"ropp", "=", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{
            RowBox[{"If", "[", 
             RowBox[{
              RowBox[{
-              RowBox[{"Options", "[", "cmd", "]"}], "=!=", 
-              RowBox[{"{", "}"}]}], ",", "\n", "\t\t\t\t\t\t\t", 
-             RowBox[{"cmd", "[", 
-              RowBox[{"args", ",", " ", 
-               RowBox[{"Sequence", "@@", 
-                RowBox[{"FilterRules", "[", 
-                 RowBox[{
-                  RowBox[{"{", "opp", "}"}], ",", " ", 
-                  RowBox[{"Options", "@", "cmd"}]}], "]"}]}]}], "]"}], ",", 
-             "\n", "\t\t\t\t\t\t\t", 
-             RowBox[{"With", "[", 
-              RowBox[{
-               RowBox[{"{", 
-                RowBox[{"c", "=", 
-                 RowBox[{"cmd", "[", 
-                  RowBox[{"args", ",", " ", "ropp"}], "]"}]}], "}"}], ",", 
-               "\n", "\t\t\t\t\t\t\t\t", 
-               RowBox[{"If", "[", 
-                RowBox[{
-                 RowBox[{
-                  RowBox[{"Head", "@", "c"}], "===", "cmd"}], ",", "\n", 
-                 "\t\t\t\t\t\t\t\t\t", 
-                 RowBox[{"cmd", "[", "args", "]"}], ",", "\n", 
-                 "\t\t\t\t\t\t\t\t\t", "c"}], "\n", "\t\t\t\t\t\t\t\t\t", 
-                "]"}]}], "\n", "\t\t\t\t\t\t\t\t", "]"}]}], "\n", 
-            "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "}"}], ",", "\n", 
-         "\t\t\t\t", 
-         RowBox[{
-          RowBox[{
-           RowBox[{"PackageExceptionBlock", "[", "\"\<GitHub\>\"", "]"}], "@",
-            "\n", "\t\t\t\t\t", 
-           RowBox[{"If", "[", 
+              RowBox[{"Length", "@", "#"}], "\[Equal]", "0"}], ",", " ", 
+             RowBox[{"Sequence", "@@", 
+              RowBox[{"{", "}"}]}], ",", " ", "#"}], "]"}], "&"}], "@", "\n", 
+          "\t\t\t\t\t", 
+          RowBox[{"If", "[", 
+           RowBox[{
             RowBox[{
-             RowBox[{"TrueQ", "@", 
-              RowBox[{"Lookup", "[", 
+             RowBox[{"Options", "[", "cmd", "]"}], "=!=", 
+             RowBox[{"{", "}"}]}], ",", "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{"FilterRules", "[", 
+             RowBox[{
+              RowBox[{"{", "opp", "}"}], ",", " ", 
+              RowBox[{"Options", "@", "cmd"}]}], "]"}], ",", "\n", "\t", 
+            "\t\t\t\t\t", 
+            RowBox[{"FilterRules", "[", "\n", "\t", "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"{", "opp", "}"}], ",", " ", "\n", "\t", "\t\t\t\t\t\t", 
+              RowBox[{"Except", "[", "$gitHubOptions", "]"}]}], "\n", "\t", 
+             "\t\t\t\t\t\t", "]"}]}], "\n", "\t", "\t\t\t\t\t", "]"}]}]}], 
+        ";", "\n", "\t\t\t\t", 
+        RowBox[{"r", "=", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"PackageExceptionBlock", "[", "\"\<GitHub\>\"", "]"}], "@", 
+          "\n", "\t", "\t\t\t\t\t", 
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Options", "[", "cmd", "]"}], "=!=", 
+             RowBox[{"{", "}"}]}], ",", "\n", "\t", "\t\t\t\t\t\t", 
+            RowBox[{"cmd", "[", 
+             RowBox[{"args", ",", " ", "ropp"}], "]"}], ",", "\n", 
+            "\t\t\t\t\t\t\t", 
+            RowBox[{"With", "[", 
+             RowBox[{
+              RowBox[{"{", 
+               RowBox[{"c", "=", 
+                RowBox[{"cmd", "[", 
+                 RowBox[{"args", ",", " ", "ropp"}], "]"}]}], "}"}], ",", 
+              "\n", "\t", "\t\t\t\t\t\t\t", 
+              RowBox[{"If", "[", 
                RowBox[{
-                RowBox[{"{", "opp", "}"}], ",", " ", 
-                "\"\<ReturnGitHubQuery\>\"", ",", " ", "False"}], "]"}]}], 
-             ",", "\n", "\t", "\t\t\t\t\t", "r", ",", "\n", "\t", 
-             "\t\t\t\t\t", 
-             RowBox[{"Replace", "[", 
-              RowBox[{"r", ",", "\n", "\t", "\t", "\t\t\t\t\t", 
-               RowBox[{
-               "h_HTTPRequest", ":>", "\n", "\t", "\t", "\t\t\t\t\t\t", 
-                RowBox[{"If", "[", 
-                 RowBox[{
-                  RowBox[{
-                   RowBox[{"Lookup", "[", 
-                    RowBox[{
-                    RowBox[{"{", "opp", "}"}], ",", " ", 
-                    "\"\<GitHubImport\>\"", ",", " ", "$GitHubImport"}], 
-                    "]"}], "===", "False"}], ",", "\n", "\t", "\t", 
-                  "\t\t\t\t\t\t\t", "h", ",", " ", "\n", "\t", "\t", 
-                  "\t\t\t\t\t\t\t", 
-                  RowBox[{"GitHubImport", "@", 
-                   RowBox[{"URLRead", "[", "h", "]"}]}]}], "\n", "\t", 
-                 "\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t", "\t\t\t\t\t\t", 
-              "]"}]}], "\n", "\t", "\t\t\t\t\t", "]"}]}], "/;", 
+                RowBox[{
+                 RowBox[{"Head", "@", "c"}], "===", "cmd"}], ",", " ", 
+                RowBox[{"cmd", "[", "args", "]"}], ",", " ", "c"}], "]"}]}], 
+             "\n", "\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t", 
+           "]"}]}]}], ";", "\n", "\t\t\t\t\t", 
+        RowBox[{
+         RowBox[{"If", "[", 
           RowBox[{
-           RowBox[{"Head", "[", "r", "]"}], "=!=", "cmd"}]}]}], "\n", 
-        "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], 
+           RowBox[{"TrueQ", "@", 
+            RowBox[{"Lookup", "[", 
+             RowBox[{
+              RowBox[{"{", "opp", "}"}], ",", " ", 
+              "\"\<ReturnGitHubQuery\>\"", ",", " ", "False"}], "]"}]}], ",", 
+           "\n", "\t", "\t\t\t\t\t", "r", ",", "\n", "\t", "\t\t\t\t\t", 
+           RowBox[{"Replace", "[", 
+            RowBox[{"r", ",", "\n", "\t", "\t", "\t\t\t\t\t", 
+             RowBox[{
+             "h_HTTPRequest", ":>", "\n", "\t", "\t", "\t\t\t\t\t\t", 
+              RowBox[{"If", "[", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Lookup", "[", 
+                  RowBox[{
+                   RowBox[{"{", "opp", "}"}], ",", " ", 
+                   "\"\<GitHubImport\>\"", ",", " ", "$GitHubImport"}], "]"}],
+                  "===", "False"}], ",", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
+                "h", ",", " ", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
+                RowBox[{"GitHubImport", "@", 
+                 RowBox[{"URLRead", "[", "h", "]"}]}]}], "\n", "\t", 
+               "\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t", "\t\t\t\t\t\t", 
+            "]"}]}], "\n", "\t", "\t\t\t\t\t", "]"}], "/;", 
+         RowBox[{
+          RowBox[{"Head", "[", "r", "]"}], "=!=", "cmd"}]}]}]}], "\n", 
+      "\t\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"9ec8d47a-22c7-4d71-bb7b-ca7dce0741e8"]
 }, Open  ]],
 
@@ -1097,13 +1109,22 @@ Cell["\[LeftCeiling]Raw Request\[RightFloor]", "CodeSubsubsubsection",
  Evaluatable->True,ExpressionUUID->"3df72fb5-85cf-47f6-907c-21f98bc77aad"],
 
 Cell[BoxData[
+ RowBox[{"gitHubTrueFallbackMethod", "=", "\n", "\t", 
+  RowBox[{"(", 
+   RowBox[{"StringStartsQ", "[", 
+    RowBox[{"LetterCharacter", "?", "LowerCaseQ"}], "]"}], 
+   ")"}]}]], \
+"CodeInput",ExpressionUUID->"71237fee-939e-45a7-bc73-967d1d77eafd"],
+
+Cell[BoxData[
  RowBox[{
   RowBox[{
    RowBox[{"GitHub", "[", "\n", "\t", 
     RowBox[{
      RowBox[{"path", ":", 
       RowBox[{
-       RowBox[{"{", "___String", "}"}], "|", "_String"}], ":", 
+       RowBox[{"{", "___String", "}"}], "|", 
+       RowBox[{"_String", "?", "gitHubTrueFallbackMethod"}]}], ":", 
       RowBox[{"{", "}"}]}], ",", "\n", "\t", 
      RowBox[{"query", ":", 
       RowBox[{
@@ -1173,7 +1194,8 @@ Cell[BoxData[
     RowBox[{
      RowBox[{"path", ":", 
       RowBox[{
-       RowBox[{"{", "___String", "}"}], "|", "_String"}], ":", 
+       RowBox[{"{", "___String", "}"}], "|", 
+       RowBox[{"_String", "?", "gitHubTrueFallbackMethod"}]}], ":", 
       RowBox[{"{", "}"}]}], ",", "\n", "\t", 
      RowBox[{"query", ":", 
       RowBox[{
@@ -1209,7 +1231,8 @@ Cell[BoxData[
     RowBox[{
      RowBox[{"path", ":", 
       RowBox[{
-       RowBox[{"{", "___String", "}"}], "|", "_String"}], ":", 
+       RowBox[{"{", "___String", "}"}], "|", 
+       RowBox[{"_String", "?", "gitHubTrueFallbackMethod"}]}], ":", 
       RowBox[{"{", "}"}]}], ",", "\n", "\t", 
      RowBox[{"query", ":", 
       RowBox[{
@@ -1239,12 +1262,7 @@ Cell[BoxData[
 Cell[CellGroupData[{
 
 Cell["\[LeftCeiling]ResultJSON\[RightFloor]", "CodeSubsubsubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.7338044634998627`*^9, 3.733804464443763*^9}, {
-   3.733804494480591*^9, 3.7338045052878923`*^9}, {3.733804759172934*^9, 
-   3.733804759842936*^9}, 3.733804837047256*^9, {3.733865637789082*^9, 
-   3.733865657206811*^9}},ExpressionUUID->"07533bea-1d34-4b34-848a-\
-6ea242268ec9"],
+ Evaluatable->True,ExpressionUUID->"07533bea-1d34-4b34-848a-6ea242268ec9"],
 
 Cell[BoxData[
  RowBox[{
@@ -1253,7 +1271,8 @@ Cell[BoxData[
     RowBox[{
      RowBox[{"path", ":", 
       RowBox[{
-       RowBox[{"{", "___String", "}"}], "|", "_String"}], ":", 
+       RowBox[{"{", "___String", "}"}], "|", 
+       RowBox[{"_String", "?", "gitHubTrueFallbackMethod"}]}], ":", 
       RowBox[{"{", "}"}]}], ",", "\n", "\t", 
      RowBox[{"query", ":", 
       RowBox[{
@@ -1295,7 +1314,8 @@ Cell[BoxData[
     RowBox[{
      RowBox[{"path", ":", 
       RowBox[{
-       RowBox[{"{", "___String", "}"}], "|", "_String"}], ":", 
+       RowBox[{"{", "___String", "}"}], "|", 
+       RowBox[{"_String", "?", "gitHubTrueFallbackMethod"}]}], ":", 
       RowBox[{"{", "}"}]}], ",", "\n", "\t", 
      RowBox[{"query", ":", 
       RowBox[{
@@ -1328,7 +1348,8 @@ Cell[BoxData[
    RowBox[{
     RowBox[{"path", ":", 
      RowBox[{
-      RowBox[{"{", "___String", "}"}], "|", "_String"}], ":", 
+      RowBox[{"{", "___String", "}"}], "|", 
+      RowBox[{"_String", "?", "gitHubTrueFallbackMethod"}]}], ":", 
      RowBox[{"{", "}"}]}], ",", "\n", "\t", 
     RowBox[{"query", ":", 
      RowBox[{
@@ -1369,7 +1390,8 @@ Cell[BoxData[
    RowBox[{
     RowBox[{"path", ":", 
      RowBox[{
-      RowBox[{"{", "___String", "}"}], "|", "_String"}], ":", 
+      RowBox[{"{", "___String", "}"}], "|", 
+      RowBox[{"_String", "?", "gitHubTrueFallbackMethod"}]}], ":", 
      RowBox[{"{", "}"}]}], ",", "\n", "\t", 
     RowBox[{"query", ":", 
      RowBox[{

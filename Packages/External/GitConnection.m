@@ -220,6 +220,9 @@ SVN[
 
 
 
+GitHub//Clear
+
+
 (* ::Subsubsection::Closed:: *)
 (*GitHubPostProcess*)
 
@@ -483,29 +486,29 @@ GitHub[
   opp___?OptionQ
   ]:=
   Block[{$GitHubRepoFormat=True},
-    With[
+    Module[
       {
         cmd=$githubactions[ToLowerCase@command],
-        ropp=
-          Sequence@@
-            FilterRules[{opp}, 
+        ropp,
+        r
+        },
+      ropp=
+        If[Length@#==0, Sequence@@{}, #]&@
+          If[Options[cmd]=!={},
+            FilterRules[{opp}, Options@cmd],
+            FilterRules[
+              {opp}, 
               Except[$gitHubOptions]
               ]
-        },
-      With[
-        {
-          r=
+            ];
+        r=
+          PackageExceptionBlock["GitHub"]@
             If[Options[cmd]=!={},
-              cmd[args, Sequence@@FilterRules[{opp}, Options@cmd]],
+              cmd[args, ropp],
               With[{c=cmd[args, ropp]},
-                If[Head@c===cmd,
-                  cmd[args],
-                  c
-                  ]
+                If[Head@c===cmd, cmd[args], c]
                 ]
-              ]
-          },
-        PackageExceptionBlock["GitHub"]@
+              ];
           If[TrueQ@Lookup[{opp}, "ReturnGitHubQuery", False],
             r,
             Replace[r,
@@ -517,7 +520,6 @@ GitHub[
               ]
             ]/;Head[r]=!=cmd
         ]
-      ]
     ];
 
 
@@ -526,8 +528,12 @@ GitHub[
 
 
 
+gitHubTrueFallbackMethod=
+  (StringStartsQ[LetterCharacter?LowerCaseQ])
+
+
 GitHub[
-  path:{___String}|_String:{},
+  path:{___String}|_String?gitHubTrueFallbackMethod:{},
   query:(_String->_)|{(_String->_)...}:{},
   headers:_Association:<||>,
   opp___?OptionQ
@@ -564,7 +570,7 @@ GitHub[
 
 
 GitHub[
-  path:{___String}|_String:{},
+  path:{___String}|_String?gitHubTrueFallbackMethod:{},
   query:(_String->_)|{(_String->_)...}:{},
   headers:_Association:<||>,
   opp___?OptionQ,
@@ -581,7 +587,7 @@ GitHub[
 
 
 GitHub[
-  path:{___String}|_String:{},
+  path:{___String}|_String?gitHubTrueFallbackMethod:{},
   query:(_String->_)|{(_String->_)...}:{},
   headers:_Association:<||>,
   opp___?OptionQ,
@@ -600,7 +606,7 @@ GitHub[
 
 
 GitHub[
-  path:{___String}|_String:{},
+  path:{___String}|_String?gitHubTrueFallbackMethod:{},
   query:(_String->_)|{(_String->_)...}:{},
   headers:_Association:<||>,
   opp___?OptionQ,
@@ -618,7 +624,7 @@ GitHub[
 
 
 GitHub[
-  path:{___String}|_String:{},
+  path:{___String}|_String?gitHubTrueFallbackMethod:{},
   query:(_String->_)|{(_String->_)...}:{},
   headers:_Association:<||>,
   opp___?OptionQ,
@@ -633,7 +639,7 @@ GitHub[
 
 
 GitHub[
-  path:{___String}|_String:{},
+  path:{___String}|_String?gitHubTrueFallbackMethod:{},
   query:(_String->_)|{(_String->_)...}:{},
   headers:_Association:<||>,
   opp___?OptionQ,
@@ -652,7 +658,7 @@ GitHub[
 
 
 GitHub[
-  path:{___String}|_String:{},
+  path:{___String}|_String?gitHubTrueFallbackMethod:{},
   query:(_String->_)|{(_String->_)...}:{},
   headers:_Association:<||>,
   opp___?OptionQ,

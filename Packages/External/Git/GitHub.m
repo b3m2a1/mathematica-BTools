@@ -149,7 +149,10 @@ GitHubGetConfig[]:=$GitHubConfig
 $GitHubActions["SetConfig"]=GitHubSetConfig;
 
 
-GitHubSetConfig[o_?OptionQ]:=
+GitHubSetConfig//Clear
+
+
+GitHubSetConfig[o_?(OptionQ)]:=
   AssociateTo[$GitHubConfig, o];
 GitHubSetConfig[k_, v_]:=
   GitHubSetConfig[k->v];
@@ -819,9 +822,9 @@ $GitHubActions["SetPassword"]:=GitHubSetPassword;
 
 
 GitHubSetPassword[u_String, s_String]:=
-  gitHubPasswordCache[u]=s;
+  (gitHubPasswordCache[u]=s;);
 GitHubSetPassword[s_String]:=
-  gitHubPasswordCache[$GitHubUsername]=s;
+  (gitHubPasswordCache[$GitHubUsername]=s;);
 GitHubSetPassword[Automatic]:=Null;
 GitHubSetPassword[_]:=$Failed
 
@@ -900,11 +903,14 @@ GitHubSetUsernameAndPassword[u_, p_]:=
 $GitHubActions["GetPassword"]=GitHubGetPassword;
 
 
+GitHubGetPassword//Clear
+
+
 GitHubGetPassword[Optional[Automatic, Automatic]]:=
   GitHubGetPassword[$GitHubUsername];
 GitHubGetPassword[u_String]:=
   GitHubPassword[u];
-GitHubGetPassword[_]:=$Failed;
+GitHubGetPassword[e_?Echo]:=$Failed;
 
 
 (* ::Subsubsection::Closed:: *)
@@ -920,10 +926,10 @@ GitHubClearPassword[key_String]:=
     PackageThrowMessage["Keychain",
       "Password in keychain for must be cleared explicitly via KeychainRemove"
       ],
-    gitHubPasswordCache[key]=.
+    Quiet[gitHubPasswordCache[key]=., Unset::norep];
     ];
 GitHubClearPassword[Optional[Automatic, Automatic]]:=
-  gitHubPasswordCache[$GitHubUsername]=.;
+  GitHubClearPassword[$GitHubUsername];
 
 
 (* ::Subsubsection::Closed:: *)
