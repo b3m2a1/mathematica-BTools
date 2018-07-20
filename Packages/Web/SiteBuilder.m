@@ -3905,8 +3905,17 @@ webSiteDeployFile[f_, uri_, outDir_, trueDir_, stripDirs_, ops___?OptionQ]:=
         CloudObject[
           url,
           FilterRules[
-            Flatten@{ops,Options[WebSiteDeploy]},
+            Flatten@{ops, Options[WebSiteDeploy]},
             Options[CloudObject]
+            ]
+          ],
+        With[{ext=ToUpperCase@FileExtension[f]},
+          Replace[
+            Quiet@ImportExport`GetMIMEType[ext],
+            {
+              {s_String, ___}:>("MIMEType"->s),
+              _:>Sequence@@{}
+              }
             ]
           ]
         ]

@@ -125,6 +125,45 @@ Cell["\[LeftCeiling]Basics\[RightFloor]", "CodeSubsection",
   3.733856745536459*^9}},ExpressionUUID->"8228cd25-65fc-404e-be34-\
 ba3aa3c56666"],
 
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Actions\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.733863202824192*^9, 
+  3.7338632038387747`*^9}},ExpressionUUID->"28be52a3-3eec-4289-9f60-\
+5d2aabfffef9"],
+
+Cell[BoxData[
+ RowBox[{"$GitHubActions", "=", 
+  RowBox[{"<|", "|>"}]}]], "CodeInput",
+ CellChangeTimes->{{3.733863206154478*^9, 
+  3.733863206710997*^9}},ExpressionUUID->"ffdfa50c-002d-48f3-91fe-\
+fd401e6de730"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]CurrentUser\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"2041ec56-d607-4dd3-b881-574ab1db22e0"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"GitHubGetCurrentUser", "[", "]"}], ":=", "\n", "\t", 
+  "$GitHubUsername"}]], \
+"CodeInput",ExpressionUUID->"44467a30-db1b-4122-9774-9c979a640727"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$GitHubActions", "[", "\"\<CurrentUser\>\"", "]"}], "=", "\n", 
+  "\t", "GitHubGetCurrentUser"}]], \
+"CodeInput",ExpressionUUID->"ec4fe376-9d8a-481b-ba3d-4c6abbeb573f"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]KeyChain\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"7229a7b9-38da-4e77-8f48-c71d9f25303b"],
+
 Cell[BoxData[
  RowBox[{
   RowBox[{"If", "[", 
@@ -141,7 +180,8 @@ Cell[BoxData[
        "]"}]}]}]}], "\n", "\t", "]"}], ";"}]], "CodeInput",
  CellChangeTimes->{{3.733696771755561*^9, 
   3.7336968060220003`*^9}},ExpressionUUID->"4e881c6d-7bda-4b9b-9952-\
-3d6ec7ac6b54"],
+3d6ec7ac6b54"]
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -210,7 +250,100 @@ Cell[BoxData[
   3.720995997697205*^9}, {3.73369954921282*^9, 3.733699551371367*^9}, {
   3.733699691684289*^9, 
   3.733699717560678*^9}},ExpressionUUID->"61ea20ac-eee7-4cb4-a0aa-\
-747d6c6f5315"]
+747d6c6f5315"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$GitHubConfig", "=", "\n", "\t", 
+   RowBox[{"Merge", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{"$GitHubConfig", ",", "\n", "\t\t\t", 
+       RowBox[{"\"\<EncodePassword\>\"", "\[Rule]", "False"}], ",", "\n", 
+       "\t\t\t", 
+       RowBox[{"\"\<UseKeychain\>\"", "\[Rule]", "False"}], ",", "\n", 
+       "\t\t\t", 
+       RowBox[{"\"\<CachePassword\>\"", "\[Rule]", "True"}], ",", "\n", 
+       "\t\t\t", 
+       RowBox[{"\"\<LockPasswordCache\>\"", "\[Rule]", "False"}]}], "\n", 
+      "\t\t\t", "}"}], ",", "\n", "\t\t", "First"}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"d092cc9c-91a1-473b-aa65-311b1f1605bd"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]GetConfig\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"9f93502a-feeb-4984-87c7-e1d21a7c5d54"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"$GitHubActions", "[", "\"\<GetConfig\>\"", "]"}], "=", 
+   "GitHubGetConfig"}], 
+  ";"}]], "CodeInput",ExpressionUUID->"0897c16a-d896-4830-8503-0818aa5ea8a7"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GitHubGetConfig", "[", "k_", "]"}], ":=", "\n", "\t", 
+   RowBox[{"Lookup", "[", 
+    RowBox[{"$GitHubConfig", ",", " ", "k"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"GitHubGetConfig", "[", "]"}], ":=", 
+  "$GitHubConfig"}]}], \
+"CodeInput",ExpressionUUID->"8ede1140-433d-4516-af99-c0204d6df5d5"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]SetConfig\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"b27f7889-066e-47eb-9ca7-0606ff7a380b"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"$GitHubActions", "[", "\"\<SetConfig\>\"", "]"}], "=", 
+   "GitHubSetConfig"}], 
+  ";"}]], "CodeInput",ExpressionUUID->"85f59626-5327-4f84-ab21-e0f0a1306991"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GitHubSetConfig", "[", 
+    RowBox[{"o_", "?", "OptionQ"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"AssociateTo", "[", 
+    RowBox[{"$GitHubConfig", ",", " ", "o"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GitHubSetConfig", "[", 
+    RowBox[{"k_", ",", " ", "v_"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"GitHubSetConfig", "[", 
+    RowBox[{"k", "\[Rule]", "v"}], "]"}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"a1c86813-0be8-4994-bd4e-e8bc96886b1b"]\
+
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]LockPasswordCache\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"b867fd5a-cd1f-4b1d-a731-0dbcfdda452c"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"$GitHubAction", "[", "\"\<LockPasswordCache\>\"", "]"}], "=", 
+   "\n", "\t", "GitHubLockPasswordCache"}], 
+  ";"}]], "CodeInput",ExpressionUUID->"442c9b3f-c50c-414d-ad14-1e68fde5819f"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"GitHubLockPasswordCache", "[", "]"}], ":=", "\n", "\t", 
+   RowBox[{"SetAttributes", "[", 
+    RowBox[{"gitHubPasswordCache", ",", " ", 
+     RowBox[{"{", 
+      RowBox[{"Locked", ",", " ", "ReadProtected"}], "}"}]}], "]"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"79fc13ca-c59b-44b4-885c-99ff909da243"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -234,9 +367,9 @@ Cell[BoxData[
      RowBox[{"Replace", "[", "\n", "\t\t\t", 
       RowBox[{
        RowBox[{"If", "[", 
-        RowBox[{"$GitHubUseKeychain", ",", " ", 
-         RowBox[{"$Keychain", "[", "\"\<$GitHubUsername\>\"", "]"}], ",", " ",
-          "None"}], "]"}], ",", "\n", "\t\t\t", 
+        RowBox[{
+        "$GitHubUseKeychain", ",", " ", "$GitHubKCUsername", ",", " ", 
+         "None"}], "]"}], ",", "\n", "\t\t\t", 
        RowBox[{
         RowBox[{"Except", "[", "_String", "]"}], ":>", "\n", "\t\t\t\t", 
         RowBox[{"Replace", "[", 
@@ -254,23 +387,20 @@ Cell[BoxData[
              "\"\<\>\"", ",", " ", "\n", "\t\t\t\t\t\t\t", "\"\<\>\""}], "\n",
               "\t\t\t\t\t\t\t", "]"}], "[", 
             RowBox[{"[", "1", "]"}], "]"}]}]}], "\n", "\t\t\t\t\t", "]"}]}]}],
-       "\n", "\t\t\t", "]"}]}]}], "\n", "\t", "]"}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.688431431563725*^9, 3.68843145938625*^9}, {
-   3.6886549408028107`*^9, 3.6886549731121607`*^9}, {3.701553394173983*^9, 
-   3.70155350891486*^9}, 3.701557057416771*^9, {3.701557889100806*^9, 
-   3.701557889104649*^9}, {3.7015682235252*^9, 3.7015682435585318`*^9}, {
-   3.702346519127798*^9, 3.702346535205718*^9}, 3.702346572410877*^9, {
-   3.703714008734323*^9, 3.7037140445268927`*^9}, 3.703714757599557*^9, {
-   3.705177659937335*^9, 3.705177674247519*^9}, 3.705178334538125*^9, 
-   3.720993458261156*^9, {3.720993573831573*^9, 3.720993583257091*^9}, {
-   3.720995685837325*^9, 3.720995691408852*^9}, {3.728445855251918*^9, 
-   3.728445864376151*^9}, {3.733696814627016*^9, 3.73369687228856*^9}, 
-   3.7336970357532177`*^9, 3.733697141645523*^9, {3.733698358494096*^9, 
-   3.733698359088771*^9}, {3.7338665603929853`*^9, 3.733866570470764*^9}, {
-   3.733866664283456*^9, 3.733866683971855*^9}, {3.733866827092326*^9, 
-   3.73386682977522*^9}},ExpressionUUID->"d8ea1eb3-a86f-4a3a-876e-\
-5f2cf6e14414"]
-}, Closed]],
+       "\n", "\t\t\t", "]"}]}]}], "\n", "\t", "]"}], 
+  ";"}]], "CodeInput",ExpressionUUID->"d8ea1eb3-a86f-4a3a-876e-5f2cf6e14414"],
+
+Cell[BoxData[
+ RowBox[{"$GitHubKCUsername", ":=", "\n", "\t", 
+  RowBox[{"KeychainGet", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+     "\"\<AccountData\>\"", ",", " ", "\"\<GitHub\>\"", ",", " ", 
+      "\"\<Username\>\""}], "}"}], ",", " ", "True"}], 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"641d18b2-d65a-47b9-b22a-837ee67f1eed"]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -304,85 +434,128 @@ Cell[BoxData[
  RowBox[{"$GitHubStorePassword", ":=", "\n", "\t", 
   RowBox[{"Lookup", "[", 
    RowBox[{
-   "$GitHubConfig", ",", " ", "\"\<CachePassword\>\"", ",", " ", "False"}], 
-   "]"}]}]], "CodeInput",
- CellChangeTimes->{{3.7209934147064123`*^9, 3.7209934390702133`*^9}, {
-  3.720993600457275*^9, 3.720993609752276*^9}, {3.733866742241905*^9, 
-  3.733866742874064*^9}},ExpressionUUID->"900c61ec-bf5d-4792-a2b1-\
-588509b532c5"],
+   "$GitHubConfig", ",", " ", "\n", "\t\t", "\"\<CachePassword\>\"", ",", " ",
+     "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"$GitHubConfig", "[", "\"\<CachePassword\>\"", "]"}], "=", 
+     "True"}]}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"900c61ec-bf5d-4792-a2b1-588509b532c5"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GitHubPasswordCacheLookup", "[", 
+    RowBox[{"s_", ",", " ", 
+     RowBox[{"def_:", "$Failed"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Replace", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"gitHubPasswordCache", "[", "s", "]"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"Except", "[", "_String", "]"}], "|", "\"\<\>\""}], ":>", 
+      "def"}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{"GitHubPasswordCacheLookup", "~", "SetAttributes", "~", 
+  "HoldRest"}]}], \
+"CodeInput",ExpressionUUID->"d72d89df-6095-43b0-98f9-21d6fe181ae5"],
 
 Cell[BoxData[{
  RowBox[{
   RowBox[{
    RowBox[{"GitHubPassword", "[", "s_String", "]"}], ":=", "\n", "\t", 
-   RowBox[{"With", "[", "\n", "\t\t", 
+   RowBox[{"Module", "[", "\n", "\t\t", 
     RowBox[{
      RowBox[{"{", "\n", "\t\t\t", 
-      RowBox[{"base", "=", "\n", "\t\t\t\t", 
-       RowBox[{"Replace", "[", 
-        RowBox[{
-         RowBox[{"gitHubPasswordCache", "[", "s", "]"}], ",", "\n", "\t", 
-         "\t\t\t\t", 
-         RowBox[{
-          RowBox[{"Except", "[", "_String", "]"}], ":>", "\n", "\t\t\t\t\t\t", 
+      RowBox[{
+       RowBox[{"base", "=", "\n", "\t\t\t\t", 
+        RowBox[{"GitHubPasswordCacheLookup", "[", 
+         RowBox[{"s", ",", "\n", "\t\t\t\t\t", 
           RowBox[{"If", "[", 
            RowBox[{"$GitHubUseKeychain", ",", " ", 
             RowBox[{"KeychainGet", "[", 
              RowBox[{
               RowBox[{"{", 
                RowBox[{"\"\<github.com\>\"", ",", "\t", "s"}], "}"}], ",", 
-              " ", "False"}], "]"}]}], "]"}]}]}], "\n", "\t\t\t\t\t", "]"}]}],
-       "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+              " ", "False"}], "]"}]}], "]"}]}], "\n", "\t\t\t\t\t", "]"}]}], 
+       ",", "\n", "\t\t\t", "res"}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
      RowBox[{"If", "[", 
       RowBox[{
        RowBox[{"StringQ", "@", "base"}], ",", "\n", "\t\t\t", "base", ",", 
        "\n", "\t\t\t", 
-       RowBox[{"If", "[", 
+       RowBox[{"Which", "[", "\n", "\t\t\t\t", 
         RowBox[{
          RowBox[{"$GitHubUseKeychain", "&&", "$GitHubStorePassword"}], ",", 
-         "\n", "\t\t\t\t", 
+         "\n", "\t\t\t\t\t", 
          RowBox[{"KeychainGet", "[", 
           RowBox[{
            RowBox[{"{", 
             RowBox[{"\"\<github.com\>\"", ",", "\t", "s"}], "}"}], ",", " ", 
-           "True"}], "]"}], ",", "\n", "\t\t\t\t", 
+           "True"}], "]"}], ",", "\n", "\t\t\t\t", "$GitHubStorePassword", 
+         ",", "\n", "\t\t\t\t\t", 
          RowBox[{"(*", " ", 
           RowBox[{
           "Create", " ", "an", " ", "auth", " ", "dialog", " ", "for", " ", 
-           "the", " ", "found", " ", "username"}], " ", "*)"}], "\n", 
+           "the", " ", "found", " ", "username"}], " ", "*)"}], "\n", "\t", 
          "\t\t\t\t", 
          RowBox[{
-          RowBox[{"AuthDialog", "[", "\n", "\t\t\t\t\t", 
-           RowBox[{
-            RowBox[{"Dynamic", "@", "$ghauth"}], ",", "\n", "\t\t\t\t\t", 
-            "\"\<\>\"", ",", "\n", "\t\t\t\t\t", "None", ",", "\n", 
-            "\t\t\t\t\t", 
-            RowBox[{"{", 
-             RowBox[{
-              RowBox[{"{", 
-               RowBox[{"\"\<github.com\>\"", ",", " ", "Automatic"}], "}"}], 
-              ",", " ", "s"}], "}"}]}], "\n", "\t\t\t\t\t", "]"}], ";", "\n", 
-          "\t\t\t\t", 
+          RowBox[{"res", "=", "\n", "\t", "\t\t\t\t\t", 
+           RowBox[{"AuthDialog", "[", "\n", "\t", "\t\t\t\t\t\t", 
+            RowBox[{
+            "\"\<\>\"", ",", "\n", "\t", "\t\t\t\t\t\t", "None", ",", "\n", 
+             "\t", "\t", "\t\t\t\t\t", 
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"\"\<github.com\>\"", ",", " ", "Automatic"}], "}"}], 
+               ",", " ", "s"}], "}"}]}], "\n", "\t", "\t", "\t\t\t\t\t", 
+            "]"}]}], ";", "\n", "\t", "\t\t\t\t", 
           RowBox[{"If", "[", 
            RowBox[{
             RowBox[{
-             RowBox[{"AssociationQ", "[", "$ghauth", "]"}], "&&", 
+             RowBox[{"AssociationQ", "[", "res", "]"}], "&&", 
              RowBox[{"StringQ", "@", 
               RowBox[{
-               RowBox[{"$ghauth", "[", "\"\<github.com\>\"", "]"}], "[", 
-               RowBox[{"[", "2", "]"}], "]"}]}]}], ",", "\n", "\t\t\t\t\t", 
+               RowBox[{"res", "[", "\"\<github.com\>\"", "]"}], "[", 
+               RowBox[{"[", "2", "]"}], "]"}]}]}], ",", "\n", "\t", 
+            "\t\t\t\t\t", 
             RowBox[{
-             RowBox[{"gitHubPasswordCache", "[", "s", "]"}], "=", "\n", 
+             RowBox[{"gitHubPasswordCache", "[", "s", "]"}], "=", "\n", "\t", 
              "\t\t\t\t\t\t", 
              RowBox[{
-              RowBox[{"$ghauth", "[", "\"\<github.com\>\"", "]"}], "[", 
-              RowBox[{"[", "2", "]"}], "]"}]}], ",", "\n", "\t\t\t\t\t", 
+              RowBox[{"res", "[", "\"\<github.com\>\"", "]"}], "[", 
+              RowBox[{"[", "2", "]"}], "]"}]}], ",", "\n", "\t", "\t\t\t\t\t", 
             RowBox[{
-             RowBox[{"gitHubPasswordCache", "[", "s", "]"}], "=", "None"}]}], 
-           "\n", "\t\t\t\t\t", "]"}], ";", "\n", "\t\t\t\t", 
-          RowBox[{"Clear", "@", "$ghauth"}], ";", "\n", "\t\t\t\t", 
-          RowBox[{"gitHubPasswordCache", "[", "s", "]"}]}]}], "\n", 
-        "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], 
+             RowBox[{"gitHubPasswordCache", "[", "s", "]"}], "=", 
+             "$Failed"}]}], "\n", "\t\t\t\t\t\t", "]"}], ";", "\n", 
+          "\t\t\t\t\t", 
+          RowBox[{"gitHubPasswordCache", "[", "s", "]"}]}], ",", "\n", 
+         "\t\t\t\t", "True", ",", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"res", "=", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"AuthDialog", "[", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{
+            "\"\<\>\"", ",", "\n", "\t", "\t\t\t\t\t\t", "None", ",", "\n", 
+             "\t", "\t", "\t\t\t\t\t", 
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"\"\<github.com\>\"", ",", " ", "Automatic"}], "}"}], 
+               ",", " ", "s"}], "}"}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}], ";",
+           "\n", "\t\t\t\t\t", 
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"AssociationQ", "[", "res", "]"}], "&&", 
+             RowBox[{"StringQ", "@", 
+              RowBox[{
+               RowBox[{"res", "[", "\"\<github.com\>\"", "]"}], "[", 
+               RowBox[{"[", "2", "]"}], "]"}]}]}], ",", "\n", "\t\t\t\t\t\t", 
+            
+            RowBox[{
+             RowBox[{"res", "[", "\"\<github.com\>\"", "]"}], "[", 
+             RowBox[{"[", "2", "]"}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
+            "$Failed"}], "\n", "\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", 
+        "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], 
   ";"}], "\n", 
  RowBox[{
   RowBox[{
@@ -395,26 +568,8 @@ Cell[BoxData[{
   RowBox[{"Clear", "@", "$GitHubPassword"}], ";"}], "\n", 
  RowBox[{
   RowBox[{"$GitHubPassword", ":=", "\n", "\t", 
-   RowBox[{"GitHubPassword", "[", "Automatic", "]"}]}], ";"}]}], "CodeInput",
- CellChangeTimes->{{3.70155733476565*^9, 3.701557393805935*^9}, {
-   3.701557448225205*^9, 3.701557478310432*^9}, {3.701557601377664*^9, 
-   3.701557611536058*^9}, {3.701557803046648*^9, 3.701557833000042*^9}, 
-   3.7015578891097403`*^9, {3.701558012691071*^9, 3.70155805913426*^9}, {
-   3.7015584648276243`*^9, 3.701558465057317*^9}, {3.701561653577629*^9, 
-   3.701561717038775*^9}, {3.701562520006114*^9, 3.701562522744647*^9}, {
-   3.701562692786832*^9, 3.701562741343692*^9}, {3.7015682235459013`*^9, 
-   3.701568243581626*^9}, {3.7037140529885807`*^9, 3.7037141567573757`*^9}, {
-   3.7037145916432858`*^9, 3.703714593252638*^9}, {3.703716997689592*^9, 
-   3.703716998128421*^9}, 3.7037193035232267`*^9, {3.720993309637135*^9, 
-   3.720993368929278*^9}, {3.720993410041003*^9, 3.720993412274629*^9}, {
-   3.720993618265954*^9, 3.720993645201344*^9}, {3.7209939560268583`*^9, 
-   3.720993963956717*^9}, {3.720994017472826*^9, 3.720994021169498*^9}, {
-   3.720994113929051*^9, 3.720994126910981*^9}, 3.7209942076903543`*^9, {
-   3.720994251336154*^9, 3.720994289820006*^9}, {3.720995707529673*^9, 
-   3.720995835325058*^9}, 3.7297989388492823`*^9, 3.7336968723018837`*^9, {
-   3.733697307419252*^9, 3.7336973074263067`*^9}, {3.73386671692024*^9, 
-   3.733866801554359*^9}},ExpressionUUID->"69a1231a-7f63-4179-811f-\
-0609596d2bba"],
+   RowBox[{"GitHubPassword", "[", "Automatic", "]"}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"69a1231a-7f63-4179-811f-0609596d2bba"],
 
 Cell[BoxData[
  RowBox[{"(*", 
@@ -474,7 +629,7 @@ Cell[BoxData[
    3.733696872312701*^9, 
    3.73369687232745*^9}},ExpressionUUID->"c6bc5906-950f-4a2f-b49c-\
 4b45af9da5e5"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -504,40 +659,6 @@ Cell[BoxData[
    3.701558284802232*^9}, {3.701558443644382*^9, 3.7015584506404753`*^9}, 
    3.728310577281073*^9},ExpressionUUID->"bd263a37-4be1-4f80-a74d-\
 dcc12d753bcd"]
-}, Closed]],
-
-Cell[CellGroupData[{
-
-Cell["\[LeftCeiling]Actions\[RightFloor]", "CodeSubsubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.733863202824192*^9, 
-  3.7338632038387747`*^9}},ExpressionUUID->"28be52a3-3eec-4289-9f60-\
-5d2aabfffef9"],
-
-Cell[BoxData[
- RowBox[{"$GitHubActions", "=", 
-  RowBox[{"<|", "|>"}]}]], "CodeInput",
- CellChangeTimes->{{3.733863206154478*^9, 
-  3.733863206710997*^9}},ExpressionUUID->"ffdfa50c-002d-48f3-91fe-\
-fd401e6de730"]
-}, Closed]],
-
-Cell[CellGroupData[{
-
-Cell["\[LeftCeiling]Lol\[RightFloor]", "CodeSubsubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.733866974384144*^9, 
-  3.733866975991927*^9}},ExpressionUUID->"2041ec56-d607-4dd3-b881-\
-574ab1db22e0"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"$GitHubActions", "[", "\"\<CurrentUser\>\"", "]"}], "=", "\n", 
-  "\t", 
-  RowBox[{"Function", "[", "$GitHubUsername", "]"}]}]], "CodeInput",
- CellChangeTimes->{{3.733866963213521*^9, 
-  3.733866972112238*^9}},ExpressionUUID->"ec4fe376-9d8a-481b-ba3d-\
-4c6abbeb573f"]
 }, Closed]]
 }, Open  ]],
 
@@ -576,8 +697,8 @@ Cell[BoxData[
      RowBox[{"\"\<Branch\>\"", "\[Rule]", "\"\<master\>\""}], ",", "\n", "\t",
       "\t", 
      RowBox[{"\"\<Tree\>\"", "\[Rule]", "\"\<tree\>\""}]}], "\n", "\t\t", 
-    "}"}]}], ";"}]], \
-"CodeInput",ExpressionUUID->"d58f7077-22b9-478e-a420-ec80ce41dc8f"],
+    "}"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"d58f7077-22b9-478e-a420-ec80ce41dc8f"],
 
 Cell[CellGroupData[{
 
@@ -608,7 +729,7 @@ Cell[BoxData[{
         RowBox[{"$GitHubEncodePassword", "||", "\n", "\t\t\t", 
          RowBox[{"MatchQ", "[", 
           RowBox[{
-           RowBox[{"OptionValue", "@", "\"\<Password\>\""}], ",", 
+           RowBox[{"OptionValue", "@", "\"\<Password\>\""}], ",", " ", 
            RowBox[{"_String", "|", "Automatic"}]}], "]"}]}], ",", "\n", 
         "\t\t\t", 
         RowBox[{"\"\<Username\>\"", "\[Rule]", "\n", "\t", "\t\t\t", 
@@ -701,7 +822,7 @@ Cell[BoxData[{
          "\t\t\t\t", "}"}]}]}], "\n", "\t\t", "|>"}]}]}], 
   ";"}]}], "CodeInput",ExpressionUUID->"5846b90e-b7e3-4109-b885-cfc98b1381ab"]\
 
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -988,7 +1109,7 @@ Cell[BoxData[
     "]"}]}]}]], \
 "CodeInput",ExpressionUUID->"72b585fd-3c06-4fef-9c60-7ebd354826b6"]
 }, Open  ]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1281,10 +1402,7 @@ Cell[CellGroupData[{
 
 Cell["\[LeftCeiling]GitHubQueryAttachAuth\[RightFloor]", \
 "CodeSubsubsubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.733803466483089*^9, 
-  3.7338034703232117`*^9}},ExpressionUUID->"bb6c5025-42ba-418c-88f9-\
-0533526a472c"],
+ Evaluatable->True,ExpressionUUID->"bb6c5025-42ba-418c-88f9-0533526a472c"],
 
 Cell[BoxData[
  RowBox[{
@@ -1371,10 +1489,9 @@ Cell[BoxData[
                "\t\t\t\t\t\t\t\t\t", "Automatic"}], "\n", 
               "\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t\t", 
            "]"}]}]}], "\n", "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "}"}]}], 
-   "\n", "\t\t", "]"}]}]], "CodeInput",
- CellChangeTimes->{{3.733803477486788*^9, 
-  3.733803485223127*^9}},ExpressionUUID->"0caf1e4f-3084-42c9-9f83-\
-2d4b400b8994"]
+   "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"0caf1e4f-3084-42c9-9f83-2d4b400b8994"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -1486,33 +1603,32 @@ Cell[BoxData[
     RowBox[{
      RowBox[{"{", "\n", "\t\t\t", 
       RowBox[{
-       RowBox[{"$GitHubUsername", "=", "$GitHubUsername"}], ",", "\n", 
+       RowBox[{"$GitHubUsername", ":=", "$GitHubUsername"}], ",", "\n", 
        "\t\t\t", 
-       RowBox[{"$GitHubPassword", "=", "$GitHubPassword"}]}], "\n", "\t\t\t", 
-      "}"}], ",", "\n", "\t\t", 
-     RowBox[{"Catch", "@", "\n", "\t\t\t", 
-      RowBox[{"HTTPRequest", "[", "\n", "\t\t\t\t", 
-       RowBox[{
-        RowBox[{"URLBuild", "@", "\n", "\t\t\t\t\t", 
-         RowBox[{"Join", "[", "\n", "\t\t\t\t\t\t", 
-          RowBox[{"$GitHubQueryBase", ",", "\n", "\t\t\t\t\t\t", 
-           RowBox[{"<|", "\n", "\t\t\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{"\"\<Path\>\"", "\[Rule]", 
-              RowBox[{"Flatten", "@", 
-               RowBox[{"{", "path", "}"}]}]}], ",", "\n", "\t", "\t", "\t", 
-             "\t", "\t", "\t\t", 
-             RowBox[{"\"\<Query\>\"", "\[Rule]", 
-              RowBox[{"{", "query", "}"}]}]}], "\n", "\t\t\t\t\t\t\t", 
-            "|>"}]}], "\n", "\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t", 
-        RowBox[{"Association", "@", 
-         RowBox[{"Normal", "@", "\n", "\t\t\t\t\t", 
-          RowBox[{"GitHubQueryPrepBody", "@", "\n", "\t\t\t\t\t\t", 
-           RowBox[{"GitHubQueryAttachAuth", "@", "headers"}]}]}]}]}], "\n", 
-       "\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "]"}]}], 
+       RowBox[{"$GitHubPassword", ":=", "$GitHubPassword"}]}], "\n", "\t\t\t",
+       "}"}], ",", "\n", "\t\t", 
+     RowBox[{"HTTPRequest", "[", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"URLBuild", "@", "\n", "\t\t\t\t", 
+        RowBox[{"Join", "[", "\n", "\t\t\t\t\t", 
+         RowBox[{"$GitHubQueryBase", ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"<|", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"\"\<Path\>\"", "\[Rule]", 
+             RowBox[{"Flatten", "@", 
+              RowBox[{"{", "path", "}"}]}]}], ",", "\n", "\t", "\t", "\t", 
+            "\t", "\t\t", 
+            RowBox[{"\"\<Query\>\"", "\[Rule]", 
+             RowBox[{"{", "query", "}"}]}]}], "\n", "\t\t\t\t\t\t", "|>"}]}], 
+         "\n", "\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"Association", "@", 
+        RowBox[{"Normal", "@", "\n", "\t\t\t\t", 
+         RowBox[{"GitHubQueryPrepBody", "@", "\n", "\t\t\t\t\t", 
+          RowBox[{"GitHubQueryAttachAuth", "@", "headers"}]}]}]}]}], "\n", 
+      "\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"76413e35-e5a3-452b-be39-d7cecd5f189c"]
 }, Open  ]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -1587,45 +1703,98 @@ Cell["\[LeftCeiling]Auth\[RightFloor]", "CodeSubsection",
 
 Cell[CellGroupData[{
 
-Cell["\[LeftCeiling]Auth\[RightFloor]", "CodeSubsubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.701559986515113*^9, 
-  3.701559987276189*^9}},ExpressionUUID->"98ee60df-4ebd-4f33-ae67-\
-6e8f74bcb073"],
+Cell["\[LeftCeiling]GitHubSetUsername\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"bf8d8c4e-77a7-47e2-8071-5faea2033b59"],
 
 Cell[BoxData[
- RowBox[{"(*", 
+ RowBox[{
   RowBox[{
-   RowBox[{"GitHubAuth", "[", "\n", "\t", 
+   RowBox[{"$GitHubActions", "[", "\"\<SetUsername\>\"", "]"}], ":=", 
+   "GitHubSetUsername"}], 
+  ";"}]], "CodeInput",ExpressionUUID->"080fffff-88ef-4219-8de1-33508805680c"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GitHubSetUsername", "[", "s_String", "]"}], ":=", "\n", "\t", 
+   RowBox[{"(", "\n", "\t\t", 
     RowBox[{
-     RowBox[{"user", ":", 
-      RowBox[{"_String", "|", "Automatic"}], ":", "Automatic"}], ",", "\n", 
-     "\t", 
-     RowBox[{"scopes", ":", 
-      RowBox[{"_String", "|", 
-       RowBox[{"{", "__String", "}"}]}], ":", 
-      RowBox[{"{", "\"\<public_repo\>\"", "}"}]}]}], "]"}], ":=", "\n", "\t", 
-   
-   RowBox[{"GitHubQuery", "[", "\n", "\t\t", 
-    RowBox[{
-     RowBox[{"Replace", "[", 
-      RowBox[{"user", ",", 
-       RowBox[{"Automatic", ":>", "$GitHubUsername"}]}], "]"}], ",", "\n", 
-     "\t\t", 
-     RowBox[{"<|", "\n", "\t\t\t", 
-      RowBox[{"\"\<Headers\>\"", "\[Rule]", 
-       RowBox[{"{", "\n", "\t\t\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{"$GitHubUseKeychain", ",", " ", "\n", "\t\t\t", 
+       RowBox[{"$GitHubUsername", "=", "s"}], ",", "\n", "\t\t\t", 
+       RowBox[{"GitHubSetUsername", "[", "Automatic", "]"}]}], "\n", "\t\t\t",
+       "]"}], ";", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"$GitHubConfig", "[", "\"\<Username\>\"", "]"}], "=", "s"}], 
+     ";"}], "\n", "\t\t", ")"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GitHubSetUsername", "[", "Automatic", "]"}], ":=", "\n", "\t", 
+   RowBox[{"$GitHubUsername", ":=", "\n", "\t\t", 
+    RowBox[{"Replace", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"If", "[", 
+       RowBox[{
+       "$GitHubUseKeychain", ",", "  ", "$GitHubKCUsername", ",", " ", 
+        "None"}], "]"}], ",", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"Except", "[", "_String", "]"}], ":>", "\n", "\t\t\t\t", 
+       RowBox[{"Replace", "[", 
         RowBox[{
+         RowBox[{"$GitHubConfig", "[", "\"\<Username\>\"", "]"}], ",", "\n", 
+         "\t\t\t\t\t", 
          RowBox[{
-         "\"\<Authorization\>\"", "\[Rule]", "\"\<token OAUTH-TOKEN\>\""}], 
-         ",", "\n", "\t\t\t\t", 
-         "\"\<\n\t\t\t\t}\n\t\t\t|>\n\t\t];\>"}]}]}]}]}]}]}], 
-  "*)"}]], "CodeInput",
- CellChangeTimes->{{3.701559988316189*^9, 3.701560052643681*^9}, {
-   3.70156009863662*^9, 3.701560099798581*^9}, {3.701560209900629*^9, 
-   3.701560302187429*^9}, {3.7015682234948673`*^9, 3.7015682435146427`*^9}, 
-   3.733696872390081*^9},ExpressionUUID->"68cd6565-e765-4e66-a930-\
-eb1b8dc38058"]
+          RowBox[{"Except", "[", 
+           RowBox[{"_String", "?", "StringQ"}], "]"}], ":>", "\n", 
+          "\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+           "GitHubSetUsernameAndPassword", "[", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{
+            "\"\<\>\"", ",", " ", "\n", "\t\t\t\t\t\t\t", "\"\<\>\""}], "\n", 
+            "\t\t\t\t\t\t\t", "]"}], "[", 
+           RowBox[{"[", "1", "]"}], "]"}]}]}], "\n", "\t\t\t\t\t", "]"}]}]}], 
+     "\n", "\t\t\t", "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GitHubSetUsername", "[", "_", "]"}], ":=", "$Failed"}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"99c87755-f946-435c-bdaf-8d80b5019d4b"]\
+
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]GitHubSetPassword\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"fc034b8a-7b49-4a24-8f2e-903cf10eba07"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"$GitHubActions", "[", "\"\<SetPassword\>\"", "]"}], ":=", 
+   "GitHubSetPassword"}], 
+  ";"}]], "CodeInput",ExpressionUUID->"6e81d529-a91d-403c-8379-df779bb215c1"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GitHubSetPassword", "[", 
+    RowBox[{"u_String", ",", " ", "s_String"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"gitHubPasswordCache", "[", "u", "]"}], "=", "s"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GitHubSetPassword", "[", "s_String", "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"gitHubPasswordCache", "[", "$GitHubUsername", "]"}], "=", 
+    "s"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GitHubSetPassword", "[", "Automatic", "]"}], ":=", "Null"}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"GitHubSetPassword", "[", "_", "]"}], ":=", 
+  "$Failed"}]}], \
+"CodeInput",ExpressionUUID->"a6cfd56e-3ec7-47ae-956b-3b176e9d1c21"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -1636,6 +1805,14 @@ Cell["\[LeftCeiling]GitHubGetUsernameAndPassword\[RightFloor]", \
  CellChangeTimes->{
   3.733866618906966*^9},ExpressionUUID->"5b2f3ad3-7bda-49bd-ae83-\
 55b97007199e"],
+
+Cell[BoxData[
+ RowBox[{"(*", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"$GitHubActions", "[", "\"\<GetUsernameAndPassword\>\"", "]"}], 
+    "=", "\n", "\t", "GitHubGetUsernameAndPassword"}], ";"}], 
+  "*)"}]], "CodeInput",ExpressionUUID->"ccedd1cc-33b1-476d-9d34-998a77f9a331"],
 
 Cell[BoxData[
  RowBox[{
@@ -1737,36 +1914,106 @@ Cell[CellGroupData[{
 
 Cell["\[LeftCeiling]GitHubSetUsernameAndPassword\[RightFloor]", \
 "CodeSubsubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.733866635590775*^9, 
-  3.73386664015452*^9}},ExpressionUUID->"dc2dc96b-cd61-43fe-a4e2-\
-29178314f19f"],
+ Evaluatable->True,ExpressionUUID->"dc2dc96b-cd61-43fe-a4e2-29178314f19f"],
+
+Cell[BoxData[
+ RowBox[{"(*", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"$GitHubActions", "[", "\"\<SetUsernameAndPassword\>\"", "]"}], ":=",
+     "\n", "\t", "GitHubSetUsernameAndPassword"}], ";"}], 
+  "*)"}]], "CodeInput",ExpressionUUID->"10a59b36-b4c8-43e8-a4f1-58c22aa089af"],
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"GitHubSetUsernameAndPassword", "[", 
-   RowBox[{"u_", ",", " ", "p_"}], "]"}], ":=", "\n", "\t", 
   RowBox[{
-   RowBox[{"Function", "[", 
-    RowBox[{
-     RowBox[{
-      RowBox[{"gitHubPasswordCache", "[", 
-       RowBox[{"#", "[", 
-        RowBox[{"[", "1", "]"}], "]"}], "]"}], "=", 
-      RowBox[{"#", "[", 
-       RowBox[{"[", "2", "]"}], "]"}]}], ";", "#"}], "]"}], "@", "\n", "\t\t", 
-   RowBox[{"Set", "[", "\n", "\t\t\t", 
+   RowBox[{"GitHubSetUsernameAndPassword", "[", 
+    RowBox[{"u_", ",", " ", "p_"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
     RowBox[{
      RowBox[{"{", 
-      RowBox[{"$GitHubUsername", ",", " ", "$GitHubPassword"}], "}"}], ",", 
-     "\n", "\t\t\t", 
-     RowBox[{"GitHubGetUsernameAndPassword", "[", 
-      RowBox[{"u", ",", " ", "p"}], "]"}]}], "\n", "\t", "\t\t", 
-    "]"}]}]}]], "CodeInput",
- CellChangeTimes->{{3.733700003170515*^9, 3.733700061144622*^9}, {
-  3.733866856482479*^9, 
-  3.733866927233539*^9}},ExpressionUUID->"dd1b281a-b94d-41ed-acd9-\
-b05e2b25bdf2"]
+      RowBox[{"up", "=", 
+       RowBox[{"GitHubGetUsernameAndPassword", "[", 
+        RowBox[{"u", ",", " ", "p"}], "]"}]}], "}"}], ",", "\n", "\t\t", 
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"GitHubSetUsername", "[", 
+        RowBox[{"up", "[", 
+         RowBox[{"[", "1", "]"}], "]"}], "]"}], ",", "\n", "\t\t\t", 
+       RowBox[{"GitHubSetPassword", "@@", "up"}]}], "\n", "\t\t\t", "}"}]}], 
+    "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"dd1b281a-b94d-41ed-acd9-b05e2b25bdf2"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]GetPassword\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"757c2701-96d6-4693-b979-ed175a035637"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"$GitHubActions", "[", "\"\<GetPassword\>\"", "]"}], "=", 
+   "GitHubGetPassword"}], 
+  ";"}]], "CodeInput",ExpressionUUID->"689f7bf4-e333-4d7b-91ad-7d794f22a4ae"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GitHubGetPassword", "[", 
+    RowBox[{"Optional", "[", 
+     RowBox[{"Automatic", ",", " ", "Automatic"}], "]"}], "]"}], ":=", "\n", 
+   "\t", 
+   RowBox[{"GitHubGetPassword", "[", "$GitHubUsername", "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GitHubGetPassword", "[", "u_String", "]"}], ":=", "\n", "\t", 
+   RowBox[{"GitHubPassword", "[", "u", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GitHubGetPassword", "[", "_", "]"}], ":=", "$Failed"}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"a60ae548-38e5-449b-9b02-00d22a321caf"]\
+
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]GitHubClearPassword\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"9e5f8a4b-9430-468f-b56c-9a84e9dcc7bd"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"$GitHubActions", "[", "\"\<ClearPassword\>\"", "]"}], "=", 
+   "GitHubClearPassword"}], 
+  ";"}]], "CodeInput",ExpressionUUID->"67f6cac1-102e-4925-bd12-5a67a39d5234"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GitHubClearPassword", "[", "key_String", "]"}], ":=", "\n", "\t", 
+   
+   RowBox[{"If", "[", 
+    RowBox[{"$GitHubUseKeychain", ",", "\n", "\t\t", 
+     RowBox[{"PackageThrowMessage", "[", 
+      RowBox[{
+      "\"\<Keychain\>\"", ",", "\n", "\t\t\t", 
+       "\"\<Password in keychain for must be cleared explicitly via \
+KeychainRemove\>\""}], "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"gitHubPasswordCache", "[", "key", "]"}], "=."}]}], "\n", 
+    "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GitHubClearPassword", "[", 
+    RowBox[{"Optional", "[", 
+     RowBox[{"Automatic", ",", " ", "Automatic"}], "]"}], "]"}], ":=", "\n", 
+   "\t", 
+   RowBox[{
+    RowBox[{"gitHubPasswordCache", "[", "$GitHubUsername", "]"}], "=."}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"345cf955-3f61-411a-a30a-a39caaeeac1c"]\
+
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -1777,6 +2024,13 @@ Cell["\[LeftCeiling]AuthHeader\[RightFloor]", "CodeSubsubsection",
   3.7037156745080976`*^9, 
   3.703715675969166*^9}},ExpressionUUID->"2a2cc377-8538-455c-9af7-\
 afa5bfb24a83"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$GitHubActions", "[", "\"\<GetAuthorizationHeader\>\"", "]"}], "=",
+   "\n", "\t", 
+  "GitHubAuthHeader"}]], \
+"CodeInput",ExpressionUUID->"986dd41a-efd8-4875-81af-22c5a1298cb1"],
 
 Cell[BoxData[
  RowBox[{
@@ -1807,10 +2061,15 @@ Cell[BoxData[
             RowBox[{
              RowBox[{"StringLength", "[", "#", "]"}], ">", "0"}]}], "&"}]}], 
          "]"}], "]"}], ",", "\n", "\t\t\t", 
-       RowBox[{
-        RowBox[{"Message", "[", 
-         RowBox[{"GitHub", "::", "noauth"}], "]"}], ";", "\n", "\t\t\t", 
-        RowBox[{"Throw", "@", "$Failed"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"PackageRaiseException", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+        "\"\<GitHub\>\"", ",", "\n", "\t\t\t\t", 
+         "\"\<GitHub couldn't authenticate user ``\>\"", ",", "\n", 
+         "\t\t\t\t", 
+         RowBox[{"Replace", "[", 
+          RowBox[{"user", ",", " ", 
+           RowBox[{"Automatic", "\[RuleDelayed]", "$GitHubUsername"}]}], 
+          "]"}]}], "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
        RowBox[{"StringJoin", "@", 
         RowBox[{"{", "\n", "\t\t\t\t", 
          RowBox[{"\"\<Basic \>\"", ",", "\n", "\t", "\t", "\t\t", 
@@ -1823,15 +2082,9 @@ Cell[BoxData[
               RowBox[{"up", "[", 
                RowBox[{"[", "2", "]"}], "]"}]}], "}"}]}]}]}], "\n", 
          "\t\t\t\t", "}"}]}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
-    "]"}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.703715609723504*^9, 3.7037156691516457`*^9}, {
-   3.703715772365231*^9, 3.703715774119626*^9}, {3.70371600420231*^9, 
-   3.703716018803359*^9}, {3.703717999252002*^9, 3.7037180130267067`*^9}, 
-   3.733696872399467*^9, {3.733698917854267*^9, 3.7336989508420153`*^9}, {
-   3.733698993574387*^9, 
-   3.7336990356457453`*^9}},ExpressionUUID->"08a61d52-8fd5-48dc-93ae-\
-197a35205601"]
-}, Closed]]
+    "]"}]}], ";"}]], \
+"CodeInput",ExpressionUUID->"08a61d52-8fd5-48dc-93ae-197a35205601"]
+}, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -1900,7 +2153,7 @@ Cell[BoxData[
      "\n", "\t\t", "query", ",", "\n", "\t\t", "headers"}], "\n", "\t\t", 
     "]"}]}], ";"}]], \
 "CodeInput",ExpressionUUID->"404841e6-3069-4850-aec7-1856c4797b5c"]
-}, Closed]]
+}, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -2094,7 +2347,7 @@ Cell[BoxData[
      RowBox[{"{", "\"\<repos\>\"", "}"}], ",", " ", "query", ",", " ", 
      "headers"}], "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"3aeaa125-df0c-4ade-98b2-2d6ac0db8de1"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -5041,7 +5294,7 @@ Cell[BoxData[{
    "]"}]}]}], \
 "CodeInput",ExpressionUUID->"7a11a489-45dd-4c26-a732-00fb3e8752ea"]
 }, Closed]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -7456,7 +7709,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"67594041-6749-4a9a-8160-\
 1874e8aa2c18"]
 },
 WindowSize->{782, 796},
-WindowMargins->{{Automatic, 0}, {Automatic, 0}},
+WindowMargins->{{Automatic, 252}, {27, Automatic}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

@@ -8,18 +8,18 @@
 
 
 $GitHubUsername::usage=
-	"The user's github username";
+  "The user's github username";
 $GitHubPassword::usage=
-	"The user's github password";
+  "The user's github password";
 FormatGitHubPath::usage="";
 GitHubPath::usage=
-	"Represents a github path";
+  "Represents a github path";
 GitHubPathParse::usage=
-	"Parses a GitHubPath from a string";
+  "Parses a GitHubPath from a string";
 GitHubRepoQ::usage=
-	"Returns if the path could be a github repo";
+  "Returns if the path could be a github repo";
 GitHubReleaseQ::usage=
-	"Returns if the path could be a GitHub release";
+  "Returns if the path could be a GitHub release";
 GitHubPathQ::usage="";
 GitHubCreate::usage="";
 GitHubDelete::usage="";
@@ -34,10 +34,10 @@ GitHubDeleteReleaseAsset::usage="";
 GitHubReleases::usage="";
 GitHubRepositories::usage="";
 $GitHubActions::usage=
-	"A collection of known calls for the GitHub function";
+  "A collection of known calls for the GitHub function";
 GitHubQuery::usage="Makes an HTTPRequest to GitHub";
 GitHubImport::usage=
-	"Imports and converts GitHub JSON";
+  "Imports and converts GitHub JSON";
 
 
 Begin["`Private`"];
@@ -48,10 +48,36 @@ Begin["`Private`"];
 
 
 
+(* ::Subsubsection::Closed:: *)
+(*Actions*)
+
+
+
+$GitHubActions=<||>
+
+
+(* ::Subsubsection::Closed:: *)
+(*CurrentUser*)
+
+
+
+GitHubGetCurrentUser[]:=
+  $GitHubUsername
+
+
+$GitHubActions["CurrentUser"]=
+  GitHubGetCurrentUser
+
+
+(* ::Subsubsection::Closed:: *)
+(*KeyChain*)
+
+
+
 If[Length@OwnValues[$GitHubUseKeychain]==0,
-	$GitHubUseKeychain:=
-		TrueQ@Lookup[$GitHubConfig, "UseKeychain", False]
-	];
+  $GitHubUseKeychain:=
+    TrueQ@Lookup[$GitHubConfig, "UseKeychain", False]
+  ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -60,33 +86,86 @@ If[Length@OwnValues[$GitHubUseKeychain]==0,
 
 
 If[Not@ValueQ@$GitHubConfig,
-	$GitHubConfig:=
-		Replace[
-			Do[
-				With[{f=PackageFilePath["Private", "Config", d]},
-					If[FileExistsQ@f,
-						Return[
-							$GitHubConfig=
-								Replace[Quiet@Import@f,
-									{ 
-										o_?OptionQ:>Association@o,
-										_-><||>
-										}
-									]
-								];
-						Break[]
-						]
-					],
-				{d,
-					{
-						"GitHubConfig.m",
-						"GitHubConfig.wl"
-						}
-					}
-				],
-			Null-><||>
-			]
-	]
+  $GitHubConfig:=
+    Replace[
+      Do[
+        With[{f=PackageFilePath["Private", "Config", d]},
+          If[FileExistsQ@f,
+            Return[
+              $GitHubConfig=
+                Replace[Quiet@Import@f,
+                  { 
+                    o_?OptionQ:>Association@o,
+                    _-><||>
+                    }
+                  ]
+                ];
+            Break[]
+            ]
+          ],
+        {d,
+          {
+            "GitHubConfig.m",
+            "GitHubConfig.wl"
+            }
+          }
+        ],
+      Null-><||>
+      ]
+  ]
+
+
+$GitHubConfig=
+  Merge[
+    {
+      $GitHubConfig,
+      "EncodePassword"->False,
+      "UseKeychain"->False,
+      "CachePassword"->True,
+      "LockPasswordCache"->False
+      },
+    First
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GetConfig*)
+
+
+
+$GitHubActions["GetConfig"]=GitHubGetConfig;
+
+
+GitHubGetConfig[k_]:=
+  Lookup[$GitHubConfig, k];
+GitHubGetConfig[]:=$GitHubConfig
+
+
+(* ::Subsubsection::Closed:: *)
+(*SetConfig*)
+
+
+
+$GitHubActions["SetConfig"]=GitHubSetConfig;
+
+
+GitHubSetConfig[o_?OptionQ]:=
+  AssociateTo[$GitHubConfig, o];
+GitHubSetConfig[k_, v_]:=
+  GitHubSetConfig[k->v];
+
+
+(* ::Subsubsection::Closed:: *)
+(*LockPasswordCache*)
+
+
+
+$GitHubAction["LockPasswordCache"]=
+  GitHubLockPasswordCache;
+
+
+GitHubLockPasswordCache[]:=
+  SetAttributes[gitHubPasswordCache, {Locked, ReadProtected}];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -95,19 +174,23 @@ If[Not@ValueQ@$GitHubConfig,
 
 
 If[Length[OwnValues@$GitHubUsername]===0,
-	$GitHubUsername:=
-		Replace[
-			If[$GitHubUseKeychain, $Keychain["$GitHubUsername"], None],
-			Except[_String]:>
-				Replace[$GitHubConfig["Username"],
-					Except[_String?StringQ]:>
-						GitHubSetUsernameAndPassword[
-							"", 
-							""
-							][[1]]
-					]
-			]
-	];
+  $GitHubUsername:=
+    Replace[
+      If[$GitHubUseKeychain, $GitHubKCUsername, None],
+      Except[_String]:>
+        Replace[$GitHubConfig["Username"],
+          Except[_String?StringQ]:>
+            GitHubSetUsernameAndPassword[
+              "", 
+              ""
+              ][[1]]
+          ]
+      ]
+  ];
+
+
+$GitHubKCUsername:=
+  KeychainGet[{"AccountData", "GitHub", "Username"}, True]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -116,7 +199,7 @@ If[Length[OwnValues@$GitHubUsername]===0,
 
 
 $GitHubEncodePassword:=
-	TrueQ@$GitHubConfig["EncodePassword"];
+  TrueQ@$GitHubConfig["EncodePassword"];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -125,44 +208,67 @@ $GitHubEncodePassword:=
 
 
 $GitHubStorePassword:=
-	Lookup[$GitHubConfig, "CachePassword", False]
+  Lookup[$GitHubConfig, 
+    "CachePassword", 
+    $GitHubConfig["CachePassword"]=True
+    ]
+
+
+GitHubPasswordCacheLookup[s_, def_:$Failed]:=
+  Replace[
+    gitHubPasswordCache[s],
+    Except[_String]|"":>def
+    ];
+GitHubPasswordCacheLookup~SetAttributes~HoldRest
 
 
 GitHubPassword[s_String]:=
-	With[
-		{
-			base=
-				Replace[gitHubPasswordCache[s],
-					Except[_String]:>
-						If[$GitHubUseKeychain, KeychainGet[{"github.com",	s}, False]]
-					]
-			},
-		If[StringQ@base,
-			base,
-			If[$GitHubUseKeychain&&$GitHubStorePassword,
-				KeychainGet[{"github.com",	s}, True],
-				(* Create an auth dialog for the found username *)
-				AuthDialog[
-					Dynamic@$ghauth,
-					"",
-					None,
-					{{"github.com", Automatic}, s}
-					];
-				If[AssociationQ[$ghauth]&&StringQ@$ghauth["github.com"][[2]],
-					gitHubPasswordCache[s]=
-						$ghauth["github.com"][[2]],
-					gitHubPasswordCache[s]=None
-					];
-				Clear@$ghauth;
-				gitHubPasswordCache[s]
-				]
-			]
-		];
+  Module[
+    {
+      base=
+        GitHubPasswordCacheLookup[s,
+          If[$GitHubUseKeychain, KeychainGet[{"github.com",  s}, False]]
+          ],
+      res
+      },
+    If[StringQ@base,
+      base,
+      Which[
+        $GitHubUseKeychain&&$GitHubStorePassword,
+          KeychainGet[{"github.com",  s}, True],
+        $GitHubStorePassword,
+          (* Create an auth dialog for the found username *)
+          res=
+            AuthDialog[
+              "",
+              None,
+              {{"github.com", Automatic}, s}
+              ];
+          If[AssociationQ[res]&&StringQ@res["github.com"][[2]],
+            gitHubPasswordCache[s]=
+              res["github.com"][[2]],
+            gitHubPasswordCache[s]=$Failed
+            ];
+          gitHubPasswordCache[s],
+        True,
+          res=
+            AuthDialog[
+              "",
+              None,
+              {{"github.com", Automatic}, s}
+              ];
+          If[AssociationQ[res]&&StringQ@res["github.com"][[2]],
+            res["github.com"][[2]],
+            $Failed
+            ]
+        ]
+      ]
+    ];
 GitHubPassword[Optional[Automatic,Automatic]]:=
-	GitHubPassword[$GitHubUsername];
+  GitHubPassword[$GitHubUsername];
 Clear@$GitHubPassword;
 $GitHubPassword:=
-	GitHubPassword[Automatic];
+  GitHubPassword[Automatic];
 
 
 (*If[ValueQ@$GitHubUsername&&!KeyMemberQ[$gitHubPassCache,$GitHubUsername],
@@ -198,28 +304,11 @@ $GitHubPassword:=
 
 
 $GitHubSSHConnected:=
-	($GitHubSSHConnected=
-		Quiet[processRunDupe[{"ssh","-T","git@github.com"}];
-			Length@$MessageList===0
-			]
-		);
-
-
-(* ::Subsubsection::Closed:: *)
-(*Actions*)
-
-
-
-$GitHubActions=<||>
-
-
-(* ::Subsubsection::Closed:: *)
-(*Lol*)
-
-
-
-$GitHubActions["CurrentUser"]=
-	Function[$GitHubUsername]
+  ($GitHubSSHConnected=
+    Quiet[processRunDupe[{"ssh","-T","git@github.com"}];
+      Length@$MessageList===0
+      ]
+    );
 
 
 (* ::Subsection:: *)
@@ -236,12 +325,12 @@ ClearAll[GitHubPath, FormatGitHubPath]
 
 
 Options[GitHubPath]=
-	{
-		"Username"->Automatic,
-		"Password"->None,
-		"Branch"->"master",
-		"Tree"->"tree"
-		};
+  {
+    "Username"->Automatic,
+    "Password"->None,
+    "Branch"->"master",
+    "Tree"->"tree"
+    };
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -250,57 +339,57 @@ Options[GitHubPath]=
 
 
 Options[FormatGitHubPath]=
-	Options[GitHubPath];
+  Options[GitHubPath];
 FormatGitHubPath[path___String,ops:OptionsPattern[]]:=
-	URLBuild@<|
-		"Scheme"->
-			"https",
-		"Domain"->
-			"github.com",
-		If[$GitHubEncodePassword||
-			MatchQ[OptionValue@"Password",_String|Automatic],
-			"Username"->
-				Replace[OptionValue["Username"],
-					{
-						Automatic:>
-							Replace[OptionValue@"Password",
-								Automatic|_String:>$GitHubUsername
-								],
-						Except[_String]->None
-						}
-					],
-			Nothing
-			],
-		If[$GitHubEncodePassword||
-			MatchQ[OptionValue@"Password",_String|Automatic],
-			"Password"->
-				Replace[
-					Replace[OptionValue["Username"],{
-						Automatic:>$GitHubUsername,
-						Except[_String]->None
-						}],
-					s_String:>
-						Replace[OptionValue["Password"],
-							Automatic:>GitHubPassword[s]
-							]
-					],
-			Nothing
-			],
-		"Path"->
-			{
-				Replace[OptionValue@"Username",
-					Automatic:>$GitHubUsername
-					],
-				If[Length@{path}>1&&!GitHubReleaseQ@{path},
-					Sequence@@Flatten@
-						Insert[{path}, 
-							{OptionValue["Tree"], Replace[OptionValue["Branch"], None->Nothing]}, 
-							2
-							],
-					Sequence@@{path}
-					]
-				}
-		|>;
+  URLBuild@<|
+    "Scheme"->
+      "https",
+    "Domain"->
+      "github.com",
+    If[$GitHubEncodePassword||
+      MatchQ[OptionValue@"Password", _String|Automatic],
+      "Username"->
+        Replace[OptionValue["Username"],
+          {
+            Automatic:>
+              Replace[OptionValue@"Password",
+                Automatic|_String:>$GitHubUsername
+                ],
+            Except[_String]->None
+            }
+          ],
+      Nothing
+      ],
+    If[$GitHubEncodePassword||
+      MatchQ[OptionValue@"Password",_String|Automatic],
+      "Password"->
+        Replace[
+          Replace[OptionValue["Username"],{
+            Automatic:>$GitHubUsername,
+            Except[_String]->None
+            }],
+          s_String:>
+            Replace[OptionValue["Password"],
+              Automatic:>GitHubPassword[s]
+              ]
+          ],
+      Nothing
+      ],
+    "Path"->
+      {
+        Replace[OptionValue@"Username",
+          Automatic:>$GitHubUsername
+          ],
+        If[Length@{path}>1&&!GitHubReleaseQ@{path},
+          Sequence@@Flatten@
+            Insert[{path}, 
+              {OptionValue["Tree"], Replace[OptionValue["Branch"], None->Nothing]}, 
+              2
+              ],
+          Sequence@@{path}
+          ]
+        }
+    |>;
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -312,115 +401,115 @@ GitHubPath//Clear
 
 
 GitHubPath[
-	repo_String, 
-	t:"tree"|"raw"|"trunk"|"releases", 
-	branch_String, 
-	p___String, 
-	ops:OptionsPattern[]
-	]:=
-	GitHubPath[repo,
-		If[t==="trunk", branch, Sequence@@{}],
-		p, 
-		"Branch"->
-			If[MemberQ[{"trunk"}, t],
-				None,
-				branch
-				],
-		"Tree"->t,
-		ops
-		];
+  repo_String, 
+  t:"tree"|"raw"|"trunk"|"releases", 
+  branch_String, 
+  p___String, 
+  ops:OptionsPattern[]
+  ]:=
+  GitHubPath[repo,
+    If[t==="trunk", branch, Sequence@@{}],
+    p, 
+    "Branch"->
+      If[MemberQ[{"trunk"}, t],
+        None,
+        branch
+        ],
+    "Tree"->t,
+    ops
+    ];
 GitHubPath[
-	path___String,
-	ops:OptionsPattern[]
-	]/;(TrueQ@$GitHubPathFormat):=
-	FormatGitHubPath[path,ops];
+  path___String,
+  ops:OptionsPattern[]
+  ]/;(TrueQ@$GitHubPathFormat):=
+  FormatGitHubPath[path,ops];
 GitHubPath[
-	s_String?(
-		URLParse[#, "Domain"]=="github.com"||
-		(
-				URLParse[#, "Scheme"]===None&&
-				URLParse[#, "Domain"]===None&&
-				Length@URLParse[#, "Path"]>1
-			)||
-		URLParse[#, "Scheme"]==="github"||
-		URLParse[#, "Scheme"]==="github-release"&
-		),
-	o:OptionsPattern[]
-	]:=
-	GitHubPathParse[
-		Which[
-			URLParse[s, "Scheme"]==="github-release",
-				URLBuild@<|
-					"Scheme"->"github",
-					"Path"->
-						Replace[URLParse[s, "Path"],
-							{
-								r:{___, "releases", "latest"}:>r,
-								{a___, "releases"}:>{a, "latest"},
-								{a___}:>{a, "releases", "latest"}
-								}
-							]
-					|>,
-		URLParse[s, "Scheme"]==="github"||
-			URLParse[s, "Domain"]==="github.com",
-			s,
-		True,
-			"github:"<>s
-		],
-	o
-	];
+  s_String?(
+    URLParse[#, "Domain"]=="github.com"||
+    (
+        URLParse[#, "Scheme"]===None&&
+        URLParse[#, "Domain"]===None&&
+        Length@URLParse[#, "Path"]>1
+      )||
+    URLParse[#, "Scheme"]==="github"||
+    URLParse[#, "Scheme"]==="github-release"&
+    ),
+  o:OptionsPattern[]
+  ]:=
+  GitHubPathParse[
+    Which[
+      URLParse[s, "Scheme"]==="github-release",
+        URLBuild@<|
+          "Scheme"->"github",
+          "Path"->
+            Replace[URLParse[s, "Path"],
+              {
+                r:{___, "releases", "latest"}:>r,
+                {a___, "releases"}:>{a, "latest"},
+                {a___}:>{a, "releases", "latest"}
+                }
+              ]
+          |>,
+    URLParse[s, "Scheme"]==="github"||
+      URLParse[s, "Domain"]==="github.com",
+      s,
+    True,
+      "github:"<>s
+    ],
+  o
+  ];
 GitHubPath[URL[s_String], ops:OptionsPattern[]]:=GitHubPath[s, ops];
 GitHubPath[GitHubPath[p___String, o___?OptionQ], op:OptionsPattern[]]:=
-	GitHubPath[p, Sequence@@DeleteDuplicatesBy[Flatten@{op, o}, First]]
+  GitHubPath[p, Sequence@@DeleteDuplicatesBy[Flatten@{op, o}, First]]
 
 
 GitHubPath/:
-	Normal[GitHubPath[repos___,ops___?OptionQ]]:=
-		{
-			FirstCase[{ops},
-				("Username"->u_):>u,
-				$GitHubUsername
-				],
-			repos
-			};
+  Normal[GitHubPath[repos___,ops___?OptionQ]]:=
+    {
+      FirstCase[{ops},
+        ("Username"->u_):>u,
+        $GitHubUsername
+        ],
+      repos
+      };
 GitHubPath/:
-	URL[GitHubPath[path___String,ops:OptionsPattern[]]]:=
-		FormatGitHubPath[path,ops]
+  URL[GitHubPath[path___String,ops:OptionsPattern[]]]:=
+    FormatGitHubPath[path,ops]
 
 
 Format[g:GitHubPath[path___String,ops:OptionsPattern[]]]:=
-	RawBoxes@
-		BoxForm`ArrangeSummaryBox[
-			"GitHubPath",
-			g,
-			None,
-			{
-				BoxForm`MakeSummaryItem[
-					{
-						"Path: ", 
-						If[GitHubReleaseQ@{path}, {path}[[1]], URLBuild[{path}]]
-						},
-					StandardForm
-					],
-				BoxForm`MakeSummaryItem[
-					{"URL: ", 
-						Hyperlink[FormatGitHubPath@@g]
-						}, StandardForm]
-				},
-			Map[
-				BoxForm`MakeSummaryItem[
-					{
-						Row@{#[[1]], ": "}, #[[2]]
-						},
-					StandardForm
-					]&,
-				Prepend[
-					Flatten[Normal/@{ops}],
-					"Release"->GitHubReleaseQ@{path}
-					]
-				],
-			StandardForm
-			]
+  RawBoxes@
+    BoxForm`ArrangeSummaryBox[
+      "GitHubPath",
+      g,
+      None,
+      {
+        BoxForm`MakeSummaryItem[
+          {
+            "Path: ", 
+            If[GitHubReleaseQ@{path}, {path}[[1]], URLBuild[{path}]]
+            },
+          StandardForm
+          ],
+        BoxForm`MakeSummaryItem[
+          {"URL: ", 
+            Hyperlink[FormatGitHubPath@@g]
+            }, StandardForm]
+        },
+      Map[
+        BoxForm`MakeSummaryItem[
+          {
+            Row@{#[[1]], ": "}, #[[2]]
+            },
+          StandardForm
+          ]&,
+        Prepend[
+          Flatten[Normal/@{ops}],
+          "Release"->GitHubReleaseQ@{path}
+          ]
+        ],
+      StandardForm
+      ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -429,16 +518,16 @@ Format[g:GitHubPath[path___String,ops:OptionsPattern[]]]:=
 
 
 GitHubPathQ[path:_String|_URL]:=
-	With[{p=URLParse[path]},
-		(
-			(MatchQ[p["Scheme"],"http"|"https"|None]&&p["Domain"]==="github.com")||
-			(MatchQ[p["Scheme"], ("github"|"github-release")]&&p["Domain"]===None)
-			)
-			&&
-		Length@p["Path"]>0
-		];
+  With[{p=URLParse[path]},
+    (
+      (MatchQ[p["Scheme"],"http"|"https"|None]&&p["Domain"]==="github.com")||
+      (MatchQ[p["Scheme"], ("github"|"github-release")]&&p["Domain"]===None)
+      )
+      &&
+    Length@p["Path"]>0
+    ];
 GitHubPathQ[_GitHubPath]:=
-	True;
+  True;
 
 
 (* ::Subsubsection::Closed:: *)
@@ -447,19 +536,19 @@ GitHubPathQ[_GitHubPath]:=
 
 
 Options[GitHubPathParse]=
-	Options[GitHubPath];
+  Options[GitHubPath];
 GitHubPathParse[path:_String|_URL, o:OptionsPattern[]]:=
-	If[GitHubPathQ[path],
-		Replace[
-			DeleteCases[""]@
-				URLParse[path, "Path"],
-			{
-				{user_, parts___}:>
-					GitHubPath[parts, "Username"->user, o]
-				}
-			],
-		$Failed
-		];
+  If[GitHubPathQ[path],
+    Replace[
+      DeleteCases[""]@
+        URLParse[path, "Path"],
+      {
+        {user_, parts___}:>
+          GitHubPath[parts, "Username"->user, o]
+        }
+      ],
+    $Failed
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -468,17 +557,17 @@ GitHubPathParse[path:_String|_URL, o:OptionsPattern[]]:=
 
 
 GitHubRepoParse[path:_String|_URL]:=
-	If[GitHubPathQ[path],
-		Replace[
-			DeleteCases[""]@
-				URLParse[path,"Path"],{
-			{"repos",user_,parts__}|
-			{user_,parts__,"releases"|"deployments"}|
-			{user_,parts__,"releases"|"deployments","tag",___}:>
-				GitHubPath[parts,"Username"->user]
-			}],
-		$Failed
-		];
+  If[GitHubPathQ[path],
+    Replace[
+      DeleteCases[""]@
+        URLParse[path,"Path"],{
+      {"repos",user_,parts__}|
+      {user_,parts__,"releases"|"deployments"}|
+      {user_,parts__,"releases"|"deployments","tag",___}:>
+        GitHubPath[parts,"Username"->user]
+      }],
+    $Failed
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -487,17 +576,17 @@ GitHubRepoParse[path:_String|_URL]:=
 
 
 iGitHubRepoQ[path:_String|_URL]:=
-	GitHubPathQ[path]&&
-	With[{p=URLParse[path]},
-		!MatchQ[p["Path"],
-			{"repos", __}|
-			{__,"releases", ___}
-			]
-		];
+  GitHubPathQ[path]&&
+  With[{p=URLParse[path]},
+    !MatchQ[p["Path"],
+      {"repos", __}|
+      {__,"releases", ___}
+      ]
+    ];
 GitHubRepoQ[p:GitHubPath[___String,___?OptionQ]]:=
-	iGitHubRepoQ[URL@p]
+  iGitHubRepoQ[URL@p]
 GitHubRepoQ[path:_String|_URL]:=
-	GitHubRepoQ[GitHubPath@path];
+  GitHubRepoQ[GitHubPath@path];
 GitHubRepoQ[_]:=False
 
 
@@ -510,21 +599,21 @@ GitHubReleaseQ//Clear
 
 
 GitHubReleaseQ[{p__String}]:=
-	MatchQ[{p},
-		{__, "releases", "latest"}|
-		{__, "releases", "tag", _}
-		];
+  MatchQ[{p},
+    {__, "releases", "latest"}|
+    {__, "releases", "tag", _}
+    ];
 GitHubReleaseQ[GitHubPath[p__String,___?OptionQ]]:=
-	GitHubReleaseQ[{p}];
+  GitHubReleaseQ[{p}];
 GitHubReleaseQ[path:_String|_URL]:=
-	If[GitHubPathQ@path,
-		Replace[GitHubPath[path],{
-			g_GitHubPath:>
-				GitHubReleaseQ@g,
-			_->False
-			}],
-		False
-		];
+  If[GitHubPathQ@path,
+    Replace[GitHubPath[path],{
+      g_GitHubPath:>
+        GitHubReleaseQ@g,
+      _->False
+      }],
+    False
+    ];
 GitHubReleaseQ[___]:=False;
 
 
@@ -544,43 +633,43 @@ GitHubReleaseQ[___]:=False;
 
 
 GitHubQueryAttachAuth[headers_]:=
-	ReplacePart[headers,
-		{
-			"Headers":>
-				ReplaceAll[headers["Headers"],
-					{
-						("Authorization"->Automatic):>
-							("Authorization"->GitHubAuthHeader[] ),
-						("Authorization"->{u__}):>
-							("Authorization"->GitHubAuthHeader[u])
-						}
-					],
-			"Username":>
-				Replace[
-					headers["Username"],
-					Automatic:>
-						Replace[$GitHubUsername,
-							Except[_String?(StringLength[#]>0&)]:>
-								GitHubSetUsernameAndPassword[
-									Automatic, 
-									Lookup[headers, "Password", $GitHubPassword]
-									]
-							]
-					],
-			"Password":>
-				Replace[
-					headers["Password"],
-					Automatic:>
-						Replace[$GitHubPassword,
-							Except[_String?(StringLength[#]>0&)]:>
-								GitHubSetUsernameAndPassword[
-									Lookup[headers, "Username", $GitHubPassword], 
-									Automatic
-									]
-							]
-					]
-			}
-		]
+  ReplacePart[headers,
+    {
+      "Headers":>
+        ReplaceAll[headers["Headers"],
+          {
+            ("Authorization"->Automatic):>
+              ("Authorization"->GitHubAuthHeader[] ),
+            ("Authorization"->{u__}):>
+              ("Authorization"->GitHubAuthHeader[u])
+            }
+          ],
+      "Username":>
+        Replace[
+          headers["Username"],
+          Automatic:>
+            Replace[$GitHubUsername,
+              Except[_String?(StringLength[#]>0&)]:>
+                GitHubSetUsernameAndPassword[
+                  Automatic, 
+                  Lookup[headers, "Password", $GitHubPassword]
+                  ]
+              ]
+          ],
+      "Password":>
+        Replace[
+          headers["Password"],
+          Automatic:>
+            Replace[$GitHubPassword,
+              Except[_String?(StringLength[#]>0&)]:>
+                GitHubSetUsernameAndPassword[
+                  Lookup[headers, "Username", $GitHubPassword], 
+                  Automatic
+                  ]
+              ]
+          ]
+      }
+    ]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -592,30 +681,30 @@ $GitHubBodyFormat="Base64";
 
 
 GitHubQueryPrepBody[headers_]:=
-	If[headers["Body"]==={},
-		KeyDrop[headers, "Body"],
-		ReplacePart[headers,
-			"Body":>
-				Replace[
-					o_?OptionQ:>
-						ExportString[o, "JSON"]
-					]@
-				ReplaceAll[
-					headers["Body"],
-					{
-						File[f_]:>
-							Switch[$GitHubBodyFormat, 
-								"Binary",
-									ReadByteArray[f],
-								"Base64",
-									Developer`EncodeBase64[ReadString[f]],
-								_,
-									ReadString[f]
-								]
-						}
-					]
-			]
-		]
+  If[headers["Body"]==={},
+    KeyDrop[headers, "Body"],
+    ReplacePart[headers,
+      "Body":>
+        Replace[
+          o_?OptionQ:>
+            ExportString[o, "JSON"]
+          ]@
+        ReplaceAll[
+          headers["Body"],
+          {
+            File[f_]:>
+              Switch[$GitHubBodyFormat, 
+                "Binary",
+                  ReadByteArray[f],
+                "Base64",
+                  Developer`EncodeBase64[ReadString[f]],
+                _,
+                  ReadString[f]
+                ]
+            }
+          ]
+      ]
+    ]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -624,37 +713,36 @@ GitHubQueryPrepBody[headers_]:=
 
 
 $GitHubQueryBase=
-	<|
-		"Scheme"->"https",
-		"Domain"->"api.github.com"
-		|>;
+  <|
+    "Scheme"->"https",
+    "Domain"->"api.github.com"
+    |>;
 
 
 GitHubQuery[
-	path:_?(MatchQ[Flatten@{#},{___String}]&):{},
-	query:(_String->_)|{(_String->_)...}:{},
-	headers:_Association:<||>
-	]:=
-	Block[
-		{
-			$GitHubUsername=$GitHubUsername,
-			$GitHubPassword=$GitHubPassword
-			},
-		Catch@
-			HTTPRequest[
-				URLBuild@
-					Join[
-						$GitHubQueryBase,
-						<|
-							"Path"->Flatten@{path},
-							"Query"->{query}
-							|>
-						],
-				Association@Normal@
-					GitHubQueryPrepBody@
-						GitHubQueryAttachAuth@headers
-				]
-			];
+  path:_?(MatchQ[Flatten@{#},{___String}]&):{},
+  query:(_String->_)|{(_String->_)...}:{},
+  headers:_Association:<||>
+  ]:=
+  Block[
+    {
+      $GitHubUsername:=$GitHubUsername,
+      $GitHubPassword:=$GitHubPassword
+      },
+    HTTPRequest[
+      URLBuild@
+        Join[
+          $GitHubQueryBase,
+          <|
+            "Path"->Flatten@{path},
+            "Query"->{query}
+            |>
+          ],
+      Association@Normal@
+        GitHubQueryPrepBody@
+          GitHubQueryAttachAuth@headers
+      ]
+      ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -666,23 +754,23 @@ $GitHubParamMap=<||>;
 
 
 GitHubQueryParamFilter[s_Symbol, ops_?OptionQ]:=
-	With[{kd=Dispatch[$GitHubParamMap[s]]},
-		Replace[
-			FilterRules[
-				Flatten@{
-					ops,
-					Options[s]
-					},
-				Keys[$GitHubParamMap[s]]
-				],
-			{
-				(k_->v:_String|_?NumberQ|True|False):>
-					Replace[k, kd]->v,
-				_->Nothing
-				},
-			1
-			]
-		]
+  With[{kd=Dispatch[$GitHubParamMap[s]]},
+    Replace[
+      FilterRules[
+        Flatten@{
+          ops,
+          Options[s]
+          },
+        Keys[$GitHubParamMap[s]]
+        ],
+      {
+        (k_->v:_String|_?NumberQ|True|False):>
+          Replace[k, kd]->v,
+        _->Nothing
+        },
+      1
+      ]
+    ]
 
 
 (* ::Subsection:: *)
@@ -691,22 +779,51 @@ GitHubQueryParamFilter[s_Symbol, ops_?OptionQ]:=
 
 
 (* ::Subsubsection::Closed:: *)
-(*Auth*)
+(*GitHubSetUsername*)
 
 
 
-(*GitHubAuth[
-	user:_String|Automatic:Automatic,
-	scopes:_String|{__String}:{"public_repo"}]:=
-	GitHubQuery[
-		Replace[user,Automatic:>$GitHubUsername],
-		<|
-			"Headers"\[Rule]{
-				"Authorization"\[Rule]"token OAUTH-TOKEN",
-				"
-				}
-			|>
-		];*)
+$GitHubActions["SetUsername"]:=GitHubSetUsername;
+
+
+GitHubSetUsername[s_String]:=
+  (
+    If[$GitHubUseKeychain, 
+      $GitHubUsername=s,
+      GitHubSetUsername[Automatic]
+      ];
+    $GitHubConfig["Username"]=s;
+    );
+GitHubSetUsername[Automatic]:=
+  $GitHubUsername:=
+    Replace[
+      If[$GitHubUseKeychain,  $GitHubKCUsername, None],
+      Except[_String]:>
+        Replace[$GitHubConfig["Username"],
+          Except[_String?StringQ]:>
+            GitHubSetUsernameAndPassword[
+              "", 
+              ""
+              ][[1]]
+          ]
+      ];
+GitHubSetUsername[_]:=$Failed;
+
+
+(* ::Subsubsection::Closed:: *)
+(*GitHubSetPassword*)
+
+
+
+$GitHubActions["SetPassword"]:=GitHubSetPassword;
+
+
+GitHubSetPassword[u_String, s_String]:=
+  gitHubPasswordCache[u]=s;
+GitHubSetPassword[s_String]:=
+  gitHubPasswordCache[$GitHubUsername]=s;
+GitHubSetPassword[Automatic]:=Null;
+GitHubSetPassword[_]:=$Failed
 
 
 (* ::Subsubsection::Closed:: *)
@@ -714,43 +831,47 @@ GitHubQueryParamFilter[s_Symbol, ops_?OptionQ]:=
 
 
 
+(*$GitHubActions["GetUsernameAndPassword"]=
+	GitHubGetUsernameAndPassword;*)
+
+
 GitHubGetUsernameAndPassword[u_, p_]:=
-	Block[
-		{
-			username=Replace[u, Automatic:>$GitHubUsername], 
-			password=Replace[u, Automatic:>$GitHubPassword]
-			},
-		If[
-			Not[
-				StringQ@username&&StringQ@password&&
-				StringLength[username]>0&&StringLength[password]>0
-				],
-			If[StringQ@username&&$GitHubUseKeychain,
-				password=
-					KeychainGet[{"github.com", username}]
-				]
-			];
-		If[
-			Not[
-				StringQ@username&&StringQ@password&&
-				StringLength[username]>0&&StringLength[password]>0
-				],
-				Replace[
-					AuthDialog[
-						{
-							"GitHub", 
-							If[StringQ[username], username, ""], 
-							If[StringQ[password], password, ""]
-							}],
-					a_Association?AssociationQ:>
-						(
-							Set[username, a[["GitHub", 1]]];
-							Set[password, a[["GitHub", 2]]];
-							)
-					]
-				];
-		{username, password}
-		];
+  Block[
+    {
+      username=Replace[u, Automatic:>$GitHubUsername], 
+      password=Replace[u, Automatic:>$GitHubPassword]
+      },
+    If[
+      Not[
+        StringQ@username&&StringQ@password&&
+        StringLength[username]>0&&StringLength[password]>0
+        ],
+      If[StringQ@username&&$GitHubUseKeychain,
+        password=
+          KeychainGet[{"github.com", username}]
+        ]
+      ];
+    If[
+      Not[
+        StringQ@username&&StringQ@password&&
+        StringLength[username]>0&&StringLength[password]>0
+        ],
+        Replace[
+          AuthDialog[
+            {
+              "GitHub", 
+              If[StringQ[username], username, ""], 
+              If[StringQ[password], password, ""]
+              }],
+          a_Association?AssociationQ:>
+            (
+              Set[username, a[["GitHub", 1]]];
+              Set[password, a[["GitHub", 2]]];
+              )
+          ]
+        ];
+    {username, password}
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -758,12 +879,51 @@ GitHubGetUsernameAndPassword[u_, p_]:=
 
 
 
+(*$GitHubActions["SetUsernameAndPassword"]:=
+	GitHubSetUsernameAndPassword;*)
+
+
 GitHubSetUsernameAndPassword[u_, p_]:=
-	Function[gitHubPasswordCache[#[[1]]]=#[[2]];#]@
-		Set[
-			{$GitHubUsername, $GitHubPassword},
-			GitHubGetUsernameAndPassword[u, p]
-			]
+  With[{up=GitHubGetUsernameAndPassword[u, p]},
+    {
+      GitHubSetUsername[up[[1]]],
+      GitHubSetPassword@@up
+      }
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*GetPassword*)
+
+
+
+$GitHubActions["GetPassword"]=GitHubGetPassword;
+
+
+GitHubGetPassword[Optional[Automatic, Automatic]]:=
+  GitHubGetPassword[$GitHubUsername];
+GitHubGetPassword[u_String]:=
+  GitHubPassword[u];
+GitHubGetPassword[_]:=$Failed;
+
+
+(* ::Subsubsection::Closed:: *)
+(*GitHubClearPassword*)
+
+
+
+$GitHubActions["ClearPassword"]=GitHubClearPassword;
+
+
+GitHubClearPassword[key_String]:=
+  If[$GitHubUseKeychain,
+    PackageThrowMessage["Keychain",
+      "Password in keychain for must be cleared explicitly via KeychainRemove"
+      ],
+    gitHubPasswordCache[key]=.
+    ];
+GitHubClearPassword[Optional[Automatic, Automatic]]:=
+  gitHubPasswordCache[$GitHubUsername]=.;
 
 
 (* ::Subsubsection::Closed:: *)
@@ -771,21 +931,28 @@ GitHubSetUsernameAndPassword[u_, p_]:=
 
 
 
+$GitHubActions["GetAuthorizationHeader"]=
+  GitHubAuthHeader
+
+
 GitHubAuthHeader[
-	user:_String|Automatic:Automatic,
-	password:_String|Automatic:Automatic
-	]:=
-	With[{up=GitHubGetUsernameAndPassword[user, password]},
-		If[Not[AllTrue[up, StringQ[#]&&StringLength[#]>0&]],
-			Message[GitHub::noauth];
-			Throw@$Failed,
-			StringJoin@{
-				"Basic ",
-				Developer`EncodeBase64@
-					StringJoin@{up[[1]],":",up[[2]]}
-				}
-			]
-		];
+  user:_String|Automatic:Automatic,
+  password:_String|Automatic:Automatic
+  ]:=
+  With[{up=GitHubGetUsernameAndPassword[user, password]},
+    If[Not[AllTrue[up, StringQ[#]&&StringLength[#]>0&]],
+      PackageRaiseException[
+        "GitHub",
+        "GitHub couldn't authenticate user ``",
+        Replace[user, Automatic:>$GitHubUsername]
+        ],
+      StringJoin@{
+        "Basic ",
+        Developer`EncodeBase64@
+          StringJoin@{up[[1]],":",up[[2]]}
+        }
+      ]
+    ];
 
 
 (* ::Subsection:: *)
@@ -799,24 +966,24 @@ GitHubAuthHeader[
 
 
 GitHubUserAPI[
-	type:"users"|"org"|"user"|None:"users",
-	user:_String|Automatic:Automatic,
-	path:{___String}|_String:{},
-	query:(_String->_)|{(_String->_)...}:{},
-	headers:_Association:<||>
-	]:=
-	GitHubQuery[
-		{
-			If[type===None, Nothing, type],
-			Replace[user, 
-				Automatic:>
-					If[type==="user"||type===None, Nothing, $GitHubUsername]
-				],
-			Flatten@path
-			},
-		query,
-		headers
-		];
+  type:"users"|"org"|"user"|None:"users",
+  user:_String|Automatic:Automatic,
+  path:{___String}|_String:{},
+  query:(_String->_)|{(_String->_)...}:{},
+  headers:_Association:<||>
+  ]:=
+  GitHubQuery[
+    {
+      If[type===None, Nothing, type],
+      Replace[user, 
+        Automatic:>
+          If[type==="user"||type===None, Nothing, $GitHubUsername]
+        ],
+      Flatten@path
+      },
+    query,
+    headers
+    ];
 
 
 (* ::Subsection:: *)
@@ -830,32 +997,32 @@ GitHubUserAPI[
 
 
 GitHubReposAPI[
-	repo_GitHubPath?GitHubRepoQ,
-	path:{___String}|_String:{},
-	query:(_String->_)|{(_String->_)...}:{},
-	headers:_Association:<||>
-	]:=
-	GitHubQuery[
-		Flatten@{
-			"repos",
-			Sequence@@Normal@repo,
-			path
-			},
-		query,
-		headers
-		];
+  repo_GitHubPath?GitHubRepoQ,
+  path:{___String}|_String:{},
+  query:(_String->_)|{(_String->_)...}:{},
+  headers:_Association:<||>
+  ]:=
+  GitHubQuery[
+    Flatten@{
+      "repos",
+      Sequence@@Normal@repo,
+      path
+      },
+    query,
+    headers
+    ];
 GitHubReposAPI[
-	s_String?GitHubRepoQ,
-	path:{___String}|_String:{},
-	query:(_String->_)|{(_String->_)...}:{},
-	headers:_Association:<||>
-	]:=
-	GitHubReposAPI[
-		GitHubPathParse[If[URLParse[s, "Scheme"]===None, "github:"<>s, s]],
-		path,
-		query,
-		headers
-		];
+  s_String?GitHubRepoQ,
+  path:{___String}|_String:{},
+  query:(_String->_)|{(_String->_)...}:{},
+  headers:_Association:<||>
+  ]:=
+  GitHubReposAPI[
+    GitHubPathParse[If[URLParse[s, "Scheme"]===None, "github:"<>s, s]],
+    path,
+    query,
+    headers
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -864,19 +1031,19 @@ GitHubReposAPI[
 
 
 GitHubUserReposAPI[
-	path:{___String}|_String:{},
-	query:(_String->_)|{(_String->_)...}:{},
-	headers:_Association:<||>
-	]:=
-	GitHubQuery[
-		Flatten@{
-			"user",
-			"repos",
-			path
-			},
-		query,
-		headers
-		];
+  path:{___String}|_String:{},
+  query:(_String->_)|{(_String->_)...}:{},
+  headers:_Association:<||>
+  ]:=
+  GitHubQuery[
+    Flatten@{
+      "user",
+      "repos",
+      path
+      },
+    query,
+    headers
+    ];
 
 
 (* ::Subsection:: *)
@@ -890,19 +1057,19 @@ GitHubUserReposAPI[
 
 
 $GitHubActions["ListRepositories"]=
-	GitHubRepositories;
+  GitHubRepositories;
 
 
 GitHubRepositories//Clear
 
 
 GitHubRepositories[
-	type:"users"|"org":"users",
-	user:_String|Automatic:Automatic,
-	query:(_String->_)|{(_String->_)...}:{},
-	headers:_Association:<||>
-	]:=
-	GitHubUserAPI[type, user, {"repos"}, query, headers];
+  type:"users"|"org":"users",
+  user:_String|Automatic:Automatic,
+  query:(_String->_)|{(_String->_)...}:{},
+  headers:_Association:<||>
+  ]:=
+  GitHubUserAPI[type, user, {"repos"}, query, headers];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -914,42 +1081,42 @@ $GitHubActions["ListMyRepositories"]=GitHubListMyRepositories;
 
 
 $GitHubParamMap[GitHubListMyRepositories]=
-	{
-		"Visibility"->"visibility",
-		"Affiliation"->"affiliation",
-		"Type"->"type",
-		"Sort"->"sort",
-		"SortDirection"->"direction"
-		};
+  {
+    "Visibility"->"visibility",
+    "Affiliation"->"affiliation",
+    "Type"->"type",
+    "Sort"->"sort",
+    "SortDirection"->"direction"
+    };
 
 
 Options[GitHubListMyRepositories]=
-	Join[
-		Thread[Keys[$GitHubParamMap[GitHubListMyRepositories]]->Automatic],
-		{
-			"Username"->Automatic,
-			"Password"->Automatic
-			}
-		];
+  Join[
+    Thread[Keys[$GitHubParamMap[GitHubListMyRepositories]]->Automatic],
+    {
+      "Username"->Automatic,
+      "Password"->Automatic
+      }
+    ];
 GitHubListMyRepositories[
-	ops:OptionsPattern[]
-	]:=
-	GitHubUserReposAPI[
-		{}, 
-		GitHubQueryParamFilter[
-			GitHubListMyRepositories,
-			{
-				ops
-				}
-			],
-		<|
-			"Headers"->
-				{	
-					"Authorization"->
-						OptionValue[{"Username", "Password"}]
-					}
-			|>
-		];
+  ops:OptionsPattern[]
+  ]:=
+  GitHubUserReposAPI[
+    {}, 
+    GitHubQueryParamFilter[
+      GitHubListMyRepositories,
+      {
+        ops
+        }
+      ],
+    <|
+      "Headers"->
+        {  
+          "Authorization"->
+            OptionValue[{"Username", "Password"}]
+          }
+      |>
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -958,15 +1125,15 @@ GitHubListMyRepositories[
 
 
 $GitHubActions["GetRepository"]=
-	GitHubRepositoryInfo;
+  GitHubRepositoryInfo;
 
 
 GitHubRepositoryInfo[
-	repo:(_String|_GitHubPath)?GitHubRepoQ
-	]:=
-	GitHubReposAPI[
-		repo
-		]
+  repo:(_String|_GitHubPath)?GitHubRepoQ
+  ]:=
+  GitHubReposAPI[
+    repo
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -979,57 +1146,57 @@ $GitHubActions["CreateRepository"]=GitHubCreate;
 
 
 $GitHubParamMap[GitHubCreate]=
-	{
-		"Name"->"name",
-		"Description"->"description",
-		"Private"->"private",
-		"HomePage"->"homepage",
-		"AutoInit"->"auto_init",
-		"HasWiki"->"has_issues",
-		"HasProjects"->"has_projects",
-		"HasIssues"->"has_wiki",
-		"Private"->"team_id",
-		"GitIgnore"->"gitignore_template",
-		"LicenseTemplate"->"license_template",
-		"AllowSquashMerge"->"allow_squash_merge",
-		"AllowMergeCommit"->"allow_merge_commit",
-		"AllowRebaseMerge"->"allow_rebase_merge"
-		};
+  {
+    "Name"->"name",
+    "Description"->"description",
+    "Private"->"private",
+    "HomePage"->"homepage",
+    "AutoInit"->"auto_init",
+    "HasWiki"->"has_issues",
+    "HasProjects"->"has_projects",
+    "HasIssues"->"has_wiki",
+    "Private"->"team_id",
+    "GitIgnore"->"gitignore_template",
+    "LicenseTemplate"->"license_template",
+    "AllowSquashMerge"->"allow_squash_merge",
+    "AllowMergeCommit"->"allow_merge_commit",
+    "AllowRebaseMerge"->"allow_rebase_merge"
+    };
 
 
 Options[GitHubCreate]=
-	Join[
-		Thread[Keys[$GitHubParamMap[GitHubCreate]]->Automatic],
-		{
-			"Username"->Automatic,
-			"Password"->Automatic
-			}
-		];
+  Join[
+    Thread[Keys[$GitHubParamMap[GitHubCreate]]->Automatic],
+    {
+      "Username"->Automatic,
+      "Password"->Automatic
+      }
+    ];
 GitHubCreate[
-	repo:_String,
-	ops:OptionsPattern[]
-	]:=
-	GitHubUserReposAPI[
-		<|
-			"Method"->"POST",
-			"Body"->
-				ExportString[
-					GitHubQueryParamFilter[
-						GitHubCreate,
-						{
-							"Name"->repo,
-							ops
-							}
-						],
-					"JSON"
-					],
-			"Headers"->
-				{
-					"Authorization"->
-						OptionValue[{"Username", "Password"}]
-						}
-			|>
-		];
+  repo:_String,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubUserReposAPI[
+    <|
+      "Method"->"POST",
+      "Body"->
+        ExportString[
+          GitHubQueryParamFilter[
+            GitHubCreate,
+            {
+              "Name"->repo,
+              ops
+              }
+            ],
+          "JSON"
+          ],
+      "Headers"->
+        {
+          "Authorization"->
+            OptionValue[{"Username", "Password"}]
+            }
+      |>
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1042,40 +1209,40 @@ $GitHubActions["Edit"]=GitHubEdit;
 
 
 $GitHubParamMap[GitHubEdit]=
-	$GitHubParamMap[GitHubCreate];
+  $GitHubParamMap[GitHubCreate];
 Options[GitHubEdit]=
-	Join[
-		Thread[Keys[$GitHubParamMap[GitHubEdit]]->Automatic],
-		{
-			"Username"->Automatic,
-			"Password"->Automatic
-			}
-		];
+  Join[
+    Thread[Keys[$GitHubParamMap[GitHubEdit]]->Automatic],
+    {
+      "Username"->Automatic,
+      "Password"->Automatic
+      }
+    ];
 GitHubEdit[
-	repo:(_String|_GitHubPath)?GitHubRepoQ,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		<|
-			"Method"->"PATCH",
-			"Body"->
-				ExportString[
-					GitHubQueryParamFilter[
-						GitHubEdit,
-						{
-							ops
-							}
-						],
-					"JSON"
-					],
-			"Headers"->
-				{
-					"Authorization"->
-						OptionValue[{"Username", "Password"}]
-						}
-			|>
-		]
+  repo:(_String|_GitHubPath)?GitHubRepoQ,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    <|
+      "Method"->"PATCH",
+      "Body"->
+        ExportString[
+          GitHubQueryParamFilter[
+            GitHubEdit,
+            {
+              ops
+              }
+            ],
+          "JSON"
+          ],
+      "Headers"->
+        {
+          "Authorization"->
+            OptionValue[{"Username", "Password"}]
+            }
+      |>
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1091,37 +1258,37 @@ GitHubDelete//ClearAll
 
 
 Options[GitHubDelete]=
-	{
-		"Username"->Automatic,
-		"Password"->Automatic
-		};
+  {
+    "Username"->Automatic,
+    "Password"->Automatic
+    };
 GitHubDelete[
-	repo_GitHubPath?GitHubRepoQ,
-	ops:OptionsPattern[]
-	]:=
-	With[{uu=URLParse[URL@repo]},
-		GitHubReposAPI[
-			repo,
-			<|
-				"Method"->"DELETE",
-				"Headers"->
-					{
-						"Authorization"->
-							OptionValue[{"Username", "Password"}]
-							}
-				|>
-			]
-		];
+  repo_GitHubPath?GitHubRepoQ,
+  ops:OptionsPattern[]
+  ]:=
+  With[{uu=URLParse[URL@repo]},
+    GitHubReposAPI[
+      repo,
+      <|
+        "Method"->"DELETE",
+        "Headers"->
+          {
+            "Authorization"->
+              OptionValue[{"Username", "Password"}]
+              }
+        |>
+      ]
+    ];
 GitHubDelete[
-	s_String?GitHubRepoQ,
-	ops:OptionsPattern[]
-	]:=
-	Block[{$GitHubPathFormat=False},
-		GitHubDelete[
-			GitHubPath[s, FilterRules[{ops}, Options@GitHubPath]],
-			ops
-			]
-		];
+  s_String?GitHubRepoQ,
+  ops:OptionsPattern[]
+  ]:=
+  Block[{$GitHubPathFormat=False},
+    GitHubDelete[
+      GitHubPath[s, FilterRules[{ops}, Options@GitHubPath]],
+      ops
+      ]
+    ];
 (*GitHubDelete[
 	s_String?(
 		URLParse[#,"Scheme"]===None&&
@@ -1142,21 +1309,21 @@ GitHubDelete[
 
 
 $GitHubParamMap[GitHubRepositoryContributors]=
-	{
-		"AnonymousContributors"->"anon"
-		};
+  {
+    "AnonymousContributors"->"anon"
+    };
 
 
 Options[GitHubRepositoryContributors]=
-	$GitHubParamMap[GitHubRepositoryContributors];
+  $GitHubParamMap[GitHubRepositoryContributors];
 GitHubRepositoryContributors[
-	repo:(_String|_GitHubPath)?GitHubRepoQ,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"contributors"}
-		];
+  repo:(_String|_GitHubPath)?GitHubRepoQ,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"contributors"}
+    ];
 
 
 (* ::Subsection:: *)
@@ -1170,32 +1337,32 @@ GitHubRepositoryContributors[
 
 
 GitHubGitDataAPI[
-	repo_GitHubPath?GitHubRepoQ,
-	part:"blobs"|"commits"|"refs"|"tags"|"trees",
-	path:{___String}|_String:{},
-	query:(_String->_)|{(_String->_)...}:{},
-	headers:_Association:<||>
-	]:=
-	GitHubReposAPI[
-		repo,
-		Flatten[{"git", part, path}],
-		query,
-		headers
-		];
+  repo_GitHubPath?GitHubRepoQ,
+  part:"blobs"|"commits"|"refs"|"tags"|"trees",
+  path:{___String}|_String:{},
+  query:(_String->_)|{(_String->_)...}:{},
+  headers:_Association:<||>
+  ]:=
+  GitHubReposAPI[
+    repo,
+    Flatten[{"git", part, path}],
+    query,
+    headers
+    ];
 GitHubGitDataAPI[
-	s_String?GitHubRepoQ,
-	part:"blobs"|"commits"|"refs"|"tags"|"trees",
-	path:{___String}|_String:{},
-	query:(_String->_)|{(_String->_)...}:{},
-	headers:_Association:<||>
-	]:=
-	GitHubGitDataAPI[
-		GitHubPathParse[If[URLParse[s, "Scheme"]===None, "github:"<>s, s]],
-		part,
-		path,
-		query,
-		headers
-		];
+  s_String?GitHubRepoQ,
+  part:"blobs"|"commits"|"refs"|"tags"|"trees",
+  path:{___String}|_String:{},
+  query:(_String->_)|{(_String->_)...}:{},
+  headers:_Association:<||>
+  ]:=
+  GitHubGitDataAPI[
+    GitHubPathParse[If[URLParse[s, "Scheme"]===None, "github:"<>s, s]],
+    part,
+    path,
+    query,
+    headers
+    ];
 
 
 (* ::Subsection:: *)
@@ -1209,12 +1376,12 @@ GitHubGitDataAPI[
 
 
 GitHubRepositoryBranches[
-	repo:(_String|_GitHubPath)?GitHubRepoQ
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"branches"}
-		];
+  repo:(_String|_GitHubPath)?GitHubRepoQ
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"branches"}
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1223,13 +1390,13 @@ GitHubRepositoryBranches[
 
 
 GitHubRepositoryBranchInfo[
-	repo:(_String|_GitHubPath)?GitHubRepoQ,
-	branch_String
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"branches", branch}
-		];
+  repo:(_String|_GitHubPath)?GitHubRepoQ,
+  branch_String
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"branches", branch}
+    ];
 
 
 (* ::Subsection:: *)
@@ -1243,23 +1410,23 @@ GitHubRepositoryBranchInfo[
 
 
 Options[GitHubListForks]=
-	{
-		"Sort"->None
-		};
+  {
+    "Sort"->None
+    };
 GitHubListForks[
-	repo:(_GitHubPath|_String)?GitHubRepoQ,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"forks"},
-		Replace[OptionValue["Sort"],
-			{
-				Except[_String]:>Sequence@@{},
-				s_String:>("sort"->s)
-				}
-			]
-		]
+  repo:(_GitHubPath|_String)?GitHubRepoQ,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"forks"},
+    Replace[OptionValue["Sort"],
+      {
+        Except[_String]:>Sequence@@{},
+        s_String:>("sort"->s)
+        }
+      ]
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1271,34 +1438,34 @@ GitHubFork//Clear
 
 
 Options[GitHubFork]=
-	{
-		"Organization"->None,
-		"Username"->Automatic,
-		"Password"->Automatic
-		};
+  {
+    "Organization"->None,
+    "Username"->Automatic,
+    "Password"->Automatic
+    };
 GitHubFork[
-	repo:(_GitHubPath|_String)?GitHubRepoQ,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"forks"},
-		Replace[OptionValue["Organization"],
-			{
-				Except[_String]:>Sequence@@{},
-				s_String:>("organization"->s)
-				}
-			],
-		<|
-			"Method"->"POST",
-			"Headers"->
-				{
-					"Authorization"->
-						OptionValue[{"Username", "Password"}]
-					}
-			|>
-		]
-			
+  repo:(_GitHubPath|_String)?GitHubRepoQ,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"forks"},
+    Replace[OptionValue["Organization"],
+      {
+        Except[_String]:>Sequence@@{},
+        s_String:>("organization"->s)
+        }
+      ],
+    <|
+      "Method"->"POST",
+      "Headers"->
+        {
+          "Authorization"->
+            OptionValue[{"Username", "Password"}]
+          }
+      |>
+    ]
+      
 
 
 (* ::Subsection:: *)
@@ -1312,48 +1479,48 @@ GitHubFork[
 
 
 $GitHubActions["ListUserIssues"]=
-	GitHubIssues;
+  GitHubIssues;
 
 
 GitHubIssues//Clear
 
 
 $GitHubParamMap[GitHubIssues]=
-	{
-		"Filter"->"filter",
-		"State"->"state",
-		"Labels"->"labels",
-		"Sort"->"sort",
-		"SortDirection"->"direction",
-		"Since"->"since"
-		};
+  {
+    "Filter"->"filter",
+    "State"->"state",
+    "Labels"->"labels",
+    "Sort"->"sort",
+    "SortDirection"->"direction",
+    "Since"->"since"
+    };
 Options[GitHubIssues]=
-	Thread[Keys[$GitHubParamMap[GitHubIssues]]->Automatic];
+  Thread[Keys[$GitHubParamMap[GitHubIssues]]->Automatic];
 GitHubIssues[
-	type:"org"|"user":"user",
-	user:_String|Automatic:Automatic,
-	ops:OptionsPattern[]
-	]:=
-	GitHubUserAPI[
-		If[user==="Assigned", None, type],
-		Which[
-			user==="Assigned",
-				Automatic,
-	 	type==="org", 
-	 		user, 
-	 	True,
-	 		Automatic
-	 	],
-		{"issues"}, 
-		GitHubQueryParamFilter[
-			GitHubIssues,
-			{
-				ops
-				}
-			],
-		<|
-			|>
-		];
+  type:"org"|"user":"user",
+  user:_String|Automatic:Automatic,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubUserAPI[
+    If[user==="Assigned", None, type],
+    Which[
+      user==="Assigned",
+        Automatic,
+     type==="org", 
+       user, 
+     True,
+       Automatic
+     ],
+    {"issues"}, 
+    GitHubQueryParamFilter[
+      GitHubIssues,
+      {
+        ops
+        }
+      ],
+    <|
+      |>
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1363,35 +1530,35 @@ GitHubIssues[
 
 $GitHubActions["ListIssues"]=GitHubRepositoryIssues;
 $GitHubParamMap[GitHubRepositoryIssues]=
-	{
-		"Milestone"->"milestone",
-		"State"->"state",
-		"Assignee"->"assignee",
-		"Creator"->"creator",
-		"Mentioned"->"mentioned",
-		"Labels"->"labels",
-		"Sort"->"sort",
-		"SortDirection"->"direction",
-		"Since"->"since"
-		};
+  {
+    "Milestone"->"milestone",
+    "State"->"state",
+    "Assignee"->"assignee",
+    "Creator"->"creator",
+    "Mentioned"->"mentioned",
+    "Labels"->"labels",
+    "Sort"->"sort",
+    "SortDirection"->"direction",
+    "Since"->"since"
+    };
 Options[GitHubRepositoryIssues]=
-	Thread[Keys[$GitHubParamMap[GitHubRepositoryIssues]]->Automatic];
+  Thread[Keys[$GitHubParamMap[GitHubRepositoryIssues]]->Automatic];
 GitHubRepositoryIssues[
-	repo:(_String|_GitHubPath)?GitHubRepoQ,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"issues"},
-		GitHubQueryParamFilter[
-			GitHubRepositoryIssues,
-			{
-				ops
-				}
-			],
-		<|
-			|>
-		]
+  repo:(_String|_GitHubPath)?GitHubRepoQ,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"issues"},
+    GitHubQueryParamFilter[
+      GitHubRepositoryIssues,
+      {
+        ops
+        }
+      ],
+    <|
+      |>
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1401,14 +1568,14 @@ GitHubRepositoryIssues[
 
 $GitHubActions["GetIssue"]=GitHubGetIssue;
 GitHubGetIssue[
-	repo:(_String|_GitHubPath)?GitHubRepoQ,
-	id:_Integer?IntegerQ,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"issues", ToString@id}
-		]
+  repo:(_String|_GitHubPath)?GitHubRepoQ,
+  id:_Integer?IntegerQ,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"issues", ToString@id}
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1418,54 +1585,54 @@ GitHubGetIssue[
 
 $GitHubActions["CreateIssue"]=GitHubCreateIssue;
 $GitHubParamMap[GitHubCreateIssue]=
-	{
-		"Title"->"title",
-		"Body"->"body",
-		"Milestone"->"milestone",
-		"Labels"->"labels",
-		"Assignees"->"assignees"
-		};
+  {
+    "Title"->"title",
+    "Body"->"body",
+    "Milestone"->"milestone",
+    "Labels"->"labels",
+    "Assignees"->"assignees"
+    };
 Options[GitHubCreateIssue]=
-	Join[
-		FilterRules[
-			Thread[Keys[$GitHubParamMap[GitHubCreateIssue]]->Automatic],
-			Except["Title"|"Body"]
-			],
-		{
-			"Username"->Automatic,
-			"Password"->Automatic
-			}
-		];
+  Join[
+    FilterRules[
+      Thread[Keys[$GitHubParamMap[GitHubCreateIssue]]->Automatic],
+      Except["Title"|"Body"]
+      ],
+    {
+      "Username"->Automatic,
+      "Password"->Automatic
+      }
+    ];
 GitHubCreateIssue[
-	repo:(_String|_GitHubPath)?GitHubRepoQ,
-	title_String,
-	body_String,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"issues"},
-		<|
-			Method->"POST",
-			"Body"->
-				ExportString[
-					GitHubQueryParamFilter[
-						GitHubCreateIssue,
-						{
-							ops,
-							"Title"->title,
-							"Body"->body
-							}
-						],
-					"JSON"
-					],
-			"Headers"->
-				{
-					"Authorization"->
-						OptionValue[{"Username", "Password"}]
-					}
-			|>
-		]
+  repo:(_String|_GitHubPath)?GitHubRepoQ,
+  title_String,
+  body_String,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"issues"},
+    <|
+      Method->"POST",
+      "Body"->
+        ExportString[
+          GitHubQueryParamFilter[
+            GitHubCreateIssue,
+            {
+              ops,
+              "Title"->title,
+              "Body"->body
+              }
+            ],
+          "JSON"
+          ],
+      "Headers"->
+        {
+          "Authorization"->
+            OptionValue[{"Username", "Password"}]
+          }
+      |>
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1475,47 +1642,47 @@ GitHubCreateIssue[
 
 $GitHubActions["EditIssue"]=GitHubEditIssue;
 $GitHubParamMap[GitHubEditIssue]=
-	{
-		"Title"->"title",
-		"Body"->"body",
-		"State"->"state",
-		"Milestone"->"milestone",
-		"Labels"->"labels",
-		"Assignees"->"assignees"
-		};
+  {
+    "Title"->"title",
+    "Body"->"body",
+    "State"->"state",
+    "Milestone"->"milestone",
+    "Labels"->"labels",
+    "Assignees"->"assignees"
+    };
 Options[GitHubEditIssue]=
-	Join[
-		Thread[Keys[$GitHubParamMap[GitHubEditIssue]]->Automatic],
-		{
-			"Username"->Automatic,
-			"Password"->Automatic
-			}
-		];
+  Join[
+    Thread[Keys[$GitHubParamMap[GitHubEditIssue]]->Automatic],
+    {
+      "Username"->Automatic,
+      "Password"->Automatic
+      }
+    ];
 GitHubEditIssue[
-	repo:(_String|_GitHubPath)?GitHubRepoQ,
-	which:_?IntegerQ,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"issues", ToString@which},
-		<|
-			Method->"PATCH",
-			"Body"->
-				ExportString[
-					GitHubQueryParamFilter[
-						GitHubEditIssue,
-						{ops}
-						],
-					"JSON"
-					],
-			"Headers"->
-				{
-					"Authorization"->
-						OptionValue[{"Username", "Password"}]
-					}
-			|>
-		]
+  repo:(_String|_GitHubPath)?GitHubRepoQ,
+  which:_?IntegerQ,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"issues", ToString@which},
+    <|
+      Method->"PATCH",
+      "Body"->
+        ExportString[
+          GitHubQueryParamFilter[
+            GitHubEditIssue,
+            {ops}
+            ],
+          "JSON"
+          ],
+      "Headers"->
+        {
+          "Authorization"->
+            OptionValue[{"Username", "Password"}]
+          }
+      |>
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1525,28 +1692,28 @@ GitHubEditIssue[
 
 $GitHubActions["ListIssueComments"]=GitHubListIssueComments;
 $GitHubParamMap[GitHubListIssueComments]=
-	{
-		"Since"->"since"
-		};
+  {
+    "Since"->"since"
+    };
 Options[GitHubListIssueComments]=
-	Thread[Keys[$GitHubParamMap[GitHubListIssueComments]]->Automatic];
+  Thread[Keys[$GitHubParamMap[GitHubListIssueComments]]->Automatic];
 GitHubListIssueComments[
-	repo:(_String|_GitHubPath)?GitHubRepoQ,
-	which:_Integer?IntegerQ,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"issues", ToString@which, "comments"},
-		GitHubQueryParamFilter[
-			GitHubListIssueComments,
-			{
-				ops
-				}
-			],
-		<|
-			|>
-		]
+  repo:(_String|_GitHubPath)?GitHubRepoQ,
+  which:_Integer?IntegerQ,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"issues", ToString@which, "comments"},
+    GitHubQueryParamFilter[
+      GitHubListIssueComments,
+      {
+        ops
+        }
+      ],
+    <|
+      |>
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1556,35 +1723,35 @@ GitHubListIssueComments[
 
 $GitHubActions["CreateIssueComment"]=GitHubCreateIssueComment;
 Options[GitHubCreateIssueComment]=
-	{
-		"Username"->Automatic,
-		"Password"->Automatic
-		};
+  {
+    "Username"->Automatic,
+    "Password"->Automatic
+    };
 GitHubCreateIssueComment[
-	repo:(_String|_GitHubPath)?GitHubRepoQ,
-	which_?IntegerQ,
-	body_String,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"issues", ToString@which, "comments"},
-		<|
-			Method->"POST",
-			"Body"->
-				ExportString[
-					{
-						"body"->body
-						},
-					"JSON"
-					],
-			"Headers"->
-				{
-					"Authorization"->
-						OptionValue[{"Username", "Password"}]
-					}
-			|>
-		]
+  repo:(_String|_GitHubPath)?GitHubRepoQ,
+  which_?IntegerQ,
+  body_String,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"issues", ToString@which, "comments"},
+    <|
+      Method->"POST",
+      "Body"->
+        ExportString[
+          {
+            "body"->body
+            },
+          "JSON"
+          ],
+      "Headers"->
+        {
+          "Authorization"->
+            OptionValue[{"Username", "Password"}]
+          }
+      |>
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1594,36 +1761,36 @@ GitHubCreateIssueComment[
 
 $GitHubActions["EditIssueComment"]=GitHubEditIssueComment;
 Options[GitHubEditIssueComment]=
-	{
-		"Username"->Automatic,
-		"Password"->Automatic
-		};
+  {
+    "Username"->Automatic,
+    "Password"->Automatic
+    };
 GitHubEditIssueComment[
-	repo:(_String|_GitHubPath)?GitHubRepoQ,
-	which_?IntegerQ,
-	subwhich_?IntegerQ,
-	body_String,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"issues", ToString@which, "comments", ToString@subwhich},
-		<|
-			Method->"PATCH",
-			"Body"->
-				ExportString[
-					{
-						"body"->body
-						},
-					"JSON"
-					],
-			"Headers"->
-				{
-					"Authorization"->
-						OptionValue[{"Username", "Password"}]
-					}
-			|>
-		]
+  repo:(_String|_GitHubPath)?GitHubRepoQ,
+  which_?IntegerQ,
+  subwhich_?IntegerQ,
+  body_String,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"issues", ToString@which, "comments", ToString@subwhich},
+    <|
+      Method->"PATCH",
+      "Body"->
+        ExportString[
+          {
+            "body"->body
+            },
+          "JSON"
+          ],
+      "Headers"->
+        {
+          "Authorization"->
+            OptionValue[{"Username", "Password"}]
+          }
+      |>
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1633,27 +1800,27 @@ GitHubEditIssueComment[
 
 $GitHubActions["DeleteIssueComment"]=GitHubDeleteIssueComment;
 Options[GitHubDeleteIssueComment]=
-	{
-		"Username"->Automatic,
-		"Password"->Automatic
-		};
+  {
+    "Username"->Automatic,
+    "Password"->Automatic
+    };
 GitHubDeleteIssueComment[
-	repo:(_String|_GitHubPath)?GitHubRepoQ,
-	subwhich_?IntegerQ,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		ToString/@{"issues", "comments", subwhich},
-		<|
-			Method->"DELETE",
-			"Headers"->
-				{
-					"Authorization"->
-						OptionValue[{"Username", "Password"}]
-					}
-			|>
-		]
+  repo:(_String|_GitHubPath)?GitHubRepoQ,
+  subwhich_?IntegerQ,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    ToString/@{"issues", "comments", subwhich},
+    <|
+      Method->"DELETE",
+      "Headers"->
+        {
+          "Authorization"->
+            OptionValue[{"Username", "Password"}]
+          }
+      |>
+    ]
 
 
 (* ::Subsection:: *)
@@ -1670,16 +1837,16 @@ $GitHubActions["GetBlob"]=GitHubGetBlob;
 
 
 GitHubGetBlob[
-	repo:(_GitHubPath|_String)?GitHubRepoQ,
-	sha:_String?(StringMatchQ[Repeated[WordCharacter, {30, Infinity}]])
-	]:=
-	GitHubGitDataAPI[
-		repo,
-		"blobs",
-		{sha},
-		<|
-			|>
-		]
+  repo:(_GitHubPath|_String)?GitHubRepoQ,
+  sha:_String?(StringMatchQ[Repeated[WordCharacter, {30, Infinity}]])
+  ]:=
+  GitHubGitDataAPI[
+    repo,
+    "blobs",
+    {sha},
+    <|
+      |>
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1691,48 +1858,48 @@ $GitHubActions["CreateBlob"]=GitHubCreateBlob;
 
 
 Options[GitHubCreateBlob]=
-	{
-		"Username"->Automatic,
-		"Password"->Automatic
-		};
+  {
+    "Username"->Automatic,
+    "Password"->Automatic
+    };
 GitHubCreateBlob[
-	repo:(_GitHubPath|_String)?GitHubRepoQ,
-	blob:_String|_File,
-	ops:OptionsPattern[]
-	]:=
-	GitHubGitDataAPI[
-		repo,
-		"blobs",
-		{},
-		<|
-			"Method"->"POST",
-			"Body"->
-				ExportString[
-					{
-						"content"->
-							If[StringQ@blob,
-								If[StringLength[blob]>10^6,
-									With[{f=CreateFile[]}, 
-										WriteString[f, blob];
-										Close@f;
-										File[f]
-										],
-									Developer`EncodeBase64[blob]
-									],
-								blob
-								],
-						"encoding"->"base64"
-						},
-					"JSON"
-					],
-			"Headers"->
-				{
-					"Authorization"->
-						OptionValue[{"Username", "Password"}]
-					}
-			|>
-		]
-			
+  repo:(_GitHubPath|_String)?GitHubRepoQ,
+  blob:_String|_File,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubGitDataAPI[
+    repo,
+    "blobs",
+    {},
+    <|
+      "Method"->"POST",
+      "Body"->
+        ExportString[
+          {
+            "content"->
+              If[StringQ@blob,
+                If[StringLength[blob]>10^6,
+                  With[{f=CreateFile[]}, 
+                    WriteString[f, blob];
+                    Close@f;
+                    File[f]
+                    ],
+                  Developer`EncodeBase64[blob]
+                  ],
+                blob
+                ],
+            "encoding"->"base64"
+            },
+          "JSON"
+          ],
+      "Headers"->
+        {
+          "Authorization"->
+            OptionValue[{"Username", "Password"}]
+          }
+      |>
+    ]
+      
 
 
 (* ::Subsection:: *)
@@ -1749,16 +1916,16 @@ $GitHubActions["GetCommit"]=GitHubGetCommit;
 
 
 GitHubGetCommit[
-	repo:(_GitHubPath|_String)?GitHubRepoQ,
-	sha:_String?(StringMatchQ[Repeated[WordCharacter, {30, Infinity}]])
-	]:=
-	GitHubGitDataAPI[
-		repo,
-		"commits",
-		{sha},
-		<|
-			|>
-		]
+  repo:(_GitHubPath|_String)?GitHubRepoQ,
+  sha:_String?(StringMatchQ[Repeated[WordCharacter, {30, Infinity}]])
+  ]:=
+  GitHubGitDataAPI[
+    repo,
+    "commits",
+    {sha},
+    <|
+      |>
+    ]
 
 
 (* ::Subsection:: *)
@@ -1775,16 +1942,16 @@ $GitHubActions["GetReference"]=GitHubGetReference;
 
 
 GitHubGetReference[
-	repo:(_GitHubPath|_String)?GitHubRepoQ,
-	which:_String:"master"
-	]:=
-	GitHubGitDataAPI[
-		repo,
-		"refs",
-		{"heads/"<>StringTrim[which, "heads/"]},
-		<|
-			|>
-		]
+  repo:(_GitHubPath|_String)?GitHubRepoQ,
+  which:_String:"master"
+  ]:=
+  GitHubGitDataAPI[
+    repo,
+    "refs",
+    {"heads/"<>StringTrim[which, "heads/"]},
+    <|
+      |>
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1796,16 +1963,16 @@ $GitHubActions["GetAllReferences"]=GitHubGetAllReferences;
 
 
 GitHubGetAllReferences[
-	repo:(_GitHubPath|_String)?GitHubRepoQ,
-	which:_String|None:None
-	]:=
-	GitHubGitDataAPI[
-		repo,
-		"refs",
-		{If[which===None, Nothing, which]},
-		<|
-			|>
-		]
+  repo:(_GitHubPath|_String)?GitHubRepoQ,
+  which:_String|None:None
+  ]:=
+  GitHubGitDataAPI[
+    repo,
+    "refs",
+    {If[which===None, Nothing, which]},
+    <|
+      |>
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1817,44 +1984,44 @@ $GitHubActions["CreateReference"]=GitHubCreateReference;
 
 
 Options[GitHubCreateReference]=
-	{
-		"Username"->Automatic,
-		"Password"->Automatic
-		};
+  {
+    "Username"->Automatic,
+    "Password"->Automatic
+    };
 GitHubCreateReference[
-	repo:(_GitHubPath|_String)?GitHubRepoQ,
-	ref:_String,
-	sha:_String?(StringMatchQ[Repeated[WordCharacter, {30, Infinity}]]),
-	ops:OptionsPattern[]
-	]:=
-	GitHubGitDataAPI[
-		repo,
-		"refs",
-		{},
-		<|
-			"Method"->"POST",
-			"Body"->
-				ExportString[
-					{
-						"ref"->
-							With[{s1=StringTrim[ref, "refs/"]},
-								If[StringContainsQ[s1, "/"],
-									"refs/"<>s1,
-									"refs/heads/"<>s1
-									]
-								],
-						"sha"->sha
-						},
-					"JSON"
-					],
-			"Headers"->
-				{
-					"Authorization"->
-						OptionValue[{"Username", "Password"}]
-					}
-			|>
-		]
-			
+  repo:(_GitHubPath|_String)?GitHubRepoQ,
+  ref:_String,
+  sha:_String?(StringMatchQ[Repeated[WordCharacter, {30, Infinity}]]),
+  ops:OptionsPattern[]
+  ]:=
+  GitHubGitDataAPI[
+    repo,
+    "refs",
+    {},
+    <|
+      "Method"->"POST",
+      "Body"->
+        ExportString[
+          {
+            "ref"->
+              With[{s1=StringTrim[ref, "refs/"]},
+                If[StringContainsQ[s1, "/"],
+                  "refs/"<>s1,
+                  "refs/heads/"<>s1
+                  ]
+                ],
+            "sha"->sha
+            },
+          "JSON"
+          ],
+      "Headers"->
+        {
+          "Authorization"->
+            OptionValue[{"Username", "Password"}]
+          }
+      |>
+    ]
+      
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1866,52 +2033,52 @@ $GitHubActions["UpdateReference"]=GitHubUpdateReference;
 
 
 $GitHubParamMap[GitHubUpdateReference]=
-	{
-		"ForceUpdate"->"force"
-		};
+  {
+    "ForceUpdate"->"force"
+    };
 Options[GitHubUpdateReference]=
-	Join[
-		$GitHubParamMap[GitHubUpdateReference],
-		{
-			"Username"->Automatic,
-			"Password"->Automatic
-			}
-		];
+  Join[
+    $GitHubParamMap[GitHubUpdateReference],
+    {
+      "Username"->Automatic,
+      "Password"->Automatic
+      }
+    ];
 GitHubUpdateReference[
-	repo:(_GitHubPath|_String)?GitHubRepoQ,
-	ref:_String,
-	sha:_String?(StringMatchQ[Repeated[WordCharacter, {30, Infinity}]]),
-	ops:OptionsPattern[]
-	]:=
-	GitHubGitDataAPI[
-		repo,
-		"refs",
-		{
-			With[{s1=StringTrim[ref, "refs/"]},
-				If[StringContainsQ[s1, "/"],
-					s1,
-					"heads/"<>s1
-					]
-				]
-			},
-		<|
-			"Method"->"PATCH",
-			"Body"->
-				ExportString[
-					{
-						"sha"->sha,
-						"force"->If[TrueQ@OptionValue["ForceUpdate"], "true", "false"]
-						},
-					"JSON"
-					],
-			"Headers"->
-				{
-					"Authorization"->
-						OptionValue[{"Username", "Password"}]
-					}
-			|>
-		]
-			
+  repo:(_GitHubPath|_String)?GitHubRepoQ,
+  ref:_String,
+  sha:_String?(StringMatchQ[Repeated[WordCharacter, {30, Infinity}]]),
+  ops:OptionsPattern[]
+  ]:=
+  GitHubGitDataAPI[
+    repo,
+    "refs",
+    {
+      With[{s1=StringTrim[ref, "refs/"]},
+        If[StringContainsQ[s1, "/"],
+          s1,
+          "heads/"<>s1
+          ]
+        ]
+      },
+    <|
+      "Method"->"PATCH",
+      "Body"->
+        ExportString[
+          {
+            "sha"->sha,
+            "force"->If[TrueQ@OptionValue["ForceUpdate"], "true", "false"]
+            },
+          "JSON"
+          ],
+      "Headers"->
+        {
+          "Authorization"->
+            OptionValue[{"Username", "Password"}]
+          }
+      |>
+    ]
+      
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1923,35 +2090,35 @@ $GitHubActions["DeleteReference"]=GitHubDeleteReference;
 
 
 Options[GitHubDeleteReference]=
-	{
-		"Username"->Automatic,
-		"Password"->Automatic
-		};
+  {
+    "Username"->Automatic,
+    "Password"->Automatic
+    };
 GitHubDeleteReference[
-	repo:(_GitHubPath|_String)?GitHubRepoQ,
-	ref:_String,
-	ops:OptionsPattern[]
-	]:=
-	GitHubGitDataAPI[
-		repo,
-		"refs",
-		{
-			With[{s1=StringTrim[ref, "refs/"]},
-				If[StringContainsQ[s1, "/"],
-					s1,
-					"heads/"<>s1
-					]
-				]
-			},
-		<|
-			"Method"->"DELTE",
-			"Headers"->
-				{
-					"Authorization"->
-						OptionValue[{"Username", "Password"}]
-					}
-			|>
-		]
+  repo:(_GitHubPath|_String)?GitHubRepoQ,
+  ref:_String,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubGitDataAPI[
+    repo,
+    "refs",
+    {
+      With[{s1=StringTrim[ref, "refs/"]},
+        If[StringContainsQ[s1, "/"],
+          s1,
+          "heads/"<>s1
+          ]
+        ]
+      },
+    <|
+      "Method"->"DELTE",
+      "Headers"->
+        {
+          "Authorization"->
+            OptionValue[{"Username", "Password"}]
+          }
+      |>
+    ]
 
 
 (* ::Subsection:: *)
@@ -1968,16 +2135,16 @@ $GitHubActions["GetTag"]=GitHubGetTag;
 
 
 GitHubGetTag[
-	repo:(_GitHubPath|_String)?GitHubRepoQ,
-	sha:_String?(StringMatchQ[Repeated[WordCharacter, {30, Infinity}]])
-	]:=
-	GitHubGitDataAPI[
-		repo,
-		"tags",
-		{sha},
-		<|
-			|>
-		]
+  repo:(_GitHubPath|_String)?GitHubRepoQ,
+  sha:_String?(StringMatchQ[Repeated[WordCharacter, {30, Infinity}]])
+  ]:=
+  GitHubGitDataAPI[
+    repo,
+    "tags",
+    {sha},
+    <|
+      |>
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1989,61 +2156,61 @@ $GitHubActions["CreateTag"]=GitHubCreateTag;
 
 
 $GitHubParamMap[GitHubCreateTag]=
-	{
-		"Name"->"name",
-		"Email"->"email",
-		"Date"->"date"
-		};
+  {
+    "Name"->"name",
+    "Email"->"email",
+    "Date"->"date"
+    };
 
 
 Options[GitHubCreateTag]=
-	Thread[Keys[$GitHubParamMap[GitHubCreateTag]]->Automatic];
+  Thread[Keys[$GitHubParamMap[GitHubCreateTag]]->Automatic];
 GitHubCreateTag[
-	repo:(_GitHubPath|_String)?GitHubRepoQ,
-	tag:_String?(StringFreeQ[WhitespaceCharacter]),
-	message:_String,
-	sha:_String?(StringMatchQ[Repeated[WordCharacter, {30, Infinity}]]),
-	type:"commit"|"tree"|"blob":"commit",
-	ops:OptionsPattern[]
-	]:=
-	GitHubGitDataAPI[
-		repo,
-		"tags",
-		<|
-			"Method"->"POST",
-			"Body"->
-				ExportString[
-					With[
-						{
-							pars=
-								GitHubQueryParamFilter[
-									GitHubCreateTag,
-									{ops}
-									]
-							},
-						{
-							"tag"->tag,
-							"message"->message,
-							"object"->sha,
-							"type"->type,
-							Replace[
-								Lookup[pars, {"name", "email", "date"}],
-								{
-									l:{__String}:>
-										("tagger"->
-											Thread[
-												{"name", "email", "date"}->
-												l
-												]),
-										_->Nothing
-										}
-								]
-							}
-						],
-					"JSON"
-					]
-			|>
-		]
+  repo:(_GitHubPath|_String)?GitHubRepoQ,
+  tag:_String?(StringFreeQ[WhitespaceCharacter]),
+  message:_String,
+  sha:_String?(StringMatchQ[Repeated[WordCharacter, {30, Infinity}]]),
+  type:"commit"|"tree"|"blob":"commit",
+  ops:OptionsPattern[]
+  ]:=
+  GitHubGitDataAPI[
+    repo,
+    "tags",
+    <|
+      "Method"->"POST",
+      "Body"->
+        ExportString[
+          With[
+            {
+              pars=
+                GitHubQueryParamFilter[
+                  GitHubCreateTag,
+                  {ops}
+                  ]
+              },
+            {
+              "tag"->tag,
+              "message"->message,
+              "object"->sha,
+              "type"->type,
+              Replace[
+                Lookup[pars, {"name", "email", "date"}],
+                {
+                  l:{__String}:>
+                    ("tagger"->
+                      Thread[
+                        {"name", "email", "date"}->
+                        l
+                        ]),
+                    _->Nothing
+                    }
+                ]
+              }
+            ],
+          "JSON"
+          ]
+      |>
+    ]
 
 
 (* ::Subsection:: *)
@@ -2060,29 +2227,29 @@ $GitHubActions["GetTree"]=GitHubGetTree;
 
 
 Options[GitHubGetTree]=
-	{
-		"Recursive"->False
-		};
+  {
+    "Recursive"->False
+    };
 GitHubGetTree[
-	repo:(_GitHubPath|_String)?GitHubRepoQ,
-	sha:_String?(StringMatchQ[Repeated[WordCharacter, {30, Infinity}]])
-	]:=
-	GitHubGitDataAPI[
-		repo,
-		"trees",
-		{sha},
-		{
-			Replace[OptionValue["Recursive"], 
-				{
-					s:_String|_Integer:>("recursive"->ToString[s]),
-					True->("recursive"->"1"),
-					_->Nothing
-					}
-				]
-			},
-		<|
-			|>
-		]
+  repo:(_GitHubPath|_String)?GitHubRepoQ,
+  sha:_String?(StringMatchQ[Repeated[WordCharacter, {30, Infinity}]])
+  ]:=
+  GitHubGitDataAPI[
+    repo,
+    "trees",
+    {sha},
+    {
+      Replace[OptionValue["Recursive"], 
+        {
+          s:_String|_Integer:>("recursive"->ToString[s]),
+          True->("recursive"->"1"),
+          _->Nothing
+          }
+        ]
+      },
+    <|
+      |>
+    ]
 
 
 (* ::Subsection:: *)
@@ -2106,85 +2273,85 @@ $GitHubActions["Merge"]=GitHubMerge;
 
 
 $GitHubParamMap[GitHubMerge]=
-	{
-		"TargetBranch"->"base",
-		"Message"->"commit_message"
-		};
+  {
+    "TargetBranch"->"base",
+    "Message"->"commit_message"
+    };
 
 
 Options[GitHubMerge]=
-	Join[
-		Thread[
-			DeleteCases[
-				Keys[$GitHubParamMap[GitHubMerge]], 
-				"SourceBranch"
-				]->Automatic
-			],
-		{
-			"Username"->Automatic,
-			"Password"->Automatic
-			}
-		];
+  Join[
+    Thread[
+      DeleteCases[
+        Keys[$GitHubParamMap[GitHubMerge]], 
+        "SourceBranch"
+        ]->Automatic
+      ],
+    {
+      "Username"->Automatic,
+      "Password"->Automatic
+      }
+    ];
 GitHubMerge[
-	repo:(_GitHubPath|_String)?GitHubRepoQ,
-	source:(_GitHubPath?GitHubRepoQ|_String),
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"merges"},
-		{},
-		<|
-			"Method"->"POST",
-			"Body"->
-				ExportString[
-					Prepend[
-						GitHubQueryParamFilter[
-							GitHubMerge,
-							DeleteDuplicatesBy[First]@{
-								ops,
-								"TargetBranch"->
-									"master",
-								"Message"->
-									TemplateApply[
-										"Merge `` into ``",
-										{
-											Replace[source,
-												_GitHubPath:>StringRiffle[Normal[source], "/"]
-												],
-											URLBuild@
-												URLParse[
-													If[StringQ@repo, repo, URL@repo], 
-													"Path"
-													]
-											}
-										]
-								}
-								],
-							"head"->
-								If[GitHubRepoQ@source,
-									Replace[
-										GitHub["GetReference", source, "master",
-											"ImportedResult"
-											]["Content"],
-										{
-											a_Association:>a["Object", "SHA"],
-											e_:>Throw[$Failed]
-											}
-										],
-									source
-									]
-							],
-					"JSON"
-					],
-			"Headers"->
-				{
-					"Authorization"->
-						OptionValue[{"Username", "Password"}]
-					}
-			|>
-		]
-			
+  repo:(_GitHubPath|_String)?GitHubRepoQ,
+  source:(_GitHubPath?GitHubRepoQ|_String),
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"merges"},
+    {},
+    <|
+      "Method"->"POST",
+      "Body"->
+        ExportString[
+          Prepend[
+            GitHubQueryParamFilter[
+              GitHubMerge,
+              DeleteDuplicatesBy[First]@{
+                ops,
+                "TargetBranch"->
+                  "master",
+                "Message"->
+                  TemplateApply[
+                    "Merge `` into ``",
+                    {
+                      Replace[source,
+                        _GitHubPath:>StringRiffle[Normal[source], "/"]
+                        ],
+                      URLBuild@
+                        URLParse[
+                          If[StringQ@repo, repo, URL@repo], 
+                          "Path"
+                          ]
+                      }
+                    ]
+                }
+                ],
+              "head"->
+                If[GitHubRepoQ@source,
+                  Replace[
+                    GitHub["GetReference", source, "master",
+                      "ImportedResult"
+                      ]["Content"],
+                    {
+                      a_Association:>a["Object", "SHA"],
+                      e_:>Throw[$Failed]
+                      }
+                    ],
+                  source
+                  ]
+              ],
+          "JSON"
+          ],
+      "Headers"->
+        {
+          "Authorization"->
+            OptionValue[{"Username", "Password"}]
+          }
+      |>
+    ]
+      
 
 
 (* ::Subsection:: *)
@@ -2199,31 +2366,31 @@ GitHubMerge[
 
 $GitHubActions["ListPullRequests"]=GitHubListPullRequests;
 $GitHubParamMap[GitHubListPullRequests]=
-	{
-		"State"->"state",
-		"UserBranch"->"head",
-		"BranchName"->"base",
-		"Sort"->"sort",
-		"SortDirection"->"direction"
-		};
+  {
+    "State"->"state",
+    "UserBranch"->"head",
+    "BranchName"->"base",
+    "Sort"->"sort",
+    "SortDirection"->"direction"
+    };
 Options[GitHubListPullRequests]=
-	Thread[Keys[$GitHubParamMap[GitHubListPullRequests]]->Automatic];
+  Thread[Keys[$GitHubParamMap[GitHubListPullRequests]]->Automatic];
 GitHubListPullRequests[
-	repo:(_String|_GitHubPath)?GitHubRepoQ,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"pulls"},
-		GitHubQueryParamFilter[
-			GitHubListPullRequests,
-			{
-				ops
-				}
-			],
-		<|
-			|>
-		]
+  repo:(_String|_GitHubPath)?GitHubRepoQ,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"pulls"},
+    GitHubQueryParamFilter[
+      GitHubListPullRequests,
+      {
+        ops
+        }
+      ],
+    <|
+      |>
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2235,13 +2402,13 @@ $GitHubActions["PullRequestInfo"]=GitHubPullRequestInfo;
 
 
 GitHubPullRequestInfo[
-	repo:(_String|_GitHubPath)?GitHubRepoQ,
-	pull:_Integer?Positive
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"pulls", ToString[pull]}
-		]
+  repo:(_String|_GitHubPath)?GitHubRepoQ,
+  pull:_Integer?Positive
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"pulls", ToString[pull]}
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2251,68 +2418,68 @@ GitHubPullRequestInfo[
 
 $GitHubActions["CreatePullRequest"]=GitHubCreatePullRequest;
 $GitHubParamMap[GitHubCreatePullRequest]=
-	{
-		"Title"->"title",
-		"SourceBranch"->"head",
-		"TargetBranch"->"base",
-		"Description"->"body",
-		"Modifiable"->"maintainer_can_modify"
-		};
+  {
+    "Title"->"title",
+    "SourceBranch"->"head",
+    "TargetBranch"->"base",
+    "Description"->"body",
+    "Modifiable"->"maintainer_can_modify"
+    };
 Options[GitHubCreatePullRequest]=
-	Join[
-		Thread[Keys[$GitHubParamMap[GitHubCreatePullRequest]]->Automatic],
-		{
-			"Username"->Automatic,
-			"Password"->Automatic
-			}
-		];
+  Join[
+    Thread[Keys[$GitHubParamMap[GitHubCreatePullRequest]]->Automatic],
+    {
+      "Username"->Automatic,
+      "Password"->Automatic
+      }
+    ];
 GitHubCreatePullRequest[
-	repo:(_String|_GitHubPath)?GitHubRepoQ,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"pulls"},
-		<|
-			Method->"POST",
-			"Body"->
-				ExportString[
-					GitHubQueryParamFilter[
-						GitHubCreatePullRequest,
-						DeleteDuplicatesBy[First]@{
-							ops,
-							"Modifiable"->True,
-							"SourceBranch"->
-								Replace[
-									OptionValue["Username"],
-									Automatic:>$GitHubUsername
-									]<>":master",
-							"TargetBranch"->"master",
-							"Title"->
-								TemplateApply[
-									"Pull request from ``",
-									URLBuild@
-										Append[
-											URLParse[
-												If[StringQ@repo, repo, URL@repo], 
-												"Path"
-												],
-											Replace[OptionValue["SourceBranch"],
-												Except[_String]:>"master"
-												]
-											]
-									]
-							}
-						],
-					"JSON"
-					],
-			"Headers"->
-				{
-					"Authorization"->
-						OptionValue[{"Username", "Password"}]
-					}
-			|>
-		]
+  repo:(_String|_GitHubPath)?GitHubRepoQ,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"pulls"},
+    <|
+      Method->"POST",
+      "Body"->
+        ExportString[
+          GitHubQueryParamFilter[
+            GitHubCreatePullRequest,
+            DeleteDuplicatesBy[First]@{
+              ops,
+              "Modifiable"->True,
+              "SourceBranch"->
+                Replace[
+                  OptionValue["Username"],
+                  Automatic:>$GitHubUsername
+                  ]<>":master",
+              "TargetBranch"->"master",
+              "Title"->
+                TemplateApply[
+                  "Pull request from ``",
+                  URLBuild@
+                    Append[
+                      URLParse[
+                        If[StringQ@repo, repo, URL@repo], 
+                        "Path"
+                        ],
+                      Replace[OptionValue["SourceBranch"],
+                        Except[_String]:>"master"
+                        ]
+                      ]
+                  ]
+              }
+            ],
+          "JSON"
+          ],
+      "Headers"->
+        {
+          "Authorization"->
+            OptionValue[{"Username", "Password"}]
+          }
+      |>
+    ]
 
 
 (* ::Subsection:: *)
@@ -2326,16 +2493,16 @@ GitHubCreatePullRequest[
 
 
 GitHubCreateReadme[repo_?GitRepoQ,readmeText:_String:""]:=
-	With[{o=
-		OpenWrite@
-			FileNameJoin@{
-				repo,
-				"README.md"
-				}
-		},
-		WriteString[o,readmeText];
-		Close@o
-		];
+  With[{o=
+    OpenWrite@
+      FileNameJoin@{
+        repo,
+        "README.md"
+        }
+    },
+    WriteString[o,readmeText];
+    Close@o
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2344,12 +2511,12 @@ GitHubCreateReadme[repo_?GitRepoQ,readmeText:_String:""]:=
 
 
 GitHubGetReadme[
-	repo:(_String|_GitHubPath)?GitHubRepoQ
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"readme"}
-		];
+  repo:(_String|_GitHubPath)?GitHubRepoQ
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"readme"}
+    ];
 
 
 (* ::Subsection:: *)
@@ -2363,19 +2530,19 @@ GitHubGetReadme[
 
 
 $GitHubActions["GetFile"]=
-	GitHubGetFile;
+  GitHubGetFile;
 $GitHubActions["GetDirectory"]=
-	GitHubGetFile;
+  GitHubGetFile;
 
 
 GitHubGetFile[
-	repo:(_String|_GitHubPath)?GitHubRepoQ,
-	path_String
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"contents", path}
-		];
+  repo:(_String|_GitHubPath)?GitHubRepoQ,
+  path_String
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"contents", path}
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2387,16 +2554,16 @@ $GitHubActions["GetFileSHA"]=GitHubGetFileSHA;
 
 
 GitHubGetFileSHA[
-	repo:(_String|_GitHubPath)?GitHubRepoQ,
-	path:_String
-	]:=
-	SelectFirst[
-		GitHub["GetDirectory", repo, 
-			StringRiffle[Most@StringSplit[path, "/"], "/"]
-			]["Content"],
-		#Path==path&,
-		<|"SHA"->None|>
-		]["SHA"]
+  repo:(_String|_GitHubPath)?GitHubRepoQ,
+  path:_String
+  ]:=
+  SelectFirst[
+    GitHub["GetDirectory", repo, 
+      StringRiffle[Most@StringSplit[path, "/"], "/"]
+      ]["Content"],
+    #Path==path&,
+    <|"SHA"->None|>
+    ]["SHA"]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2405,73 +2572,73 @@ GitHubGetFileSHA[
 
 
 $GitHubParamMap[GitHubAddFile]=
-	{
-		"Message"->"message",
-		"Branch"->"branch",
-		"Committer"->"committer",
-		"Author"->"author"
-		};
+  {
+    "Message"->"message",
+    "Branch"->"branch",
+    "Committer"->"committer",
+    "Author"->"author"
+    };
 
 
 Options[GitHubAddFile]=
-	Join[
-		Thread[Keys[$GitHubParamMap[GitHubAddFile]]->Automatic],
-		{
-			"Username"->Automatic,
-			"Password"->Automatic
-			}
-		];
+  Join[
+    Thread[Keys[$GitHubParamMap[GitHubAddFile]]->Automatic],
+    {
+      "Username"->Automatic,
+      "Password"->Automatic
+      }
+    ];
 GitHubAddFile[
-	repo:(_String|_GitHubPath)?GitHubRepoQ,
-	file_String?FileExistsQ,
-	pathy:_String|Automatic:Automatic,
-	ops:OptionsPattern[]
-	]:=
-	With[
-		{
-			path=
-				Replace[pathy,
-					{
-						Except[_String]:>FileNameTake[file]
-						}
-					]
-			},
-		GitHubReposAPI[
-			repo,
-			{
-				"contents", 
-				Replace[path,
-					{
-						Except[_String]:>FileNameTake[file]
-						}
-					]
-				},
-			<|
-				Method->"PUT",
-				"Body"->
-					Prepend[
-						GitHubQueryParamFilter[
-							GitHubAddFile,
-							DeleteDuplicatesBy[First]@
-								{
-									"Message"->
-											Replace[OptionValue["Message"], 
-												Automatic:>TemplateApply["Added ``", path]
-												],
-									ops
-									}
-							],
-						"content"->
-							File[file]
-						],
-				"Headers"->
-					{
-						"Authorization"->
-							OptionValue[{"Username", "Password"}]
-							}
-				|>
-			]
-		];
+  repo:(_String|_GitHubPath)?GitHubRepoQ,
+  file_String?FileExistsQ,
+  pathy:_String|Automatic:Automatic,
+  ops:OptionsPattern[]
+  ]:=
+  With[
+    {
+      path=
+        Replace[pathy,
+          {
+            Except[_String]:>FileNameTake[file]
+            }
+          ]
+      },
+    GitHubReposAPI[
+      repo,
+      {
+        "contents", 
+        Replace[path,
+          {
+            Except[_String]:>FileNameTake[file]
+            }
+          ]
+        },
+      <|
+        Method->"PUT",
+        "Body"->
+          Prepend[
+            GitHubQueryParamFilter[
+              GitHubAddFile,
+              DeleteDuplicatesBy[First]@
+                {
+                  "Message"->
+                      Replace[OptionValue["Message"], 
+                        Automatic:>TemplateApply["Added ``", path]
+                        ],
+                  ops
+                  }
+              ],
+            "content"->
+              File[file]
+            ],
+        "Headers"->
+          {
+            "Authorization"->
+              OptionValue[{"Username", "Password"}]
+              }
+        |>
+      ]
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2483,70 +2650,70 @@ $GitHubActions["EditFile"]=GitHubEditFile;
 
 
 $GitHubParamMap[GitHubEditFile]=
-	{
-		"Message"->"message",
-		"Branch"->"branch",
-		"Committer"->"committer",
-		"Author"->"author",
-		"CommitSHA"->"sha"
-		};
+  {
+    "Message"->"message",
+    "Branch"->"branch",
+    "Committer"->"committer",
+    "Author"->"author",
+    "CommitSHA"->"sha"
+    };
 
 
 Options[GitHubEditFile]=
-	Join[
-		Thread[Keys[$GitHubParamMap[GitHubEditFile]]->Automatic],
-		{
-			"Username"->Automatic,
-			"Password"->Automatic
-			}
-		];
+  Join[
+    Thread[Keys[$GitHubParamMap[GitHubEditFile]]->Automatic],
+    {
+      "Username"->Automatic,
+      "Password"->Automatic
+      }
+    ];
 GitHubEditFile[
-	repo:(_String|_GitHubPath)?GitHubRepoQ,
-	file:_String?FileExistsQ,
-	pathy:_String|Automatic:Automatic,
-	ops:OptionsPattern[]
-	]:=
-	With[{path=
-		Replace[pathy,
-				{
-					Except[_String]:>FileNameTake[file]
-					}
-				]
-		},
-		GitHubReposAPI[
-			repo,
-			{"contents", path},
-			<|
-				Method->"PUT",
-				"Body"->
-					Prepend[
-						GitHubQueryParamFilter[
-							GitHubEditFile,
-							DeleteDuplicatesBy[First]@{
-								"CommitSHA"->
-									Replace[OptionValue["CommitSHA"],
-										Except[_String]:>
-											GitHubGetFileSHA[repo, path]
-										],
-								"Message"->
-									Replace[OptionValue["Message"], 
-										Automatic:>TemplateApply["Updated ``", path]
-										],
-								ops
-								
-								}
-							],
-						"content"->
-							File[file]
-						],
-				"Headers"->
-					{
-						"Authorization"->
-							OptionValue[{"Username", "Password"}]
-							}
-				|>
-			]
-		];
+  repo:(_String|_GitHubPath)?GitHubRepoQ,
+  file:_String?FileExistsQ,
+  pathy:_String|Automatic:Automatic,
+  ops:OptionsPattern[]
+  ]:=
+  With[{path=
+    Replace[pathy,
+        {
+          Except[_String]:>FileNameTake[file]
+          }
+        ]
+    },
+    GitHubReposAPI[
+      repo,
+      {"contents", path},
+      <|
+        Method->"PUT",
+        "Body"->
+          Prepend[
+            GitHubQueryParamFilter[
+              GitHubEditFile,
+              DeleteDuplicatesBy[First]@{
+                "CommitSHA"->
+                  Replace[OptionValue["CommitSHA"],
+                    Except[_String]:>
+                      GitHubGetFileSHA[repo, path]
+                    ],
+                "Message"->
+                  Replace[OptionValue["Message"], 
+                    Automatic:>TemplateApply["Updated ``", path]
+                    ],
+                ops
+                
+                }
+              ],
+            "content"->
+              File[file]
+            ],
+        "Headers"->
+          {
+            "Authorization"->
+              OptionValue[{"Username", "Password"}]
+              }
+        |>
+      ]
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2555,51 +2722,51 @@ GitHubEditFile[
 
 
 $GitHubParamMap[GitHubDeleteFile]=
-	{
-		"Message"->"message",
-		"Branch"->"branch",
-		"CommitSHA"->"sha"
-		};
+  {
+    "Message"->"message",
+    "Branch"->"branch",
+    "CommitSHA"->"sha"
+    };
 
 
 Options[GitHubDeleteFile]=
-	Join[
-		Thread[Keys[$GitHubParamMap[GitHubDeleteFile]]->Automatic],
-		{
-			"Username"->Automatic,
-			"Password"->Automatic
-			}
-		];
+  Join[
+    Thread[Keys[$GitHubParamMap[GitHubDeleteFile]]->Automatic],
+    {
+      "Username"->Automatic,
+      "Password"->Automatic
+      }
+    ];
 GitHubDeleteFile[
-	repo:(_String|_GitHubPath)?GitHubRepoQ,
-	path_String,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"contents", path},
-		<|
-			Method->"DELETE",
-			"Body"->
-				GitHubQueryParamFilter[
-					GitHubDeleteFile,
-					{
-						"CommitSHA"->
-							Replace[OptionValue["CommitSHA"],
-								Except[_String]:>
-									GitHubGetFileSHA[repo, path]
-								],
-						ops,
-						"Message"->TemplateApply["Removed ``", path]
-						}
-					],
-			"Headers"->
-				{
-					"Authorization"->
-						OptionValue[{"Username", "Password"}]
-						}
-			|>
-		];
+  repo:(_String|_GitHubPath)?GitHubRepoQ,
+  path_String,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"contents", path},
+    <|
+      Method->"DELETE",
+      "Body"->
+        GitHubQueryParamFilter[
+          GitHubDeleteFile,
+          {
+            "CommitSHA"->
+              Replace[OptionValue["CommitSHA"],
+                Except[_String]:>
+                  GitHubGetFileSHA[repo, path]
+                ],
+            ops,
+            "Message"->TemplateApply["Removed ``", path]
+            }
+          ],
+      "Headers"->
+        {
+          "Authorization"->
+            OptionValue[{"Username", "Password"}]
+            }
+      |>
+    ];
 
 
 (* ::Subsection:: *)
@@ -2616,35 +2783,35 @@ GitHubReleases//Clear
 
 
 GitHubReleases[
-	repo:(_GitHubPath|_String)?GitHubRepoQ,
-	identifier:_String|_Integer|None:None
-	]:=
-	GitHubReposAPI[
-		repo,
-		Switch[identifier,
-			None,
-				"releases",
-			_Integer|_?(StringMatchQ[ToLowerCase@#,"latest"]&),
-				{"releases", ToLowerCase@ToString@identifier},
-			_,
-				{"releases", "tags", ToLowerCase@ToString@identifier}
-			]
-		];
+  repo:(_GitHubPath|_String)?GitHubRepoQ,
+  identifier:_String|_Integer|None:None
+  ]:=
+  GitHubReposAPI[
+    repo,
+    Switch[identifier,
+      None,
+        "releases",
+      _Integer|_?(StringMatchQ[ToLowerCase@#,"latest"]&),
+        {"releases", ToLowerCase@ToString@identifier},
+      _,
+        {"releases", "tags", ToLowerCase@ToString@identifier}
+      ]
+    ];
 GitHubReleases[
-	repo:(_GitHubPath|_String)?(GitHubReleaseQ),
-	identifier:_:None
-	]:=
-	Replace[
-		Replace[repo, s_String:>GitHubPath[s]],
-		{
-			GitHubPath[s__, "releases", "tag", tag_String,o__?OptionQ]:>
-				GitHubReleases[GitHubPath[s, o], tag],
-			GitHubPath[s__, "releases", "latest", o__?OptionQ]:>
-				GitHubReleases[GitHubPath[s, o], "latest"],
-			GitHubPath[s__, "releases", o__?OptionQ]:>
-				GitHubReleases[GitHubPath[s, o], identifier]
-			}
-		]
+  repo:(_GitHubPath|_String)?(GitHubReleaseQ),
+  identifier:_:None
+  ]:=
+  Replace[
+    Replace[repo, s_String:>GitHubPath[s]],
+    {
+      GitHubPath[s__, "releases", "tag", tag_String,o__?OptionQ]:>
+        GitHubReleases[GitHubPath[s, o], tag],
+      GitHubPath[s__, "releases", "latest", o__?OptionQ]:>
+        GitHubReleases[GitHubPath[s, o], "latest"],
+      GitHubPath[s__, "releases", o__?OptionQ]:>
+        GitHubReleases[GitHubPath[s, o], identifier]
+      }
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2659,14 +2826,14 @@ GitHubGetRelease//Clear
 
 
 GitHubGetRelease[
-	repo_String,
-	tagName:_Integer,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"releases", ToString@tagName}
-		]
+  repo_String,
+  tagName:_Integer,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"releases", ToString@tagName}
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2678,55 +2845,55 @@ $GitHubActions["CreateRelease"]=GitHubCreateRelease;
 
 
 $GitHubParamMap[GitHubCreateRelease]=
-	{
-		"Name"->"name",
-		"TagName"->"tag_name",
-		"TargetCommitish"->"target_commitish",
-		"Description"->"body",
-		"Draft"->"draft",
-		"PreRelease"->"prerelease"
-		};
+  {
+    "Name"->"name",
+    "TagName"->"tag_name",
+    "TargetCommitish"->"target_commitish",
+    "Description"->"body",
+    "Draft"->"draft",
+    "PreRelease"->"prerelease"
+    };
 
 
 Options[GitHubCreateRelease]=
-	Join[
-		FilterRules[
-			Thread[Keys[$GitHubParamMap[GitHubCreateRelease]]->Automatic],
-			Except["TagName"]
-			],
-		{
-			"Username"->Automatic,
-			"Password"->Automatic
-			}
-		];
+  Join[
+    FilterRules[
+      Thread[Keys[$GitHubParamMap[GitHubCreateRelease]]->Automatic],
+      Except["TagName"]
+      ],
+    {
+      "Username"->Automatic,
+      "Password"->Automatic
+      }
+    ];
 GitHubCreateRelease[
-	repo_String,
-	tagName_String,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"releases"},
-		<|
-			"Method"->"POST",
-			"Body"->
-			ExportString[
-					GitHubQueryParamFilter[
-						GitHubCreateRelease,
-						{
-							"TagName"->tagName,
-							ops
-							}
-						],
-					"JSON"
-					],
-			"Headers"->
-				{
-					"Authorization"->
-						OptionValue[{"Username", "Password"}]
-					}
-			|>
-			]
+  repo_String,
+  tagName_String,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"releases"},
+    <|
+      "Method"->"POST",
+      "Body"->
+      ExportString[
+          GitHubQueryParamFilter[
+            GitHubCreateRelease,
+            {
+              "TagName"->tagName,
+              ops
+              }
+            ],
+          "JSON"
+          ],
+      "Headers"->
+        {
+          "Authorization"->
+            OptionValue[{"Username", "Password"}]
+          }
+      |>
+      ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2738,53 +2905,53 @@ $GitHubActions["EditRelease"]=GitHubEditRelease;
 
 
 $GitHubParamMap[GitHubEditRelease]=
-	{
-		"Name"->"name",
-		"TagName"->"tag_name",
-		"TargetCommitish"->"target_commitish",
-		"Description"->"body",
-		"Draft"->"draft",
-		"PreRelease"->"prerelease"
-		};
+  {
+    "Name"->"name",
+    "TagName"->"tag_name",
+    "TargetCommitish"->"target_commitish",
+    "Description"->"body",
+    "Draft"->"draft",
+    "PreRelease"->"prerelease"
+    };
 
 
 GitHubEditRelease//Clear
 
 
 Options[GitHubEditRelease]=
-	Join[
-		Thread[Keys[$GitHubParamMap[GitHubEditRelease]]->Automatic],
-		{
-			"Username"->Automatic,
-			"Password"->Automatic
-			}
-		];
+  Join[
+    Thread[Keys[$GitHubParamMap[GitHubEditRelease]]->Automatic],
+    {
+      "Username"->Automatic,
+      "Password"->Automatic
+      }
+    ];
 GitHubEditRelease[
-	repo_String,
-	id_Integer,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"releases", ToString@id},
-		<|
-			"Method"->"PATCH",
-			"Body"->
-				ExportString[
-					GitHubQueryParamFilter[
-						GitHubCreateRelease,
-						{
-							ops
-							}
-						],
-					"JSON"
-					],
-			"Headers"->{
-				"Authorization"->
-					OptionValue[{"Username", "Password"}]
-					}
-			|>
-		];
+  repo_String,
+  id_Integer,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"releases", ToString@id},
+    <|
+      "Method"->"PATCH",
+      "Body"->
+        ExportString[
+          GitHubQueryParamFilter[
+            GitHubCreateRelease,
+            {
+              ops
+              }
+            ],
+          "JSON"
+          ],
+      "Headers"->{
+        "Authorization"->
+          OptionValue[{"Username", "Password"}]
+          }
+      |>
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2799,26 +2966,26 @@ GitHubDeleteRelease//Clear
 
 
 Options[GitHubDeleteRelease]=
-	{
-		"Username"->Automatic,
-		"Password"->Automatic
-		};
+  {
+    "Username"->Automatic,
+    "Password"->Automatic
+    };
 GitHubDeleteRelease[
-	repo_String,
-	id_Integer,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"releases", ToString@id},
-		<|
-			"Method"->"DELETE",
-			"Headers"->{
-				"Authorization"->
-					OptionValue[{"Username", "Password"}]
-					}
-			|>
-		]
+  repo_String,
+  id_Integer,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"releases", ToString@id},
+    <|
+      "Method"->"DELETE",
+      "Headers"->{
+        "Authorization"->
+          OptionValue[{"Username", "Password"}]
+          }
+      |>
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2830,26 +2997,26 @@ $GitHubActions["ListReleaseAssets"]=GitHubListReleaseAssets;
 
 
 Options[GitHubListReleaseAssets]=
-	{
-		"Username"->Automatic,
-		"Password"->Automatic
-		};
+  {
+    "Username"->Automatic,
+    "Password"->Automatic
+    };
 GitHubListReleaseAssets[
-	repo_String,
-	id_Integer,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"releases", ToString@id, "assets"},
-		<|
-			"Method"->"GET",
-			"Headers"->{
-				"Authorization"->
-					OptionValue[{"Username", "Password"}]
-					}
-			|>
-		];
+  repo_String,
+  id_Integer,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"releases", ToString@id, "assets"},
+    <|
+      "Method"->"GET",
+      "Headers"->{
+        "Authorization"->
+          OptionValue[{"Username", "Password"}]
+          }
+      |>
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2861,78 +3028,78 @@ $GitHubActions["UploadReleaseAsset"]=GitHubUploadReleaseAsset;
 
 
 $GitHubParamMap[GitHubUploadReleaseAsset]=
-	{
-		"Name"->Automatic,
-		"Label"->Automatic
-		};
+  {
+    "Name"->Automatic,
+    "Label"->Automatic
+    };
 
 
 GitHubUploadReleaseAsset//Clear
 
 
 Options[GitHubUploadReleaseAsset]=
-	{
-		"Username"->Automatic,
-		"Password"->Automatic,
-		"ContentType"->Automatic,
-		"Name"->Automatic,
-		"Label"->Automatic
-		};
+  {
+    "Username"->Automatic,
+    "Password"->Automatic,
+    "ContentType"->Automatic,
+    "Name"->Automatic,
+    "Label"->Automatic
+    };
 GitHubUploadReleaseAsset[
-	repo_String,
-	id_Integer,
-	asset:(_String|_File)?FileExistsQ|_ByteArray,
-	ops:OptionsPattern[]
-	]:=
-	Block[
-		{
-			$GitHubQueryBase=
-				ReplacePart[$GitHubQueryBase, "Domain"->"uploads.github.com"],
-			$GitHubBodyFormat="Binary"
-			},
-		GitHubReposAPI[
-			repo,
-			{"releases", ToString@id, "assets"},
-			{
-				Replace[OptionValue["Name"],
-					{
-						s_String:>
-							("name"->s),
-						_:>
-							("name"->FileNameTake[asset])
-						}
-					],
-				Replace[OptionValue["Label"],
-					{
-						s_String:>
-							("label"->s),
-						_:>
-							Nothing
-						}
-					]
-				},
-			<|
-				"Method"->"POST",
-				"Body"->
-					Replace[
-						asset,
-						_String|_File:>
-							Flatten[File[asset], 1, File]
-						],
-				"Headers"->{
-					Replace[OptionValue["ContentType"],
-						{
-							s_String:>
-								"ContentType"->s,
-							_->Nothing
-							}
-						],
-					"Authorization"->
-						OptionValue[{"Username", "Password"}]
-						}
-				|>
-			]
-		];
+  repo_String,
+  id_Integer,
+  asset:(_String|_File)?FileExistsQ|_ByteArray,
+  ops:OptionsPattern[]
+  ]:=
+  Block[
+    {
+      $GitHubQueryBase=
+        ReplacePart[$GitHubQueryBase, "Domain"->"uploads.github.com"],
+      $GitHubBodyFormat="Binary"
+      },
+    GitHubReposAPI[
+      repo,
+      {"releases", ToString@id, "assets"},
+      {
+        Replace[OptionValue["Name"],
+          {
+            s_String:>
+              ("name"->s),
+            _:>
+              ("name"->FileNameTake[asset])
+            }
+          ],
+        Replace[OptionValue["Label"],
+          {
+            s_String:>
+              ("label"->s),
+            _:>
+              Nothing
+            }
+          ]
+        },
+      <|
+        "Method"->"POST",
+        "Body"->
+          Replace[
+            asset,
+            _String|_File:>
+              Flatten[File[asset], 1, File]
+            ],
+        "Headers"->{
+          Replace[OptionValue["ContentType"],
+            {
+              s_String:>
+                "ContentType"->s,
+              _->Nothing
+              }
+            ],
+          "Authorization"->
+            OptionValue[{"Username", "Password"}]
+            }
+        |>
+      ]
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2941,26 +3108,26 @@ GitHubUploadReleaseAsset[
 
 
 Options[GitHubGetReleaseAsset]=
-	{
-		"Username"->Automatic,
-		"Password"->Automatic
-		};
+  {
+    "Username"->Automatic,
+    "Password"->Automatic
+    };
 GitHubGetReleaseAsset[
-	repo_String,
-	id_Integer,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"releases", "assets", ToString@id},
-		<|
-			"Method"->"GET",
-			"Headers"->{
-				"Authorization"->
-					OptionValue[{"Username", "Password"}]
-					}
-			|>
-		]
+  repo_String,
+  id_Integer,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"releases", "assets", ToString@id},
+    <|
+      "Method"->"GET",
+      "Headers"->{
+        "Authorization"->
+          OptionValue[{"Username", "Password"}]
+          }
+      |>
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2972,45 +3139,45 @@ $GitHubActions["EditReleaseAsset"]=GitHubEditReleaseAsset;
 
 
 $GitHubParamMap[GitHubEditReleaseAsset]=
-	{
-		"Name"->Automatic,
-		"Label"->Automatic
-		};
+  {
+    "Name"->Automatic,
+    "Label"->Automatic
+    };
 
 
 Options[GitHubEditReleaseAsset]=
-	{
-		"Username"->Automatic,
-		"Password"->Automatic,
-		"Name"->Automatic,
-		"Label"->Automatic
-		};
+  {
+    "Username"->Automatic,
+    "Password"->Automatic,
+    "Name"->Automatic,
+    "Label"->Automatic
+    };
 GitHubEditReleaseAsset[
-	repo_String,
-	id_Integer,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"releases", "assets", ToString@id},
-		<|
-			"Method"->"PATCH",
-			"Body"->
-				ExportString[
-					GitHubQueryParamFilter[
-						GitHubEditReleaseAsset,
-						{
-							ops
-							}
-						],
-					"JSON"
-					],
-			"Headers"->{
-				"Authorization"->
-					OptionValue[{"Username", "Password"}]
-					}
-			|>
-		];
+  repo_String,
+  id_Integer,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"releases", "assets", ToString@id},
+    <|
+      "Method"->"PATCH",
+      "Body"->
+        ExportString[
+          GitHubQueryParamFilter[
+            GitHubEditReleaseAsset,
+            {
+              ops
+              }
+            ],
+          "JSON"
+          ],
+      "Headers"->{
+        "Authorization"->
+          OptionValue[{"Username", "Password"}]
+          }
+      |>
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -3022,26 +3189,26 @@ $GitHubActions["DeleteReleaseAsset"]=GitHubDeleteReleaseAsset;
 
 
 Options[GitHubDeleteReleaseAsset]=
-	{
-		"Username"->Automatic,
-		"Password"->Automatic
-		};
+  {
+    "Username"->Automatic,
+    "Password"->Automatic
+    };
 GitHubDeleteReleaseAsset[
-	repo_String,
-	id_Integer,
-	ops:OptionsPattern[]
-	]:=
-	GitHubReposAPI[
-		repo,
-		{"releases", "assets", ToString@id},
-		<|
-			"Method"->"DELETE",
-			"Headers"->{
-				"Authorization"->
-					OptionValue[{"Username", "Password"}]
-					}
-			|>
-		]
+  repo_String,
+  id_Integer,
+  ops:OptionsPattern[]
+  ]:=
+  GitHubReposAPI[
+    repo,
+    {"releases", "assets", ToString@id},
+    <|
+      "Method"->"DELETE",
+      "Headers"->{
+        "Authorization"->
+          OptionValue[{"Username", "Password"}]
+          }
+      |>
+    ]
 
 
 (* ::Subsection:: *)
@@ -3055,14 +3222,14 @@ GitHubDeleteReleaseAsset[
 
 
 GitHubDeployments[repo:(_GitHubRepo|_String)?GitHubRepoQ,
-	identifier:_String|_Integer|None
-	]:=
-	GitHubReposAPI[repo,
-		If[identifier===None,
-			"deployments",
-			{"deployments",ToLowerCase@ToString@identifier}
-			]
-		];
+  identifier:_String|_Integer|None
+  ]:=
+  GitHubReposAPI[repo,
+    If[identifier===None,
+      "deployments",
+      {"deployments",ToLowerCase@ToString@identifier}
+      ]
+    ];
 
 
 (* ::Subsection:: *)
@@ -3079,130 +3246,130 @@ GitHubClone//Clear
 
 
 Options[GitHubClone]:=
-	Join[
-		Options[GitHubPath],
-		{
-			OverwriteTarget->False
-			},
-		Git["Clone", "Options"]
-		];
+  Join[
+    Options[GitHubPath],
+    {
+      OverwriteTarget->False
+      },
+    Git["Clone", "Options"]
+    ];
 GitHubClone[
-	repo:(_String|_GitHubPath)?(Not@*GitHubReleaseQ),
-	dir:(_String?(DirectoryQ@*DirectoryName))|Automatic:Automatic,
-	ops:OptionsPattern[]
-	]:=
-	Module[
-		{
-			path=
-				If[MatchQ[repo, _GitHubPath],
-					repo,
-					GitHubPath[repo, FilterRules[{ops}, Options@GitHubPath]]
-					]
-			},
-		With[
-			{
-				o=Options[path],
-				n=Normal[path]
-				},
-			Switch[Lookup[o, "Tree", "tree"],
-				"tree",
-					If[Length@n<3,
-						GitClone[
-							URL[path],
-							dir,
-							OverwriteTarget->OptionValue[OverwriteTarget],
-							ops
-							],
-						SVNExport[
-							URL[GitHubPath[repo, "Tree"->"trunk", "Branch"->Nothing]],
-							dir,
-							"TrustServer"->True,
-							OverwriteTarget->OptionValue[OverwriteTarget]
-							]
-						],
-				"trunk",
-					SVNExport[
-						URL[path],
-						dir,
-						"TrustServer"->True,
-						OverwriteTarget->OptionValue[OverwriteTarget]
-						],
-				"raw"|"releases",
-					Replace[
-						URLDownload[
-							URL[path],
-							FileNameJoin@{
-								If[StringQ@dir, 
-									If[!DirectoryQ@dir, CreateDirectory[dir]];
-									dir,
-									$TemporaryDirectory
-									], 
-								Last@n
-								}
-							],
-						File[f_]:>f
-						],
-				_,
-					GitHub::badtree=
-						"Don't know what to do with tree type ``";
-					Message[GitHub::badtree,
-						Lookup[o, "Tree", "tree"]
-						];
-					$Failed
-				]
-			]/;path=!=$Failed
-		];
+  repo:(_String|_GitHubPath)?(Not@*GitHubReleaseQ),
+  dir:(_String?(DirectoryQ@*DirectoryName))|Automatic:Automatic,
+  ops:OptionsPattern[]
+  ]:=
+  Module[
+    {
+      path=
+        If[MatchQ[repo, _GitHubPath],
+          repo,
+          GitHubPath[repo, FilterRules[{ops}, Options@GitHubPath]]
+          ]
+      },
+    With[
+      {
+        o=Options[path],
+        n=Normal[path]
+        },
+      Switch[Lookup[o, "Tree", "tree"],
+        "tree",
+          If[Length@n<3,
+            GitClone[
+              URL[path],
+              dir,
+              OverwriteTarget->OptionValue[OverwriteTarget],
+              ops
+              ],
+            SVNExport[
+              URL[GitHubPath[repo, "Tree"->"trunk", "Branch"->Nothing]],
+              dir,
+              "TrustServer"->True,
+              OverwriteTarget->OptionValue[OverwriteTarget]
+              ]
+            ],
+        "trunk",
+          SVNExport[
+            URL[path],
+            dir,
+            "TrustServer"->True,
+            OverwriteTarget->OptionValue[OverwriteTarget]
+            ],
+        "raw"|"releases",
+          Replace[
+            URLDownload[
+              URL[path],
+              FileNameJoin@{
+                If[StringQ@dir, 
+                  If[!DirectoryQ@dir, CreateDirectory[dir]];
+                  dir,
+                  $TemporaryDirectory
+                  ], 
+                Last@n
+                }
+              ],
+            File[f_]:>f
+            ],
+        _,
+          GitHub::badtree=
+            "Don't know what to do with tree type ``";
+          Message[GitHub::badtree,
+            Lookup[o, "Tree", "tree"]
+            ];
+          $Failed
+        ]
+      ]/;path=!=$Failed
+    ];
 GitHubClone[
-	repo:(_String|_GitHubPath)?GitHubReleaseQ,
-	dir:(_String?(DirectoryQ@*DirectoryName))|Automatic:Automatic,
-	ops:OptionsPattern[]
-	]:=
-	With[
-		{
-			release=
-				GitHub[
-					"Releases",
-					GitHubPath[repo],
-					"ImportedResult"
-					]["Content"]
-			},
-		If[AssociationQ@release,
-			If[Length@release["Assets"]>0,
-				With[{url=
-					release[["Assets",-1,"BrowserDownloadURL"]]
-					},
-					URLDownload[
-						url,
-						FileNameJoin@{
-							Replace[dir, 
-								{
-									Automatic:>$TemporaryDirectory,
-									_:>(If[!DirectoryQ@dir, CreateDirectory[dir]];dir)
-									}
-								],
-							URLParse[url,"Path"][[-1]]
-							}
-						]
-					],
-				ExtractArchive[
-					URLDownload[
-						release["ZipballURL"],
-						FileNameJoin@{
-							$TemporaryDirectory,
-							URLParse[release["ZipballURL"],"Path"][[-1]]
-							}
-						],
-					Replace[dir, 
-						{
-							Automatic:>$TemporaryDirectory,
-							_:>(If[!DirectoryQ@dir, CreateDirectory[dir]];dir)
-							}
-						]
-					]
-				],
-			$Failed
-			]
-		]
+  repo:(_String|_GitHubPath)?GitHubReleaseQ,
+  dir:(_String?(DirectoryQ@*DirectoryName))|Automatic:Automatic,
+  ops:OptionsPattern[]
+  ]:=
+  With[
+    {
+      release=
+        GitHub[
+          "Releases",
+          GitHubPath[repo],
+          "ImportedResult"
+          ]["Content"]
+      },
+    If[AssociationQ@release,
+      If[Length@release["Assets"]>0,
+        With[{url=
+          release[["Assets",-1,"BrowserDownloadURL"]]
+          },
+          URLDownload[
+            url,
+            FileNameJoin@{
+              Replace[dir, 
+                {
+                  Automatic:>$TemporaryDirectory,
+                  _:>(If[!DirectoryQ@dir, CreateDirectory[dir]];dir)
+                  }
+                ],
+              URLParse[url,"Path"][[-1]]
+              }
+            ]
+          ],
+        ExtractArchive[
+          URLDownload[
+            release["ZipballURL"],
+            FileNameJoin@{
+              $TemporaryDirectory,
+              URLParse[release["ZipballURL"],"Path"][[-1]]
+              }
+            ],
+          Replace[dir, 
+            {
+              Automatic:>$TemporaryDirectory,
+              _:>(If[!DirectoryQ@dir, CreateDirectory[dir]];dir)
+              }
+            ]
+          ]
+        ],
+      $Failed
+      ]
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -3211,30 +3378,30 @@ GitHubClone[
 
 
 GitHubConfigure[
-	dirBase:_String?DirectoryQ|Automatic,
-	repo:_String?GitHubRepoQ|_GitHubPath,
-	ignorePats:{___String}|None:None,
-	excludePats:{___String}|None:None
-	]:=
-	Module[{repoExistsQ, dir=Replace[dirBase, Automatic:>Directory[]]},
-		If[!GitRepoQ@dir,
-			GitInit[dir, ignorePats, excludePats];
-			GitSetRemote[dir, repo];
-			repoExistsQ=Between[URLRead[repo,"StatusCode"],{200,299}];
-			If[repoExistsQ, GitRealignRemotes[dir]]
-			];
-		If[GitRepoQ@dir,
-			If[!ValueQ[repoExistsQ],
-				repoExistsQ=Between[URLRead[repo,"StatusCode"],{200,299}]
-				];
-			If[!repoExistsQ,
-				GitHubImport["Create",
-					URLParse[repo, "Path"][[-1]]
-					];
-				GitSetRemote[dir, repo]
-				]
-			]
-		];
+  dirBase:_String?DirectoryQ|Automatic,
+  repo:_String?GitHubRepoQ|_GitHubPath,
+  ignorePats:{___String}|None:None,
+  excludePats:{___String}|None:None
+  ]:=
+  Module[{repoExistsQ, dir=Replace[dirBase, Automatic:>Directory[]]},
+    If[!GitRepoQ@dir,
+      GitInit[dir, ignorePats, excludePats];
+      GitSetRemote[dir, repo];
+      repoExistsQ=Between[URLRead[repo,"StatusCode"],{200,299}];
+      If[repoExistsQ, GitRealignRemotes[dir]]
+      ];
+    If[GitRepoQ@dir,
+      If[!ValueQ[repoExistsQ],
+        repoExistsQ=Between[URLRead[repo,"StatusCode"],{200,299}]
+        ];
+      If[!repoExistsQ,
+        GitHubImport["Create",
+          URLParse[repo, "Path"][[-1]]
+          ];
+        GitSetRemote[dir, repo]
+        ]
+      ]
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -3243,33 +3410,33 @@ GitHubConfigure[
 
 
 GitHubPush[
-	dir:_String?GitRepoQ,
-	repo:_String|_GitHubPath|Automatic:Automatic
-	]:=
-	Replace[repo,{
-		Automatic:>
-			Replace[
-				GitGetRemoteURL[dir, "PushURL"->True],
-				{
-					s_String:>
-						Git["Push", dir, s],
-					(r_->s_):>
-						Quiet@
-							Check[
-								Git["Push", dir, r, "master"],
-								Git["Push", s]
-								]
-					}
-				],
-		s_String?(URLParse[#, "Scheme"]===None&):>
-			Quiet@
-				Check[
-					Git["Push", dir, s, "master"],
-					Git["Push", dir, URL@GitHubPath[s]]
-					],
-		s_String:>
-			Git["Push", dir, s]
-		}]
+  dir:_String?GitRepoQ,
+  repo:_String|_GitHubPath|Automatic:Automatic
+  ]:=
+  Replace[repo,{
+    Automatic:>
+      Replace[
+        GitGetRemoteURL[dir, "PushURL"->True],
+        {
+          s_String:>
+            Git["Push", dir, s],
+          (r_->s_):>
+            Quiet@
+              Check[
+                Git["Push", dir, r, "master"],
+                Git["Push", s]
+                ]
+          }
+        ],
+    s_String?(URLParse[#, "Scheme"]===None&):>
+      Quiet@
+        Check[
+          Git["Push", dir, s, "master"],
+          Git["Push", dir, URL@GitHubPath[s]]
+          ],
+    s_String:>
+      Git["Push", dir, s]
+    }]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -3281,74 +3448,74 @@ GitHubImport//Clear
 
 
 GitHubImport[a_Association]:=
-	Association@
-		KeyValueMap[
-			StringReplace[
-				StringJoin[
-					Replace[
-						HoldPattern[Capitalize[s_String]]:>
-							(ToUpperCase@StringTake[s,1]<>StringDrop[s,1])
-						]@*Capitalize/@StringSplit[#,"_"]
-					],{
-				"Id"~~EndOfString->"ID",
-				"Url"->"URL",
-				"Html"->"HTML",
-				"Sha"->"SHA"
-				}]->
-				Which[
-					StringEndsQ[#,"_at"],
-						DateObject@#2,
-					StringEndsQ[#,"url"],
-						URL[#2],
-					True,
-						GitHubImport@#2
-					]&,
-		a
-		];
+  Association@
+    KeyValueMap[
+      StringReplace[
+        StringJoin[
+          Replace[
+            HoldPattern[Capitalize[s_String]]:>
+              (ToUpperCase@StringTake[s,1]<>StringDrop[s,1])
+            ]@*Capitalize/@StringSplit[#,"_"]
+          ],{
+        "Id"~~EndOfString->"ID",
+        "Url"->"URL",
+        "Html"->"HTML",
+        "Sha"->"SHA"
+        }]->
+        Which[
+          StringEndsQ[#,"_at"],
+            DateObject@#2,
+          StringEndsQ[#,"url"],
+            URL[#2],
+          True,
+            GitHubImport@#2
+          ]&,
+    a
+    ];
 GitHubImport[h_HTTPResponse]:=
-	<|
-		"StatusCode"->
-			h["StatusCode"],
-		"Content"->
-			If[MatchQ[h["StatusCode"],0|(_?(Between@{200,299}))],
-				Quiet[
-					Check[
-						GitHubImport@Import[h, "RawJSON"],
-						Null,
-						Import::jsonnullinput
-						],
-					Import::jsonnullinput
-					],
-				$Failed
-				],
-		If[h["StatusCode"]>400,
-			"Message"->Import[h, "RawJSON"]["message"],
-			Nothing
-			]
-		|>;
+  <|
+    "StatusCode"->
+      h["StatusCode"],
+    "Content"->
+      If[MatchQ[h["StatusCode"],0|(_?(Between@{200,299}))],
+        Quiet[
+          Check[
+            GitHubImport@Import[h, "RawJSON"],
+            Null,
+            Import::jsonnullinput
+            ],
+          Import::jsonnullinput
+          ],
+        $Failed
+        ],
+    If[h["StatusCode"]>400,
+      "Message"->Import[h, "RawJSON"]["message"],
+      Nothing
+      ]
+    |>;
 GitHubImport[s_String]:=
-	s;
+  s;
 GitHubImport[l_List]:=
-	GitHubImport/@l;
+  GitHubImport/@l;
 GitHubImport[e_]:=
-	e
+  e
 
 
 GitHubImport[
-	command_?(MemberQ[ToLowerCase/@Keys[$GitHubActions], ToLowerCase@#]&),
-	args__
-	]:=
-	With[{gh=GitHub[command,args]},
-		GitHubImport[gh]/;Head[gh]=!=GitHub
-		]
+  command_?(MemberQ[ToLowerCase/@Keys[$GitHubActions], ToLowerCase@#]&),
+  args__
+  ]:=
+  With[{gh=GitHub[command,args]},
+    GitHubImport[gh]/;Head[gh]=!=GitHub
+    ]
 GitHubImport[
-	path:{___String}|_String:{},
-	query:(_String->_)|{(_String->_)...}:{},
-	headers:_Association:<||>
-	]:=
-	With[{gh=GitHub[path,query,headers]},
-		GitHubImport[gh]/;Head[gh]=!=GitHub
-		]
+  path:{___String}|_String:{},
+  query:(_String->_)|{(_String->_)...}:{},
+  headers:_Association:<||>
+  ]:=
+  With[{gh=GitHub[path,query,headers]},
+    GitHubImport[gh]/;Head[gh]=!=GitHub
+    ]
 
 
 (* ::Subsection:: *)
@@ -3362,88 +3529,88 @@ GitHubImport[
 
 
 $GitHubActions=
-	KeySort@
-		Join[
-			$GitHubActions,
-			<|
-				"Push"->
-					GitHubPush,
-				"Configure"->
-					GitHubConfigure,
-				"Repositories"->
-					GitHubRepositories,
-				"ListMyRepositories"->
-					GitHubListMyRepositories,
-				"Clone"->
-					GitHubClone,
-				"ListContributors"->
-					GitHubRepositoryContributors,
-				"ListBranches"->
-					GitHubRepositoryBranches,
-				"BranchInfo"->
-					GitHubRepositoryBranchInfo,
-				"Fork"->
-					GitHubFork,
-				"ListForks"->
-					GitHubListForks,
-				"CreateReadme"->
-					GitHubCreateReadme,
-				"GetReadme"->
-					GitHubGetReadme,
-				"GetFile"->
-					GitHubGetFile,
-				"AddFile"->
-					GitHubAddFile,
-				"DeleteFile"->
-					GitHubDeleteFile,
-				"Releases"->
-					GitHubReleases,
-				"CreateRelease"->
-					GitHubCreateRelease,
-				"EditRelease"->
-					GitHubEditRelease,
-				"DeleteRelease"->
-					GitHubDeleteRelease,
-				"UploadReleaseAsset"->
-					GitHubUploadReleaseAsset,
-				"GetReleaseAsset"->
-					GitHubGetReleaseAsset,
-				"EditReleaseAsset"->
-					GitHubEditReleaseAsset,
-				"DeleteReleaseAsset"->
-					GitHubDeleteReleaseAsset,
-				"Deployments"->
-					GitHubDownloads,
-				"Path"->
-					Function[GitHubPath[##]],
-				"URL"->
-					Function[
-						Replace[GitHubPath[##],
-							g_GitHubPath:>URL[g]
-							]
-						],
-				"RawPath"->
-					Function[GitHubPath[##, "Tree"->"raw"]],
-				"RawURL"->
-					Function[
-						Replace[GitHubPath[##, "Tree"->"raw"],
-							g_GitHubPath:>URL[g]
-							]
-						],
-				"SVNPath"->
-					Function[GitHubPath[##, "Tree"->"trunk", "Branch"->Nothing]],
-				"SVNURL"->
-					Function[
-						Replace[GitHubPath[##, "Tree"->"trunk", "Branch"->Nothing],
-							g_GitHubPath:>URL[g]
-							]
-						],
-				"PathQ"->
-					GitHubPathQ,
-				"RepoQ"->
-					GitHubRepoQ
-				|>
-				];
+  KeySort@
+    Join[
+      $GitHubActions,
+      <|
+        "Push"->
+          GitHubPush,
+        "Configure"->
+          GitHubConfigure,
+        "Repositories"->
+          GitHubRepositories,
+        "ListMyRepositories"->
+          GitHubListMyRepositories,
+        "Clone"->
+          GitHubClone,
+        "ListContributors"->
+          GitHubRepositoryContributors,
+        "ListBranches"->
+          GitHubRepositoryBranches,
+        "BranchInfo"->
+          GitHubRepositoryBranchInfo,
+        "Fork"->
+          GitHubFork,
+        "ListForks"->
+          GitHubListForks,
+        "CreateReadme"->
+          GitHubCreateReadme,
+        "GetReadme"->
+          GitHubGetReadme,
+        "GetFile"->
+          GitHubGetFile,
+        "AddFile"->
+          GitHubAddFile,
+        "DeleteFile"->
+          GitHubDeleteFile,
+        "Releases"->
+          GitHubReleases,
+        "CreateRelease"->
+          GitHubCreateRelease,
+        "EditRelease"->
+          GitHubEditRelease,
+        "DeleteRelease"->
+          GitHubDeleteRelease,
+        "UploadReleaseAsset"->
+          GitHubUploadReleaseAsset,
+        "GetReleaseAsset"->
+          GitHubGetReleaseAsset,
+        "EditReleaseAsset"->
+          GitHubEditReleaseAsset,
+        "DeleteReleaseAsset"->
+          GitHubDeleteReleaseAsset,
+        "Deployments"->
+          GitHubDownloads,
+        "Path"->
+          Function[GitHubPath[##]],
+        "URL"->
+          Function[
+            Replace[GitHubPath[##],
+              g_GitHubPath:>URL[g]
+              ]
+            ],
+        "RawPath"->
+          Function[GitHubPath[##, "Tree"->"raw"]],
+        "RawURL"->
+          Function[
+            Replace[GitHubPath[##, "Tree"->"raw"],
+              g_GitHubPath:>URL[g]
+              ]
+            ],
+        "SVNPath"->
+          Function[GitHubPath[##, "Tree"->"trunk", "Branch"->Nothing]],
+        "SVNURL"->
+          Function[
+            Replace[GitHubPath[##, "Tree"->"trunk", "Branch"->Nothing],
+              g_GitHubPath:>URL[g]
+              ]
+            ],
+        "PathQ"->
+          GitHubPathQ,
+        "RepoQ"->
+          GitHubRepoQ
+        |>
+        ];
 
 
 End[];

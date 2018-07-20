@@ -1,0 +1,378 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["SymbolTools", \
+"CodeSection",ExpressionUUID->"25fd2085-9430-4611-ab4d-71fdbfa613b2"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"SymbolNameMatchQ", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<StringMatchQ on just the SymbolName (also works for strings)\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SymbolDetermineType", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Determines symbol type\>\""}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"8a1cd5f1-47de-450a-a9cc-9857b55b7996"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"c1522f67-c4a2-4bd6-b53d-\
+101d3349a0d3"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]SymbolNameMatchQ\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{
+  3.700400175915476*^9, {3.706458845001885*^9, 
+   3.706458845568138*^9}},ExpressionUUID->"5d3ce990-9017-4c71-b4d4-\
+8c9c6cf59228"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"SymbolNameMatchQ", "[", 
+    RowBox[{"s_Symbol", ",", "pat_"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"StringMatchQ", "[", 
+    RowBox[{
+     RowBox[{"SymbolName", "@", 
+      RowBox[{"Unevaluated", "[", "s", "]"}]}], ",", "pat"}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SymbolNameMatchQ", "[", 
+    RowBox[{"s_String", ",", "pat_"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"StringMatchQ", "[", 
+    RowBox[{
+     RowBox[{"Last", "@", 
+      RowBox[{"StringSplit", "[", 
+       RowBox[{"s", ",", "\"\<`\>\""}], "]"}]}], ",", "pat"}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SymbolNameMatchQ", "[", 
+    RowBox[{
+     RowBox[{"e", ":", 
+      RowBox[{"Except", "[", "_Symbol", "]"}]}], ",", "pat_"}], "]"}], ":=", 
+   "\n", "\t", 
+   RowBox[{"SymbolNameMatchQ", "[", 
+    RowBox[{"e", ",", "pat"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"SymbolNameMatchQ", "[", "pat_", "]"}], "[", "e_", "]"}], ":=", 
+   "\n", "\t", 
+   RowBox[{"SymbolNameMatchQ", "[", 
+    RowBox[{"e", ",", "pat"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"SetAttributes", "[", 
+   RowBox[{"SymbolNameMatchQ", ",", "HoldFirst"}], "]"}], ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.700400220792535*^9, 3.7004003186710997`*^9}, {
+  3.700400606371895*^9, 
+  3.700400619158168*^9}},ExpressionUUID->"c5e2a828-4de9-4497-9e7f-\
+4e86bc7f0159"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]SymbolDetermineType\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.702822455425211*^9, 3.702822460871848*^9}, 
+   3.7044709543005753`*^9},ExpressionUUID->"26b31c23-9975-4cf2-b568-\
+d9925efed1fb"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"docFindValues", "[", 
+    RowBox[{"s_", ",", "type_"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Quiet", "[", "\n", "\t\t", 
+    RowBox[{"Replace", "[", 
+     RowBox[{
+      RowBox[{"type", "[", "s", "]"}], ",", "\n", "\t", "\t", "\t", 
+      RowBox[{
+       RowBox[{"Except", "[", "_List", "]"}], "\[Rule]", 
+       RowBox[{"{", "}"}]}]}], "]"}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"docFindValues", "~", "SetAttributes", "~", "HoldFirst"}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.706458033019199*^9, 
+  3.706458084338065*^9}},ExpressionUUID->"226a1553-0ff7-4d3c-ad14-\
+edb698a7904c"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"$SymbolTypeNames", "=", "\n", "\t", 
+   RowBox[{"<|", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"OwnValues", "\[Rule]", "\"\<Constant\>\""}], ",", "\n", "\t", 
+     "\t", 
+     RowBox[{"DownValues", "\[Rule]", "\"\<Function\>\""}], ",", "\n", "\t", 
+     "\t", 
+     RowBox[{"UpValues", "\[Rule]", "\"\<Object\>\""}], ",", "\n", "\t", "\t", 
+     RowBox[{"SubValues", "\[Rule]", "\"\<Operator\>\""}], ",", "\n", "\t", 
+     "\t", 
+     RowBox[{"FormatValues", "\[Rule]", "\"\<Wrapper\>\""}]}], "\n", "\t\t", 
+    "|>"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"$SymbolNameTypes", "=", "\n", "\t", 
+   RowBox[{"AssociationThread", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Values", "@", "$SymbolTypeNames"}], ",", "\n", "\t\t", 
+     RowBox[{"Keys", "@", "$SymbolTypeNames"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"SymbolDetermineType", "//", "Clear"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SymbolDetermineType", "[", 
+    RowBox[{"s_Symbol", ",", 
+     RowBox[{"all", ":", 
+      RowBox[{"True", "|", "False"}], ":", "False"}]}], "]"}], ":=", "\n", 
+   "\t", 
+   RowBox[{"Catch", "[", "\n", "\t\t", 
+    RowBox[{"Replace", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"Map", "[", "\n", "\t", "\t\t\t", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{"SymbolDetermineType", "[", 
+            RowBox[{"s", ",", 
+             RowBox[{"$SymbolTypeNames", "[", "#", "]"}]}], "]"}], ",", "\n", 
+           "\t", "\t\t\t\t", 
+           RowBox[{"If", "[", 
+            RowBox[{"all", ",", "\n", "\t", "\t\t\t\t\t", 
+             RowBox[{"$SymbolTypeNames", "[", "#", "]"}], ",", "\n", 
+             "\t\t\t\t\t\t", 
+             RowBox[{"Throw", "[", 
+              RowBox[{"$SymbolTypeNames", "[", "#", "]"}], "]"}]}], "\n", 
+            "\t", "\t\t\t\t\t", "]"}], ",", "\n", "\t", "\t\t\t\t", 
+           "Nothing"}], "\n", "\t", "\t\t\t\t", "]"}], "&"}], ",", "\n", "\t",
+         "\t\t\t", 
+        RowBox[{"Keys", "@", "$SymbolTypeNames"}]}], "\n", "\t", "\t\t\t", 
+       "]"}], ",", "\n", "\t", "\t\t", 
+      RowBox[{
+       RowBox[{"{", "}"}], "\[Rule]", "\"\<Inert\>\""}]}], "\n", "\t\t\t", 
+     "]"}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SymbolDetermineType", "[", 
+    RowBox[{"s_Symbol", ",", 
+     RowBox[{"$SymbolTypeNames", "[", "OwnValues", "]"}]}], "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"10.4", "<=", "$VersionNumber"}], "&&", 
+      RowBox[{"System`Private`HasOwnCodeQ", "@", "s"}]}], ")"}], "||", "\n", 
+    "\t\t", 
+    RowBox[{
+     RowBox[{"Length", "@", 
+      RowBox[{"docFindValues", "[", 
+       RowBox[{"s", ",", "OwnValues"}], "]"}]}], ">", "0"}]}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SymbolDetermineType", "[", 
+    RowBox[{"s_Symbol", ",", 
+     RowBox[{"$SymbolTypeNames", "[", "DownValues", "]"}]}], "]"}], ":=", 
+   "\n", "\t", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"10.4", "<=", "$VersionNumber"}], "&&", 
+      RowBox[{"System`Private`HasDownCodeQ", "@", "s"}]}], ")"}], "||", "\n", 
+    "\t\t", 
+    RowBox[{
+     RowBox[{"Length", "@", 
+      RowBox[{"docFindValues", "[", 
+       RowBox[{"s", ",", "DownValues"}], "]"}]}], ">", "0"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SymbolDetermineType", "[", 
+    RowBox[{"s_Symbol", ",", 
+     RowBox[{"$SymbolTypeNames", "[", "SubValues", "]"}]}], "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"10.4", "<=", "$VersionNumber", "<=", "11.1"}], "&&", 
+      RowBox[{"System`Private`HasSubCodeQ", "@", "s"}]}], ")"}], "||", "\n", 
+    "\t\t", 
+    RowBox[{
+     RowBox[{"Length", "@", 
+      RowBox[{"docFindValues", "[", 
+       RowBox[{"s", ",", "SubValues"}], "]"}]}], ">", "0"}]}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SymbolDetermineType", "[", 
+    RowBox[{"s_Symbol", ",", 
+     RowBox[{"$SymbolTypeNames", "[", "UpValues", "]"}]}], "]"}], ":=", "\n", 
+   "\t", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"10.4", "<=", "$VersionNumber"}], "&&", 
+      RowBox[{"System`Private`HasUpCodeQ", "@", "s"}]}], ")"}], "||", "\n", 
+    "\t\t", 
+    RowBox[{
+     RowBox[{"Length", "@", 
+      RowBox[{"docFindValues", "[", 
+       RowBox[{"s", ",", "UpValues"}], "]"}]}], ">", "0"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SymbolDetermineType", "[", 
+    RowBox[{"s_Symbol", ",", 
+     RowBox[{"$SymbolTypeNames", "[", "FormatValues", "]"}]}], "]"}], ":=", 
+   "\n", "\t", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"10.4", "<=", "$VersionNumber"}], "&&", 
+      RowBox[{"System`Private`HasPrintCodeQ", "@", "s"}]}], ")"}], "||", "\n",
+     "\t\t", 
+    RowBox[{
+     RowBox[{"Length", "@", 
+      RowBox[{"docFindValues", "[", 
+       RowBox[{"s", ",", "FormatValues"}], "]"}]}], ">", "0"}]}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SymbolDetermineType", "[", 
+    RowBox[{"s_Symbol", ",", "\"\<Inert\>\""}], "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"SymbolDetermineType", "[", "s", "]"}], "===", 
+    "\"\<Inert\>\""}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SymbolDetermineType", "[", 
+    RowBox[{"s_Symbol", ",", "\n", "\t", 
+     RowBox[{
+      RowBox[{"Verbatim", "[", "Alternatives", "]"}], "[", 
+      RowBox[{"t__", "?", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"KeyMemberQ", "[", 
+          RowBox[{"$SymbolNameTypes", ",", "#"}], "]"}], "&"}], ")"}]}], 
+      "]"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Or", "@@", 
+    RowBox[{"Map", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"SymbolDetermineType", "[", 
+        RowBox[{"s", ",", "#"}], "]"}], "&"}], ",", 
+      RowBox[{"{", "t", "}"}]}], "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SymbolDetermineType", "[", 
+    RowBox[{"s_Symbol", ",", 
+     RowBox[{"Or", "[", 
+      RowBox[{"t__", "?", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"KeyMemberQ", "[", 
+          RowBox[{"$SymbolNameTypes", ",", "#"}], "]"}], "&"}], ")"}]}], 
+      "]"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Or", "@@", 
+    RowBox[{"Map", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"SymbolDetermineType", "[", 
+        RowBox[{"s", ",", "#"}], "]"}], "&"}], ",", 
+      RowBox[{"{", "t", "}"}]}], "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SymbolDetermineType", "[", 
+    RowBox[{"s_Symbol", ",", 
+     RowBox[{"And", "[", 
+      RowBox[{"t__", "?", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"KeyMemberQ", "[", 
+          RowBox[{"$SymbolNameTypes", ",", "#"}], "]"}], "&"}], ")"}]}], 
+      "]"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"And", "@@", 
+    RowBox[{"Map", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"SymbolDetermineType", "[", 
+        RowBox[{"s", ",", "#"}], "]"}], "&"}], ",", 
+      RowBox[{"{", "t", "}"}]}], "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SymbolDetermineType", "[", 
+    RowBox[{"s_String", ",", "e___"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"ToExpression", "[", 
+    RowBox[{"s", ",", "StandardForm", ",", 
+     RowBox[{"Function", "[", 
+      RowBox[{"Null", ",", 
+       RowBox[{"SymbolDetermineType", "[", 
+        RowBox[{"#", ",", "e"}], "]"}], ",", "HoldFirst"}], "]"}]}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SymbolDetermineType", "[", 
+    RowBox[{
+     RowBox[{"s", ":", 
+      RowBox[{"{", "__String", "}"}]}], ",", "e___"}], "]"}], ":=", "\n", 
+   "\t", 
+   RowBox[{"AssociationThread", "[", "\n", "\t\t", 
+    RowBox[{"s", ",", "\n", "\t\t", 
+     RowBox[{"ToExpression", "[", 
+      RowBox[{"s", ",", "StandardForm", ",", 
+       RowBox[{"Function", "[", 
+        RowBox[{"Null", ",", 
+         RowBox[{"SymbolDetermineType", "[", 
+          RowBox[{"#", ",", "e"}], "]"}], ",", "HoldFirst"}], "]"}]}], 
+      "]"}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SymbolDetermineType", "[", 
+    RowBox[{
+     RowBox[{"{", "}"}], ",", "___"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"<|", "|>"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"SymbolDetermineType", "~", "SetAttributes", "~", "HoldFirst"}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.702822463275947*^9, 3.702822670314241*^9}, {
+  3.702822731223959*^9, 3.702822848199498*^9}, {3.702823088640841*^9, 
+  3.702823100199636*^9}, {3.702823134839465*^9, 3.7028235133797817`*^9}, {
+  3.7028236295489407`*^9, 3.702824078935396*^9}, {3.702824198240528*^9, 
+  3.702824212775765*^9}, {3.702824457616255*^9, 3.702824460269855*^9}, {
+  3.702824598301115*^9, 3.702824599850347*^9}, {3.703458111366643*^9, 
+  3.703458145829115*^9}, {3.703458178798684*^9, 3.7034582324344883`*^9}, {
+  3.706457984025552*^9, 3.7064580256358843`*^9}, {3.706458144858427*^9, 
+  3.706458188965707*^9}, {3.706460146449922*^9, 3.706460146614801*^9}, {
+  3.709394979425872*^9, 3.709394986039485*^9}, {3.7148500143281116`*^9, 
+  3.7148500839203787`*^9}},ExpressionUUID->"1e41d2a8-f799-4fb0-9d2a-\
+71cc1e9d2672"]
+}, Closed]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"End", "[", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"52c40ff1-3f19-4e7c-9381-\
+3385a5baee76"]
+}, Open  ]],
+
+Cell["", "SectionSeparator",ExpressionUUID->"4aaff95c-5287-4eb1-8505-\
+3703b4e84c81"]
+},
+WindowSize->{807, 855},
+WindowMargins->{{Automatic, 275}, {Automatic, 0}},
+FontFamily->Automatic,
+FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
+2018)",
+StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+
