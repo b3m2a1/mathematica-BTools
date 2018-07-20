@@ -176,19 +176,23 @@ GitHubLockPasswordCache[]:=
 
 
 
+GitHubGetDefaultUsername[]:=
+  Replace[
+    If[$GitHubUseKeychain, $GitHubKCUsername, None],
+    Except[_String]:>
+      Replace[$GitHubConfig["Username"],
+        Except[_String?StringQ]:>
+          GitHubSetUsernameAndPassword[
+            "", 
+            ""
+            ][[1]]
+        ]
+    ]
+
+
 If[Length[OwnValues@$GitHubUsername]===0,
   $GitHubUsername:=
-    Replace[
-      If[$GitHubUseKeychain, $GitHubKCUsername, None],
-      Except[_String]:>
-        Replace[$GitHubConfig["Username"],
-          Except[_String?StringQ]:>
-            GitHubSetUsernameAndPassword[
-              "", 
-              ""
-              ][[1]]
-          ]
-      ]
+    GitHubGetDefaultUsername[]
   ];
 
 
@@ -727,25 +731,41 @@ GitHubQuery[
   query:(_String->_)|{(_String->_)...}:{},
   headers:_Association:<||>
   ]:=
-  Block[
+  With[
     {
-      $GitHubUsername:=$GitHubUsername,
-      $GitHubPassword:=$GitHubPassword
-      },
-    HTTPRequest[
-      URLBuild@
-        Join[
-          $GitHubQueryBase,
-          <|
-            "Path"->Flatten@{path},
-            "Query"->{query}
-            |>
+      u=
+        If[MatchQ[OwnValues@$GitHubUsername, {_:>_String, ___}],
+          $GitHubUsername,
+          None
           ],
-      Association@Normal@
-        GitHubQueryPrepBody@
-          GitHubQueryAttachAuth@headers
+      p=
+        If[MatchQ[OwnValues@$GitHubPassword, {_:>_String, ___}],
+          $GitHubPassword,
+          None
+          ]
+      },
+    Block[
+      {
+        $GitHubUsername:=
+          If[StringQ@u, u, GitHubGetDefaultUsername[]],
+        $GitHubPassword:=
+          If[StringQ@p, p, GitHubPassword[]]
+        },
+      HTTPRequest[
+        URLBuild@
+          Join[
+            $GitHubQueryBase,
+            <|
+              "Path"->Flatten@{path},
+              "Query"->{query}
+              |>
+            ],
+        Association@Normal@
+          GitHubQueryPrepBody@
+            GitHubQueryAttachAuth@headers
+        ]
       ]
-      ];
+    ];
 
 
 (* ::Subsubsection::Closed:: *)

@@ -339,7 +339,56 @@ PackageAddAutocompletions[
   "GitHub",
   {
     Keys[$GitHubActions],
-    {"Options", "Function"}
+    {
+      "Options",
+      "Function",
+      "ResultObject",
+      "ResultJSON",
+      "ResultJSONObject",
+      "HTTPRequest",
+      "HTTPResponse",
+      "ImportedResult"
+      },
+    {
+      "ResultObject",
+      "ResultJSON",
+      "ResultJSONObject",
+      "HTTPRequest",
+      "HTTPResponse",
+      "ImportedResult"
+      },
+    {
+      "ResultObject",
+      "ResultJSON",
+      "ResultJSONObject",
+      "HTTPRequest",
+      "HTTPResponse",
+      "ImportedResult"
+      },
+    {
+      "ResultObject",
+      "ResultJSON",
+      "ResultJSONObject",
+      "HTTPRequest",
+      "HTTPResponse",
+      "ImportedResult"
+      },
+    {
+      "ResultObject",
+      "ResultJSON",
+      "ResultJSONObject",
+      "HTTPRequest",
+      "HTTPResponse",
+      "ImportedResult"
+      },
+    {
+      "ResultObject",
+      "ResultJSON",
+      "ResultJSONObject",
+      "HTTPRequest",
+      "HTTPResponse",
+      "ImportedResult"
+      }
     }
   ]
 
