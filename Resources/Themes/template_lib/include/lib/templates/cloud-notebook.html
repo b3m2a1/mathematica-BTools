@@ -1,75 +1,58 @@
+<wolfram:with
+  notebookId='If[StringQ@#NotebookID, #NotebookID, CreateUUID["notebook-"]]'
+  divWidth='Replace[#Width, {n_Integer:>ToString[n]<>"px", Scaled[i_]:>ToString[100*i]<>"%", _->"100%" }]'
+  nbWidth='Replace[{#Left,#Width},  { {n_Integer,m_Integer}:>ToString[n+m]<>"px",  {Scaled[i_],Scaled[j_]}:>ToString[100*(i+j)]<>"%",  {Scaled[i_], m_Integer}|{m_Integer, Scaled[i_]}:>"calc("<>ToString[100*i]<>"%"<>" + "<>ToString[m]<>"px"<>")", {_, m_Integer}:>ToString[m+2]<>"px", {_, Scaled[i_]}:>"calc("<>ToString[100*i]<>"%"<>" + "<>ToString[4]<>"px"<>")", _->"calc(100% + 4px)"}]'
+  divHeight='Replace[#Height, { m_Integer:>ToString[m]<>"px", Scaled[j_]:>ToString[100*(j)]<>"%", m_Integer:>ToString[m]<>"px", _->"200px" } ]'
+  nbHeight='Replace[{#Top, #Height},  { {n_Integer,m_Integer}:>ToString[n+m]<>"px",  {Scaled[i_],Scaled[j_]}:>ToString[100*(i+j)]<>"%",  {Scaled[i_], m_Integer}|{m_Integer, Scaled[i_]}:>"calc("<>ToString[100*i]<>"%"<>" + "<>ToString[m]<>"px"<>")", {_, m_Integer}:>ToString[m+If[FreeQ[{#Resizable}, True], 86, 75]]<>"px", {_, Scaled[i_]}:>"calc("<>ToString[100*i]<>"% + 88px)", _->"calc(100% + 88px)"}]'
+  nbPosTop='Replace[#Top, { n_Integer:>ToString[-n]<>"px", Scaled[i_]:>ToString[-100*i]<>"\%", _->"-86px" } ]'
+  nbPosLeft='Replace[#Left, { n_Integer:>ToString[-n]<>"px", Scaled[i_]:>ToString[-100*i]<>"\%", _->"-2px" } ]'
+  nbSrc='Replace[#Source, { Except[_String]->"https://sandbox.open.wolframcloud.com/app/view/newNotebook" } ]'
+  nbBorder='Replace[#Border, { i_Integer:> "border: 1px solid #e3e3e3; border-radius: "<>ToString[i]<>"px; box-shadow: inset 0 1px 1px rgba(0,0,0,.05);", None->";", Except[_String]->"border: 1px solid #e3e3e3; border-radius: 4px; box-shadow: inset 0 1px 1px rgba(0,0,0,.05);" } ]'
+  nbResize='Replace[#Resizable, { True|{True, True}->"overflow-x: auto; overflow-y: hidden; resize: both", {True, _}->"overflow-x: auto; overflow-y: hidden; resize: horizontal", {_, True}->"overflow: hidden; resize: vertical", _->"overflow: hidden"}]'
+  >
 <div
-  style=
-    'width:
-      <wolfram:expr>
-        Replace[#Width,
-          {
-            n_Integer:>ToString[n]<>"px",
-            Scaled[i_]:>ToString[100*i]<>"\%",
-            _->"100%"
-            }
-          ]
-      </wolfram:expr>;
-    height:
-      <wolfram:expr>
-        Replace[#Height,
-          {
-            n_Integer:>ToString[n]<>"px",
-            Scaled[i_]:>ToString[100*i]<>"\%",
-            _->"200px"
-            }
-          ]
-      </wolfram:expr>;
-    <wolfram:expr>
-      Replace[#Style,
-        {
-          Bottom:> "position: -webkit-sticky; position: sticky;  bottom: 0;",
-          Top:> "position: -webkit-sticky; position: sticky;  top: 0;",
-          s_String:>s,
-          _->"position: relative;"
-          }
-        ]
-    </wolfram:expr>;
-    overflow: hidden;
-    '
+  class="embedded-notebook-resize-top"
+  style='<*
+    Replace[#Style,
+      {
+        Bottom:> "position: -webkit-sticky; position: sticky;  bottom: 0",
+        Top:> "position: -webkit-sticky; position: sticky;  top: 0",
+        s_String:>s
+        }
+      ]
+    *>; `nbResize`; `nbBorder` height: `divHeight`; width: `divWidth`;'
     >
-    <iframe
-        src="https://sandbox.open.wolframcloud.com/app/view/newNotebook"
-        style='
-          position: absolute;
-          left:-2px;
-          top:
-          <wolfram:expr>
-            Replace[#Top,
-              {
-                n_Integer:>ToString[-n]<>"px",
-                Scaled[i_]:>ToString[-100*i]<>"\%",
-                _->"-85px"
-                }
-              ]
-          </wolfram:expr>;
-          '
-        width=
-          '<wolfram:expr>
-            Replace[#Width,
-              {
-                n_Integer:>ToString[n]<>"px",
-                Scaled[i_]:>ToString[100*i]<>"\%",
-                _->"100%"
-                }
-              ]
-          </wolfram:expr>'
-        height=
-          '<wolfram:expr>
-            Replace[{#Top, #Height},
-              {
-                { n_Integer,  m_Integer  }:>ToString[n+m]<>"px",
-                { Scaled[i_], Scaled[j_] }:>ToString[100*(i+j)]<>"\%",
-                { _Missing,   m_Integer  }:>ToString[m+85]<>"px",
-                _->"285px"
-                }
-              ]
-          </wolfram:expr>'
-        >
-    </iframe>
+  <div
+    class="embedded-notebook-resize-container"
+    style='width: 100%; height: <* If[FreeQ[{#Resizable}, True], "100%", "calc(100% - 10px)"] *>;'
+    >
+  <div class="embedded-notebook-container" style="position: relative; width: 100%; height: 100%">
+  <button
+    class="embedded-notebook"
+    id="`notebookId`"
+    onclick="loadCloudNotebook('`notebookId`')"
+    style="text-align: center; height: `divHeight`; width: `nbWidth`; cursor: pointer; background-color: #fff; background-repeat:no-repeat; border:none;"
+    >
+    <script>
+      function loadCloudNotebook(frameId){
+        nbDiv = document.getElementById(frameId);
+        nbFrame = document.createElement('iframe');
+        nbFrame.id=nbDiv.id;
+        nbFrame.class=nbDiv.class;
+        nbFrame.src = "`nbSrc`";
+        nbFrame.style = "position: absolute; left:`nbPosLeft`; top:`nbPosTop`; height: <*#nbHeight*>; width: `nbWidth`;"
+        nbDiv.parentNode.replaceChild(nbFrame, nbDiv);
+        }
+    </script>
+    <span style="display: inline-block; vertical-align: middle;">
+      <i class="fa fa-book"></i>Click to load notebook
+    </span>
+  </button>
+  </div>
+  </div>
+  <wolfram:if test="TrueQ[#PreloadNotebook]">
+    <script>loadCloudNotebook('`notebookId`')</script>
+  </wolfram:if>
 </div>
+
+</wolfram:with>

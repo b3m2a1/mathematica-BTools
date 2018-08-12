@@ -52,13 +52,21 @@ markdownToXMLFormat[
         ]
     },
     XMLElement["pre",
-      {},
+      If[!StringMatchQ[First@striptext,Whitespace],
+        {
+          "class"->
+            TemplateApply[
+              "lang-`lang` highlight-source-`lang`",
+              <|
+                "lang"->StringTrim[First@striptext]
+                |>
+              ]
+          },
+        {}
+        ],
       {
         XMLElement["code",
-          If[!StringMatchQ[First@striptext,Whitespace],
-            {"class"->"language-"<>StringTrim[First@striptext]},
-            {}
-            ],
+          {},
           {
             "\n"<>Last@striptext
             }
@@ -464,12 +472,27 @@ markdownToXMLFormat[
 
 
 (* ::Subsubsection::Closed:: *)
+(*TextForms*)
+
+
+
+$MarkdownToXMLTextForms=
+  {
+    "MathLine"
+    };
+
+
+markdownToXMLFormat[Alternatives@@$MarkdownToXMLTextForms, text_String]:=
+  text;
+
+
+(* ::Subsubsection::Closed:: *)
 (*Fallback*)
 
 
 
 markdownToXMLFormat[t_,text_String]:=
-  XMLElement[t,{},{text}]
+  XMLElement[t, {}, {text}]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -771,6 +794,16 @@ $markdownToXMLCodeLine=
 
 
 (* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLMathLine*)
+
+
+
+$markdownToXMLMathLine=
+  math:Shortest[("$$"~~__~~"$$")]:>
+    ("MathLine"->math)
+
+
+(* ::Subsubsubsection::Closed:: *)
 (*$markdownToXMLXMLLine*)
 
 
@@ -842,16 +875,18 @@ $markdownToXMLBlockRules={
 
 
 
-$markdownToXMLElementRules={
-  $markdownToXMLLink,
-  $markdownToXMLImageRef,
-  $markdownToXMLImageRefLink,
-  $markdownToXMLImage,
-  $markdownToXMLCodeLine,
-  $markdownToXMLItalBold,
-  $markdownToXMLXMLBlock,
-  $markdownToXMLXMLLine
-  };
+$markdownToXMLElementRules=
+  {
+    $markdownToXMLMathLine,
+    $markdownToXMLLink,
+    $markdownToXMLImageRef,
+    $markdownToXMLImageRefLink,
+    $markdownToXMLImage,
+    $markdownToXMLCodeLine,
+    $markdownToXMLItalBold,
+    $markdownToXMLXMLBlock,
+    $markdownToXMLXMLLine
+    };
 
 
 (* ::Subsubsubsection::Closed:: *)

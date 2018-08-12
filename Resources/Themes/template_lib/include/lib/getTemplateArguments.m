@@ -1,8 +1,14 @@
 (Join@@
   Flatten@{
     #,
-    Replace[Templating`$TemplateArgumentStack,{
-        {___,a_}:>a,
-        _-><||>
-      }]
+    Replace[
+      $$templateVars,
+      Except[_Association]-><||>
+      ],
+    Replace[Templating`$TemplateArgumentStack,
+      {
+          {___,a_}:>a,
+          _-><||>
+        }
+      ]
     })&

@@ -2057,14 +2057,29 @@ notebookToMarkdownNoMathJAX[ass_]:=
   ass["UseMathJAX"]===False
 
 
+notebookToMarkdownMathJAXExport//Clear
+
+
 notebookToMarkdownMathJAXExport[
   pathInfo_,
-  boxes_
+  boxes_,
+  temp_:"$$``$$"
   ]:=
-  "$$``$$"~TemplateApply~
-  System`FEDump`transformProcessedBoxesToTeX@
-    System`FEDump`TransformBoxesToTraditionalFormBoxes@
-      System`FEDump`processBoxesForCopyAsTeX[TraditionalForm, boxes]
+  temp~TemplateApply~
+    Module[
+      {
+        box,
+        expr
+        },
+      box=System`FEDump`processBoxesForCopyAsTeX[TraditionalForm, boxes];
+      expr=Quiet[Check[MakeExpression[box, StandardForm], $Failed]];
+      box=
+        If[expr=!=$Failed,
+          ToBoxes[Extract[expr, 1, HoldForm], TraditionalForm],
+          box
+          ];
+      System`FEDump`transformProcessedBoxesToTeX@box
+      ]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -3111,12 +3126,18 @@ notebookToMarkdownExportPrintStyle[
 $notebookToMarkdownMessagePrintTemplate=
   StringTrim@
   "
-<div style='font-size: 12px; font-family: monospace;'>
+<div 
+	class='mma-message-wrapper'
+	style='font-size: 12px; font-family: monospace;'>
 	<div class='mma-message'>
-		<span style='color: #dd0000'>
+		<span 
+			class='mma-message-name-wrapper'
+			style='color: #dd0000'>
 			<span class='mma-message-name'>`head`::`name`:</span>
 		</span>
-		<span style='color: gray'>
+		<span 
+			class='mma-message-text-wrapper'
+			style='color: gray'>
 			<span class='mma-message-text'>`body`</span>
 		</span>
 	</div>
@@ -3152,6 +3173,7 @@ $notebookToMarkdownUsagePrintTemplate=
   StringTrim@
 "
 <div 
+	class='mma-print-usage-wrapper'
 	style='margin-top: -2px; padding: 0px; font-size: 12px; color: rgb(128, 128, 128); background-color: aliceblue; border-top : solid 2px lightblue; padding: 5px 0 5px 0;'>
 	<div class='mma-print-usage'>
 		`body`
@@ -3178,7 +3200,9 @@ iNotebookToMarkdownRegister[pathInfo_, Cell[t_, "Print", "PrintUsage", ___]]:=
 $notebookToMarkdownPrintPrintTemplate=
   StringTrim@
 "
-<div style='font-size 12px; color : rgb(55, 55, 55);'>	
+<div 
+	class='mma-print-wrapper'
+	style='font-size 12px; color : rgb(55, 55, 55);'>	
 	<div class='mma-print'>
 		`body`
 	</div>
@@ -3206,9 +3230,13 @@ iNotebookToMarkdownRegister[pathInfo_,
 $notebookToMarkdownEchoPrintTemplate=
   StringTrim@
 "
-<div style='font-size 12px; color : rgb(55, 55, 55);'>
+<div 
+	class='mma-echo-wrapper'
+	style='font-size 12px; color : rgb(55, 55, 55);'>
 	<div class='mma-echo mma-print'>
-		<span style='color:orange;'>
+		<span 
+			class='mma-echo-text-wrapper'
+			style='color:orange;'>
 			<span class='mma-echo-prompt' > >> </span>
 		</span>
 		`body`
@@ -3505,7 +3533,7 @@ iNotebookToMarkdownRegister[
   pathInfo_,
   Cell[
     e_,
-    "InlineFormula"|"DisplayFormula", 
+    "InlineFormula", 
     o___
     ]
   ]:=
@@ -3547,6 +3575,47 @@ iNotebookToMarkdownRegister[
       iNotebookToMarkdownExport[pathInfo, e]
       ];
     ]
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*InlineFormula*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  Cell[
+    e_,
+    "InlineFormula",
+    o___
+    ]
+  ]:=
+  If[pathInfo["UseMathJAX"]=!=False,
+    notebookToMarkdownMathJAXExport[
+      pathInfo,
+      e,
+      "$``$"
+      ],
+    iNotebookToMarkdownExport[pathInfo, e]
+    ];
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*TraditionalForm*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  FormBox[bd_, TraditionalForm]
+  ]:=
+  If[pathInfo["UseMathJAX"]=!=False,
+    notebookToMarkdownMathJAXExport[
+      pathInfo,
+      bd
+      ],
+    iNotebookToMarkdownExport[pathInfo, bd]
+    ];
 
 
 (* ::Subsubsubsection::Closed:: *)

@@ -1,6 +1,6 @@
 Paclet[
   Name -> "BTools",
-  Version -> "2.1.27",
+  Version -> "2.1.28",
   Creator -> "b3m2a1@gmail.com",
   URL -> "https://github.com/b3m2a1/mathematica-BTools",
   Description -> "A suite of development tools",
@@ -158,6 +158,10 @@ Paclet[
        			{
         				"include",
         				"Themes/template_lib/include"
+        			},
+       			{
+        				"static",
+        				"Themes/template_lib/static"
         			},
        			{
         				"templates",

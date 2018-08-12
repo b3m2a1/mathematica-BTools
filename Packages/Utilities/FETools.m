@@ -101,6 +101,7 @@ FEUnicodeCharBrowser::usage=
 
 
 
+FEAttachCellSpec::usage="";
 FEAttachCell::usage="Simplified syntax for attaching a cell";
 
 
@@ -722,181 +723,6 @@ FEValueBrowser[pat:_String:"",ops___]:=
 
 
 (* ::Subsubsection::Closed:: *)
-(*FEFiles*)
-
-
-
-InternalFiles[namePattern_,directoryExtensions___String,depth:_Integer|\[Infinity]:\[Infinity]]:=
-  FileNames[namePattern,
-    FileNameJoin@{
-      $InstallationDirectory,
-      directoryExtensions
-      },
-    depth];
-InternalDocumentationFiles[namePattern_,args___]:=
-  InternalFiles[namePattern,"Documentation",args];
-InternalSystemFiles[namePattern_,args___]:=
-  InternalFiles[namePattern,"SystemFiles",args];
-FrontEndFiles[namePattern_,args___]:=
-  InternalSystemFiles[namePattern,"FrontEnd",args];
-
-
-$FrontEndDirectory=
-  FileNameJoin@{
-    $InstallationDirectory,
-    "SystemFiles",
-    "FrontEnd"
-    };
-
-
-FrontEndFile=FrontEndFiles;
-
-
-FrontEndImageFiles[files_List]:=
-  Select[files,feImageQ];
-FrontEndImageFiles[pattern_,specs___String,
-  function:
-    InternalFiles|
-    InternalSystemFiles|
-    FrontEndFiles:
-    FrontEndFiles]:=
-  FrontEndImageFiles@function[pattern,specs];
-FrontEndImage[name_,which_:First]:=
-With[{files=Select[FrontEndFiles[name],feImageQ]},
-Switch[which,
-All,Thread[files->(Import/@files)],
-_Symbol,Thread[which@files->(Import@which@files)],
-_,Replace[Thread[Flatten@{files[[which]]}->(Import/@Flatten@{files[[which]]})],
-{img_}:>img
-]
-]
-]
-
-
-FrontEndImageBrowser[pattern_,
-  args:Except[_Rule|_RuleDelayed]...,
-  ops:OptionsPattern[Options@PaneColumn]]:=
-  PaneColumn[
-    With[{img=Quiet@Check[Import@#,$Failed]},
-      Button[
-      Tooltip[img,#],
-      Print@(#->img),
-      Appearance->"Frameless"]
-      ]&/@
-      FrontEndImageFiles[
-        Replace[pattern,{
-          Verbatim[Verbatim][p_]:>p,
-          (StartOfString~~p_):>(p~~___),
-          (p_~~EndOfString):>(___~~p),
-          p_:>(___~~p~~___)
-          }],args],
-    ops]
-
-
-FrontEndBlobIcon[expr_,fmt_:StandardForm]:=
-  With[{boxes=MakeBoxes[expr,fmt]},
-    If[
-      MatchQ[boxes,
-        InterpretationBox[_RowBox,___]|
-        TagBox[TemplateBox[{_RowBox,___},___],___]
-        ],
-      ToExpression@
-        FirstCase[
-          boxes,
-          PaneSelectorBox[{False->GridBox[{{_,e_,___},___},___],___},___]:>e,
-          "None",
-          \[Infinity]
-          ],
-      None
-      ]
-    ]
-
-
-TRFiles[pat_]:=
-  FileNames[
-  "*.tr",
-    FileNameJoin@{
-      $InstallationDirectory,
-      "SystemFiles",
-      "FrontEnd",
-      "TextResources"
-      }
-    ]
-
-
-(* ::Subsubsection::Closed:: *)
-(*Characters*)
-
-
-
-$FEUnicodeChars:=
-  $FEUnicodeChars=
-    Select[StringContainsQ["Characters"]]@
-      InternalFiles["*.nb",
-        "Documentation","English",
-          "System","ReferencePages",
-          "Characters"]//Map[FileBaseName];
-
-
-FEUnicodeCharFind[pat_:_]:=
-  Select[$FEUnicodeChars,
-    StringContainsQ[pat]
-    ];
-FEUnicodeCharBrowser[pat_:_]:=
-  Replace[FEUnicodeCharFind[pat],{
-    s:{__}:>HyperlinkBrowse[
-      TemplateApply["\"\[``]\"",#]->
-        ToExpression[TemplateApply["\"\[``]\"",#],
-          StandardForm
-          ]&/@s,
-      Print,
-      ImageSize->{250,250}
-      ],
-    _->None
-    }];
-
-
-(* ::Subsubsection::Closed:: *)
-(*FEImport*)
-
-
-
-feImageFormats=ToLowerCase/@Image`$ImportImageFormats;
-feImageQ[s_String]:=
-  MemberQ[feImageFormats,FileExtension@s];
-
-
-FEImport[f_String?FileExistsQ]:=
-  Import[f];
-FEImport[f:FrontEnd`FileName[_,s_?feImageQ,ops___]]:=
-  FE`Evaluate@FEPrivate`ImportImage[f]
-FEImport[f:FrontEnd`FileName[_,_,ops___]]:=
-  Import[FEToFileName[f],ops];
-FEImport[FEPrivate`FrontEndResource[r___]]:=
-  FrontEndResource[r]
-
-
-FEToFileName[FrontEnd`FileName[p:{__},f_,___]]:=
-  Replace[
-    Select[FrontEndFiles[f],
-      StringContainsQ@
-        FileNameJoin@p
-      ],{
-      {}:>
-        Replace[
-          Select[InternalFiles[f],
-            StringContainsQ@
-              FileNameJoin@p
-          ],
-          {fn_}:>fn
-          ],
-      {fn_}:>fn
-    }];
-FEToFileName[FrontEnd`ToFileName[a___]]:=
-  FEToFileName[FrontEnd`FileName[a]];
-
-
-(* ::Subsubsection::Closed:: *)
 (*FileOnPath*)
 
 
@@ -1062,6 +888,307 @@ PackageAddAutocompletions[
       "s"
       ]}
   ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*InternalFiles*)
+
+
+
+InternalFiles[namePattern_,directoryExtensions___String,depth:_Integer|\[Infinity]:\[Infinity]]:=
+  FileNames[namePattern,
+    FileNameJoin@{
+      $InstallationDirectory,
+      directoryExtensions
+      },
+    depth];
+InternalDocumentationFiles[namePattern_,args___]:=
+  InternalFiles[namePattern, "Documentation",args];
+InternalSystemFiles[namePattern_,args___]:=
+  InternalFiles[namePattern, "SystemFiles",args];
+
+
+(* ::Subsubsection::Closed:: *)
+(*FrontEndFiles*)
+
+
+
+$FrontEndDirectory=
+  FileNameJoin@{
+    $InstallationDirectory,
+    "SystemFiles",
+    "FrontEnd"
+    };
+
+
+FrontEndFile=FrontEndFiles;
+
+
+$FEPathMap2=
+  Map[
+    Which[
+      StringStartsQ[#, "PrivatePaths"],
+        StringTrim[#, "PrivatePaths"],
+      StringContainsQ[#, "Options"],
+        {#[[1]]<>"Options", #[[2]]}&@
+          StringSplit[#, "Options"],
+      NameQ["System`"<>#],
+        ToExpression[#],
+      True,
+        #
+      ]&,
+    $FEPathMap
+    ]
+
+
+$FEMap2BaseKeys=
+  Flatten[
+    Intersection[Keys[$FEPathMap2], #]&/@
+      {
+        StringTrim[
+          DeleteDuplicates@Values@$FEPathMap,
+          "PrivatePaths"|"Path"|"NotebookSecurityOptions"
+          ],
+        StringTrim[
+          DeleteDuplicates@Values@$FEPathMap,
+          "PrivatePaths"|"Path"|"NotebookSecurityOptions"
+          ]~StringTrim~"s",
+        StringTrim[
+          DeleteDuplicates@Values@$FEPathMap,
+          "PrivatePaths"|"Path"|"NotebookSecurityOptions"
+          ]//Map[#<>"s"&]
+        }
+    ]//DeleteDuplicatesBy[#, StringTrim[#, "s"]&]&
+
+
+FrontEndFiles//Clear
+
+
+FrontEndFiles[
+  namePattern_,
+  path:{___String?(KeyExistsQ[$FEPathMap2, #]&)}, 
+  n:_Integer?Positive|Infinity:1,
+  ops:OptionsPattern[FileNames]
+  ]:=
+  With[{p=Flatten@Lookup[$FEPathMap2, path]},
+    FileNames[namePattern, 
+      Replace[
+        Which[
+          StringQ@#,
+            Replace[
+              AbsoluteCurrentValue[$FrontEndSession, {PrivatePaths, #}],
+              f:$Failed:>
+                AbsoluteCurrentValue[$FrontEndSession, #]
+              ],
+          MatchQ[#, _Symbol|_List],
+            AbsoluteCurrentValue[$FrontEndSession, #],
+          True,
+            #
+          ]&/@p//Flatten,
+        {
+          f_FrontEnd`FileName:>ToFileName[f],
+          Except[_String]->Nothing
+          },
+        1
+        ],
+      n,
+      ops
+      ]
+    ];
+
+
+FrontEndFiles[
+  namePattern_,
+  path:_String?(KeyExistsQ[$FEPathMap2, #]&), 
+  n:_Integer?Positive|Infinity:1,
+  ops:OptionsPattern[FileNames]
+  ]:=
+  FrontEndFiles[
+    namePattern,
+    {path},
+    n,
+    ops
+    ];
+
+
+FrontEndFiles[
+  namePattern_,
+  path:Automatic:Automatic,
+  n:_Integer?Positive|Infinity:1,
+  ops:OptionsPattern[FileNames]
+  ]:=
+  FrontEndFiles[
+    namePattern,
+    $FEMap2BaseKeys,
+    n,
+    ops
+    ]
+
+
+(*FrontEndFiles[namePattern_, args___]:=
+	InternalSystemFiles[namePattern,"FrontEnd",args];*)
+
+
+PackageAddAutocompletions[
+  "FrontEndFiles",
+  {
+    None,
+    $FEMap2BaseKeys
+    }
+  ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*FrontEndImage*)
+
+
+
+FrontEndImageFiles[files_List]:=
+  Select[files,feImageQ];
+FrontEndImageFiles[pattern_,
+  specs___String,
+  function:
+    InternalFiles|
+    InternalSystemFiles|
+    FrontEndFiles:
+    FrontEndFiles
+    ]:=
+  FrontEndImageFiles@function[pattern,specs];
+
+
+FrontEndImage[name_,which_:First]:=
+With[{files=Select[FrontEndFiles[name],feImageQ]},
+Switch[which,
+All,Thread[files->(Import/@files)],
+_Symbol,Thread[which@files->(Import@which@files)],
+_,Replace[Thread[Flatten@{files[[which]]}->(Import/@Flatten@{files[[which]]})],
+{img_}:>img
+]
+]
+];
+
+
+FrontEndImageBrowser[pattern_,
+  args:Except[_Rule|_RuleDelayed]...,
+  ops:OptionsPattern[Options@PaneColumn]]:=
+  PaneColumn[
+    With[{img=Quiet@Check[Import@#,$Failed]},
+      Button[
+      Tooltip[img,#],
+      Print@(#->img),
+      Appearance->"Frameless"]
+      ]&/@
+      FrontEndImageFiles[
+        Replace[pattern,{
+          Verbatim[Verbatim][p_]:>p,
+          (StartOfString~~p_):>(p~~___),
+          (p_~~EndOfString):>(___~~p),
+          p_:>(___~~p~~___)
+          }],args],
+    ops]
+
+
+FrontEndBlobIcon[expr_,fmt_:StandardForm]:=
+  With[{boxes=MakeBoxes[expr,fmt]},
+    If[
+      MatchQ[boxes,
+        InterpretationBox[_RowBox,___]|
+        TagBox[TemplateBox[{_RowBox,___},___],___]
+        ],
+      ToExpression@
+        FirstCase[
+          boxes,
+          PaneSelectorBox[{False->GridBox[{{_,e_,___},___},___],___},___]:>e,
+          "None",
+          \[Infinity]
+          ],
+      None
+      ]
+    ]
+
+
+TRFiles[pat_]:=
+  FileNames[
+  "*.tr",
+    FileNameJoin@{
+      $InstallationDirectory,
+      "SystemFiles",
+      "FrontEnd",
+      "TextResources"
+      }
+    ]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Characters*)
+
+
+
+$FEUnicodeChars:=
+  $FEUnicodeChars=
+    Select[StringContainsQ["Characters"]]@
+      InternalFiles["*.nb",
+        "Documentation","English",
+          "System","ReferencePages",
+          "Characters"]//Map[FileBaseName];
+
+
+FEUnicodeCharFind[pat_:_]:=
+  Select[$FEUnicodeChars,
+    StringContainsQ[pat]
+    ];
+FEUnicodeCharBrowser[pat_:_]:=
+  Replace[FEUnicodeCharFind[pat],{
+    s:{__}:>HyperlinkBrowse[
+      TemplateApply["\"\[``]\"",#]->
+        ToExpression[TemplateApply["\"\[``]\"",#],
+          StandardForm
+          ]&/@s,
+      Print,
+      ImageSize->{250,250}
+      ],
+    _->None
+    }];
+
+
+(* ::Subsubsection::Closed:: *)
+(*FEImport*)
+
+
+
+feImageFormats=ToLowerCase/@Image`$ImportImageFormats;
+feImageQ[s_String]:=
+  MemberQ[feImageFormats,FileExtension@s];
+
+
+FEImport[f_String?FileExistsQ]:=
+  Import[f];
+FEImport[f:FrontEnd`FileName[_,s_?feImageQ,ops___]]:=
+  FE`Evaluate@FEPrivate`ImportImage[f]
+FEImport[f:FrontEnd`FileName[_,_,ops___]]:=
+  Import[FEToFileName[f],ops];
+FEImport[FEPrivate`FrontEndResource[r___]]:=
+  FrontEndResource[r]
+
+
+FEToFileName[FrontEnd`FileName[p:{__},f_,___]]:=
+  Replace[
+    Select[FrontEndFiles[f],
+      StringContainsQ@
+        FileNameJoin@p
+      ],{
+      {}:>
+        Replace[
+          Select[InternalFiles[f],
+            StringContainsQ@
+              FileNameJoin@p
+          ],
+          {fn_}:>fn
+          ],
+      {fn_}:>fn
+    }];
+FEToFileName[FrontEnd`ToFileName[a___]]:=
+  FEToFileName[FrontEnd`FileName[a]];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1711,14 +1838,14 @@ feAttachCellValidateClosingActions[spec_]:=
 
 
 
-FEAttachCell//Clear;
-FEAttachCell[
-  parent:(_CellObject|_NotebookObject|_BoxObject|Automatic):Automatic,
+iFEAttachCellSpec//Clear;
+iFEAttachCellSpec[
+  parent_,
   expr_,
-  radialAway:_?feAttachCellValidateRadialAway:Automatic,
-  alignment:_?feAttachCellValidateAlign:Automatic,
-  anchor:_?feAttachCellValidateAnchor:Automatic,
-  closingActions:_?feAttachCellValidateClosingActions:Automatic
+  radialAway_,
+  alignment_,
+  anchor_,
+  closingActions_
   ]:=
   Module[
     {
@@ -1759,7 +1886,7 @@ FEAttachCell[
     rad=
       Replace[rad,
         {
-          {a_,b_}:>Offset[{a,b},0],
+          {a_,b_}:>Offset[{a,b}, 0],
           Automatic:>
             Replace[align,
               {
@@ -1772,7 +1899,7 @@ FEAttachCell[
     align=
       Replace[alignment,
         Automatic:>
-          If[MatchQ[parent,_NotebookObject],
+          If[MatchQ[parent, _NotebookObject],
             Replace[anchor,
               {
                 Automatic->
@@ -1806,7 +1933,7 @@ FEAttachCell[
                   {lr,Center}
                   }
               ],
-            If[align=="EndOfContents",
+            If[align==="EndOfContents",
               {Baseline, Baseline},
               {Left,Top}
               ]
@@ -1833,9 +1960,10 @@ FEAttachCell[
     If[StringQ@align,
       align=Quiet[ToExpression["FrontEnd`"<>align]]
       ];
-    FrontEndExecute@
-      FrontEnd`AttachCell[
+    <|
+      "Parent"->
         Replace[parent,Automatic:>EvaluationCell[]],
+      "Expression"->
         Replace[expr,
           Except[_Cell|_TextCell|_ExpressionCell]:>
             If[MatchQ[parent,_NotebookObject],
@@ -1849,9 +1977,57 @@ FEAttachCell[
               Cell[BoxData@ToBoxes@expr]
               ]
           ],
-        {rad, align},
-        anch,
-        "ClosingActions"->close
+      "Position"->rad,
+      "Alignment"->align,
+      "Anchor"->anch,
+      "ClosingActions"->close
+      |>
+    ]
+
+
+FEAttachCellSpec//Clear;
+FEAttachCellSpec[
+  parent:(_CellObject|_NotebookObject|_BoxObject|Automatic):Automatic,
+  expr_,
+  radialAway:_?feAttachCellValidateRadialAway:Automatic,
+  alignment:_?feAttachCellValidateAlign:Automatic,
+  anchor:_?feAttachCellValidateAnchor:Automatic,
+  closingActions:_?feAttachCellValidateClosingActions:Automatic
+  ]:=
+  iFEAttachCellSpec[
+    parent, expr, 
+    radialAway, alignment, 
+    anchor, 
+    closingActions
+    ]
+
+
+FEAttachCell//Clear;
+FEAttachCell[
+  parent:(_CellObject|_NotebookObject|_BoxObject|Automatic):Automatic,
+  expr_,
+  radialAway:_?feAttachCellValidateRadialAway:Automatic,
+  alignment:_?feAttachCellValidateAlign:Automatic,
+  anchor:_?feAttachCellValidateAnchor:Automatic,
+  closingActions:_?feAttachCellValidateClosingActions:Automatic
+  ]:=
+  With[
+    {
+      spec=
+        iFEAttachCellSpec[
+          parent, expr, 
+          radialAway, alignment, 
+          anchor, 
+          closingActions
+          ]
+      },
+    FrontEndExecute@
+      FrontEnd`AttachCell[
+        spec["Parent"],
+        spec["Expression"],
+        {spec["Position"], spec["Alignment"]},
+        spec["Anchor"],
+        "ClosingActions"->spec["ClosingActions"]
         ]
     ];
 

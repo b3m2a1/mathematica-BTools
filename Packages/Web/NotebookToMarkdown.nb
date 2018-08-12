@@ -4825,17 +4825,47 @@ Cell[BoxData[
 "CodeInput",ExpressionUUID->"4109c68c-4dc6-4b79-9d97-7623f4f4e355"],
 
 Cell[BoxData[
+ RowBox[{"notebookToMarkdownMathJAXExport", "//", 
+  "Clear"}]], \
+"CodeInput",ExpressionUUID->"0893d039-f9b4-4c95-82b7-bbf6c2ed123a"],
+
+Cell[BoxData[
  RowBox[{
   RowBox[{"notebookToMarkdownMathJAXExport", "[", "\n", "\t", 
-   RowBox[{"pathInfo_", ",", "\n", "\t", "boxes_"}], "\n", "\t", "]"}], ":=", 
-  "\n", "\t", 
-  RowBox[{"\"\<$$``$$\>\"", "~", "TemplateApply", "~", "\n", "\t", 
-   RowBox[{"System`FEDump`transformProcessedBoxesToTeX", "@", "\n", "\t\t", 
+   RowBox[{"pathInfo_", ",", "\n", "\t", "boxes_", ",", "\n", "\t", 
+    RowBox[{"temp_:", "\"\<$$``$$\>\""}]}], "\n", "\t", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"temp", "~", "TemplateApply", "~", "\n", "\t\t", 
+   RowBox[{"Module", "[", "\n", "\t\t\t", 
     RowBox[{
-    "System`FEDump`TransformBoxesToTraditionalFormBoxes", "@", "\n", "\t\t\t", 
-     RowBox[{"System`FEDump`processBoxesForCopyAsTeX", "[", 
-      RowBox[{"TraditionalForm", ",", " ", "boxes"}], 
-      "]"}]}]}]}]}]], \
+     RowBox[{"{", "\n", "\t\t\t\t", 
+      RowBox[{"box", ",", "\n", "\t\t\t\t", "expr"}], "\n", "\t\t\t\t", "}"}],
+      ",", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"box", "=", 
+       RowBox[{"System`FEDump`processBoxesForCopyAsTeX", "[", 
+        RowBox[{"TraditionalForm", ",", " ", "boxes"}], "]"}]}], ";", "\n", 
+      "\t\t\t", 
+      RowBox[{"expr", "=", 
+       RowBox[{"Quiet", "[", 
+        RowBox[{"Check", "[", 
+         RowBox[{
+          RowBox[{"MakeExpression", "[", 
+           RowBox[{"box", ",", " ", "StandardForm"}], "]"}], ",", " ", 
+          "$Failed"}], "]"}], "]"}]}], ";", "\n", "\t\t\t", 
+      RowBox[{"box", "=", "\n", "\t\t\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"expr", "=!=", "$Failed"}], ",", "\n", "\t", "\t\t\t\t", 
+         RowBox[{"ToBoxes", "[", 
+          RowBox[{
+           RowBox[{"Extract", "[", 
+            RowBox[{"expr", ",", " ", "1", ",", " ", "HoldForm"}], "]"}], ",",
+            " ", "TraditionalForm"}], "]"}], ",", "\n", "\t\t\t\t\t", "box"}],
+         "\n", "\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t", 
+      RowBox[{"System`FEDump`transformProcessedBoxesToTeX", "@", "box"}]}]}], 
+    "\n", "\t\t\t", 
+    "]"}]}]}]], \
 "CodeInput",ExpressionUUID->"0e790d24-b7d9-4186-ae04-a29b46b15483"]
 }, Closed]],
 
@@ -5907,7 +5937,7 @@ Cell[BoxData[
     "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"a4429adb-5cf6-49ac-84ac-0db3b47b2d45"]
 }, Open  ]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -6378,8 +6408,8 @@ Cell[BoxData[
      RowBox[{"Select", "[", 
       RowBox[{
        RowBox[{"{", "o", "}"}], ",", " ", "OptionQ"}], "]"}]}], "\n", "\t\t", 
-    "]"}]}], 
-  ";"}]], "CodeInput",ExpressionUUID->"25e3fcf2-5d5d-4671-a7b8-4fcae0811713"]
+    "]"}]}], ";"}]], \
+"CodeInput",ExpressionUUID->"25e3fcf2-5d5d-4671-a7b8-4fcae0811713"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -6455,7 +6485,7 @@ Cell[BoxData[
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"2d25a359-c4fd-4a09-915b-827d1ccddbde"]
 }, Open  ]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -6997,11 +7027,13 @@ Cell[BoxData[
   RowBox[{"$notebookToMarkdownMessagePrintTemplate", "=", "\n", "\t", 
    RowBox[{
    "StringTrim", "@", "\n", "\t", 
-    "\"\<\n<div style='font-size: 12px; font-family: monospace;'>\n\t<div \
-class='mma-message'>\n\t\t<span style='color: #dd0000'>\n\t\t\t<span \
-class='mma-message-name'>`head`::`name`:</span>\n\t\t</span>\n\t\t<span \
-style='color: gray'>\n\t\t\t<span class='mma-message-text'>`body`</span>\n\t\t\
-</span>\n\t</div>\n</div>\n\>\""}]}], 
+    "\"\<\n<div \n\tclass='mma-message-wrapper'\n\tstyle='font-size: 12px; \
+font-family: monospace;'>\n\t<div class='mma-message'>\n\t\t<span \n\t\t\t\
+class='mma-message-name-wrapper'\n\t\t\tstyle='color: #dd0000'>\n\t\t\t<span \
+class='mma-message-name'>`head`::`name`:</span>\n\t\t</span>\n\t\t<span \n\t\t\
+\tclass='mma-message-text-wrapper'\n\t\t\tstyle='color: gray'>\n\t\t\t<span \
+class='mma-message-text'>`body`</span>\n\t\t</span>\n\t</div>\n</div>\n\
+\>\""}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"46bdfe97-6cb9-4b26-8d13-24902e0b41cc"],
 
 Cell[BoxData[
@@ -7042,7 +7074,7 @@ Cell[BoxData[
         RowBox[{"StartOfLine", "|", "StartOfString"}], ")"}], "\[Rule]", 
        "\"\<    \>\""}], "]"}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"85802607-0bd4-4146-85f6-caaa8f07882e"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -7054,10 +7086,11 @@ Cell[BoxData[
   RowBox[{"$notebookToMarkdownUsagePrintTemplate", "=", "\n", "\t", 
    RowBox[{
    "StringTrim", "@", "\n", 
-    "\"\<\n<div \n\tstyle='margin-top: -2px; padding: 0px; font-size: 12px; \
-color: rgb(128, 128, 128); background-color: aliceblue; border-top : solid \
-2px lightblue; padding: 5px 0 5px 0;'>\n\t<div class='mma-print-usage'>\n\t\t\
-`body`\n\t</div>\n</div>\n\>\""}]}], 
+    "\"\<\n<div \n\tclass='mma-print-usage-wrapper'\n\tstyle='margin-top: \
+-2px; padding: 0px; font-size: 12px; color: rgb(128, 128, 128); \
+background-color: aliceblue; border-top : solid 2px lightblue; padding: 5px 0 \
+5px 0;'>\n\t<div class='mma-print-usage'>\n\t\t`body`\n\t</div>\n</div>\n\
+\>\""}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"802b8f25-2f05-417e-9b39-b39c680987d4"],
 
 Cell[BoxData[
@@ -7099,8 +7132,9 @@ Cell[BoxData[
   RowBox[{"$notebookToMarkdownPrintPrintTemplate", "=", "\n", "\t", 
    RowBox[{
    "StringTrim", "@", "\n", 
-    "\"\<\n<div style='font-size 12px; color : rgb(55, 55, 55);'>\t\n\t<div \
-class='mma-print'>\n\t\t`body`\n\t</div>\n</div>\n\>\""}]}], 
+    "\"\<\n<div \n\tclass='mma-print-wrapper'\n\tstyle='font-size 12px; color \
+: rgb(55, 55, 55);'>\t\n\t<div class='mma-print'>\n\t\t`body`\n\t</div>\n\
+</div>\n\>\""}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"489f7541-04f0-4578-8308-e12b8a3b0388"],
 
 Cell[BoxData[
@@ -7141,8 +7175,9 @@ Cell[BoxData[
   RowBox[{"$notebookToMarkdownEchoPrintTemplate", "=", "\n", "\t", 
    RowBox[{
    "StringTrim", "@", "\n", 
-    "\"\<\n<div style='font-size 12px; color : rgb(55, 55, 55);'>\n\t<div \
-class='mma-echo mma-print'>\n\t\t<span style='color:orange;'>\n\t\t\t<span \
+    "\"\<\n<div \n\tclass='mma-echo-wrapper'\n\tstyle='font-size 12px; color \
+: rgb(55, 55, 55);'>\n\t<div class='mma-echo mma-print'>\n\t\t<span \n\t\t\t\
+class='mma-echo-text-wrapper'\n\t\t\tstyle='color:orange;'>\n\t\t\t<span \
 class='mma-echo-prompt' > >> </span>\n\t\t</span>\n\t\t`body`\n</div>\n\
 \>\""}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"ada6d4ce-db96-4efe-badc-eade7a8e3c4b"],
@@ -7826,10 +7861,10 @@ Cell[BoxData[
    RowBox[{"iNotebookToMarkdownRegister", "[", "\n", "\t", 
     RowBox[{"pathInfo_", ",", "\n", "\t", 
      RowBox[{"Cell", "[", "\n", "\t\t", 
-      RowBox[{"e_", ",", "\n", "\t\t", 
-       RowBox[{"\"\<InlineFormula\>\"", "|", "\"\<DisplayFormula\>\""}], ",", 
-       " ", "\n", "\t\t", "o___"}], "\n", "\t\t", "]"}]}], "\n", "\t", "]"}], 
-   ":=", "\n", "\t", 
+      RowBox[{
+      "e_", ",", "\n", "\t\t", "\"\<InlineFormula\>\"", ",", " ", "\n", 
+       "\t\t", "o___"}], "\n", "\t\t", "]"}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
    RowBox[{"If", "[", 
     RowBox[{
      RowBox[{
@@ -7841,7 +7876,7 @@ Cell[BoxData[
      RowBox[{"iNotebookToMarkdownExport", "[", 
       RowBox[{"pathInfo", ",", " ", "e"}], "]"}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"2d60f8d8-88d4-4fc8-9ce8-fca96fc66fd4"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -7899,8 +7934,62 @@ Cell[BoxData[
       "]"}], ";"}]}], "\n", "\t\t", 
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"7d40e870-a472-4b79-8d79-705dbb0d6c46"]
-}, Open  ]]
 }, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]InlineFormula\[RightFloor]", "CodeSubsubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"9cc6b888-8bde-41e1-a2d9-11b327501f57"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"iNotebookToMarkdownRegister", "[", "\n", "\t", 
+    RowBox[{"pathInfo_", ",", "\n", "\t", 
+     RowBox[{"Cell", "[", "\n", "\t\t", 
+      RowBox[{
+      "e_", ",", "\n", "\t\t", "\"\<InlineFormula\>\"", ",", "\n", "\t\t", 
+       "o___"}], "\n", "\t\t", "]"}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"pathInfo", "[", "\"\<UseMathJAX\>\"", "]"}], "=!=", "False"}], 
+     ",", "\n", "\t\t", 
+     RowBox[{"notebookToMarkdownMathJAXExport", "[", "\n", "\t\t\t", 
+      RowBox[{
+      "pathInfo", ",", "\n", "\t\t\t", "e", ",", "\n", "\t\t\t", 
+       "\"\<$``$\>\""}], "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
+     RowBox[{"iNotebookToMarkdownExport", "[", 
+      RowBox[{"pathInfo", ",", " ", "e"}], "]"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"aef6e5a7-662e-4bda-baa2-0e1dde0f43d1"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]TraditionalForm\[RightFloor]", "CodeSubsubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"b1852b97-35b1-4a20-9596-f599bb5ef2bb"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"iNotebookToMarkdownRegister", "[", "\n", "\t", 
+    RowBox[{"pathInfo_", ",", "\n", "\t", 
+     RowBox[{"FormBox", "[", 
+      RowBox[{"bd_", ",", " ", "TraditionalForm"}], "]"}]}], "\n", "\t", 
+    "]"}], ":=", "\n", "\t", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"pathInfo", "[", "\"\<UseMathJAX\>\"", "]"}], "=!=", "False"}], 
+     ",", "\n", "\t\t", 
+     RowBox[{"notebookToMarkdownMathJAXExport", "[", "\n", "\t\t\t", 
+      RowBox[{"pathInfo", ",", "\n", "\t\t\t", "bd"}], "\n", "\t\t\t", "]"}], 
+     ",", "\n", "\t\t", 
+     RowBox[{"iNotebookToMarkdownExport", "[", 
+      RowBox[{"pathInfo", ",", " ", "bd"}], "]"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"d3b3f487-6ba0-4a46-a600-b1f4e0670600"]
+}, Open  ]]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -8204,6 +8293,7 @@ Cell[BoxData[
              "\n", "\t\t\t\t\t\t", 
              "\"\<https://reference.wolfram.com/language\>\"", ",", "\n", 
              "\t\t\t\t\t\t", 
+             
              "\"\<https://www.wolframcloud.com/objects/b3m2a1.docs/reference\>\
 \""}], "\n", "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t", 
            RowBox[{"URLParse", "[", 
@@ -8385,7 +8475,7 @@ Cell[BoxData[
         "\"\<[\>\"", "<>", "t", "<>", "\"\<](\>\"", "<>", "url", "<>", 
          "\"\<)\>\""}]}], "\n", "\t\t\t", "]"}]}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"447d011b-17af-4ced-8f80-d07246f9af8f"]
-}, Open  ]]
+}, Closed]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -9194,7 +9284,7 @@ Cell[BoxData[{
     "]"}]}], ";"}]}], \
 "CodeInput",ExpressionUUID->"906b2bbd-9687-4ac6-8834-e801998830b4"]
 }, Open  ]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 

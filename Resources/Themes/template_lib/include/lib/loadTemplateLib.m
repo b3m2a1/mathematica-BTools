@@ -1,9 +1,9 @@
-With[{Templating`lib`Private`libdir=DirectoryName[$InputFileName]},
+With[{Templating`lib`$$libdir=DirectoryName[$InputFileName]},
   Templating`lib`$$templateLib[f_]:=
     Templating`lib`$$templateLib[f]=
-      (
-        Begin["Templating`lib`Private`"];
-        (End[];#)&@
-          Import@FileNameJoin[{Templating`lib`Private`libdir,f<>".m"}]
-        )
+      Internal`WithLocalSettings[
+        Begin["Templating`lib`Private`"],
+        Get@FileNameJoin[{Templating`lib`$$libdir,f<>".m"}],
+        End[]
+        ]
   ]

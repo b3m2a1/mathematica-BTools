@@ -89,7 +89,7 @@ PackageThrowMessage[
     );
 PackageThrowMessage[
   tag_?StringQ,
-  body_String,
+  body_?StringQ,
   ops:OptionsPattern[]
   ]:=
   PackageThrowMessage[

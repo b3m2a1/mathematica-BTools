@@ -6,6 +6,8 @@ SymbolNameMatchQ::usage=
   "StringMatchQ on just the SymbolName (also works for strings)";
 SymbolDetermineType::usage=
   "Determines symbol type";
+$SymbolTypeNames=
+  "Mapping of type to string";
 
 
 Begin["`Private`"];

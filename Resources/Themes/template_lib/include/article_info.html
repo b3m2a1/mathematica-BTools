@@ -1,0 +1,43 @@
+<div class="article-info">
+
+  <wolfram:which>
+  <wolfram:if test='$$templateLib["prepArticleInfo"][#Article];(!ListQ[$$["ArticleInfoItems"]]||MemberQ[$$["ArticleInfoItems"], "Modified"])&&StringQ[$$["Modified"]]'>
+    <span class="modified">
+      <i class="fa fa-calendar"></i><time datetime='<*$$["Modified"]*>'> <*$$["Modified"]*> </time>
+    </span>&nbsp;
+  </wolfram:if>
+  <wolfram:if test='(!ListQ[$$["ArticleInfoItems"]]||MemberQ[$$["ArticleInfoItems"], "Date"])&&StringQ[$$["Date"]]'>
+    <span class="published">
+      <i class="fa fa-calendar"></i><time datetime='<*$$["Date"]*>'> <*$$["Date"]*> </time>
+    </span>&nbsp;
+  </wolfram:if>
+  </wolfram:which>
+
+  <wolfram:if test='(!ListQ[$$["ArticleInfoItems"]]||MemberQ[$$["ArticleInfoItems"], "Author"])&&ListQ[$$["Authors"]&&Length[$$["Authors"]]>0]'>
+    <span class="authors">
+        <i class="fa fa-user"></i>
+        <wolfram:sequence values='$$["Authors"]' slot="Author">
+          <a href="`SiteURL`/authors/`Author`.html">`Author`</a>
+        </wolfram:sequence>
+    </span>&nbsp;
+  </wolfram:if>
+
+  <wolfram:if test='(!ListQ[$$["ArticleInfoItems"]]||MemberQ[$$["ArticleInfoItems"], "Category"])&&ListQ[$$["Categories"]&&Length[$$["Categories"]]>0]'>
+    <span class="categories">
+      <i class="fa fa-folder"></i>
+      <wolfram:sequence values='$$["Categories"]' slot="Category">
+        <a href="`SiteURL`/categories/`Category`.html">`Category`</a>
+      </wolfram:sequence>
+    </span>&nbsp;
+  </wolfram:if>
+
+  <wolfram:if test='(!ListQ[$$["ArticleInfoItems"]]||MemberQ[$$["ArticleInfoItems"], "Tags"])&&ListQ[$$["Tags"]&&Length[$$["Tags"]]>0]'>
+    <span class="tags">
+      <i class="fa fa-tags"></i>
+      <wolfram:sequence values='$$["Tags"]' slot="Tag">
+        <a href="`SiteURL`/tags/`Tag`.html">`Tag`</a>
+      </wolfram:sequence>
+    </span>
+  </wolfram:if>
+
+</div><!-- /.post-info -->
