@@ -776,7 +776,7 @@ xmlTemplatePostProcessWhitespace[s_]:=
 xmlTemplateLoad[template_]:=
   With[{tdat=$WebSiteTemplateCache[template]},
     If[MissingQ[tdat]||!DateObjectQ@$WebSiteLastBuild||
-      FileDate[template, "Modified"]<=$WebSiteLastBuild,
+      FileDate[template, "Modification"]<=$WebSiteLastBuild,
       $WebSiteTemplateCache[template]=
         XMLTemplate[File[template]],
       tdat
