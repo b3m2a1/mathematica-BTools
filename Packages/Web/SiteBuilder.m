@@ -3275,7 +3275,7 @@ iWebSiteGenerateSearchIndex[
         ];
     Export[
       FileNameJoin@{outDir, "theme", "search", "search_index.json"},
-      <|"pages"->contentData|>
+      <|"pages"->If[!AssociationQ@contentData, <||>, contentData]|>
       ] 
     ]
 
@@ -3805,8 +3805,11 @@ iWebSiteBuild[
             Options[WebSiteGenerateContent]
             ]
           ];
+        If[FileExistsQ@FileNameJoin@{dir, "BuildInfo.m"},
+          DeleteFile@FileNameJoin@{dir, "BuildInfo.m"}
+          ];
         Export[
-          FileNameJoin@{dir, "BuildInfo.m"},
+          FileNameJoin@{dir, "BuildInfo.wl"},
           {
             "LastBuild"->Now
             }
@@ -3998,14 +4001,22 @@ WebSiteBuild[
           confOps,
           ops,
           Replace[Except[_?OptionQ]->{}]@
-          Normal@
-            Replace[
-              FileNameJoin@{dir, "BuildInfo.m"},
-              {
-                f_String?FileExistsQ:>
-                  Import[f]
-                }
-              ],
+            Normal@
+              Replace[
+                FileNameJoin@{dir, "BuildInfo.wl"},
+                {
+                  f_String?FileExistsQ:>
+                    Import[f],
+                  _String:>
+                    Replace[
+                      FileNameJoin@{dir, "BuildInfo.m"},
+                      {
+                        f_String?FileExistsQ:>
+                          Import[f]
+                        }
+                      ]
+                  }
+                ],
           Normal@config
           },
         First
@@ -4412,13 +4423,19 @@ WebSiteDeploy[
       last
       },
     info=
-      If[
+      Which[
+        FileExistsQ[FileNameJoin@{trueDir, "DeploymentInfo.wl"}],
+          Import[FileNameJoin@{trueDir, "DeploymentInfo.wl"}],
         FileExistsQ[FileNameJoin@{trueDir,"DeploymentInfo.m"}],
-        Import[FileNameJoin@{trueDir,"DeploymentInfo.m"}],
-        {}
+          Import[FileNameJoin@{trueDir,"DeploymentInfo.m"}],
+        True,
+          {}
         ];
+    If[FileExistsQ@FileNameJoin@{trueDir,"DeploymentInfo.m"},
+      DeleteFile@FileNameJoin@{trueDir,"DeploymentInfo.m"}
+      ];
     Export[
-      FileNameJoin@{trueDir,"DeploymentInfo.m"},
+      FileNameJoin@{trueDir,"DeploymentInfo.wl"},
       KeyDrop[
         Association@
           Flatten@{

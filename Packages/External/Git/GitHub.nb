@@ -7326,7 +7326,13 @@ Cell[CellGroupData[{
 Cell["\[LeftCeiling]GitHubPush\[RightFloor]", "CodeSubsubsection",
  Evaluatable->True,ExpressionUUID->"e596189c-d7cd-4815-8ca3-e49c63b4efc6"],
 
-Cell[BoxData[
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "GitHubPush", "]"}], "=", "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{"\"\<IncludePassword\>\"", "\[Rule]", "Automatic"}], "\n", "\t\t",
+     "}"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{"GitHubPush", "[", "\n", "\t", 
    RowBox[{
@@ -7334,73 +7340,84 @@ Cell[BoxData[
      RowBox[{"_String", "?", "GitRepoQ"}]}], ",", "\n", "\t", 
     RowBox[{"repo", ":", 
      RowBox[{"_String", "|", "_GitHubPath", "|", "Automatic"}], ":", 
-     "Automatic"}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
-  RowBox[{"Replace", "[", 
-   RowBox[{"repo", ",", 
-    RowBox[{"{", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{"Automatic", ":>", "\n", "\t\t\t", 
-       RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
+     "Automatic"}], ",", "\n", "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"Block", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{"$GitHubEncodePassword", "=", "\n", "\t\t\t\t", 
+      RowBox[{"Replace", "[", 
+       RowBox[{
+        RowBox[{"OptionValue", "[", "\"\<IncludePassword\>\"", "]"}], ",", 
+        "\n", "\t\t\t\t\t", 
         RowBox[{
-         RowBox[{"GitGetRemoteURL", "[", 
-          RowBox[{"dir", ",", " ", 
-           RowBox[{"\"\<PushURL\>\"", "\[Rule]", "True"}]}], "]"}], ",", "\n",
-          "\t\t\t\t", 
-         RowBox[{"{", "\n", "\t\t\t\t\t", 
+         RowBox[{"Except", "[", 
+          RowBox[{"True", "|", "False"}], "]"}], ":>", 
+         "$GitHubEncodePassword"}]}], "\n", "\t\t\t\t\t", "]"}]}], "\n", 
+     "\t\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{"Replace", "[", 
+     RowBox[{"repo", ",", 
+      RowBox[{"{", "\n", "\t", "\t\t", 
+       RowBox[{
+        RowBox[{"Automatic", ":>", "\n", "\t", "\t\t\t", 
+         RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t", 
           RowBox[{
-           RowBox[{"s_String", ":>", "\n", "\t", "\t\t\t\t\t", 
-            RowBox[{"Git", "[", 
-             RowBox[{"\"\<Push\>\"", ",", " ", "dir", ",", " ", "s"}], 
-             "]"}]}], ",", "\n", "\t", "\t\t\t\t", 
-           RowBox[{
-            RowBox[{"(", 
-             RowBox[{"r_", "\[Rule]", "s_"}], ")"}], ":>", "\n", "\t", 
-            "\t\t\t\t\t", 
-            RowBox[{"Quiet", "@", "\n", "\t", "\t\t\t\t\t\t", 
-             RowBox[{"Check", "[", "\n", "\t", "\t\t\t\t\t\t\t", 
-              RowBox[{
-               RowBox[{"Git", "[", 
+           RowBox[{"GitGetRemoteURL", "[", 
+            RowBox[{"dir", ",", " ", 
+             RowBox[{"\"\<PushURL\>\"", "\[Rule]", "True"}]}], "]"}], ",", 
+           "\n", "\t", "\t\t\t\t", 
+           RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"s_String", ":>", "\n", "\t", "\t", "\t\t\t\t\t", 
+              RowBox[{"Git", "[", 
+               RowBox[{"\"\<Push\>\"", ",", " ", "dir", ",", " ", "s"}], 
+               "]"}]}], ",", "\n", "\t", "\t", "\t\t\t\t", 
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"r_", "\[Rule]", "s_"}], ")"}], ":>", "\n", "\t", "\t",
+               "\t\t\t\t\t", 
+              RowBox[{"Quiet", "@", "\n", "\t", "\t", "\t\t\t\t\t\t", 
+               RowBox[{"Check", "[", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
                 RowBox[{
-                "\"\<Push\>\"", ",", " ", "dir", ",", " ", "r", ",", " ", 
-                 "\"\<master\>\""}], "]"}], ",", "\n", "\t", "\t\t\t\t\t\t\t", 
-               RowBox[{"Git", "[", 
-                RowBox[{"\"\<Push\>\"", ",", " ", "s"}], "]"}]}], "\n", "\t", 
-              "\t\t\t\t\t\t\t", "]"}]}]}]}], "\n", "\t", "\t\t\t\t", "}"}]}], 
-        "\n", "\t", "\t\t\t", "]"}]}], ",", "\n", "\t\t", 
-      RowBox[{
-       RowBox[{"s_String", "?", 
-        RowBox[{"(", 
-         RowBox[{
-          RowBox[{
-           RowBox[{"URLParse", "[", 
-            RowBox[{"#", ",", " ", "\"\<Scheme\>\""}], "]"}], "===", "None"}],
-           "&"}], ")"}]}], ":>", "\n", "\t\t\t", 
-       RowBox[{"Quiet", "@", "\n", "\t\t\t\t", 
-        RowBox[{"Check", "[", "\n", "\t\t\t\t\t", 
-         RowBox[{
-          RowBox[{"Git", "[", 
+                 RowBox[{"Git", "[", 
+                  RowBox[{
+                  "\"\<Push\>\"", ",", " ", "dir", ",", " ", "r", ",", " ", 
+                   "\"\<master\>\""}], "]"}], ",", "\n", "\t", "\t", 
+                 "\t\t\t\t\t\t\t", 
+                 RowBox[{"Git", "[", 
+                  RowBox[{"\"\<Push\>\"", ",", " ", "s"}], "]"}]}], "\n", 
+                "\t", "\t", "\t\t\t\t\t\t\t", "]"}]}]}]}], "\n", "\t", "\t", 
+            "\t\t\t\t", "}"}]}], "\n", "\t", "\t", "\t\t\t", "]"}]}], ",", 
+        "\n", "\t", "\t\t", 
+        RowBox[{
+         RowBox[{"s_String", "?", 
+          RowBox[{"(", 
            RowBox[{
-           "\"\<Push\>\"", ",", " ", "dir", ",", " ", "s", ",", " ", 
-            "\"\<master\>\""}], "]"}], ",", "\n", "\t\t\t\t\t", 
-          RowBox[{"Git", "[", 
-           RowBox[{"\"\<Push\>\"", ",", " ", "dir", ",", " ", 
-            RowBox[{"URL", "@", 
-             RowBox[{"GitHubPath", "[", "s", "]"}]}]}], "]"}]}], "\n", 
-         "\t\t\t\t\t", "]"}]}]}], ",", "\n", "\t\t", 
-      RowBox[{"s_String", ":>", "\n", "\t\t\t", 
-       RowBox[{"Git", "[", 
-        RowBox[{"\"\<Push\>\"", ",", " ", "dir", ",", " ", "s"}], "]"}]}]}], 
-     "\n", "\t\t", "}"}]}], "]"}]}]], "CodeInput",
- CellChangeTimes->{{3.720994337975457*^9, 3.720994395754366*^9}, {
-   3.720994675081216*^9, 3.7209949354980917`*^9}, 3.72099504795531*^9, {
-   3.720996611237173*^9, 3.720996611663804*^9}, {3.720996648371608*^9, 
-   3.720996653032683*^9}, {3.720996880571487*^9, 3.720996917561592*^9}, {
-   3.720996987459021*^9, 3.720996995079403*^9}, {3.7209970389958773`*^9, 
-   3.720997193112493*^9}, {3.7288856798589497`*^9, 3.7288856799960938`*^9}, {
-   3.728887234939557*^9, 
-   3.728887248616584*^9}},ExpressionUUID->"7fc135a5-7343-4bd0-9e3c-\
-f0605e357db6"]
-}, Closed]],
+            RowBox[{
+             RowBox[{"URLParse", "[", 
+              RowBox[{"#", ",", " ", "\"\<Scheme\>\""}], "]"}], "===", 
+             "None"}], "&"}], ")"}]}], ":>", "\n", "\t", "\t\t\t", 
+         RowBox[{"Quiet", "@", "\n", "\t", "\t\t\t\t", 
+          RowBox[{"Check", "[", "\n", "\t", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"Git", "[", 
+             RowBox[{
+             "\"\<Push\>\"", ",", " ", "dir", ",", " ", "s", ",", " ", 
+              "\"\<master\>\""}], "]"}], ",", "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{"Git", "[", 
+             RowBox[{"\"\<Push\>\"", ",", " ", "dir", ",", " ", 
+              RowBox[{"URL", "@", 
+               RowBox[{"GitHubPath", "[", "s", "]"}]}]}], "]"}]}], "\n", "\t",
+            "\t\t\t\t\t", "]"}]}]}], ",", "\n", "\t", "\t\t", 
+        RowBox[{"s_String", ":>", "\n", "\t", "\t\t\t", 
+         RowBox[{"Git", "[", 
+          RowBox[{"\"\<Push\>\"", ",", " ", "dir", ",", " ", "s"}], "]"}]}]}],
+        "\n", "\t\t\t", "}"}]}], "]"}]}], "\n", "\t\t", 
+   "]"}]}]}], \
+"CodeInput",ExpressionUUID->"7fc135a5-7343-4bd0-9e3c-f0605e357db6"]
+}, Open  ]],
 
 Cell[CellGroupData[{
 

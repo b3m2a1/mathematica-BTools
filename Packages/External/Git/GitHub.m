@@ -3435,34 +3435,47 @@ GitHubConfigure[
 
 
 
+Options[GitHubPush]=
+  {
+    "IncludePassword"->Automatic
+    };
 GitHubPush[
   dir:_String?GitRepoQ,
-  repo:_String|_GitHubPath|Automatic:Automatic
+  repo:_String|_GitHubPath|Automatic:Automatic,
+  ops:OptionsPattern[]
   ]:=
-  Replace[repo,{
-    Automatic:>
-      Replace[
-        GitGetRemoteURL[dir, "PushURL"->True],
-        {
-          s_String:>
-            Git["Push", dir, s],
-          (r_->s_):>
-            Quiet@
-              Check[
-                Git["Push", dir, r, "master"],
-                Git["Push", s]
-                ]
-          }
-        ],
-    s_String?(URLParse[#, "Scheme"]===None&):>
-      Quiet@
-        Check[
-          Git["Push", dir, s, "master"],
-          Git["Push", dir, URL@GitHubPath[s]]
+  Block[
+    {
+      $GitHubEncodePassword=
+        Replace[OptionValue["IncludePassword"],
+          Except[True|False]:>$GitHubEncodePassword
+          ]
+      },
+    Replace[repo,{
+      Automatic:>
+        Replace[
+          GitGetRemoteURL[dir, "PushURL"->True],
+          {
+            s_String:>
+              Git["Push", dir, s],
+            (r_->s_):>
+              Quiet@
+                Check[
+                  Git["Push", dir, r, "master"],
+                  Git["Push", s]
+                  ]
+            }
           ],
-    s_String:>
-      Git["Push", dir, s]
-    }]
+      s_String?(URLParse[#, "Scheme"]===None&):>
+        Quiet@
+          Check[
+            Git["Push", dir, s, "master"],
+            Git["Push", dir, URL@GitHubPath[s]]
+            ],
+      s_String:>
+        Git["Push", dir, s]
+      }]
+    ]
 
 
 (* ::Subsubsection::Closed:: *)

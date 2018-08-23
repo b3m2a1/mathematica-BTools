@@ -1,14 +1,15 @@
 <wolfram:with
   notebookId='If[StringQ@#NotebookID, #NotebookID, CreateUUID["notebook-"]]'
-  divWidth='Replace[#Width, {n_Integer:>ToString[n]<>"px", Scaled[i_]:>ToString[100*i]<>"%", _->"100%" }]'
-  nbWidth='Replace[{#Left,#Width},  { {n_Integer,m_Integer}:>ToString[n+m]<>"px",  {Scaled[i_],Scaled[j_]}:>ToString[100*(i+j)]<>"%",  {Scaled[i_], m_Integer}|{m_Integer, Scaled[i_]}:>"calc("<>ToString[100*i]<>"%"<>" + "<>ToString[m]<>"px"<>")", {_, m_Integer}:>ToString[m+2]<>"px", {_, Scaled[i_]}:>"calc("<>ToString[100*i]<>"%"<>" + "<>ToString[4]<>"px"<>")", _->"calc(100% + 4px)"}]'
-  divHeight='Replace[#Height, { m_Integer:>ToString[m]<>"px", Scaled[j_]:>ToString[100*(j)]<>"%", m_Integer:>ToString[m]<>"px", _->"200px" } ]'
-  nbHeight='Replace[{#Top, #Height},  { {n_Integer,m_Integer}:>ToString[n+m]<>"px",  {Scaled[i_],Scaled[j_]}:>ToString[100*(i+j)]<>"%",  {Scaled[i_], m_Integer}|{m_Integer, Scaled[i_]}:>"calc("<>ToString[100*i]<>"%"<>" + "<>ToString[m]<>"px"<>")", {_, m_Integer}:>ToString[m+If[FreeQ[{#Resizable}, True], 86, 75]]<>"px", {_, Scaled[i_]}:>"calc("<>ToString[100*i]<>"% + 88px)", _->"calc(100% + 88px)"}]'
-  nbPosTop='Replace[#Top, { n_Integer:>ToString[-n]<>"px", Scaled[i_]:>ToString[-100*i]<>"\%", _->"-86px" } ]'
-  nbPosLeft='Replace[#Left, { n_Integer:>ToString[-n]<>"px", Scaled[i_]:>ToString[-100*i]<>"\%", _->"-2px" } ]'
+  divWidth='Replace[#FrameWidth, {n_Integer:>ToString[n]<>"px", Scaled[i_]:>ToString[100*i]<>"%", Except[_String]->Automatic }]'
+  divHeight='Replace[#FrameHeight, {n_Integer:>ToString[n]<>"px", Scaled[i_]:>ToString[100*i]<>"%", Except[_String]->Automatic }]'
+  nbWidth='Replace[#Width, {n_Integer:>ToString[n]<>"px", Scaled[i_]:>ToString[100*i]<>"%", _->"100%" }]'
+  nbHeight='Replace[#Height, { m_Integer:>ToString[m]<>"px", Scaled[j_]:>ToString[100*(j)]<>"%", m_Integer:>ToString[m]<>"px", Except[_String]->"200px" } ]'
+  nbPosTop='Replace[#Top, { n_Integer:>ToString[-n]<>"px", Scaled[i_]:>ToString[-100*i]<>"\%", Except[_String]->"-2px" } ]'
+  nbPosLeft='Replace[#Left, { n_Integer:>ToString[-n]<>"px", Scaled[i_]:>ToString[-100*i]<>"\%", Except[_String]->"-2px" } ]'
   nbSrc='Replace[#Source, { Except[_String]->"https://sandbox.open.wolframcloud.com/app/view/newNotebook" } ]'
   nbBorder='Replace[#Border, { i_Integer:> "border: 1px solid #e3e3e3; border-radius: "<>ToString[i]<>"px; box-shadow: inset 0 1px 1px rgba(0,0,0,.05);", None->";", Except[_String]->"border: 1px solid #e3e3e3; border-radius: 4px; box-shadow: inset 0 1px 1px rgba(0,0,0,.05);" } ]'
   nbResize='Replace[#Resizable, { True|{True, True}->"overflow-x: auto; overflow-y: hidden; resize: both", {True, _}->"overflow-x: auto; overflow-y: hidden; resize: horizontal", {_, True}->"overflow: hidden; resize: vertical", _->"overflow: hidden"}]'
+  nbFrame='Replace[#Frame, {Except[_String]->"frameless"}]'
   >
 <div
   class="embedded-notebook-resize-top"
@@ -20,7 +21,7 @@
         s_String:>s
         }
       ]
-    *>; `nbResize`; `nbBorder` height: `divHeight`; width: `divWidth`;'
+    *>; `nbResize`; `nbBorder` height: <*If[StringQ@#divHeight, #divHeight, #nbHeight]*>; width: <*If[StringQ@#divWidth, #divWidth, #nbWidth]*>;'
     >
   <div
     class="embedded-notebook-resize-container"
@@ -31,17 +32,75 @@
     class="embedded-notebook"
     id="`notebookId`"
     onclick="loadCloudNotebook('`notebookId`')"
-    style="text-align: center; height: `divHeight`; width: `nbWidth`; cursor: pointer; background-color: #fff; background-repeat:no-repeat; border:none;"
+    style="text-align: center; height: `nbHeight`; width: `nbWidth`; cursor: pointer; background-color: #fff; background-repeat:no-repeat; border:none;"
     >
+
     <script>
-      function loadCloudNotebook(frameId){
+      function insertCloudNotebookCell(frameId, ops, paused = false) {
+        nbFrame = document.getElementById(frameId);
+
+        if (  nbFrame.contentDocument  == null && paused ) {
+
+          req = ops;
+          req.api="notebook";
+          req.version=1;
+          req.rid="1";
+          req.command="insertCellAtCursor";
+          origin="https://sandbox.open.wolframcloud.com";
+          nbFrame.contentWindow.postMessage(req, origin);
+
+        } else if (nbFrame.contentDocument  == null ) {
+
+          // this is clumsy but I don't really know how better to do this... the API doesn't
+          // activate until the full JS loads
+          window.setTimeout(()=>(insertCloudNotebookCell(frameId, ops, true)), 1500);
+
+        } else {
+
+          window.setTimeout(()=>(insertCloudNotebookCell(frameId, ops)), 100);
+
+        }
+      }
+
+      function populateCloudNotebookCells(frameId, cells) {
+        for (var ckey in cells) {
+          cell = cells[ckey];
+          if (typeof cell == "string") {
+            insertCloudNotebookCell(frameId, {"style":"Input", "content":cell})
+          } else {
+            if (!cell.hasOwnProperty("style")) {
+              cell.style="Input"
+            };
+            if (!cell.hasOwnProperty("content")) {
+              cell.content=""
+            };
+            insertCloudNotebookCell(frameId, cell)
+          }
+        }
+      }
+      function loadCloudNotebook(frameId) {
         nbDiv = document.getElementById(frameId);
         nbFrame = document.createElement('iframe');
         nbFrame.id=nbDiv.id;
         nbFrame.class=nbDiv.class;
-        nbFrame.src = "`nbSrc`";
-        nbFrame.style = "position: absolute; left:`nbPosLeft`; top:`nbPosTop`; height: <*#nbHeight*>; width: `nbWidth`;"
+        nbFrame.src = "`nbSrc`?_view=`nbFrame`";
+        nbFrame.style = "position: absolute; left:`nbPosLeft`; top:`nbPosTop`; height: `nbHeight`; width: `nbWidth`;"
+        <wolfram:with
+          cellJSON='ToString[ExportString[Replace[Replace[Flatten[{#Cells}, 1],n_Notebook:>First@NotebookTools`FlattenCellGroups@n],
+                      {
+			                 c:Cell[e_,t_String, ___]:>{"style"->t, "content"->Replace[FrontEndExecute@ExportPacket[c, If[Head@e===BoxData, "InputText", "PlainText"]], {{s_String, ___}:>s,_->""}]},
+			                 c:Cell[e_, ___]:>{"style"->If[Head@e===BoxData, "Input", "Text"], "content"->Replace[FrontEndExecute@ExportPacket[c, If[Head@e===BoxData, "InputText", "PlainText"]], {{s_String, ___}:>s, _->""}]},
+                       _Missing:>Nothing,
+                       e_:>{"style"->"Input", "content"->ToString[e, InputForm]}
+		                   },
+		                  1],
+                      "JSON", "Compact"->True
+                    ], InputForm]'
+          >
+        nbCells = JSON.parse(`cellJSON`);
+        </wolfram:with>
         nbDiv.parentNode.replaceChild(nbFrame, nbDiv);
+        populateCloudNotebookCells('`notebookId`', nbCells)
         }
     </script>
     <span style="display: inline-block; vertical-align: middle;">
