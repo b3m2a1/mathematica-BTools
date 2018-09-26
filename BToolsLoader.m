@@ -927,7 +927,7 @@ PackageInstallPacletDependency[
               |>,
           None->
             Automatic,
-          _->
+          Except[_String]->
             "http://raw.githubusercontent.com/paclets/PacletServer/master"
           }
         ];
@@ -988,7 +988,9 @@ PackageLoadPacletDependency[dep_String?(StringEndsQ["`"]), ops:OptionsPattern[]]
           "Sites"->Replace[OptionValue["Site"], s_String:>{s}]
           ]
         ],
-      PackageInstallPacletDependency[dep, ops]
+      PackageInstallPacletDependency[dep, 
+        FilterRules[{ops}, Options@PackageInstallPacletDependency ]
+        ]
       ];
     Needs[dep];
     PackageExtendContextPath@
@@ -1166,7 +1168,7 @@ PackageThrowMessage[
     );
 PackageThrowMessage[
   tag_?StringQ,
-  body_String,
+  body_?StringQ,
   ops:OptionsPattern[]
   ]:=
   PackageThrowMessage[

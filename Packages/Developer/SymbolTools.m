@@ -10,6 +10,9 @@ $SymbolTypeNames=
   "Mapping of type to string";
 
 
+PackageScopeBlock[$SymbolNameTypes::usage="Reverse mapping"];
+
+
 Begin["`Private`"];
 
 

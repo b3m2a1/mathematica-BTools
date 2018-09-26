@@ -564,18 +564,14 @@ instead.\>\""}], ";"}], "\n",
         RowBox[{"(", 
          RowBox[{"StringEndsQ", "[", "\"\<`\>\"", "]"}], ")"}]}], "]"}]}], 
      "\[RuleDelayed]", "\n", "\t\t\t", 
-     RowBox[{"(", "\n", "\t\t\t\t", 
-      RowBox[{
-       RowBox[{"Message", "[", 
-        RowBox[{
-         RowBox[{"NotebookToMarkdown", "::", "nocont"}], ",", " ", "c"}], 
-        "]"}], ";", "\n", "\t\t\t\t", 
-       RowBox[{"Throw", "[", "$Failed", "]"}]}], "\n", "\t\t\t\t", ")"}]}]}], 
-   "\n", "\t\t", "]"}]}]}], "CodeInput",
- CellChangeTimes->{{3.723393781270191*^9, 
-  3.7233938863230886`*^9}},ExpressionUUID->"8b078e2b-e4df-409c-86f1-\
-799f192e1056"]
-}, Closed]],
+     RowBox[{"PackageRaiseException", "[", "\n", "\t\t\t\t", 
+      RowBox[{"Automatic", ",", "\n", "\t\t\t\t", 
+       RowBox[{"Evaluate", "[", 
+        RowBox[{"NotebookToMarkdown", "::", "nocont"}], "]"}], ",", "\n", 
+       "\t\t\t\t", "c"}], "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t", 
+   "]"}]}]}], \
+"CodeInput",ExpressionUUID->"8b078e2b-e4df-409c-86f1-799f192e1056"]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -4011,7 +4007,9 @@ Cell[BoxData[{
      RowBox[{"ops", ":", 
       RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
     "\t", 
-   RowBox[{"Catch", "@", "\n", "\t", 
+   RowBox[{
+    RowBox[{"PackageExceptionBlock", "[", "\"\<NotebookToMarkdown\>\"", "]"}],
+     "@", "\n", "\t", 
     RowBox[{"Block", "[", "\n", "\t\t", 
      RowBox[{
       RowBox[{"{", "\n", "\t\t\t", 
@@ -4091,13 +4089,23 @@ Cell[BoxData[{
          RowBox[{"If", "[", 
           RowBox[{
            RowBox[{"!", 
-            RowBox[{"DirectoryQ", "@", "dir"}]}], ",", " ", 
-           RowBox[{"Throw", "[", "$Failed", "]"}]}], "]"}], ";", "\n", "\t\t", 
+            RowBox[{"DirectoryQ", "@", "dir"}]}], ",", " ", "\n", "\t\t\t", 
+           RowBox[{"PackageRaiseException", "[", "\n", "\t\t\t\t", 
+            RowBox[{
+            "Automatic", ",", "\n", "\t\t\t\t", 
+             "\"\<Notebook directory `` is not a valid directory\>\"", ",", 
+             "\n", "\t\t\t\t", "dir"}], "\n", "\t\t\t\t", "]"}]}], "\n", 
+          "\t\t\t", "]"}], ";", "\n", "\t\t", 
          RowBox[{"If", "[", 
           RowBox[{
            RowBox[{"!", 
-            RowBox[{"StringQ", "@", "path"}]}], ",", " ", 
-           RowBox[{"Throw", "[", "$Failed", "]"}]}], "]"}], ";", "\n", "\t\t", 
+            RowBox[{"StringQ", "@", "path"}]}], ",", "\n", "\t\t\t", 
+           RowBox[{"PackageRaiseException", "[", "\n", "\t\t\t\t", 
+            RowBox[{
+            "Automatic", ",", "\n", "\t\t\t\t", 
+             "\"\<Notebook path `` is not a valid string path\>\"", ",", "\n",
+              "\t\t\t\t", "path"}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t",
+           "]"}], ";", "\n", "\t\t", 
          RowBox[{"exportStrings", "=", "\n", "\t\t\t", 
           RowBox[{
            RowBox[{
@@ -4495,7 +4503,7 @@ Cell[BoxData[
    3.733031212363727*^9}},ExpressionUUID->"28911e07-ea46-45b1-a3d9-\
 d23bbc36a35e"]
 }, Open  ]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -8752,7 +8760,7 @@ Cell[BoxData[
    3.723397847252461*^9, 3.723397849268346*^9}, 
    3.7234866895458727`*^9},ExpressionUUID->"3ec577fe-9752-4e44-b864-\
 39f848aa5f60"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -9453,7 +9461,12 @@ Cell[BoxData[
     RowBox[{"nbObj", ":", 
      RowBox[{"_NotebookObject", "|", "Automatic"}], ":", "Automatic"}], "\n", 
     "\t", "]"}], ":=", "\n", "\t", 
-   RowBox[{"Catch", "@", "\n", "\t", 
+   RowBox[{
+    RowBox[{"Function", "[", 
+     RowBox[{"Null", ",", " ", 
+      RowBox[{"Catch", "[", 
+       RowBox[{"#", ",", " ", "\"\<NotebookSaveAbort\>\""}], "]"}], ",", " ", 
+      "HoldFirst"}], "]"}], "@", "\n", "\t", 
     RowBox[{
      RowBox[{
      "PackageExceptionBlock", "[", "\"\<NotebookMarkdownSave\>\"", "]"}], "@",
@@ -9499,8 +9512,9 @@ Cell[BoxData[
              RowBox[{"meta", ",", " ", "\"\<_Save\>\"", ",", " ", "True"}], 
              "]"}], "===", "False"}]}], " ", 
           RowBox[{"(*", "Legacy", "*)"}], ",", " ", "\n", "\t\t\t\t", 
-          RowBox[{"Throw", "[", "Null", "]"}]}], "\n", "\t\t\t\t", "]"}], ";",
-         "\n", "\t\t\t", 
+          RowBox[{"Throw", "[", 
+           RowBox[{"Null", ",", " ", "\"\<NotebookSaveAbort\>\""}], "]"}]}], 
+         "\n", "\t\t\t\t", "]"}], ";", "\n", "\t\t\t", 
         RowBox[{"md", "=", "\n", "\t\t\t\t", 
          RowBox[{"Reap", "[", "\n", "\t\t\t\t\t", 
           RowBox[{
@@ -9524,7 +9538,10 @@ Cell[BoxData[
              RowBox[{"StringTrim", "@", 
               RowBox[{"md", "[", 
                RowBox[{"[", "1", "]"}], "]"}]}]}], "==", "0"}]}], ",", " ", 
-          RowBox[{"Throw", "[", "Null", "]"}]}], "]"}], ";", "\n", "\t\t\t", 
+          "\n", "\t\t\t\t", 
+          RowBox[{"Throw", "[", 
+           RowBox[{"Null", ",", " ", "\"\<NotebookSaveAbort\>\""}], "]"}]}], 
+         "\n", "\t\t\t\t", "]"}], ";", "\n", "\t\t\t", 
         RowBox[{"nbDir", "=", 
          RowBox[{"MarkdownNotebookDirectory", "[", "nb", "]"}]}], ";", "\n", 
         "\t\t\t", 
@@ -9664,7 +9681,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"0792ebaa-1dc2-414d-9656-\
 e65bfc12151a"]
 },
 WindowSize->{812, 759},
-WindowMargins->{{228, Automatic}, {29, Automatic}},
+WindowMargins->{{Automatic, 309}, {Automatic, 26}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

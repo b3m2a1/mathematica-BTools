@@ -246,10 +246,11 @@ NotebookToMarkdown::nocont=
 MarkdownNotebookContext[nb_]:=
   Replace[CurrentValue[nb, CellContext],
     c:Except[_String?(StringEndsQ["`"])]:>
-      (
-        Message[NotebookToMarkdown::nocont, c];
-        Throw[$Failed]
-        )
+      PackageRaiseException[
+        Automatic,
+        Evaluate[NotebookToMarkdown::nocont],
+        c
+        ]
     ]
 
 
@@ -1703,7 +1704,7 @@ NotebookToMarkdown[
   nb_Notebook,
   ops:OptionsPattern[]
   ]:=
-  Catch@
+  PackageExceptionBlock["NotebookToMarkdown"]@
   Block[
     {
       $MarkdownIncludeStyleDefinitions=
@@ -1731,8 +1732,20 @@ NotebookToMarkdown[
       cells=OptionValue["CellObjects"],
       ps=OptionValue["UseHTMLFormatting"]
       },
-    If[!DirectoryQ@dir, Throw[$Failed]];
-    If[!StringQ@path, Throw[$Failed]];
+    If[!DirectoryQ@dir, 
+      PackageRaiseException[
+        Automatic,
+        "Notebook directory `` is not a valid directory",
+        dir
+        ]
+      ];
+    If[!StringQ@path,
+      PackageRaiseException[
+        Automatic,
+        "Notebook path `` is not a valid string path",
+        path
+        ]
+      ];
     exportStrings=
       iNotebookToMarkdown[
         <|
@@ -4299,7 +4312,7 @@ $NotebookMarkdownSaveIgnoredMeta=
 NotebookMarkdownSave[
   nbObj:_NotebookObject|Automatic:Automatic
   ]:=
-  Catch@
+  Function[Null, Catch[#, "NotebookSaveAbort"], HoldFirst]@
   PackageExceptionBlock["NotebookMarkdownSave"]@
     Module[
       {
@@ -4321,7 +4334,7 @@ NotebookMarkdownSave[
       If[
         Lookup[expOps, "Save", True]===False||
           Lookup[meta, "_Save", True]===False (*Legacy*), 
-        Throw[Null]
+        Throw[Null, "NotebookSaveAbort"]
         ];
       md=
         Reap[
@@ -4329,7 +4342,9 @@ NotebookMarkdownSave[
             FilterRules[Normal@expOps, Options[NotebookToMarkdown]]],
           "MarkdownExport"
           ];
-      If[!StringQ@md[[1]]||StringLength@StringTrim@md[[1]]==0, Throw[Null]];
+      If[!StringQ@md[[1]]||StringLength@StringTrim@md[[1]]==0, 
+        Throw[Null, "NotebookSaveAbort"]
+        ];
       nbDir=MarkdownNotebookDirectory[nb];
       siteBase=MarkdownSiteBase@nbDir;
       root=
