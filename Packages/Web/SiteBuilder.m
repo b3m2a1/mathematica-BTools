@@ -1917,7 +1917,7 @@ WebSiteTemplateGatherArgs[fileContent_, args_]:=
             URLParse[s,"Path"][[-1]],
           Except[_String]:>
             Replace[
-              Lookup[args,"SiteURL"],
+              Lookup[args, "SiteURL"],
               {
                 s_String:>
                   URLParse[s,"Path"][[-1]],
