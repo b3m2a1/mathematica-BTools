@@ -2536,7 +2536,7 @@ WebSiteExtractPageData[rootDir_, files_,config_, ops:OptionsPattern[]]:=
           },
         extractfile=fname;
         cname=webSitePrepContentName[fname, rootDir];
-        If[KeyFreeQ[$WebSiteBuildContentStack, cname]&&
+        If[KeyFreeQ[$WebSiteBuildContentStack, cname]||
             (!DateObjectQ[lb]||lb<=FileDate[fname, "Modification"]),
           WebSiteExtractFileData[
             rootDir,
@@ -3752,7 +3752,7 @@ iWebSiteBuild[
           Keys@Options[iWebSiteBuild]
           ]
       },
-      If[AnyTrue[{genCont, genAggs, genInd, genSP},TrueQ],
+      If[AnyTrue[{genCont, genAggs, genInd, genSP}, TrueQ],
         WebSiteExtractPageData[
           ExpandFileName@dir,
           fileNames,

@@ -1741,7 +1741,7 @@ PacletMarkdownNotebookUpdate[f_String?FileExistsQ,a_,regen_:Automatic]:=
   With[{nb=Import[f]},
     Switch[nb,
       _Notebook,
-        With[{new=PacletMarkdownNotebookUpdate[nb,a]},
+        With[{new=PacletMarkdownNotebookUpdate[nb, a]},
           If[TrueQ[regen]||new=!=nb,
             Export[f,new]
             ]
