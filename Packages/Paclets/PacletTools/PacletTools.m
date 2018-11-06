@@ -3520,8 +3520,10 @@ gitPacletPull//Clear
 
 
 gitPacletPull[loc:(_String|_File|_URL)?GitHubPathQ]:=
-  If[StringStartsQ[loc, "GitHubRelease"],
-    GitHub["Clone", loc, OverwriteTarget->True]
+  Replace[GitHub["Clone", loc, OverwriteTarget->True],
+    {
+      File[f_]:>f
+      }
     ];
 gitPacletPull[loc:(_String|_File|_URL)?(Not@*GitHubPathQ)]:=
   Git["Clone", loc, OverwriteTarget->True];
