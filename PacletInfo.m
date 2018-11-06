@@ -1,6 +1,6 @@
 Paclet[
   Name -> "BTools",
-  Version -> "2.1.30",
+  Version -> "2.1.31",
   Creator -> "b3m2a1@gmail.com",
   URL -> "https://github.com/b3m2a1/mathematica-BTools",
   Description -> "A suite of development tools",
@@ -16,6 +16,7 @@ Paclet[
      		"Root" -> "Resources",
      		"Resources" -> {
        			"Icons",
+       			"Images",
        			"PaletteGenerators",
        			"Templates",
        			"Themes",
@@ -26,6 +27,10 @@ Paclet[
        			{
         				"PacletSiteIcon",
         				"Icons/PacletSiteIcon.png"
+        			},
+       			{
+        				"GoogleOAuthExample",
+        				"Images/GoogleOAuthExample.png"
         			},
        			{
         				"AppManagerPaletteGenerator",

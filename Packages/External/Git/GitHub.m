@@ -70,6 +70,19 @@ $GitHubActions["CurrentUser"]=
 
 
 (* ::Subsubsection::Closed:: *)
+(*GetPassword*)
+
+
+
+GitHubGetPassword[]:=
+  $GitHubPassword
+
+
+$GitHubActions["Password"]=
+  GitHubGetPassword
+
+
+(* ::Subsubsection::Closed:: *)
 (*KeyChain*)
 
 
@@ -388,13 +401,16 @@ FormatGitHubPath[path___String,ops:OptionsPattern[]]:=
           Automatic:>$GitHubUsername
           ],
         If[Length@{path}>1&&!GitHubReleaseQ@{path},
-          Sequence@@Flatten@
-            Insert[{path}, 
-              {OptionValue["Tree"], Replace[OptionValue["Branch"], None->Nothing]}, 
-              2
-              ],
-          Sequence@@{path}
-          ]
+            Sequence@@Flatten@
+              Insert[{path}, 
+                {
+                  OptionValue["Tree"], 
+                  Replace[OptionValue["Branch"], None->Nothing]
+                  }, 
+                2
+                ],
+            Sequence@@{path}
+            ]
         }
     |>;
 
@@ -409,7 +425,7 @@ GitHubPath//Clear
 
 GitHubPath[
   repo_String, 
-  t:"tree"|"raw"|"trunk"|"releases", 
+  t:"tree"|"raw"|"trunk", 
   branch_String, 
   p___String, 
   ops:OptionsPattern[]
@@ -425,13 +441,27 @@ GitHubPath[
     "Tree"->t,
     ops
     ];
+(*GitHubPath[
+	repo_String, 
+	t:"releases", 
+	p__String,
+	ops:OptionsPattern[]
+	]:=
+	GitHubPath[repo, t, p, ops];*)
 GitHubPath[
   path___String,
   ops:OptionsPattern[]
   ]/;(TrueQ@$GitHubPathFormat):=
   FormatGitHubPath[path,ops];
-GitHubPath[
-  s_String?(
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Parsers*)
+
+
+
+validPathStringQ=
+  (
     URLParse[#, "Domain"]=="github.com"||
     (
         URLParse[#, "Scheme"]===None&&
@@ -440,34 +470,20 @@ GitHubPath[
       )||
     URLParse[#, "Scheme"]==="github"||
     URLParse[#, "Scheme"]==="github-release"&
-    ),
-  o:OptionsPattern[]
-  ]:=
-  GitHubPathParse[
-    Which[
-      URLParse[s, "Scheme"]==="github-release",
-        URLBuild@<|
-          "Scheme"->"github",
-          "Path"->
-            Replace[URLParse[s, "Path"],
-              {
-                r:{___, "releases", "latest"}:>r,
-                {a___, "releases"}:>{a, "latest"},
-                {a___}:>{a, "releases", "latest"}
-                }
-              ]
-          |>,
-    URLParse[s, "Scheme"]==="github"||
-      URLParse[s, "Domain"]==="github.com",
-      s,
-    True,
-      "github:"<>s
-    ],
-  o
-  ];
-GitHubPath[URL[s_String], ops:OptionsPattern[]]:=GitHubPath[s, ops];
+    )
+
+
+GitHubPath[s_String?validPathStringQ, o:OptionsPattern[]]:=
+  GitHubPathParse[s, o];
+GitHubPath[URL[s_String?validPathStringQ], ops:OptionsPattern[]]:=
+  GitHubPathParse[s, ops];
 GitHubPath[GitHubPath[p___String, o___?OptionQ], op:OptionsPattern[]]:=
   GitHubPath[p, Sequence@@DeleteDuplicatesBy[Flatten@{op, o}, First]]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*UpValues Stuff*)
+
 
 
 GitHubPath/:
@@ -542,9 +558,39 @@ GitHubPathQ[_GitHubPath]:=
 
 
 
+GitHubPathParse//Clear
+
+
 Options[GitHubPathParse]=
   Options[GitHubPath];
-GitHubPathParse[path:_String|_URL, o:OptionsPattern[]]:=
+GitHubPathParse[s_, ops:OptionsPattern[]]:=
+  GitHubPathParseRaw[
+    Which[
+      URLParse[s, "Scheme"]==="github-release",
+        URLBuild@<|
+          "Scheme"->"github",
+          "Path"->
+            Replace[URLParse[s, "Path"],
+              {
+                r:{_, _, "releases", "latest"}:>r,
+                {a_, b_, "releases"}:>{a, b, "releases", "latest"},
+                {a_, b_}:>{a, b, "releases", "latest"},
+                {a_, b_, "tag", c_}:>{a, b, "releases", "tag", c},
+                {a_, b_, c_}:>{a, b, "releases", "tag", c}
+                }
+              ]
+          |>,
+      URLParse[s, "Scheme"]==="github"||
+        URLParse[s, "Domain"]==="github.com",
+        s,
+      True,
+        "github:"<>s
+      ],
+  ops
+  ]
+
+
+GitHubPathParseRaw[path:_String|_URL, o:OptionsPattern[]]:=
   If[GitHubPathQ[path],
     Replace[
       DeleteCases[""]@
@@ -979,6 +1025,233 @@ GitHubAuthHeader[
         }
       ]
     ];
+
+
+(* ::Subsection:: *)
+(*OAuth*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*Clear*)
+
+
+
+GitHubClearAuth[
+  user:(_String|Automatic):Automatic,
+  clientID:_String|Automatic:Automatic,
+  scope:_String?GHOAuthScopeQ:"drive"
+  ]:=
+  With[
+    {
+      u=
+        StringTrim[
+          Replace[user, Automatic:>$GitHubUsername],
+          "@gmail.com"
+          ],
+      cid=
+        Replace[clientID, Automatic:>$GitHubClientID],
+      kc=$GHCacheSym
+      },
+    kc[{u,cid,scope,"token"}]=.;
+    kc[{u,cid,scope,"code"}]=.;
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Scopes*)
+
+
+
+(*$GAOAuthScopes=
+	<|
+		"drive"->
+			{
+				"file",
+				"appdata",
+				"metadata",
+				"metadata.readonly",
+				"photos.readonly",
+				"readonly",
+				"scripts"
+				}
+		|>;*)
+
+
+(*GAOAuthScopeQ[s_]:=
+	(KeyMemberQ[$GAOAuthScopes,ToLowerCase@s]||
+		With[{sp=StringSplit[ToLowerCase@s,".",2]},
+			MemberQ[
+				$GAOAuthScopes[First@sp],
+				Last@sp
+				]
+			]
+		);*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Requests*)
+
+
+
+(*GAOAuthCodeURL[
+	clientID_,
+	scope_
+	]:=
+	With[{
+		cid=
+			Replace[clientID,
+				Automatic\[RuleDelayed]
+					$GAClientID
+				],
+		s=URLBuild@{"https://www.googleapis.com/auth",scope}
+		},
+		URLBuild@
+			GAURLAssoc["OAuthCode",
+				"client_id"\[Rule]cid,
+				"scope"\[Rule]s
+				]
+		];*)
+
+
+(*GAOAuthTokenRequest[code_]:=
+	HTTPRequest[
+		URLBuild@GAURLAssoc["OAuthToken"],
+		<|
+			"Method"\[Rule]"Post",
+			"Body"\[Rule]{
+				"code"\[Rule]code,
+				"client_id"\[Rule]$GAClientID,
+				"client_secret"\[Rule]$GAClientSecret,
+				"grant_type"\[Rule]"authorization_code",
+				"redirect_uri"->"http://localhost/oauth2callback"
+				}
+			|>
+		];
+GAOAuthRefreshRequest[token_]:=
+	HTTPRequest[
+		URLBuild@GAURLAssoc["OAuthToken"],
+		<|
+			"Method"\[Rule]"Post",
+			"Body"\[Rule]{
+				"refresh_token"\[Rule]token,
+				"client_id"\[Rule]$GAClientID,
+				"client_secret"\[Rule]$GAClientSecret,
+				"grant_type"\[Rule]"refresh_token"
+				}
+			|>
+		];*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Auth*)
+
+
+
+(*GAOAuthenticate[
+	user:(_String|Automatic):Automatic,
+	clientID:_String|Automatic:Automatic,
+	scope:_String?GAOAuthScopeQ:"drive"
+	]:=
+	With[{
+		u=
+			StringTrim[
+				Replace[user, Automatic\[RuleDelayed]$GoogleAPIUsername],
+				"@gmail.com"
+				],
+		cid=
+			Replace[clientID, Automatic\[RuleDelayed]$GAClientID]
+			},
+		With[{a=GAOAuthTokenData[u, cid, scope]},
+			Block[{
+				$GAOAuthTokenDataTmp=a,
+				$GAOAuthTokenCalls=
+					If[!IntegerQ@$GAOAuthTokenCalls, 0, $GAOAuthTokenCalls]
+				},
+				If[$GAOAuthTokenCalls<4&&AssociationQ@a,
+					$GAOAuthTokenCalls++;
+					If[
+						Quantity[ToExpression@#,"Seconds"]>(Now-#2)&@@
+							Lookup[a,{"expires_in","LastUpdated"}, 3600],
+						Lookup[a,"access_token"],
+						If[KeyMemberQ[a,"refresh_token"],
+							Replace[Import[GAOAuthRefreshRequest@a["refresh_token"],"RawJSON"],{
+								r_Association:>
+									With[{kc=$GACacheSym},
+										kc[{u,cid,scope,"token"}]=
+											Append[r,"LastUpdated"\[Rule]Now];
+										GAOAuthenticate[u,cid,scope]
+										],
+								_->$Failed
+								}],
+							If[$GAOAuthTokenCalls>1&&KeyMemberQ[a,"access_token"],
+								a["access_token"],
+								GoogleAPIClearAuth[u,cid,scope];
+								GAOAuthenticate[u,cid,scope]
+								]
+							],
+						$Failed
+						],
+					$Failed
+					]
+				]
+			]
+		];*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*OAuthTokenData*)
+
+
+
+(*GAOAuthTokenData[
+	user:_String|Automatic:Automatic,
+	clientID:_String|Automatic:Automatic,
+	scope:_String?GAOAuthScopeQ:"drive"
+	]:=
+	Replace[$GAOAuthTokenDataTmp,
+		Except[_String]:>
+			With[
+				{
+					u=
+						StringTrim[
+							Replace[user,Automatic\[RuleDelayed]$GoogleAPIUsername],
+							"@gmail.com"
+							],
+					cid=
+						Replace[clientID,Automatic\[RuleDelayed]$GAClientID],
+					kc=$GACacheSym
+					},
+				Replace[kc[{u,cid,scope,"token"}],
+					Except[_Association?(KeyMemberQ["access_token"])]:>
+						Replace[
+							Replace[kc[{u,clientID,scope,"code"}],
+								Except[_String?(StringLength@#>0&)]:>
+									Replace[
+										OAuthDialog[
+											"Google OAuth Authorization",
+											{
+												{"Google OAuth",GAOAuthCodeURL[cid,scope]},
+												$GAKeyExample
+												},
+											$GAParameters["Root","Domain"]
+											],
+										s_String?(StringLength@#>0&):>
+											(kc[{u,cid,scope,"code"}]=s)
+										]
+								],{
+							code_String?(StringLength@#>0&):>
+								Replace[Import[GAOAuthTokenRequest[code],"RawJSON"],
+									r_Association?(KeyMemberQ["access_token"]):>
+										(
+											kc[{u,cid,scope,"token"}]=
+												Append[r,"LastUpdated"\[Rule]Now]
+											)
+									]
+							}]
+					]
+				]
+		];*)
 
 
 (* ::Subsection:: *)
@@ -2853,7 +3126,7 @@ GitHubGetRelease//Clear
 
 GitHubGetRelease[
   repo_String,
-  tagName:_Integer,
+  tagName:_Integer|"latest":"latest",
   ops:OptionsPattern[]
   ]:=
   GitHubReposAPI[

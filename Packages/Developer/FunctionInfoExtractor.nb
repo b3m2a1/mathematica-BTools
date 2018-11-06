@@ -44,6 +44,17 @@ Cell[BoxData[{
    3.7305025448345413`*^9},ExpressionUUID->"07e8a7d8-f909-421a-bdbd-\
 913ca2856007"],
 
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"SetAutocompletions", "::", "usage"}], "=", 
+   "\"\<Straight-up sets autocompletions\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SetArgCount", "::", "usage"}], "=", 
+   "\"\<Straight-up sets the arg-count\>\""}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"fec99b8d-3c7d-40fd-9941-5dfe1338abd5"],
+
 Cell[BoxData[
  RowBox[{
   RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
@@ -1254,6 +1265,43 @@ be53fd83ac53"]
 
 Cell[CellGroupData[{
 
+Cell["\[LeftCeiling]SetAutocompletions\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"38213310-c49d-41f0-ad20-d7cf976f15a7"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"SetAutocompletions", "[", 
+    RowBox[{"pats", ":", 
+     RowBox[{"{", "__Rule", "}"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{"$Notebooks", "&&", "\n", "\t", "\t\t", 
+      RowBox[{
+       RowBox[{"Internal`CachedSystemInformation", "[", 
+        RowBox[{"\"\<FrontEnd\>\"", ",", "\"\<VersionNumber\>\""}], "]"}], 
+       ">", "10.0"}]}], ",", "\n", "\t", "\t\t", 
+     RowBox[{"FrontEndExecute", "@", 
+      RowBox[{"FrontEnd`Value", "@", "\n", "\t", "\t\t\t", 
+       RowBox[{"Map", "[", "\n", "\t", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"FEPrivate`AddSpecialArgCompletion", "[", "#", "]"}], "&"}],
+          ",", "\n", "\t", "\t\t\t\t", "pats"}], "\n", "\t", "\t\t\t\t", 
+        "]"}]}]}], ",", "\n", "\t\t\t", "$Failed"}], "\n", "\t\t\t", "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"SetAutocompletions", "[", 
+   RowBox[{"a_", "\[Rule]", "b_"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"SetAutocompletions", "[", 
+   RowBox[{"{", 
+    RowBox[{"a", "->", "b"}], "}"}], 
+   "]"}]}]}], \
+"CodeInput",ExpressionUUID->"a9e90ada-3bab-4f37-a5ab-35352a75fddf"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
 Cell["\[LeftCeiling]AddFunctionAutocompletions Base\[RightFloor]", \
 "CodeSubsubsection",
  Evaluatable->True,
@@ -1276,22 +1324,7 @@ Cell[BoxData[{
         "}"}]}], ",", "\n", "\t", 
      RowBox[{"head_:", "Identity"}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
    RowBox[{"head", "@", 
-    RowBox[{"If", "[", 
-     RowBox[{
-      RowBox[{"$Notebooks", "&&", "\n", "\t\t", 
-       RowBox[{
-        RowBox[{"Internal`CachedSystemInformation", "[", 
-         RowBox[{"\"\<FrontEnd\>\"", ",", "\"\<VersionNumber\>\""}], "]"}], 
-        ">", "10.0"}]}], ",", "\n", "\t\t", 
-      RowBox[{"FrontEndExecute", "@", 
-       RowBox[{"FrontEnd`Value", "@", "\n", "\t\t\t", 
-        RowBox[{"Map", "[", "\n", "\t\t\t\t", 
-         RowBox[{
-          RowBox[{
-           RowBox[{"FEPrivate`AddSpecialArgCompletion", "[", "#", "]"}], 
-           "&"}], ",", "\n", "\t\t\t\t", "pats"}], "\n", "\t\t\t\t", 
-         "]"}]}]}], ",", "\n", "\t\t", "$Failed"}], "\n", "\t\t", "]"}]}]}], 
-  ";"}], "\n", 
+    RowBox[{"SetAutocompletions", "[", "pats", "]"}]}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"AddFunctionAutocompletions", "[", "\n", "\t", 
@@ -1306,16 +1339,9 @@ Cell[BoxData[{
    RowBox[{"AddFunctionAutocompletions", "[", 
     RowBox[{
      RowBox[{"{", "pat", "}"}], ",", " ", "head"}], "]"}]}], 
-  ";"}]}], "CodeInput",
- CellChangeTimes->{{3.7304710582764378`*^9, 3.730471071462666*^9}, {
-  3.7304727968759613`*^9, 3.730472826487265*^9}, {3.730473987090564*^9, 
-  3.730473987099532*^9}, {3.730474046375752*^9, 3.73047404638695*^9}, {
-  3.730482850992605*^9, 3.730482851015169*^9}, {3.7304828896029263`*^9, 
-  3.730482901971238*^9}, {3.733261609396655*^9, 3.73326161139997*^9}, {
-  3.7332617058045053`*^9, 
-  3.7332617068156567`*^9}},ExpressionUUID->"e692c310-e7c3-4ca9-8d0a-\
-b6662b79f311"]
-}, Closed]],
+  ";"}]}], "CodeInput",ExpressionUUID->"e692c310-e7c3-4ca9-8d0a-b6662b79f311"]\
+
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -2821,58 +2847,83 @@ Cell[BoxData[{
              "]"}], "\n", "\t", "\t\t\t\t\t", "]"}], ":>", "_Failure"}], "\n",
            "\t", "\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "]"}]}], ";", "\n", 
       "\t\t", 
-      RowBox[{
+      RowBox[{"SetArgCount", "[", 
+       RowBox[{"f", ",", " ", 
+        RowBox[{"{", 
+         RowBox[{"minA", ",", " ", "maxA"}], "}"}], ",", " ", "noo"}], "]"}], 
+      ";", "\n", "\t\t", 
+      RowBox[{"If", "[", 
+       RowBox[{"wasProt", ",", " ", 
+        RowBox[{"Protect", "[", "f", "]"}]}], "]"}], ";"}]}], "\n", "\t", 
+    "\t", "]"}]}], ";"}], "\n", 
+ RowBox[{"setArgCount", "~", "SetAttributes", "~", 
+  "HoldFirst"}]}], \
+"CodeInput",ExpressionUUID->"8477f891-669e-4ba3-b217-51097b7d0fbf"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["SetArgCount", \
+"CodeSubsubsection",ExpressionUUID->"259b98fe-8cd3-406a-b6fe-14781000d3b5"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"SetArgCount", "[", "\n", "\t", 
+   RowBox[{"f_", ",", " ", "\n", "\t", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"minA", " ", ":", " ", "_Integer"}], ",", " ", 
+      RowBox[{"maxA", " ", ":", " ", 
+       RowBox[{"_Integer", "|", "Infinity"}]}]}], "}"}], ",", " ", "\n", "\t", 
+    RowBox[{"noo", " ", ":", " ", 
+     RowBox[{"True", " ", "|", " ", "False"}]}]}], "\n", "\t", "]"}], " ", ":=",
+   "\n", "\t", 
+  RowBox[{"(", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"f", "[", "argPatLongToNotDupe___", "]"}], " ", "/;", " ", 
+      RowBox[{"(", "\n", "\t", "\t\t", 
        RowBox[{
-        RowBox[{"f", "[", "argPatLongToNotDupe___", "]"}], " ", "/;", " ", 
-        RowBox[{"(", "\n", "\t\t\t", 
-         RowBox[{
-          RowBox[{"ArgumentCountQ", "[", "\n", "\t\t\t\t", 
-           RowBox[{"f", ",", "\n", "\t\t\t\t", 
-            RowBox[{"Length", "@", "\n", "\t\t\t\t", 
-             RowBox[{"If", "[", 
-              RowBox[{"noo", ",", "\n", "\t\t\t\t\t", 
-               RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t", 
-                RowBox[{
-                 RowBox[{"Hold", "[", "argPatLongToNotDupe", "]"}], ",", " ", 
-                 "\n", "\t\t\t\t\t\t", 
+        RowBox[{"ArgumentCountQ", "[", "\n", "\t", "\t\t\t", 
+         RowBox[{"f", ",", "\n", "\t", "\t\t\t", 
+          RowBox[{"Length", "@", "\n", "\t", "\t\t\t\t", 
+           RowBox[{"If", "[", 
+            RowBox[{"noo", ",", "\n", "\t", "\t\t\t\t\t", 
+             RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Hold", "[", "argPatLongToNotDupe", "]"}], ",", " ", 
+               "\n", "\t", "\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"Hold", "[", 
                  RowBox[{
-                  RowBox[{"Hold", "[", 
-                   RowBox[{
-                   "argPatLongToNotDupe2___", ",", " ", "\n", 
-                    "\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"(", 
+                 "argPatLongToNotDupe2___", ",", " ", "\n", "\t", 
+                  "\t\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"(", 
                     RowBox[{
                     "_Rule", " ", "|", " ", "_RuleDelayed", " ", "|", " ", 
                     RowBox[{"{", 
                     RowBox[{
                     RowBox[{"(", 
                     RowBox[{"_Rule", " ", "|", " ", "_RuleDelayed"}], ")"}], 
-                    " ", ".."}], "}"}]}], ")"}], " ", "..."}]}], "\n", 
-                   "\t\t\t\t\t\t\t", "]"}], " ", ":>", " ", 
-                  RowBox[{"Hold", "[", "argPatLongToNotDupe2", "]"}]}]}], 
-                "\n", "\t\t\t\t\t\t", "]"}], ",", " ", "\n", "\t\t\t\t\t", 
-               RowBox[{"Hold", "[", "argPatLongToNotDupe", "]"}]}], "\n", 
-              "\t\t\t\t\t", "]"}]}], ",", " ", "\n", "\t\t\t\t", "minA", ",", 
-            " ", "\n", "\t\t\t\t", "maxA"}], "\n", "\t\t\t\t", "]"}], ";", 
-          " ", "\n", "\t\t\t", "False"}], "\n", "\t\t\t", ")"}]}], " ", ":=", 
-       " ", "\n", "\t\t", 
-       RowBox[{"Failure", "[", 
-        RowBox[{
-        "\"\<Bad Definition\>\"", ",", "\n", "\t\t\t", 
-         "\"\<If you're seeing this we have a bug; Raise an issue on GitHub\>\
-\""}], "\n", "\t\t\t", "]"}]}], ";", "\n", "\t\t", 
-      RowBox[{"If", "[", 
-       RowBox[{"wasProt", ",", " ", 
-        RowBox[{"Protect", "[", "f", "]"}]}], "]"}], ";"}]}], "\n", "\t", 
-    "\t", "]"}]}], ";"}], "\n", 
- RowBox[{"setArgCount", "~", "SetAttributes", "~", 
-  "HoldFirst"}]}], "CodeInput",
- CellChangeTimes->{{3.73047592082053*^9, 3.7304759522709427`*^9}, {
-  3.7304774421764383`*^9, 
-  3.730477454391954*^9}},ExpressionUUID->"8477f891-669e-4ba3-b217-\
-51097b7d0fbf"]
-}, Closed]],
+                    " ", ".."}], "}"}]}], ")"}], " ", "..."}]}], "\n", "\t", 
+                 "\t\t\t\t\t\t\t", "]"}], " ", ":>", " ", 
+                RowBox[{"Hold", "[", "argPatLongToNotDupe2", "]"}]}]}], "\n", 
+              "\t", "\t\t\t\t\t\t", "]"}], ",", " ", "\n", "\t", "\t\t\t\t\t", 
+             RowBox[{"Hold", "[", "argPatLongToNotDupe", "]"}]}], "\n", "\t", 
+            "\t\t\t\t\t", "]"}]}], ",", " ", "\n", "\t", "\t\t\t", "minA", 
+          ",", " ", "\n", "\t", "\t\t\t", "maxA"}], "\n", "\t", "\t\t\t", 
+         "]"}], ";", " ", "\n", "\t", "\t\t", "False"}], "\n", "\t", "\t\t", 
+       ")"}]}], " ", ":=", " ", "\n", "\t", "\t", 
+     RowBox[{"Failure", "[", 
+      RowBox[{
+      "\"\<Bad Definition\>\"", ",", "\n", "\t", "\t\t", 
+       "\"\<If you're seeing this we have a bug; Raise an issue on \
+GitHub\>\""}], "\n", "\t", "\t\t", "]"}]}], ";"}], "\n", "\t\t", 
+   ")"}]}]], \
+"CodeInput",ExpressionUUID->"434a9ac1-887a-4314-8ed9-1d66675b0b16"]
+}, Open  ]],
 
 Cell[CellGroupData[{
 

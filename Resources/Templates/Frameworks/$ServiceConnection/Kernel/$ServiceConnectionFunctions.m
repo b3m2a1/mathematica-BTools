@@ -36,6 +36,8 @@ $$serviceconnectionoauthcodecloudlink::usage=
 	"A static cloud object URL for getting code copied"
 $$serviceconnectionoauthaccesstokencloudlink::usage=
 	"A static cloud object URL for getting an access_token copied"
+	$$serviceconnectionoauthaccesscodecloudlink::usage=
+		"A static cloud object URL for getting an access_code copied"
 
 
 (* ::Subsubsection::Closed:: *)
@@ -142,7 +144,7 @@ $serviceconnectionprivateoauthpagetemplate[keys_]:=
 		<style>
 			* {
 				margin: 0;
-				padding: 0;	
+				padding: 0;
 				border: 0;
 				outline: 0;
 				font-size: 100%;
@@ -151,24 +153,24 @@ $serviceconnectionprivateoauthpagetemplate[keys_]:=
     }
 			body { background: #fcfcfc; padding: 0; width: 100%;}
 			.top-bar {
-				width: 100%; background: #cc0000; height: 100px; 
+				width: 100%; background: #cc0000; height: 100px;
 				border-bottom: solid 1px gray;
       margin: 0px 0px 25px 0px;
 				}
-			.key-field { 
-				background: white; 
+			.key-field {
+				background: white;
       padding: 15px 50px 15px 50px;
 				margin: 5px 0px 5px 0px;
 				width: 100%;
-				border-top: solid 1px gray; 
+				border-top: solid 1px gray;
       border-bottom: solid 1px gray;
 				}
-			.footer-bar { 
+			.footer-bar {
 				position: absolute;
 				bottom: 0;
 				background: #555;
-				width: 100%; height: 50px; 
-				border-top: solid 1px gray; 
+				width: 100%; height: 50px;
+				border-top: solid 1px gray;
 				}
       h3 {
        color: #777;
@@ -184,7 +186,7 @@ $serviceconnectionprivateoauthpagetemplate[keys_]:=
 		</style>
 		<script>
 			function pullAuthCode () {
-				// Copped from stack overflow. 
+				// Copped from stack overflow.
 				// Pulls the query parameters then returns the appropriate one
 				var query_string = {};
 				var query = window.location.hash;
@@ -211,7 +213,7 @@ $serviceconnectionprivateoauthpagetemplate[keys_]:=
 				 			};
 	 		return { `keys` }
 			};
-			function authCodeInsert () { 
+			function authCodeInsert () {
 				// Inserts the pulled parameters into the page
 				var query_strings = pullAuthCode();
 				for ( key in query_strings ){
@@ -270,6 +272,9 @@ $$serviceconnectionoauthcodecloudlink=
 
 $$serviceconnectionoauthaccesstokencloudlink=
 	"https://www.wolframcloud.com/objects/b3m2a1/o/oauthflow/oauth2callback-access_token";
+
+$$serviceconnectionoauthaccesscodecloudlink=
+	"https://www.wolframcloud.com/objects/b3m2a1/o/oauthflow/oauth2callback-access_code";
 
 
 $serviceconnectionprivateoauthfile=
@@ -337,7 +342,7 @@ $serviceconnectiontokenechopage[token_]:=
 $serviceconnectiontokenechocloudlink[token_]:=
 	First@
 		CloudExport[
-			$serviceconnectiontokenechopage[token],
+			$serviceconnectiontokenechopagetemplate[token],
 			"Text",
 			"o/oauthflow/oauth2accesstoken",
 			Permissions->"Public"
@@ -522,7 +527,7 @@ $$serviceconnectionclientsecretsjsonfile=
 		{
 			ParentDirectory@DirectoryName@$InputFileName,
 			FileNameJoin@{
-				$UserBaseDirectory, 
+				$UserBaseDirectory,
 				"ApplicationData",
 				"ServiceConnections",
 				"$ServiceConnection"
@@ -640,7 +645,7 @@ post@Lookup[
 			],
 		fallback
 		]
-	];	
+	];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -685,7 +690,7 @@ $serviceconnectionstoreclientdata[cred_,val_]:=
 				val]
 			],
 		{Get::noopen,Needs::nocont}
-		];	
+		];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -713,7 +718,7 @@ $serviceconnectionclearclientdata[cred_]:=
 				]
 			],
 		{Get::noopen,Needs::nocont}
-		];	
+		];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -729,10 +734,10 @@ $serviceconnectionMimeToFormat:=
 				Quiet[
 					DeleteCases[
 						Flatten[
-							Function[{CloudObject`Private`format},
-								Function[{CloudObject`Private`mime},
-									CloudObject`Private`mime->CloudObject`Private`format
-									]/@ImportExport`GetMIMEType[CloudObject`Private`format]
+							Function[{format},
+								Function[{mime},
+									mime->format
+									]/@ImportExport`GetMIMEType[format]
 								]/@$ExportFormats],
 						$Failed],
 					FileFormat::fmterr
@@ -873,8 +878,15 @@ $serviceconnectionreformatmultipartbodydata[baseCall_,id_,pars_]:=
 								"MIMEType",
 								Replace[Association[fetchParams["BodyData"]]["BodyContent"],{
 										f:(_File|_String)?FileExistsQ:>
-											ImportExport`GetMIMEType[FileBaseName@f],
-										_->"application/vnd.wolfram.mathematica.package"
+											ToLowerCase@Replace[
+												ImportExport`GetMIMEType[ToUpperCase@FileExtension@f],
+												{
+													{}->"application/octet-stream",
+													{fil_}:>fil,
+													{}->"application/octet-stream"
+												}
+												],
+										_->"application/octet-stream"
 								}]
 								]
 							}->
@@ -882,6 +894,15 @@ $serviceconnectionreformatmultipartbodydata[baseCall_,id_,pars_]:=
 									Replace[Association[fetchParams["BodyData"]]["BodyContent"],{
 											f:(_File|_String)?FileExistsQ:>
 												ReadString[f],
+											(Hold|HoldComplete|HoldForm)[e_]:>
+												Replace[e,
+													{
+														fi:(_File|_String)?FileExistsQ:>
+															ReadString[fi],
+														o:Except[_String]:>
+															ToString[o,InputForm]
+														}
+													],
 											e:Except[_String]:>
 												ToString[e,InputForm]
 											}]
@@ -908,6 +929,7 @@ $serviceconnectionreformatbodydata[baseCall_,id_,pars_]:=
 					baseCall
 					][[5]]
 			},
+			heldBodyData
 			If[Length@bodyParams>0,
 			params=
 				Normal@
@@ -918,7 +940,7 @@ $serviceconnectionreformatbodydata[baseCall_,id_,pars_]:=
 							If[StringQ@bodyData,
 								StringJoin@{
 									"[","\n",bodyData,",","\n",
-									ExportString[Normal@#,"JSON"]/.
+									ExportString[Normal@#,"JSON", "Compact"->True]/.
 										f_File:>
 											ReadString[f],
 									"\n","]"
@@ -930,7 +952,8 @@ $serviceconnectionreformatbodydata[baseCall_,id_,pars_]:=
 											f_File:>
 												ReadString[f]
 										],
-									"JSON"
+									"JSON",
+									"Compact"->True
 									]
 								]
 							]@
@@ -1055,5 +1078,5 @@ $serviceconnectionpatchmultipartparams[
 
 
 End[];
- 
+
 EndPackage[];

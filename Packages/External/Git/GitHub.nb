@@ -109,7 +109,7 @@ Cell[BoxData[{
    "\"\<Imports and converts GitHub JSON\>\""}], 
   ";"}]}], "CodeInput",ExpressionUUID->"5c8033df-e034-46a7-ab46-5005f5cf126b"]\
 
-}, Open  ]],
+}, Closed]],
 
 Cell[BoxData[
  RowBox[{
@@ -157,6 +157,24 @@ Cell[BoxData[
   RowBox[{"$GitHubActions", "[", "\"\<CurrentUser\>\"", "]"}], "=", "\n", 
   "\t", "GitHubGetCurrentUser"}]], \
 "CodeInput",ExpressionUUID->"ec4fe376-9d8a-481b-ba3d-4c6abbeb573f"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]GetPassword\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"43487cf7-95a5-484c-b6f6-afd3adff1fc5"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"GitHubGetPassword", "[", "]"}], ":=", "\n", "\t", 
+  "$GitHubPassword"}]], \
+"CodeInput",ExpressionUUID->"04c26b27-1f18-4d43-b346-4fc2f4fba5fb"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$GitHubActions", "[", "\"\<Password\>\"", "]"}], "=", "\n", "\t", 
+  "GitHubGetPassword"}]], \
+"CodeInput",ExpressionUUID->"25e6a19f-4eba-4ef4-928c-763f17d3f8be"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -325,7 +343,7 @@ Cell[BoxData[{
     RowBox[{"k_", ",", " ", "v_"}], "]"}], ":=", "\n", "\t", 
    RowBox[{"GitHubSetConfig", "[", 
     RowBox[{"k", "\[Rule]", "v"}], "]"}]}], 
-  ";"}]}], "CodeInput",ExpressionUUID->"a1c86813-0be8-4994-bd4e-e8bc96886b1b"]\
+  ";"}]}], "CodeInput",ExpressionUUID->"a1c86813-0be8-4994-bd4e-e8bc96886b1b"]
 
 }, Closed]],
 
@@ -670,7 +688,7 @@ Cell[BoxData[
    3.728310577281073*^9},ExpressionUUID->"bd263a37-4be1-4f80-a74d-\
 dcc12d753bcd"]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -807,29 +825,31 @@ Cell[BoxData[{
               RowBox[{"{", "path", "}"}]}], ">", "1"}], "&&", 
             RowBox[{"!", 
              RowBox[{"GitHubReleaseQ", "@", 
-              RowBox[{"{", "path", "}"}]}]}]}], ",", "\n", "\t\t\t\t\t", 
+              RowBox[{"{", "path", "}"}]}]}]}], ",", "\n", "\t\t\t\t\t\t", 
            RowBox[{"Sequence", "@@", 
-            RowBox[{"Flatten", "@", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"Flatten", "@", "\n", "\t", "\t\t\t\t\t\t", 
              RowBox[{"Insert", "[", 
               RowBox[{
-               RowBox[{"{", "path", "}"}], ",", " ", "\n", "\t\t\t\t\t\t\t", 
-               RowBox[{"{", 
+               RowBox[{"{", "path", "}"}], ",", " ", "\n", "\t", 
+               "\t\t\t\t\t\t\t", 
+               RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t\t", 
                 RowBox[{
                  RowBox[{"OptionValue", "[", "\"\<Tree\>\"", "]"}], ",", " ", 
-                 
+                 "\n", "\t", "\t\t\t\t\t\t\t\t", 
                  RowBox[{"Replace", "[", 
                   RowBox[{
                    RowBox[{"OptionValue", "[", "\"\<Branch\>\"", "]"}], ",", 
                    " ", 
-                   RowBox[{"None", "\[Rule]", "Nothing"}]}], "]"}]}], "}"}], 
-               ",", " ", "\n", "\t\t\t\t\t\t\t", "2"}], "\n", 
-              "\t\t\t\t\t\t\t", "]"}]}]}], ",", "\n", "\t\t\t\t\t", 
+                   RowBox[{"None", "\[Rule]", "Nothing"}]}], "]"}]}], "\n", 
+                "\t", "\t\t\t\t\t\t\t\t", "}"}], ",", " ", "\n", "\t", 
+               "\t\t\t\t\t\t\t", "2"}], "\n", "\t\t\t\t\t\t\t\t", "]"}]}]}], 
+           ",", "\n", "\t\t\t\t\t\t", 
            RowBox[{"Sequence", "@@", 
-            RowBox[{"{", "path", "}"}]}]}], "\n", "\t\t\t\t\t", "]"}]}], "\n",
-         "\t\t\t\t", "}"}]}]}], "\n", "\t\t", "|>"}]}]}], 
+            RowBox[{"{", "path", "}"}]}]}], "\n", "\t\t\t\t\t\t", "]"}]}], 
+        "\n", "\t\t\t\t", "}"}]}]}], "\n", "\t\t", "|>"}]}]}], 
   ";"}]}], "CodeInput",ExpressionUUID->"5846b90e-b7e3-4109-b885-cfc98b1381ab"]\
 
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -844,34 +864,47 @@ Cell[BoxData[
 Cell[BoxData[{
  RowBox[{
   RowBox[{
-   RowBox[{"GitHubPath", "[", "\n", "\t", 
-    RowBox[{"repo_String", ",", " ", "\n", "\t", 
-     RowBox[{"t", ":", 
-      RowBox[{
-      "\"\<tree\>\"", "|", "\"\<raw\>\"", "|", "\"\<trunk\>\"", "|", 
-       "\"\<releases\>\""}]}], ",", " ", "\n", "\t", "branch_String", ",", 
-     " ", "\n", "\t", "p___String", ",", " ", "\n", "\t", 
-     RowBox[{"ops", ":", 
-      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
-    "\t", 
-   RowBox[{"GitHubPath", "[", 
-    RowBox[{"repo", ",", "\n", "\t\t", 
-     RowBox[{"If", "[", 
-      RowBox[{
-       RowBox[{"t", "===", "\"\<trunk\>\""}], ",", " ", "branch", ",", " ", 
-       RowBox[{"Sequence", "@@", 
-        RowBox[{"{", "}"}]}]}], "]"}], ",", "\n", "\t\t", "p", ",", " ", "\n",
-      "\t\t", 
-     RowBox[{"\"\<Branch\>\"", "\[Rule]", "\n", "\t\t\t", 
+   RowBox[{
+    RowBox[{"GitHubPath", "[", "\n", "\t", 
+     RowBox[{"repo_String", ",", " ", "\n", "\t", 
+      RowBox[{"t", ":", 
+       RowBox[{"\"\<tree\>\"", "|", "\"\<raw\>\"", "|", "\"\<trunk\>\""}]}], 
+      ",", " ", "\n", "\t", "branch_String", ",", " ", "\n", "\t", 
+      "p___String", ",", " ", "\n", "\t", 
+      RowBox[{"ops", ":", 
+       RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", 
+    "\n", "\t", 
+    RowBox[{"GitHubPath", "[", 
+     RowBox[{"repo", ",", "\n", "\t\t", 
       RowBox[{"If", "[", 
        RowBox[{
-        RowBox[{"MemberQ", "[", 
-         RowBox[{
-          RowBox[{"{", "\"\<trunk\>\"", "}"}], ",", " ", "t"}], "]"}], ",", 
-        "\n", "\t\t\t\t", "None", ",", "\n", "\t\t\t\t", "branch"}], "\n", 
-       "\t\t\t\t", "]"}]}], ",", "\n", "\t\t", 
-     RowBox[{"\"\<Tree\>\"", "\[Rule]", "t"}], ",", "\n", "\t\t", "ops"}], 
-    "\n", "\t\t", "]"}]}], ";"}], "\n", 
+        RowBox[{"t", "===", "\"\<trunk\>\""}], ",", " ", "branch", ",", " ", 
+        RowBox[{"Sequence", "@@", 
+         RowBox[{"{", "}"}]}]}], "]"}], ",", "\n", "\t\t", "p", ",", " ", 
+      "\n", "\t\t", 
+      RowBox[{"\"\<Branch\>\"", "\[Rule]", "\n", "\t\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"MemberQ", "[", 
+          RowBox[{
+           RowBox[{"{", "\"\<trunk\>\"", "}"}], ",", " ", "t"}], "]"}], ",", 
+         "\n", "\t\t\t\t", "None", ",", "\n", "\t\t\t\t", "branch"}], "\n", 
+        "\t\t\t\t", "]"}]}], ",", "\n", "\t\t", 
+      RowBox[{"\"\<Tree\>\"", "\[Rule]", "t"}], ",", "\n", "\t\t", "ops"}], 
+     "\n", "\t\t", "]"}]}], ";"}], "\n", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"GitHubPath", "[", "\n", "\t", 
+      RowBox[{"repo_String", ",", " ", "\n", "\t", 
+       RowBox[{"t", ":", "\"\<releases\>\""}], ",", " ", "\n", "\t", 
+       "p__String", ",", "\n", "\t", 
+       RowBox[{"ops", ":", 
+        RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", 
+     "\n", "\t", 
+     RowBox[{"GitHubPath", "[", 
+      RowBox[{"repo", ",", " ", "t", ",", " ", "p", ",", " ", "ops"}], 
+      "]"}]}], ";"}], "*)"}]}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{
@@ -882,109 +915,70 @@ Cell[BoxData[{
     RowBox[{"(", 
      RowBox[{"TrueQ", "@", "$GitHubPathFormat"}], ")"}]}], ":=", "\n", "\t", 
    RowBox[{"FormatGitHubPath", "[", 
-    RowBox[{"path", ",", "ops"}], "]"}]}], ";"}], "\n", 
- RowBox[{
-  RowBox[{
-   RowBox[{"GitHubPath", "[", "\n", "\t", 
+    RowBox[{"path", ",", "ops"}], "]"}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"cc938e25-6f45-4a7f-a0e1-cab67b04bdb8"]\
+
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Parsers\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"3fbf5776-bf83-4225-89e1-747c37ad10eb"],
+
+Cell[BoxData[
+ RowBox[{"validPathStringQ", "=", "\n", "\t", 
+  RowBox[{"(", "\n", "\t\t", 
+   RowBox[{
     RowBox[{
-     RowBox[{"s_String", "?", 
-      RowBox[{"(", "\n", "\t\t", 
-       RowBox[{
-        RowBox[{
-         RowBox[{
-          RowBox[{"URLParse", "[", 
-           RowBox[{"#", ",", " ", "\"\<Domain\>\""}], "]"}], "\[Equal]", 
-          "\"\<github.com\>\""}], "||", "\n", "\t\t", 
-         RowBox[{"(", "\n", "\t\t\t\t", 
-          RowBox[{
-           RowBox[{
-            RowBox[{"URLParse", "[", 
-             RowBox[{"#", ",", " ", "\"\<Scheme\>\""}], "]"}], "===", 
-            "None"}], "&&", "\n", "\t\t\t\t", 
-           RowBox[{
-            RowBox[{"URLParse", "[", 
-             RowBox[{"#", ",", " ", "\"\<Domain\>\""}], "]"}], "===", 
-            "None"}], "&&", "\n", "\t\t\t\t", 
-           RowBox[{
-            RowBox[{"Length", "@", 
-             RowBox[{"URLParse", "[", 
-              RowBox[{"#", ",", " ", "\"\<Path\>\""}], "]"}]}], ">", "1"}]}], 
-          "\n", "\t\t\t", ")"}], "||", "\n", "\t\t", 
-         RowBox[{
-          RowBox[{"URLParse", "[", 
-           RowBox[{"#", ",", " ", "\"\<Scheme\>\""}], "]"}], "===", 
-          "\"\<github\>\""}], "||", "\n", "\t\t", 
-         RowBox[{
-          RowBox[{"URLParse", "[", 
-           RowBox[{"#", ",", " ", "\"\<Scheme\>\""}], "]"}], "===", 
-          "\"\<github-release\>\""}]}], "&"}], "\n", "\t\t", ")"}]}], ",", 
-     "\n", "\t", 
-     RowBox[{"o", ":", 
-      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
-    "\t", 
-   RowBox[{"GitHubPathParse", "[", "\n", "\t\t", 
-    RowBox[{
-     RowBox[{"Which", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"URLParse", "[", 
+       RowBox[{"#", ",", " ", "\"\<Domain\>\""}], "]"}], "\[Equal]", 
+      "\"\<github.com\>\""}], "||", "\n", "\t\t", 
+     RowBox[{"(", "\n", "\t\t\t\t", 
       RowBox[{
        RowBox[{
         RowBox[{"URLParse", "[", 
-         RowBox[{"s", ",", " ", "\"\<Scheme\>\""}], "]"}], "===", 
-        "\"\<github-release\>\""}], ",", "\n", "\t\t\t\t", 
-       RowBox[{"URLBuild", "@", 
-        RowBox[{"<|", "\n", "\t\t\t\t\t", 
-         RowBox[{
-          RowBox[{"\"\<Scheme\>\"", "->", "\"\<github\>\""}], ",", "\n", 
-          "\t\t\t\t\t", 
-          RowBox[{"\"\<Path\>\"", "\[Rule]", "\n", "\t\t\t\t\t\t", 
-           RowBox[{"Replace", "[", 
-            RowBox[{
-             RowBox[{"URLParse", "[", 
-              RowBox[{"s", ",", " ", "\"\<Path\>\""}], "]"}], ",", "\n", 
-             "\t\t\t\t\t\t\t", 
-             RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
-              RowBox[{
-               RowBox[{
-                RowBox[{"r", ":", 
-                 RowBox[{"{", 
-                  RowBox[{
-                  "___", ",", " ", "\"\<releases\>\"", ",", " ", 
-                   "\"\<latest\>\""}], "}"}]}], "\[RuleDelayed]", "r"}], ",", 
-               "\n", "\t\t\t\t\t\t\t\t", 
-               RowBox[{
-                RowBox[{"{", 
-                 RowBox[{"a___", ",", " ", "\"\<releases\>\""}], "}"}], 
-                "\[RuleDelayed]", 
-                RowBox[{"{", 
-                 RowBox[{"a", ",", " ", "\"\<latest\>\""}], "}"}]}], ",", 
-               "\n", "\t\t\t\t\t\t\t\t", 
-               RowBox[{
-                RowBox[{"{", "a___", "}"}], "\[RuleDelayed]", 
-                RowBox[{"{", 
-                 RowBox[{
-                 "a", ",", " ", "\"\<releases\>\"", ",", " ", 
-                  "\"\<latest\>\""}], "}"}]}]}], "\n", "\t\t\t\t\t\t\t\t", 
-              "}"}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t", 
-         "|>"}]}], ",", "\n", "\t\t", 
+         RowBox[{"#", ",", " ", "\"\<Scheme\>\""}], "]"}], "===", "None"}], "&&",
+        "\n", "\t\t\t\t", 
        RowBox[{
-        RowBox[{
+        RowBox[{"URLParse", "[", 
+         RowBox[{"#", ",", " ", "\"\<Domain\>\""}], "]"}], "===", "None"}], "&&",
+        "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"Length", "@", 
          RowBox[{"URLParse", "[", 
-          RowBox[{"s", ",", " ", "\"\<Scheme\>\""}], "]"}], "===", 
-         "\"\<github\>\""}], "||", "\n", "\t\t\t", 
-        RowBox[{
-         RowBox[{"URLParse", "[", 
-          RowBox[{"s", ",", " ", "\"\<Domain\>\""}], "]"}], "===", 
-         "\"\<github.com\>\""}]}], ",", "\n", "\t\t\t", "s", ",", "\n", 
-       "\t\t", "True", ",", "\n", "\t\t\t", 
-       RowBox[{"\"\<github:\>\"", "<>", "s"}]}], "\n", "\t\t", "]"}], ",", 
-     "\n", "\t", "o"}], "\n", "\t", "]"}]}], ";"}], "\n", 
+          RowBox[{"#", ",", " ", "\"\<Path\>\""}], "]"}]}], ">", "1"}]}], 
+      "\n", "\t\t\t", ")"}], "||", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"URLParse", "[", 
+       RowBox[{"#", ",", " ", "\"\<Scheme\>\""}], "]"}], "===", 
+      "\"\<github\>\""}], "||", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"URLParse", "[", 
+       RowBox[{"#", ",", " ", "\"\<Scheme\>\""}], "]"}], "===", 
+      "\"\<github-release\>\""}]}], "&"}], "\n", "\t\t", 
+   ")"}]}]], \
+"CodeInput",ExpressionUUID->"f17c3a3b-9c60-4333-9b4f-c53415da4de5"],
+
+Cell[BoxData[{
  RowBox[{
   RowBox[{
    RowBox[{"GitHubPath", "[", 
     RowBox[{
-     RowBox[{"URL", "[", "s_String", "]"}], ",", " ", 
-     RowBox[{"ops", ":", 
-      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", 
+     RowBox[{"s_String", "?", "validPathStringQ"}], ",", " ", 
+     RowBox[{"o", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"GitHubPathParse", "[", 
+    RowBox[{"s", ",", " ", "o"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
    RowBox[{"GitHubPath", "[", 
+    RowBox[{
+     RowBox[{"URL", "[", 
+      RowBox[{"s_String", "?", "validPathStringQ"}], "]"}], ",", " ", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"GitHubPathParse", "[", 
     RowBox[{"s", ",", " ", "ops"}], "]"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{"GitHubPath", "[", 
@@ -1004,7 +998,13 @@ Cell[BoxData[{
          RowBox[{"op", ",", " ", "o"}], "}"}]}], ",", " ", "First"}], 
       "]"}]}]}], 
    "]"}]}]}], \
-"CodeInput",ExpressionUUID->"cc938e25-6f45-4a7f-a0e1-cab67b04bdb8"],
+"CodeInput",ExpressionUUID->"8a3d910b-300b-4510-ab26-f662d8c1d442"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]UpValues Stuff\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"ae61d7d5-78ee-4fb5-820b-786c02228e70"],
 
 Cell[BoxData[{
  RowBox[{
@@ -1116,7 +1116,7 @@ Cell[BoxData[
     "]"}]}]}]], \
 "CodeInput",ExpressionUUID->"72b585fd-3c06-4fef-9c60-7ebd354826b6"]
 }, Closed]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1182,14 +1182,105 @@ Cell["\[LeftCeiling]GitHubPathParse\[RightFloor]", "CodeSubsubsection",
    3.7037222877168694`*^9},ExpressionUUID->"51a0d19e-5567-40c8-941a-\
 d01eb2f22678"],
 
+Cell[BoxData[
+ RowBox[{"GitHubPathParse", "//", 
+  "Clear"}]], \
+"CodeInput",ExpressionUUID->"5e8b54fd-6769-40c2-851c-37edba79f691"],
+
 Cell[BoxData[{
  RowBox[{
   RowBox[{
    RowBox[{"Options", "[", "GitHubPathParse", "]"}], "=", "\n", "\t", 
    RowBox[{"Options", "[", "GitHubPath", "]"}]}], ";"}], "\n", 
  RowBox[{
+  RowBox[{"GitHubPathParse", "[", 
+   RowBox[{"s_", ",", " ", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"GitHubPathParseRaw", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"Which", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"URLParse", "[", 
+        RowBox[{"s", ",", " ", "\"\<Scheme\>\""}], "]"}], "===", 
+       "\"\<github-release\>\""}], ",", "\n", "\t", "\t\t\t", 
+      RowBox[{"URLBuild", "@", 
+       RowBox[{"<|", "\n", "\t", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"\"\<Scheme\>\"", "->", "\"\<github\>\""}], ",", "\n", "\t", 
+         "\t\t\t\t", 
+         RowBox[{"\"\<Path\>\"", "\[Rule]", "\n", "\t", "\t\t\t\t\t", 
+          RowBox[{"Replace", "[", 
+           RowBox[{
+            RowBox[{"URLParse", "[", 
+             RowBox[{"s", ",", " ", "\"\<Path\>\""}], "]"}], ",", "\n", "\t", 
+            "\t\t\t\t\t\t", 
+            RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"r", ":", 
+                RowBox[{"{", 
+                 RowBox[{
+                 "_", ",", " ", "_", ",", " ", "\"\<releases\>\"", ",", " ", 
+                  "\"\<latest\>\""}], "}"}]}], "\[RuleDelayed]", "r"}], ",", 
+              "\n", "\t", "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"a_", ",", " ", "b_", ",", " ", "\"\<releases\>\""}], 
+                "}"}], "\[RuleDelayed]", 
+               RowBox[{"{", 
+                RowBox[{
+                "a", ",", " ", "b", ",", " ", "\"\<releases\>\"", ",", " ", 
+                 "\"\<latest\>\""}], "}"}]}], ",", "\n", "\t", 
+              "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"a_", ",", " ", "b_"}], "}"}], "\[RuleDelayed]", 
+               RowBox[{"{", 
+                RowBox[{
+                "a", ",", " ", "b", ",", " ", "\"\<releases\>\"", ",", " ", 
+                 "\"\<latest\>\""}], "}"}]}], ",", "\n", "\t", 
+              "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{
+                "a_", ",", " ", "b_", ",", " ", "\"\<tag\>\"", ",", " ", 
+                 "c_"}], "}"}], "\[RuleDelayed]", 
+               RowBox[{"{", 
+                RowBox[{
+                "a", ",", " ", "b", ",", " ", "\"\<releases\>\"", ",", " ", 
+                 "\"\<tag\>\"", ",", " ", "c"}], "}"}]}], ",", "\n", 
+              "\t\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"a_", ",", " ", "b_", ",", " ", "c_"}], "}"}], 
+               "\[RuleDelayed]", 
+               RowBox[{"{", 
+                RowBox[{
+                "a", ",", " ", "b", ",", " ", "\"\<releases\>\"", ",", " ", 
+                 "\"\<tag\>\"", ",", " ", "c"}], "}"}]}]}], "\n", 
+             "\t\t\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}]}], 
+        "\n", "\t\t\t\t\t", "|>"}]}], ",", "\n", "\t", "\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"URLParse", "[", 
+         RowBox[{"s", ",", " ", "\"\<Scheme\>\""}], "]"}], "===", 
+        "\"\<github\>\""}], "||", "\n", "\t", "\t\t\t", 
+       RowBox[{
+        RowBox[{"URLParse", "[", 
+         RowBox[{"s", ",", " ", "\"\<Domain\>\""}], "]"}], "===", 
+        "\"\<github.com\>\""}]}], ",", "\n", "\t", "\t\t\t", "s", ",", "\n", 
+      "\t", "\t\t", "True", ",", "\n", "\t", "\t\t\t", 
+      RowBox[{"\"\<github:\>\"", "<>", "s"}]}], "\n", "\t\t\t", "]"}], ",", 
+    "\n", "\t", "ops"}], "\n", "\t", 
+   "]"}]}]}], \
+"CodeInput",ExpressionUUID->"a1606034-8b60-4c38-9780-965f75d6ce29"],
+
+Cell[BoxData[
+ RowBox[{
   RowBox[{
-   RowBox[{"GitHubPathParse", "[", 
+   RowBox[{"GitHubPathParseRaw", "[", 
     RowBox[{
      RowBox[{"path", ":", 
       RowBox[{"_String", "|", "_URL"}]}], ",", " ", 
@@ -1216,9 +1307,8 @@ Cell[BoxData[{
            RowBox[{"\"\<Username\>\"", "\[Rule]", "user"}], ",", " ", "o"}], 
           "]"}]}], "\n", "\t\t\t\t", "}"}]}], "\n", "\t\t\t", "]"}], ",", 
      "\n", "\t\t", "$Failed"}], "\n", "\t\t", "]"}]}], 
-  ";"}]}], "CodeInput",ExpressionUUID->"a1606034-8b60-4c38-9780-965f75d6ce29"]\
-
-}, Closed]],
+  ";"}]], "CodeInput",ExpressionUUID->"3008b6fb-2944-4107-bb8c-cb355b9e8d02"]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1327,7 +1417,7 @@ Cell[BoxData[{
   RowBox[{"GitHubRepoQ", "[", "_", "]"}], ":=", 
   "False"}]}], \
 "CodeInput",ExpressionUUID->"5565db2c-a634-4338-a372-403715aee9c8"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1389,7 +1479,7 @@ Cell[BoxData[{
    RowBox[{"GitHubReleaseQ", "[", "___", "]"}], ":=", "False"}], 
   ";"}]}], "CodeInput",ExpressionUUID->"4794e8c1-5b8a-4bdd-96a9-65fee4f39cc1"]\
 
-}, Closed]]
+}, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -1733,7 +1823,7 @@ Cell[BoxData[
   3.7297838452320023`*^9}},ExpressionUUID->"c81fb7cd-a442-4b76-80ed-\
 ec5d72ede991"]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -2140,8 +2230,599 @@ Cell[BoxData[
          "\t\t\t\t", "}"}]}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
     "]"}]}], ";"}]], \
 "CodeInput",ExpressionUUID->"08a61d52-8fd5-48dc-93ae-197a35205601"]
-}, Open  ]]
+}, Closed]]
 }, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]OAuth\[RightFloor]", "CodeSubsection",
+ Evaluatable->True,ExpressionUUID->"ab0535fb-3301-4189-8148-a1626ac80eeb"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Clear\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.734840118515174*^9, 
+  3.7348401196996326`*^9}},ExpressionUUID->"ce809960-551d-47c1-b8b3-\
+cd0f5d135786"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"GitHubClearAuth", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"user", ":", 
+      RowBox[{"(", 
+       RowBox[{"_String", "|", "Automatic"}], ")"}], ":", "Automatic"}], ",", 
+     "\n", "\t", 
+     RowBox[{"clientID", ":", 
+      RowBox[{"_String", "|", "Automatic"}], ":", "Automatic"}], ",", "\n", 
+     "\t", 
+     RowBox[{"scope", ":", 
+      RowBox[{"_String", "?", "GHOAuthScopeQ"}], ":", "\"\<drive\>\""}]}], 
+    "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"u", "=", "\n", "\t\t\t\t", 
+        RowBox[{"StringTrim", "[", "\n", "\t", "\t", "\t\t\t", 
+         RowBox[{
+          RowBox[{"Replace", "[", 
+           RowBox[{"user", ",", " ", 
+            RowBox[{"Automatic", "\[RuleDelayed]", "$GitHubUsername"}]}], 
+           "]"}], ",", "\n", "\t", "\t\t\t\t", "\"\<@gmail.com\>\""}], "\n", 
+         "\t", "\t", "\t\t\t", "]"}]}], ",", "\n", "\t", "\t\t", 
+       RowBox[{"cid", "=", "\n", "\t", "\t\t\t", 
+        RowBox[{"Replace", "[", 
+         RowBox[{"clientID", ",", " ", 
+          RowBox[{"Automatic", "\[RuleDelayed]", "$GitHubClientID"}]}], 
+         "]"}]}], ",", "\n", "\t", "\t\t", 
+       RowBox[{"kc", "=", "$GHCacheSym"}]}], "\n", "\t\t\t", "}"}], ",", "\n",
+      "\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"kc", "[", 
+        RowBox[{"{", 
+         RowBox[{"u", ",", "cid", ",", "scope", ",", "\"\<token\>\""}], "}"}],
+         "]"}], "=."}], ";", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"kc", "[", 
+        RowBox[{"{", 
+         RowBox[{"u", ",", "cid", ",", "scope", ",", "\"\<code\>\""}], "}"}], 
+        "]"}], "=."}], ";"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"98f653ab-1fa8-4d5f-a09b-aeed8989e6be"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Scopes\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.704407343619795*^9, 
+  3.704407347185019*^9}},ExpressionUUID->"de4fc3e4-eb14-45fc-a324-\
+7d1255fabb5f"],
+
+Cell[BoxData[
+ RowBox[{"(*", 
+  RowBox[{
+   RowBox[{"$GAOAuthScopes", "=", "\n", "\t", 
+    RowBox[{"<|", "\n", "\t\t", 
+     RowBox[{"\"\<drive\>\"", "->", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{
+       "\"\<file\>\"", ",", "\n", "\t\t\t\t", "\"\<appdata\>\"", ",", "\n", 
+        "\t\t\t\t", "\"\<metadata\>\"", ",", "\n", "\t\t\t\t", 
+        "\"\<metadata.readonly\>\"", ",", "\n", "\t\t\t\t", 
+        "\"\<photos.readonly\>\"", ",", "\n", "\t\t\t\t", "\"\<readonly\>\"", 
+        ",", "\n", "\t\t\t\t", "\"\<scripts\>\""}], "\n", "\t\t\t\t", "}"}]}],
+      "\n", "\t\t", "|>"}]}], ";"}], "*)"}]], "CodeInput",
+ CellChangeTimes->{{3.7041535471330557`*^9, 
+  3.7041536233575077`*^9}},ExpressionUUID->"883f21fa-89b8-4e65-9b71-\
+de92cbd967cf"],
+
+Cell[BoxData[
+ RowBox[{"(*", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"GAOAuthScopeQ", "[", "s_", "]"}], ":=", "\n", "\t", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"KeyMemberQ", "[", 
+       RowBox[{"$GAOAuthScopes", ",", 
+        RowBox[{"ToLowerCase", "@", "s"}]}], "]"}], "||", "\n", "\t\t", 
+      RowBox[{"With", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"sp", "=", 
+          RowBox[{"StringSplit", "[", 
+           RowBox[{
+            RowBox[{"ToLowerCase", "@", "s"}], ",", "\"\<.\>\"", ",", "2"}], 
+           "]"}]}], "}"}], ",", "\n", "\t\t\t", 
+        RowBox[{"MemberQ", "[", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"$GAOAuthScopes", "[", 
+           RowBox[{"First", "@", "sp"}], "]"}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"Last", "@", "sp"}]}], "\n", "\t\t\t\t", "]"}]}], "\n", 
+       "\t\t\t", "]"}]}], "\n", "\t\t", ")"}]}], ";"}], "*)"}]], "CodeInput",
+ CellChangeTimes->{{3.7041536390021963`*^9, 
+  3.704153722202602*^9}},ExpressionUUID->"fe92d4c9-f44e-4177-a385-\
+3fae4365518a"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Requests\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.704407343619795*^9, 
+  3.704407365620213*^9}},ExpressionUUID->"85e97f54-14c5-4d9c-b9de-\
+dd4e75232036"],
+
+Cell[BoxData[
+ RowBox[{"(*", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"GAOAuthCodeURL", "[", "\n", "\t", 
+     RowBox[{"clientID_", ",", "\n", "\t", "scope_"}], "\n", "\t", "]"}], ":=",
+     "\n", "\t", 
+    RowBox[{"With", "[", 
+     RowBox[{
+      RowBox[{"{", "\n", "\t\t", 
+       RowBox[{
+        RowBox[{"cid", "=", "\n", "\t\t\t", 
+         RowBox[{"Replace", "[", 
+          RowBox[{"clientID", ",", "\n", "\t\t\t\t", 
+           RowBox[{
+           "Automatic", "\[RuleDelayed]", "\n", "\t\t\t\t\t", 
+            "$GAClientID"}]}], "\n", "\t\t\t\t", "]"}]}], ",", "\n", "\t\t", 
+        RowBox[{"s", "=", 
+         RowBox[{"URLBuild", "@", 
+          RowBox[{"{", 
+           RowBox[{"\"\<https://www.googleapis.com/auth\>\"", ",", "scope"}], 
+           "}"}]}]}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+      RowBox[{"URLBuild", "@", "\n", "\t\t\t", 
+       RowBox[{"GAURLAssoc", "[", 
+        RowBox[{"\"\<OAuthCode\>\"", ",", "\n", "\t\t\t\t", 
+         RowBox[{"\"\<client_id\>\"", "\[Rule]", "cid"}], ",", "\n", "\t", 
+         "\t", "\t\t", 
+         RowBox[{"\"\<scope\>\"", "\[Rule]", "s"}]}], "\n", "\t\t\t\t", 
+        "]"}]}]}], "\n", "\t\t", "]"}]}], ";"}], "*)"}]], "CodeInput",
+ CellChangeTimes->{{3.704217289140033*^9, 3.704217380970406*^9}, {
+   3.704217451002118*^9, 3.704217482577188*^9}, {3.704218082258048*^9, 
+   3.704218089713018*^9}, {3.7042182204308443`*^9, 3.704218243879983*^9}, {
+   3.704399307725911*^9, 3.70439932311629*^9}, {3.704399526393512*^9, 
+   3.704399542038047*^9}, {3.704404468644308*^9, 3.704404491412129*^9}, 
+   3.704404794022266*^9, 
+   3.704412407771387*^9},ExpressionUUID->"0d0e0a86-16ac-4bda-9118-\
+cfd69d64dc86"],
+
+Cell[BoxData[
+ RowBox[{"(*", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"GAOAuthTokenRequest", "[", "code_", "]"}], ":=", "\n", "\t", 
+    RowBox[{"HTTPRequest", "[", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"URLBuild", "@", 
+       RowBox[{"GAURLAssoc", "[", "\"\<OAuthToken\>\"", "]"}]}], ",", "\n", 
+      "\t\t", 
+      RowBox[{"<|", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"\"\<Method\>\"", "\[Rule]", "\"\<Post\>\""}], ",", "\n", 
+        "\t\t\t", 
+        RowBox[{"\"\<Body\>\"", "\[Rule]", 
+         RowBox[{"{", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"\"\<code\>\"", "\[Rule]", "code"}], ",", "\n", "\t", 
+           "\t\t\t", 
+           RowBox[{"\"\<client_id\>\"", "\[Rule]", "$GAClientID"}], ",", "\n",
+            "\t", "\t\t\t", 
+           RowBox[{"\"\<client_secret\>\"", "\[Rule]", "$GAClientSecret"}], 
+           ",", "\n", "\t", "\t\t\t", 
+           RowBox[{
+           "\"\<grant_type\>\"", "\[Rule]", "\"\<authorization_code\>\""}], 
+           ",", "\n", "\t\t\t\t", 
+           RowBox[{
+           "\"\<redirect_uri\>\"", "->", 
+            "\"\<http://localhost/oauth2callback\>\""}]}], "\n", "\t\t\t\t", 
+          "}"}]}]}], "\n", "\t\t\t", "|>"}]}], "\n", "\t\t", "]"}]}], ";", 
+   "\n", 
+   RowBox[{
+    RowBox[{"GAOAuthRefreshRequest", "[", "token_", "]"}], ":=", "\n", "\t", 
+    RowBox[{"HTTPRequest", "[", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"URLBuild", "@", 
+       RowBox[{"GAURLAssoc", "[", "\"\<OAuthToken\>\"", "]"}]}], ",", "\n", 
+      "\t\t", 
+      RowBox[{"<|", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"\"\<Method\>\"", "\[Rule]", "\"\<Post\>\""}], ",", "\n", 
+        "\t\t\t", 
+        RowBox[{"\"\<Body\>\"", "\[Rule]", 
+         RowBox[{"{", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"\"\<refresh_token\>\"", "\[Rule]", "token"}], ",", "\n", 
+           "\t\t\t\t", 
+           RowBox[{"\"\<client_id\>\"", "\[Rule]", "$GAClientID"}], ",", "\n",
+            "\t", "\t\t\t", 
+           RowBox[{"\"\<client_secret\>\"", "\[Rule]", "$GAClientSecret"}], 
+           ",", "\n", "\t", "\t\t\t", 
+           RowBox[{
+           "\"\<grant_type\>\"", "\[Rule]", "\"\<refresh_token\>\""}]}], "\n",
+           "\t\t\t\t", "}"}]}]}], "\n", "\t\t\t", "|>"}]}], "\n", "\t\t", 
+     "]"}]}], ";"}], "*)"}]], "CodeInput",
+ CellChangeTimes->{{3.7044044753408957`*^9, 3.704404546323728*^9}, {
+  3.704405223276102*^9, 3.7044053059492617`*^9}, {3.704405720012932*^9, 
+  3.704405726550679*^9}, {3.704405867160124*^9, 3.7044058947319813`*^9}, {
+  3.70440594055486*^9, 3.704405969061781*^9}, {3.704406322657716*^9, 
+  3.704406323090069*^9}, {3.7044063964618607`*^9, 3.704406396913866*^9}, {
+  3.7044072856746473`*^9, 3.704407329571311*^9}, {3.7044078533520527`*^9, 
+  3.7044078574622507`*^9}},ExpressionUUID->"d7062c6e-1253-4032-8b04-\
+d3e2f6e7f17a"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Auth\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.704407343619795*^9, 3.704407347185019*^9}, {
+  3.7044073781548557`*^9, 
+  3.7044073786013937`*^9}},ExpressionUUID->"f067591d-3eb4-4ab4-be78-\
+42878f0a6d0e"],
+
+Cell[BoxData[
+ RowBox[{"(*", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"GAOAuthenticate", "[", "\n", "\t", 
+     RowBox[{
+      RowBox[{"user", ":", 
+       RowBox[{"(", 
+        RowBox[{"_String", "|", "Automatic"}], ")"}], ":", "Automatic"}], ",",
+       "\n", "\t", 
+      RowBox[{"clientID", ":", 
+       RowBox[{"_String", "|", "Automatic"}], ":", "Automatic"}], ",", "\n", 
+      "\t", 
+      RowBox[{"scope", ":", 
+       RowBox[{"_String", "?", "GAOAuthScopeQ"}], ":", "\"\<drive\>\""}]}], 
+     "\n", "\t", "]"}], ":=", "\n", "\t", 
+    RowBox[{"With", "[", 
+     RowBox[{
+      RowBox[{"{", "\n", "\t\t", 
+       RowBox[{
+        RowBox[{"u", "=", "\n", "\t\t\t", 
+         RowBox[{"StringTrim", "[", "\n", "\t", "\t\t\t", 
+          RowBox[{
+           RowBox[{"Replace", "[", 
+            RowBox[{"user", ",", " ", 
+             RowBox[{"Automatic", "\[RuleDelayed]", "$GoogleAPIUsername"}]}], 
+            "]"}], ",", "\n", "\t\t\t\t", "\"\<@gmail.com\>\""}], "\n", "\t", 
+          "\t\t\t", "]"}]}], ",", "\n", "\t\t", 
+        RowBox[{"cid", "=", "\n", "\t\t\t", 
+         RowBox[{"Replace", "[", 
+          RowBox[{"clientID", ",", " ", 
+           RowBox[{"Automatic", "\[RuleDelayed]", "$GAClientID"}]}], 
+          "]"}]}]}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+      RowBox[{"With", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"a", "=", 
+          RowBox[{"GAOAuthTokenData", "[", 
+           RowBox[{"u", ",", " ", "cid", ",", " ", "scope"}], "]"}]}], "}"}], 
+        ",", "\n", "\t\t\t", 
+        RowBox[{"Block", "[", 
+         RowBox[{
+          RowBox[{"{", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"$GAOAuthTokenDataTmp", "=", "a"}], ",", "\n", "\t\t\t\t", 
+            RowBox[{"$GAOAuthTokenCalls", "=", "\n", "\t\t\t\t\t", 
+             RowBox[{"If", "[", 
+              RowBox[{
+               RowBox[{"!", 
+                RowBox[{"IntegerQ", "@", "$GAOAuthTokenCalls"}]}], ",", " ", 
+               "0", ",", " ", "$GAOAuthTokenCalls"}], "]"}]}]}], "\n", 
+           "\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"$GAOAuthTokenCalls", "<", "4"}], "&&", 
+             RowBox[{"AssociationQ", "@", "a"}]}], ",", "\n", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"$GAOAuthTokenCalls", "++"}], ";", "\n", "\t\t\t\t\t", 
+             RowBox[{"If", "[", "\n", "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"Quantity", "[", 
+                   RowBox[{
+                    RowBox[{"ToExpression", "@", "#"}], ",", 
+                    "\"\<Seconds\>\""}], "]"}], ">", 
+                  RowBox[{"(", 
+                   RowBox[{"Now", "-", "#2"}], ")"}]}], "&"}], "@@", "\n", 
+                "\t", "\t", "\t\t\t\t\t", 
+                RowBox[{"Lookup", "[", 
+                 RowBox[{"a", ",", 
+                  RowBox[{"{", 
+                   RowBox[{"\"\<expires_in\>\"", ",", "\"\<LastUpdated\>\""}],
+                    "}"}], ",", " ", "3600"}], "]"}]}], ",", "\n", 
+               "\t\t\t\t\t\t", 
+               RowBox[{"Lookup", "[", 
+                RowBox[{"a", ",", "\"\<access_token\>\""}], "]"}], ",", "\n", 
+               "\t", "\t", "\t\t\t\t", 
+               RowBox[{"If", "[", 
+                RowBox[{
+                 RowBox[{"KeyMemberQ", "[", 
+                  RowBox[{"a", ",", "\"\<refresh_token\>\""}], "]"}], ",", 
+                 "\n", "\t", "\t", "\t\t\t\t\t", 
+                 RowBox[{"Replace", "[", 
+                  RowBox[{
+                   RowBox[{"Import", "[", 
+                    RowBox[{
+                    RowBox[{"GAOAuthRefreshRequest", "@", 
+                    RowBox[{"a", "[", "\"\<refresh_token\>\"", "]"}]}], ",", 
+                    "\"\<RawJSON\>\""}], "]"}], ",", 
+                   RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"r_Association", ":>", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"With", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"kc", "=", "$GACacheSym"}], "}"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"kc", "[", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    "u", ",", "cid", ",", "scope", ",", "\"\<token\>\""}], 
+                    "}"}], "]"}], "=", "\n", "\t", "\t", "\t", 
+                    "\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Append", "[", 
+                    RowBox[{"r", ",", 
+                    RowBox[{"\"\<LastUpdated\>\"", "\[Rule]", "Now"}]}], 
+                    "]"}]}], ";", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"GAOAuthenticate", "[", 
+                    RowBox[{"u", ",", "cid", ",", "scope"}], "]"}]}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t", 
+                    RowBox[{"_", "->", "$Failed"}]}], "\n", "\t", "\t", "\t", 
+                    "\t\t\t\t\t", "}"}]}], "]"}], ",", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{"If", "[", 
+                  RowBox[{
+                   RowBox[{
+                    RowBox[{"$GAOAuthTokenCalls", ">", "1"}], "&&", 
+                    RowBox[{"KeyMemberQ", "[", 
+                    RowBox[{"a", ",", "\"\<access_token\>\""}], "]"}]}], ",", 
+                   "\n", "\t\t\t\t\t\t\t\t", 
+                   RowBox[{"a", "[", "\"\<access_token\>\"", "]"}], ",", "\n",
+                    "\t\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"GoogleAPIClearAuth", "[", 
+                    RowBox[{"u", ",", "cid", ",", "scope"}], "]"}], ";", "\n",
+                     "\t\t\t\t\t\t\t\t", 
+                    RowBox[{"GAOAuthenticate", "[", 
+                    RowBox[{"u", ",", "cid", ",", "scope"}], "]"}]}]}], "\n", 
+                  "\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t", "]"}], 
+               ",", "\n", "\t\t\t\t\t\t", "$Failed"}], "\n", "\t\t\t\t\t\t", 
+              "]"}]}], ",", "\n", "\t\t\t\t\t", "$Failed"}], "\n", 
+           "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", 
+       "]"}]}], "\n", "\t\t", "]"}]}], ";"}], "*)"}]], "CodeInput",
+ CellChangeTimes->{{3.704152245937763*^9, 3.704152269085229*^9}, 
+   3.704152407314834*^9, {3.7041535079072866`*^9, 3.70415354488306*^9}, {
+   3.704153631881968*^9, 3.704153635360695*^9}, {3.704153666172489*^9, 
+   3.7041536683943167`*^9}, {3.704153734955559*^9, 3.7041537478609962`*^9}, {
+   3.704153903459049*^9, 3.704153941235005*^9}, 3.7041547920198717`*^9, {
+   3.704157568233798*^9, 3.7041575687684717`*^9}, {3.70415800661298*^9, 
+   3.70415804969309*^9}, {3.704158091569962*^9, 3.7041581582183027`*^9}, {
+   3.704217211835392*^9, 3.704217255898592*^9}, 3.704217351381868*^9, {
+   3.7042174890102167`*^9, 3.7042175495910807`*^9}, {3.704217914650906*^9, 
+   3.704217926049142*^9}, {3.704218060444283*^9, 3.704218066361372*^9}, {
+   3.7043998549757547`*^9, 3.704399938082333*^9}, {3.7044048088779373`*^9, 
+   3.704404809452928*^9}, {3.70440502568195*^9, 3.7044052113378267`*^9}, {
+   3.7044055470908213`*^9, 3.7044055600575047`*^9}, {3.704406572944916*^9, 
+   3.704406652555252*^9}, {3.704406776670209*^9, 3.704406866841387*^9}, {
+   3.704406955933085*^9, 3.704406977994359*^9}, {3.7044070196538763`*^9, 
+   3.7044070199183702`*^9}, {3.7044070955845013`*^9, 3.704407204039177*^9}, {
+   3.704407389947613*^9, 3.704407392480397*^9}, {3.704407425760953*^9, 
+   3.704407456826722*^9}, {3.704407499246567*^9, 3.704407645876357*^9}, {
+   3.704407817562467*^9, 3.7044078282005377`*^9}, {3.704407974054574*^9, 
+   3.704407998617695*^9}, {3.704408054602543*^9, 3.704408054896233*^9}, {
+   3.704408232430522*^9, 3.704408300888001*^9}, 3.704412525692698*^9, {
+   3.704578587054851*^9, 3.7045786069624147`*^9}, {3.704580047174643*^9, 
+   3.7045801467913*^9}, {3.704580255546556*^9, 3.704580257343474*^9}, {
+   3.704580334233431*^9, 3.704580337078128*^9}, {3.704580526144487*^9, 
+   3.704580558566659*^9}, {3.704639938735136*^9, 3.7046399639332523`*^9}, 
+   3.704652568455933*^9, {3.70465354896032*^9, 3.70465355551416*^9}, {
+   3.704654481835306*^9, 3.704654495322069*^9}, {3.704656881921751*^9, 
+   3.704656883790267*^9}, {3.7046569199355717`*^9, 3.70465704859964*^9}, {
+   3.7046571243847427`*^9, 3.704657148403262*^9}, {3.70465769527437*^9, 
+   3.704657741403573*^9}, {3.7046586063942413`*^9, 3.704658614661681*^9}, 
+   3.7336971278839293`*^9, {3.7348372086409597`*^9, 3.734837222234748*^9}, {
+   3.734837513575652*^9, 3.734837520379994*^9}, 
+   3.73484013955544*^9},ExpressionUUID->"61e0d6b5-c18b-43d0-9b31-15705f43848d"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]OAuthTokenData\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{3.734840130898121*^9, 
+  3.7348401982591763`*^9},ExpressionUUID->"b3e13fb8-fb4f-49bf-b5a4-\
+82fccee9d903"],
+
+Cell[BoxData[
+ RowBox[{"(*", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"GAOAuthTokenData", "[", "\n", "\t", 
+     RowBox[{
+      RowBox[{"user", ":", 
+       RowBox[{"_String", "|", "Automatic"}], ":", "Automatic"}], ",", "\n", 
+      "\t", 
+      RowBox[{"clientID", ":", 
+       RowBox[{"_String", "|", "Automatic"}], ":", "Automatic"}], ",", "\n", 
+      "\t", 
+      RowBox[{"scope", ":", 
+       RowBox[{"_String", "?", "GAOAuthScopeQ"}], ":", "\"\<drive\>\""}]}], 
+     "\n", "\t", "]"}], ":=", "\n", "\t", 
+    RowBox[{"Replace", "[", 
+     RowBox[{"$GAOAuthTokenDataTmp", ",", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"Except", "[", "_String", "]"}], ":>", "\n", "\t\t\t", 
+       RowBox[{"With", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"{", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"u", "=", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"StringTrim", "[", "\n", "\t", "\t", "\t", "\t", "\t\t\t", 
+             RowBox[{
+              RowBox[{"Replace", "[", 
+               RowBox[{"user", ",", 
+                RowBox[{
+                "Automatic", "\[RuleDelayed]", "$GoogleAPIUsername"}]}], 
+               "]"}], ",", "\n", "\t", "\t", "\t", "\t\t\t\t", 
+              "\"\<@gmail.com\>\""}], "\n", "\t", "\t", "\t", "\t\t\t\t", 
+             "]"}]}], ",", "\n", "\t", "\t", "\t", "\t\t", 
+           RowBox[{"cid", "=", "\n", "\t", "\t", "\t", "\t\t\t", 
+            RowBox[{"Replace", "[", 
+             RowBox[{"clientID", ",", 
+              RowBox[{"Automatic", "\[RuleDelayed]", "$GAClientID"}]}], 
+             "]"}]}], ",", "\n", "\t", "\t\t\t\t", 
+           RowBox[{"kc", "=", "$GACacheSym"}]}], "\n", "\t", "\t\t\t\t", 
+          "}"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"Replace", "[", 
+          RowBox[{
+           RowBox[{"kc", "[", 
+            RowBox[{"{", 
+             RowBox[{"u", ",", "cid", ",", "scope", ",", "\"\<token\>\""}], 
+             "}"}], "]"}], ",", "\n", "\t", "\t", "\t", "\t\t", 
+           RowBox[{
+            RowBox[{"Except", "[", 
+             RowBox[{"_Association", "?", 
+              RowBox[{"(", 
+               RowBox[{"KeyMemberQ", "[", "\"\<access_token\>\"", "]"}], 
+               ")"}]}], "]"}], ":>", "\n", "\t", "\t", "\t\t\t\t", 
+            RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Replace", "[", 
+               RowBox[{
+                RowBox[{"kc", "[", 
+                 RowBox[{"{", 
+                  RowBox[{
+                  "u", ",", "clientID", ",", "scope", ",", "\"\<code\>\""}], 
+                  "}"}], "]"}], ",", "\n", "\t", "\t", "\t", "\t", "\t", 
+                "\t\t\t", 
+                RowBox[{
+                 RowBox[{"Except", "[", 
+                  RowBox[{"_String", "?", 
+                   RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"StringLength", "@", "#"}], ">", "0"}], "&"}], 
+                    ")"}]}], "]"}], ":>", "\n", "\t", "\t", "\t", "\t", "\t", 
+                 "\t\t\t\t", 
+                 RowBox[{
+                 "Replace", "[", "\n", "\t", "\t", "\t", "\t", "\t", 
+                  "\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{
+                   "OAuthDialog", "[", "\n", "\t", "\t", "\t", "\t", "\t", 
+                    "\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<Google OAuth Authorization\>\"", ",", "\n", "\t", 
+                    "\t", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"\"\<Google OAuth\>\"", ",", 
+                    RowBox[{"GAOAuthCodeURL", "[", 
+                    RowBox[{"cid", ",", "scope"}], "]"}]}], "}"}], ",", "\n", 
+                    "\t", "\t", "\t\t\t\t\t\t\t\t\t\t", "$GAKeyExample"}], 
+                    "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t\t", "}"}], ",", 
+                    "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"$GAParameters", "[", 
+                    RowBox[{"\"\<Root\>\"", ",", "\"\<Domain\>\""}], "]"}]}], 
+                    "\n", "\t", "\t", "\t", "\t", "\t", "\t\t\t\t\t\t", "]"}],
+                    ",", "\n", "\t", "\t", "\t", "\t", "\t", "\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"s_String", "?", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"StringLength", "@", "#"}], ">", "0"}], "&"}], 
+                    ")"}]}], ":>", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{"kc", "[", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    "u", ",", "cid", ",", "scope", ",", "\"\<code\>\""}], 
+                    "}"}], "]"}], "=", "s"}], ")"}]}]}], "\n", "\t", "\t", 
+                  "\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t", "\t", 
+               "\t\t\t\t\t\t", "]"}], ",", 
+              RowBox[{"{", "\n", "\t", "\t", "\t", "\t\t\t\t", 
+               RowBox[{
+                RowBox[{"code_String", "?", 
+                 RowBox[{"(", 
+                  RowBox[{
+                   RowBox[{
+                    RowBox[{"StringLength", "@", "#"}], ">", "0"}], "&"}], 
+                  ")"}]}], ":>", "\n", "\t", "\t", "\t", "\t\t\t\t\t", 
+                RowBox[{"Replace", "[", 
+                 RowBox[{
+                  RowBox[{"Import", "[", 
+                   RowBox[{
+                    RowBox[{"GAOAuthTokenRequest", "[", "code", "]"}], ",", 
+                    "\"\<RawJSON\>\""}], "]"}], ",", "\n", "\t", "\t", "\t", 
+                  "\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"r_Association", "?", 
+                    RowBox[{"(", 
+                    RowBox[{"KeyMemberQ", "[", "\"\<access_token\>\"", "]"}], 
+                    ")"}]}], ":>", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"(", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"kc", "[", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    "u", ",", "cid", ",", "scope", ",", "\"\<token\>\""}], 
+                    "}"}], "]"}], "=", "\n", "\t", "\t", "\t", 
+                    "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Append", "[", 
+                    RowBox[{"r", ",", 
+                    RowBox[{"\"\<LastUpdated\>\"", "\[Rule]", "Now"}]}], 
+                    "]"}]}], "\n", "\t", "\t", "\t", "\t\t\t\t\t\t\t\t", 
+                    ")"}]}]}], "\n", "\t", "\t", "\t", "\t\t\t\t\t\t", 
+                 "]"}]}], "\n", "\t", "\t", "\t", "\t\t\t\t", "}"}]}], 
+             "]"}]}]}], "\n", "\t", "\t\t\t\t", "]"}]}], "\n", "\t", "\t\t\t",
+         "]"}]}]}], "\n", "\t\t", "]"}]}], ";"}], "*)"}]], "CodeInput",
+ CellChangeTimes->{{3.704152245937763*^9, 3.704152269085229*^9}, 
+   3.704152407314834*^9, {3.7041535079072866`*^9, 3.70415354488306*^9}, {
+   3.704153631881968*^9, 3.704153635360695*^9}, {3.704153666172489*^9, 
+   3.7041536683943167`*^9}, {3.704153734955559*^9, 3.7041537478609962`*^9}, {
+   3.704153903459049*^9, 3.704153941235005*^9}, 3.7041547920198717`*^9, {
+   3.704157568233798*^9, 3.7041575687684717`*^9}, {3.70415800661298*^9, 
+   3.70415804969309*^9}, {3.704158091569962*^9, 3.7041581582183027`*^9}, {
+   3.704217211835392*^9, 3.704217255898592*^9}, 3.704217351381868*^9, {
+   3.7042174890102167`*^9, 3.7042175495910807`*^9}, {3.704217914650906*^9, 
+   3.704217926049142*^9}, {3.704218060444283*^9, 3.704218066361372*^9}, {
+   3.7043998549757547`*^9, 3.704399938082333*^9}, {3.7044048088779373`*^9, 
+   3.704404809452928*^9}, {3.70440502568195*^9, 3.7044052113378267`*^9}, {
+   3.7044055470908213`*^9, 3.7044055600575047`*^9}, {3.704406572944916*^9, 
+   3.704406652555252*^9}, {3.704406776670209*^9, 3.704406854238793*^9}, {
+   3.7044068947638397`*^9, 3.70440691684188*^9}, {3.704407697339944*^9, 
+   3.70440770389034*^9}, {3.70441239744532*^9, 3.704412397592751*^9}, {
+   3.704412531050218*^9, 3.704412542266304*^9}, {3.7045801343835297`*^9, 
+   3.7045801521283207`*^9}, {3.7045802713902073`*^9, 
+   3.7045803105365877`*^9}, {3.704580573831892*^9, 3.70458057507514*^9}, {
+   3.704639971725464*^9, 3.704640001261196*^9}, 3.704652568462626*^9, {
+   3.704653564427356*^9, 3.704653592418604*^9}, {3.704654120148748*^9, 
+   3.7046541229825478`*^9}, 3.7046542169442253`*^9, {3.733697127903844*^9, 
+   3.733697127925744*^9}, {3.7348375309944677`*^9, 
+   3.73483758748048*^9}},ExpressionUUID->"830d83cb-5f31-4905-83ed-\
+805748faae6c"]
+}, Open  ]]
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -6204,7 +6885,9 @@ Cell[BoxData[
  RowBox[{
   RowBox[{"GitHubGetRelease", "[", "\n", "\t", 
    RowBox[{"repo_String", ",", "\n", "\t", 
-    RowBox[{"tagName", ":", "_Integer"}], ",", "\n", "\t", 
+    RowBox[{"tagName", ":", 
+     RowBox[{"_Integer", "|", "\"\<latest\>\""}], ":", "\"\<latest\>\""}], 
+    ",", "\n", "\t", 
     RowBox[{"ops", ":", 
      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
   "\t", 
@@ -6872,7 +7555,7 @@ Cell[BoxData[{
    "]"}]}]}], \
 "CodeInput",ExpressionUUID->"d8c8e75e-c146-4e29-82cb-fb0cb36ff15c"]
 }, Closed]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -7214,7 +7897,7 @@ Cell[BoxData[{
      "]"}]}], "\n", "\t\t", 
    "]"}]}]}], \
 "CodeInput",ExpressionUUID->"dbb23741-fcab-49d5-bb83-16d75a28b679"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -7782,7 +8465,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"67594041-6749-4a9a-8160-\
 1874e8aa2c18"]
 },
 WindowSize->{782, 796},
-WindowMargins->{{Automatic, 89}, {Automatic, 0}},
+WindowMargins->{{Automatic, 109}, {Automatic, 0}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

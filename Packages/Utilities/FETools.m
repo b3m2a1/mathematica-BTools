@@ -879,7 +879,10 @@ FEFindFileOnPath[file_,
 PackageAddAutocompletions[
   "FEFindFileOnPath",
   {
-    None,
+    {
+      "MenuSetup.tr",
+      "KeyEventTranslations.tr"
+      },
     StringTrim[
       StringTrim[
         DeleteDuplicates@Values@$FEPathMap,
@@ -1209,11 +1212,12 @@ FEUserBaseFile[
       _String|Automatic:Automatic,
   exts:
     {__String?(StringLength[#]<6&&StringMatchQ[#, WordCharacter..]&)}:
-    {"nb", "m", "tr"}
+    {"nb", "m", "tr"},
+  ops:OptionsPattern[]
   ]:=
   Module[
     {
-      res=FEFindFileOnPath[fName, fep, exts, "ReturnKey"->True],
+      res=FEFindFileOnPath[fName, fep, exts, "ReturnPath"->True],
       path,
       heads,
       file,
