@@ -3998,8 +3998,10 @@ Cell[BoxData[{
      "\n", "\t\t", 
      RowBox[{"\"\<UseHTMLFormatting\>\"", "\[Rule]", "Automatic"}], ",", "\n",
       "\t\t", 
-     RowBox[{"\"\<UseMathJAX\>\"", "\[Rule]", "False"}]}], "\n", "\t\t", 
-    "}"}]}], ";"}], "\n", 
+     RowBox[{"\"\<UseMathJAX\>\"", "\[Rule]", "False"}], ",", "\n", "\t\t", 
+     RowBox[{
+     "\"\<PacletLinkResolutionFunction\>\"", "\[Rule]", "Automatic"}]}], "\n",
+     "\t\t", "}"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"NotebookToMarkdown", "[", "\n", "\t", 
@@ -4083,8 +4085,18 @@ Cell[BoxData[{
            RowBox[{"OptionValue", "[", "\"\<CellObjects\>\"", "]"}]}], ",", 
           "\n", "\t\t\t", 
           RowBox[{"ps", "=", 
-           RowBox[{"OptionValue", "[", "\"\<UseHTMLFormatting\>\"", "]"}]}]}],
-          "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+           RowBox[{"OptionValue", "[", "\"\<UseHTMLFormatting\>\"", "]"}]}], 
+          ",", "\n", "\t\t\t", 
+          RowBox[{"prf", "=", 
+           RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
+            RowBox[{
+             RowBox[{
+             "OptionValue", "[", "\"\<PacletLinkResolutionFunction\>\"", 
+              "]"}], ",", " ", "\n", "\t\t\t\t", 
+             RowBox[{
+             "Automatic", "\[Rule]", "notebookToMarkdownResolvePacletURL"}]}],
+             "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "}"}], ",", "\n", 
+        "\t\t", 
         RowBox[{
          RowBox[{"If", "[", 
           RowBox[{
@@ -4129,9 +4141,11 @@ Cell[BoxData[{
                 "\n", "\t\t\t\t\t", 
                 RowBox[{"\"\<Context\>\"", "\[Rule]", "cont"}], ",", "\n", 
                 "\t\t\t\t\t", 
-                RowBox[{"\"\<UseHTML\>\"", "->", "ps"}]}], "\n", "\t\t\t\t\t",
-                "|>"}], ",", "\n", "\t\t\t\t", "#"}], "\n", "\t\t\t\t", "]"}],
-             "&"}], "/@", 
+                RowBox[{"\"\<UseHTML\>\"", "->", "ps"}], ",", "\n", 
+                "\t\t\t\t\t", 
+                RowBox[{"\"\<PacletResolve\>\"", "->", "prf"}]}], "\n", 
+               "\t\t\t\t\t", "|>"}], ",", "\n", "\t\t\t\t", "#"}], "\n", 
+             "\t\t\t\t", "]"}], "&"}], "/@", 
            RowBox[{"First", "@", "nb"}]}]}], ";", "\n", "\t\t", 
          RowBox[{"exportPick", "=", "\n", "\t\t\t", 
           RowBox[{"Map", "[", 
@@ -4502,7 +4516,7 @@ Cell[BoxData[
    3.7330311489610767`*^9, 
    3.733031212363727*^9}},ExpressionUUID->"28911e07-ea46-45b1-a3d9-\
 d23bbc36a35e"]
-}, Open  ]]
+}, Closed]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -7996,7 +8010,7 @@ Cell[BoxData[
      RowBox[{"iNotebookToMarkdownExport", "[", 
       RowBox[{"pathInfo", ",", " ", "bd"}], "]"}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"d3b3f487-6ba0-4a46-a600-b1f4e0670600"]
-}, Open  ]]
+}, Closed]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -8255,8 +8269,8 @@ Cell[BoxData[
    3.72357084150315*^9, 3.723570850258906*^9}, {3.731361445916453*^9, 
    3.731361527511653*^9}, {3.731361559428236*^9, 
    3.7313615627705*^9}},ExpressionUUID->"6c1d1421-6f5e-4a9b-b726-2fc8a0e4c167"]
-}, Open  ]]
-}, Closed]],
+}, Closed]]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -8301,7 +8315,6 @@ Cell[BoxData[
              "\n", "\t\t\t\t\t\t", 
              "\"\<https://reference.wolfram.com/language\>\"", ",", "\n", 
              "\t\t\t\t\t\t", 
-             
              "\"\<https://www.wolframcloud.com/objects/b3m2a1.docs/reference\>\
 \""}], "\n", "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t", 
            RowBox[{"URLParse", "[", 
@@ -8444,34 +8457,45 @@ Cell[BoxData[
       RowBox[{
        RowBox[{"t", "=", 
         RowBox[{"iNotebookToMarkdown", "[", 
-         RowBox[{"pathInfo", ",", "d"}], "]"}]}], ",", "\n", "\t\t\t", 
-       "url"}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+         RowBox[{"pathInfo", ",", "d"}], "]"}]}], ",", "\n", "\t\t\t", "url", 
+       ",", "\n", "\t\t\t", "baseURL"}], "\n", "\t\t\t", "}"}], ",", "\n", 
+     "\t\t", 
      RowBox[{
-      RowBox[{"url", "=", "\n", "\t\t\t", 
-       RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
+      RowBox[{"baseURL", "=", "\n", "\t\t\t", 
+       RowBox[{"FirstCase", "[", "\n", "\t\t\t\t", 
         RowBox[{
-         RowBox[{"FirstCase", "[", "\n", "\t\t\t\t\t", 
+         RowBox[{"Flatten", "@", 
+          RowBox[{"{", 
+           RowBox[{"Lookup", "[", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"o", ",", "r"}], "}"}], ",", "ButtonData", ",", "t"}], 
+            "]"}], "}"}]}], ",", "\n", "\t\t\t\t", "_String", ",", "\n", 
+         "\t\t\t\t", "t"}], "\n", "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
+      RowBox[{"url", "=", "\n", "\t\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{"baseURL", ",", " ", "\n", "\t", "\t\t\t", 
+         RowBox[{"s_String", ":>", "\n", "\t", "\t\t\t\t", 
           RowBox[{
-           RowBox[{"Flatten", "@", 
-            RowBox[{"{", 
-             RowBox[{"Lookup", "[", 
-              RowBox[{
-               RowBox[{"{", 
-                RowBox[{"o", ",", "r"}], "}"}], ",", "ButtonData", ",", "t"}],
-               "]"}], "}"}]}], ",", "\n", "\t\t\t\t\t", "_String", ",", "\n", 
-           "\t\t\t\t\t", "t"}], "\n", "\t\t\t\t\t", "]"}], ",", "\n", 
-         "\t\t\t\t", 
-         RowBox[{"s_String", ":>", "\n", "\t\t\t\t\t", 
-          RowBox[{"notebookToMarkdownResolvePacletURL", "[", "s", "]"}]}]}], 
-        "\n", "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
-      RowBox[{"If", "[", 
+           RowBox[{"Lookup", "[", 
+            RowBox[{
+            "pathInfo", ",", " ", "\"\<PacletResolve\>\"", ",", " ", 
+             "notebookToMarkdownResolvePacletURL"}], "]"}], "[", "s", 
+           "]"}]}]}], "\n", "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
+      RowBox[{"If", "[", "\n", "\t\t\t", 
        RowBox[{
-        RowBox[{"StringEndsQ", "[", 
-         RowBox[{"url", ",", " ", 
-          RowBox[{"\"\<ref/\>\"", "~~", 
-           RowBox[{
-            RowBox[{"Except", "[", "\"\</\>\"", "]"}], ".."}]}]}], " ", "]"}],
-         ",", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"StringQ", "[", "baseURL", "]"}], "&&", 
+          RowBox[{"StringContainsQ", "[", 
+           RowBox[{"baseURL", ",", " ", "\"\</ref\>\""}], "]"}]}], "||", "\n",
+          "\t", "\t\t\t", 
+         RowBox[{"StringEndsQ", "[", 
+          RowBox[{"url", ",", " ", 
+           RowBox[{"\"\<ref/\>\"", "~~", 
+            RowBox[{
+             RowBox[{"Except", "[", "\"\</\>\"", "]"}], ".."}]}]}], " ", 
+          "]"}]}], ",", "\n", "\t\t\t", 
         RowBox[{"\"\<[```\>\"", "<>", "t", "<>", 
          RowBox[{"If", "[", 
           RowBox[{
@@ -8483,7 +8507,7 @@ Cell[BoxData[
         "\"\<[\>\"", "<>", "t", "<>", "\"\<](\>\"", "<>", "url", "<>", 
          "\"\<)\>\""}]}], "\n", "\t\t\t", "]"}]}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"447d011b-17af-4ced-8f80-d07246f9af8f"]
-}, Closed]]
+}, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -9455,12 +9479,21 @@ Cell[BoxData[
 4d81c6db92de"],
 
 Cell[BoxData[
+ RowBox[{"NotebookMarkdownSave", "//", 
+  "Clear"}]], \
+"CodeInput",ExpressionUUID->"1bcbed6b-4077-4349-98c4-c2b129358d1c"],
+
+Cell[BoxData[
  RowBox[{
   RowBox[{
    RowBox[{"NotebookMarkdownSave", "[", "\n", "\t", 
-    RowBox[{"nbObj", ":", 
-     RowBox[{"_NotebookObject", "|", "Automatic"}], ":", "Automatic"}], "\n", 
-    "\t", "]"}], ":=", "\n", "\t", 
+    RowBox[{
+     RowBox[{"nbObj", ":", 
+      RowBox[{"_NotebookObject", "|", "Automatic"}], ":", "Automatic"}], ",", 
+     "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
    RowBox[{
     RowBox[{"Function", "[", 
      RowBox[{"Null", ",", " ", 
@@ -9483,23 +9516,32 @@ Cell[BoxData[
          "\t", "\t\t\t", "meta", ",", "\n", "\t\t\t\t", "expOps", ",", "\n", 
          "\t\t\t\t", "md", ",", "\n", "\t\t\t\t", "root", ",", "\n", 
          "\t\t\t\t", "expDir", ",", "\n", "\t\t\t\t", "expName", ",", "\n", 
-         "\t\t\t\t", "nbDir", ",", "\n", "\t\t\t\t", "siteBase"}], "\n", 
-        "\t\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+         "\t\t\t\t", "nbDir", ",", "\n", "\t\t\t\t", "siteBase", ",", "\n", 
+         "\t\t\t\t", 
+         RowBox[{"flops", "=", 
+          RowBox[{"Flatten", "@", 
+           RowBox[{"{", "ops", "}"}]}]}]}], "\n", "\t\t\t\t", "}"}], ",", 
+       "\n", "\t\t\t", 
        RowBox[{
-        RowBox[{"meta", "=", 
-         RowBox[{"MarkdownNotebookMetadata", "[", "nb", "]"}]}], ";", "\n", 
-        "\t\t\t", 
-        RowBox[{"expOps", "=", "\n", "\t\t\t\t", 
-         RowBox[{"Replace", "[", 
+        RowBox[{"meta", "=", "\n", "\t\t\t\t", 
+         RowBox[{"Merge", "[", "\n", "\t\t\t\t\t", 
           RowBox[{
-           RowBox[{"Lookup", "[", 
-            RowBox[{"meta", ",", " ", "\"\<ExportOptions\>\"", ",", " ", 
-             RowBox[{"<|", "|>"}]}], "]"}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"MarkdownNotebookMetadata", "[", "nb", "]"}], ",", "\n", 
+             "\t\t\t\t\t\t", "flops"}], "\n", "\t\t\t\t\t\t", "}"}], ",", 
+           "\n", "\t\t\t\t\t", "Last"}], "\n", "\t\t\t\t\t", "]"}]}], ";", 
+        "\n", "\t\t\t", 
+        RowBox[{"expOps", "=", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Replace", "[", 
            RowBox[{
             RowBox[{"Except", "[", 
              RowBox[{"_", "?", "OptionQ"}], "]"}], "\[Rule]", 
-            RowBox[{"<|", "|>"}]}]}], "\n", "\t\t\t\t\t", "]"}]}], ";", "\n", 
-        "\t\t\t", 
+            RowBox[{"<|", "|>"}]}], "]"}], "@", "\n", "\t\t\t\t\t", 
+          RowBox[{"Lookup", "[", 
+           RowBox[{"meta", ",", " ", "\"\<ExportOptions\>\""}], "]"}]}]}], 
+        ";", "\n", "\t\t\t", 
         RowBox[{"If", "[", "\n", "\t\t\t\t", 
          RowBox[{
           RowBox[{
@@ -9681,7 +9723,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"0792ebaa-1dc2-414d-9656-\
 e65bfc12151a"]
 },
 WindowSize->{812, 759},
-WindowMargins->{{Automatic, 309}, {Automatic, 26}},
+WindowMargins->{{305, Automatic}, {Automatic, 0}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

@@ -19,6 +19,10 @@ SetAutocompletions::usage="Straight-up sets autocompletions";
 SetArgCount::usage="Straight-up sets the arg-count";
 
 
+GenerateFunctionInfo::usage=
+  "Extracts function information";
+
+
 Begin["`Private`"];
 
 
@@ -710,6 +714,11 @@ AddFunctionAutocompletions[e__]/;(!TrueQ@$eTrueProtection):=
 AddFunctionAutocompletions~SetAttributes~HoldFirst
 
 
+(* ::Subsection:: *)
+(*Pattern Parsing*)
+
+
+
 (* ::Subsubsection::Closed:: *)
 (*reducePatterns*)
 
@@ -959,6 +968,11 @@ generateArgPatList[f_, dvs_]:=
 generateArgPatList~SetAttributes~HoldFirst
 
 
+(* ::Subsection:: *)
+(*SyntaxInfo*)
+
+
+
 (* ::Subsubsection::Closed:: *)
 (*generateSIArgPat*)
 
@@ -1083,6 +1097,11 @@ AddFunctionSyntaxInformation[
     {1}
     ];
 AddFunctionSyntaxInformation~SetAttributes~HoldFirst;
+
+
+(* ::Subsection:: *)
+(*ArgCount*)
+
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1224,6 +1243,494 @@ AddFunctionArgCount~SetAttributes~HoldFirst;
 
 
 (* ::Subsection:: *)
+(*Details*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*contextNames*)
+
+
+
+contextNames[s_String]:=
+  FixedPoint[
+    ToExpression[
+      Names[s<>"*"],
+      StandardForm,
+      Function[Null,
+        If[
+          MatchQ[dgSymValues[#,OwnValues],
+            {_:>Verbatim[Condition][_System`Dump`AutoLoad,_]}
+            ],
+          #
+          ],
+        HoldFirst
+        ]
+      ];
+    Names[s<>"*"]&,
+    None
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*relatedFunctionNames*)
+
+
+
+relatedFunctionNamesTrimmed[s_]:=
+  With[{trimmed=StringTrim[s, "$"]},
+        Replace[StringPosition[trimmed,_?LowerCaseQ],{
+          {{three_?(GreaterThan[2]),_},___}:>
+            StringTake[trimmed, three-2],
+          {__}:>
+            Replace[
+              StringPosition[StringDrop[trimmed,1],
+                _?(Not@*LowerCaseQ)],{
+              {{two_,_},___}:>
+                StringTake[trimmed,two],
+              _:>
+                If[StringLength[trimmed]>=3,StringTake[trimmed,3],trimmed]
+              }],
+          _:>If[StringLength[trimmed]>=3,StringTake[trimmed,3],trimmed]
+          }]
+        ]
+
+
+relatedFunctionNames[s_String,c:_String|Automatic:Automatic]:=
+  With[{
+    wordStart=relatedFunctionNamesTrimmed@s,
+    cont=
+      Replace[c,
+        Automatic:>
+          ToExpression[s,StandardForm,Context]
+        ]
+    },
+    Select[
+      StringTrim[Names[cont<>"*"],cont],
+      #!=s&&
+      StringMatchQ[StringTrim[#,"$"],
+        wordStart~~(""|(_?(Not@*LowerCaseQ)~~___))]&
+      ]
+    ];
+relatedFunctionNames[s_Symbol,c:_String|Automatic:Automatic]:=
+  relatedFunctionNames[Evaluate@ToString@Unevaluated[s],
+    Replace[c,
+      Automatic:>Context[s]
+      ]];
+relatedFunctionNames~SetAttributes~HoldFirst
+
+
+(* ::Subsubsection::Closed:: *)
+(*novelFunctionOptions*)
+
+
+
+$filterOutOps=
+  {
+    Graphics,Graphics3D,
+    Framed,Style,Cell,
+    CloudDeploy,Button,
+    Pane,Panel,ActionMenu,
+    PopupMenu,Column,
+    Row,Grid,CreateDocument,
+    Notebook,Plot,Plot3D,
+    DialogInput,MeshRegion
+    };
+
+
+novelFunctionOptions[sym_,others_:$filterOutOps]:=
+  With[{
+    o=Options@Unevaluated[sym],
+    tests=
+      Replace[First/@Options@#,
+        s_Symbol:>
+          SymbolName@s,
+        1]&/@others},
+    With[{selected=
+      Flatten@
+        Select[tests,
+          With[{k=
+            Replace[Keys@o,
+              s_Symbol:>
+                SymbolName@s,
+              1]},
+              Complement[#,k]=={}&
+            ]
+          ]
+      },
+      DeleteCases[o,
+        _[_?(MemberQ[selected,Replace[#,_Symbol:>SymbolName[#]]]&),_]
+      ]
+    ]
+  ];
+novelFunctionOptions[s:Except[_Symbol]?(MatchQ[#,_Symbol]&)]:=
+  novelFunctionOptions@Evaluate@s;
+novelFunctionOptions~SetAttributes~HoldFirst
+
+
+(* ::Subsubsection::Closed:: *)
+(*containedFunctionOptions*)
+
+
+
+containedFunctionOptions[sym_,others_:$filterOutOps]:=
+  With[{o=Options@Unevaluated[sym]},
+    Select[others,
+      With[{k=
+        Replace[Keys@o,
+          s_Symbol:>
+            SymbolName@s,
+          1]},
+          With[{ops=
+            Replace[First/@Options@#,
+              s_Symbol:>
+                SymbolName@s,
+              1]
+            },
+            Complement[ops,k]=={}
+            ]&
+        ]
+      ]
+    ];
+containedFunctionOptions[s:Except[_Symbol]?(MatchQ[#,_Symbol]&)]:=
+  containedFunctionOptions@Evaluate@s;
+containedFunctionOptions~SetAttributes~HoldFirst
+
+
+(* ::Subsubsection::Closed:: *)
+(*generateDetails*)
+
+
+
+(* ::Text:: *)
+(*
+	Should find a nice way to have some parts of this done with boxes... (or be box compatible)
+*)
+
+
+
+$generateDetailsMap=
+  <|
+    "has"->"has",
+    "hasInt"->"has an internal",
+    "ovs"->"immediate value",
+    "dvs"->"call",
+    "svs"->"SubValues",
+    "uvs"->"UpValues",
+    "ops"->"Options",
+    "msg"->"Messages",
+    "attrs"->"Attributes"
+    |>
+
+
+generateDetails[sym_Symbol]:=
+  Module[{
+    $=$generateDetailsMap,
+    ovs=getCodeValues[sym,OwnValues],
+    dvs=getCodeValues[sym,DownValues],
+    uvs=getCodeValues[sym,UpValues],
+    svs=getCodeValues[sym,SubValues],
+    fvs=getCodeValues[sym,FormatValues],
+    hovs=System`Private`HasOwnCodeQ[sym],
+    hdvs=System`Private`HasDownCodeQ[sym],
+    huvs=System`Private`HasUpCodeQ[sym],
+    hsvs=System`Private`HasSubCodeQ[sym],
+    hfvs=System`Private`HasSubCodeQ[sym],
+    ops,
+    conts,
+    attrs=Flatten@{Attributes[sym]},
+    msgs=
+      DeleteCases[Messages[sym],
+        Verbatim[HoldPattern][
+          HoldPattern@MessageName[_,"usage"|"usages"]
+          ]:>_
+        ],
+    sname=SymbolName[Unevaluated[sym]]
+    },
+    ops=If[Length@ovs==0,novelFunctionOptions[sym],{}];
+    conts=If[Length@ovs==0,containedFunctionOptions[sym],{}];
+    {
+      Replace[Length@ovs,{
+        0->Nothing,
+        1->{sname, $["has"], "an", $["ovs"]},
+        n_:>{sname, $["has"], n, $["ovs"]<>"s"}
+        }],
+      If[hovs,
+        {sname, $["hasInt"], $["ovs"]},
+        Nothing
+        ],
+      If[Length@dvs>0,
+        {sname, $@"has", Length@dvs, $["dvs"], "pattern"<>If[Length@dvs>1,"s",""]},
+        Nothing
+        ],
+      If[hdvs,
+        {sname, $@"hasInt", $["dvs"], "pattern"},
+        Nothing
+        ],
+      If[Length@uvs>0,
+        {sname, $@"has", Length@dvs, $["uvs"], "pattern"<>If[Length@dvs>1,"s",""]},
+        Nothing
+        ],
+      If[hdvs,
+        {sname, $@"hasInt", $["uvs"], "pattern"},
+        Nothing
+        ],
+      If[Length@svs>0,
+        {sname, $@"has", Length@dvs, $["svs"], "pattern"<>If[Length@dvs>1,"s",""]},
+        Nothing
+        ],
+      If[hsvs,
+        {sname, $@"hasInt", $["svs"], "pattern"},
+        Nothing
+        ],
+      If[Length@ops>0,
+        Join[
+          {sname, $@"has", "the following", $@"ops"},
+          Map[
+            {
+              ToString[#[[1]], InputForm],
+              Extract[#,2,
+                Function[Null, ToString[Unevaluated[#], InputForm], HoldFirst]
+                ]
+              }&,
+            ops
+            ]
+          ],
+        Nothing
+        ],
+      If[Length@conts>0,
+        Join[
+          {sname, "can take", $@"ops", "from the following"},
+          Map[
+            {ToString[#, InputForm]}&,
+            ops
+            ]
+          ],
+        Nothing
+        ],
+      If[Length@msgs>0,
+        {
+          {sname, $@"has", "the following", $@"msg"},
+          Map[
+            {
+              Replace[First@#,
+                Verbatim[HoldPattern][m_MessageName]:>
+                  ToString[Unevaluated[m], InputForm]
+                ],
+                Last@#
+              }&,
+            msgs
+            ]
+          },
+        Nothing
+        ],
+      If[Length@attrs>0,
+        {
+          {sname, "has the following", $@"attrs"},
+          Map[
+            {ToString[#, InputForm]}&,
+            attrs
+            ]
+          },
+        Nothing
+        ],
+      If[Length@fvs>0||hfvs,
+        {sname, "is a formatted symbol"},
+        Nothing
+        ]
+      }
+    ];
+generateDetails~SetAttributes~HoldFirst;
+
+
+(* ::Subsection:: *)
+(*Examples*)
+
+
+
+(* ::Text:: *)
+(*
+	mostly still need to do this...
+*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*generateExamples*)
+
+
+
+generateExamples[sym_,defer:True|False:False]:=
+  With[
+    {
+    vals=
+      Map[First,
+        Join@@
+          Map[codeValues[sym,#]&, {UpValues,DownValues,SubValues}]
+        ]},
+    Flatten@{
+      With[{c=Context[sym]},
+        If[MemberQ[$ContextPath,c]&&Not@MatchQ[c,"Global`"|"System`"],
+          {
+            Cell["Load "<>StringTrim[c,"`"]<>":","ExampleText"],
+            If[!defer,
+              ToExpression@RowBox@{"Needs","[","\""<>c<>"\"","]"}
+              ];
+            Cell[BoxData@RowBox@{"Needs","[","\""<>c<>"\"","]"},
+              "ExamplesInput",
+              InitializationCell->True
+              ]
+            },
+          Nothing
+          ]
+        ],
+      Flatten@Riffle[
+        Cell[TextData@{"From ",
+          inlineRefBox@Replace[usagePatternReplace@#,
+              Verbatim[HoldPattern][e_]:>{
+                toSafeBoxes[Unevaluated[e],StandardForm]
+              }],":"},
+          "ExampleText"
+          ]&/@vals,
+        If[defer,
+          Cell[
+            BoxData@
+              Replace[#,{
+                Verbatim[HoldPattern][e_]:>
+                  toSafeBoxes[Unevaluated@e,StandardForm]
+                }],
+            "ExamplesInput"
+            ],
+          Cell[CellGroupData[{
+            Cell[
+              BoxData@
+                Replace[#,{
+                  Verbatim[HoldPattern][e_]:>
+                    toSafeBoxes[Unevaluated@e,StandardForm]
+                  }],
+              "ExamplesInput"
+              ],
+            Cell[
+              BoxData@
+                Replace[#,{
+                  Verbatim[HoldPattern][e_]:>
+                    ToBoxes[e]
+                  }],
+              "ExamplesOutput"
+              ]
+            },Open]]
+          ]&/@callPatternReplace[vals]
+          ],
+      AutoGenerateOptionExamples[sym,defer],
+      Cell[CellGroupData[{
+        Cell["Definitions","ExampleSection"],
+        Cell["Examine all definitions:","ExampleText"],
+        Cell[
+          BoxData@
+            RowBox@{
+              "GeneralUtilities`PrintDefinitionsLocal",
+              "[",
+              Block[{$ContextPath},ToString[Unevaluated@sym,InputForm]],
+              "]"
+              },
+          "ExamplesInput"
+          ]
+        }]]
+      }
+    ];
+generateExamples[
+  e:Except[_Symbol]?(MatchQ[#,_Symbol]&),
+  defer:True|False:False]:=
+  generateExamples[System`Evaluate@e,defer];
+generateExamples~SetAttributes~HoldFirst
+
+
+(* ::Subsubsection::Closed:: *)
+(*AutoGenerateOptionExamples*)
+
+
+
+generateOptionExamples[sym_Symbol,defer:True|False:False]:=
+  With[{
+    u=
+      FirstCase[First/@dgSymValues[sym,DownValues],
+        Verbatim[HoldPattern][
+          _[
+            ___,
+            Verbatim[OptionsPattern][]|
+            Verbatim[Pattern][_,Verbatim[OptionsPattern][]],
+            ___
+            ]
+          ],
+        HoldPattern[sym[OptionsPattern[]]]
+        ],
+    ops=If[Length@dgSymValues[sym,OwnValues]==0,novelFunctionOptions[sym],{}]
+    },
+    With[{usages=
+      Map[
+        First@#->
+          callPatternReplace[u,
+            Verbatim[OptionsPattern][]->#
+            ]&,
+        ops
+        ]
+      },
+      If[Length@usages>0,
+        Cell[CellGroupData[Flatten@{
+          Cell["Options","ExampleSection"],
+          Map[
+            Cell@
+              CellGroupData[Flatten@{
+                Cell[ToString@First@#,"ExampleSubsection"],
+                If[defer,
+                  Cell[
+                    BoxData@
+                      Replace[Last@#,{
+                        Verbatim[HoldPattern][e_]:>
+                          toSafeBoxes[Unevaluated@e,StandardForm]
+                        }],
+                    "ExamplesInput"
+                    ],
+                  With[{
+                    res=
+                      Replace[Last@#,{
+                        Verbatim[HoldPattern][e_]:>
+                          e
+                        }]
+                    },
+                    Cell[CellGroupData[{
+                      Cell[
+                        BoxData@ToBoxes@
+                          Replace[Last@#,{
+                            Verbatim[HoldPattern][e_]:>
+                              toSafeBoxes[Unevaluated@e,StandardForm]
+                            }],
+                        "ExamplesInput"
+                        ],
+                      Cell[
+                        BoxData@ToBoxes@res,
+                        "ExamplesOutput"
+                        ]
+                      },Open]]
+                    ]
+                  ]
+                },
+                Closed]&,
+            usages
+            ]
+          },Closed]
+          ],
+        Nothing
+        ]
+      ]
+    ];
+generateOptionExamples[e:Except[_Symbol]?(MatchQ[#,_Symbol]&),
+  defer:True|False:False]:=
+  generateOptionExamples[System`Evaluate@e,defer];
+generateOptionExamples~SetAttributes~HoldFirst
+
+
+(* ::Subsection:: *)
 (*AutoFunctionInfo*)
 
 
@@ -1239,41 +1746,64 @@ Options[generateAutoFunctionInfo] =
     "Autocompletions" -> {},
     "UsageMessages" -> {},
     "UsageTemplate" -> Automatic,
-    "ArgCount" -> Automatic
+    "ArgCount" -> Automatic,
+    "Details"->Automatic,
+    "Examples"->Automatic
     };
 generateAutoFunctionInfo[
   f_Symbol,
+  keys_:{"UsageMessages", "SyntaxInformation", "ArgCount"},
   ops : OptionsPattern[]
   ] :=
-  {
-    "UsageMessages" ->
-      generateSymbolUsage[
-        f,
-        Cases[
-          Flatten@List[OptionsPattern["UsageMessages"]],
-          _Rule | _RuleDelayed
+  KeyValueMap[Rule, KeyTake[#, keys]]&@
+    <|
+      "UsageMessages" :>
+        generateSymbolUsage[
+          f,
+          Cases[
+            Flatten@List[OptionsPattern["UsageMessages"]],
+            _Rule | _RuleDelayed
+            ],
+          OptionValue["UsageTemplate"]
           ],
-        OptionValue["UsageTemplate"]
-        ],
-    "SyntaxInformation" ->
-      generateSyntaxInformation[f,
-        OptionValue["SyntaxInformation"]
-        ],
-    "Autocompletions" ->
-      generateAutocompletions[f,
-        OptionValue["Autocompletions"]
-        ],
-    "ArgCount" ->
-      Replace[OptionValue@"ArgCount",
-        Except[
-          KeyValuePattern[
-            {"MinArgs" -> _Integer, "MaxArgs" -> _Integer | Infinity, 
-              "OptionsPattern" -> (True | False)}
-            ]
-          ] :> generateArgCount[f]
-        ]
-    };
+      "SyntaxInformation" :>
+        generateSyntaxInformation[f,
+          OptionValue["SyntaxInformation"]
+          ],
+      "Autocompletions" :>
+        generateAutocompletions[f,
+          OptionValue["Autocompletions"]
+          ],
+      "ArgCount" :>
+        Replace[OptionValue@"ArgCount",
+          Except[
+            KeyValuePattern[
+              {"MinArgs" -> _Integer, "MaxArgs" -> _Integer | Infinity, 
+                "OptionsPattern" -> (True | False)}
+              ]
+            ] :> generateArgCount[f]
+          ],
+      "Details":>
+        Replace[OptionValue@"Details",
+          Except[{__List}]:> generateDetails[f]
+          ]
+      |>;
 generateAutoFunctionInfo~SetAttributes~HoldFirst
+
+
+Options[GenerateFunctionInfo]=
+  {
+    "Keys"->{"UsageMessages", "Details", "SyntaxInformation", "ArgCount"},
+    "Defaults"->{}
+    };
+GenerateFunctionInfo[s_Symbol,
+  ops:OptionsPattern[]
+  ]:=
+  Replace[
+    generateAutoFunctionInfo[s, OptionValue["Keys"], OptionValue["Defaults"]],
+    Except[_?OptionQ]->$Failed
+    ];
+GenerateFunctionInfo~SetAttributes~HoldFirst;
 
 
 (* ::Subsubsection::Closed:: *)

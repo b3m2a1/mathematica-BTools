@@ -1,0 +1,1749 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Code", "CodeSection",
+ CellChangeTimes->{{3.685098851275654*^9, 3.6850988518438063`*^9}, {
+  3.685100483097843*^9, 
+  3.685100483768149*^9}},ExpressionUUID->"e12cab96-1fda-45aa-83a5-\
+316df8f367e0"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GetUsage", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Finds the uses of a symbol\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"FormattedUsage", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Formats a GetUsage call\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"FormattedDefs", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<FormattedUsage with Full\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"DocFile", "::", "usage"}], "=", 
+   "\"\<Returns the doc file for a given symbol\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"OpenDocs", "::", "usage"}], "=", 
+   "\"\<Opens a documentation notebook for the symbol name\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ContextOrdering", "::", "usage"}], "=", 
+   "\"\<The ordering function for context notebooks\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ContextNotebook", "::", "usage"}], "=", 
+   "\"\<Formats a notebook to give docs for an entire context\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"DocsDialog", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Creates a documentation search dialog\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"$DockDocDialog", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<A symbol formatted to the docs dialog in the documentation search \
+palette\>\""}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"e0bd4e10-8494-41c8-a679-f0c3e018f991"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
+  ";"}]], "InputSection",ExpressionUUID->"edb198bc-d49f-4842-97c6-\
+ce9cf4c381ef"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]DocFile\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.684255090752561*^9, 3.6842550936328*^9}, {
+  3.684688613582259*^9, 
+  3.6846886143011713`*^9}},ExpressionUUID->"877bd2fa-0c29-4f21-a253-\
+d27db4e0ab04"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"DocFile", "[", 
+   RowBox[{"symbolName_String", ",", 
+    RowBox[{"mode_:", "Automatic"}]}], "]"}], ":=", 
+  RowBox[{"TemplateApply", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Switch", "[", 
+     RowBox[{"mode", ",", "\[IndentingNewLine]", 
+      RowBox[{"\"\<Web\>\"", "|", "Hyperlink", "|", "URL"}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{"URLBuild", "@", 
+       RowBox[{"<|", 
+        RowBox[{
+         RowBox[{"\"\<Scheme\>\"", "\[Rule]", "\"\<https\>\""}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{
+         "\"\<Domain\>\"", "\[Rule]", "\"\<reference.wolfram.com\>\""}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"\"\<Path\>\"", "\[Rule]", 
+          RowBox[{"{", 
+           RowBox[{
+           "\"\<language\>\"", ",", "\"\<ref\>\"", ",", "\"\<``.html\>\""}], 
+           "}"}]}]}], "\[IndentingNewLine]", "|>"}]}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{"Automatic", "|", "File"}], ",", "\[IndentingNewLine]", 
+      RowBox[{"FileNameJoin", "@", 
+       RowBox[{"{", 
+        RowBox[{
+        "$InstallationDirectory", ",", " ", "\"\<Documentation\>\"", ",", 
+         " ", "\"\<English\>\"", ",", "\"\<System\>\"", ",", " ", 
+         "\"\<ReferencePages\>\"", ",", "\"\<Symbols\>\"", ",", 
+         "\"\<``.nb\>\""}], "}"}]}]}], "\[IndentingNewLine]", "]"}], ",", 
+    "\[IndentingNewLine]", "symbolName"}], "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.684688500177964*^9, 3.684688512513266*^9}, 
+   3.6846885696490192`*^9, {3.684688719155335*^9, 3.6846887721028976`*^9}, {
+   3.6846888041189003`*^9, 3.684688812842581*^9}, {3.684688881496151*^9, 
+   3.6846888876292973`*^9}, 3.68468909283436*^9, {3.684765079561913*^9, 
+   3.684765168636653*^9}},ExpressionUUID->"5a7e25bb-f357-45fe-a4df-\
+5997dd73eb21"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]PrintDefinitionsNotebook\[RightFloor]", \
+"CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.684255090752561*^9, 3.6842550936328*^9}, {
+   3.684688631773862*^9, 3.6846886384605923`*^9}, 
+   3.6846964098197117`*^9},ExpressionUUID->"e2021f8c-cfad-4243-9323-\
+17bd3e4649d0"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"PrintDefinitionsNotebook", "[", 
+    RowBox[{"nb_", ",", "symbolName_"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+       "GeneralUtilities`PackageScope`$EmbedSymbolBoxStyles", "=", "True"}], 
+       ",", "\n", "\t\t", 
+       RowBox[{
+       "GeneralUtilities`Debugging`PackagePrivate`$\
+PrintDefinitionsBackground", "=", "None"}], ",", "\n", "\t\t", 
+       RowBox[{"CreateDocument", " ", "=", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"NotebookWrite", "[", 
+           RowBox[{"nb", ",", "\n", "\t\t\t", 
+            RowBox[{"#", "/.", 
+             RowBox[{
+             "GeneralUtilities`PrintDefinitions", "\[Rule]", 
+              "GeneralUtilities`PrintDefinitionsLocal"}]}], ",", "\n", 
+            "\t\t\t", "None", ",", "\n", "\t\t\t", 
+            RowBox[{"AutoScroll", "\[Rule]", "False"}]}], "]"}], "&"}], 
+         ")"}]}]}], "\n", "\t\t", "}"}], ",", "\n", "\t", 
+     RowBox[{"ToExpression", "[", 
+      RowBox[{
+      "symbolName", ",", "StandardForm", ",", 
+       "GeneralUtilities`PrintDefinitions"}], "]"}]}], "\n", "\t", "]"}]}], 
+  ";"}]], "CodeInput",
+ CellChangeTimes->{{3.6846886941147757`*^9, 3.6846887118203993`*^9}, {
+   3.684689520223624*^9, 3.6846895562675734`*^9}, {3.684695914537541*^9, 
+   3.6846959276723824`*^9}, {3.684696106405756*^9, 3.6846961273201647`*^9}, {
+   3.6846962339570503`*^9, 3.684696234590116*^9}, 3.684703545013506*^9, {
+   3.7004002013851547`*^9, 
+   3.700400210038662*^9}},ExpressionUUID->"56b4e8ac-ccd4-4f31-af74-\
+c04e0e9d59b8"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]OpenDocs\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"07386039-5724-4162-90da-6872394a0af4"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"OpenDocs", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"symbolName", ":", "_String"}], ",", "\n", "\t", 
+     RowBox[{"fileSource", ":", 
+      RowBox[{"_String", "|", "Automatic"}], ":", "Automatic"}], ",", "\n", 
+     "\t", 
+     RowBox[{"docNB", ":", 
+      RowBox[{"_NotebookObject", "|", "CreateNotebook", "|", "Automatic"}], 
+      ":", "Automatic"}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "Notebook", "]"}]}]}], "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"Module", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"file", "=", 
+        RowBox[{"Replace", "[", 
+         RowBox[{"fileSource", ",", 
+          RowBox[{"Automatic", "\[RuleDelayed]", 
+           RowBox[{"DocFile", "@", "symbolName"}]}]}], "]"}]}], ",", "\n", 
+       "\t\t", 
+       RowBox[{"winTit", "=", 
+        RowBox[{"\"\<Documentation Notebook: \>\"", "<>", "symbolName"}]}], 
+       ",", "\n", "\t\t", 
+       RowBox[{"nb", "=", 
+        RowBox[{"Replace", "[", 
+         RowBox[{"docNB", ",", 
+          RowBox[{"{", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Automatic", "|", 
+              RowBox[{"_NotebookObject", "?", 
+               RowBox[{"(", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"NotebookInformation", "@", "#"}], "===", 
+                  "$Failed"}], "&"}], ")"}]}]}], "\[RuleDelayed]", 
+             "$DocPage"}], ",", "\n", "\t\t\t\t", 
+            RowBox[{"CreateNotebook", "\[RuleDelayed]", "\n", "\t\t\t\t\t", 
+             RowBox[{"Quiet", "[", "\n", "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"CreateNotebook", "[", 
+                RowBox[{"ops", ",", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{"WindowTitle", "->", 
+                  RowBox[{
+                  "\"\<Documentation Notebook: \>\"", "<>", "symbolName"}]}], 
+                 ",", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{"System`ClosingSaveDialog", "\[Rule]", "False"}], 
+                 ",", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{"CellMargins", "\[Rule]", 
+                  RowBox[{"{", 
+                   RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"100", ",", "Automatic"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"100", ",", "Automatic"}], "}"}]}], "}"}]}], ",", 
+                 "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                 "StyleDefinitions", "\[Rule]", "\n", "\t\t\t\t\t\t\t\t", 
+                  RowBox[{"FrontEnd`FileName", "[", 
+                   RowBox[{
+                    RowBox[{"{", "\"\<Wolfram\>\"", "}"}], ",", 
+                    "\"\<Reference.nb\>\"", ",", 
+                    RowBox[{
+                    "CharacterEncoding", "\[Rule]", "\"\<UTF-8\>\""}]}], 
+                   "]"}]}]}], "\n", "\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+               "\t\t\t\t\t\t", 
+               RowBox[{"ClosingSaveDialog", "::", "shdw"}]}], "]"}]}]}], "\n",
+            "\t\t\t\t\t", "}"}]}], "]"}]}]}], "}"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"MatchQ", "[", 
+         RowBox[{"nb", ",", "\n", "\t\t\t", 
+          RowBox[{
+           RowBox[{"Except", "[", "_NotebookObject", "]"}], "|", 
+           RowBox[{"_NotebookObject", "?", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"NotebookInformation", "@", "#"}], "===", "$Failed"}], 
+              "&"}], ")"}]}]}]}], "]"}], ",", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"nb", "=", 
+          RowBox[{"If", "[", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"FreeQ", "[", "\n", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"CurrentValue", "[", 
+               RowBox[{
+                RowBox[{"EvaluationNotebook", "[", "]"}], ",", 
+                "StyleDefinitions"}], "]"}], ",", "\n", "\t\t\t\t\t", 
+              RowBox[{"_String", "?", 
+               RowBox[{"(", 
+                RowBox[{"StringContainsQ", "[", 
+                 RowBox[{
+                 "\"\<Palette\>\"", "|", "\"\<Dialog\>\"", "|", 
+                  "\"\<PrivateStylesheetFormatting\>\""}], "]"}], ")"}]}]}], 
+             "\n", "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+            RowBox[{"Documentation`HelpLookup", "[", 
+             RowBox[{"symbolName", ",", 
+              RowBox[{"EvaluationNotebook", "[", "]"}]}], "]"}], ",", "\n", 
+            "\t\t\t\t", 
+            RowBox[{"Documentation`HelpLookup", "[", 
+             RowBox[{"symbolName", ",", "None"}], "]"}]}], "\n", "\t\t\t\t", 
+           "]"}]}], ";", "\n", "\t\t\t", 
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{"docNB", "===", "Automatic"}], ",", 
+           RowBox[{"$DocPage", "=", "nb"}]}], "]"}], ";"}], ",", "\n", 
+        "\t\t\t", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"FileExistsQ", "@", "file"}], "//", "TrueQ"}], ",", "\n", 
+          "\t", "\t\t\t", 
+          RowBox[{"With", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"nbops", "=", "\n", "\t", "\t\t\t\t", 
+              RowBox[{"FilterRules", "[", "\n", "\t", "\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"Join", "[", 
+                 RowBox[{
+                  RowBox[{"{", "ops", "}"}], ",", 
+                  RowBox[{"Replace", "[", 
+                   RowBox[{
+                    RowBox[{"AbsoluteOptions", "@", "nb"}], ",", 
+                    RowBox[{"$Failed", "\[Rule]", 
+                    RowBox[{"{", "}"}]}]}], "]"}]}], "]"}], ",", "\n", "\t", 
+                "\t\t\t\t\t", 
+                RowBox[{"Except", "[", "WindowTitle", "]"}]}], "]"}]}], "}"}],
+             ",", "\n", "\t", "\t\t\t\t", 
+            RowBox[{"NotebookPut", "[", 
+             RowBox[{
+              RowBox[{"Get", "@", "file"}], ",", "nb", ",", 
+              RowBox[{"Sequence", "@@", 
+               RowBox[{"Prepend", "[", 
+                RowBox[{"nbops", ",", 
+                 RowBox[{"WindowTitle", "\[Rule]", "winTit"}]}], "]"}]}]}], 
+             "]"}]}], "\n", "\t", "\t\t\t\t", "]"}], ",", "\n", "\t", 
+          "\t\t\t", 
+          RowBox[{
+           RowBox[{"Do", "[", "\n", "\t", "\t\t\t\t", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"If", "[", 
+               RowBox[{
+                RowBox[{"Not", "@", 
+                 RowBox[{"(", 
+                  RowBox[{"Deletable", "/.", 
+                   RowBox[{"Options", "[", 
+                    RowBox[{"c", ",", "Deletable"}], "]"}]}], ")"}]}], ",", 
+                RowBox[{"SetOptions", "[", 
+                 RowBox[{"c", ",", 
+                  RowBox[{"Deletable", "\[Rule]", "True"}]}], "]"}]}], "]"}], 
+              ";"}], ",", "\n", "\t", "\t", "\t\t\t", 
+             RowBox[{"{", 
+              RowBox[{"c", ",", 
+               RowBox[{"Cells", "@", "nb"}]}], "}"}]}], "]"}], ";", "\n", 
+           "\t", "\t", "\t\t", 
+           RowBox[{"NotebookDelete", "[", 
+            RowBox[{"Cells", "@", "nb"}], "]"}], ";", "\n", "\t", "\t", 
+           "\t\t", 
+           RowBox[{"SetOptions", "[", 
+            RowBox[{"nb", ",", 
+             RowBox[{"WindowTitle", "\[Rule]", "winTit"}]}], "]"}]}]}], "\n", 
+         "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}], ";", "\n", "\t", 
+      RowBox[{"SetSelectedNotebook", "@", "nb"}], ";", "\n", "\t", 
+      RowBox[{"SelectionMove", "[", 
+       RowBox[{"nb", ",", "After", ",", "Notebook", ",", 
+        RowBox[{"AutoScroll", "\[Rule]", "False"}]}], "]"}], ";", "\n", "\t", 
+      
+      RowBox[{"NotebookWrite", "[", 
+       RowBox[{"nb", ",", "\n", "\t\t", 
+        RowBox[{"Cell", "[", 
+         RowBox[{"\"\<Definitions Block\>\"", ",", "\"\<Section\>\"", ",", 
+          RowBox[{"CellFrame", "\[Rule]", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"0", ",", "0"}], "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{"1", ",", "1"}], "}"}]}], "}"}]}]}], "]"}], ",", "\n", 
+        "\t\t", "None", ",", "\n", "\t\t", 
+        RowBox[{"AutoScroll", "\[Rule]", "False"}]}], "]"}], ";", "\n", "\t", 
+      
+      RowBox[{"Replace", "[", "\n", "\t\t", 
+       RowBox[{
+        RowBox[{"Replace", "[", "\n", "\t\t\t", 
+         RowBox[{
+          RowBox[{"ToExpression", "[", 
+           RowBox[{"symbolName", ",", "StandardForm", ",", "HoldComplete"}], 
+           "]"}], ",", "\n", "\t\t\t", 
+          RowBox[{
+           RowBox[{"HoldComplete", "[", "s_", "]"}], "\[RuleDelayed]", 
+           RowBox[{"MessageName", "[", 
+            RowBox[{"s", ",", "\"\<usage\>\""}], "]"}]}]}], "\n", "\t\t\t", 
+         "]"}], ",", "\n", "\t\t", 
+        RowBox[{
+         RowBox[{"e", ":", 
+          RowBox[{"Except", "[", "_MessageName", "]"}]}], "\[RuleDelayed]", 
+         "\n", "\t\t\t", 
+         RowBox[{"NotebookWrite", "[", 
+          RowBox[{"nb", ",", 
+           RowBox[{"Cell", "[", 
+            RowBox[{
+             RowBox[{"BoxData", "[", "e", "]"}], ",", "\"\<Output\>\""}], 
+            "]"}], ",", "None", ",", 
+           RowBox[{"AutoScroll", "\[Rule]", "False"}]}], "]"}]}]}], "\n", 
+       "\t\t", "]"}], ";", "\n", "\t", 
+      RowBox[{"PrintDefinitionsNotebook", "[", 
+       RowBox[{"nb", ",", "symbolName"}], "]"}], ";", "\n", "\t", 
+      RowBox[{"NotebookWrite", "[", 
+       RowBox[{"nb", ",", "\n", "\t\t", 
+        RowBox[{"Cell", "[", 
+         RowBox[{"\"\<\>\"", ",", "\"\<Section\>\"", ",", "\n", "\t\t\t\t", 
+          RowBox[{"CellFrame", "\[Rule]", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"0", ",", "0"}], "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{"1", ",", "1"}], "}"}]}], "}"}]}]}], "]"}], ",", "None",
+         ",", 
+        RowBox[{"AutoScroll", "\[Rule]", "False"}]}], "]"}], ";", "\n", 
+      "\t\t", 
+      RowBox[{"SelectionMove", "[", 
+       RowBox[{"nb", ",", "Before", ",", "Notebook"}], "]"}], ";", "\n", 
+      "\t\t", "nb"}]}], "\n", "\t", "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.6846883528991833`*^9, 3.6846885339378*^9}, {
+   3.6846886679242077`*^9, 3.684688681214864*^9}, {3.684689151064507*^9, 
+   3.6846891548067217`*^9}, {3.684689354379064*^9, 3.6846893645881777`*^9}, {
+   3.6846894190914516`*^9, 3.6846894354931307`*^9}, {3.684689477874961*^9, 
+   3.6846894831700153`*^9}, {3.6846962632390137`*^9, 3.684696276588587*^9}, {
+   3.6846963155330687`*^9, 3.684696395808823*^9}, {3.6847025611080112`*^9, 
+   3.684702683831913*^9}, {3.684703340768664*^9, 3.6847033609899693`*^9}, {
+   3.6847035764968348`*^9, 3.684703578861618*^9}, {3.6847036117911777`*^9, 
+   3.6847036227315273`*^9}, {3.684703660204069*^9, 3.6847036646591797`*^9}, {
+   3.684704628639606*^9, 3.6847046613318768`*^9}, {3.684705212240004*^9, 
+   3.684705230414404*^9}, {3.684705262320034*^9, 3.6847052710100403`*^9}, {
+   3.6847592885381804`*^9, 3.6847593605458803`*^9}, {3.684763272487533*^9, 
+   3.6847633785449142`*^9}, {3.6847634372894382`*^9, 3.68476362699839*^9}, {
+   3.684763670370019*^9, 3.68476372216928*^9}, {3.6847642452321777`*^9, 
+   3.684764247959972*^9}, {3.684765964496641*^9, 3.6847660597691927`*^9}, 
+   3.68476611919281*^9, {3.684766383279479*^9, 3.6847663993771687`*^9}, {
+   3.68476664077999*^9, 3.684766683991067*^9}, {3.6847667188234167`*^9, 
+   3.6847667221981783`*^9}, {3.684766776221074*^9, 3.684766780882852*^9}, {
+   3.684766906426839*^9, 3.684766935159973*^9}, {3.684767025468289*^9, 
+   3.684767043834144*^9}, {3.6847671912897453`*^9, 3.6847672207495823`*^9}, {
+   3.684767289820057*^9, 3.684767313692515*^9}, {3.684768526130807*^9, 
+   3.6847685582301903`*^9}, {3.6847685946453323`*^9, 
+   3.6847686191190453`*^9}, {3.684768704310979*^9, 3.684768729348662*^9}, {
+   3.684768768259652*^9, 3.684768774350153*^9}, {3.684769072860526*^9, 
+   3.684769146773938*^9}, {3.684769291801174*^9, 3.6847693076064243`*^9}, {
+   3.684769368662456*^9, 3.684769470557699*^9}, {3.68477732249984*^9, 
+   3.684777342057817*^9}, 3.684777470265032*^9, 3.684777523832884*^9, {
+   3.684777706449885*^9, 3.684777714167802*^9}, {3.684777775131242*^9, 
+   3.684777782024186*^9}, 3.684777933099379*^9, {3.685101482232707*^9, 
+   3.685101491232849*^9}, {3.68520981463096*^9, 3.685209825511243*^9}, 
+   3.6852333692889833`*^9, {3.685234123487528*^9, 3.685234144256771*^9}, {
+   3.685234191911536*^9, 3.685234213102894*^9}, 3.685234275875185*^9, {
+   3.685234600473486*^9, 3.685234628233015*^9}, {3.6871211896394176`*^9, 
+   3.687121320865642*^9}, {3.6871214259687147`*^9, 3.687121479796528*^9}, {
+   3.68712151765622*^9, 3.687121523050496*^9}, {3.687121562926022*^9, 
+   3.6871215639226923`*^9}, {3.687218244271543*^9, 3.687218650548884*^9}, {
+   3.687218686002706*^9, 3.6872186870887127`*^9}, {3.6872187225005503`*^9, 
+   3.687218725528187*^9}, {3.6872187557467947`*^9, 3.687218757255679*^9}, {
+   3.687218829107583*^9, 3.687218829423451*^9}, {3.68721914710189*^9, 
+   3.687219147385144*^9}, {3.6872191858539886`*^9, 3.687219196826228*^9}, {
+   3.687219242523283*^9, 3.687219279168438*^9}, 3.699877747926022*^9, {
+   3.699877820407139*^9, 
+   3.6998778974662*^9}},ExpressionUUID->"7fb2a5b8-e89d-4f13-88aa-\
+8da01e58349a"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"OpenDocs", "[", 
+   RowBox[{"s_ToString", ",", "o___"}], "]"}], ":=", 
+  RowBox[{"OpenDocs", "[", 
+   RowBox[{
+    RowBox[{"Evaluate", "@", "s"}], ",", "o"}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"OpenDocs", "[", 
+    RowBox[{"sym_Symbol", ",", "o___"}], "]"}], ":=", 
+   RowBox[{"OpenDocs", "[", 
+    RowBox[{
+     RowBox[{"ToString", "@", 
+      RowBox[{"Unevaluated", "@", "sym"}]}], ",", "o"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"OpenDocs", "~", "SetAttributes", "~", "HoldFirst"}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.6846883528991833`*^9, 3.6846885339378*^9}, {
+   3.6846886679242077`*^9, 3.684688681214864*^9}, {3.684689151064507*^9, 
+   3.6846891548067217`*^9}, {3.684689354379064*^9, 3.6846893645881777`*^9}, {
+   3.6846894190914516`*^9, 3.6846894354931307`*^9}, {3.684689477874961*^9, 
+   3.6846894831700153`*^9}, {3.6846962632390137`*^9, 3.684696276588587*^9}, {
+   3.6846963155330687`*^9, 3.684696395808823*^9}, {3.6847025611080112`*^9, 
+   3.684702683831913*^9}, {3.684703340768664*^9, 3.6847033609899693`*^9}, {
+   3.6847035764968348`*^9, 3.684703578861618*^9}, {3.6847036117911777`*^9, 
+   3.6847036227315273`*^9}, {3.684703660204069*^9, 3.6847036646591797`*^9}, {
+   3.684704628639606*^9, 3.6847046613318768`*^9}, {3.684705212240004*^9, 
+   3.684705230414404*^9}, {3.684705262320034*^9, 3.6847052710100403`*^9}, {
+   3.6847592885381804`*^9, 3.6847593605458803`*^9}, {3.684763272487533*^9, 
+   3.6847633785449142`*^9}, {3.6847634372894382`*^9, 3.68476362699839*^9}, {
+   3.684763670370019*^9, 3.68476372216928*^9}, {3.6847642452321777`*^9, 
+   3.684764247959972*^9}, {3.684765964496641*^9, 3.6847660597691927`*^9}, 
+   3.68476611919281*^9, {3.684766383279479*^9, 3.6847663993771687`*^9}, {
+   3.68476664077999*^9, 3.684766683991067*^9}, {3.6847667188234167`*^9, 
+   3.6847667221981783`*^9}, {3.684766776221074*^9, 3.684766780882852*^9}, {
+   3.684766906426839*^9, 3.684766935159973*^9}, {3.684767025468289*^9, 
+   3.684767043834144*^9}, {3.6847671912897453`*^9, 3.6847672207495823`*^9}, {
+   3.684767289820057*^9, 3.684767313692515*^9}, {3.684768526130807*^9, 
+   3.6847685582301903`*^9}, {3.6847685946453323`*^9, 
+   3.6847686191190453`*^9}, {3.684768704310979*^9, 3.684768729348662*^9}, {
+   3.684768768259652*^9, 3.684768774350153*^9}, {3.684769072860526*^9, 
+   3.684769146773938*^9}, {3.684769291801174*^9, 3.6847693076064243`*^9}, {
+   3.684769368662456*^9, 3.684769470557699*^9}, {3.68477732249984*^9, 
+   3.684777342057817*^9}, 3.684777470265032*^9, 3.684777523832884*^9, {
+   3.684777706449885*^9, 3.684777714167802*^9}, {3.684777775131242*^9, 
+   3.684777782024186*^9}, 3.684777933099379*^9, {3.685101482232707*^9, 
+   3.685101491232849*^9}, {3.68520981463096*^9, 3.685209825511243*^9}, 
+   3.6852333692889833`*^9, {3.685234123487528*^9, 3.685234144256771*^9}, {
+   3.685234191911536*^9, 3.685234213102894*^9}, 3.685234275875185*^9, {
+   3.685234600473486*^9, 3.6852346720619507`*^9}, {3.699877757084413*^9, 
+   3.699877769025042*^9}},ExpressionUUID->"ef1ff060-f33f-4dc9-94d2-\
+5e1927a7c3b2"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]GetUsage\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.6866673729340963`*^9, 3.686667375878237*^9}, {
+  3.6866674282886667`*^9, 3.6866674305805273`*^9}, {3.731276725317368*^9, 
+  3.731276725870208*^9}},ExpressionUUID->"ed4c1aae-2280-4ad8-a306-\
+e546e49e30bf"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"definitionPatternsSimplify", "[", "valueSpec_List", "]"}], ":=", 
+   "\n", "\t", 
+   RowBox[{"Replace", "[", 
+    RowBox[{"valueSpec", ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", "p___", "]"}], 
+      "\[RuleDelayed]", "\n", "\t\t\t", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"HoldForm", "[", "p", "]"}], "/.", 
+        RowBox[{"{", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{"Verbatim", "[", "Pattern", "]"}], "[", 
+            RowBox[{"name_", ",", "pat_"}], "]"}], "\[RuleDelayed]", "pat"}], 
+          ",", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Verbatim", "[", "Optional", "]"}], "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"Verbatim", "[", "Pattern", "]"}], "[", 
+              RowBox[{"name_", ",", "pat_"}], "]"}], ",", "v_"}], "]"}], 
+           "\[RuleDelayed]", 
+           RowBox[{"Optional", "[", 
+            RowBox[{"pat", ",", "v"}], "]"}]}]}], "\n", "\t\t\t\t", "}"}]}], 
+       ")"}]}], ",", "\n", "\t\t", "1"}], "]"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.690556854050044*^9, 3.6905568921891737`*^9}, 
+   3.6905570976272993`*^9, {3.690557139738491*^9, 3.6905571516004133`*^9}, 
+   3.690557209542533*^9, {3.7023405847087107`*^9, 3.702340592501234*^9}, {
+   3.702340727790413*^9, 
+   3.7023407292772427`*^9}},ExpressionUUID->"9eb813ba-7aa4-4175-a676-\
+647c1935bae7"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"defintionsValueFunctions", "=", "\n", "\t", 
+   RowBox[{
+   "OwnValues", "|", "DownValues", "|", "UpValues", "|", "SubValues", "|", 
+    "Attributes", "|", "Messages", "|", "Options"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GetUsage", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"sym_Symbol", "|", 
+      RowBox[{
+       RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", "sym_Symbol", 
+       "]"}]}], ",", "\n", "\t", 
+     RowBox[{"getTypes", ":", "\n", "\t\t", 
+      RowBox[{"(", 
+       RowBox[{"defintionsValueFunctions", "|", "\n", "\t\t", 
+        RowBox[{"{", 
+         RowBox[{"defintionsValueFunctions", ".."}], "}"}], "|", "All", "|", 
+        "Short"}], ")"}], ":", "Short"}], ",", "\n", "\t", 
+     RowBox[{"fullUsage", ":", 
+      RowBox[{"Full", "|", "True", "|", "False", "|", "Short"}], ":", 
+      "False"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"get", "=", "\n", "\t\t\t", 
+        RowBox[{"Replace", "[", 
+         RowBox[{"getTypes", ",", "\n", "\t", "\t\t\t", 
+          RowBox[{"{", "\n", "\t", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"All", "\[Rule]", 
+             RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+              RowBox[{
+              "OwnValues", ",", "DownValues", ",", "UpValues", ",", 
+               "SubValues", ",", "\n", "\t\t\t\t\t\t", "Attributes", ",", 
+               "Messages", ",", "Options"}], "}"}]}], ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"Short", "->", 
+             RowBox[{"{", 
+              RowBox[{
+              "OwnValues", ",", "DownValues", ",", "UpValues", ",", 
+               "SubValues"}], "}"}]}], ",", "\n", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"a", ":", 
+              RowBox[{"Except", "[", "_List", "]"}]}], "\[RuleDelayed]", 
+             RowBox[{"{", "a", "}"}]}]}], "\n", "\t", "\t\t\t\t", "}"}]}], 
+         "]"}]}], ",", "\n", "\t\t", 
+       RowBox[{"full", "=", 
+        RowBox[{"Replace", "[", 
+         RowBox[{"fullUsage", ",", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"Full", "\[Rule]", "True"}], ",", 
+            RowBox[{"Short", "\[Rule]", "False"}]}], "}"}]}], "]"}]}]}], "\n",
+       "\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{"With", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"vals", "=", 
+         RowBox[{"Join", "@@", 
+          RowBox[{"Table", "[", 
+           RowBox[{
+            RowBox[{"With", "[", 
+             RowBox[{
+              RowBox[{"{", 
+               RowBox[{"a", "=", "a"}], "}"}], ",", 
+              RowBox[{"a", "[", "sym", "]"}]}], "]"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"a", ",", "get"}], "}"}]}], "]"}]}]}], "}"}], ",", "\n", 
+       "\t\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+        "full", ",", "\n", "\t\t\t\t", "vals", ",", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"First", "/@", "vals"}], "//", 
+          "definitionPatternsSimplify"}]}], "\n", "\t\t\t\t", "]"}]}], "\n", 
+      "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"GetUsage", "~", "SetAttributes", "~", "HoldFirst"}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.686667378265486*^9, 3.6866673922618923`*^9}, {
+   3.686667436008265*^9, 3.6866675638542128`*^9}, {3.686667606807067*^9, 
+   3.686667717727759*^9}, {3.6866677480810843`*^9, 3.686667810832864*^9}, {
+   3.6866680896189938`*^9, 3.686668292779634*^9}, 3.690556851480541*^9, {
+   3.690556898463194*^9, 3.6905571193313*^9}, {3.690557154635665*^9, 
+   3.6905572052487926`*^9}, {3.6905572965902367`*^9, 3.690557348913074*^9}, {
+   3.690557381606522*^9, 3.690557427260592*^9}, {3.69055874845439*^9, 
+   3.6905587585627832`*^9}, {3.6905590436404343`*^9, 3.690559061213175*^9}, {
+   3.691069506692893*^9, 3.691069516249918*^9}, {3.7023405079865913`*^9, 
+   3.702340596328134*^9}, {3.7023407609498672`*^9, 
+   3.702340785113288*^9}},ExpressionUUID->"a03c3b6a-0f0d-45d4-9f0d-\
+c38da4026357"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"formattedUsageOnClick", "=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"Block", "[", 
+     RowBox[{
+      RowBox[{"{", "\n", "\t\t", 
+       RowBox[{
+       "GeneralUtilities`Debugging`PackagePrivate`$\
+DefinitionSymbolTemplateBoxOptions", "=", "\n", "\t\t\t", 
+        RowBox[{"{", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Editable", " ", "\[Rule]", " ", "False"}], ",", "\n", 
+          "\t\t\t\t", 
+          RowBox[{
+          "DisplayFunction", " ", "\[Rule]", " ", "\n", "\t\t\t\t\t", 
+           RowBox[{"Function", "[", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"TagBox", "[", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"TagBox", "[", "\n", "\t", "\t", "\t", "\t", "\t\t\t\t", 
+               RowBox[{
+                RowBox[{"TooltipBox", "[", 
+                 RowBox[{
+                 "#2", ",", "\n", "\t", "\t", "\t", "\t", "\t\t\t\t\t", 
+                  RowBox[{"StyleBox", "[", 
+                   RowBox[{
+                   "#", ",", "\n", "\t", "\t", "\t", "\t", "\t\t\t\t\t\t", 
+                    RowBox[{"FontColor", " ", "\[Rule]", " ", 
+                    RowBox[{"RGBColor", "[", 
+                    RowBox[{"0", ",", " ", "0", ",", " ", "0"}], "]"}]}], ",",
+                     "\n", "\t", "\t", "\t", "\t", "\t\t\t\t\t\t", 
+                    RowBox[{
+                    "FontFamily", " ", "\[Rule]", " ", "\"\<Courier\>\""}], 
+                    ",", " ", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"FontWeight", " ", "\[Rule]", " ", "Bold"}]}], 
+                   "\n", "\t\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+                  "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"TooltipDelay", " ", "\[Rule]", " ", "0.4"}]}], 
+                 "\n", "\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+                "\t\t\t\t\t\t\t\t", 
+                RowBox[{"EventHandlerTag", "[", 
+                 RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"\"\<MouseClicked\>\"", " ", "\[RuleDelayed]", 
+                   RowBox[{"(", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Replace", "[", 
+                    RowBox[{
+                    RowBox[{"ToExpression", "[", 
+                    RowBox[{"#", ",", "StandardForm", ",", "FormattedDefs"}], 
+                    "]"}], ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"c", ":", 
+                    RowBox[{"Column", "[", 
+                    RowBox[{"{", "__", "}"}], "]"}]}], "\[RuleDelayed]", 
+                    RowBox[{"(", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"SelectionMove", "[", 
+                    RowBox[{
+                    RowBox[{"EvaluationNotebook", "[", "]"}], ",", "After", 
+                    ",", "Cell"}], "]"}], ";", "\n", "\t", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"NotebookWrite", "[", 
+                    RowBox[{
+                    RowBox[{"EvaluationNotebook", "[", "]"}], ",", "\n", "\t",
+                     "\t", "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Cell", "[", 
+                    RowBox[{
+                    RowBox[{"BoxData", "@", 
+                    RowBox[{"ToBoxes", "@", "c"}]}], ",", "\n", "\t", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Sequence", "@@", 
+                    RowBox[{"Rest", "@", 
+                    RowBox[{"NotebookRead", "[", 
+                    RowBox[{"EvaluationCell", "[", "]"}], "]"}]}]}]}], "\n", 
+                    "\t", "\t", "\t\t\t\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+                    "\t", "\t", "\t\t\t\t\t\t\t\t\t\t\t", "None", ",", "\n", 
+                    "\t", "\t", "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"AutoScroll", "\[Rule]", "False"}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", ")"}]}]}], "]"}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", ")"}]}], "\n", 
+                  "\t\t\t\t\t\t\t\t\t", "}"}], "]"}]}], "\n", 
+               "\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t", "\t", "\t", "\t", 
+              "\t\t\t", 
+              RowBox[{
+              "MouseAppearanceTag", " ", "@", " ", "\"\<LinkHand\>\""}]}], 
+             "\n", "\t", "\t", "\t", "\t", "\t\t", "]"}], "\n", "\t", "\t", 
+            "\t", "\t", "\t", "]"}]}], ",", "\n", "\t", "\t", "\t", "\t", 
+          "\t", 
+          RowBox[{"InterpretationFunction", " ", "\[Rule]", " ", 
+           RowBox[{"(", 
+            RowBox[{"#", "&"}], ")"}]}]}], "\n", "\t\t\t\t", "}"}]}], "\n", 
+       "\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+      RowBox[{"RawBoxes", "@", 
+       RowBox[{"ToBoxes", "@", 
+        RowBox[{"GeneralUtilities`CodeForm", "[", "#", "]"}]}]}]}], "\n", 
+     "\t\t\t", "]"}], "&"}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.702676758328733*^9, 3.702677005432334*^9}, {
+  3.7026770905589333`*^9, 3.7026771056794577`*^9}, {3.7026771438021812`*^9, 
+  3.702677165330204*^9}},ExpressionUUID->"78e1d5e6-bb41-47da-9cdb-\
+46f9a614632e"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "FormattedUsage", "]"}], "=", "\n", "\t", 
+   RowBox[{"Join", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{"Format", "\[Rule]", "formattedUsageOnClick"}], "\n", "\t\t\t", 
+      "}"}], ",", "\n", "\t\t", 
+     RowBox[{"Options", "@", "Column"}], ",", "\n", "\t\t", 
+     RowBox[{"Options", "@", "Style"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"FormattedUsage", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"sym_Symbol", "|", 
+      RowBox[{
+       RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", "sym_Symbol", 
+       "]"}]}], ",", "\n", "\t", 
+     RowBox[{"fullUsage", ":", 
+      RowBox[{"Full", "|", "True", "|", "False", "|", "Short"}], ":", 
+      "False"}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{"format", "=", "\n", "\t\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{
+         RowBox[{"OptionValue", "[", "Format", "]"}], ",", 
+         RowBox[{"{", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"None", "\[Rule]", "Identity"}], ",", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"Automatic", "|", "Box"}], "->", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"GeneralUtilities`PrettyForm", "@", "#"}], "&"}], 
+             ")"}]}]}], "\n", "\t\t\t\t", "}"}]}], "]"}]}], "\n", "\t\t\t\t", 
+      "}"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"format", "/@", 
+        RowBox[{"(", 
+         RowBox[{"sym", "~", "GetUsage", "~", "fullUsage"}], ")"}]}], "\n", 
+       "\t\t\t", "//", 
+       RowBox[{
+        RowBox[{"Column", "[", 
+         RowBox[{"#", ",", 
+          RowBox[{"FilterRules", "[", 
+           RowBox[{
+            RowBox[{"{", "ops", "}"}], ",", 
+            RowBox[{"Options", "@", "Column"}]}], "]"}]}], "]"}], "&"}]}], 
+      "\n", "\t\t\t", "//", 
+      RowBox[{
+       RowBox[{"Style", "[", 
+        RowBox[{"#", ",", "\"\<Input\>\"", ",", 
+         RowBox[{"FilterRules", "[", 
+          RowBox[{
+           RowBox[{"{", "ops", "}"}], ",", 
+           RowBox[{"Options", "@", "Style"}]}], "]"}]}], "]"}], "&"}]}]}], 
+    "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"FormattedUsage", "~", "SetAttributes", "~", "HoldFirst"}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.690558729658814*^9, 3.6905587785154257`*^9}, {
+   3.690559071469592*^9, 3.690559157281341*^9}, {3.690559243994602*^9, 
+   3.690559276250483*^9}, {3.690559326269146*^9, 3.690559351899302*^9}, {
+   3.69055983096124*^9, 3.6905598926063023`*^9}, {3.690562798144458*^9, 
+   3.690562811655209*^9}, {3.690999789103997*^9, 3.690999790948077*^9}, {
+   3.690999821294505*^9, 3.690999824890862*^9}, {3.69106952170936*^9, 
+   3.69106952388395*^9}, 3.6910715738863153`*^9, {3.702336808203977*^9, 
+   3.7023368313252983`*^9}, {3.70267669552883*^9, 3.7026767557324543`*^9}, 
+   3.7026770398758*^9, 
+   3.702677074105529*^9},ExpressionUUID->"fba6e263-5540-4367-8807-\
+a68444850189"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"FormattedDefs", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"sym_Symbol", "|", 
+      RowBox[{
+       RowBox[{"Verbatim", "[", "HoldPattern", "]"}], "[", "sym_Symbol", 
+       "]"}]}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"FormattedUsage", "[", 
+    RowBox[{"sym", ",", "Full", ",", "ops"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"FormattedDefs", "~", "SetAttributes", "~", "HoldFirst"}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.7010089714653883`*^9, 3.7010090045857077`*^9}, {
+  3.7010090348255577`*^9, 
+  3.7010090430881567`*^9}},ExpressionUUID->"1c18c320-5d8f-4c61-92dd-\
+f3c769170e6e"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]ToolbarAdd\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.6847712395103283`*^9, 
+  3.684771259980937*^9}},ExpressionUUID->"5da37bb4-e4e9-4637-8bf5-\
+0244d7fac5e9"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ToolBarEdit", "[", 
+   RowBox[{"toolbar_", ",", "\[IndentingNewLine]", 
+    RowBox[{"editFunction_:", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"Delete", "[", 
+        RowBox[{"#1", ",", 
+         RowBox[{"First", "/@", "#2"}]}], "]"}], "&"}], ")"}]}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"editObjects_:", 
+     RowBox[{"(", 
+      RowBox[{"_Grid", "|", "_Row", "|", "_Column"}], ")"}]}]}], 
+   "\[IndentingNewLine]", "]"}], ":=", "\[IndentingNewLine]", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"toolbarCell", "=", 
+      RowBox[{"FirstCase", "[", 
+       RowBox[{
+        RowBox[{"FrontEndResource", "[", 
+         RowBox[{"\"\<FEExpressions\>\"", ",", "toolbar"}], "]"}], ",", 
+        "\[IndentingNewLine]", "_Cell"}], "]"}]}], "}"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"With", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"toolbarExpression", "=", 
+        RowBox[{"ToExpression", "@", 
+         RowBox[{"First", "@", "toolbarCell"}]}]}], "}"}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{"With", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"resourceList", "=", "\n", "\t\t", 
+          RowBox[{"Replace", "[", "\[IndentingNewLine]", 
+           RowBox[{
+            RowBox[{"Position", "[", 
+             RowBox[{"toolbarExpression", ",", "editObjects"}], "]"}], ",", 
+            "\[IndentingNewLine]", 
+            RowBox[{"pos_List", "\[RuleDelayed]", 
+             RowBox[{"Table", "[", 
+              RowBox[{
+               RowBox[{"p", "\[Rule]", 
+                RowBox[{"Part", "[", 
+                 RowBox[{"toolbarExpression", ",", 
+                  RowBox[{"Sequence", "@@", "p"}]}], "]"}]}], ",", 
+               RowBox[{"{", 
+                RowBox[{"p", ",", "pos"}], "}"}]}], "]"}]}]}], 
+           "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", "}"}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{"ReplacePart", "[", 
+         RowBox[{"toolbarCell", ",", "\[IndentingNewLine]", 
+          RowBox[{"1", "\[Rule]", 
+           RowBox[{"Replace", "[", 
+            RowBox[{
+             RowBox[{"editFunction", "[", "\[IndentingNewLine]", 
+              RowBox[{
+              "toolbarExpression", ",", "\[IndentingNewLine]", 
+               "resourceList"}], "\[IndentingNewLine]", "]"}], ",", 
+             "\[IndentingNewLine]", 
+             RowBox[{
+              RowBox[{"b", ":", 
+               RowBox[{"Except", "[", "_BoxData", "]"}]}], "\[RuleDelayed]", 
+              RowBox[{"BoxData", "@", 
+               RowBox[{"ToBoxes", "@", "b"}]}]}]}], "\[IndentingNewLine]", 
+            "]"}]}]}], "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", 
+       "]"}]}], "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", 
+   "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.684772019548016*^9, 3.684772232135706*^9}, {
+  3.684772279361795*^9, 3.684772331939499*^9}, {3.684772408888769*^9, 
+  3.684772410472555*^9}, {3.684772525084387*^9, 3.684772527570838*^9}, {
+  3.6847725726258*^9, 3.684772588978739*^9}, {3.684772892699244*^9, 
+  3.684772915202971*^9}, {3.684773205060298*^9, 3.684773226650819*^9}, {
+  3.684773331671092*^9, 3.684773344365447*^9}, {3.6847750458359537`*^9, 
+  3.684775055411676*^9}, {3.684775617897814*^9, 3.6847756354772463`*^9}, {
+  3.702345688995941*^9, 
+  3.70234569023981*^9}},ExpressionUUID->"59cfdee5-cc61-47f2-bdc5-8036817d6caf"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]ContextNotebook\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.6847632592125263`*^9, 3.6847632648672743`*^9}, 
+   3.6847764984717607`*^9},ExpressionUUID->"5f651564-e210-4779-9a38-\
+3e3c82621ab1"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"usageMSG", "[", "s_", "]"}], ":=", 
+   RowBox[{"MessageName", "[", 
+    RowBox[{"s", ",", "\"\<usage\>\""}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"usageMSG", "~", "SetAttributes", "~", "HoldFirst"}], 
+  ";"}]}], "CodeInput",
+ CellChangeTimes->{{3.685101268212751*^9, 
+  3.6851013065945063`*^9}},ExpressionUUID->"b971b76f-6942-44c4-b5fc-\
+5f68566551be"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ContextOrdering", "[", "name_", "]"}], ":=", 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"StringLength", "[", "name", "]"}], "+", 
+    RowBox[{"Which", "[", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"MemberQ", "[", 
+       RowBox[{
+        RowBox[{"ToExpression", "[", 
+         RowBox[{"name", ",", "StandardForm", ",", "Attributes"}], "]"}], ",",
+         "Temporary"}], "]"}], ",", "\n", "\t\t", "1000", ",", "\n", "\t\t", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Length", "@", 
+          RowBox[{"ToExpression", "[", 
+           RowBox[{"name", ",", "StandardForm", ",", "OwnValues"}], "]"}]}], "==",
+          "0"}], "&&", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"Length", "@", 
+          RowBox[{"ToExpression", "[", 
+           RowBox[{"name", ",", "StandardForm", ",", "DownValues"}], "]"}]}], 
+         "==", "0"}], "&&", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"Length", "@", 
+          RowBox[{"ToExpression", "[", 
+           RowBox[{"name", ",", "StandardForm", ",", "UpValues"}], "]"}]}], "==",
+          "0"}], "&&", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"Length", "@", 
+          RowBox[{"ToExpression", "[", 
+           RowBox[{"name", ",", "StandardForm", ",", "SubValues"}], "]"}]}], "==",
+          "0"}]}], ")"}], ",", "\n", "\t\t", "500", ",", "\n", "\t\t", 
+      RowBox[{"MatchQ", "[", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"ToExpression", "[", 
+         RowBox[{"name", ",", "StandardForm", ",", "usageMSG"}], "]"}], ",", 
+        "\n", "\t\t\t", "_MessageName"}], "\n", "\t\t\t", "]"}], ",", "100", 
+      ",", "\n", "\t\t", "True", ",", "\n", "\t\t", 
+      RowBox[{"LetterNumber", "@", 
+       RowBox[{"StringTake", "[", 
+        RowBox[{"name", ",", 
+         RowBox[{"{", "1", "}"}]}], "]"}]}]}], "\n", "\t\t", "]"}]}], 
+   ")"}]}]], "CodeInput",
+ CellChangeTimes->{{3.685101176592122*^9, 3.6851012520589*^9}, {
+   3.685101310132081*^9, 3.685101454845313*^9}, {3.685101600137681*^9, 
+   3.685101605610491*^9}, {3.68510171335188*^9, 3.685101772404399*^9}, {
+   3.685101835302207*^9, 3.685101835730955*^9}, {3.6852044243190937`*^9, 
+   3.68520443535398*^9}, {3.685204471866603*^9, 3.685204481508971*^9}, 
+   3.702345605700822*^9},ExpressionUUID->"36906b07-8042-424b-a97c-\
+7f989245d486"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ContextFind", "[", 
+   RowBox[{"pkg_", ",", 
+    RowBox[{"pat_:", "\"\<*\>\""}], ",", 
+    RowBox[{"ops", ":", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"_Rule", "|", "_RuleDelayed"}], ")"}], "..."}]}]}], "]"}], ":=",
+   "\n", "\t", 
+  RowBox[{"DocFind", "[", 
+   RowBox[{
+   "pat", ",", "\n", "\t", "\t", "ContextOrdering", ",", "\n", "\t", "\t", 
+    RowBox[{"Context", "\[Rule]", "pkg"}], ",", "\n", "\t", "\t", "ops"}], 
+   "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.685204281811571*^9, 3.685204372789165*^9}, {
+  3.702345607881159*^9, 
+  3.702345609327211*^9}},ExpressionUUID->"0012e91c-d392-43ef-8726-\
+5dc5b5094215"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ContextNotebook", "[", "pkg_", "]"}], ":=", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"nb", "=", 
+      RowBox[{"OpenDocs", "[", "\n", "\t\t", 
+       RowBox[{
+       "\"\<\>\"", ",", "\n", "\t\t", "CreateNotebook", ",", "\n", "\t\t", 
+        RowBox[{"Visible", "\[Rule]", "False"}]}], "]"}]}], "}"}], ",", "\n", 
+    "\t", 
+    RowBox[{
+     RowBox[{"With", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"cells", "=", 
+         RowBox[{"Prepend", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{
+             RowBox[{"Cell", "[", 
+              RowBox[{
+               RowBox[{"BoxData", "@", "#"}], ",", "\"\<SearchResultCell\>\"",
+                ",", "\n", "\t\t", 
+               RowBox[{"CellEventActions", "\[Rule]", 
+                RowBox[{"{", "}"}]}], ",", "\n", "\t\t", 
+               RowBox[{"Deletable", "\[Rule]", "True"}]}], "]"}], "&"}], "/@", 
+            RowBox[{"Cases", "[", 
+             RowBox[{
+              RowBox[{"DocFind", "[", 
+               RowBox[{
+               "\"\<*\>\"", ",", "\n", "\t\t\t", "ContextOrdering", ",", "\n",
+                 "\t\t\t", 
+                RowBox[{"Context", "\[Rule]", "pkg"}], ",", "\n", "\t\t\t", 
+                RowBox[{"ButtonFunction", "\[Rule]", 
+                 RowBox[{"(", 
+                  RowBox[{
+                   RowBox[{"(", "\n", "\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"NotebookDelete", "@", 
+                    RowBox[{"Cells", "[", "nb", "]"}]}], ";", "\n", 
+                    "\t\t\t\t", 
+                    RowBox[{"OpenDocs", "[", 
+                    RowBox[{"#", ",", "nb"}], "]"}]}], ")"}], "&"}], 
+                  ")"}]}]}], "\n", "\t\t\t", "]"}], ",", 
+              RowBox[{
+               RowBox[{"Button", "[", "\n", "\t\t\t", 
+                RowBox[{
+                 RowBox[{"Mouseover", "[", 
+                  RowBox[{
+                   RowBox[{"Style", "[", 
+                    RowBox[{"text_", ",", "___"}], "]"}], ",", "___"}], "]"}],
+                  ",", "\n", "\t\t\t", "cmd___"}], "]"}], "\[RuleDelayed]", 
+               RowBox[{"{", 
+                RowBox[{
+                 RowBox[{"Cell", "[", "\n", "\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"BoxData", "@", 
+                    RowBox[{"ToBoxes", "@", 
+                    RowBox[{"Button", "[", 
+                    RowBox[{
+                    RowBox[{"Mouseover", "[", "\n", "\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"Style", "[", 
+                    RowBox[{"text", ",", 
+                    RowBox[{"RGBColor", "[", 
+                    RowBox[{".75", ",", "0", ",", "0"}], "]"}]}], "]"}], ",", 
+                    "\n", "\t\t\t\t\t", 
+                    RowBox[{"Style", "[", 
+                    RowBox[{"text", ",", 
+                    RowBox[{"RGBColor", "[", 
+                    RowBox[{".95", ",", ".2", ",", "0"}], "]"}]}], "]"}]}], 
+                    "\n", "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", "cmd"}],
+                     "]"}]}]}], ",", "\n", "\t\t\t", 
+                   "\"\<SearchResultTitle\>\""}], "]"}], ",", "\n", "\t\t", 
+                 RowBox[{"Cell", "[", 
+                  RowBox[{
+                   RowBox[{"Replace", "[", "\n", "\t\t\t", 
+                    RowBox[{
+                    RowBox[{"ToExpression", "[", 
+                    RowBox[{
+                    RowBox[{
+                    "\"\<Unevaluated[\>\"", "<>", "pkg", "<>", "\"\<`\>\"", "<>",
+                     "text", "<>", "\"\<]\>\""}], ",", "\n", "\t\t\t\t", 
+                    "StandardForm", ",", 
+                    RowBox[{
+                    RowBox[{"MessageName", "[", 
+                    RowBox[{"#", ",", "\"\<usage\>\""}], "]"}], "&"}]}], 
+                    "]"}], ",", 
+                    RowBox[{"{", "\n", "\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"_MessageName", ":>", 
+                    RowBox[{"pkg", "<>", "\"\<`\>\"", "<>", "text"}]}], ",", 
+                    "\n", "\t\t\t\t", 
+                    RowBox[{"b_", "\[RuleDelayed]", 
+                    RowBox[{"BoxData", "@", "b"}]}]}], "\n", "\t\t\t\t", 
+                    "}"}]}], "]"}], ",", "\n", "\t\t", 
+                   "\"\<SearchResultSummary\>\""}], "]"}]}], "\n", "\t\t", 
+                "}"}]}], ",", "\n", "\t", "\[Infinity]"}], "]"}]}], ",", "\n",
+            "\t", 
+           RowBox[{"Cell", "[", 
+            RowBox[{"pkg", ",", "\"\<SearchPageHeading\>\"", ",", 
+             RowBox[{"CellFrame", "\[Rule]", 
+              RowBox[{"{", 
+               RowBox[{
+                RowBox[{"{", 
+                 RowBox[{"0", ",", "0"}], "}"}], ",", 
+                RowBox[{"{", 
+                 RowBox[{"1", ",", "0"}], "}"}]}], "}"}]}]}], "]"}]}], "\n", 
+          "\t", "]"}]}], "}"}], ",", "\n", "\t", 
+       RowBox[{
+        RowBox[{"SetOptions", "[", 
+         RowBox[{"nb", ",", "\n", "\t", "\t", 
+          RowBox[{"DockedCells", "\[Rule]", "\n", "\t", "\t", 
+           RowBox[{"Replace", "[", "\n", "\t", "\t\t", 
+            RowBox[{
+             RowBox[{"ToolBarEdit", "[", 
+              RowBox[{
+              "\"\<HelpViewerToolbar\>\"", ",", "\n", "\t", "\t\t\t", 
+               RowBox[{
+                RowBox[{"BoxData", "@", 
+                 RowBox[{"{", 
+                  RowBox[{
+                   RowBox[{"ToBoxes", "@", "#1"}], ",", "\n", "\t", 
+                   "\t\t\t\t", 
+                   RowBox[{"ToBoxes", "@", 
+                    RowBox[{"Button", "[", "\n", "\t", "\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"Row", "@", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"Spacer", "[", "25", "]"}], ",", 
+                    RowBox[{"Style", "[", 
+                    RowBox[{"\"\<\[ReturnIndicator]\>\"", ",", "Gray"}], 
+                    "]"}]}], "}"}]}], ",", "\n", "\t", "\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"SetOptions", "[", 
+                    RowBox[{"#", ",", 
+                    RowBox[{"Deletable", "\[Rule]", "True"}]}], "]"}], "&"}], 
+                    "/@", 
+                    RowBox[{"Cells", "@", "nb"}]}], ";", "\n", "\t", 
+                    "\t\t\t\t\t", 
+                    RowBox[{"NotebookPut", "[", 
+                    RowBox[{
+                    RowBox[{"Notebook", "[", 
+                    RowBox[{"cells", ",", 
+                    RowBox[{"AbsoluteOptions", "@", "nb"}]}], "]"}], ",", 
+                    "nb"}], "]"}], ";", "\n", "\t", "\t\t\t\t\t", 
+                    RowBox[{"SelectionMove", "[", 
+                    RowBox[{"nb", ",", "Before", ",", "Notebook"}], "]"}], 
+                    ";", "\n", "\t", "\t\t\t\t\t", 
+                    RowBox[{"SetOptions", "[", 
+                    RowBox[{"nb", ",", 
+                    RowBox[{"WindowTitle", "\[Rule]", 
+                    RowBox[{
+                    "\"\<Context: \>\"", "<>", "pkg", "<>", "\"\<`\>\""}]}]}],
+                     "]"}]}], ",", "\n", "\t", "\t\t\t\t\t", 
+                    RowBox[{"Method", "\[Rule]", "\"\<Queued\>\""}], ",", 
+                    "\n", "\t", "\t\t\t\t\t", 
+                    RowBox[{"Appearance", "\[Rule]", "\"\<Frameless\>\""}]}], 
+                    "\n", "\t", "\t\t\t\t\t", "]"}]}]}], "}"}]}], "&"}]}], 
+              "\n", "\t", "\t\t\t", "]"}], ",", "\n", "\t", "\t\t", 
+             RowBox[{
+              RowBox[{"Cell", "[", 
+               RowBox[{"e_", ",", "t_", ",", "c__"}], "]"}], "\[RuleDelayed]", 
+              RowBox[{"Cell", "[", 
+               RowBox[{"e", ",", "t", ",", "\n", "\t", "\t\t\t", 
+                RowBox[{"Background", "\[Rule]", 
+                 RowBox[{"GrayLevel", "[", ".95", "]"}]}], ",", "\n", "\t", 
+                "\t\t\t", 
+                RowBox[{"CellFrame", "\[Rule]", 
+                 RowBox[{"{", 
+                  RowBox[{
+                   RowBox[{"{", 
+                    RowBox[{"0", ",", "0"}], "}"}], ",", 
+                   RowBox[{"{", 
+                    RowBox[{"5", ",", "0"}], "}"}]}], "}"}]}], ",", "c"}], 
+               "]"}]}]}], "\n", "\t", "\t\t", "]"}]}]}], "\n", "\t", "\t", 
+         "]"}], ";", "\n", "\t", 
+        RowBox[{"NotebookDelete", "@", 
+         RowBox[{"Cells", "@", "nb"}]}], ";", "\n", "\t", 
+        RowBox[{"NotebookWrite", "[", 
+         RowBox[{"nb", ",", "cells", ",", "None", ",", 
+          RowBox[{"AutoScroll", "\[Rule]", "False"}]}], "]"}]}]}], "]"}], ";",
+      "\n", "\t", 
+     RowBox[{"SetOptions", "[", 
+      RowBox[{"nb", ",", 
+       RowBox[{"WindowTitle", "\[Rule]", 
+        RowBox[{"\"\<Context: \>\"", "<>", "pkg", "<>", "\"\<`\>\""}]}], ",", 
+       
+       RowBox[{"Visible", "\[Rule]", "True"}]}], "]"}], ";", "\n", "\t", 
+     "nb"}]}], "\n", "\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.6847662226345663`*^9, 3.684766266399886*^9}, {
+   3.684766523604806*^9, 3.684766525713129*^9}, {3.684767178095276*^9, 
+   3.6847671836797733`*^9}, {3.6847673309214354`*^9, 3.684767732762226*^9}, {
+   3.684767770922765*^9, 3.68476780720122*^9}, {3.684767873775736*^9, 
+   3.68476787569573*^9}, 3.6847679182746687`*^9, {3.6847679979309587`*^9, 
+   3.684768047593822*^9}, {3.684768214594284*^9, 3.684768388324089*^9}, {
+   3.684768438823863*^9, 3.6847684677890587`*^9}, {3.684768629445459*^9, 
+   3.684768629897942*^9}, {3.6847695207526827`*^9, 3.684769526335883*^9}, {
+   3.684769581508456*^9, 3.6847699691378317`*^9}, {3.684770008609068*^9, 
+   3.684770009794612*^9}, {3.684770046913233*^9, 3.684770085759224*^9}, {
+   3.6847701315120153`*^9, 3.684770150446258*^9}, 3.684770878223805*^9, {
+   3.684770932549762*^9, 3.684770932932489*^9}, {3.6847711186060038`*^9, 
+   3.684771119597406*^9}, {3.684771184436199*^9, 3.684771190155504*^9}, 
+   3.68477127926611*^9, {3.68477503883645*^9, 3.6847751821051683`*^9}, {
+   3.684775232901079*^9, 3.684775247106731*^9}, {3.6847753112093773`*^9, 
+   3.684775501244256*^9}, {3.684775551059948*^9, 3.6847756046830883`*^9}, {
+   3.684775650184*^9, 3.6847757718166847`*^9}, {3.684775875840703*^9, 
+   3.6847759116589823`*^9}, {3.684775942808467*^9, 3.6847759792211847`*^9}, {
+   3.684776099556031*^9, 3.684776113787562*^9}, {3.684776194544465*^9, 
+   3.684776207176605*^9}, {3.684776257224111*^9, 3.684776273390655*^9}, {
+   3.684776366661327*^9, 3.684776394179901*^9}, {3.684776445849393*^9, 
+   3.684776475208433*^9}, {3.684776506594262*^9, 3.684776554176757*^9}, {
+   3.6847766713492002`*^9, 3.684776703457972*^9}, {3.6847770763276787`*^9, 
+   3.6847771035149612`*^9}, {3.684777574264875*^9, 3.684777574716741*^9}, {
+   3.684777610787922*^9, 3.684777639887241*^9}, {3.684777804182452*^9, 
+   3.684777819435769*^9}, {3.6847778503095818`*^9, 3.684777858585946*^9}, {
+   3.684778002980755*^9, 3.684778008191375*^9}, {3.684778038556172*^9, 
+   3.684778048482654*^9}, {3.6851009110254297`*^9, 3.6851009647660093`*^9}, {
+   3.685101072931768*^9, 3.685101204655982*^9}, {3.6852032689891*^9, 
+   3.685203285514283*^9}, {3.685203595811727*^9, 3.685203601500622*^9}, {
+   3.685203725007532*^9, 3.685203730198223*^9}, {3.685204005630921*^9, 
+   3.685204007148238*^9}, {3.699877757146015*^9, 3.699877757151012*^9}, {
+   3.702345614529385*^9, 
+   3.7023456467285147`*^9}},ExpressionUUID->"c51f6689-7112-4c7f-9359-\
+effe4626a7ca"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Documentation Dialog\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.684255090752561*^9, 3.684255121208126*^9}, {
+  3.684694347102347*^9, 
+  3.684694349581209*^9}},ExpressionUUID->"699765ff-51c9-4bf9-8899-\
+b3f41a8f4509"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"DocsDialog", "[", 
+    RowBox[{
+     RowBox[{"dialog", ":", 
+      RowBox[{"Except", "[", "_Rule", "]"}], ":", "False"}], ",", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "CreateDialog", "]"}]}]}], "]"}], ":=", 
+   "\n", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"DynamicModule", "[", 
+       RowBox[{
+        RowBox[{"{", "\n", "\t", 
+         RowBox[{
+          RowBox[{"symbolName", "=", "\"\<\>\""}], ",", 
+          RowBox[{"context", "=", "\"\<\>\""}], ",", 
+          RowBox[{"option", "=", "\"\<\>\""}], ",", "\n", "\t", 
+          "optionUpdate", ",", "symbolUpdate", ",", 
+          RowBox[{"viewing", "=", "False"}], ",", "\n", "\t", 
+          RowBox[{"autocomplete", "=", "True"}]}], "}"}], ",", "\n", "\t", 
+        RowBox[{"Dynamic", "[", 
+         RowBox[{
+          RowBox[{"viewing", ";", "context", ";", "\n", "\t\t", 
+           RowBox[{
+            RowBox[{"{", "\n", "\t\t\t", 
+             RowBox[{
+              RowBox[{"Column", "@", 
+               RowBox[{"{", "\n", "\t", "\t\t\t", 
+                RowBox[{
+                 RowBox[{"TextCell", "[", 
+                  RowBox[{
+                  "\"\<Context\>\"", ",", "\"\<Text\>\"", ",", "\n", "\t", 
+                   "\t\t\t\t", 
+                   RowBox[{"FontSize", "\[Rule]", 
+                    RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{"dialog", "===", "DockedCells"}], ",", "12", ",", 
+                    "Automatic"}], "]"}]}]}], "]"}], ",", "\n", "\t", 
+                 "\t\t\t", 
+                 RowBox[{"TextCell", "[", "\n", "\t", "\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"InputField", "[", "\n", "\t", "\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"Dynamic", "[", 
+                    RowBox[{"context", ",", "\n", "\t", "\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{"If", "[", "\n", "\t", "\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"MemberQ", "[", 
+                    RowBox[{
+                    RowBox[{"StringLength", "/@", 
+                    RowBox[{"{", 
+                    RowBox[{"#", ",", "context"}], "}"}]}], ",", "0"}], "]"}],
+                     "\n", "\t", "\t\t\t\t\t\t\t\t", "||", "\n", "\t", 
+                    "\t\t\t\t\t\t\t", 
+                    RowBox[{"Not", "@", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{"StringMatchQ", "[", 
+                    RowBox[{"#", ",", 
+                    RowBox[{"context", "<>", "\"\<*\>\""}]}], "]"}], "||", 
+                    RowBox[{"StringMatchQ", "[", 
+                    RowBox[{"context", ",", 
+                    RowBox[{"#", "<>", "\"\<*\>\""}]}], "]"}]}], ")"}]}]}], 
+                    ",", "\n", "\t", "\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"symbolName", "=", "\"\<\>\""}], ";", "\n", "\t", 
+                    "\t\t\t\t\t\t\t", 
+                    RowBox[{"option", "=", "\"\<\>\""}]}]}], "]"}], ";", "\n",
+                     "\t", "\t\t\t\t\t\t\t", 
+                    RowBox[{"context", "=", "#"}]}], "\n", "\t", 
+                    "\t\t\t\t\t\t", ")"}], "&"}]}], "\n", "\t", "\t\t\t\t\t", 
+                    "]"}], ",", "String"}], "]"}], ",", "\"\<Input\>\""}], 
+                  "]"}]}], "}"}]}], ",", "\n", "\t\t\t", 
+              RowBox[{"Grid", "[", 
+               RowBox[{
+                RowBox[{"{", "\n", "\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"{", "\n", "\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"TextCell", "[", 
+                    RowBox[{"\"\<Symbol\>\"", ",", "\"\<Text\>\"", ",", 
+                    RowBox[{"FontSize", "\[Rule]", 
+                    RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{"dialog", "===", "DockedCells"}], ",", "12", ",", 
+                    "Automatic"}], "]"}]}]}], "]"}], ",", "\n", "\t\t\t\t\t", 
+                    
+                    RowBox[{"TextCell", "[", 
+                    RowBox[{"\"\<Option\>\"", ",", "\"\<Text\>\"", ",", 
+                    RowBox[{"FontSize", "\[Rule]", 
+                    RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{"dialog", "===", "DockedCells"}], ",", "12", ",", 
+                    "Automatic"}], "]"}]}]}], "]"}]}], "\n", "\t\t\t\t", 
+                   "}"}], ",", "\n", "\t\t\t\t", 
+                  RowBox[{"{", "\n", "\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"TextCell", "[", "\n", "\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"InputField", "[", "\n", "\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"Dynamic", "[", 
+                    RowBox[{"symbolName", ",", "\n", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"symbolName", "=", "#"}], ";", 
+                    RowBox[{"symbolUpdate", "=", 
+                    RowBox[{"RandomReal", "[", "]"}]}], ";"}], "&"}], ")"}]}],
+                     "]"}], ",", "\n", "\t\t\t\t\t\t\t", "String", ",", "\n", 
+                    "\t\t\t\t\t\t\t", 
+                    RowBox[{"FieldSize", "\[Rule]", "Automatic"}]}], "\n", 
+                    "\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t", 
+                    "\"\<Input\>\""}], "]"}], ",", "\n", "\t\t\t\t\t", 
+                    RowBox[{"TextCell", "[", "\n", "\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"InputField", "[", "\n", "\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"Dynamic", "[", 
+                    RowBox[{"option", ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{"symbolName", "=!=", "\"\<\>\""}], ",", 
+                    RowBox[{
+                    RowBox[{"option", "=", "#"}], ";", 
+                    RowBox[{"optionUpdate", "=", 
+                    RowBox[{"RandomReal", "[", "]"}]}], ";"}]}], "]"}], "&"}],
+                     ")"}]}], "]"}], ",", "\n", "\t\t\t\t\t\t\t", "String", 
+                    ",", "\n", "\t\t\t\t\t\t\t", 
+                    RowBox[{"FieldSize", "\[Rule]", "Automatic"}]}], "]"}], 
+                    ",", "\n", "\t\t\t\t\t\t", "\"\<Input\>\""}], "]"}]}], 
+                   "\n", "\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t", 
+                  RowBox[{"With", "[", 
+                   RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"conf", "=", "\n", "\t\t\t\t\t\t", 
+                    RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"FrameStyle", "\[Rule]", 
+                    RowBox[{"GrayLevel", "[", ".8", "]"}]}], ",", "\n", 
+                    "\t\t\t\t\t\t\t", 
+                    RowBox[{"Framed", "\[Rule]", "True"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t", 
+                    RowBox[{"Background", "->", "White"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t", 
+                    RowBox[{"ImageSize", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"290", ",", 
+                    RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{"dialog", "===", "DockedCells"}], ",", "60", ",", 
+                    "250"}], "]"}]}], "}"}]}]}], "}"}]}], "\n", 
+                    "\t\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t\t\t", 
+                    RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"Dynamic", "[", 
+                    RowBox[{
+                    RowBox[{"symbolName", ";", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"StringLength", "[", "symbolName", "]"}], ">", 
+                    "1"}], ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"DownValues", "@", "DocFind"}], "\[Equal]", 
+                    RowBox[{"{", "}"}]}], ",", 
+                    RowBox[{"Needs", "@", "\"\<BTools`\>\""}]}], "]"}], ";", 
+                    "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"DocFind", "[", 
+                    RowBox[{
+                    "symbolName", ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Context", "\[Rule]", 
+                    RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{"context", "\[Equal]", "\"\<\>\""}], ",", 
+                    "\"\<*\>\"", ",", "context"}], "]"}]}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Sequence", "@@", "conf"}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", "\"\<\>\""}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
+                    RowBox[{"{", "symbolName", "}"}]}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Dynamic", "[", 
+                    RowBox[{
+                    RowBox[{"option", ";", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{"option", "=!=", "\"\<\>\""}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "OpsFind", "[", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{
+                    "ToExpression", "[", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{"context", "\[Equal]", "\"\<\>\""}], ",", 
+                    "symbolName", ",", 
+                    RowBox[{
+                    "context", "<>", "\"\<`\>\"", "<>", "symbolName"}]}], 
+                    "]"}], ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    "StandardForm", ",", "Unevaluated"}], "]"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "option", ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"ButtonFunction", "\[Rule]", "Hyperlink"}], ",", 
+                    "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Sequence", "@@", "conf"}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t", "\"\<\>\""}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
+                    RowBox[{"{", "option", "}"}]}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t\t", 
+                    "}"}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}], "\n", 
+                 "\t\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t\t", 
+                RowBox[{"Dividers", "\[Rule]", 
+                 RowBox[{"{", 
+                  RowBox[{
+                   RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"1", "\[Rule]", "Gray"}], ",", 
+                    RowBox[{"2", "\[Rule]", "Gray"}], ",", 
+                    RowBox[{"3", "\[Rule]", "Gray"}]}], "}"}], ",", 
+                   RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"1", "\[Rule]", "Gray"}], ",", 
+                    RowBox[{
+                    RowBox[{"-", "1"}], "\[Rule]", "Gray"}]}], "}"}]}], 
+                  "}"}]}], ",", "\n", "\t\t\t\t\t\t", 
+                RowBox[{"Alignment", "\[Rule]", 
+                 RowBox[{"{", 
+                  RowBox[{"Left", ",", "Top"}], "}"}]}]}], "\n", "\t\t\t\t\t",
+                "]"}]}], "\n", "\t\t\t\t", "}"}], "//", "\n", "\t\t\t\t\t", 
+            RowBox[{"If", "[", 
+             RowBox[{
+              RowBox[{"dialog", "===", "DockedCells"}], ",", "\n", 
+              "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Column", "@", 
+                RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"Button", "[", "\n", "\t\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"RawBoxes", "@", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"FrontEndResource", "[", 
+                    RowBox[{
+                    "\"\<FEBitmaps\>\"", ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"If", "[", 
+                    RowBox[{
+                    "viewing", ",", "\"\<SquareMinusIconSmall\>\"", ",", 
+                    "\"\<SquarePlusIconSmall\>\""}], "]"}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t", 
+                    RowBox[{"viewing", "=", 
+                    RowBox[{"Not", "@", "viewing"}]}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Appearance", "\[Rule]", "\"\<Frameless\>\""}]}], 
+                   "\n", "\t\t\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+                  "\t\t\t\t\t\t\t", 
+                  RowBox[{"Row", "@", 
+                   RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"Spacer", "[", "25", "]"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"If", "[", 
+                    RowBox[{"viewing", ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Column", "@", "#"}], ",", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Button", "[", 
+                    RowBox[{
+                    RowBox[{"Style", "[", 
+                    RowBox[{
+                    "\"\<Search Documentation\>\"", ",", "Italic", ",", 
+                    "Gray"}], "]"}], ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
+                    
+                    RowBox[{"viewing", "=", "True"}], ",", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Appearance", "\[Rule]", "\"\<Frameless\>\""}]}], 
+                    "]"}]}], "\n", "\t", "\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t", "}"}]}]}], "\n", "\t\t\t\t\t\t\t\t",
+                  "}"}]}], "&"}], ",", "\n", "\t\t\t\t\t\t\t", "Column"}], 
+             "]"}]}]}], ",", "\n", "\t\t\t", 
+          RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
+           RowBox[{"{", 
+            RowBox[{"viewing", ",", "context"}], "}"}]}]}], "\n", "\t\t", 
+         "]"}]}], "]"}], "//", "\n", "\t\t\t", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"dialog", "===", "DockedCells"}], ",", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"#", "/.", 
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{"Dividers", "\[Rule]", "_"}], ")"}], "\[Rule]", 
+            RowBox[{"(", 
+             RowBox[{"Dividers", "\[Rule]", "None"}], ")"}]}]}], ")"}], "&"}],
+         ",", "\n", "\t", "\t\t\t", 
+        RowBox[{
+         RowBox[{"TextCell", "[", "\n", "\t", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Framed", "[", 
+            RowBox[{"#", ",", "\n", "\t", "\t\t\t\t\t", 
+             RowBox[{"RoundingRadius", "\[Rule]", "5"}], ",", "\n", "\t", 
+             "\t\t\t\t\t", 
+             RowBox[{"Background", "\[Rule]", 
+              RowBox[{"GrayLevel", "[", ".95", "]"}]}]}], "]"}], ",", "\n", 
+           "\t", "\t\t\t\t", 
+           RowBox[{"FontFamily", "\[Rule]", "\"\<ArialBlack\>\""}]}], "]"}], 
+         "&"}]}], "]"}]}], "//", "\n", "\t\t\t", "Deploy"}], "//", "\n", 
+    "\t\t\t\t", 
+    RowBox[{"Switch", "[", "\n", "\t\t\t\t\t", 
+     RowBox[{
+      RowBox[{"If", "[", "\n", "\t\t\t\t\t\t", 
+       RowBox[{
+        RowBox[{"MatchQ", "[", 
+         RowBox[{"dialog", ",", "\n", "\t\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"_NotebookObject", "?", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"NotebookInformation", "[", "#", "]"}], "===", 
+               "$Failed"}], "&"}], ")"}]}], "|", "\n", "\t", "\t\t\t\t\t\t", 
+           RowBox[{"Except", "[", 
+            RowBox[{"_NotebookObject", "|", "True"}], "]"}]}]}], "\n", 
+         "\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"Length", "@", 
+           RowBox[{"{", "ops", "}"}]}], ">", "0"}], ")"}], ",", "\n", 
+        "\t\t\t\t\t\t", "dialog"}], "\n", "\t\t\t\t\t", "]"}], ",", "\n", 
+      "\t\t\t\t\t", "True", ",", 
+      RowBox[{
+       RowBox[{"CreateDialog", "[", 
+        RowBox[{"#", ",", "ops", ",", 
+         RowBox[{"WindowTitle", "\[Rule]", "\"\<Documentation Helper\>\""}]}],
+         "]"}], "&"}], ",", "\n", "\t", "\t", "\t", "\t", "\t", 
+      "_NotebookObject", ",", 
+      RowBox[{
+       RowBox[{"CreateDialog", "[", 
+        RowBox[{"#", ",", "dialog", ",", 
+         RowBox[{"Sequence", "@@", 
+          RowBox[{"Join", "[", 
+           RowBox[{
+            RowBox[{"{", "ops", "}"}], ",", 
+            RowBox[{"Options", "@", "dialog"}]}], "]"}]}]}], "]"}], "&"}], 
+      ",", "\n", "\t", "\t", "\t", "\t", "\t", "_", ",", "Identity"}], 
+     "]"}]}]}], ";"}]], "CodeInput",
+ CellChangeTimes->{{3.684689701293874*^9, 3.684689822005481*^9}, {
+   3.684689867027985*^9, 3.6846901025955048`*^9}, {3.684690133851671*^9, 
+   3.68469015868067*^9}, {3.6846901912805643`*^9, 3.68469020504635*^9}, {
+   3.684690244986315*^9, 3.6846902767047863`*^9}, {3.684690406854505*^9, 
+   3.68469073667369*^9}, {3.684690767298368*^9, 3.684690818688154*^9}, {
+   3.684690856200829*^9, 3.684691166401959*^9}, {3.6846912014350357`*^9, 
+   3.684691339013865*^9}, {3.6846913713052063`*^9, 3.684691588348769*^9}, {
+   3.6846925078031597`*^9, 3.684692510616581*^9}, {3.684692599336836*^9, 
+   3.68469305869937*^9}, {3.684693091502934*^9, 3.684693236230153*^9}, {
+   3.684693291953596*^9, 3.684693293809249*^9}, {3.684693326384696*^9, 
+   3.684693374799158*^9}, {3.684693444565958*^9, 3.6846936240734053`*^9}, {
+   3.684693681847845*^9, 3.684693699118919*^9}, {3.684693939245541*^9, 
+   3.6846939500887117`*^9}, {3.684693983691527*^9, 3.684694033985622*^9}, {
+   3.684694170782785*^9, 3.684694174533337*^9}, {3.684694208597638*^9, 
+   3.6846942352766027`*^9}, {3.684694470087788*^9, 3.684694681537396*^9}, {
+   3.6846947311448927`*^9, 3.684694809285677*^9}, {3.684694862963688*^9, 
+   3.684694896442534*^9}, {3.684694956106962*^9, 3.684694962756098*^9}, {
+   3.6846950327318497`*^9, 3.684695068506073*^9}, {3.6846955050558357`*^9, 
+   3.6846956167782497`*^9}, {3.68469572331914*^9, 3.684695732111927*^9}, {
+   3.684695762270216*^9, 3.6846957760298023`*^9}, {3.684704543666678*^9, 
+   3.684704550720088*^9}, {3.684704788289382*^9, 3.684704792369067*^9}, {
+   3.684705628766172*^9, 3.684705665869076*^9}, {3.6847057174528713`*^9, 
+   3.684705760601419*^9}, {3.684705835610941*^9, 3.684705859841935*^9}, 
+   3.6847059020011597`*^9, {3.684705970271123*^9, 3.684706171953764*^9}, {
+   3.684712253438403*^9, 3.6847123271481867`*^9}, {3.6847123867287817`*^9, 
+   3.684712518013605*^9}, {3.6847125742212477`*^9, 3.684712631085002*^9}, {
+   3.684712727820799*^9, 3.6847127420964603`*^9}, {3.684712782427006*^9, 
+   3.684712783503718*^9}, {3.684712970037818*^9, 3.684713064837676*^9}, {
+   3.68471313403765*^9, 3.684713337525131*^9}, {3.6847133705145493`*^9, 
+   3.684713464452104*^9}, {3.684713507324985*^9, 3.6847135925645943`*^9}, {
+   3.684713842774391*^9, 3.6847138549776983`*^9}, 3.6847138856200647`*^9, {
+   3.6847139187364798`*^9, 3.6847139208955393`*^9}, {3.684713976369536*^9, 
+   3.6847140009443197`*^9}, {3.6847140338912487`*^9, 3.684714117896737*^9}, {
+   3.684714327460816*^9, 3.6847144135509157`*^9}, {3.687187519528553*^9, 
+   3.68718752319849*^9}, {3.687188236233076*^9, 3.6871883838312883`*^9}, {
+   3.687189815830183*^9, 3.687190241149383*^9}, {3.687190449992033*^9, 
+   3.687190458829077*^9}, {3.687190521142421*^9, 3.687190535926012*^9}, {
+   3.702083157953034*^9, 3.702083159110071*^9}, 
+   3.702345585222423*^9},ExpressionUUID->"eb44a779-416c-40c7-8a06-\
+231b8f0b2015"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$DockDocDialog\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{{3.687190804056444*^9, 
+  3.6871908090550947`*^9}},ExpressionUUID->"2f233ec7-aa1a-4b8c-a572-\
+962c397793fc"],
+
+Cell[BoxData[
+ RowBox[{"$DockDocDialog", ":=", "\n", "\t", 
+  RowBox[{"Append", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"First", "@", 
+      RowBox[{"FEResourceFind", "[", "\"\<Help*Toolbar\>\"", "]"}]}], "//", 
+     "Last"}], ",", "\n", "\t\t", 
+    RowBox[{"Cell", "[", "\n", "\t\t\t", 
+     RowBox[{"BoxData", "@", 
+      RowBox[{"ToBoxes", "@", 
+       RowBox[{"(", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"DocsDialog", "[", "DockedCells", "]"}], "/.", "\n", 
+         "\t\t\t\t\t", 
+         RowBox[{"(", "\n", "\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{"ImageSize", "\[Rule]", 
+             RowBox[{"{", 
+              RowBox[{"290", ",", "_"}], "}"}]}], ")"}], "\[Rule]", 
+           RowBox[{"(", 
+            RowBox[{"ImageSize", "\[Rule]", 
+             RowBox[{"{", 
+              RowBox[{"290", ",", 
+               RowBox[{"{", 
+                RowBox[{"60", ",", "250"}], "}"}]}], "}"}]}], ")"}]}], "\n", 
+          "\t\t\t\t\t", ")"}]}], "\n", "\t\t\t\t", ")"}]}]}], "]"}]}], "\n", 
+   "\t\t", "]"}]}]], "CodeInput",
+ CellChangeTimes->{{3.687190909680571*^9, 3.6871909234006453`*^9}, {
+   3.687190961263835*^9, 3.687190975716022*^9}, {3.687191033757422*^9, 
+   3.687191102096059*^9}, {3.687191136968856*^9, 3.687191138967061*^9}, {
+   3.6871911772085133`*^9, 3.687191180781569*^9}, 
+   3.7013281930248947`*^9},ExpressionUUID->"dd28c616-df8b-49bd-b55f-\
+8c2eec781d3e"]
+}, Closed]]
+}, Open  ]],
+
+Cell["End[];", \
+"InputSection",ExpressionUUID->"34b00e2e-5419-4307-815d-a4a268bf9c3f"]
+}, Open  ]],
+
+Cell["", "SectionSeparator",ExpressionUUID->"1b9b328b-3945-42cd-a3ed-\
+4a96a02c8211"]
+},
+WindowSize->{808, 753},
+WindowMargins->{{178, Automatic}, {0, Automatic}},
+TaggingRules->{
+ ScrollPosition -> {0., 48.}, "LinkTrails" -> "", "SearchTextTranslated" -> 
+  ""},
+Magnification->1.,
+Background->None,
+FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
+2018)",
+StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+

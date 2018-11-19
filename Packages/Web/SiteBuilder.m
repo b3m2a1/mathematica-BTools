@@ -1891,7 +1891,7 @@ WebSiteTemplateGatherArgs[fileContent_, args_]:=
             bit=
               Length@
                 Replace[
-                  Lookup[args,"URL",
+                  Lookup[args, "URL",
                     FileNameSplit@
                       Lookup[args, "FilePath", "??"]
                     ],
@@ -1953,6 +1953,17 @@ WebSiteTemplateGatherArgs[fileContent_, args_]:=
                   Append[Most@FileNameSplit[fp], WebSiteBuildAttachExtension@slug],
                 WebSiteBuildAttachExtension@slug
                 ],
+          StringQ@title,
+            "URL"->If[StringQ[fp],
+                URLBuild@
+                  Append[Most@FileNameSplit[fp], WebSiteBuildAttachExtension@title],
+                WebSiteBuildAttachExtension@title
+                ],
+          StringQ[fp],
+            "URL"->
+              URLBuild@
+                Append[Most@FileNameSplit[fp], 
+                  WebSiteBuildAttachExtension@FileNameTake@fp],
           True,  
             Nothing
           ],
@@ -3655,7 +3666,8 @@ iWebSiteBuildGetFiles[patt_, dir_, dirs_, templates_]:=
             FileNameJoin@{dir, "content", #},
             \[Infinity]
             ]->
-            Lookup[temps, #, "page.html"]
+            Function[If[FileExtension[#]=="", #<>".html", #]]@
+              Lookup[temps, #, "page.html"]
           ]&,
         Replace[
           dirs,
