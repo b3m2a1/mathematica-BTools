@@ -1756,7 +1756,7 @@ webSiteTemplateGatherSummary[len_, content_]:=
           _[i_Integer?Positive, u:Alternatives@@$WebSiteSummaryBaseUnits]:>
             {i, u},
           _:>
-            {3,"Sentences"}
+            {3, "Lines"}
           }
         ];
     cont=ImportString[content, "HTML"];

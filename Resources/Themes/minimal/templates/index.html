@@ -1,0 +1,77 @@
+<wolfram:comment>
+
+This generates the index.html page
+
+</wolfram:comment>
+
+<wolfram:comment>
+
+  <wolfram:expr>
+    (*This is debug code*)
+    Echo@#Articles
+
+  </wolfram:expr>
+
+</wolfram:comment>
+
+<wolfram:get path="base.html">
+
+<wolfram:slot id="head">
+  <wolfram:slot id="Description">
+    <wolfram:get path="include/lib/templates/varDefinedBlock.html">
+      <wolfram:slot id="var">"Description"</wolfram:slot>
+      <wolfram:slot id="Description"><wolfram:slot id="Description"/></wolfram:slot>
+      <wolfram:slot id="if">
+        <meta name="description" content="<wolfram:slot id='Description'/>">
+      </wolfram:slot>
+    </wolfram:get>
+  </wolfram:slot>
+</wolfram:slot>
+
+<wolfram:slot id="Title">
+  <wolfram:get path="include/lib/templates/varDefinedBlock.html">
+    <wolfram:slot id="var">"SiteSubtitle"</wolfram:slot>
+    <wolfram:slot id="SiteSubtitle"><wolfram:slot id="SiteSubtitle"/></wolfram:slot>
+    <wolfram:slot id="SiteName"><wolfram:slot id="SiteName"/></wolfram:slot>
+    <wolfram:slot id="if">
+      <wolfram:expr>
+        $$templateLib["getSiteName"][#]
+      </wolfram:expr> | <wolfram:slot id="SiteSubtitle"/>
+    </wolfram:slot>
+    <wolfram:slot id="else">
+      <wolfram:expr>
+        $$templateLib["getSiteName"][#]
+      </wolfram:expr>
+    </wolfram:slot>
+  </wolfram:get>
+</wolfram:slot>
+
+<wolfram:slot id="PrimaryContent">
+
+  <wolfram:sequence
+    values="Replace[#IndexListing,Except[_List]:>#Articles]"
+    slot="IndexItem" delimiters="<hr/>"
+    >
+
+    <div class="article-bubble bubble centered">
+      <article class="teaser">
+          <h4 class="article-title">
+            <a href='<wolfram:slot id="SiteURL"/>/<wolfram:expr>#IndexItem["URL"]</wolfram:expr>'>
+              <wolfram:expr>Replace[#IndexItem["Title"], Except[_String?(StringLenght[#]>0)]->"Untitled"]</wolfram:expr>
+            </a>
+          </h4>
+          <div class="content article-summary">
+            <wolfram:expr>#IndexItem["Summary"]</wolfram:expr>
+          </div>
+      </article>
+    </div>
+
+  </wolfram:sequence>
+
+  <wolfram:comment>
+    <wolfram:get path='include/pagination.html'>
+  </wolfram:comment>
+
+</wolfram:slot>
+
+</wolfram:get>

@@ -1677,6 +1677,14 @@ $NotebookToMarkdownLongToUnicodeReplacements=
 
 
 (* ::Subsubsubsection::Closed:: *)
+(*Misc Settings*)
+
+
+
+$codeIndentation="    ";
+
+
+(* ::Subsubsubsection::Closed:: *)
 (*Main*)
 
 
@@ -1699,7 +1707,12 @@ Options[NotebookToMarkdown]=
     "IncludeLinkAnchors"->Automatic,
     "UseHTMLFormatting"->Automatic,
     "UseMathJAX"->False,
-    "PacletLinkResolutionFunction"->Automatic
+    "UseImageInput"->False,
+    "PacletLinkResolutionFunction"->Automatic,
+    "ImageExportPathFunction"->Automatic,
+    "CellStyleExporters"->Automatic,
+    "CodeIndentation"->Automatic,
+    "ContentPathExtension"->Automatic
     };
 NotebookToMarkdown[
   nb_Notebook,
@@ -1726,16 +1739,39 @@ NotebookToMarkdown[
       dir=OptionValue["Directory"],
       path=OptionValue["Path"],
       name=Replace[Except[_String]->"Markdown"]@OptionValue["Name"],
-      cext=Replace[Except[_String]->"content"]@OptionValue["ContentExtension"],
+      cext=Replace[Except[_String]->None]@OptionValue["ContentExtension"],
       meta=Replace[Except[_Association?AssociationQ]-><||>]@OptionValue["Metadata"],
       cont=Replace[Except[_String]->"Global`"]@OptionValue["Context"],
       nbo=OptionValue["NotebookObject"],
       cells=OptionValue["CellObjects"],
       ps=OptionValue["UseHTMLFormatting"],
+      exporters=OptionValue["CellStyleExporters"],
       prf=Replace[
         OptionValue["PacletLinkResolutionFunction"], 
         Automatic->notebookToMarkdownResolvePacletURL
-        ]
+        ],
+      imexp=
+        Replace[
+          OptionValue["ImageExportPathFunction"], 
+          Automatic->markdownNotebookExportImagePath
+          ],
+      cstyles=
+        Association@Flatten@Replace[
+          Flatten@Normal@List@
+            Replace[OptionValue["CellStyles"],
+             Automatic:>$NotebookToMarkdownStyles
+             ],
+          {
+            s_String:>
+              s->iNotebookToMarkdown,
+            ParentList:>
+              Thread[$NotebookToMarkdownStyles->iNotebookToMarkdown],
+            Except[_Rule|_RuleDelayed]->Nothing
+            },
+          1
+          ],
+      co=Replace[OptionValue["CodeIndentation"], Except[_String]->$codeIndentation],
+      cpe=Replace[OptionValue["ContentPathExtension"], Except[_String]->"{filename}"]
       },
     If[!DirectoryQ@dir, 
       PackageRaiseException[
@@ -1752,20 +1788,29 @@ NotebookToMarkdown[
         ]
       ];
     exportStrings=
-      iNotebookToMarkdown[
-        <|
-          "Root"->dir,
-          "Path"->path,
-          "Name"->name,
-          "ContentExtension"->cext,
-          "Meta"->meta,
-          "NotebookObject"->nbo,
-          "CellObjects"->cells,
-          "Context"->cont,
-          "UseHTML"->ps,
-          "PacletResolve"->prf
-          |>,
-        #
+      With[
+        {
+          fn=Lookup[cstyles, #[[2]], iNotebookToMarkdown],
+          opp=
+            <|
+              "Root"->dir,
+              "Path"->path,
+              "Name"->name,
+              "ContentExtension"->cext,
+              "Meta"->meta,
+              "NotebookObject"->nbo,
+              "CellObjects"->cells,
+              "Context"->cont,
+              "UseHTML"->ps,
+              "UseImageInput"->TrueQ@OptionValue["UseImageInput"],
+              "PacletResolve"->prf,
+              "ImagePath"->imexp,
+              "StyleExporters"->cstyles,
+              "CodeIndentation"->co,
+              "ContentPathExtension"->cpe
+              |>
+          },
+        fn[opp, #]
         ]&/@First@nb;
     exportPick=
       Map[#=!=""&, exportStrings];
@@ -1820,10 +1865,19 @@ NotebookToMarkdown[
 
 
 NotebookToMarkdown[nb_NotebookObject, ops:OptionsPattern[]]:=
-  With[{meta=MarkdownNotebookMetadata[nb]},
-    With[{
+  Module[
+    {
+      meta=MarkdownNotebookMetadata[nb],
       dir=
         MarkdownNotebookDirectory[nb],
+      name,
+      d2,
+      cext,
+      path,
+      cont,
+      cstyles,
+      cells
+      },
       name=
         Replace[OptionValue["Name"],
           Automatic:>
@@ -1835,47 +1889,60 @@ NotebookToMarkdown[nb_NotebookObject, ops:OptionsPattern[]]:=
                     Except[_String]->"Title"
                     ]
                 ]
-          ]
-      },
+          ];
       If[!DirectoryQ[dir],
         $Failed,
-        With[{
           d2=
             MarkdownSiteBase@
               Replace[OptionValue["Directory"],
                 Automatic:>MarkdownSiteBase[dir]
-                ],
+                ];
           cext=
             Replace[OptionValue["ContentExtension"],
               Automatic:>MarkdownContentExtension[MarkdownSiteBase@dir]
-              ],
+              ];
           path=
             Replace[OptionValue["Path"],
               Automatic:>
                 If[StringMatchQ[dir, MarkdownContentPath[dir]~~___],
                   "",
-                  URLBuild@ConstantArray["..",
-                    1+FileNameDepth[MarkdownContentPath[dir]]]
+                  URLBuild@
+                    ConstantArray["..",
+                      1+FileNameDepth[MarkdownContentPath[dir]]
+                      ]
                   ]
-              ],
+              ];
           cont=
             Replace[OptionValue["Context"],
               Automatic:>MarkdownNotebookContext@nb
-              ],
+              ];
+          cstyles=
+            Association@Flatten@
+              Replace[
+                Flatten@Normal@List@
+                  Replace[OptionValue["CellStyles"],
+                   Automatic:>$NotebookToMarkdownStyles
+                   ],
+                {
+                  s_String:>
+                    s->iNotebookToMarkdown,
+                  ParentList:>
+                    Thread[$NotebookToMarkdownStyles->iNotebookToMarkdown],
+                  Except[_Rule|_RuleDelayed]->Nothing
+                  },
+                1
+                ];
           cells=
             Cells[nb,
               CellStyle->
-                Replace[OptionValue["CellStyles"],
-                 Automatic:>$NotebookToMarkdownStyles
-                 ]
-              ]
-          },
+                Keys@cstyles
+              ];
           NotebookToMarkdown[
             Notebook[
               NotebookRead@
                 cells,
               ExportAutoReplacements->
-                CurrentValue[nb, ExportAutoReplacements]
+                AbsoluteCurrentValue[nb, ExportAutoReplacements]
               ],
             {
               "Directory"->d2,
@@ -1890,6 +1957,8 @@ NotebookToMarkdown[nb_NotebookObject, ops:OptionsPattern[]]:=
                     Except[Alternatives@@Keys@Options@NotebookToMarkdown]
                     ],
               "Context"->cont,
+              "CellStyles"->
+                cstyles,
               Sequence@@
                 FilterRules[Normal@meta,
                   Options@NotebookToMarkdown
@@ -1898,9 +1967,7 @@ NotebookToMarkdown[nb_NotebookObject, ops:OptionsPattern[]]:=
               }
             ]
           ]
-        ]
-      ]
-    ];
+        ];
 
 
 (*NotebookToMarkdown[nb_Notebook]:=
@@ -2634,48 +2701,107 @@ markdownCodeCellIOReformat[
   postFormat2_,
   ops:OptionsPattern[]
   ]:=
-  Module[{stack=<|"Raw"-><||>|>},
-    Replace[
-      {
-        s_String?(StringContainsQ["<"~~__~~">"~~___~~"</"~~__~~">"]):>
-          postFormat2@
-            With[{baseWhitespace=StringCases[s, StartOfString~~Whitespace, 1]},
-              "<pre >\n<code>\n"<>
-                If[Length@baseWhitespace>0,
-                  StringReplace[s, 
-                    StartOfLine~~baseWhitespace[[1]]->""
-                    ],
-                  s
-                  ]<>
-              "\n</code>\n</pre>"
-              ],
-        s:Except["", _String]:>
-          StringReplace[postFormat@s,
-            {
-              ("    "...)~~$iNotebookToMarkdownUnIndentedLine->
-                "",
-              (* Clean up the replacements for \t *)
-              "  \\\n"->
-                "\n",
-              "\\\n"~~(Whitespace|"")->
-                ""
-              }]
-        }
-      ]@
-      markdownCodeCellIOReformatStripIndents@
-      markdownCodeCellIOReformatStripFlags@
-      markdownCodeCellIOReformatReinsertStack[Hold[stack]]@
-        markdownCodeCellIOReformatBaseExport[
-          pathInfo,
-          e,
-          style,
-          postFormat,
-          Hold[stack],
-          FilterRules[Flatten@{ops},
-            Alternatives@@markdownCodeCellIOReformatHaveEffectCellStyles
-            ]
-        ]
+  If[TrueQ@pathInfo["UseImageInput"],
+    If[Flatten[{style}][[-1]]==="Output"
+      (* should have some setting for this but we'll hard code for now... *),
+      markdownNotebookHashExport[
+        pathInfo,
+        e,
+        "png",
+        Automatic,
+        Automatic,
+        Identity,
+        Hash@e
+        ],
+      markdownCodeCellExportCopyable[pathInfo, e]
+      ],
+    Module[{stack=<|"Raw"-><||>|>},
+      Replace[
+        {
+          s_String?(StringContainsQ["<"~~__~~">"~~___~~"</"~~__~~">"]):>
+            postFormat2@
+              With[{baseWhitespace=StringCases[s, StartOfString~~Whitespace, 1]},
+                "<pre >\n<code>\n"<>
+                  If[Length@baseWhitespace>0,
+                    StringReplace[s, 
+                      StartOfLine~~baseWhitespace[[1]]->""
+                      ],
+                    s
+                    ]<>
+                "\n</code>\n</pre>"
+                ],
+          s:Except["", _String]:>
+            StringReplace[postFormat@s,
+              {
+                ("    "...)~~$iNotebookToMarkdownUnIndentedLine->
+                  "",
+                (* Clean up the replacements for \t *)
+                "  \\\n"->
+                  "\n",
+                "\\\n"~~(Whitespace|"")->
+                  ""
+                }]
+          }
+        ]@
+        markdownCodeCellIOReformatStripIndents@
+        markdownCodeCellIOReformatStripFlags@
+        markdownCodeCellIOReformatReinsertStack[Hold[stack]]@
+          markdownCodeCellIOReformatBaseExport[
+            pathInfo,
+            e,
+            style,
+            postFormat,
+            Hold[stack],
+            FilterRules[Flatten@{ops},
+              Alternatives@@markdownCodeCellIOReformatHaveEffectCellStyles
+              ]
+          ]
+      ]
     ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*markdownCodeCellExportCopyable*)
+
+
+
+$copyableCodeTemplate=
+    "
+<div class=\"ce-notebook-expression ce-white ce-colorTipContainer\">
+<img src=\"`1`\"></img>
+<textarea style=\"display: none;\">`2`</textarea>
+<span class=\"ce-colorTip\" style=\"margin-left: -60px; display: none;\"><span class=\"ce-content\">Copy input</span><span class=\"ce-pointyTipShadow\"></span><span class=\"ce-pointyTip\"></span></span></div>
+"
+
+
+markdownCodeCellExportCopyable[pathInfo_, cell_]:=
+  Module[
+    {
+      exp,
+      cexpr
+      },
+    cexpr=
+      If[Head@cell=!=Cell,
+        Cell[cell, "Input"],
+        cell
+        ];
+    exp=
+      markdownNotebookHashExport[
+        pathInfo,
+        cexpr,
+        "png",
+        Automatic,
+        Automatic,
+        Identity,
+        Hash@cell,
+        #2&
+        ];
+    $copyableCodeTemplate
+      ~TemplateApply~{
+        exp,
+        ToString[cexpr, InputForm]
+      }
+    ]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -2822,18 +2948,34 @@ iNotebookToMarkdownRegister[pathInfo_,
 
 
 iNotebookToMarkdownRegister[pathInfo_,
-  Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "Code"|"Input", o___]]:=
-  markdownCodeCellIOReformat[pathInfo,
+  Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "Code", o___]]:=
+  markdownCodeCellIOReformat[
+    pathInfo,
     e,
     {"InputText", "Code"},
     StringReplace[#, 
       {
-        StartOfLine->"    ",
+        (StartOfLine|StartOfString)->pathInfo["CodeIndentation"],
         "\\\n"->""
         }]&,
     Identity,
     Select[{o}, OptionQ]
     ];
+
+
+iNotebookToMarkdownRegister[pathInfo_,
+  Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "Input", o___]]:=
+  iNotebookToMarkdown[
+    pathInfo,
+    Cell[
+      BoxData@FrontEndExecute@
+        FrontEnd`ReparseBoxStructurePacket@First@
+          FrontEndExecute@
+            ExportPacket[Cell[e, "Input"], "InputText"],
+      "Code",
+      o
+      ]
+  ]
 
 
 (* ::Subsubsubsubsection::Closed:: *)
@@ -3853,6 +3995,25 @@ iNotebookToMarkdownRegister[
 
 
 
+markdownNotebookExportImagePath[pathInfo_, fname_]:=
+  StringRiffle[{
+      Lookup[pathInfo, "FileExtension",
+        Switch[pathInfo["ContentExtension"],
+          "content",
+            pathInfo["ContentPathExtension"],
+          _String,
+            pathInfo["Path"]<>
+              If[StringLength[pathInfo["Path"]]>0, "/", ""]<>
+              pathInfo["ContentExtension"],
+          _,
+            Nothing
+          ]
+        ],
+      "img",
+      fname
+      },"/"]
+
+
 markdownNotebookHashExport//Clear
 
 
@@ -3863,7 +4024,8 @@ markdownNotebookHashExport[
   fbase_:Automatic,
   alt_:Automatic,
   pre_:Identity,
-  hash_:Automatic
+  hash_:Automatic,
+  fmt_:Automatic
   ]:=
   With[{
     fname=
@@ -3885,26 +4047,17 @@ markdownNotebookHashExport[
       {"img", fname}->pre@expr,
       "MarkdownExport"
       ];
-    "!["<>
-      Replace[alt,
-        Automatic:>StringTrim[fname,"."<>ext]
-        ]<>"]("<>
-      StringRiffle[{
-        Lookup[pathInfo, "FileExtension",
-          Switch[pathInfo["ContentExtension"],
-            "content",
-              "{filename}",
-            _String,
-              pathInfo["Path"]<>
-                If[StringLength[pathInfo["Path"]]>0, "/", ""]<>
-                pathInfo["ContentExtension"],
-            _,
-              Nothing
-            ]
+    Replace[fmt,
+      Automatic->
+        Function[
+          "!["<>#<>"]("<>#2<>")"
+          ]
+      ][
+        Replace[alt,
+          Automatic:>StringTrim[fname,"."<>ext]
           ],
-        "img",
-        fname
-        },"/"]<>")"
+        Lookup[pathInfo, "ImagePath", markdownNotebookExportImagePath][pathInfo, fname]
+        ]
     ]
 
 
@@ -4249,12 +4402,9 @@ NotebookMarkdownSaveExportSown[root_, files_]:=
       {
         f=
           FileNameJoin@
-            Flatten@{
-              root,
-              ext,
-              First[#]
-              }
-          },
+            Flatten@{root,ext,First[#]},
+        flext=FileExtension[First[#]]
+        },
         If[!FileExistsQ@f,
           If[!DirectoryQ@DirectoryName[f],
             CreateDirectory[DirectoryName[f], CreateIntermediateDirectories->True]
@@ -4264,6 +4414,8 @@ NotebookMarkdownSaveExportSown[root_, files_]:=
             Switch[FileExtension[f],
               "gif",
                 "AnimationRepetitions"->Infinity,
+              "png",
+                Background->None,
               _,
                 Sequence@@{}
               ]

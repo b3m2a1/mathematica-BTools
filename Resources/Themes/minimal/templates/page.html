@@ -1,0 +1,37 @@
+<wolfram:get path="base.html">
+
+<wolfram:slot id="head">
+  <wolfram:get path="include/lib/templates/varDefinedBlock.html">
+    <wolfram:slot id="var">Summary</wolfram:slot>
+    <wolfram:slot id="if">
+      <meta name="description" content="<wolfram:slot id='summary' />">
+    </wolfram:slot>
+  </wolfram:get>
+
+  <link href="<wolfram:slot id='SiteURL'/>/theme/prettify/styles/prettify-mma.min.css" rel="stylesheet">
+  <script src="<wolfram:slot id='SiteURL'/>/theme/prettify/src/prettify.js"></script>
+  <script src="<wolfram:slot id='SiteURL'/>/theme/prettify/src/lang-mma.min.js"></script>
+
+  <script>
+    function moveWindow (){window.location.hash="main-content";}
+  </script>
+
+</wolfram:slot>
+
+<wolfram:slot id="PageTitle">
+  <wolfram:expr>
+    $$templateLib["getPageTitle"]
+  </wolfram:expr> | <wolfram:expr>
+      $$templateLib["getSiteName"][#]
+    </wolfram:expr>
+</wolfram:slot>
+
+<wolfram:slot id="PrimaryContent">
+  <article class="article">
+    <div class="content">
+      <wolfram:slot id="Content"/>
+    </div>
+  </article>
+</wolfram:slot>
+
+</wolfram:get>
