@@ -1689,7 +1689,7 @@ Cell[BoxData[
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"488dd539-a30d-4b38-83df-b813cf4873af"]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -2031,7 +2031,7 @@ Cell[BoxData[
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"fcd7a343-0ff6-4220-ba33-c0d6072df430"]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -3998,7 +3998,7 @@ Cell[BoxData[
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"17b78b98-9484-4a98-800f-2bbd2202e38f"]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -6646,47 +6646,42 @@ Cell[BoxData[
     RowBox[{
      RowBox[{"siteIndexedContent", "=", "\n", "\t\t\t", 
       RowBox[{
-       RowBox[{"Replace", "[", 
+       RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
         RowBox[{
          RowBox[{"Except", "[", 
-          RowBox[{"{", "__String", "}"}], "]"}], "\[Rule]", 
-         RowBox[{"{", "\"\<Articles\>\"", "}"}]}], "]"}], "@", "\n", 
-       "\t\t\t\t", 
+          RowBox[{"{", "__String", "}"}], "]"}], "\[RuleDelayed]", 
+         RowBox[{"{", "\"\<Articles\>\"", "}"}]}], "\n", "\t\t\t\t", "]"}], 
+       "@", 
        RowBox[{"config", "[", "\"\<SearchedPages\>\"", "]"}]}]}], ";", "\n", 
      "\t\t", 
      RowBox[{"selector", "=", "\n", "\t\t\t", 
       RowBox[{
        RowBox[{
         RowBox[{"Evaluate", "[", "\n", "\t\t\t\t", 
-         RowBox[{"And", "@@", "\n", "\t\t\t\t\t", 
-          RowBox[{"Table", "[", "\n", "\t\t\t\t\t\t", 
-           RowBox[{
-            RowBox[{"holdMemQ", "[", "\n", "\t\t\t\t\t\t\t", 
-             RowBox[{
-              RowBox[{"#", "[", "\"\<Templates\>\"", "]"}], ",", " ", "\n", 
-              "\t\t\t\t\t\t\t", 
-              RowBox[{"Replace", "[", 
-               RowBox[{"t", ",", " ", "\n", "\t\t\t\t\t\t\t\t", 
-                RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+         RowBox[{"holdMemQ", "[", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"#", "[", "\"\<Templates\>\"", "]"}], ",", " ", "\n", 
+           "\t\t\t\t\t", 
+           RowBox[{"Alternatives", "@@", "\n", "\t\t\t\t\t", 
+            RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"siteIndexedContent", ",", " ", "\n", "\t\t\t\t\t\t", 
+              RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                "\"\<Articles\>\"", "\[Rule]", "\"\<article.html\>\""}], ",", 
+                "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{"\"\<Pages\>\"", "\[Rule]", "\"\<page.html\>\""}], 
+                ",", "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"\"\<Images\>\"", "|", "\"\<Themes\>\""}], ":>", 
+                 "Nothing"}], ",", "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{"s_String", "\[RuleDelayed]", 
                  RowBox[{
-                  RowBox[{
-                  "\"\<Articles\>\"", "\[Rule]", "\"\<article.html\>\""}], 
-                  ",", "\n", "\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{"\"\<Pages\>\"", "\[Rule]", "\"\<page.html\>\""}], 
-                  ",", "\n", "\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{
-                   RowBox[{"\"\<Images\>\"", "|", "\"\<Themes\>\""}], ":>", 
-                   "Nothing"}], ",", "\n", "\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{"s_String", "\[RuleDelayed]", 
-                   RowBox[{
-                    RowBox[{"StringTrim", "[", 
-                    RowBox[{"s", ",", " ", "\"\<.html\>\""}], "]"}], "<>", 
-                    "\"\<.html\>\""}]}]}], "\n", "\t\t\t\t\t\t\t\t\t", 
-                 "}"}]}], "\n", "\t\t\t\t\t\t\t\t", "]"}]}], "\n", 
-             "\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t", 
-            RowBox[{"{", 
-             RowBox[{"t", ",", " ", "siteIndexedContent"}], "}"}]}], "\n", 
-           "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}], "&"}], "/.", 
+                  RowBox[{"StringTrim", "[", 
+                   RowBox[{"s", ",", " ", "\"\<.html\>\""}], "]"}], "<>", 
+                  "\"\<.html\>\""}]}]}], "\n", "\t\t\t\t\t\t\t", "}"}], ",", 
+              "\n", "\t\t\t\t\t\t", "1"}], "\n", "\t\t\t\t\t\t", "]"}]}]}], 
+          "\n", "\t\t\t\t\t", "]"}], "\n", "\t\t\t\t", "]"}], "&"}], "/.", 
        RowBox[{"holdMemQ", "\[Rule]", "MemberQ"}]}]}], ";", "\n", "\t\t", 
      RowBox[{"contentData", "=", "\n", "\t\t\t", 
       RowBox[{"Map", "[", "\n", "\t\t\t\t", 
@@ -8348,7 +8343,7 @@ $WebSiteBuildErrors.\>\""}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}],
   ";"}]}], "CodeInput",ExpressionUUID->"9d4353a9-dbe4-477d-b228-d70bbae52773"]\
 
 }, Open  ]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -8749,8 +8744,9 @@ Cell[BoxData[
           "\n", "\t\t\t\t\t", 
           RowBox[{"OptionValue", "@", "\"\<IncludeFiles\>\""}]}], "\n", 
          "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t", 
-    "]"}]}], "*)"}]], \
-"CodeInput",ExpressionUUID->"25ffec1f-4c5e-420e-bf1c-76a062f46225"]
+    "]"}]}], 
+  "*)"}]], "CodeInput",ExpressionUUID->"25ffec1f-4c5e-420e-bf1c-76a062f46225"]\
+
 }, Closed]],
 
 Cell[CellGroupData[{
