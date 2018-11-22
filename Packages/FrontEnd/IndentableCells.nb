@@ -426,7 +426,7 @@ Cell[BoxData[
    3.731277227240508*^9, 
    3.731277239037321*^9}},ExpressionUUID->"bdf79e99-6701-44c3-abf5-\
 e62f5106310b"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -460,23 +460,225 @@ Cell["\[LeftCeiling]Replace old indentation\[RightFloor]", "CodeSubsubsection",
   3.6858360383987226`*^9}},ExpressionUUID->"379f7201-55b7-4c9d-967e-\
 e7a7c5520627"],
 
-Cell[TextData[{
- "Done recursively by having a global call in a Block which then delegates to \
-a recursive caller.\nThe recursive caller records the call number and the \
-number of replacements applied before hand.\nNeed to find a way to account \
-for the indentation that occurs after ",
- Cell[BoxData[
-  FormBox["=", TraditionalForm]],ExpressionUUID->
-  "ca86cc5f-ea30-4c55-b263-eae5ed3748d6"],
- " and ",
- Cell[BoxData[
-  FormBox[":=", TraditionalForm]],ExpressionUUID->
-  "416a0029-9175-4d57-88ba-c654cc8d04d6"]
-}], "Text",
- CellChangeTimes->{{3.6974027830339937`*^9, 3.69740285161385*^9}, {
-   3.6975495103500338`*^9, 3.697549537290553*^9}, 
-   3.727104880426003*^9},ExpressionUUID->"50edba5c-bafa-405a-ad5f-\
-06208878226a"],
+Cell["\<\
+\[LeftCeiling]
+\tDone recursively by having a global call in a Block which then delegates to \
+a recursive caller.
+The recursive caller records the call number and the number of replacements \
+applied before hand.
+
+Need to find a way to account for the indentation that occurs after = and := \
+-DONE?
+\[RightFloor]\
+\>", "Text",
+ Evaluatable->True,ExpressionUUID->"50edba5c-bafa-405a-ad5f-06208878226a"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$NewlineChar", "=", "\n", "\t", "\"\<\\n\>\""}], 
+  ";"}]], "CodeInput",ExpressionUUID->"f078ed2f-d437-4a78-a13a-ed6c3d1a26a4"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$indentKeyMap\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"a01a708a-bdf4-4dbc-baf0-7bad4bbce0b7"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"$indentKeyMapOpen", "=", "\n", "\t", 
+   RowBox[{"<|", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"\"\<{\>\"", "\[Rule]", "\"\<{\>\""}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<[\>\"", "\[Rule]", "\"\<[\>\""}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<(\>\"", "\[Rule]", "\"\<(\>\""}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<<|\>\"", "->", "\"\<\[LeftAssociation]\>\""}], ",", "\n", 
+     "\t\t", 
+     RowBox[{
+     "\"\<\[LeftAssociation]\>\"", "->", "\"\<\[LeftAssociation]\>\""}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"\"\<[[\>\"", "\[Rule]", "\"\<\[LeftDoubleBracket]\>\""}], ",", 
+     "\n", "\t\t", 
+     RowBox[{
+     "\"\<\[LeftDoubleBracket]\>\"", "\[Rule]", 
+      "\"\<\[LeftDoubleBracket]\>\""}]}], "\n", "\t\t", "|>"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"$indentKeyMapClose", "=", "\n", "\t", 
+   RowBox[{"<|", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"\"\<}\>\"", "\[Rule]", "\"\<{\>\""}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<]\>\"", "\[Rule]", "\"\<[\>\""}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<)\>\"", "\[Rule]", "\"\<(\>\""}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<|>\>\"", "->", "\"\<\[LeftAssociation]\>\""}], ",", "\n", 
+     "\t\t", 
+     RowBox[{
+     "\"\<\[RightAssociation]\>\"", "->", "\"\<\[LeftAssociation]\>\""}], ",",
+      "\n", "\t\t", 
+     RowBox[{"\"\<]]\>\"", "\[Rule]", "\"\<\[LeftDoubleBracket]\>\""}], ",", 
+     "\n", "\t\t", 
+     RowBox[{
+     "\"\<\[RightDoubleBracket]\>\"", "\[Rule]", 
+      "\"\<\[LeftDoubleBracket]\>\""}]}], "\n", "\t\t", "|>"}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"ff127001-9cc8-4639-a277-7e7bb193acaf"]\
+
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]calculateIndentation\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"7da6609f-7fe5-4266-af9c-1f0e1389a958"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"calculateIndentationLevels", "[", "]"}], ":=", "\n", "\t", 
+   RowBox[{"Map", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Which", "[", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"$indentationUnbalancedBrackets", "[", "#", "]"}], ">", 
+         RowBox[{"$intentationPreviousLevels", "[", "#", "]"}]}], ",", "\n", 
+        "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"$indentationLevel", "[", "#", "]"}], "++"}], ",", "\n", 
+        "\t\t\t", 
+        RowBox[{
+         RowBox[{"$indentationUnbalancedBrackets", "[", "#", "]"}], "<", 
+         RowBox[{"$intentationPreviousLevels", "[", "#", "]"}]}], ",", "\n", 
+        "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"$indentationLevel", "[", "#", "]"}], "=", "\n", 
+         "\t\t\t\t\t", 
+         RowBox[{"Max", "@", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"$indentationLevel", "[", "#", "]"}], "-", "1"}], ",", 
+            "0"}], "}"}]}]}]}], "\n", "\t\t\t", "]"}], "&"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"Keys", "@", "$indentationLevel"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"fdf3f406-a951-44e5-91e2-5b84cda9a7c2"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"calculateIndentation", "[", "]"}], ":=", "\n", "\t", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", "indent", "}"}], ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"calculateIndentationLevels", "[", "]"}], ";", "\n", "\t\t", 
+     RowBox[{"indent", "=", 
+      RowBox[{"$indentationAdd", "+", 
+       RowBox[{"Total", "@", "$indentationLevel"}]}]}], ";", "\n", "\t\t", 
+     RowBox[{
+     "$intentationPreviousLevels", "=", "$indentationUnbalancedBrackets"}], 
+     ";", "\n", "\t\t", 
+     RowBox[{"$NewlineChar", "<>", "\n", "\t\t\t", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"indent", ">", "0"}], ",", " ", 
+        RowBox[{"StringRepeat", "[", 
+         RowBox[{"$IndentationChar", ",", " ", "indent"}], "]"}], ",", " ", 
+        "\"\<\>\""}], "]"}]}]}]}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"8efca1b7-9fd4-4957-97ca-c447c2b4e672"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$indentAfterItems\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"6c752ec6-cbce-4ae9-9b2d-588a7ee14d97"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$indentAfterItems", "=", "\n", "\t", 
+   RowBox[{
+   "\"\<@\>\"", "|", "\"\<->\>\"", "|", "\"\<\[Rule]\>\"", "|", "\"\<:>\>\"", 
+    "|", "\"\<\[RuleDelayed]\>\"", "|", "\"\<=\>\"", "|", "\"\<==\>\"", "|", 
+    "\"\<===\>\"", "|", "\"\<\[Equal]\>\"", "|", "\"\<:=\>\"", "|", 
+    "\"\<//\>\""}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"80d0aa73-7fad-483a-88b8-72b1dba32563"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$indentReplaceDispatch\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"fbbe5040-e187-4342-9e7f-e48932bc65cd"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$indentReplaceDispatch", "=", "\n", "\t", 
+   RowBox[{"Dispatch", "@", "\n", "\t\t", 
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"k", ":", "$indentAfterItems"}], "\[RuleDelayed]", "\n", 
+       "\t\t\t\t", 
+       RowBox[{"CompoundExpression", "[", "\n", "\t\t\t\t\t", 
+        RowBox[{
+         RowBox[{"$indentationAdd", "=", 
+          RowBox[{"$indentationAddOld", "+", "1"}]}], ",", "\n", "\t\t\t\t\t",
+          "k"}], "\n", "\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"e", ":", 
+        RowBox[{"Alternatives", "@@", 
+         RowBox[{"Keys", "[", "$indentKeyMapOpen", "]"}]}]}], 
+       "\[RuleDelayed]", "\n", "\t\t\t\t", 
+       RowBox[{"With", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"k", "=", 
+           RowBox[{"$indentKeyMapOpen", "[", "e", "]"}]}], "}"}], ",", "\n", 
+         "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"$indentationUnbalancedBrackets", "[", "k", "]"}], "++"}], 
+          ";", "\n", "\t\t\t\t\t", "e"}]}], "\n", "\t\t\t\t\t", "]"}]}], ",", 
+      "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"e", ":", 
+        RowBox[{"Alternatives", "@@", 
+         RowBox[{"Keys", "[", "$indentKeyMapClose", "]"}]}]}], 
+       "\[RuleDelayed]", "\n", "\t\t\t\t", 
+       RowBox[{"With", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"k", "=", 
+           RowBox[{"$indentKeyMapClose", "[", "e", "]"}]}], "}"}], ",", "\n", 
+         "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"$indentationUnbalancedBrackets", "[", "k", "]"}], "=", 
+           "\n", "\t\t\t\t\t\t", 
+           RowBox[{"Max", "@", 
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"$indentationUnbalancedBrackets", "[", "k", "]"}], "-",
+                "1"}], ",", " ", "0"}], "}"}]}]}], ";", "\n", "\t\t\t\t\t", 
+          "e"}]}], "\n", "\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t", 
+      RowBox[{"r2_RowBox", "\[RuleDelayed]", "\n", "\t\t\t\t", 
+       RowBox[{"indentingNewLineReplace", "[", "r2", "]"}]}], ",", "\n", 
+      "\t\t\t", 
+      RowBox[{"$indentingNewLine", "\[RuleDelayed]", 
+       RowBox[{"(", 
+        RowBox[{"calculateIndentation", "[", "]"}], ")"}]}], ",", "\n", 
+      "\t\t\t", 
+      RowBox[{"e_", "\[RuleDelayed]", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"$indentationAdd", "=", "$indentationAddOld"}], ";", "e"}], 
+        ")"}]}]}], "\n", "\t\t\t", "}"}]}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"89b86a21-6d23-44d5-91e5-d7ee8dbb1a94"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]indentingNewLineReplace\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"952d6bf4-d52a-456c-bf42-b9653137b5d1"],
 
 Cell[BoxData[
  RowBox[{
@@ -484,168 +686,18 @@ Cell[BoxData[
    RowBox[{"indentingNewLineReplace", "[", 
     RowBox[{"r", ":", 
      RowBox[{"RowBox", "[", "data_", "]"}]}], "]"}], ":=", "\n", "\t", 
-   RowBox[{"RowBox", "@", "\n", "\t\t", 
-    RowBox[{"Replace", "[", 
-     RowBox[{"data", ",", "\n", "\t\t\t", 
-      RowBox[{"{", "\n", "\t\t\t\t", 
-       RowBox[{
-        RowBox[{
-         RowBox[{"k", ":", 
-          RowBox[{
-          "\"\<@\>\"", "|", "\"\<->\>\"", "|", "\"\<\[Rule]\>\"", "|", 
-           "\"\<:>\>\"", "|", "\"\<\[RuleDelayed]\>\"", "|", "\"\<=\>\"", 
-           "|", "\"\<:=\>\""}]}], "\[RuleDelayed]", "\n", "\t\t\t\t\t", 
-         RowBox[{"CompoundExpression", "[", "\n", "\t\t\t\t\t\t", 
-          RowBox[{
-           RowBox[{"$indentationAddFlag", "=", "True"}], ",", "\n", 
-           "\t\t\t\t\t\t", "k"}], "\n", "\t\t\t\t\t\t", "]"}]}], ",", "\n", 
-        "\t\t\t\t", 
-        RowBox[{
-         RowBox[{"k", ":", 
-          RowBox[{"\"\<{\>\"", "|", "\"\<[\>\"", "|", "\"\<(\>\""}]}], 
-         "\[RuleDelayed]", "\n", "\t\t\t\t\t", 
-         RowBox[{"CompoundExpression", "[", "\n", "\t\t\t\t\t\t", 
-          RowBox[{
-           RowBox[{
-            RowBox[{"$indentationUnbalancedBrackets", "[", "k", "]"}], "++"}],
-            ",", "\n", "\t\t\t\t\t\t", "k"}], "\n", "\t\t\t\t\t\t", "]"}]}], 
-        ",", "\n", "\t\t\t\t", 
-        RowBox[{"\"\<}\>\"", ":>", "\n", "\t", "\t\t\t\t", 
-         RowBox[{"CompoundExpression", "[", "\n", "\t", "\t\t\t\t\t", 
-          RowBox[{
-           RowBox[{
-            RowBox[{"$indentationUnbalancedBrackets", "[", "\"\<{\>\"", "]"}],
-             "=", "\n", "\t", "\t\t\t\t\t\t", 
-            RowBox[{"Max", "@", 
-             RowBox[{"{", 
-              RowBox[{
-               RowBox[{
-                RowBox[{
-                "$indentationUnbalancedBrackets", "[", "\"\<{\>\"", "]"}], 
-                "-", "1"}], ",", "0"}], "}"}]}]}], ",", "\n", "\t", 
-           "\t\t\t\t\t", "\"\<}\>\""}], "\n", "\t\t\t\t\t\t", "]"}]}], ",", 
-        "\n", "\t\t\t\t", 
-        RowBox[{"\"\<]\>\"", ":>", "\n", "\t", "\t\t\t\t", 
-         RowBox[{"CompoundExpression", "[", "\n", "\t", "\t\t\t\t\t", 
-          RowBox[{
-           RowBox[{
-            RowBox[{"$indentationUnbalancedBrackets", "[", "\"\<[\>\"", "]"}],
-             "=", "\n", "\t", "\t\t\t\t\t\t", 
-            RowBox[{"Max", "@", 
-             RowBox[{"{", 
-              RowBox[{
-               RowBox[{
-                RowBox[{
-                "$indentationUnbalancedBrackets", "[", "\"\<[\>\"", "]"}], 
-                "-", "1"}], ",", "0"}], "}"}]}]}], ",", "\n", "\t", 
-           "\t\t\t\t\t", "\"\<]\>\""}], "\n", "\t\t\t\t\t\t", "]"}]}], ",", 
-        "\n", "\t\t\t\t", 
-        RowBox[{"\"\<)\>\"", "\[RuleDelayed]", "\n", "\t", "\t\t\t\t", 
-         RowBox[{"CompoundExpression", "[", "\n", "\t", "\t\t\t\t\t", 
-          RowBox[{
-           RowBox[{
-            RowBox[{"$indentationUnbalancedBrackets", "[", "\"\<(\>\"", "]"}],
-             "=", "\n", "\t", "\t\t\t\t\t\t", 
-            RowBox[{"Max", "@", 
-             RowBox[{"{", 
-              RowBox[{
-               RowBox[{
-                RowBox[{
-                "$indentationUnbalancedBrackets", "[", "\"\<(\>\"", "]"}], 
-                "-", "1"}], ",", "0"}], "}"}]}]}], ",", "\n", "\t", 
-           "\t\t\t\t\t", "\"\<)\>\""}], "\n", "\t", "\t\t\t\t\t", "]"}]}], 
-        ",", "\n", "\t", "\t\t\t", 
-        RowBox[{
-         RowBox[{"e", ":", 
-          RowBox[{"\"\<<|\>\"", "|", "\"\<\[LeftAssociation]\>\""}]}], 
-         "\[RuleDelayed]", "\n", "\t", "\t\t\t\t", 
-         RowBox[{"CompoundExpression", "[", "\n", "\t", "\t\t\t\t\t", 
-          RowBox[{
-           RowBox[{
-            RowBox[{
-            "$indentationUnbalancedBrackets", "[", 
-             "\"\<\[LeftAssociation]\>\"", "]"}], "++"}], ",", "\n", "\t", 
-           "\t\t\t\t\t", "e"}], "\n", "\t", "\t\t\t\t\t", "]"}]}], ",", "\n", 
-        "\t", "\t\t\t", 
-        RowBox[{
-         RowBox[{"e", ":", 
-          RowBox[{"\"\<|>\>\"", "|", "\"\<\[RightAssociation]\>\""}]}], 
-         "\[RuleDelayed]", "\n", "\t", "\t\t\t\t", 
-         RowBox[{"CompoundExpression", "[", "\n", "\t", "\t\t\t\t\t", 
-          RowBox[{
-           RowBox[{"Max", "@", 
-            RowBox[{"{", 
-             RowBox[{
-              RowBox[{
-               RowBox[{
-               "$indentationUnbalancedBrackets", "[", 
-                "\"\<\[LeftAssociation]\>\"", "]"}], "-", "1"}], ",", "0"}], 
-             "}"}]}], ",", "\n", "\t", "\t\t\t\t\t", "e"}], "\n", "\t", 
-          "\t\t\t\t\t", "]"}]}], ",", "\n", "\t", "\t\t\t", 
-        RowBox[{"r2_RowBox", "\[RuleDelayed]", "\n", "\t", "\t\t\t\t", 
-         RowBox[{"indentingNewLineReplace", "[", "r2", "]"}]}], ",", "\n", 
-        "\t", "\t\t\t", 
-        RowBox[{"$indentingNewLine", "\[RuleDelayed]", "\n", "\t", "\t\t\t\t", 
-         RowBox[{"CompoundExpression", "[", "\n", "\t", "\t\t\t\t\t", 
-          RowBox[{
-           RowBox[{"Map", "[", "\n", "\t", "\t\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{
-              RowBox[{"Which", "[", "\n", "\t", "\t\t\t\t\t\t\t", 
-               RowBox[{
-                RowBox[{
-                 RowBox[{"$indentationUnbalancedBrackets", "[", "#", "]"}], 
-                 ">", 
-                 RowBox[{"$intentationPreviousLevels", "[", "#", "]"}]}], ",",
-                 "\n", "\t", "\t\t\t\t\t\t\t\t", 
-                RowBox[{
-                 RowBox[{"$indentationLevel", "[", "#", "]"}], "++"}], ",", 
-                "\n", "\t", "\t\t\t\t\t\t\t", 
-                RowBox[{
-                 RowBox[{"$indentationUnbalancedBrackets", "[", "#", "]"}], 
-                 "<", 
-                 RowBox[{"$intentationPreviousLevels", "[", "#", "]"}]}], ",",
-                 "\n", "\t", "\t\t\t\t\t\t\t\t", 
-                RowBox[{
-                 RowBox[{"$indentationLevel", "[", "#", "]"}], "=", "\n", 
-                 "\t", "\t\t\t\t\t\t\t\t\t", 
-                 RowBox[{"Max", "@", 
-                  RowBox[{"{", 
-                   RowBox[{
-                    RowBox[{
-                    RowBox[{"$indentationLevel", "[", "#", "]"}], "-", "1"}], 
-                    ",", "0"}], "}"}]}]}]}], "\n", "\t", "\t\t\t\t\t\t\t", 
-               "]"}], "&"}], ",", "\n", "\t", "\t\t\t\t\t\t", 
-             RowBox[{"Keys", "@", "$indentationLevel"}]}], "]"}], ",", "\n", 
-           "\t", "\t\t\t\t\t", 
-           RowBox[{
-           "$intentationPreviousLevels", "=", 
-            "$indentationUnbalancedBrackets"}], ",", "\n", "\t", "\t\t\t\t\t", 
-           RowBox[{"\"\<\\n\>\"", "<>", "\n", "\t", "\t\t\t\t\t\t", 
-            RowBox[{"If", "[", 
-             RowBox[{
-              RowBox[{
-               RowBox[{"Total", "@", "$indentationLevel"}], ">", "0"}], ",", 
-              "\n", "\t", "\t\t\t\t\t\t\t", 
-              RowBox[{"StringRepeat", "[", 
-               RowBox[{
-               "$IndentationChar", ",", " ", "\n", "\t\t\t\t\t\t\t\t\t", 
-                RowBox[{
-                 RowBox[{"If", "[", 
-                  RowBox[{"$indentationAddFlag", ",", " ", 
-                   RowBox[{
-                    RowBox[{"$indentationAddFlag", "=", "False"}], ";", "1"}],
-                    ",", " ", "0"}], "]"}], "+", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                 RowBox[{"Total", "@", "$indentationLevel"}]}]}], "\n", 
-               "\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
-              "\"\<\>\""}], "\n", "\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", 
-          "\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t", 
-        RowBox[{"e_", "\[RuleDelayed]", 
-         RowBox[{"(", 
-          RowBox[{
-           RowBox[{"$indentationAddFlag", "=", "False"}], ";", "e"}], 
-          ")"}]}]}], "\n", "\t\t\t\t", "}"}], ",", "\n", "\t\t\t", "1"}], 
-     "]"}]}]}], 
+   RowBox[{"Block", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"$indentationAdd", "=", "$indentationAdd"}], ",", " ", "\n", 
+       "\t\t\t", 
+       RowBox[{"$indentationAddOld", "=", "$indentationAdd"}]}], "\n", 
+      "\t\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{"RowBox", "@", 
+      RowBox[{"Replace", "[", 
+       RowBox[{"data", ",", " ", "$indentReplaceDispatch", ",", " ", "1"}], 
+       "]"}]}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"f70c4431-3d03-4a62-ba57-8877582b370a"],
 
 Cell[BoxData[{
@@ -654,42 +706,34 @@ Cell[BoxData[{
    RowBox[{"IndentingNewLineReplace", "[", 
     RowBox[{"r", ":", 
      RowBox[{"RowBox", "[", "data_", "]"}]}], "]"}], ":=", "\n", "\t", 
-   RowBox[{"Block", "[", 
+   RowBox[{"Block", "[", "\n", "\t\t", 
     RowBox[{
-     RowBox[{"{", "\n", "\t\t", 
+     RowBox[{"{", "\n", "\t\t\t", 
       RowBox[{
-       RowBox[{"$indentationAddFlag", "=", "False"}], ",", "\n", "\t\t", 
-       RowBox[{"$indentationUnbalancedBrackets", "=", "\n", "\t\t\t", 
-        RowBox[{"<|", 
+       RowBox[{"$indentationAdd", "=", "0"}], ",", "\n", "\t\t\t", 
+       RowBox[{"$indentationUnbalancedBrackets", "=", "\n", "\t\t\t\t", 
+        RowBox[{"AssociationMap", "[", 
          RowBox[{
-          RowBox[{"\"\<\[LeftAssociation]\>\"", "\[Rule]", "0"}], ",", 
-          RowBox[{"\"\<[\>\"", "\[Rule]", "0"}], ",", 
-          RowBox[{"\"\<{\>\"", "\[Rule]", "0"}], ",", 
-          RowBox[{"\"\<(\>\"", "\[Rule]", "0"}]}], "|>"}]}], ",", "\n", 
-       "\t\t", 
-       RowBox[{"$intentationPreviousLevels", "=", "\n", "\t\t\t", 
-        RowBox[{"<|", 
-         RowBox[{
-          RowBox[{"\"\<\[LeftAssociation]\>\"", "\[Rule]", "0"}], ",", 
-          RowBox[{"\"\<[\>\"", "\[Rule]", "0"}], ",", 
-          RowBox[{"\"\<{\>\"", "\[Rule]", "0"}], ",", 
-          RowBox[{"\"\<(\>\"", "\[Rule]", "0"}]}], "|>"}]}], ",", "\n", 
-       "\t\t", 
-       RowBox[{"$indentationLevel", "=", "\n", "\t\t\t", 
-        RowBox[{"<|", 
-         RowBox[{
-          RowBox[{"\"\<\[LeftAssociation]\>\"", "\[Rule]", "0"}], ",", 
-          RowBox[{"\"\<[\>\"", "\[Rule]", "0"}], ",", 
-          RowBox[{"\"\<{\>\"", "\[Rule]", "0"}], ",", 
-          RowBox[{"\"\<(\>\"", "\[Rule]", "0"}]}], "|>"}]}]}], "\n", "\t\t", 
-      "}"}], ",", "\n", "\t\t", 
-     RowBox[{"indentingNewLineReplace", "[", "r", "]"}]}], "\n", "\t\t", 
+          RowBox[{"0", "&"}], ",", " ", 
+          RowBox[{"Values", "[", "$indentKeyMapOpen", "]"}]}], "]"}]}], ",", 
+       "\n", "\t\t\t", "$intentationPreviousLevels", ",", "\n", "\t\t\t", 
+       "$indentationLevel"}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"$indentationLevel", "=", "\n", "\t\t\t\t", 
+       RowBox[{
+       "$intentationPreviousLevels", "=", "\n", "\t\t\t\t", 
+        "$indentationUnbalancedBrackets"}]}], ";", "\n", "\t\t\t", 
+      RowBox[{"indentingNewLineReplace", "[", "r", "]"}]}]}], "\n", "\t\t", 
     "]"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"IndentingNewLineReplace", "[", "s_String", "]"}], ":=", "\n", 
-   "\t", "s"}], 
-  ";"}]}], "CodeInput",ExpressionUUID->"b6cb9401-9172-4411-b9ae-a8192cdabbd5"],
+   "\t", "s"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"IndentingNewLineReplace", "[", "e_", "]"}], ":=", "\n", "\t", 
+   "e"}], ";"}]}], \
+"CodeInput",ExpressionUUID->"b6cb9401-9172-4411-b9ae-a8192cdabbd5"],
 
 Cell[BoxData[
  RowBox[{
@@ -745,6 +789,7 @@ Cell[BoxData[
    3.705677844605525*^9}, {3.723204198518064*^9, 3.723204208611381*^9}, 
    3.7271039048851433`*^9},ExpressionUUID->"8e610367-f379-4139-a7fa-\
 b4c597e564b3"]
+}, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -798,18 +843,13 @@ Cell[BoxData[{
     "\t\t", "]"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
+   RowBox[{"IndentingNewLineRestore", "[", 
+    RowBox[{"{", "}"}], "]"}], ":=", 
+   RowBox[{"{", "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
    RowBox[{"IndentingNewLineRestore", "[", "s_String", "]"}], ":=", "s"}], 
-  ";"}]}], "CodeInput",
- CellChangeTimes->{{3.704539654750347*^9, 3.704539713605093*^9}, {
-   3.704540182390115*^9, 3.7045403075636663`*^9}, {3.704540872288443*^9, 
-   3.7045408835136013`*^9}, {3.7045409562021914`*^9, 
-   3.7045410298873262`*^9}, {3.704541078478695*^9, 3.7045410802739677`*^9}, {
-   3.7045411242289886`*^9, 3.7045412274755993`*^9}, {3.704541268955727*^9, 
-   3.704541280262192*^9}, {3.704541362036057*^9, 3.7045414191366034`*^9}, 
-   3.716840339840087*^9, 3.716840390250965*^9, 3.716840429270811*^9, {
-   3.727104857885343*^9, 
-   3.7271048645277977`*^9}},ExpressionUUID->"139af375-0460-492c-a753-\
-830328531023"],
+  ";"}]}], "CodeInput",ExpressionUUID->"139af375-0460-492c-a753-830328531023"],
 
 Cell[BoxData[
  RowBox[{
@@ -861,7 +901,7 @@ Cell[BoxData[
    3.723204212806776*^9, 3.72320422035618*^9}, 
    3.727103900844697*^9},ExpressionUUID->"51d02914-c07a-4e3f-8430-\
 4513de883665"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1298,7 +1338,7 @@ Cell[BoxData[
    3.731276981565054*^9}},ExpressionUUID->"a1ee5895-f8b2-4b0d-99a5-\
 6b38db9a2c32"]
 }, Open  ]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -1310,7 +1350,8 @@ Cell["\[LeftCeiling]Main handler\[RightFloor]", "CodeSubsection",
 
 Cell[CellGroupData[{
 
-Cell["IndentationEvent", "CodeSubsubsection",
+Cell["\[LeftCeiling]IndentationEvent\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
  CellChangeTimes->{{3.685290548315332*^9, 3.685290610855906*^9}, 
    3.697397521235486*^9},ExpressionUUID->"0e5e791a-a63d-41a3-a52e-\
 41e300a12c17"],
@@ -1454,11 +1495,12 @@ Cell[BoxData[
    3.727104335906975*^9}, {3.7271043732114267`*^9, 
    3.727104424394738*^9}},ExpressionUUID->"c8d62c65-3c05-4dbc-8886-\
 96c60e538ca6"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
-Cell["BatchIndentationEvent", "CodeSubsubsection",
+Cell["\[LeftCeiling]BatchIndentationEvent\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
  CellChangeTimes->{{3.7271036835739*^9, 3.727103687860159*^9}, {
   3.727104626394329*^9, 
   3.7271046265782347`*^9}},ExpressionUUID->"4e7aaccd-46ba-425b-9c47-\
@@ -1574,7 +1616,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"4edf0732-0182-495a-92a0-\
 8dcde8eca4d9"]
 },
 WindowSize->{809, 755},
-WindowMargins->{{148, Automatic}, {Automatic, 0}},
+WindowMargins->{{Automatic, 252}, {19, Automatic}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

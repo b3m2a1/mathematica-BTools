@@ -1767,9 +1767,9 @@ NotebookToMarkdown[
              ],
           {
             s_String:>
-              s->iNotebookToMarkdown,
+              s->Automatic,
             ParentList:>
-              Thread[$NotebookToMarkdownStyles->iNotebookToMarkdown],
+              Thread[$NotebookToMarkdownStyles->Automatic],
             Except[_Rule|_RuleDelayed]->Nothing
             },
           1
@@ -1794,7 +1794,10 @@ NotebookToMarkdown[
     exportStrings=
       With[
         {
-          fn=Lookup[cstyles, #[[2]], iNotebookToMarkdown],
+          fn=
+            Replace[Lookup[cstyles, #[[2]], Automatic],
+              Automatic:>Lookup[cstyles, Automatic, iNotebookToMarkdown]
+              ],
           opp=
             <|
               "Root"->dir,
@@ -1814,7 +1817,7 @@ NotebookToMarkdown[
               "ContentPathExtension"->cpe
               |>
           },
-        fn[opp, #]
+        iNotebookToMarkdown[opp, fn[opp, #]]
         ]&/@First@nb;
     exportPick=
       Map[#=!=""&, exportStrings];
@@ -1929,9 +1932,9 @@ NotebookToMarkdown[nb_NotebookObject, ops:OptionsPattern[]]:=
                    ],
                 {
                   s_String:>
-                    s->iNotebookToMarkdown,
+                    s->Automatic,
                   ParentList:>
-                    Thread[$NotebookToMarkdownStyles->iNotebookToMarkdown],
+                    Thread[$NotebookToMarkdownStyles->Automatic],
                   Except[_Rule|_RuleDelayed]->Nothing
                   },
                 1

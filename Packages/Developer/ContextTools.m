@@ -98,6 +98,38 @@ ContextScopeBlock~SetAttributes~HoldFirst;
 
 
 (* ::Subsubsection::Closed:: *)
+(*contextNames*)
+
+
+
+(* ::Text:: *)
+(*
+	not used yet, just useful
+*)
+
+
+
+contextNames[s_String]:=
+  FixedPoint[
+    ToExpression[
+      Names[s<>"*"],
+      StandardForm,
+      Function[Null,
+        If[
+          MatchQ[codeValues[#, OwnValues],
+            {_:>Verbatim[Condition][_System`Dump`AutoLoad,_]}
+            ],
+          #
+          ],
+        HoldFirst
+        ]
+      ];
+    Names[s<>"*"]&,
+    None
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
 (*Autocompletes*)
 
 

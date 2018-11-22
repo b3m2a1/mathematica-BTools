@@ -8,7 +8,7 @@
 
 
 AppExecute::usage=
-	"A high-level interface to low-level application manipulation procedures";
+  "A high-level interface to low-level application manipulation procedures";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -17,7 +17,7 @@ AppExecute::usage=
 
 
 AppDocGen::usage=
-	"A high-level interface to generating application docs";
+  "A high-level interface to generating application docs";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -26,7 +26,7 @@ AppDocGen::usage=
 
 
 AppGit::usage=
-	"Git-type wrapper for apps";
+  "Git-type wrapper for apps";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -35,7 +35,7 @@ AppGit::usage=
 
 
 AppPacletExecute::usage=
-	"PacletExecute-type wrapper for apps";
+  "PacletExecute-type wrapper for apps";
 
 
 Begin["`Private`"];
@@ -57,19 +57,19 @@ Begin["`Private`"];
 
 
 $AppPathMethods=
-	<|
-		"ListApplications"->
-			(AppNames[]&),
-		"Path"->
-			AppPath,
-		"MainDirectory"->
-			($AppDirectory&),
-		"SetMainDirectory"->
-			(Replace[#, s_String?DirectoryQ:>Set[$AppDirectory, s]]&),
-		"DirectoryPath"->
-			($AppDirectories&),
-		"GetAppName"->AppFromFile
-		|>;
+  <|
+    "ListApplications"->
+      (AppNames[]&),
+    "Path"->
+      AppPath,
+    "MainDirectory"->
+      ($AppDirectory&),
+    "SetMainDirectory"->
+      (Replace[#, s_String?DirectoryQ:>Set[$AppDirectory, s]]&),
+    "DirectoryPath"->
+      ($AppDirectories&),
+    "GetAppName"->AppFromFile
+    |>;
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -78,46 +78,46 @@ $AppPathMethods=
 
 
 $AppEditMethods=
-	<|
-		"Configure"->
-			AppConfigure,
-		"ConfigureSubapp"->
-			AppConfigureSubapp,
-		"ReconfigureSubapp"->
-			AppReconfigureSubapp,
-		"FileNames"->
-			AppFileNames,
-		"ListContent"->
-			AppComponentFiles,
-		"FindFile"->
-			AppFindFile,
-		"AddContent"->
-			AppAddContent,
-		"ListPackages"->
-			AppPackages,
-		"ListStylesheets"->
-			AppStyleSheets,
-		"ListPalettes"->
-			AppPalettes,
-		"FindPackage"->
-			AppPackage,
-		"FindStylesheet"->
-			AppStylesheet,
-		"FindPalette"->
-			AppPalette,
-		"RegenerateConfig"->
-			AppConfigRegenerate,
-		"RegeneratePacletInfo"->
-			AppRegeneratePacletInfo,
-		"RegenerateLoaderFile"->
-			AppRegenerateInit,
-		"RegenerateDirectories"->
-			AppRegenerateDirectories,
-		"RegenerateContextLoaders"->
-			AppRegenerateContextLoadFiles,
-		"RegenerateLoadInfo"->
-			AppRegenerateLoadInfo
-		|>;
+  <|
+    "Configure"->
+      AppConfigure,
+    "ConfigureSubapp"->
+      AppConfigureSubapp,
+    "ReconfigureSubapp"->
+      AppReconfigureSubapp,
+    "FileNames"->
+      AppFileNames,
+    "ListContent"->
+      AppComponentFiles,
+    "FindFile"->
+      AppFindFile,
+    "AddContent"->
+      AppAddContent,
+    "ListPackages"->
+      AppPackages,
+    "ListStylesheets"->
+      AppStyleSheets,
+    "ListPalettes"->
+      AppPalettes,
+    "FindPackage"->
+      AppPackage,
+    "FindStylesheet"->
+      AppStylesheet,
+    "FindPalette"->
+      AppPalette,
+    "RegenerateConfig"->
+      AppConfigRegenerate,
+    "RegeneratePacletInfo"->
+      AppRegeneratePacletInfo,
+    "RegenerateLoaderFile"->
+      AppRegenerateInit,
+    "RegenerateDirectories"->
+      AppRegenerateDirectories,
+    "RegenerateContextLoaders"->
+      AppRegenerateContextLoadFiles,
+    "RegenerateLoadInfo"->
+      AppRegenerateLoadInfo
+    |>;
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -126,10 +126,10 @@ $AppEditMethods=
 
 
 $AppDistMethods=
-	<|
-		"Publish"->
-			AppPublish
-		|>
+  <|
+    "Publish"->
+      AppPublish
+    |>
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -138,16 +138,16 @@ $AppDistMethods=
 
 
 $AppDevMethods=
-	<|
-		"Get"->AppGet,
-		"Needs"->AppNeeds,
-		"OpenPackage"->AppPackageOpen,
-		"ListContexts"->AppContexts,
-		"MainContext"->AppMainContext,
-		"PackageFunctions"->AppPackageFunctions,
-		"PackageDependencies"->AppPackageDependencies,
-		"FunctionDependencies"->AppFunctionDependencies
-		|>
+  <|
+    "Get"->AppGet,
+    "Needs"->AppNeeds,
+    "OpenPackage"->AppPackageOpen,
+    "ListContexts"->AppContexts,
+    "MainContext"->AppMainContext,
+    "PackageFunctions"->AppPackageFunctions,
+    "PackageDependencies"->AppPackageDependencies,
+    "FunctionDependencies"->AppFunctionDependencies
+    |>
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -156,20 +156,20 @@ $AppDevMethods=
 
 
 $AppExecuteMethods=
-	Join[
-		$AppPathMethods,
-		$AppEditMethods,
-		$AppDistMethods,
-		$AppDevMethods
-		];
+  Join[
+    $AppPathMethods,
+    $AppEditMethods,
+    $AppDistMethods,
+    $AppDevMethods
+    ];
 $appNoAppMethods=
-	{
-		"Configure", "SetMainDirectory", 
-		"MainDirectory", "DirectoryPath", 
-		"GetAppName"
-		};
+  {
+    "Configure", "SetMainDirectory", 
+    "MainDirectory", "DirectoryPath", 
+    "GetAppName"
+    };
 validateAppExecCall[app_, meth_]:=
-	StringQ@app||MatchQ[meth, Alternatives@@$appNoAppMethods];
+  StringQ@app||MatchQ[meth, Alternatives@@$appNoAppMethods];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -179,25 +179,31 @@ validateAppExecCall[app_, meth_]:=
 
 AppExecute//Clear
 AppExecute[
-	method_String?(KeyExistsQ[$AppExecuteMethods, #]&),
-	app:_String,
-	args___
-	]:=
-	With[{a=AppFromFile[app], m=$AppExecuteMethods[method]},
-		With[{res=m[If[StringQ@a, a, app], args]},
-			res/;Head[res]=!=m
-			]/;validateAppExecCall[a, method]
-		];
+  method_String?(KeyExistsQ[$AppExecuteMethods, #]&),
+  app:_String,
+  args___
+  ]:=
+  With[{a=AppFromFile[app], m=$AppExecuteMethods[method]},
+    With[{res=m[If[StringQ@a, a, app], args]},
+      res/;Head[res]=!=m
+      ]/;validateAppExecCall[a, method]
+    ];
 AppExecute[
-	method_String?(KeyExistsQ[$AppExecuteMethods, #]&),
-	Optional["Function", "Function"]
-	]:=
-	Replace[$AppExecuteMethods[method], f_Function:>f[]];
+  method_String?(KeyExistsQ[$AppExecuteMethods, #]&),
+  app:_PacletManager`Paclet,
+  args___
+  ]:=
+  AppExecute[method, app["Location"], args];
 AppExecute[
-	method_String?(KeyExistsQ[$AppExecuteMethods, #]&),
-	"Options"
-	]:=
-	Options@Evaluate[$AppExecuteMethods[method]];
+  method_String?(KeyExistsQ[$AppExecuteMethods, #]&),
+  Optional["Function", "Function"]
+  ]:=
+  Replace[$AppExecuteMethods[method], f_Function:>f[]];
+AppExecute[
+  method_String?(KeyExistsQ[$AppExecuteMethods, #]&),
+  "Options"
+  ]:=
+  Options@Evaluate[$AppExecuteMethods[method]];
 
 
 (* ::Subsection:: *)
@@ -221,50 +227,50 @@ AppExecute[
 
 
 $AppDocGenMethodRouter:=
-	<|
-		"SymbolPages"->
-			<|
-				Automatic->
-					AppGenerateSymbolNotebook,
-				"PackageNotebook"->
-					AppGeneratePackageSymbolNotebook,
-				"Template"->
-					AppSymbolNotebook,
-				"PackageTemplate"->
-					AppPackageSymbolNotebook,
-				"Save"->
-					AppSaveSymbolPages,
-				"PackageSave"->
-					AppPackageSaveSymbolPages
-				|>,
-		"Guide"->
-			<|
-				Automatic->
-					AppGuideNotebook,
-				"Save"->
-					AppSaveGuide,
-				"Template"->
-					AppGuideNotebook
-				|>,
-		"Tutorial"->
-			<|
-				Automatic->AppTutorialNotebook,
-				"PackageTemplate"->AppPackageDocumentationTemplate
-				|>,
-		"Documentation"->
-			<|
-				Automatic->AppGenerateDocumentation,
-				"Package"->AppPackageGenerateDocumentation,
-				"Template"->AppDocumentationTemplate
-				|>,
-		"HTML"->
-			<|
-				Automatic->AppGenerateHTMLDocumentation,
-				"Package"->AppPackageGenerateHTMLDocumentation
-				|>,
-		"Index"->
-			AppIndexDocs
-		|>;
+  <|
+    "SymbolPages"->
+      <|
+        Automatic->
+          AppGenerateSymbolNotebook,
+        "PackageNotebook"->
+          AppGeneratePackageSymbolNotebook,
+        "Template"->
+          AppSymbolNotebook,
+        "PackageTemplate"->
+          AppPackageSymbolNotebook,
+        "Save"->
+          AppSaveSymbolPages,
+        "PackageSave"->
+          AppPackageSaveSymbolPages
+        |>,
+    "Guide"->
+      <|
+        Automatic->
+          AppGuideNotebook,
+        "Save"->
+          AppSaveGuide,
+        "Template"->
+          AppGuideNotebook
+        |>,
+    "Tutorial"->
+      <|
+        Automatic->AppTutorialNotebook,
+        "PackageTemplate"->AppPackageDocumentationTemplate
+        |>,
+    "Documentation"->
+      <|
+        Automatic->AppGenerateDocumentation,
+        "Package"->AppPackageGenerateDocumentation,
+        "Template"->AppDocumentationTemplate
+        |>,
+    "HTML"->
+      <|
+        Automatic->AppGenerateHTMLDocumentation,
+        "Package"->AppPackageGenerateHTMLDocumentation
+        |>,
+    "Index"->
+      AppIndexDocs
+    |>;
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -273,61 +279,61 @@ $AppDocGenMethodRouter:=
 
 
 AppDocGen::nopkg=
-	"Method `` requires ";
+  "Method `` requires ";
 appDocGenDefault[
-	app_String, type_String, 
-	fun_Symbol, method:_String|_Symbol, 
-	methOps_?OptionQ, ops___?OptionQ
-	]:=
-	Catch@
-	With[
-		{
-			pkg=Lookup[methOps, "Package", None], 
-			meth=ToString[method],
-			dir=
-				Lookup[methOps, Directory, Automatic],
-			ext=
-				Lookup[methOps, Extension, True],
-			gtype=
-				Lookup[methOps, "GenerateType", All],
-			fnp=
-				Lookup[methOps, "FileNamePattern", All]
-			},
-		If[StringStartsQ[meth, "Package"]&&!StringQ[pkg],
-			Message[AppDocGen::nopkg, pkg];
-			Throw@$Failed
-			];
-		Which[
-			fun===AppGenerateDocumentation||StringEndsQ[meth, "Save"],
-				If[StringStartsQ[meth, "Package"],
-					fun[app, pkg, dir, ext,
-						Evaluate@FilterRules[{ops}, Options@fun]
-						],
-					fun[app, dir, ext,
-						Evaluate@FilterRules[{ops}, Options@fun]
-						]
-					],
-			type==="Documentation",
-				Which[
-					StringStartsQ[meth, "Package"],
-						fun[app, pkg, dir, gtype, fnp,
-							Evaluate@FilterRules[{ops}, Options@fun]
-							],
-					StringStartsQ[meth, "Template"],
-						fun[app,
-							Evaluate@FilterRules[{ops}, Options@fun]
-							],
-					True,
-						fun[app, dir, gtype, fnp,
-							Evaluate@FilterRules[{ops}, Options@fun]
-							]
-					],
-			StringStartsQ[meth, "Package"],
-				fun[app, pkg, Evaluate@FilterRules[{ops}, Options@fun]],
-			True,
-				fun[app, Evaluate@FilterRules[{ops}, Options@fun]]
-			]
-		];
+  app_String, type_String, 
+  fun_Symbol, method:_String|_Symbol, 
+  methOps_?OptionQ, ops___?OptionQ
+  ]:=
+  Catch@
+  With[
+    {
+      pkg=Lookup[methOps, "Package", None], 
+      meth=ToString[method],
+      dir=
+        Lookup[methOps, Directory, Automatic],
+      ext=
+        Lookup[methOps, Extension, True],
+      gtype=
+        Lookup[methOps, "GenerateType", All],
+      fnp=
+        Lookup[methOps, "FileNamePattern", All]
+      },
+    If[StringStartsQ[meth, "Package"]&&!StringQ[pkg],
+      Message[AppDocGen::nopkg, pkg];
+      Throw@$Failed
+      ];
+    Which[
+      fun===AppGenerateDocumentation||StringEndsQ[meth, "Save"],
+        If[StringStartsQ[meth, "Package"],
+          fun[app, pkg, dir, ext,
+            Evaluate@FilterRules[{ops}, Options@fun]
+            ],
+          fun[app, dir, ext,
+            Evaluate@FilterRules[{ops}, Options@fun]
+            ]
+          ],
+      type==="Documentation",
+        Which[
+          StringStartsQ[meth, "Package"],
+            fun[app, pkg, dir, gtype, fnp,
+              Evaluate@FilterRules[{ops}, Options@fun]
+              ],
+          StringStartsQ[meth, "Template"],
+            fun[app,
+              Evaluate@FilterRules[{ops}, Options@fun]
+              ],
+          True,
+            fun[app, dir, gtype, fnp,
+              Evaluate@FilterRules[{ops}, Options@fun]
+              ]
+          ],
+      StringStartsQ[meth, "Package"],
+        fun[app, pkg, Evaluate@FilterRules[{ops}, Options@fun]],
+      True,
+        fun[app, Evaluate@FilterRules[{ops}, Options@fun]]
+      ]
+    ];
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -339,21 +345,21 @@ AppDocGen//Clear
 
 
 Options[AppDocGen]=
-	{
-		Method->Automatic
-		};
+  {
+    Method->Automatic
+    };
 AppDocGen[
-	type:_String?(KeyExistsQ[$AppDocGenMethodRouter, #]&):"SymbolPage",
-	app_?StringQ,
-	ops:OptionsPattern[]
-	]:=
-	Block[
-		{
-			$DocGenMethodRouter=$AppDocGenMethodRouter,
-			$DocGenFunction=appDocGenDefault
-			},
-		DocGen[type, app, ops]
-		]
+  type:_String?(KeyExistsQ[$AppDocGenMethodRouter, #]&):"SymbolPage",
+  app_?StringQ,
+  ops:OptionsPattern[]
+  ]:=
+  Block[
+    {
+      $DocGenMethodRouter=$AppDocGenMethodRouter,
+      $DocGenFunction=appDocGenDefault
+      },
+    DocGen[type, app, ops]
+    ]
 AppDocGen~SetAttributes~HoldRest
 
 
@@ -368,24 +374,24 @@ AppDocGen~SetAttributes~HoldRest
 
 
 $AppGitRouter:=
-	<|
-		"Init"->
-			AppGitInit,
-		"Clone"->
-			AppGitClone,
-		"Commit"->
-			AppGitSafeCommit,
-		"GitHubRepo"->
-			AppGitHubRepo,
-		"GitHubConfigure"->
-			AppGitHubConfigure,
-		"GitHubPush"->
-			AppGitHubPush,
-		"GitHubDelete"->
-			AppGitHubDelete,
-		"GitHubCreateRelease"->
-			AppGitHubCreateRelease
-		|>
+  <|
+    "Init"->
+      AppGitInit,
+    "Clone"->
+      AppGitClone,
+    "Commit"->
+      AppGitSafeCommit,
+    "GitHubRepo"->
+      AppGitHubRepo,
+    "GitHubConfigure"->
+      AppGitHubConfigure,
+    "GitHubPush"->
+      AppGitHubPush,
+    "GitHubDelete"->
+      AppGitHubDelete,
+    "GitHubCreateRelease"->
+      AppGitHubCreateRelease
+    |>
 
 
 (* ::Subsubsection::Closed:: *)
@@ -397,25 +403,25 @@ AppGit//Clear
 
 
 AppGit[
-	k_?(KeyExistsQ[$AppGitRouter, #]&),
-	app_String,
-	args___
-	]:=
-	With[{fn=$AppGitRouter[k]},
-		With[{res=fn[app, args]},
-			res/;Head[res]=!=fn
-			]
-		];
+  k_?(KeyExistsQ[$AppGitRouter, #]&),
+  app_String,
+  args___
+  ]:=
+  With[{fn=$AppGitRouter[k]},
+    With[{res=fn[app, args]},
+      res/;Head[res]=!=fn
+      ]
+    ];
 AppGit[
-	k_?(KeyExistsQ[$AppGitRouter, #]&),
-	Optional["Function", "Function"]
-	]:=
-	$AppGitRouter[k];
+  k_?(KeyExistsQ[$AppGitRouter, #]&),
+  Optional["Function", "Function"]
+  ]:=
+  $AppGitRouter[k];
 AppGit[
-	k_?(KeyExistsQ[$AppGitRouter, #]&),
-	"Options"
-	]:=
-	Options@Evaluate@$AppGitRouter[k];
+  k_?(KeyExistsQ[$AppGitRouter, #]&),
+  "Options"
+  ]:=
+  Options@Evaluate@$AppGitRouter[k];
 
 
 (* ::Subsection:: *)
@@ -429,49 +435,49 @@ AppGit[
 
 
 $AppPacletExecuteMethods=
-	<|
-		"Paclet"->
-			AppPaclet,
-		"PacletInfo"->
-			AppPacletInfo,
-		"SiteURL"->
-			AppPacletSiteURL,
-		"BundleSite"->
-			AppPacletSiteBundle,
-		"Upload"->
-			AppPacletUpload,
-		"Bundle"->
-			PacletBundle,
-		"Backup"->
-			AppPacletBackup,
-		"UploadSubpaclet"->
-			AppSubpacletUpload
-		|>;
+  <|
+    "Paclet"->
+      AppPaclet,
+    "PacletInfo"->
+      AppPacletInfo,
+    "SiteURL"->
+      AppPacletSiteURL,
+    "BundleSite"->
+      AppPacletSiteBundle,
+    "Upload"->
+      AppPacletUpload,
+    "Bundle"->
+      PacletBundle,
+    "Backup"->
+      AppPacletBackup,
+    "UploadSubpaclet"->
+      AppSubpacletUpload
+    |>;
 
 
 AppPacletExecute//Clear
 
 
 AppPacletExecute[
-	k_?(KeyExistsQ[$AppPacletExecuteMethods, #]&),
-	app_String,
-	args___
-	]:=
-	With[{fn=$AppPacletExecuteMethods[k]},
-		With[{res=fn[app, args]},
-			res/;Head[res]=!=fn
-			]
-		];
+  k_?(KeyExistsQ[$AppPacletExecuteMethods, #]&),
+  app_String,
+  args___
+  ]:=
+  With[{fn=$AppPacletExecuteMethods[k]},
+    With[{res=fn[app, args]},
+      res/;Head[res]=!=fn
+      ]
+    ];
 AppPacletExecute[
-	k_?(KeyExistsQ[$AppPacletExecuteMethods, #]&),
-	Optional["Function", "Function"]
-	]:=
-	$AppPacletExecuteMethods[k];
+  k_?(KeyExistsQ[$AppPacletExecuteMethods, #]&),
+  Optional["Function", "Function"]
+  ]:=
+  $AppPacletExecuteMethods[k];
 AppPacletExecute[
-	k_?(KeyExistsQ[$AppPacletExecuteMethods, #]&),
-	"Options"
-	]:=
-	Options@Evaluate@$AppPacletExecuteMethods[k];
+  k_?(KeyExistsQ[$AppPacletExecuteMethods, #]&),
+  "Options"
+  ]:=
+  Options@Evaluate@$AppPacletExecuteMethods[k];
 
 
 (* ::Subsection:: *)
@@ -493,16 +499,16 @@ $AppNamesCurrent=AppNames["*", True];
 
 
 PackageAddAutocompletions@
-	Map[
-		#->
-			{
-				Keys@$AppExecuteMethods,
-				Join[$AppNamesCurrent, {"Function", "Options"}]
-				}&,
-		{
-			"AppExecute"
-			}
-		]
+  Map[
+    #->
+      {
+        Keys@$AppExecuteMethods,
+        Join[$AppNamesCurrent, {"Function", "Options"}]
+        }&,
+    {
+      "AppExecute"
+      }
+    ]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -511,16 +517,16 @@ PackageAddAutocompletions@
 
 
 PackageAddAutocompletions@
-	Map[
-		#->
-			{
-				Keys@$AppDocGenMethodRouter,
-				Join[$AppNamesCurrent, {"Function", "Options"}]
-				}&,
-		{
-			"AppDocGen"
-			}
-		]
+  Map[
+    #->
+      {
+        Keys@$AppDocGenMethodRouter,
+        Join[$AppNamesCurrent, {"Function", "Options"}]
+        }&,
+    {
+      "AppDocGen"
+      }
+    ]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -529,16 +535,16 @@ PackageAddAutocompletions@
 
 
 PackageAddAutocompletions@
-	Map[
-		#->
-			{
-				Keys@$AppPacletExecuteMethods,
-				Join[$AppNamesCurrent, {"Function", "Options"}]
-				}&,
-		{
-			"AppPacletExecute"
-			}
-		]
+  Map[
+    #->
+      {
+        Keys@$AppPacletExecuteMethods,
+        Join[$AppNamesCurrent, {"Function", "Options"}]
+        }&,
+    {
+      "AppPacletExecute"
+      }
+    ]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -547,16 +553,16 @@ PackageAddAutocompletions@
 
 
 PackageAddAutocompletions@
-	Map[
-		#->
-			{
-				Keys@$AppGitRouter,
-				Join[$AppNamesCurrent, {"Function", "Options"}]
-				}&,
-		{
-			"AppGit"
-			}
-		]
+  Map[
+    #->
+      {
+        Keys@$AppGitRouter,
+        Join[$AppNamesCurrent, {"Function", "Options"}]
+        }&,
+    {
+      "AppGit"
+      }
+    ]
 
 
 End[];

@@ -31,7 +31,7 @@ Cell["Begin[\"AppManagerPalette`Private`\"];", "InputSection",
    3.686674210128455*^9}, {3.687212942531571*^9, 3.687212971485302*^9}, {
    3.6872130442937307`*^9, 3.687213057164139*^9}, {3.700783530159133*^9, 
    3.700783552813157*^9}},
- CellLabel->"In[1]:=",ExpressionUUID->"b6114dd6-f7a3-4c35-bb13-4d0cf35ca081"],
+ CellLabel->"In[37]:=",ExpressionUUID->"b6114dd6-f7a3-4c35-bb13-4d0cf35ca081"],
 
 Cell[CellGroupData[{
 
@@ -50,7 +50,7 @@ Cell[BoxData[{
     "}"}]}], ";"}]}], "CodeInput",
  CellChangeTimes->{{3.700783578620867*^9, 3.700783597511285*^9}, {
   3.7044727594484787`*^9, 3.704472763057322*^9}},
- CellLabel->"In[2]:=",ExpressionUUID->"82afe519-9812-435e-a3f8-e12fdd9989e4"],
+ CellLabel->"In[38]:=",ExpressionUUID->"82afe519-9812-435e-a3f8-e12fdd9989e4"],
 
 Cell[BoxData[{
  RowBox[{
@@ -97,8 +97,8 @@ Cell[BoxData[{
                "]"}]}], ")"}]}]}], "\n", "\t\t\t\t\t", "}"}]}], "]"}]}], "\n",
        "\t\t\t\t", "]"}]}], "\n", "\t\t\t", ")"}]}], ";"}], "\n", 
  RowBox[{
-  RowBox[{"getAppName", "[", "]"}], 
-  ";"}]}], "CodeInput",ExpressionUUID->"58be6747-1f37-4600-a04b-4531d6f2c82b"],
+  RowBox[{"getAppName", "[", "]"}], ";"}]}], "CodeInput",
+ CellLabel->"In[40]:=",ExpressionUUID->"58be6747-1f37-4600-a04b-4531d6f2c82b"],
 
 Cell[BoxData[
  RowBox[{
@@ -189,7 +189,7 @@ Cell[BoxData[
    3.721053572285303*^9, 3.721053576639737*^9}, 3.721055837380896*^9, {
    3.7318508474824753`*^9, 3.73185090460841*^9}, {3.731859732844849*^9, 
    3.731859765376134*^9}, {3.731862865598768*^9, 3.731862877387425*^9}},
- CellLabel->"In[6]:=",ExpressionUUID->"56df3460-6e05-4bbe-9238-c934476c9115"],
+ CellLabel->"In[42]:=",ExpressionUUID->"56df3460-6e05-4bbe-9238-c934476c9115"],
 
 Cell[BoxData[{
  RowBox[{
@@ -281,12 +281,125 @@ Cell[BoxData[{
    3.720662003089591*^9}, {3.720662663438692*^9, 3.720662727635861*^9}, 
    3.7206637710283318`*^9, {3.721021156505336*^9, 3.7210211711900377`*^9}, {
    3.7289500225076723`*^9, 3.728950022514207*^9}},
- CellLabel->"In[7]:=",ExpressionUUID->"76952f4d-59bd-4000-b7a9-45c9b8e97b34"],
+ CellLabel->"In[43]:=",ExpressionUUID->"76952f4d-59bd-4000-b7a9-45c9b8e97b34"],
 
 Cell[BoxData[
  RowBox[{"<<", "BTools`All`"}]], "CodeInput",
  CellChangeTimes->{{3.7318602080819187`*^9, 3.7318602102478857`*^9}},
- CellLabel->"In[9]:=",ExpressionUUID->"b1840f51-137a-4bce-887e-786636bb3bd2"]
+ CellLabel->"In[45]:=",ExpressionUUID->"b1840f51-137a-4bce-887e-786636bb3bd2"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"openerSelector", "//", "ClearAll"}], ";"}]], "CodeInput",
+ CellLabel->"In[46]:=",ExpressionUUID->"0ea726c9-f921-4033-b09f-14963ddbc1c3"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"openerSelector", "[", 
+   RowBox[{"label_", ",", " ", 
+    RowBox[{"Hold", "[", "listingFunction_", "]"}], ",", " ", 
+    RowBox[{"Hold", "[", "counter_", "]"}]}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"flag", ",", " ", "listing"}], "}"}], ",", "\n", "\t\t", 
+    RowBox[{"With", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"gather", "=", "fileNamesGather"}], ",", " ", 
+        RowBox[{"format", "=", "formatFilePaths"}]}], "}"}], ",", "\n", "\t", 
+      "\t", "\t\t", 
+      RowBox[{"EventHandler", "[", "\n", "\t\t\t\t\t", 
+       RowBox[{
+        RowBox[{"dynamicActionMenu", "[", 
+         RowBox[{"label", ",", "\n", "\t\t\t\t\t\t", 
+          RowBox[{
+          "flag", ";", "\n", "\t\t\t\t\t\t", "currentApp", ";", "\n", 
+           "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"If", "[", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"ListQ", "@", "listing"}], "&&", 
+               RowBox[{
+                RowBox[{"listing", "[", 
+                 RowBox[{"[", "1", "]"}], "]"}], "\[Equal]", "currentApp"}]}],
+               ",", "\n", "\t\t\t\t\t\t\t", "listing", ",", "\n", 
+              "\t\t\t\t\t\t\t", 
+              RowBox[{"listing", "=", 
+               RowBox[{"{", 
+                RowBox[{"currentApp", ",", " ", "listingFunction"}], 
+                "}"}]}]}], "\n", "\t\t\t\t\t\t\t", "]"}], "[", 
+            RowBox[{"[", "2", "]"}], "]"}]}], ",", "\n", "\t\t\t\t\t\t", 
+          RowBox[{"Enabled", "\[Rule]", "\n", "\t\t\t\t\t\t\t", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"Length", "@", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{"If", "[", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"ListQ", "@", "listing"}], "&&", 
+                 RowBox[{
+                  RowBox[{"listing", "[", 
+                   RowBox[{"[", "1", "]"}], "]"}], "\[Equal]", 
+                  "currentApp"}]}], ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{"listing", "[", 
+                 RowBox[{"[", "2", "]"}], "]"}], ",", "\n", 
+                "\t\t\t\t\t\t\t\t\t", "counter"}], "\n", "\t\t\t\t\t\t\t\t\t",
+                "]"}]}], ">", "0"}], ")"}]}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
+           RowBox[{"{", 
+            RowBox[{"flag", ",", " ", "currentApp"}], "}"}]}]}], "\n", 
+         "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+        RowBox[{"{", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"\"\<MouseDown\>\"", "\[RuleDelayed]", 
+           RowBox[{"(", 
+            RowBox[{"flag", "=", 
+             RowBox[{"RandomReal", "[", "]"}]}], ")"}]}], ",", "\n", "\t", 
+          "\t", "\t", "\t\t", 
+          RowBox[{"PassEventsDown", "\[Rule]", "True"}]}], "\n", "\t", "\t", 
+         "\t", "\t\t", "}"}]}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", 
+     "]"}]}], "\n", "\t", "]"}]}], "\n", 
+ RowBox[{
+  RowBox[{"openerSelector", "[", 
+   RowBox[{"label_", ",", " ", "types_", ",", " ", "path_String", ",", " ", 
+    RowBox[{"depth_:", "4"}]}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"gather", "=", "fileNamesGather"}], ",", " ", 
+      RowBox[{"format", "=", "formatFilePaths"}]}], "}"}], ",", "\n", "\t\t", 
+    
+    RowBox[{"openerSelector", "[", 
+     RowBox[{"label", ",", "\n", "\t", "\t\t", 
+      RowBox[{"Hold", "[", "\n", "\t", "\t\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"DirectoryQ", "@", 
+          RowBox[{
+           RowBox[{"whichPacF", "[", "\"\<AppPath\>\"", "]"}], "[", 
+           RowBox[{"currentApp", ",", " ", "path"}], "]"}]}], ",", "\n", 
+         "\t\t\t\t\t\t", 
+         RowBox[{"format", "@", "\n", "\t\t\t\t\t\t\t", 
+          RowBox[{"gather", "[", 
+           RowBox[{"types", ",", " ", "path"}], "]"}]}], ",", "\n", 
+         "\t\t\t\t\t\t", 
+         RowBox[{"{", "}"}]}], "\n", "\t", "\t", "\t\t\t\t", "]"}], "\n", 
+       "\t", "\t", "\t\t", "]"}], ",", "\n", "\t\t\t", 
+      RowBox[{"Hold", "[", "\n", "\t\t\t\t", 
+       RowBox[{"FileNames", "[", "\n", "\t\t\t\t\t", 
+        RowBox[{"types", ",", "\n", "\t", "\t", "\t", "\t\t", 
+         RowBox[{
+          RowBox[{"whichPacF", "[", "\"\<AppPath\>\"", "]"}], "[", 
+          RowBox[{"currentApp", ",", " ", "path"}], "]"}], ",", "\n", 
+         "\t\t\t\t\t", "depth"}], "\n", "\t", "\t", "\t\t\t", "]"}], "\n", 
+       "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+   "]"}]}]}], "CodeInput",
+ CellLabel->
+  "In[47]:=",ExpressionUUID->"58a22c1e-d2f8-4f87-b9aa-8cc9029102e4"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -307,7 +420,7 @@ Cell[BoxData[{
   3.700781204596918*^9}, {3.700781256821913*^9, 3.700781257211*^9}, {
   3.700781519659034*^9, 3.700781523728725*^9}, {3.700781822808559*^9, 
   3.700781827224463*^9}, {3.7007820749573717`*^9, 3.700782078418912*^9}},
- CellLabel->"In[10]:=",ExpressionUUID->"90384069-0e5f-4e8c-8758-b21064d4f33a"],
+ CellLabel->"In[49]:=",ExpressionUUID->"90384069-0e5f-4e8c-8758-b21064d4f33a"],
 
 Cell[BoxData[{
  RowBox[{
@@ -421,7 +534,7 @@ Cell[BoxData[{
    3.7025968865816917`*^9, 3.7025968903911753`*^9}, {3.705193515047269*^9, 
    3.7051935190376043`*^9}, {3.721002564815364*^9, 3.7210025945151453`*^9}, {
    3.721053426069869*^9, 3.72105345195756*^9}},
- CellLabel->"In[12]:=",ExpressionUUID->"a3c05dc1-824b-4bff-b566-39e2fec58faa"],
+ CellLabel->"In[51]:=",ExpressionUUID->"a3c05dc1-824b-4bff-b566-39e2fec58faa"],
 
 Cell[BoxData[{
  RowBox[{
@@ -464,7 +577,7 @@ Cell[BoxData[{
   3.7009707434272633`*^9}, {3.7009708632703123`*^9, 3.700970869417843*^9}, {
   3.701120917994899*^9, 3.701120924834337*^9}, {3.701400151117146*^9, 
   3.7014001686680098`*^9}},
- CellLabel->"In[14]:=",ExpressionUUID->"5989f9c0-514d-4250-9a02-064a3b289b6f"],
+ CellLabel->"In[53]:=",ExpressionUUID->"5989f9c0-514d-4250-9a02-064a3b289b6f"],
 
 Cell[BoxData[
  RowBox[{
@@ -493,7 +606,7 @@ Cell[BoxData[
    3.700791587086299*^9, 3.700791589932214*^9}, {3.7008441717733183`*^9, 
    3.700844187409851*^9}, {3.702596908448208*^9, 3.7025969299083548`*^9}, 
    3.705193528994864*^9},
- CellLabel->"In[17]:=",ExpressionUUID->"2e1cf1da-5b92-4c63-86e9-95808d1800ad"],
+ CellLabel->"In[56]:=",ExpressionUUID->"2e1cf1da-5b92-4c63-86e9-95808d1800ad"],
 
 Cell[BoxData[{
  RowBox[{
@@ -570,7 +683,7 @@ Cell[BoxData[{
    3.700791924603052*^9, 3.7007919251204557`*^9}, {3.700792081787094*^9, 
    3.700792102648835*^9}, 3.700795592462592*^9, {3.721049392580677*^9, 
    3.721049416793082*^9}},
- CellLabel->"In[18]:=",ExpressionUUID->"e44234db-be3b-41f3-a669-6b3e7a7a6d2b"],
+ CellLabel->"In[57]:=",ExpressionUUID->"e44234db-be3b-41f3-a669-6b3e7a7a6d2b"],
 
 Cell[BoxData[{
  RowBox[{
@@ -619,7 +732,7 @@ Cell[BoxData[{
   3.731862641201531*^9, 3.73186264365396*^9}, {3.731862766205368*^9, 
   3.731862767363759*^9}, {3.731862800253929*^9, 3.731862814059184*^9}},
  CellLabel->
-  "In[20]:=",ExpressionUUID->"f658a918-bcf0-4ffd-8ad0-b50466dcd43f"]
+  "In[59]:=",ExpressionUUID->"f658a918-bcf0-4ffd-8ad0-b50466dcd43f"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -629,46 +742,49 @@ Cell["Functions", "CodeSubsubsection",
   3.721049210329391*^9}},ExpressionUUID->"c41555b8-6c19-4eb1-ae60-\
 657527ee5382"],
 
-Cell[BoxData[
+Cell[BoxData[{
+ RowBox[{"fileNamesGather", "//", "Clear"}], "\n", 
  RowBox[{
-  RowBox[{"fileNamesGather", "=", "\n", "\t", 
-   RowBox[{"Function", "[", "\n", "\t\t", 
-    RowBox[{"With", "[", 
-     RowBox[{
-      RowBox[{"{", 
-       RowBox[{
-        RowBox[{"pat", "=", "#"}], ",", 
-        RowBox[{"path", "=", 
-         RowBox[{"{", "##2", "}"}]}], ",", 
-        RowBox[{"dir", "=", 
-         RowBox[{
-          RowBox[{"whichPacF", "[", "\"\<AppPath\>\"", "]"}], "[", 
-          RowBox[{"currentApp", ",", "##2"}], "]"}]}]}], "}"}], ",", "\n", 
-      "\t\t\t", 
-      RowBox[{"Flatten", "@", "\n", "\t\t\t\t", 
-       RowBox[{"Riffle", "[", "\n", "\t\t\t\t\t", 
+  RowBox[{
+   RowBox[{"fileNamesGather", "[", "zargs___", "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"Function", "[", "\n", "\t\t", 
+     RowBox[{"With", "[", 
+      RowBox[{
+       RowBox[{"{", 
         RowBox[{
+         RowBox[{"pat", "=", "#"}], ",", 
+         RowBox[{"path", "=", 
+          RowBox[{"{", "##2", "}"}]}], ",", 
+         RowBox[{"dir", "=", 
+          RowBox[{
+           RowBox[{"whichPacF", "[", "\"\<AppPath\>\"", "]"}], "[", 
+           RowBox[{"currentApp", ",", "##2"}], "]"}]}]}], "}"}], ",", "\n", 
+       "\t\t\t", 
+       RowBox[{"Flatten", "@", "\n", "\t\t\t\t", 
+        RowBox[{"Riffle", "[", "\n", "\t\t\t\t\t", 
          RowBox[{
           RowBox[{
-           RowBox[{"Map", "[", "\n", "\t\t\t\t\t\t", 
-            RowBox[{
+           RowBox[{
+            RowBox[{"Map", "[", "\n", "\t\t\t\t\t\t", 
              RowBox[{
-              RowBox[{"GatherBy", "[", "\n", "\t\t\t\t\t\t\t", 
-               RowBox[{"#", ",", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"GatherBy", "[", "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{"#", ",", "\n", "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"FileNameTake", "[", 
+                   RowBox[{"#", ",", " ", 
+                    RowBox[{
+                    RowBox[{"FileNameDepth", "@", "dir"}], "+", "2"}]}], 
+                   "]"}], "&"}]}], "\n", "\t\t\t\t\t\t\t", "]"}], "&"}], ",", 
+              "\n", "\t\t\t\t\t\t", 
+              RowBox[{"GatherBy", "[", 
+               RowBox[{"#", ",", "\n", "\t", "\t\t\t\t\t\t", 
                 RowBox[{
                  RowBox[{"FileNameTake", "[", 
-                  RowBox[{"#", ",", " ", 
-                   RowBox[{
-                    RowBox[{"FileNameDepth", "@", "dir"}], "+", "2"}]}], 
-                  "]"}], "&"}]}], "\n", "\t\t\t\t\t\t\t", "]"}], "&"}], ",", 
-             "\n", "\t\t\t\t\t\t", 
-             RowBox[{"GatherBy", "[", 
-              RowBox[{"#", ",", "\n", "\t", "\t\t\t\t\t\t", 
-               RowBox[{
-                RowBox[{"FileNameTake", "[", 
-                 RowBox[{"#", ",", "\n", "\t\t\t\t\t\t\t\t", 
-                  RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
-                   RowBox[{
+                  RowBox[{"#", ",", "\n", "\t\t\t\t\t\t\t\t", 
+                   RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
                     RowBox[{"FileNameDepth", "@", "dir"}], ",", " ", "\n", 
                     "\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"Min", "@", 
@@ -680,71 +796,74 @@ Cell[BoxData[
                     RowBox[{
                     RowBox[{"FileNameDepth", "@", "#"}], "-", "1"}]}], 
                     "}"}]}]}], "\n", "\t\t\t\t\t\t\t\t\t", "}"}]}], "\n", 
-                 "\t\t\t\t\t\t\t\t", "]"}], "&"}]}], "\n", "\t\t\t\t\t\t\t", 
-              "]"}]}], "\n", "\t\t\t\t\t\t", "]"}], "&"}], "@", "\n", 
-          "\t\t\t\t\t", 
-          RowBox[{
-           RowBox[{"SortBy", "[", "\n", "\t", "\t", "\t\t\t\t", 
-            RowBox[{
-             RowBox[{
-              RowBox[{"FileNameDepth", "@", "#"}], "+", "\n", "\t", "\t", 
-              "\t\t\t\t", 
-              RowBox[{"30", "*", 
-               RowBox[{"Boole", "@", "\n", "\t", "\t", "\t\t\t\t\t", 
-                RowBox[{"StringContainsQ", "[", 
-                 RowBox[{"#", ",", "\n", "\t", "\t", "\t\t\t\t\t\t", 
-                  RowBox[{"\"\<__\>\"", "~~", 
-                   RowBox[{
+                  "\t\t\t\t\t\t\t\t", "]"}], "&"}]}], "\n", "\t\t\t\t\t\t\t", 
+               "]"}]}], "\n", "\t\t\t\t\t\t", "]"}], "&"}], "@", "\n", 
+           "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"SortBy", "[", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                 RowBox[{"FileNameDepth", "@", "#"}], "+", "\n", "\t", 
+                 "\t\t\t\t\t\t\t", 
+                 RowBox[{"30", "*", 
+                  RowBox[{
+                  "Boole", "@", "\n", "\t", "\t", "\t", "\t", "\t\t\t\t\t", 
+                   RowBox[{"StringContainsQ", "[", 
+                    RowBox[{
+                    "#", ",", "\n", "\t", "\t", "\t", "\t", "\t\t\t\t\t\t", 
+                    RowBox[{"\"\<__\>\"", "~~", 
+                    RowBox[{
                     RowBox[{"(", 
                     RowBox[{
                     "WordCharacter", "|", "\"\< \>\"", "|", "\"\<$\>\""}], 
-                    ")"}], ".."}], "~~", "\"\<__\>\""}]}], "\n", "\t", "\t", 
-                 "\t\t\t\t\t\t", "]"}]}]}]}], "&"}], "\n", "\t", "\t", 
-            "\t\t\t\t", "]"}], "@", "\n", "\t\t\t\t\t\t", 
-           RowBox[{
-            RowBox[{"Select", "[", "\n", "\t\t\t\t\t\t\t", 
-             RowBox[{
-              RowBox[{
-               RowBox[{"StringContainsQ", "[", 
+                    ")"}], ".."}], "~~", "\"\<__\>\""}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t", "]"}]}]}]}], "&"}], ",", "\n", 
+               "\t\t\t\t\t\t\t", 
+               RowBox[{
                 RowBox[{
-                 RowBox[{"StringTrim", "[", 
-                  RowBox[{"#", ",", "dir"}], "]"}], ",", 
-                 "\"\<__Future__\>\""}], "]"}], "||", "\n", "\t\t\t\t\t\t\t", 
-               
-               RowBox[{"Not", "@", "\n", "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"FileNameSplit", "[", "#", "]"}], "[", 
+                 RowBox[{"[", 
+                  RowBox[{"-", "2"}], "]"}], "]"}], "&"}], ",", "\n", 
+               "\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"FileBaseName", "[", "#", "]"}], "&"}], ",", "\n", 
+               "\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{"StringReverse", "@", 
+                 RowBox[{"FileExtension", "[", "#", "]"}]}], "&"}]}], "\n", 
+              "\t\t\t\t\t\t\t", "}"}], "\n", "\t\t\t\t\t\t", "]"}], "@", "\n",
+             "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Select", "[", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{
                 RowBox[{"StringContainsQ", "[", 
                  RowBox[{
                   RowBox[{"StringTrim", "[", 
-                   RowBox[{"#", ",", "dir"}], "]"}], ",", "\n", 
-                  "\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{"\"\<__\>\"", "~~", 
-                   RowBox[{
+                   RowBox[{"#", ",", "dir"}], "]"}], ",", 
+                  "\"\<__Future__\>\""}], "]"}], "||", "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{"Not", "@", "\n", "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"StringContainsQ", "[", 
+                  RowBox[{
+                   RowBox[{"StringTrim", "[", 
+                    RowBox[{"#", ",", "dir"}], "]"}], ",", "\n", 
+                   "\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"\"\<__\>\"", "~~", 
+                    RowBox[{
                     RowBox[{"(", 
                     RowBox[{
                     "WordCharacter", "|", "\"\< \>\"", "|", "\"\<$\>\""}], 
                     ")"}], ".."}], "~~", "\"\<__\>\""}]}], "]"}]}]}], "\n", 
-              "\t", "\t", "\t\t\t\t\t", "&"}], "]"}], "@", "\n", "\t", 
-            "\t\t\t\t\t", 
-            RowBox[{"FileNames", "[", 
-             RowBox[{"#", ",", " ", "dir", ",", " ", "\[Infinity]"}], 
-             "]"}]}]}]}], ",", "\n", "\t\t\t\t\t", "Delimiter"}], "\n", 
-        "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "]"}], "\n", "\t\t", "]"}]}],
-   ";"}]], "CodeInput",
- CellChangeTimes->{{3.7051855777243013`*^9, 3.705185626330187*^9}, {
-   3.7051858336598673`*^9, 3.7051858464041224`*^9}, {3.705186296413937*^9, 
-   3.705186346858235*^9}, {3.70518639238303*^9, 3.705186431801084*^9}, {
-   3.70520266535154*^9, 3.7052026654921017`*^9}, 3.705929276202733*^9, {
-   3.705929409782112*^9, 3.705929440888466*^9}, {3.705929472182261*^9, 
-   3.705929558195554*^9}, {3.720662404249503*^9, 3.7206624042552147`*^9}, {
-   3.720662663457241*^9, 3.720662676982924*^9}, {3.7305585274697733`*^9, 
-   3.730558533872855*^9}, {3.730558588829022*^9, 3.730558596765547*^9}, 
-   3.730558640288987*^9, {3.7305587357562237`*^9, 3.730558856626248*^9}, {
-   3.730558910281765*^9, 3.730558920325294*^9}, {3.730559014498589*^9, 
-   3.730559050393065*^9}, {3.730559158931164*^9, 3.730559193391719*^9}, {
-   3.7305592275508757`*^9, 3.730559281929666*^9}, {3.7305593472731037`*^9, 
-   3.7305594402329273`*^9}, {3.7305594806355352`*^9, 3.73055951294737*^9}, {
-   3.7318505553186417`*^9, 3.7318505567629337`*^9}},
- CellLabel->"In[22]:=",ExpressionUUID->"48206c6e-0080-4444-a0ec-dc4da79ff756"],
+               "\t", "\t", "\t\t\t\t\t", "&"}], "]"}], "@", "\n", "\t", 
+             "\t\t\t\t\t", 
+             RowBox[{"FileNames", "[", 
+              RowBox[{"#", ",", " ", "dir", ",", " ", "\[Infinity]"}], 
+              "]"}]}]}]}], ",", "\n", "\t\t\t\t\t", "Delimiter"}], "\n", 
+         "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "]"}], "\n", "\t\t", "]"}], 
+    "[", "zargs", "]"}]}], ";"}]}], "CodeInput",
+ CellLabel->"In[61]:=",ExpressionUUID->"48206c6e-0080-4444-a0ec-dc4da79ff756"],
 
 Cell[BoxData[
  RowBox[{
@@ -797,63 +916,65 @@ Cell[BoxData[
  CellChangeTimes->{{3.706030716050374*^9, 3.706030725111767*^9}, {
   3.7060321033007717`*^9, 3.706032208550083*^9}, {3.7246826707078333`*^9, 
   3.72468287046272*^9}, {3.724682971720882*^9, 3.7246830281521053`*^9}},
- CellLabel->"In[23]:=",ExpressionUUID->"fa77cbb2-5cdc-402f-9fc4-8b063fdcc90e"],
+ CellLabel->"In[63]:=",ExpressionUUID->"fa77cbb2-5cdc-402f-9fc4-8b063fdcc90e"],
 
-Cell[BoxData[
+Cell[BoxData[{
+ RowBox[{"formatFilePaths", "//", "Clear"}], "\n", 
  RowBox[{
-  RowBox[{"formatFilePaths", "=", "\n", "\t", 
-   RowBox[{"Function", "@", "\n", "\t\t", 
-    RowBox[{
-     RowBox[{"Function", "[", 
-      RowBox[{"DeleteDuplicates", "[", 
-       RowBox[{"#", ",", " ", 
-        RowBox[{
-         RowBox[{"If", "[", 
-          RowBox[{
-           RowBox[{"#", "===", "Delimiter"}], ",", " ", "False", ",", " ", 
-           RowBox[{"Equal", "[", "##", "]"}]}], "]"}], "&"}]}], "]"}], "]"}], 
-     "@", "\n", "\t\t", 
-     RowBox[{"Flatten", "@", "\n", "\t\t\t", 
-      RowBox[{"Table", "[", "\n", "\t\t\t\t", 
-       RowBox[{
-        RowBox[{"With", "[", 
+  RowBox[{
+   RowBox[{"formatFilePaths", "[", "zargs___", "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"Function", "[", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Function", "[", 
+       RowBox[{"DeleteDuplicates", "[", 
+        RowBox[{"#", ",", " ", 
          RowBox[{
-          RowBox[{"{", 
-           RowBox[{"n", "=", "n"}], "}"}], ",", "\n", "\t\t\t\t\t", 
           RowBox[{"If", "[", 
            RowBox[{
-            RowBox[{"StringQ", "@", "n"}], ",", "\n", "\t", "\t", "\t\t\t\t", 
-            
-            RowBox[{"With", "[", "\n", "\t", "\t", "\t\t\t\t\t", 
-             RowBox[{
-              RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t\t\t", 
-               RowBox[{"fp", "=", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
-                RowBox[{
-                "FileNameDrop", "[", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
+            RowBox[{"#", "===", "Delimiter"}], ",", " ", "False", ",", " ", 
+            RowBox[{"Equal", "[", "##", "]"}]}], "]"}], "&"}]}], "]"}], "]"}],
+       "@", "\n", "\t\t", 
+      RowBox[{"Flatten", "@", "\n", "\t\t\t", 
+       RowBox[{"Table", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"With", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"n", "=", "n"}], "}"}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{"StringQ", "@", "n"}], ",", "\n", "\t", "\t", "\t\t\t\t", 
+             RowBox[{"With", "[", "\n", "\t", "\t", "\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t\t\t", 
+                RowBox[{"fp", "=", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
                  RowBox[{
-                  RowBox[{"FileNameJoin", "@", 
-                   RowBox[{"{", 
+                 "FileNameDrop", "[", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{"FileNameJoin", "@", 
+                    RowBox[{"{", 
                     RowBox[{
                     RowBox[{"DirectoryName", "@", "n"}], ",", 
                     RowBox[{"FileBaseName", "@", "n"}]}], "}"}]}], ",", "\n", 
-                  "\t", "\t", "\t", "\t", "\t", "\t", "\t", "\t", "\t\t", 
-                  RowBox[{"FileNameDepth", "@", 
-                   RowBox[{
+                   "\t", "\t", "\t", "\t", "\t", "\t", "\t", "\t", "\t\t", 
+                   RowBox[{"FileNameDepth", "@", 
+                    RowBox[{
                     RowBox[{"whichPacF", "[", "\"\<AppDirectory\>\"", "]"}], 
                     "[", "currentApp", "]"}]}]}], "\n", "\t", "\t", "\t", 
-                 "\t", "\t\t\t\t\t\t", "]"}]}], "\n", "\t", 
-               "\t\t\t\t\t\t\t\t", "}"}], ",", "\n", "\t", "\t\t\t\t\t\t", 
-              RowBox[{"With", "[", 
-               RowBox[{
-                RowBox[{"{", 
-                 RowBox[{"l", "=", 
-                  RowBox[{"FileNameDepth", "[", "fp", "]"}]}], "}"}], ",", 
-                "\n", "\t\t\t\t\t\t\t\t", 
-                RowBox[{"If", "[", 
-                 RowBox[{
-                  RowBox[{"l", ">", "1"}], ",", "\n", "\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{"MapIndexed", "[", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                   RowBox[{
+                  "\t", "\t\t\t\t\t\t", "]"}]}], "\n", "\t", 
+                "\t\t\t\t\t\t\t\t", "}"}], ",", "\n", "\t", "\t\t\t\t\t\t", 
+               RowBox[{"With", "[", 
+                RowBox[{
+                 RowBox[{"{", 
+                  RowBox[{"l", "=", 
+                   RowBox[{"FileNameDepth", "[", "fp", "]"}]}], "}"}], ",", 
+                 "\n", "\t\t\t\t\t\t\t\t", 
+                 RowBox[{"If", "[", 
+                  RowBox[{
+                   RowBox[{"l", ">", "1"}], ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"MapIndexed", "[", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
                     RowBox[{
                     RowBox[{"If", "[", 
                     RowBox[{
@@ -908,27 +1029,18 @@ Cell[BoxData[
                     "\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"Rest", "@", 
                     RowBox[{"FileNameSplit", "[", "fp", "]"}]}]}], "\n", 
-                   "\t\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
-                  "\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{"fp", ":>", 
-                   RowBox[{"sysOpen", "[", "n", "]"}]}]}], "\n", 
-                 "\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t\t", 
-               "]"}]}], "\n", "\t\t\t\t\t\t\t", "]"}], ",", "\n", 
-            "\t\t\t\t\t\t", "n"}], "\n", "\t\t\t\t\t\t", "]"}]}], "\n", 
-         "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
-        RowBox[{"{", 
-         RowBox[{"n", ",", " ", "#"}], "}"}]}], "\n", "\t\t\t\t", 
-       "]"}]}]}]}]}], ";"}]], "CodeInput",
- CellChangeTimes->CompressedData["
-1:eJxTTMoPSmViYGAQB2IQfezWY+Hg068d381wkwXRuaE7lUB0zI3tKiA6JdLQ
-HERbSp8E03xz0oJBtN+//lgQbZMlXwLWd+xBNYg+Ee3TAKJ92jIaQfSOcsYO
-EG2g0wamv9440wui7+ftnAii16q8mwWi+07+XAGiFSdn7Abr55lwAET/6T13
-FET/NKi6Duaf0H8AooPq1b6D6JnX2xlCgLRIVB4jiE6dxSAAotMLV4uBaDkn
-CxMQrRT/Hkynu0hbg+gn+m02ILohwSYQRMeqTQPTNiad0SB6Qd3/BDB90XkX
-iF4zQ2UfiF7W0HIIRIu19x0G2+uosi8cFB4aCw+D6HNmL06A6CcMH8D0Jrvo
-yyD60YRFV0A0AAuYxK4=
-  "],
- CellLabel->"In[24]:=",ExpressionUUID->"904f2043-0a6d-45b9-8e47-0b49d2c58a84"],
+                    "\t\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+                   "\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"fp", ":>", 
+                    RowBox[{"sysOpen", "[", "n", "]"}]}]}], "\n", 
+                  "\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t\t", 
+                "]"}]}], "\n", "\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+             "\t\t\t\t\t\t", "n"}], "\n", "\t\t\t\t\t\t", "]"}]}], "\n", 
+          "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"{", 
+          RowBox[{"n", ",", " ", "#"}], "}"}]}], "\n", "\t\t\t\t", "]"}]}]}], 
+     "\n", "\t\t\t", "]"}], "[", "zargs", "]"}]}], ";"}]}], "CodeInput",
+ CellLabel->"In[64]:=",ExpressionUUID->"904f2043-0a6d-45b9-8e47-0b49d2c58a84"],
 
 Cell[BoxData[
  RowBox[{
@@ -940,7 +1052,7 @@ Cell[BoxData[
      RowBox[{"whichPacF", "[", "\"\<AppPath\>\"", "]"}], "@", 
      "currentApp"}]}]}]}]], "CodeInput",
  CellChangeTimes->{{3.731861975261861*^9, 3.731862014348103*^9}},
- CellLabel->"In[25]:=",ExpressionUUID->"38c74ba5-8abc-49b1-935d-525b69e54186"],
+ CellLabel->"In[66]:=",ExpressionUUID->"38c74ba5-8abc-49b1-935d-525b69e54186"],
 
 Cell[BoxData[
  RowBox[{
@@ -971,7 +1083,7 @@ Cell[BoxData[
  CellChangeTimes->{{3.731125666356124*^9, 3.731125689592984*^9}, {
   3.7311264882734613`*^9, 3.731126523050441*^9}, {3.731859790858601*^9, 
   3.7318598232337847`*^9}, {3.731862022585742*^9, 3.7318620232447653`*^9}},
- CellLabel->"In[26]:=",ExpressionUUID->"d0a79e83-daa3-42c3-9a4a-4d5df002292c"],
+ CellLabel->"In[67]:=",ExpressionUUID->"d0a79e83-daa3-42c3-9a4a-4d5df002292c"],
 
 Cell[BoxData[
  RowBox[{
@@ -1007,8 +1119,8 @@ Cell[BoxData[
  CellChangeTimes->{{3.7311266511675453`*^9, 3.7311267312984133`*^9}, {
   3.731861994848669*^9, 3.73186199510935*^9}},
  CellLabel->
-  "In[27]:=",ExpressionUUID->"084ca89d-65d2-41db-8f9c-1df03c8341b6"]
-}, Closed]],
+  "In[68]:=",ExpressionUUID->"084ca89d-65d2-41db-8f9c-1df03c8341b6"]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1027,7 +1139,7 @@ Cell[BoxData[
      "}"}]}]}], ";"}]], "CodeInput",
  CellChangeTimes->{{3.731862393184458*^9, 3.731862397047909*^9}, {
    3.731862595828732*^9, 3.731862616816931*^9}, 3.7318628201405983`*^9},
- CellLabel->"In[28]:=",ExpressionUUID->"43e0ae8c-075f-416a-8ea2-7d81ab6caf2e"],
+ CellLabel->"In[69]:=",ExpressionUUID->"43e0ae8c-075f-416a-8ea2-7d81ab6caf2e"],
 
 Cell[BoxData[
  RowBox[{
@@ -1042,9 +1154,10 @@ Cell[BoxData[
           RowBox[{"n", "=", "n"}], "}"}], ",", 
          RowBox[{
           RowBox[{"FileBaseName", "@", "n"}], "\[RuleDelayed]", 
-          RowBox[{"sysOpen", "@", "n"}]}]}], "]"}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"sysOpen", "@", "n"}]}]}], "]"}], ",", "\n", "\t\t\t", 
        RowBox[{"{", 
-        RowBox[{"n", ",", "appList"}], "}"}]}], "]"}], ",", "\n", "\t\t", 
+        RowBox[{"n", ",", "appList"}], "}"}]}], "\n", "\t\t\t", "]"}], ",", 
+     "\n", "\t\t", 
      RowBox[{"Enabled", "\[Rule]", 
       RowBox[{"(", 
        RowBox[{
@@ -1053,34 +1166,7 @@ Cell[BoxData[
      RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
       RowBox[{"{", "appList", "}"}]}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",
- CellChangeTimes->{{3.6866658565713*^9, 3.686666230090374*^9}, {
-   3.6866662843270283`*^9, 3.686666708608439*^9}, {3.686666860366229*^9, 
-   3.686666897362671*^9}, {3.6866669456422567`*^9, 3.686666976917091*^9}, {
-   3.6866670320298643`*^9, 3.68666704450677*^9}, {3.6866670900620317`*^9, 
-   3.686667312287689*^9}, {3.686668361964838*^9, 3.686668379804222*^9}, {
-   3.686668531096282*^9, 3.686668661834544*^9}, {3.6866686918708878`*^9, 
-   3.686668752287323*^9}, {3.686668812427894*^9, 3.686669133692913*^9}, {
-   3.686670093628582*^9, 3.68667020006082*^9}, {3.686670233930834*^9, 
-   3.686670285441992*^9}, {3.686670319393962*^9, 3.6866703373400097`*^9}, {
-   3.686670381476098*^9, 3.686670412802319*^9}, {3.6866704512175694`*^9, 
-   3.68667054281531*^9}, {3.686670579654827*^9, 3.6866706293318777`*^9}, {
-   3.68667069618439*^9, 3.686670820800705*^9}, {3.686671086858493*^9, 
-   3.686671124656726*^9}, {3.6866719193019733`*^9, 3.686671922069762*^9}, {
-   3.686671955697404*^9, 3.686671959815279*^9}, {3.6866719941794767`*^9, 
-   3.686672015003488*^9}, {3.686672762721985*^9, 3.686672785075831*^9}, {
-   3.6866728263767767`*^9, 3.686672859288535*^9}, {3.6866729747904367`*^9, 
-   3.686673057228726*^9}, 3.686673169336504*^9, {3.686673296120431*^9, 
-   3.6866733595005627`*^9}, {3.686674037457156*^9, 3.68667405105399*^9}, {
-   3.686674090700632*^9, 3.686674103156412*^9}, {3.686674162405921*^9, 
-   3.686674210128455*^9}, {3.687212942531571*^9, 3.687212971485302*^9}, {
-   3.6872130442937307`*^9, 3.687213077464993*^9}, {3.687213141963664*^9, 
-   3.68721315810915*^9}, {3.688427276484226*^9, 3.6884272891166153`*^9}, {
-   3.688427353602851*^9, 3.688427357188294*^9}, {3.692132695782959*^9, 
-   3.692132701989298*^9}, {3.700226510781085*^9, 3.700226520129416*^9}, 
-   3.700780599193321*^9, 3.700780842706677*^9, {3.700788514161731*^9, 
-   3.700788519820444*^9}, {3.700789780343031*^9, 3.700789803407461*^9}, 
-   3.7007899909654503`*^9, 3.7007916125989656`*^9, 3.724682887986429*^9},
- CellLabel->"In[29]:=",ExpressionUUID->"3f0942d1-6659-4936-8256-c20468c0670b"],
+ CellLabel->"In[70]:=",ExpressionUUID->"3f0942d1-6659-4936-8256-c20468c0670b"],
 
 Cell[BoxData[
  RowBox[{
@@ -1173,187 +1259,7 @@ Cell[BoxData[
    3.7206623681852913`*^9, 3.7206624038827543`*^9}, {3.7206626634676228`*^9, 
    3.720662676989641*^9}, 3.7246828954912043`*^9},
  CellLabel->
-  "In[30]:=",ExpressionUUID->"74884783-cfff-4652-870f-135f1398b3e8"]
-}, Closed]],
-
-Cell[CellGroupData[{
-
-Cell["Config", "CodeSubsubsection",
- CellChangeTimes->{{3.701638924404808*^9, 
-  3.701638925684251*^9}},ExpressionUUID->"004e8e39-3228-49c0-9790-\
-34b4880cec43"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"configOpener", "=", "\n", "\t", 
-   RowBox[{"With", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"gather", "=", "fileNamesGather"}], ",", " ", 
-       RowBox[{"format", "=", "formatFilePaths"}]}], "}"}], ",", "\n", "\t\t", 
-     RowBox[{"dynamicActionMenu", "[", 
-      RowBox[{"\"\<Open Config\>\"", ",", "\n", "\t\t\t", 
-       RowBox[{"format", "@", "\n", "\t\t\t\t", 
-        RowBox[{
-         RowBox[{"SortBy", "[", "FileNameDepth", "]"}], "@", "\n", 
-         "\t\t\t\t\t", 
-         RowBox[{"Join", "[", "\n", "\t\t\t\t\t\t", 
-          RowBox[{
-           RowBox[{"FileNames", "[", 
-            RowBox[{
-             RowBox[{"\"\<*Info.m\>\"", "|", "\"\<*Info.wl\>\""}], ",", "\n", 
-             "\t\t\t\t\t\t\t", 
-             RowBox[{
-              RowBox[{"whichPacF", "[", "\"\<AppDirectory\>\"", "]"}], "[", 
-              "currentApp", "]"}]}], "\n", "\t\t\t\t\t\t\t", "]"}], ",", "\n",
-            "\t\t\t\t\t\t", 
-           RowBox[{"gather", "[", 
-            RowBox[{
-             RowBox[{"\"\<*.m\>\"", "|", "\"\<*.wl\>\""}], ",", 
-             "\"\<Config\>\""}], "]"}]}], "\n", "\t\t\t\t\t\t", "]"}]}]}], 
-       ",", "\n", "\t\t\t\t", 
-       RowBox[{"Enabled", "\[Rule]", "\n", "\t\t\t\t\t", 
-        RowBox[{
-         RowBox[{"Length", "@", "\n", "\t\t\t\t\t\t", 
-          RowBox[{"Join", "[", "\n", "\t\t\t\t\t\t\t", 
-           RowBox[{
-            RowBox[{"FileNames", "[", 
-             RowBox[{
-              RowBox[{"\"\<*.m\>\"", "|", "\"\<*.wl\>\""}], ",", 
-              RowBox[{
-               RowBox[{"whichPacF", "[", "\"\<AppDirectory\>\"", "]"}], "[", 
-               "currentApp", "]"}]}], "]"}], ",", "\n", "\t\t\t\t\t\t\t", 
-            RowBox[{"gather", "[", 
-             RowBox[{
-              RowBox[{"\"\<*.m\>\"", "|", "\"\<*.wl\>\""}], ",", 
-              "\"\<Config\>\""}], "]"}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}], 
-         ">", "0"}]}], ",", "\n", "\t\t\t", 
-       RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
-        RowBox[{"{", "currentApp", "}"}]}]}], "\n", "\t", "\t\t", "]"}]}], 
-    "\n", "\t", "\t", "]"}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.6866658565713*^9, 3.686666230090374*^9}, {
-   3.6866662843270283`*^9, 3.686666708608439*^9}, {3.686666860366229*^9, 
-   3.686666897362671*^9}, {3.6866669456422567`*^9, 3.686666976917091*^9}, {
-   3.6866670320298643`*^9, 3.68666704450677*^9}, {3.6866670900620317`*^9, 
-   3.686667312287689*^9}, {3.686668361964838*^9, 3.686668379804222*^9}, {
-   3.686668531096282*^9, 3.686668661834544*^9}, {3.6866686918708878`*^9, 
-   3.686668752287323*^9}, {3.686668812427894*^9, 3.686669133692913*^9}, {
-   3.686670093628582*^9, 3.68667020006082*^9}, {3.686670233930834*^9, 
-   3.686670285441992*^9}, {3.686670319393962*^9, 3.6866703373400097`*^9}, {
-   3.686670381476098*^9, 3.686670412802319*^9}, {3.6866704512175694`*^9, 
-   3.68667054281531*^9}, {3.686670579654827*^9, 3.6866706293318777`*^9}, {
-   3.68667069618439*^9, 3.686670820800705*^9}, {3.686671086858493*^9, 
-   3.686671124656726*^9}, {3.6866719193019733`*^9, 3.686671922069762*^9}, {
-   3.686671955697404*^9, 3.686671959815279*^9}, {3.6866719941794767`*^9, 
-   3.686672015003488*^9}, {3.686672762721985*^9, 3.686672785075831*^9}, {
-   3.6866728263767767`*^9, 3.686672859288535*^9}, {3.6866729747904367`*^9, 
-   3.686673057228726*^9}, 3.686673169336504*^9, {3.686673296120431*^9, 
-   3.6866733595005627`*^9}, {3.686674037457156*^9, 3.68667405105399*^9}, {
-   3.686674090700632*^9, 3.686674103156412*^9}, {3.686674162405921*^9, 
-   3.686674210128455*^9}, {3.687212942531571*^9, 3.687212971485302*^9}, {
-   3.6872130442937307`*^9, 3.6872130822250423`*^9}, {3.6872132548719883`*^9, 
-   3.687213264090925*^9}, {3.688141166330776*^9, 3.6881412101411667`*^9}, {
-   3.688427285545987*^9, 3.688427299083531*^9}, {3.688427348922093*^9, 
-   3.688427361549971*^9}, {3.6921326072340097`*^9, 3.692132611920721*^9}, 
-   3.6921326854221697`*^9, {3.7002265378585043`*^9, 3.700226590407857*^9}, 
-   3.700780614685978*^9, {3.700780866850075*^9, 3.700780871217124*^9}, {
-   3.700788760675802*^9, 3.7007887625283403`*^9}, {3.700791945519458*^9, 
-   3.7007919487597427`*^9}, {3.7009335839945908`*^9, 
-   3.7009335898934317`*^9}, {3.701626133193327*^9, 3.701626175635332*^9}, {
-   3.7016262106019707`*^9, 3.701626228517788*^9}, {3.701626261272168*^9, 
-   3.701626272197625*^9}, {3.701638933448317*^9, 3.701638964109*^9}, 
-   3.701643900131143*^9, {3.701657268747056*^9, 3.7016572892809*^9}, {
-   3.707047503062923*^9, 3.707047529417224*^9}, {3.712615244099208*^9, 
-   3.712615289255546*^9}, {3.72066237972488*^9, 3.720662403899802*^9}, {
-   3.720662663473064*^9, 3.720662677009638*^9}, {3.721049334007784*^9, 
-   3.721049356968214*^9}, 3.724682896969702*^9, {3.730478804991316*^9, 
-   3.73047889312405*^9}, {3.730478958693178*^9, 3.7304789595086937`*^9}, {
-   3.730479230108618*^9, 3.730479254608295*^9}, {3.7304792995497437`*^9, 
-   3.730479306260523*^9}, {3.730479344031267*^9, 3.730479348065316*^9}, 
-   3.7304795629533663`*^9, {3.730481124942381*^9, 3.730481131288147*^9}, 
-   3.730481528340499*^9, {3.734450776698941*^9, 3.734450783557637*^9}},
- CellLabel->
-  "In[31]:=",ExpressionUUID->"910c1bd9-ef09-475b-af7a-6106ea218c1b"]
-}, Closed]],
-
-Cell[CellGroupData[{
-
-Cell["Project", "CodeSubsubsection",
- CellChangeTimes->{{3.707047485538341*^9, 
-  3.707047486520729*^9}},ExpressionUUID->"19fd7693-e2f9-4bca-bbc1-\
-5345fb4f5127"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"projOpener", "=", "\n", "\t", 
-   RowBox[{"With", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"format", "=", "formatFilePaths"}], "}"}], ",", "\n", "\t\t", 
-     RowBox[{"dynamicActionMenu", "[", 
-      RowBox[{"\"\<Open Project\>\"", ",", "\n", "\t\t\t", 
-       RowBox[{"format", "@", "\n", "\t\t\t\t", 
-        RowBox[{
-         RowBox[{"SortBy", "[", "FileNameDepth", "]"}], "@", "\n", 
-         "\t\t\t\t\t", 
-         RowBox[{"Join", "[", "\n", "\t\t\t\t\t\t", 
-          RowBox[{
-           RowBox[{"FileNames", "[", 
-            RowBox[{"\"\<README*\>\"", ",", "\n", "\t\t\t\t\t\t\t", 
-             RowBox[{
-              RowBox[{"whichPacF", "[", "\"\<AppDirectory\>\"", "]"}], "[", 
-              "currentApp", "]"}]}], "\n", "\t\t\t\t\t\t\t", "]"}], ",", "\n",
-            "\t\t\t\t\t\t", 
-           RowBox[{"FileNames", "[", "\n", "\t\t\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{
-             "\"\<*.png\>\"", "|", "\"\<*.html\>\"", "|", "\"\<*.md\>\"", 
-              "|", "\"\<*.nb\>\""}], ",", "\n", "\t\t\t\t\t\t\t", 
-             RowBox[{
-              RowBox[{"whichPacF", "[", "\"\<AppDirectory\>\"", "]"}], "[", 
-              RowBox[{"currentApp", ",", "\"\<project\>\""}], "]"}], ",", 
-             "\n", "\t\t\t\t\t\t\t", "\[Infinity]"}], "\n", "\t\t\t\t\t\t\t", 
-            "]"}]}], "\n", "\t\t\t\t\t\t", "]"}]}]}], ",", "\n", "\t\t\t\t", 
-       RowBox[{"Enabled", "\[Rule]", "\n", "\t\t\t\t\t", 
-        RowBox[{"(", 
-         RowBox[{
-          RowBox[{"Length", "@", "\n", "\t", "\t\t\t\t\t", 
-           RowBox[{"Join", "[", "\n", "\t", "\t\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{"FileNames", "[", 
-              RowBox[{"\"\<README*\>\"", ",", "\n", "\t", "\t\t\t\t\t\t\t", 
-               RowBox[{
-                RowBox[{"whichPacF", "[", "\"\<AppDirectory\>\"", "]"}], "[", 
-                "currentApp", "]"}]}], "\n", "\t", "\t\t\t\t\t\t\t", "]"}], 
-             ",", "\n", "\t", "\t\t\t\t\t\t", 
-             RowBox[{"FileNames", "[", "\n", "\t", "\t\t\t\t\t\t\t", 
-              RowBox[{
-               RowBox[{
-               "\"\<*.png\>\"", "|", "\"\<*.html\>\"", "|", "\"\<*.md\>\"", 
-                "|", "\"\<*.nb\>\""}], ",", "\n", "\t", "\t\t\t\t\t\t\t", 
-               RowBox[{
-                RowBox[{"whichPacF", "[", "\"\<AppDirectory\>\"", "]"}], "[", 
-                
-                RowBox[{"currentApp", ",", "\"\<project\>\""}], "]"}], ",", 
-               "\n", "\t", "\t\t\t\t\t\t\t", "\[Infinity]"}], "\n", "\t", 
-              "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t", "\t\t\t\t\t\t", "]"}]}], 
-          ">", "0"}], "\n", "\t", "\t\t\t\t\t", ")"}]}], ",", "\n", "\t", 
-       "\t\t", 
-       RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
-        RowBox[{"{", "currentApp", "}"}]}]}], "\n", "\t\t\t", "]"}]}], "\n", 
-    "\t\t", "]"}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.707047509800289*^9, 3.707047574468364*^9}, {
-   3.707047627792787*^9, 3.707047670870763*^9}, {3.70704782540592*^9, 
-   3.707047832201335*^9}, {3.707048897494339*^9, 3.7070488981944036`*^9}, {
-   3.707049008954204*^9, 3.707049014239913*^9}, {3.707049071738366*^9, 
-   3.707049139863328*^9}, {3.720662403905675*^9, 3.7206624039306097`*^9}, {
-   3.720662663489964*^9, 3.720662677043277*^9}, 3.724682898320943*^9, {
-   3.7304794625642147`*^9, 3.730479485230979*^9}, {3.730479569064378*^9, 
-   3.73047957600561*^9}, 3.730480567812463*^9, {3.730481106918297*^9, 
-   3.730481117236058*^9}, 3.730481524015234*^9},
- CellLabel->
-  "In[32]:=",ExpressionUUID->"563b8fd6-7c1c-48a6-8de8-56ef5746d1db"]
+  "In[71]:=",ExpressionUUID->"74884783-cfff-4652-870f-135f1398b3e8"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -1372,168 +1278,114 @@ Cell[BoxData[
       RowBox[{
        RowBox[{"gather", "=", "fileNamesGather"}], ",", " ", 
        RowBox[{"format", "=", "formatFilePaths"}]}], "}"}], ",", "\n", "\t\t", 
-     RowBox[{"dynamicActionMenu", "[", "\n", "\t\t\t", 
-      RowBox[{"\"\<Open Package\>\"", ",", "\n", "\t\t\t", 
-       RowBox[{"With", "[", "\n", "\t\t\t\t", 
-        RowBox[{
-         RowBox[{"{", "\n", "\t\t\t\t\t", 
-          RowBox[{"bits", "=", "\n", "\t\t\t\t\t\t", 
-           RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t\t", 
-            RowBox[{
+     RowBox[{"openerSelector", "[", 
+      RowBox[{"\"\<Packages\>\"", ",", "\n", "\t\t\t", 
+       RowBox[{"Hold", "@", "\n", "\t\t\t\t", 
+        RowBox[{"With", "[", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"bits", "=", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t\t\t", 
              RowBox[{
-              RowBox[{"DeleteDuplicatesBy", "[", 
-               RowBox[{
-                RowBox[{"If", "[", 
-                 RowBox[{
-                  RowBox[{"AtomQ", "[", "#", "]"}], ",", " ", 
-                  RowBox[{"RandomReal", "[", "]"}], ",", " ", 
-                  RowBox[{"First", "@", "#"}]}], "]"}], "&"}], "]"}], "/@", 
-              "\n", "\t\t\t\t\t\t\t", 
-              RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
-               RowBox[{
-                RowBox[{"format", "@", "\n", "\t\t\t\t\t\t\t\t\t", 
-                 RowBox[{"gather", "[", 
-                  RowBox[{
-                   RowBox[{
-                   "\"\<*.nb\>\"", "|", "\"\<*.m\>\"", "|", "\"\<*.wl\>\""}], 
-                   ",", " ", "\"\<Packages\>\""}], "]"}]}], ",", "\n", 
-                "\t\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"DeleteDuplicatesBy", "[", 
                 RowBox[{
-                 RowBox[{"Select", "[", 
+                 RowBox[{"If", "[", 
                   RowBox[{
+                   RowBox[{"AtomQ", "[", "#", "]"}], ",", " ", 
+                   RowBox[{"RandomReal", "[", "]"}], ",", " ", 
+                   RowBox[{"First", "@", "#"}]}], "]"}], "&"}], "]"}], "/@", 
+               "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"format", "@", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"gather", "[", 
                    RowBox[{
+                    RowBox[{
+                    "\"\<*.nb\>\"", "|", "\"\<*.m\>\"", "|", "\"\<*.wl\>\""}],
+                     ",", " ", "\"\<Packages\>\""}], "]"}]}], ",", "\n", 
+                 "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"Select", "[", 
+                   RowBox[{
+                    RowBox[{
                     RowBox[{"AtomQ", "@", "#"}], "||", 
                     RowBox[{
                     RowBox[{"First", "@", "#"}], "=!=", "\"\<init\>\""}]}], 
-                   "&"}], "]"}], "@", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
-                 RowBox[{
-                 "format", "@", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
-                  RowBox[{"gather", "[", 
-                   RowBox[{
+                    "&"}], "]"}], "@", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"format", "@", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"gather", "[", 
+                    RowBox[{
                     RowBox[{"\"\<*.m\>\"", "|", "\"\<*.wl\>\""}], ",", " ", 
                     "\"\<Kernel\>\""}], "]"}]}]}], ",", "\n", 
-                "\t\t\t\t\t\t\t\t", 
-                RowBox[{
-                 RowBox[{"Select", "[", 
-                  RowBox[{
-                   RowBox[{"!", 
+                 "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"Select", "[", 
+                   RowBox[{
+                    RowBox[{"!", 
                     RowBox[{"StringEndsQ", "[", 
                     RowBox[{
                     RowBox[{"First", "@", "#"}], ",", " ", "\"\<Info\>\""}], 
-                    "]"}]}], "&"}], "]"}], "@", "\n", "\t\t\t\t\t\t\t\t\t", 
-                 RowBox[{"format", "@", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{"FileNames", "[", 
-                   RowBox[{
+                    "]"}]}], "&"}], "]"}], "@", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                  
+                  RowBox[{"format", "@", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"SortBy", "[", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"FileNames", "[", 
+                    RowBox[{
                     RowBox[{"\"\<*.m\>\"", "|", "\"\<*.wl\>\""}], ",", " ", 
                     RowBox[{
                     RowBox[{"whichPacF", "[", "\"\<AppDirectory\>\"", "]"}], 
-                    "[", "currentApp", "]"}]}], "]"}]}]}]}], "\n", 
-               "\t\t\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t\t\t\t\t\t\t", 
-             RowBox[{
-              RowBox[{"{", "}"}], "\[Rule]", "Nothing"}], ",", "\n", 
-             "\t\t\t\t\t\t\t", "1"}], "\n", "\t\t\t\t\t\t\t", "]"}]}], "\n", 
-          "\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t", 
-         RowBox[{"Flatten", "@", 
-          RowBox[{"Riffle", "[", 
-           RowBox[{"bits", ",", " ", "Delimiter"}], "]"}]}]}], "\n", 
-        "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
-       RowBox[{"Enabled", "\[Rule]", "\n", "\t\t\t\t", 
-        RowBox[{"(", 
-         RowBox[{
-          RowBox[{"Length", "@", "\n", "\t\t\t\t\t", 
-           RowBox[{"Join", "[", "\n", "\t\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{"gather", "[", 
+                    "[", "currentApp", "]"}]}], "]"}], ",", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"{", 
+                    RowBox[{"StringReverse", "@*", "FileExtension"}], "}"}]}],
+                     "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t", "]"}]}]}]}], "\n", 
+                "\t\t\t\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t\t\t\t\t\t\t\t", 
+              
               RowBox[{
-               RowBox[{
-               "\"\<*.nb\>\"", "|", "\"\<*.m\>\"", "|", "\"\<*.wl\>\""}], ",",
-                " ", "\"\<Packages\>\""}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
+               RowBox[{"{", "}"}], "\[Rule]", "Nothing"}], ",", "\n", 
+              "\t\t\t\t\t\t\t\t", "1"}], "\n", "\t\t\t\t\t\t\t\t", "]"}]}], 
+           "\n", "\t\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"Flatten", "@", 
+           RowBox[{"Riffle", "[", 
+            RowBox[{"bits", ",", " ", "Delimiter"}], "]"}]}]}], "\n", 
+         "\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"Hold", "@", "\n", "\t\t\t\t", 
+        RowBox[{"Join", "[", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"gather", "[", 
+           RowBox[{
+            RowBox[{"\"\<*.nb\>\"", "|", "\"\<*.m\>\"", "|", "\"\<*.wl\>\""}],
+             ",", " ", "\"\<Packages\>\""}], "]"}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Select", "[", 
+            RowBox[{
              RowBox[{
-              RowBox[{"Select", "[", 
+              RowBox[{"FileBaseName", "@", "#"}], "=!=", "\"\<init\>\""}], 
+             "&"}], "]"}], "@", 
+           RowBox[{"gather", "[", 
+            RowBox[{
+             RowBox[{"\"\<*.m\>\"", "|", "\"\<*.wl\>\""}], ",", " ", 
+             "\"\<Kernel\>\""}], "]"}]}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Select", "[", 
+            RowBox[{
+             RowBox[{"!", 
+              RowBox[{"StringEndsQ", "[", 
                RowBox[{
-                RowBox[{
-                 RowBox[{"FileBaseName", "@", "#"}], "=!=", "\"\<init\>\""}], 
-                "&"}], "]"}], "@", 
-              RowBox[{"gather", "[", 
-               RowBox[{
-                RowBox[{"\"\<*.m\>\"", "|", "\"\<*.wl\>\""}], ",", " ", 
-                "\"\<Kernel\>\""}], "]"}]}], ",", "\n", "\t\t\t\t\t\t", 
+                RowBox[{"FileBaseName", "@", "#"}], ",", " ", 
+                "\"\<Info\>\""}], "]"}]}], "&"}], "]"}], "@", "\n", 
+           "\t\t\t\t\t\t", 
+           RowBox[{"FileNames", "[", 
+            RowBox[{
+             RowBox[{"\"\<*.m\>\"", "|", "\"\<*.wl\>\""}], ",", " ", 
              RowBox[{
-              RowBox[{"Select", "[", 
-               RowBox[{
-                RowBox[{"!", 
-                 RowBox[{"StringEndsQ", "[", 
-                  RowBox[{
-                   RowBox[{"FileBaseName", "@", "#"}], ",", " ", 
-                   "\"\<Info\>\""}], "]"}]}], "&"}], "]"}], "@", "\n", 
-              "\t\t\t\t\t\t\t", 
-              RowBox[{"FileNames", "[", 
-               RowBox[{
-                RowBox[{"\"\<*.m\>\"", "|", "\"\<*.wl\>\""}], ",", " ", 
-                RowBox[{
-                 RowBox[{"whichPacF", "[", "\"\<AppDirectory\>\"", "]"}], "[",
-                  "currentApp", "]"}]}], "]"}]}]}], "\n", "\t", "\t\t\t\t\t", 
-            "]"}]}], ">", "0"}], ")"}]}], ",", "\n", "\t\t", 
-       RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
-        RowBox[{"{", "currentApp", "}"}]}]}], "\n", "\t\t", "]"}]}], "\n", 
-    "\t", "]"}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.6866658565713*^9, 3.686666230090374*^9}, {
-   3.6866662843270283`*^9, 3.686666708608439*^9}, {3.686666860366229*^9, 
-   3.686666897362671*^9}, {3.6866669456422567`*^9, 3.686666976917091*^9}, {
-   3.6866670320298643`*^9, 3.68666704450677*^9}, {3.6866670900620317`*^9, 
-   3.686667312287689*^9}, {3.686668361964838*^9, 3.686668379804222*^9}, {
-   3.686668531096282*^9, 3.686668661834544*^9}, {3.6866686918708878`*^9, 
-   3.686668752287323*^9}, {3.686668812427894*^9, 3.686669133692913*^9}, {
-   3.686670093628582*^9, 3.68667020006082*^9}, {3.686670233930834*^9, 
-   3.686670285441992*^9}, {3.686670319393962*^9, 3.6866703373400097`*^9}, {
-   3.686670381476098*^9, 3.686670412802319*^9}, {3.6866704512175694`*^9, 
-   3.68667054281531*^9}, {3.686670579654827*^9, 3.6866706293318777`*^9}, {
-   3.68667069618439*^9, 3.686670820800705*^9}, {3.686671086858493*^9, 
-   3.686671124656726*^9}, {3.6866719193019733`*^9, 3.686671922069762*^9}, {
-   3.686671955697404*^9, 3.686671959815279*^9}, {3.6866719941794767`*^9, 
-   3.686672015003488*^9}, {3.686672762721985*^9, 3.686672785075831*^9}, {
-   3.6866728263767767`*^9, 3.686672859288535*^9}, {3.6866729747904367`*^9, 
-   3.686673057228726*^9}, 3.686673169336504*^9, {3.686673296120431*^9, 
-   3.6866733595005627`*^9}, {3.686674037457156*^9, 3.68667405105399*^9}, {
-   3.686674090700632*^9, 3.686674103156412*^9}, {3.686674162405921*^9, 
-   3.686674210128455*^9}, {3.687212942531571*^9, 3.687212971485302*^9}, {
-   3.6872130442937307`*^9, 3.6872130822250423`*^9}, {3.6872132548719883`*^9, 
-   3.687213264090925*^9}, {3.688141166330776*^9, 3.6881412101411667`*^9}, {
-   3.688427285545987*^9, 3.688427299083531*^9}, {3.688427348922093*^9, 
-   3.688427361549971*^9}, {3.6921326072340097`*^9, 3.692132611920721*^9}, 
-   3.6921326854221697`*^9, {3.7002265378585043`*^9, 3.700226590407857*^9}, 
-   3.700780614685978*^9, {3.700780866850075*^9, 3.700780871217124*^9}, {
-   3.700788760675802*^9, 3.7007887625283403`*^9}, {3.700791945519458*^9, 
-   3.7007919487597427`*^9}, {3.7009335839945908`*^9, 
-   3.7009335898934317`*^9}, {3.701626133193327*^9, 3.701626175635332*^9}, {
-   3.7016262106019707`*^9, 3.701626228517788*^9}, {3.701626261272168*^9, 
-   3.701626272197625*^9}, {3.701638967583395*^9, 3.701638973421948*^9}, {
-   3.7035654048384743`*^9, 3.703565533034391*^9}, {3.704578384158578*^9, 
-   3.704578411626473*^9}, {3.704578466706106*^9, 3.704578468701704*^9}, {
-   3.705178897907558*^9, 3.7051789592569647`*^9}, {3.705179127066949*^9, 
-   3.705179137218792*^9}, {3.705179190597172*^9, 3.7051792035957747`*^9}, {
-   3.7051793067487707`*^9, 3.705179323599574*^9}, {3.705182113699417*^9, 
-   3.705182187553791*^9}, {3.7051823108240423`*^9, 3.705182311494503*^9}, {
-   3.7051825190971527`*^9, 3.705182710364584*^9}, {3.705184260441628*^9, 
-   3.705184266637648*^9}, {3.7051846962932453`*^9, 3.705184699934329*^9}, {
-   3.7051847368229017`*^9, 3.705184807736389*^9}, {3.705184876666079*^9, 
-   3.705184882917706*^9}, 3.70518491360853*^9, {3.7051849673410883`*^9, 
-   3.7051850036019287`*^9}, 3.705185560507277*^9, {3.7051856401207323`*^9, 
-   3.705185677584654*^9}, {3.706032219734557*^9, 3.706032222801949*^9}, {
-   3.7206624039379387`*^9, 3.720662403949654*^9}, {3.7206626635212097`*^9, 
-   3.720662677065818*^9}, {3.7304794944423847`*^9, 3.7304795334614162`*^9}, {
-   3.730481095054492*^9, 3.730481098191057*^9}, {3.730481191499007*^9, 
-   3.730481192429592*^9}, 3.730481379448556*^9, 3.730481500913391*^9, {
-   3.73445067235518*^9, 3.73445075197696*^9}, {3.734450797411749*^9, 
-   3.734450963166335*^9}, {3.73445201285886*^9, 3.734452014169389*^9}, {
-   3.734452100771356*^9, 3.734452107363566*^9}, {3.7344521429525747`*^9, 
-   3.734452166225788*^9}, {3.7344619037089033`*^9, 3.734461910380896*^9}, {
-   3.734461945651312*^9, 3.7344620822031116`*^9}, {3.7344648223990917`*^9, 
-   3.7344648234520693`*^9}, {3.734464857917857*^9, 3.734464859495528*^9}, {
-   3.734465181179294*^9, 3.734465198928179*^9}, {3.7344954297782383`*^9, 
-   3.734495506276793*^9}, {3.7344955841046467`*^9, 3.7344957079437037`*^9}},
+              RowBox[{"whichPacF", "[", "\"\<AppDirectory\>\"", "]"}], "[", 
+              "currentApp", "]"}]}], "]"}]}]}], "\n", "\t\t\t\t\t", "]"}]}]}],
+       "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
  CellLabel->
-  "In[33]:=",ExpressionUUID->"19aa9214-1658-4fa1-b555-0179cd9b7e3e"]
+  "In[72]:=",ExpressionUUID->"19aa9214-1658-4fa1-b555-0179cd9b7e3e"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -1546,66 +1398,12 @@ b187ab77e41e"],
 Cell[BoxData[
  RowBox[{
   RowBox[{"feOpener", "=", "\n", "\t", 
-   RowBox[{"With", "[", 
+   RowBox[{"openerSelector", "[", 
     RowBox[{
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"gather", "=", "fileNamesGather"}], ",", " ", 
-       RowBox[{"format", "=", "formatFilePaths"}]}], "}"}], ",", "\n", "\t\t", 
-     RowBox[{"dynamicActionMenu", "[", 
-      RowBox[{"\"\<Open FrontEnd\>\"", ",", "\n", "\t\t\t", 
-       RowBox[{"format", "@", 
-        RowBox[{"gather", "[", 
-         RowBox[{"\"\<*.nb\>\"", ",", " ", "\"\<FrontEnd\>\""}], "]"}]}], ",",
-        "\n", "\t\t\t", 
-       RowBox[{"Enabled", "\[Rule]", "\n", "\t\t\t\t", 
-        RowBox[{"(", 
-         RowBox[{
-          RowBox[{"Length", "@", 
-           RowBox[{"FileNames", "[", 
-            RowBox[{"\"\<*.nb\>\"", ",", "\n", "\t\t\t\t\t", 
-             RowBox[{
-              RowBox[{"whichPacF", "[", "\"\<AppDirectory\>\"", "]"}], "[", 
-              RowBox[{"currentApp", ",", "\"\<FrontEnd\>\""}], "]"}], ",", 
-             "\[Infinity]"}], "]"}]}], ">", "0"}], ")"}]}], ",", "\n", "\t\t", 
-       RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
-        RowBox[{"{", "currentApp", "}"}]}]}], "\n", "\t\t", "]"}]}], "\n", 
-    "\t", "]"}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.6866658565713*^9, 3.686666230090374*^9}, {
-   3.6866662843270283`*^9, 3.686666708608439*^9}, {3.686666860366229*^9, 
-   3.686666897362671*^9}, {3.6866669456422567`*^9, 3.686666976917091*^9}, {
-   3.6866670320298643`*^9, 3.68666704450677*^9}, {3.6866670900620317`*^9, 
-   3.686667312287689*^9}, {3.686668361964838*^9, 3.686668379804222*^9}, {
-   3.686668531096282*^9, 3.686668661834544*^9}, {3.6866686918708878`*^9, 
-   3.686668752287323*^9}, {3.686668812427894*^9, 3.686669133692913*^9}, {
-   3.686670093628582*^9, 3.68667020006082*^9}, {3.686670233930834*^9, 
-   3.686670285441992*^9}, {3.686670319393962*^9, 3.6866703373400097`*^9}, {
-   3.686670381476098*^9, 3.686670412802319*^9}, {3.6866704512175694`*^9, 
-   3.68667054281531*^9}, {3.686670579654827*^9, 3.6866706293318777`*^9}, {
-   3.68667069618439*^9, 3.686670820800705*^9}, {3.686671086858493*^9, 
-   3.686671124656726*^9}, {3.6866719193019733`*^9, 3.686671922069762*^9}, {
-   3.686671955697404*^9, 3.686671959815279*^9}, {3.6866719941794767`*^9, 
-   3.686672015003488*^9}, {3.686672762721985*^9, 3.686672785075831*^9}, {
-   3.6866728263767767`*^9, 3.686672859288535*^9}, {3.6866729747904367`*^9, 
-   3.686673057228726*^9}, 3.686673169336504*^9, {3.686673296120431*^9, 
-   3.6866733595005627`*^9}, {3.686674037457156*^9, 3.68667405105399*^9}, {
-   3.686674090700632*^9, 3.686674103156412*^9}, {3.686674162405921*^9, 
-   3.686674210128455*^9}, {3.687212942531571*^9, 3.687212971485302*^9}, {
-   3.6872130442937307`*^9, 3.68721308698403*^9}, {3.687213359958499*^9, 
-   3.687213379216803*^9}, {3.688140726506507*^9, 3.688140761534438*^9}, {
-   3.688140861575437*^9, 3.688140891838065*^9}, {3.688427307802211*^9, 
-   3.6884273711928797`*^9}, 3.692132623992117*^9, 3.6921326870035954`*^9, {
-   3.700226616338072*^9, 3.7002266241263733`*^9}, 3.700780879143078*^9, {
-   3.700788778098542*^9, 3.700788780671692*^9}, {3.700791965024661*^9, 
-   3.700791968144475*^9}, {3.701196837331053*^9, 3.701196837811174*^9}, {
-   3.701626081994994*^9, 3.701626104640252*^9}, {3.70518569983998*^9, 
-   3.7051857234872828`*^9}, {3.7051858039136477`*^9, 3.705185815865034*^9}, {
-   3.720662403954892*^9, 3.720662403959741*^9}, {3.720662663541026*^9, 
-   3.720662677077314*^9}, 3.724682899248605*^9, {3.730479644618678*^9, 
-   3.730479653946271*^9}, {3.7304811990198307`*^9, 3.730481201309026*^9}, 
-   3.730481529362612*^9},
+    "\"\<Front End\>\"", ",", " ", "\"\<*.nb\>\"", ",", " ", 
+     "\"\<FrontEnd\>\"", ",", " ", "4"}], "]"}]}], ";"}]], "CodeInput",
  CellLabel->
-  "In[34]:=",ExpressionUUID->"aa97503d-e643-4bd8-b186-74c906483bfe"]
+  "In[73]:=",ExpressionUUID->"aa97503d-e643-4bd8-b186-74c906483bfe"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -1618,56 +1416,12 @@ b2dac005fbea"],
 Cell[BoxData[
  RowBox[{
   RowBox[{"privateOpener", "=", "\n", "\t", 
-   RowBox[{"With", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"gather", "=", "fileNamesGather"}], ",", " ", 
-       RowBox[{"format", "=", "formatFilePaths"}]}], "}"}], ",", "\n", "\t\t", 
-     RowBox[{"dynamicActionMenu", "[", 
-      RowBox[{"\"\<Open Private\>\"", ",", "\n", "\t\t\t", 
-       RowBox[{"If", "[", 
-        RowBox[{
-         RowBox[{"DirectoryQ", "@", 
-          RowBox[{
-           RowBox[{"whichPacF", "[", "\"\<AppPath\>\"", "]"}], "[", 
-           RowBox[{"currentApp", ",", "\"\<Private\>\""}], "]"}]}], ",", "\n",
-          "\t\t\t\t", 
-         RowBox[{"format", "@", 
-          RowBox[{"gather", "[", 
-           RowBox[{
-            RowBox[{"\"\<*.nb\>\"", "|", "\"\<*.wl\>\"", "|", "\"\<*.m\>\""}],
-             ",", "\"\<Private\>\""}], "]"}]}], ",", "\n", "\t\t\t\t", 
-         RowBox[{"{", "}"}]}], "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
-       RowBox[{"Enabled", "\[Rule]", "\n", "\t\t\t\t", 
-        RowBox[{"(", 
-         RowBox[{
-          RowBox[{"Length", "@", 
-           RowBox[{"FileNames", "[", 
-            RowBox[{
-             RowBox[{
-             "\"\<*.nb\>\"", "|", "\"\<*.wl\>\"", "|", "\"\<*.m\>\""}], ",", 
-             "\n", "\t\t\t\t\t", 
-             RowBox[{
-              RowBox[{"whichPacF", "[", "\"\<AppDirectory\>\"", "]"}], "[", 
-              RowBox[{"currentApp", ",", "\"\<Private\>\""}], "]"}], ",", 
-             "\[Infinity]"}], "]"}]}], ">", "0"}], ")"}]}], ",", "\n", "\t\t", 
-       RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
-        RowBox[{"{", "currentApp", "}"}]}]}], "\n", "\t\t", "]"}]}], "\n", 
-    "\t", "]"}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.701149677503627*^9, 3.701149718302668*^9}, {
-   3.701196751159214*^9, 3.701196821465067*^9}, {3.701626279503417*^9, 
-   3.701626280212803*^9}, {3.7016267055738163`*^9, 3.7016267139275303`*^9}, {
-   3.705185663791915*^9, 3.7051856832326202`*^9}, {3.7051857440629263`*^9, 
-   3.7051858000236053`*^9}, {3.705193483718948*^9, 3.705193485547102*^9}, {
-   3.7070518325570593`*^9, 3.707051844328483*^9}, {3.720662403965271*^9, 
-   3.720662412604755*^9}, {3.720662663551384*^9, 3.720662677095245*^9}, 
-   3.7246829002967577`*^9, {3.726336687112877*^9, 3.72633669112814*^9}, {
-   3.730479633783445*^9, 3.730479639580124*^9}, {3.730479685348331*^9, 
-   3.730479687015772*^9}, {3.730481207388681*^9, 3.7304812104048023`*^9}, 
-   3.7304815300344343`*^9},
+   RowBox[{"openerSelector", "[", 
+    RowBox[{"\"\<Private\>\"", ",", " ", 
+     RowBox[{"\"\<*.nb\>\"", "|", "\"\<*.wl\>\"", "|", "\"\<*.m\>\""}], ",", 
+     " ", "\"\<Private\>\"", ",", " ", "5"}], "]"}]}], ";"}]], "CodeInput",
  CellLabel->
-  "In[35]:=",ExpressionUUID->"24875b4c-119a-467b-b442-552abe1e30a9"]
+  "In[74]:=",ExpressionUUID->"24875b4c-119a-467b-b442-552abe1e30a9"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -1680,61 +1434,266 @@ eaeea3b591a4"],
 Cell[BoxData[
  RowBox[{
   RowBox[{"templateOpener", "=", "\n", "\t", 
+   RowBox[{"openerSelector", "[", 
+    RowBox[{"\"\<Resources\>\"", ",", " ", 
+     RowBox[{
+     "\"\<*.nb\>\"", "|", "\"\<*.wl\>\"", "|", "\"\<*.m\>\"", "|", 
+      "\"\<.tr\>\""}], ",", " ", "\"\<Resources\>\"", ",", " ", "8"}], 
+    "]"}]}], ";"}]], "CodeInput",
+ CellLabel->
+  "In[75]:=",ExpressionUUID->"bbaad61d-0c7f-43bd-9554-3687be8f2797"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Config", "CodeSubsubsection",
+ CellChangeTimes->{{3.701638924404808*^9, 
+  3.701638925684251*^9}},ExpressionUUID->"004e8e39-3228-49c0-9790-\
+34b4880cec43"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"configOpener", "=", "\n", "\t", 
    RowBox[{"With", "[", 
     RowBox[{
      RowBox[{"{", 
       RowBox[{
        RowBox[{"gather", "=", "fileNamesGather"}], ",", " ", 
-       RowBox[{"format", "=", "formatFilePaths"}]}], "}"}], ",", "\n", "\t\t", 
-     RowBox[{"dynamicActionMenu", "[", 
-      RowBox[{"\"\<Open Resource\>\"", ",", "\n", "\t\t\t", 
-       RowBox[{"If", "[", 
-        RowBox[{
-         RowBox[{"DirectoryQ", "@", 
-          RowBox[{
-           RowBox[{"whichPacF", "[", "\"\<AppPath\>\"", "]"}], "[", 
-           RowBox[{"currentApp", ",", "\"\<Resources\>\""}], "]"}]}], ",", 
-         "\n", "\t\t\t\t", 
-         RowBox[{"format", "@", "\n", "\t\t\t\t\t", 
-          RowBox[{"gather", "[", "\n", "\t\t\t\t\t\t", 
-           RowBox[{
-            RowBox[{
-            "\"\<*.nb\>\"", "|", "\"\<*.m\>\"", "|", "\"\<*.wl\>\"", "|", 
-             "\"\<*.tr\>\""}], ",", "\n", "\t\t\t\t\t\t", 
-            "\"\<Resources\>\""}], "\n", "\t\t\t\t\t\t", "]"}]}], ",", "\n", 
-         "\t\t\t\t", 
-         RowBox[{"{", "}"}]}], "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
-       RowBox[{"Enabled", "\[Rule]", "\n", "\t\t\t\t", 
-        RowBox[{"(", 
+       RowBox[{"format", "=", "formatFilePaths"}]}], "}"}], ",", "\n", "\t", 
+     "\t", 
+     RowBox[{"openerSelector", "[", 
+      RowBox[{"\"\<Config\>\"", ",", "\n", "\t\t\t", 
+       RowBox[{"Hold", "@", "\n", "\t\t\t\t", 
+        RowBox[{"format", "@", "\n", "\t\t\t\t\t", 
          RowBox[{
-          RowBox[{"Length", "@", "\n", "\t\t\t\t\t", 
+          RowBox[{"SortBy", "[", "FileNameDepth", "]"}], "@", "\n", "\t", 
+          "\t\t\t\t\t", 
+          RowBox[{"Join", "[", "\n", "\t", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"FileNames", "[", 
+             RowBox[{
+              RowBox[{"\"\<*Info.m\>\"", "|", "\"\<*Info.wl\>\""}], ",", "\n",
+               "\t", "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"whichPacF", "[", "\"\<AppDirectory\>\"", "]"}], "[", 
+               "currentApp", "]"}]}], "\n", "\t", "\t\t\t\t\t\t\t", "]"}], 
+            ",", "\n", "\t", "\t\t\t\t\t\t", 
+            RowBox[{"gather", "[", 
+             RowBox[{
+              RowBox[{"\"\<*.m\>\"", "|", "\"\<*.wl\>\""}], ",", 
+              "\"\<Config\>\""}], "]"}]}], "\n", "\t\t\t\t\t\t\t", 
+           "]"}]}]}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"Hold", "@", "\n", "\t\t\t\t", 
+        RowBox[{"Join", "[", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"FileNames", "[", 
+           RowBox[{
+            RowBox[{"\"\<*.m\>\"", "|", "\"\<*.wl\>\""}], ",", 
+            RowBox[{
+             RowBox[{"whichPacF", "[", "\"\<AppDirectory\>\"", "]"}], "[", 
+             "currentApp", "]"}]}], "]"}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"gather", "[", 
+           RowBox[{
+            RowBox[{"\"\<*.m\>\"", "|", "\"\<*.wl\>\""}], ",", 
+            "\"\<Config\>\""}], "]"}]}], "\n", "\t\t\t\t\t", "]"}]}]}], "\n", 
+      "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
+ CellLabel->
+  "In[76]:=",ExpressionUUID->"910c1bd9-ef09-475b-af7a-6106ea218c1b"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Project", "CodeSubsubsection",
+ CellChangeTimes->{{3.707047485538341*^9, 
+  3.707047486520729*^9}},ExpressionUUID->"19fd7693-e2f9-4bca-bbc1-\
+5345fb4f5127"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"projOpener", "=", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"gather", "=", "fileNamesGather"}], ",", " ", 
+      RowBox[{"format", "=", "formatFilePaths"}]}], "}"}], ",", "\n", "\t", 
+    "\t", 
+    RowBox[{"openerSelector", "[", 
+     RowBox[{"\"\<Project\>\"", ",", "\n", "\t\t\t", 
+      RowBox[{"Hold", "@", "\n", "\t\t\t\t", 
+       RowBox[{"format", "@", "\n", "\t\t\t\t\t", 
+        RowBox[{
+         RowBox[{"SortBy", "[", "FileNameDepth", "]"}], "@", "\n", "\t", 
+         "\t\t\t\t\t", 
+         RowBox[{"Join", "[", "\n", "\t", "\t\t\t\t\t\t", 
+          RowBox[{
            RowBox[{"FileNames", "[", 
+            RowBox[{"\"\<README*\>\"", ",", "\n", "\t", "\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"whichPacF", "[", "\"\<AppDirectory\>\"", "]"}], "[", 
+              "currentApp", "]"}]}], "\n", "\t", "\t\t\t\t\t\t\t", "]"}], ",",
+            "\n", "\t", "\t\t\t\t\t\t", 
+           RowBox[{"FileNames", "[", "\n", "\t", "\t\t\t\t\t\t\t", 
             RowBox[{
              RowBox[{
-             "\"\<*.nb\>\"", "|", "\"\<*.m\>\"", "|", "\"\<*.wl\>\"", "|", 
-              "\"\<*.tr\>\""}], ",", "\n", "\t\t\t\t\t\t", 
+             "\"\<*.png\>\"", "|", "\"\<*.html\>\"", "|", "\"\<*.md\>\"", 
+              "|", "\"\<*.nb\>\""}], ",", "\n", "\t", "\t\t\t\t\t\t\t", 
              RowBox[{
-              RowBox[{"whichPacF", "[", "\"\<AppPath\>\"", "]"}], "[", 
-              RowBox[{"currentApp", ",", "\"\<Resources\>\""}], "]"}], ",", 
-             "\n", "\t\t\t\t\t\t", "\[Infinity]"}], "\n", "\t\t\t\t\t\t", 
-            "]"}]}], ">", "0"}], ")"}]}], ",", "\n", "\t\t", 
-       RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
-        RowBox[{"{", "currentApp", "}"}]}]}], "\n", "\t\t", "]"}]}], "\n", 
-    "\t", "]"}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.701149677503627*^9, 3.701149718302668*^9}, {
-   3.701196751159214*^9, 3.701196821465067*^9}, {3.701626279503417*^9, 
-   3.701626280212803*^9}, {3.7016267055738163`*^9, 3.7016267139275303`*^9}, {
-   3.705185663791915*^9, 3.7051856832326202`*^9}, {3.7051857440629263`*^9, 
-   3.7051858000236053`*^9}, {3.705193483718948*^9, 3.705193485547102*^9}, {
-   3.705928959362824*^9, 3.70592901443231*^9}, 3.705929118191259*^9, {
-   3.705929168129232*^9, 3.705929180100608*^9}, 3.706032232734583*^9, {
-   3.709989329307486*^9, 3.709989359983739*^9}, {3.7126151577568483`*^9, 
-   3.712615209505986*^9}, {3.7206624126106253`*^9, 3.720662412623579*^9}, {
-   3.720662663569173*^9, 3.7206626771132298`*^9}, {3.730479696181595*^9, 
-   3.730479708095284*^9}, {3.730481216283044*^9, 3.730481226042241*^9}, 
-   3.730481530762323*^9},
+              RowBox[{"whichPacF", "[", "\"\<AppDirectory\>\"", "]"}], "[", 
+              RowBox[{"currentApp", ",", "\"\<project\>\""}], "]"}], ",", 
+             "\n", "\t", "\t\t\t\t\t\t\t", "\[Infinity]"}], "\n", "\t", 
+            "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t", "\t\t\t\t\t\t", 
+          "]"}]}]}]}], ",", "\n", "\t\t\t", 
+      RowBox[{"Hold", "@", "\n", "\t\t\t\t", 
+       RowBox[{"Join", "[", "\n", "\t\t\t\t\t", 
+        RowBox[{
+         RowBox[{"FileNames", "[", 
+          RowBox[{"\"\<README*\>\"", ",", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"whichPacF", "[", "\"\<AppDirectory\>\"", "]"}], "[", 
+            "currentApp", "]"}]}], "\n", "\t\t\t\t\t\t", "]"}], ",", "\n", 
+         "\t\t\t\t\t", 
+         RowBox[{"FileNames", "[", "\n", "\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+           "\"\<*.png\>\"", "|", "\"\<*.html\>\"", "|", "\"\<*.md\>\"", "|", 
+            "\"\<*.nb\>\""}], ",", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"whichPacF", "[", "\"\<AppDirectory\>\"", "]"}], "[", 
+            RowBox[{"currentApp", ",", "\"\<project\>\""}], "]"}], ",", "\n", 
+           "\t\t\t\t\t\t", "\[Infinity]"}], "\n", "\t\t\t\t\t\t", "]"}]}], 
+        "\n", "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+   "]"}]}]], "CodeInput",
+ CellLabel->"In[77]:=",ExpressionUUID->"563b8fd6-7c1c-48a6-8de8-56ef5746d1db"],
+
+Cell[BoxData[
+ TagBox[
+  DynamicBox[ToBoxes[
+    Insert[
+     ReplaceAll[
+      Insert[
+       Row[{
+         Button[
+         "Project", Null, Appearance -> ("Default" -> Image[CompressedData["
+1:eJzN1LEKglAYhuFDNTQ0dAEt3UVrY6vRBRSZtBhoEF2GlyeKoqKIIqLobMdB
++Fz6qqkfngPn8E5n+Nenm3KZCCHMuTyU42NrGMfnfikvB928arp63ul3VVON
+zWkqH1fSQpqJ0XRvjMayrO4T2Nu2TWHvOA6Fveu6FPae51HY+75PDf/Y90EQ
+UMP/9n0YhhT2URRR2MdxTGGfJAmFfZqmFPZZllHY53lOYV8UBYV9WZYU9lVV
+UdjXdU1h3zQNhX3bttSPvfiiF//af7OvyC4c7cQXOc/YKw==
+             "], "Byte", 
+             ColorSpace -> "RGB", Interleaving -> True]), {
+          Appearance -> {
+            "Palette", FrameStyle -> Automatic, 
+             ImagePadding -> {{1, 0}, {1, 1}}}, ImageSize -> 178, 
+           FrameMargins -> Automatic, ImageSize -> 200, Appearance -> 
+           "Palette", Appearance -> ActionMenu, Alignment -> Automatic, 
+           Background -> None, DefaultBaseStyle -> {}}], 
+         ActionMenu[
+          Button["", Null, Appearance -> {"Default" -> Image[CompressedData["
+1:eJzt1s+KgkAcwPGhOuyxY4e99BZd97jXYh+gyKSLgYV/HsMH8MFEUVQUUUQU
+PbszURG/GpP4uacd+MioM9+TqPPNYbkbEUKOH/SwXKtfsrzWV1N68iMd96Ik
+bL+lkyAK8mIzphc/qRk1IdzRvoE7DMNoh3DftywLFezbto0K9h3HQQX7ruui
+gn3P81Dd9c9z3/dRXfrttR8EASrYD8MQFexHUYQK9uM4RgX7SZI8YM+xaZqd
+2Jpne2E/TdOnFEXhvtPYPd4+2M+yjEtV1Yc2u9a1B/bzPO+kadptPZu/Wg/7
+RVG8pOv6WZ+1sF+WJSrYr6oKFezXdY0K9pumQfWHfTJgn/z3+/WH/L+6focR
+3cYv8PIQ7g==
+               "], "Byte", ColorSpace -> "RGB", Interleaving -> 
+               True], "Hover" -> Image[CompressedData["
+1:eJzt1j1rg0AYwPEj6ZCxY4Yu+RZdM3a19AMkxIYuBrQQ9YM4+9V8wVdUVNTR
+3oUq8iRnJDx26sFPTr37b75s9ifhc0EIUVb0IOzOW1neae/P9ORDUr6Oknh4
+k77Foyi/7pf04gu1pp4Id7QP4A7DMNo5DPuWZaGCfdu2UcG+4zioYN91XVSw
+73keqkH/Mvd9H9Vvv+36QRCggv0wDFHBfhRFqGA/jmNUsJ8kyRX2HJqmOYqt
+ubUX9tM0vUlVVe47jd3j7YP9LMu4NE27arNrY3tgP8/zUbqu9+vZ/N562C+K
+4i7WZaashf2yLFHBflVVqGC/rmtUsN80Dao/7JMZ++S/P60/5/9V9x1G1I8f
+BDwtSg==
+               "], "Byte", ColorSpace -> "RGB", Interleaving -> 
+               True], "Pressed" -> Image[CompressedData["
+1:eJxTTMoPSmNiYGAo5gASQYnljkVFiZXBAkBOaF5xZnpeaopnXklqemqRRRIz
+UFAGiCWAmIUBJ/hPBsYJmpqa/tMCI5u/bds2quJR8weN+f9paP7/4WL+9u3b
+qYrRzd+zZw9VMbr5Bw8exMAwd+DDIDXY9KKbf+zYMaw4JSUFZ5kGksOlD938
+06dP48Tp6ekYZoPE8OlBN//8+fN4cWZmJlw9iE1IPbr5ly5dIoizsrLAmBi1
+6OZfvXqVqhjd/Bs3blAVo5t/+/ZtqmJ08+/cuUNVTEfzGWhoPsOo+cSZT8v2
+FawepiKGAwBxeUst
+               "], "Byte", ColorSpace -> "RGB", Interleaving -> 
+               True], "Disabled" -> Image[CompressedData["
+1:eJzt1s+KgkAcwPGh7dBxj3vo0lt07di1ZR+gyKKLgS0se/MVfBj/vIAPIYqi
+oogioujZnYkt4pdaxM9ODXxkHGe+By86We0XmwEh5DCil8XyZyYIy9/Pd3rz
+xR92W55bz/lvbssJ09UbXRxTH9SQtI76Aa1DkqS6D5d9wzBQwb5pmqhg37Is
+VLBv2zYq2HccB9VF/zh3XRfVf78+9T3PQwX7vu+jgv0gCFDBfhiGqGA/iqIr
+7D3qut6J7Wk6C/txHDeSZbkWRbERe9Z2DvaTJGmlKMpVm611nYH9NE07qap6
+brP5rf2wn2XZTZqmHd2zF/bzPEcF+0VRoIL9sixRwX5VVaie2Cc99smrf1+/
+z/+r03cY0Xn8Ad19LLo=
+               "], "Byte", ColorSpace -> "RGB", 
+               Interleaving -> True]}], {"Label" :> "Result"}, Appearance -> 
+          None, {}]}, {}], 
+       FilterRules[{Enabled -> Length[
+            If[
+             And[
+              ListQ[AppManagerPalette`Private`listing$11639], 
+              Part[AppManagerPalette`Private`listing$11639, 1] == 
+              AppManagerPalette`Private`currentApp], 
+             Part[AppManagerPalette`Private`listing$11639, 2], 
+             Join[
+              FileNames["README*", 
+               AppManagerPalette`Private`whichPacF["AppDirectory"][
+               AppManagerPalette`Private`currentApp]], 
+              FileNames[
+               Alternatives["*.png", "*.html", "*.md", "*.nb"], 
+               AppManagerPalette`Private`whichPacF["AppDirectory"][
+               AppManagerPalette`Private`currentApp, "project"], Infinity]]]] > 
+          0, TrackedSymbols :> {
+          AppManagerPalette`Private`flag$11639, 
+           AppManagerPalette`Private`currentApp}}, 
+        Options[ActionMenu]], {1, 2, -1}], {"Label" :> "Result"} -> (
+       AppManagerPalette`Private`flag$11639; 
+       AppManagerPalette`Private`currentApp; Part[
+         If[
+          And[
+           ListQ[AppManagerPalette`Private`listing$11639], 
+           Part[AppManagerPalette`Private`listing$11639, 1] == 
+           AppManagerPalette`Private`currentApp], 
+          AppManagerPalette`Private`listing$11639, 
+          AppManagerPalette`Private`listing$11639 = {
+           AppManagerPalette`Private`currentApp, 
+            AppManagerPalette`Private`formatFilePaths[
+             SortBy[FileNameDepth][
+              Join[
+               FileNames["README*", 
+                AppManagerPalette`Private`whichPacF["AppDirectory"][
+                AppManagerPalette`Private`currentApp]], 
+               FileNames[
+                Alternatives["*.png", "*.html", "*.md", "*.nb"], 
+                AppManagerPalette`Private`whichPacF["AppDirectory"][
+                AppManagerPalette`Private`currentApp, "project"], 
+                Infinity]]]]}], 2])], 
+     FilterRules[{Enabled -> Length[
+          If[
+           And[
+            ListQ[AppManagerPalette`Private`listing$11639], 
+            Part[AppManagerPalette`Private`listing$11639, 1] == 
+            AppManagerPalette`Private`currentApp], 
+           Part[AppManagerPalette`Private`listing$11639, 2], 
+           Join[
+            FileNames["README*", 
+             AppManagerPalette`Private`whichPacF["AppDirectory"][
+             AppManagerPalette`Private`currentApp]], 
+            FileNames[
+             Alternatives["*.png", "*.html", "*.md", "*.nb"], 
+             AppManagerPalette`Private`whichPacF["AppDirectory"][
+             AppManagerPalette`Private`currentApp, "project"], Infinity]]]] > 
+        0, TrackedSymbols :> {
+        AppManagerPalette`Private`flag$11639, 
+         AppManagerPalette`Private`currentApp}}, 
+      Options[Button]], {1, 1, -1}], StandardForm], {Enabled -> False},
+   ImageSizeCache->{200., {8., 19.}}],
+  EventHandlerTag[{
+   "MouseDown" :> (AppManagerPalette`Private`flag$11639 = RandomReal[]), 
+    PassEventsDown -> True, Method -> "Preemptive", PassEventsUp -> 
+    True}]]], "Output",
  CellLabel->
-  "In[36]:=",ExpressionUUID->"bbaad61d-0c7f-43bd-9554-3687be8f2797"]
+  "Out[77]=",ExpressionUUID->"2e1e2a7e-b769-4bb7-b248-48ef4af67bfb"]
+}, Open  ]]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -1791,7 +1750,7 @@ Cell[BoxData[
    3.720662663588037*^9, 3.720662676556799*^9}, {3.724682901543756*^9, 
    3.724682903855782*^9}, {3.7288841875567408`*^9, 3.7288841976142263`*^9}},
  CellLabel->
-  "In[37]:=",ExpressionUUID->"f53658f7-fcc8-45c7-823a-4cdfe155b29f"]
+  "In[78]:=",ExpressionUUID->"f53658f7-fcc8-45c7-823a-4cdfe155b29f"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -1940,7 +1899,7 @@ Cell[BoxData[
    3.7206634164637938`*^9}, {3.7210028825334473`*^9, 3.721003010471178*^9}, {
    3.721003068629978*^9, 3.721003101208274*^9}},
  CellLabel->
-  "In[38]:=",ExpressionUUID->"9969a0f9-c1ad-4fd9-a335-63b342231bde"]
+  "In[79]:=",ExpressionUUID->"9969a0f9-c1ad-4fd9-a335-63b342231bde"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -1967,7 +1926,7 @@ Cell[BoxData[
   ";"}]], "CodeInput",
  CellChangeTimes->{{3.6999457249433126`*^9, 3.699945749469339*^9}, {
   3.699945972843802*^9, 3.699946051383072*^9}},
- CellLabel->"In[39]:=",ExpressionUUID->"409b9eca-db8e-4b23-b6c6-215bc767cea6"],
+ CellLabel->"In[80]:=",ExpressionUUID->"409b9eca-db8e-4b23-b6c6-215bc767cea6"],
 
 Cell[BoxData[
  RowBox[{"(*", 
@@ -2088,7 +2047,7 @@ Cell[BoxData[
    3.7011988691651373`*^9}, {3.701199200640356*^9, 3.701199216783265*^9}, 
    3.701199270357007*^9, {3.70119947705759*^9, 3.701199478305154*^9}, {
    3.720662817183174*^9, 3.720662817191114*^9}},
- CellLabel->"In[40]:=",ExpressionUUID->"a6a048cc-b469-47af-87d1-c9788ace8dd3"],
+ CellLabel->"In[81]:=",ExpressionUUID->"a6a048cc-b469-47af-87d1-c9788ace8dd3"],
 
 Cell[BoxData[
  RowBox[{"(*", 
@@ -2278,7 +2237,7 @@ fddxXzjTZKB6BfYYEO10t+eYKpBetkXzBoiucjVjVAPSWUEBTCD625Nv0yqB
 QiA6pKtIFET/921qrgHS3X+/g+nk7bO91acA9a/SCwLRGjOmR4LoiP9/YkH0
 qSX1G2bueO3IItQApreqPrkAohnfTL4EogFczqL/
   "],
- CellLabel->"In[41]:=",ExpressionUUID->"b6b4b0b3-ac16-4dc1-bf7a-44ea0b114bf9"],
+ CellLabel->"In[82]:=",ExpressionUUID->"b6b4b0b3-ac16-4dc1-bf7a-44ea0b114bf9"],
 
 Cell[BoxData[
  RowBox[{"(*", 
@@ -2369,7 +2328,7 @@ Cell[BoxData[
    3.7012037351658688`*^9, 3.701203794641405*^9}, {3.701656331188929*^9, 
    3.7016563313793488`*^9}, {3.7206624040114803`*^9, 
    3.7206624040177794`*^9}, {3.7206626631517887`*^9, 3.720662676638349*^9}},
- CellLabel->"In[42]:=",ExpressionUUID->"6e65a6a0-daa7-4c19-a3c3-caa37e538060"],
+ CellLabel->"In[83]:=",ExpressionUUID->"6e65a6a0-daa7-4c19-a3c3-caa37e538060"],
 
 Cell[BoxData[
  RowBox[{"(*", 
@@ -2462,7 +2421,7 @@ Cell[BoxData[
    3.701198528001886*^9}, {3.7011985675849524`*^9, 3.701198576503841*^9}, {
    3.70120380377035*^9, 3.701203831137539*^9}, {3.720662404027471*^9, 
    3.720662404033939*^9}, {3.7206626631638937`*^9, 3.720662676652691*^9}},
- CellLabel->"In[43]:=",ExpressionUUID->"5902f97f-a2b4-42ef-8282-0f4cf0b2d956"],
+ CellLabel->"In[84]:=",ExpressionUUID->"5902f97f-a2b4-42ef-8282-0f4cf0b2d956"],
 
 Cell[BoxData[
  RowBox[{"(*", 
@@ -2569,7 +2528,7 @@ Cell[BoxData[
    3.701204167722731*^9}, {3.701204299053514*^9, 3.701204300619132*^9}, {
    3.701568963707309*^9, 3.701569031763523*^9}, 3.701656345902313*^9},
  CellLabel->
-  "In[44]:=",ExpressionUUID->"9bf688c2-c2ee-4204-9e92-364dbdcf2505"]
+  "In[85]:=",ExpressionUUID->"9bf688c2-c2ee-4204-9e92-364dbdcf2505"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -2645,7 +2604,7 @@ Cell[BoxData[
    3.7012307559935503`*^9, 3.701230765793182*^9}, 3.701264209060186*^9, {
    3.720662404043132*^9, 3.7206624040534773`*^9}, {3.720662663175282*^9, 
    3.720662676670038*^9}, 3.724682921449568*^9},
- CellLabel->"In[45]:=",ExpressionUUID->"53588569-9de7-4909-b9d6-702130c051e3"],
+ CellLabel->"In[86]:=",ExpressionUUID->"53588569-9de7-4909-b9d6-702130c051e3"],
 
 Cell[BoxData[
  RowBox[{
@@ -2709,7 +2668,7 @@ Cell[BoxData[
    3.701196854930353*^9, 3.701196855489648*^9}, {3.720662404061274*^9, 
    3.720662404073846*^9}, {3.720662663189886*^9, 3.720662676687516*^9}, 
    3.7246829225861397`*^9},
- CellLabel->"In[46]:=",ExpressionUUID->"948b3d1d-cf8b-47ac-becc-e8e3b621f5ff"],
+ CellLabel->"In[87]:=",ExpressionUUID->"948b3d1d-cf8b-47ac-becc-e8e3b621f5ff"],
 
 Cell[BoxData[
  RowBox[{
@@ -2773,7 +2732,7 @@ Cell[BoxData[
    3.701196857746243*^9}, {3.720662404083864*^9, 3.720662404093445*^9}, {
    3.720662663206451*^9, 3.720662676707398*^9}, 3.724682923441448*^9},
  CellLabel->
-  "In[47]:=",ExpressionUUID->"497d84e3-e194-4ecd-a2cf-a86ebaeca124"]
+  "In[88]:=",ExpressionUUID->"497d84e3-e194-4ecd-a2cf-a86ebaeca124"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -2927,7 +2886,7 @@ Cell[BoxData[
    3.723734449798544*^9, 3.723734449818667*^9}, {3.723734918430058*^9, 
    3.723734918440859*^9}, {3.724682924885396*^9, 3.724682927051268*^9}},
  CellLabel->
-  "In[48]:=",ExpressionUUID->"de71bd32-b1fe-40f4-97a7-5e4e168dd1e4"]
+  "In[89]:=",ExpressionUUID->"de71bd32-b1fe-40f4-97a7-5e4e168dd1e4"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -3547,7 +3506,7 @@ Cell[BoxData[{
    3.723734444292693*^9, 3.723734474641584*^9}, {3.7246829289510517`*^9, 
    3.724682931260647*^9}},
  CellLabel->
-  "In[49]:=",ExpressionUUID->"a1f7527f-238e-4201-b009-c0ac7695b403"]
+  "In[90]:=",ExpressionUUID->"a1f7527f-238e-4201-b009-c0ac7695b403"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -3777,7 +3736,7 @@ Cell[BoxData[
    3.7206626767859983`*^9}, {3.720663017226076*^9, 3.7206630172351*^9}, {
    3.721053254652597*^9, 3.721053298109509*^9}, {3.723734444302031*^9, 
    3.723734444310279*^9}},
- CellLabel->"In[52]:=",ExpressionUUID->"061d0602-a49f-42c8-9afa-2525f0b80fa7"],
+ CellLabel->"In[93]:=",ExpressionUUID->"061d0602-a49f-42c8-9afa-2525f0b80fa7"],
 
 Cell[BoxData[
  RowBox[{
@@ -4047,7 +4006,7 @@ Cell[BoxData[
    3.720662676800147*^9}, 3.720662944217844*^9, {3.7206630235251713`*^9, 
    3.720663023535573*^9}, {3.721053301277125*^9, 3.721053366055732*^9}, {
    3.723734307709948*^9, 3.72373431480186*^9}},
- CellLabel->"In[53]:=",ExpressionUUID->"eb639ffe-6cc5-4d3d-875d-c64f27eb918b"],
+ CellLabel->"In[94]:=",ExpressionUUID->"eb639ffe-6cc5-4d3d-875d-c64f27eb918b"],
 
 Cell[BoxData[
  RowBox[{
@@ -4260,7 +4219,7 @@ Cell[BoxData[
    3.701481139458919*^9}, {3.7206629948722687`*^9, 3.7206630048154097`*^9}, 
    3.721053374548153*^9, {3.723734474653467*^9, 3.723734474661271*^9}},
  CellLabel->
-  "In[54]:=",ExpressionUUID->"6624e889-bf98-4299-af7a-dfc12cae4711"]
+  "In[95]:=",ExpressionUUID->"6624e889-bf98-4299-af7a-dfc12cae4711"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -4295,7 +4254,7 @@ Cell[BoxData[{
    3.701264402975295*^9}, 3.720663430417251*^9, 3.723734931669218*^9, 
    3.724682932447401*^9, {3.726336477728815*^9, 3.726336479781456*^9}},
  CellLabel->
-  "In[55]:=",ExpressionUUID->"4b10b95a-46ae-4b2f-ab61-f4f1f81c583d"]
+  "In[96]:=",ExpressionUUID->"4b10b95a-46ae-4b2f-ab61-f4f1f81c583d"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -4337,7 +4296,7 @@ Cell[BoxData[
    3.702082046383388*^9}, {3.702607922692361*^9, 3.702607987418024*^9}, {
    3.702608018420384*^9, 3.702608108726365*^9}, 3.7121966496006317`*^9, {
    3.720663445978533*^9, 3.720663455939706*^9}},
- CellLabel->"In[57]:=",ExpressionUUID->"1c4184e2-a6a6-487a-b2cc-7e13e75c8225"],
+ CellLabel->"In[98]:=",ExpressionUUID->"1c4184e2-a6a6-487a-b2cc-7e13e75c8225"],
 
 Cell[BoxData[
  RowBox[{"(*", 
@@ -4623,7 +4582,7 @@ Cell[BoxData[
    3.7056305280469227`*^9, 3.7056305319254217`*^9}, {3.720663445997504*^9, 
    3.72066351003916*^9}, {3.7206636887136507`*^9, 3.720663716514112*^9}},
  CellLabel->
-  "In[58]:=",ExpressionUUID->"2d0bc603-6caa-4e8b-be1d-200c3183638c"]
+  "In[99]:=",ExpressionUUID->"2d0bc603-6caa-4e8b-be1d-200c3183638c"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -4863,8 +4822,7 @@ Cell[BoxData[{
    3.7318618156959143`*^9}, {3.731861951082555*^9, 3.73186196445363*^9}, {
    3.731862035335504*^9, 3.731862045573946*^9}, {3.731862214092524*^9, 
    3.7318622257972193`*^9}},
- CellLabel->
-  "In[59]:=",ExpressionUUID->"6bbc7b6f-2325-48c3-a0cf-07c1051a0ac3"]
+ CellLabel->"In[100]:=",ExpressionUUID->"6bbc7b6f-2325-48c3-a0cf-07c1051a0ac3"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -4912,8 +4870,7 @@ Cell[BoxData[{
    3.701795364473922*^9, 3.701795371201579*^9}, {3.702082048344789*^9, 
    3.702082062554185*^9}, 3.712196649573677*^9, 3.720663455948991*^9, {
    3.7206635651221247`*^9, 3.72066357850902*^9}},
- CellLabel->
-  "In[62]:=",ExpressionUUID->"2667be53-2a20-4f35-88c4-488403ac9c12"]
+ CellLabel->"In[103]:=",ExpressionUUID->"2667be53-2a20-4f35-88c4-488403ac9c12"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -5042,9 +4999,8 @@ Cell[BoxData[
   3.707093175276664*^9}, {3.7070932371231813`*^9, 3.707093243399753*^9}, {
   3.70709330367312*^9, 3.707093326472999*^9}, {3.720663446081047*^9, 
   3.720663446125762*^9}, {3.7246829428907433`*^9, 3.724682949608694*^9}},
- CellLabel->
-  "In[65]:=",ExpressionUUID->"7c3bd35e-738a-4d9a-bbaf-6e375b86a80e"]
-}, Open  ]],
+ CellLabel->"In[106]:=",ExpressionUUID->"7c3bd35e-738a-4d9a-bbaf-6e375b86a80e"]
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -5187,7 +5143,8 @@ Cell[BoxData[{
   3.726336445866228*^9}, {3.726336577767982*^9, 3.72633657866094*^9}, {
   3.728949867167047*^9, 3.728949911667121*^9}, {3.728950777548448*^9, 
   3.7289508121114063`*^9}, {3.7289511771516027`*^9, 3.728951179570745*^9}},
- CellLabel->"In[66]:=",ExpressionUUID->"875609d0-f9af-4e73-8e07-e601ed788ca1"],
+ CellLabel->
+  "In[107]:=",ExpressionUUID->"875609d0-f9af-4e73-8e07-e601ed788ca1"],
 
 Cell[BoxData[
  RowBox[{
@@ -5248,9 +5205,8 @@ Cell[BoxData[
            "]"}]}], "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
        "\"\<Publishing\>\""}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}],
    ";"}]], "CodeInput",
- CellLabel->
-  "In[73]:=",ExpressionUUID->"c3b5cf36-cd4e-4c6c-b3ab-e43e754858de"]
-}, Open  ]],
+ CellLabel->"In[114]:=",ExpressionUUID->"c3b5cf36-cd4e-4c6c-b3ab-e43e754858de"]
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -5378,7 +5334,8 @@ Cell[BoxData[
    3.720662412735415*^9}, {3.72066266335445*^9, 3.72066267689297*^9}, {
    3.720663584748314*^9, 3.720663607862315*^9}, {3.724682952953908*^9, 
    3.7246829584650183`*^9}},
- CellLabel->"In[74]:=",ExpressionUUID->"33662194-d161-4b53-90ba-760aa11ac6fb"],
+ CellLabel->
+  "In[115]:=",ExpressionUUID->"33662194-d161-4b53-90ba-760aa11ac6fb"],
 
 Cell[BoxData[
  RowBox[{"(*", 
@@ -5497,8 +5454,7 @@ Cell[BoxData[
    3.7070916448507967`*^9}, {3.708005401424738*^9, 3.708005404338725*^9}, {
    3.7121972514456167`*^9, 3.712197298278893*^9}, {3.720663601531389*^9, 
    3.720663614727021*^9}},
- CellLabel->
-  "In[75]:=",ExpressionUUID->"f28f7e2d-2123-4e2a-80cd-423f0785a165"]
+ CellLabel->"In[116]:=",ExpressionUUID->"f28f7e2d-2123-4e2a-80cd-423f0785a165"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -5542,8 +5498,7 @@ Cell[BoxData[
    3.712938896614746*^9}, {3.7206635170229483`*^9, 3.720663532034801*^9}, {
    3.724682959567296*^9, 3.724682962128037*^9}, {3.726336362933601*^9, 
    3.726336370294848*^9}, {3.7263365296888857`*^9, 3.726336535877695*^9}},
- CellLabel->
-  "In[76]:=",ExpressionUUID->"61cfeb64-eeb4-4695-9657-e75b680c1152"]
+ CellLabel->"In[117]:=",ExpressionUUID->"61cfeb64-eeb4-4695-9657-e75b680c1152"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -5636,8 +5591,7 @@ Cell[BoxData[
    3.720662404221528*^9}, {3.720662663393689*^9, 3.72066267691502*^9}, {
    3.720663629385893*^9, 3.720663629393743*^9}, {3.721049152796843*^9, 
    3.721049155762947*^9}},
- CellLabel->
-  "In[77]:=",ExpressionUUID->"40594666-9beb-4935-9044-baf553d2031d"]
+ CellLabel->"In[118]:=",ExpressionUUID->"40594666-9beb-4935-9044-baf553d2031d"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -5674,7 +5628,8 @@ improperly\>\""}], ";"}]], "CodeInput",
    3.686674090700632*^9, 3.686674103156412*^9}, {3.686674162405921*^9, 
    3.686674210128455*^9}, {3.687212942531571*^9, 3.687212971485302*^9}, {
    3.6872130442937307`*^9, 3.687213095864246*^9}},
- CellLabel->"In[78]:=",ExpressionUUID->"a0b1cfec-34f8-476c-8962-5a42f5deb2c9"],
+ CellLabel->
+  "In[119]:=",ExpressionUUID->"a0b1cfec-34f8-476c-8962-5a42f5deb2c9"],
 
 Cell[BoxData[
  RowBox[{
@@ -5918,8 +5873,7 @@ Cell[BoxData[
    3.720662663413416*^9, 3.720662676943338*^9}, {3.730136522631379*^9, 
    3.730136584218164*^9}, {3.730136641875152*^9, 3.730136644474423*^9}, 
    3.730136766352572*^9, {3.7301368364822397`*^9, 3.730136838956173*^9}},
- CellLabel->
-  "In[79]:=",ExpressionUUID->"f39628fd-f5a9-4476-adf4-af0a1ab62fed"]
+ CellLabel->"In[120]:=",ExpressionUUID->"f39628fd-f5a9-4476-adf4-af0a1ab62fed"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -5952,7 +5906,8 @@ Cell[BoxData[
    3.697377350414102*^9, 3.697377628642466*^9, 3.700780620239099*^9, {
    3.700781090867659*^9, 3.700781097312394*^9}, 3.700797666892942*^9, 
    3.707049605605151*^9},
- CellLabel->"In[80]:=",ExpressionUUID->"8567d834-f6dc-4d22-b106-41be7955cae8"],
+ CellLabel->
+  "In[121]:=",ExpressionUUID->"8567d834-f6dc-4d22-b106-41be7955cae8"],
 
 Cell[BoxData[
  RowBox[{
@@ -5977,7 +5932,8 @@ Cell[BoxData[
  CellChangeTimes->{{3.700781102025426*^9, 3.700781105400004*^9}, 
    3.700797664645802*^9, 3.700937796620645*^9, {3.700937881954781*^9, 
    3.700937889804406*^9}},
- CellLabel->"In[81]:=",ExpressionUUID->"7af4d6c6-1e54-4176-b1d6-6ad65df055bb"],
+ CellLabel->
+  "In[122]:=",ExpressionUUID->"7af4d6c6-1e54-4176-b1d6-6ad65df055bb"],
 
 Cell[BoxData[
  RowBox[{
@@ -6000,19 +5956,21 @@ Cell[BoxData[
          "addNB", ",", "\n", "\t\t\t", "addStuff", ",", "\n", "\t\t\t", 
          "addDir", ",", "\n", "\t\t\t", "overwriteBox"}], "*)"}], "\n", 
        "\t\t\t", "}"}]}], ",", "\n", "\t", 
-     RowBox[{"\"\<Docs\>\"", "\[Rule]", "\n", "\t\t", 
-      RowBox[{"{", "\n", "\t\t\t", 
-       RowBox[{
-       "refOpener", ",", "\n", "\t\t\t", "guideOpener", ",", "\n", "\t\t\t", 
-        "tutorialOpener", ",", "\n", "\t\t\t", "contentSpacer", ",", "\n", 
-        "\t\t\t", "docAutoButton", ",", "\n", "\t\t\t", "docTemp", ",", "\n", 
-        "\t\t\t", "docGen", ",", "\n", "\t\t\t", "docSave", ",", "\n", 
-        "\t\t\t", "contentSpacer", ",", "\n", "\t\t\t", "docInfoM", ",", "\n",
-         "\t\t\t", "indexDocs", ",", "\n", "\t\t\t", "contentSpacer", ",", 
-        "\n", "\t\t\t", "appDocs", ",", "\n", "\t\t\t", "appGuides", ",", 
-        "\n", "\t\t\t", "appTutorials", ",", "\n", "\t\t\t", "contentSpacer", 
-        ",", "\n", "\t\t\t", "overwriteBox"}], "\n", "\t\t\t", "}"}]}], ",", 
-     "\n", "\t", 
+     RowBox[{"(*", 
+      RowBox[{
+       RowBox[{"\"\<Docs\>\"", "\[Rule]", "\n", "\t\t", 
+        RowBox[{"{", "\n", "\t\t\t", 
+         RowBox[{
+         "refOpener", ",", "\n", "\t\t\t", "guideOpener", ",", "\n", "\t\t\t",
+           "tutorialOpener", ",", "\n", "\t\t\t", "contentSpacer", ",", "\n", 
+          "\t\t\t", "docAutoButton", ",", "\n", "\t\t\t", "docTemp", ",", 
+          "\n", "\t\t\t", "docGen", ",", "\n", "\t\t\t", "docSave", ",", "\n",
+           "\t\t\t", "contentSpacer", ",", "\n", "\t\t\t", "docInfoM", ",", 
+          "\n", "\t\t\t", "indexDocs", ",", "\n", "\t\t\t", "contentSpacer", 
+          ",", "\n", "\t\t\t", "appDocs", ",", "\n", "\t\t\t", "appGuides", 
+          ",", "\n", "\t\t\t", "appTutorials", ",", "\n", "\t\t\t", 
+          "contentSpacer", ",", "\n", "\t\t\t", "overwriteBox"}], "\n", 
+         "\t\t\t", "}"}]}], ","}], "*)"}], "\n", "\t", 
      RowBox[{"\"\<Dist\>\"", "->", "\n", "\t\t", 
       RowBox[{"{", "\t", "\n", "\t\t\t", 
        RowBox[{
@@ -6028,48 +5986,8 @@ Cell[BoxData[
         "\t\t\t", "gitHubPush", ",", "\n", "\t\t\t", "gitHubConfigure", ",", 
         "\n", "\t\t\t", "gitHubDelete"}], "\n", "\t\t\t", "}"}]}]}], "\n", 
     "\t", "|>"}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.7005288766517467`*^9, 3.7005289062530823`*^9}, {
-   3.700528944117058*^9, 3.7005290317663727`*^9}, {3.7005290948395433`*^9, 
-   3.7005291006101522`*^9}, {3.70078073539707*^9, 3.700780742521099*^9}, {
-   3.700781111309617*^9, 3.7007811150752974`*^9}, {3.700781457037772*^9, 
-   3.700781494169245*^9}, 3.700781560847602*^9, {3.700782061150652*^9, 
-   3.7007820686041*^9}, {3.7007840054919643`*^9, 3.700784012846957*^9}, {
-   3.700796811395934*^9, 3.700796811728499*^9}, {3.7007974872590427`*^9, 
-   3.700797488422942*^9}, {3.700937709033041*^9, 3.700937716690935*^9}, {
-   3.70094082071556*^9, 3.700940825750019*^9}, {3.700948458905424*^9, 
-   3.700948470364563*^9}, {3.700948789852963*^9, 3.700948802535385*^9}, {
-   3.700951941118091*^9, 3.700951951231913*^9}, {3.700952007445394*^9, 
-   3.7009520078146753`*^9}, {3.700952596471506*^9, 3.700952605517126*^9}, {
-   3.700953681067514*^9, 3.7009536815279293`*^9}, {3.7009745700041513`*^9, 
-   3.700974570805828*^9}, {3.701066991324445*^9, 3.7010669976423073`*^9}, {
-   3.7011240955572977`*^9, 3.7011240961771727`*^9}, {3.701149727548361*^9, 
-   3.701149728471499*^9}, {3.701175972941594*^9, 3.701175985889265*^9}, {
-   3.701177892505191*^9, 3.7011779109966507`*^9}, 3.70117805865664*^9, {
-   3.701183754948044*^9, 3.701183766559903*^9}, {3.701191319065481*^9, 
-   3.7011913304835653`*^9}, {3.701191784922971*^9, 3.701191793462101*^9}, {
-   3.701196721906316*^9, 3.7011967333260117`*^9}, 3.701201187552369*^9, {
-   3.701202076045247*^9, 3.7012020880735817`*^9}, {3.7012645023874397`*^9, 
-   3.70126450328939*^9}, {3.701397422919108*^9, 3.701397425081458*^9}, {
-   3.7014332424285507`*^9, 3.701433244419656*^9}, {3.701444173665155*^9, 
-   3.7014441955938997`*^9}, {3.701555536109982*^9, 3.7015555942957277`*^9}, {
-   3.7015558893855343`*^9, 3.7015558913081207`*^9}, {3.7015693689233837`*^9, 
-   3.701569381839019*^9}, {3.7015695766419697`*^9, 3.701569578477935*^9}, {
-   3.701570796478465*^9, 3.7015708022096033`*^9}, {3.70162644528444*^9, 
-   3.70162645215342*^9}, {3.701638997321453*^9, 3.7016389985487623`*^9}, {
-   3.7016571520343*^9, 3.701657162014299*^9}, {3.701795802618906*^9, 
-   3.701795836230495*^9}, {3.702604650746078*^9, 3.702604657772984*^9}, {
-   3.702608280675802*^9, 3.70260831844114*^9}, {3.7059290511261044`*^9, 
-   3.705929060010597*^9}, {3.7070489606142282`*^9, 3.70704897526585*^9}, 
-   3.7070917418234177`*^9, {3.7070931807294197`*^9, 3.707093198885152*^9}, {
-   3.7080014316877403`*^9, 3.708001451865574*^9}, {3.709558427686329*^9, 
-   3.7095584320689793`*^9}, {3.7121967432038097`*^9, 3.712196757379072*^9}, {
-   3.7122002992231817`*^9, 3.712200307499041*^9}, {3.7128748945444393`*^9, 
-   3.712874895031433*^9}, {3.721061157762271*^9, 3.721061158084944*^9}, {
-   3.721061655951964*^9, 3.721061663598237*^9}, {3.726335566816457*^9, 
-   3.726335567309576*^9}, 3.726335640925552*^9, {3.726336513577394*^9, 
-   3.726336523621969*^9}, 3.728964385111186*^9, {3.731125018517922*^9, 
-   3.731125037240787*^9}},
- CellLabel->"In[82]:=",ExpressionUUID->"a04d0f3e-93c1-4591-b269-f541ff62fa75"],
+ CellLabel->
+  "In[123]:=",ExpressionUUID->"a04d0f3e-93c1-4591-b269-f541ff62fa75"],
 
 Cell[BoxData[
  RowBox[{"\t", 
@@ -6097,8 +6015,7 @@ Cell[BoxData[
    3.700529226008194*^9, {3.700779993875292*^9, 3.700780005521081*^9}, {
    3.700780427213382*^9, 3.7007804316268044`*^9}, {3.700781045630597*^9, 
    3.700781049908457*^9}, {3.700930900033351*^9, 3.70093095333928*^9}},
- CellLabel->
-  "In[83]:=",ExpressionUUID->"9710e1aa-fb5f-45ad-b68e-ba5f493e89a7"]
+ CellLabel->"In[124]:=",ExpressionUUID->"9710e1aa-fb5f-45ad-b68e-ba5f493e89a7"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -6118,7 +6035,8 @@ Cell[BoxData[{
  CellChangeTimes->{{3.730224245584218*^9, 3.730224247006164*^9}, {
   3.7302255606536503`*^9, 3.73022556781525*^9}, {3.730225807000893*^9, 
   3.730225809335243*^9}},
- CellLabel->"In[84]:=",ExpressionUUID->"469a6a61-6502-4900-bdea-fa389cbb7ffb"],
+ CellLabel->
+  "In[125]:=",ExpressionUUID->"469a6a61-6502-4900-bdea-fa389cbb7ffb"],
 
 Cell[BoxData[
  RowBox[{
@@ -6228,10 +6146,10 @@ Cell[BoxData[
              RowBox[{
               RowBox[{"Column", "[", "\n", "\t", "\t", "\t\t\t", 
                RowBox[{
-                RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t", 
+                RowBox[{"{", "\n", "\t\t\t\t\t\t", 
                  RowBox[{
-                 "paletteSpacer", ",", "\n", "\t", "\t", "\t\t\t\t", 
-                  "appFileBrowser", ",", "\n", "\t", "\t", "\t\t\t\t", 
+                 "paletteSpacer", ",", "\n", "\t\t\t\t\t\t", "appFileBrowser",
+                   ",", "\n", "\t\t\t\t\t\t", 
                   RowBox[{"paletteButton", "[", 
                    RowBox[{
                    "\"\<New App\>\"", ",", "\n", "\t", "\t", "\t\t\t\t\t", 
@@ -6260,7 +6178,7 @@ Cell[BoxData[
           RowBox[{"Alignment", "\[Rule]", 
            RowBox[{"{", 
             RowBox[{
-             RowBox[{"{", "Left", "}"}], ",", 
+             RowBox[{"{", "Left", "}"}], ",", " ", 
              RowBox[{"{", 
               RowBox[{"Top", ",", "Bottom"}], "}"}]}], "}"}]}]}], "\n", "\t", 
          "\t", "\t", "]"}], ",", "\n", "\t", "\t", "\t", 
@@ -6269,14 +6187,8 @@ Cell[BoxData[
           RowBox[{"Automatic", ",", 
            RowBox[{"Scaled", "[", "1", "]"}]}], "}"}]}]}], "\n", "\t\t\t", 
        "]"}]}]}]}], "\n", "\t\t", "]"}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.730224131533839*^9, 3.730224236229413*^9}, {
-   3.730224390425557*^9, 3.730224401245391*^9}, {3.730224616498605*^9, 
-   3.730224616968108*^9}, {3.73022553547546*^9, 3.730225575667198*^9}, 
-   3.73022568019971*^9, {3.730226822665637*^9, 3.730226836432652*^9}, {
-   3.7318627062493267`*^9, 3.7318627141056356`*^9}, {3.731862898671525*^9, 
-   3.731862958031448*^9}, {3.7318630060413322`*^9, 3.731863048403324*^9}, {
-   3.731863080556078*^9, 3.731863081978621*^9}},
- CellLabel->"In[86]:=",ExpressionUUID->"c72cfc59-e982-4955-ad7d-6231c1c723c4"],
+ CellLabel->
+  "In[127]:=",ExpressionUUID->"c72cfc59-e982-4955-ad7d-6231c1c723c4"],
 
 Cell[BoxData[
  RowBox[{
@@ -6330,8 +6242,13 @@ Cell[BoxData[
           RowBox[{"DownValues", "[", "inputDialog", "]"}]}], ",", "\n", 
          "\t\t\t", 
          RowBox[{"gitRepoQDVs", "=", 
-          RowBox[{"DownValues", "[", "gitRepoQ", "]"}]}]}], "\n", "\t\t\t", 
-        "}"}], ",", "\n", "\t\t", 
+          RowBox[{"DownValues", "[", "gitRepoQ", "]"}]}], ",", "\n", "\t\t\t", 
+         RowBox[{"fileNamesGatherDVs", "=", 
+          RowBox[{"DownValues", "[", "fileNamesGather", "]"}]}], ",", "\n", 
+         "\t\t\t", 
+         RowBox[{"formatFilePathsDVs", "=", 
+          RowBox[{"DownValues", "[", "formatFilePaths", "]"}]}]}], "\n", 
+        "\t\t\t", "}"}], ",", "\n", "\t\t", 
        RowBox[{"DynamicWrapper", "[", "\n", "\t\t\t", 
         RowBox[{"main", ",", "\n", "\t\t\t", 
          RowBox[{"CompoundExpression", "[", "\n", "\t\t\t\t", 
@@ -6450,6 +6367,12 @@ Cell[BoxData[
            RowBox[{
             RowBox[{"DownValues", "[", "gitRepoQ", "]"}], "=", "\n", 
             "\t\t\t\t\t", "gitRepoQDVs"}], ",", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"DownValues", "[", "fileNamesGather", "]"}], "=", "\n", 
+            "\t\t\t\t\t", "fileNamesGatherDVs"}], ",", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"DownValues", "[", "formatFilePaths", "]"}], "=", "\n", 
+            "\t\t\t\t\t", "formatFilePathsDVs"}], ",", "\n", "\t\t\t\t", 
            RowBox[{"If", "[", 
             RowBox[{
              RowBox[{"!", 
@@ -6463,84 +6386,7 @@ Cell[BoxData[
            RowBox[{"refreshApps", "[", "]"}]}], "\n", "\t\t\t\t", "]"}]}], 
         "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], "\n", "\t\t", "]"}]}],
    ";"}]], "CodeInput",
- CellChangeTimes->{{3.6866658565713*^9, 3.686666230090374*^9}, {
-   3.6866662843270283`*^9, 3.686666708608439*^9}, {3.686666860366229*^9, 
-   3.686666897362671*^9}, {3.6866669456422567`*^9, 3.686666976917091*^9}, {
-   3.6866670320298643`*^9, 3.68666704450677*^9}, {3.6866670900620317`*^9, 
-   3.686667312287689*^9}, {3.686668361964838*^9, 3.686668379804222*^9}, {
-   3.686668531096282*^9, 3.686668661834544*^9}, {3.6866686918708878`*^9, 
-   3.686668752287323*^9}, {3.686668812427894*^9, 3.686669133692913*^9}, {
-   3.686670093628582*^9, 3.68667020006082*^9}, {3.686670233930834*^9, 
-   3.686670285441992*^9}, {3.686670319393962*^9, 3.6866703373400097`*^9}, {
-   3.686670381476098*^9, 3.686670412802319*^9}, {3.6866704512175694`*^9, 
-   3.68667054281531*^9}, {3.686670579654827*^9, 3.6866706293318777`*^9}, {
-   3.68667069618439*^9, 3.686670820800705*^9}, {3.686671086858493*^9, 
-   3.686671124656726*^9}, {3.6866719193019733`*^9, 3.686671922069762*^9}, {
-   3.686671955697404*^9, 3.686671959815279*^9}, {3.6866719941794767`*^9, 
-   3.686672015003488*^9}, {3.686672762721985*^9, 3.686672785075831*^9}, {
-   3.6866728263767767`*^9, 3.686672859288535*^9}, {3.6866729747904367`*^9, 
-   3.686673057228726*^9}, 3.686673169336504*^9, {3.686673296120431*^9, 
-   3.6866733595005627`*^9}, {3.686674037457156*^9, 3.68667405105399*^9}, {
-   3.686674090700632*^9, 3.686674103156412*^9}, {3.686674162405921*^9, 
-   3.686674210128455*^9}, {3.687212942531571*^9, 3.687212971485302*^9}, 
-   3.6872130442937307`*^9, {3.687214767862287*^9, 3.687214838644068*^9}, {
-   3.6873013212256002`*^9, 3.687301326051847*^9}, {3.6886605568502417`*^9, 
-   3.68866060119528*^9}, {3.68920834540851*^9, 3.68920834926724*^9}, 
-   3.6892084228309593`*^9, {3.692132471054103*^9, 3.69213247240455*^9}, {
-   3.697161325279274*^9, 3.697161329505673*^9}, {3.6971650133390408`*^9, 
-   3.697165051475947*^9}, {3.6971651039351063`*^9, 3.697165114329521*^9}, {
-   3.697376890804738*^9, 3.697376914498364*^9}, {3.697377027795611*^9, 
-   3.697377068023012*^9}, {3.697377100751192*^9, 3.697377120421554*^9}, {
-   3.697377181135147*^9, 3.6973771895631638`*^9}, {3.697377256875628*^9, 
-   3.697377265105241*^9}, {3.697377370848751*^9, 3.69737746907565*^9}, {
-   3.697377512540875*^9, 3.6973775633568068`*^9}, {3.6998922672726927`*^9, 
-   3.699892276973596*^9}, {3.699910993582492*^9, 3.699911052882008*^9}, {
-   3.699945785789607*^9, 3.6999457862672787`*^9}, {3.700325406653961*^9, 
-   3.7003254283884907`*^9}, {3.7003649800540943`*^9, 3.70036499617168*^9}, {
-   3.700528938145049*^9, 3.7005289391482363`*^9}, {3.700529027427113*^9, 
-   3.700529065648416*^9}, {3.700529114370572*^9, 3.7005291280301847`*^9}, {
-   3.700529203502536*^9, 3.7005292481416693`*^9}, {3.7007802156571207`*^9, 
-   3.700780298146533*^9}, {3.700780334751843*^9, 3.700780392987212*^9}, {
-   3.7007804477977037`*^9, 3.700780451283347*^9}, {3.700780485674428*^9, 
-   3.700780562015875*^9}, {3.700781150737135*^9, 3.7007811994105387`*^9}, {
-   3.7007812884450617`*^9, 3.7007812972356663`*^9}, {3.7007834315583477`*^9, 
-   3.700783499800654*^9}, {3.700792791452232*^9, 3.700792952802845*^9}, {
-   3.700792995296929*^9, 3.7007930170532627`*^9}, {3.7007937292777443`*^9, 
-   3.700793737946303*^9}, {3.700793821188972*^9, 3.700793823832143*^9}, {
-   3.700794719519372*^9, 3.700794883231201*^9}, {3.700794917715577*^9, 
-   3.700794917873752*^9}, {3.700794955523727*^9, 3.700794980867898*^9}, {
-   3.700795184916493*^9, 3.7007952665681067`*^9}, {3.700795895370576*^9, 
-   3.7007959435308743`*^9}, {3.700796824149515*^9, 3.700796844157143*^9}, 
-   3.700797004340077*^9, {3.700799157454069*^9, 3.7007993074447613`*^9}, {
-   3.7007993375297832`*^9, 3.7007994434506702`*^9}, {3.700799473833288*^9, 
-   3.700799600422876*^9}, {3.700799638899909*^9, 3.7007996617661448`*^9}, {
-   3.7007997037685223`*^9, 3.700799749412383*^9}, {3.700830120724607*^9, 
-   3.700830132935397*^9}, {3.700970670206168*^9, 3.70097069911381*^9}, {
-   3.700970756542145*^9, 3.700970757748044*^9}, 3.7009708057969217`*^9, {
-   3.7012647763303413`*^9, 3.701264776479044*^9}, {3.70126481618406*^9, 
-   3.701264816477721*^9}, {3.701264877364723*^9, 3.701264950147718*^9}, {
-   3.7012650012946033`*^9, 3.7012650386767883`*^9}, {3.702082062525502*^9, 
-   3.702082062530835*^9}, {3.704473410372175*^9, 3.704473496592544*^9}, 
-   3.704473585922257*^9, {3.706032240814661*^9, 3.706032273716577*^9}, 
-   3.720663629403285*^9, {3.720663804432054*^9, 3.72066392244207*^9}, {
-   3.7210039922339573`*^9, 3.7210039927377977`*^9}, {3.72101345368388*^9, 
-   3.721013455321784*^9}, {3.721020327881179*^9, 3.721020337055875*^9}, {
-   3.721020658796103*^9, 3.721020660743984*^9}, {3.721049182304411*^9, 
-   3.72104918411194*^9}, 3.7210492648713493`*^9, {3.721050353886867*^9, 
-   3.721050364689012*^9}, {3.721939647425098*^9, 3.721939648975906*^9}, 
-   3.7302241286927557`*^9, {3.73022425633393*^9, 3.730224278468204*^9}, {
-   3.730224337864294*^9, 3.730224344295665*^9}, {3.730224385065711*^9, 
-   3.730224462388873*^9}, {3.73022450107196*^9, 3.730224502204954*^9}, 
-   3.730224624043048*^9, {3.730224683228341*^9, 3.730224712506279*^9}, {
-   3.730224765545289*^9, 3.7302248905462303`*^9}, 3.730225055894494*^9, {
-   3.730225586158266*^9, 3.730225598762138*^9}, {3.7302256724684668`*^9, 
-   3.730225673411868*^9}, {3.73022573529593*^9, 3.730225761306035*^9}, {
-   3.7302258246163177`*^9, 3.730225838503271*^9}, {3.730259443127668*^9, 
-   3.730259462745709*^9}, {3.7311256985250587`*^9, 3.73112572024818*^9}, {
-   3.731126757996347*^9, 3.7311267741654778`*^9}, {3.731862068794066*^9, 
-   3.731862090600603*^9}},
- CellLabel->
-  "In[87]:=",ExpressionUUID->"491fcd63-9085-40df-860f-5b10d828e4b7"]
+ CellLabel->"In[128]:=",ExpressionUUID->"491fcd63-9085-40df-860f-5b10d828e4b7"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -6599,21 +6445,22 @@ Cell[BoxData[
             RowBox[{
             "\"\<BTools\>\"", ",", "\"\<Palettes\>\"", ",", "\"\<BTools\>\"", 
              ",", "\"\<AppManager.nb\>\""}], "]"}]}], "]"}], ";"}]}], "\n", 
-       "\t\t\t", "]"}], ";"}]}], "\n", "\t\t", "]"}]}], 
-  ";"}]], "CodeInput",ExpressionUUID->"931b56de-2b5d-447a-82f6-8a139ce8c87e"],
+       "\t\t\t", "]"}], ";"}]}], "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
+ CellLabel->
+  "In[129]:=",ExpressionUUID->"931b56de-2b5d-447a-82f6-8a139ce8c87e"],
 
 Cell[BoxData[
  RowBox[{"GeneratePalette", "[", "]"}]], "CodeInput",
  CellChangeTimes->{{3.686674300372908*^9, 3.686674311584058*^9}, 
    3.6872129773556633`*^9, 3.6872153772269497`*^9, 3.700790278352828*^9},
- CellLabel->"In[89]:=",ExpressionUUID->"a995df3d-083e-4093-b81a-7c7ff41c8ac6"],
+ CellLabel->
+  "In[130]:=",ExpressionUUID->"a995df3d-083e-4093-b81a-7c7ff41c8ac6"],
 
 Cell[BoxData[
  RowBox[{
   RowBox[{"$ContextPath", "=", "$contextPath"}], ";"}]], "CodeInput",
  CellChangeTimes->{{3.7007836028407793`*^9, 3.7007836060789747`*^9}},
- CellLabel->
-  "In[90]:=",ExpressionUUID->"75215a88-6066-4c5f-809d-300ab412bbbb"]
+ CellLabel->"In[106]:=",ExpressionUUID->"75215a88-6066-4c5f-809d-300ab412bbbb"]
 }, Open  ]]
 }, Open  ]],
 
@@ -6640,8 +6487,7 @@ Cell[BoxData[
    3.6866733595005627`*^9}, {3.686674037457156*^9, 3.68667405105399*^9}, {
    3.686674090700632*^9, 3.686674103156412*^9}, {3.686674162405921*^9, 
    3.686674210128455*^9}, {3.687212942531571*^9, 3.6872129733097763`*^9}},
- CellLabel->
-  "In[91]:=",ExpressionUUID->"2c004422-420f-4f16-a153-b5d0fd5510ba"]
+ CellLabel->"In[107]:=",ExpressionUUID->"2c004422-420f-4f16-a153-b5d0fd5510ba"]
 }, Open  ]],
 
 Cell["", "SectionSeparator",ExpressionUUID->"62675c9c-ff56-4c92-9d30-\
