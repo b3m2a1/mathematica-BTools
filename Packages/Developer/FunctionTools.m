@@ -1419,7 +1419,7 @@ generateDetails[sym_Symbol]:=
         Nothing
         ],
       If[Length@ops>0,
-        Join[
+        Sequence@@{
           {sname, $@"has", "the following", $@"ops"},
           Map[
             {
@@ -1430,21 +1430,21 @@ generateDetails[sym_Symbol]:=
               }&,
             ops
             ]
-          ],
+          },
         Nothing
         ],
       If[Length@conts>0,
-        Join[
+        Sequence@@{
           {sname, "can take", $@"ops", "from the following"},
           Map[
             {ToString[#, InputForm]}&,
             ops
             ]
-          ],
+          },
         Nothing
         ],
       If[Length@msgs>0,
-        {
+        Sequence@@{
           {sname, $@"has", "the following", $@"msg"},
           Map[
             {
@@ -1460,7 +1460,7 @@ generateDetails[sym_Symbol]:=
         Nothing
         ],
       If[Length@attrs>0,
-        {
+        Sequence@@{
           {sname, "has the following", $@"attrs"},
           Map[
             {ToString[#, InputForm]}&,

@@ -1714,7 +1714,6 @@ Options[NotebookToMarkdown]=
     "UseImageInput"->False,
     "PacletLinkResolutionFunction"->Automatic,
     "ImageExportPathFunction"->Automatic,
-    "CellStyleExporters"->Automatic,
     "CodeIndentation"->Automatic,
     "ContentPathExtension"->Automatic
     };
@@ -1740,8 +1739,8 @@ NotebookToMarkdown[
       },
   With[
     {
-      dir=OptionValue["Directory"],
-      path=OptionValue["Path"],
+      dir=Replace[OptionValue["Directory"], Automatic:>$TemporaryDirectory],
+      path=Replace[OptionValue["Path"], Automatic:>""],
       name=Replace[Except[_String]->"Markdown"]@OptionValue["Name"],
       cext=Replace[Except[_String]->None]@OptionValue["ContentExtension"],
       meta=Replace[Except[_Association?AssociationQ]-><||>]@OptionValue["Metadata"],
@@ -1749,7 +1748,6 @@ NotebookToMarkdown[
       nbo=OptionValue["NotebookObject"],
       cells=OptionValue["CellObjects"],
       ps=OptionValue["UseHTMLFormatting"],
-      exporters=OptionValue["CellStyleExporters"],
       prf=Replace[
         OptionValue["PacletLinkResolutionFunction"], 
         Automatic->notebookToMarkdownResolvePacletURL
@@ -1795,7 +1793,8 @@ NotebookToMarkdown[
       With[
         {
           fn=
-            Replace[Lookup[cstyles, #[[2]], Automatic],
+            Replace[
+              Lookup[cstyles, If[Length@#>1, #[[2]], Automatic], Automatic],
               Automatic:>Lookup[cstyles, Automatic, iNotebookToMarkdown]
               ],
           opp=
@@ -3899,6 +3898,26 @@ iNotebookToMarkdownRegister[
     ];
 
 
+(* ::Subsubsubsubsection::Closed:: *)
+(*Hyperlink*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  TemplateBox[d_, "HyperlinkURL", ___]
+  ]:=
+  iNotebookToMarkdown[
+    pathInfo,
+    ButtonBox[
+      ToExpression[#],
+      BaseStyle->"Hyperlink",
+      ButtonData->{URL[#2],None},
+      ButtonNote->#2
+      ]&@@d
+    ];
+
+
 (* ::Subsubsubsection::Closed:: *)
 (*Paclet Links*)
 
@@ -4301,7 +4320,7 @@ iNotebookToMarkdownRegister[pathInfo_,
   iNotebookToMarkdown[pathInfo,
     Replace[
       setting/.a,
-      setting->a[[1,2]]
+      setting->Lookup[a[[1]], False, a[[1,2]]]
       ]
     ]
 
@@ -4346,10 +4365,22 @@ iNotebookToMarkdownRegister[pathInfo_,
 iNotebookToMarkdownRegister[pathInfo_, 
   TemplateBox[a_, s_, ___]
   ]:=
-  iNotebookToMarkdown[pathInfo,
-    CurrentValue[pathInfo["Notebook"], 
-      {StyleDefinitions, s, "TemplateBoxOptionsDisplayFunction"}
-      ]@@a
+  With[
+    {
+      df=
+        CurrentValue[
+          Replace[pathInfo["Notebook"], 
+            Except[_NotebookObject]:>
+              Notebooks[][[1]]
+            ],
+          {StyleDefinitions, s, "TemplateBoxOptionsDisplayFunction"}
+          ]
+      },
+    iNotebookToMarkdown[pathInfo,
+      Replace[df@@a,
+        _df:>RowBox@a
+        ]
+      ]
     ]
 
 

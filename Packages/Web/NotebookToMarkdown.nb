@@ -4022,8 +4022,6 @@ Cell[BoxData[{
       ",", "\n", "\t\t", 
      RowBox[{"\"\<ImageExportPathFunction\>\"", "\[Rule]", "Automatic"}], ",",
       "\n", "\t\t", 
-     RowBox[{"\"\<CellStyleExporters\>\"", "\[Rule]", "Automatic"}], ",", 
-     "\n", "\t\t", 
      RowBox[{"\"\<CodeIndentation\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
      "\t\t", 
      RowBox[{"\"\<ContentPathExtension\>\"", "\[Rule]", "Automatic"}]}], "\n",
@@ -4066,11 +4064,17 @@ Cell[BoxData[{
         RowBox[{"{", "\n", "\t\t\t", 
          RowBox[{
           RowBox[{"dir", "=", 
-           RowBox[{"OptionValue", "[", "\"\<Directory\>\"", "]"}]}], ",", 
-          "\n", "\t\t\t", 
+           RowBox[{"Replace", "[", 
+            RowBox[{
+             RowBox[{"OptionValue", "[", "\"\<Directory\>\"", "]"}], ",", " ", 
+             RowBox[{"Automatic", "\[RuleDelayed]", "$TemporaryDirectory"}]}],
+             "]"}]}], ",", "\n", "\t\t\t", 
           RowBox[{"path", "=", 
-           RowBox[{"OptionValue", "[", "\"\<Path\>\"", "]"}]}], ",", "\n", 
-          "\t\t\t", 
+           RowBox[{"Replace", "[", 
+            RowBox[{
+             RowBox[{"OptionValue", "[", "\"\<Path\>\"", "]"}], ",", " ", 
+             RowBox[{"Automatic", "\[RuleDelayed]", "\"\<\>\""}]}], "]"}]}], 
+          ",", "\n", "\t\t\t", 
           RowBox[{"name", "=", 
            RowBox[{
             RowBox[{"Replace", "[", 
@@ -4112,9 +4116,6 @@ Cell[BoxData[{
           "\n", "\t\t\t", 
           RowBox[{"ps", "=", 
            RowBox[{"OptionValue", "[", "\"\<UseHTMLFormatting\>\"", "]"}]}], 
-          ",", "\n", "\t\t\t", 
-          RowBox[{"exporters", "=", 
-           RowBox[{"OptionValue", "[", "\"\<CellStyleExporters\>\"", "]"}]}], 
           ",", "\n", "\t\t\t", 
           RowBox[{"prf", "=", 
            RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
@@ -4212,13 +4213,18 @@ Cell[BoxData[{
               RowBox[{"{", "\n", "\t\t\t\t\t", 
                RowBox[{
                 RowBox[{"fn", "=", "\n", "\t\t\t\t\t\t", 
-                 RowBox[{"Replace", "[", 
+                 RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t\t", 
                   RowBox[{
                    RowBox[{"Lookup", "[", 
                     RowBox[{"cstyles", ",", " ", 
+                    RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", "#"}], ">", "1"}], ",", " ", 
                     RowBox[{"#", "[", 
                     RowBox[{"[", "2", "]"}], "]"}], ",", " ", "Automatic"}], 
-                    "]"}], ",", "\n", "\t\t\t\t\t\t\t", 
+                    "]"}], ",", " ", "Automatic"}], "]"}], ",", "\n", 
+                   "\t\t\t\t\t\t\t", 
                    RowBox[{"Automatic", ":>", 
                     RowBox[{"Lookup", "[", 
                     RowBox[{
@@ -8004,7 +8010,7 @@ Cell[BoxData[
     RowBox[{"pathInfo", ",", "\n", "\t\t", "g"}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"ff099e28-4611-47b4-8e71-61901970ca62"]
 }, Open  ]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -8541,7 +8547,39 @@ Cell[BoxData[
    3.72357084150315*^9, 3.723570850258906*^9}, {3.731361445916453*^9, 
    3.731361527511653*^9}, {3.731361559428236*^9, 
    3.7313615627705*^9}},ExpressionUUID->"6c1d1421-6f5e-4a9b-b726-2fc8a0e4c167"]
-}, Closed]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Hyperlink\[RightFloor]", "CodeSubsubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"970da91f-f6ed-4faf-adca-5416ba659719"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"iNotebookToMarkdownRegister", "[", "\n", "\t", 
+    RowBox[{"pathInfo_", ",", "\n", "\t", 
+     RowBox[{"TemplateBox", "[", 
+      RowBox[{"d_", ",", " ", "\"\<HyperlinkURL\>\"", ",", " ", "___"}], 
+      "]"}]}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+   RowBox[{"iNotebookToMarkdown", "[", "\n", "\t\t", 
+    RowBox[{"pathInfo", ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"ButtonBox", "[", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"ToExpression", "[", "#", "]"}], ",", "\n", "\t\t\t", 
+         RowBox[{"BaseStyle", "\[Rule]", "\"\<Hyperlink\>\""}], ",", "\n", 
+         "\t\t\t", 
+         RowBox[{"ButtonData", "\[Rule]", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"URL", "[", "#2", "]"}], ",", "None"}], "}"}]}], ",", 
+         "\n", "\t\t\t", 
+         RowBox[{"ButtonNote", "\[Rule]", "#2"}]}], "\n", "\t\t\t", "]"}], 
+       "&"}], "@@", "d"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"d1aa37ec-9fda-4cf3-bfa1-21e0a30c0380"]
+}, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -8783,7 +8821,7 @@ Cell[BoxData[
         "\"\<[\>\"", "<>", "t", "<>", "\"\<](\>\"", "<>", "url", "<>", 
          "\"\<)\>\""}]}], "\n", "\t\t\t", "]"}]}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"447d011b-17af-4ced-8f80-d07246f9af8f"]
-}, Open  ]]
+}, Closed]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -9407,15 +9445,16 @@ Cell[BoxData[
      RowBox[{
       RowBox[{"setting", "/.", "a"}], ",", "\n", "\t\t\t", 
       RowBox[{"setting", "\[Rule]", 
-       RowBox[{"a", "[", 
-        RowBox[{"[", 
-         RowBox[{"1", ",", "2"}], "]"}], "]"}]}]}], "\n", "\t\t\t", "]"}]}], 
-   "\n", "\t\t", "]"}]}]], "CodeInput",
- CellChangeTimes->{{3.723570347733181*^9, 3.723570431348855*^9}, {
-  3.723570483142658*^9, 3.723570491539453*^9}, {3.723570607613659*^9, 
-  3.723570626379199*^9}, {3.723570659332905*^9, 
-  3.7235706767088623`*^9}},ExpressionUUID->"30c6550d-3e53-4fa2-8387-\
-2d06886e3989"]
+       RowBox[{"Lookup", "[", 
+        RowBox[{
+         RowBox[{"a", "[", 
+          RowBox[{"[", "1", "]"}], "]"}], ",", " ", "False", ",", " ", 
+         RowBox[{"a", "[", 
+          RowBox[{"[", 
+           RowBox[{"1", ",", "2"}], "]"}], "]"}]}], "]"}]}]}], "\n", "\t\t\t",
+      "]"}]}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"30c6550d-3e53-4fa2-8387-2d06886e3989"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -9511,22 +9550,39 @@ Cell[BoxData[{
     RowBox[{"TemplateBox", "[", 
      RowBox[{"a_", ",", " ", "s_", ",", " ", "___"}], "]"}]}], "\n", "\t", 
    "]"}], ":=", "\n", "\t", 
-  RowBox[{"iNotebookToMarkdown", "[", 
-   RowBox[{"pathInfo", ",", "\n", "\t\t", 
-    RowBox[{
-     RowBox[{"CurrentValue", "[", 
-      RowBox[{
-       RowBox[{"pathInfo", "[", "\"\<Notebook\>\"", "]"}], ",", " ", "\n", 
-       "\t\t\t", 
-       RowBox[{"{", 
-        RowBox[{
-        "StyleDefinitions", ",", " ", "s", ",", " ", 
-         "\"\<TemplateBoxOptionsDisplayFunction\>\""}], "}"}]}], "\n", 
-      "\t\t\t", "]"}], "@@", "a"}]}], "\n", "\t\t", "]"}]}]}], "CodeInput",
- CellChangeTimes->{{3.723570347733181*^9, 3.723570431348855*^9}, {
-  3.723570483142658*^9, 3.723570491539453*^9}, {3.723595727343039*^9, 
-  3.723595727706192*^9}},ExpressionUUID->"8820a2d1-8fb5-45a4-8626-\
-cb625cedc930"]
+  RowBox[{"With", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{"df", "=", "\n", "\t\t\t\t", 
+      RowBox[{"CurrentValue", "[", "\n", "\t\t\t\t\t", 
+       RowBox[{
+        RowBox[{"Replace", "[", 
+         RowBox[{
+          RowBox[{"pathInfo", "[", "\"\<Notebook\>\"", "]"}], ",", " ", "\n", 
+          "\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Except", "[", "_NotebookObject", "]"}], ":>", "\n", 
+           "\t\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"Notebooks", "[", "]"}], "[", 
+            RowBox[{"[", "1", "]"}], "]"}]}]}], "\n", "\t\t\t\t\t\t", "]"}], 
+        ",", "\n", "\t\t\t\t\t", 
+        RowBox[{"{", 
+         RowBox[{
+         "StyleDefinitions", ",", " ", "s", ",", " ", 
+          "\"\<TemplateBoxOptionsDisplayFunction\>\""}], "}"}]}], "\n", "\t", 
+       "\t", "\t\t\t", "]"}]}], "\n", "\t", "\t\t", "}"}], ",", "\n", "\t\t", 
+    
+    RowBox[{"iNotebookToMarkdown", "[", 
+     RowBox[{"pathInfo", ",", "\n", "\t", "\t\t", 
+      RowBox[{"Replace", "[", 
+       RowBox[{
+        RowBox[{"df", "@@", "a"}], ",", "\n", "\t", "\t\t\t", 
+        RowBox[{"_df", "\[RuleDelayed]", 
+         RowBox[{"RowBox", "@", "a"}]}]}], "\n", "\t\t\t\t", "]"}]}], "\n", 
+     "\t\t\t", "]"}]}], "\n", "\t\t", 
+   "]"}]}]}], \
+"CodeInput",ExpressionUUID->"8820a2d1-8fb5-45a4-8626-cb625cedc930"]
 }, Closed]],
 
 Cell[CellGroupData[{
