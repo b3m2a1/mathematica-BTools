@@ -1,0 +1,1210 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     56808,       1202]
+NotebookOptionsPosition[     48753,       1018]
+NotebookOutlinePosition[     49815,       1046]
+CellTagsIndexPosition[     49772,       1043]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{"Markdown", " ", "metadata"}], " ", "*)"}], "\[IndentingNewLine]", 
+  
+  RowBox[{"<|", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"\"\<Title\>\"", "\[Rule]", "Automatic"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"\"\<Date\>\"", "\[RuleDelayed]", "Now"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"\"\<ExportOptions\>\"", "\[Rule]", 
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{"(*", 
+       RowBox[{"\"\<UseImageInput\>\"", "\[Rule]", "True"}], "*)"}], 
+      "\[IndentingNewLine]", "}"}]}]}], "\[IndentingNewLine]", 
+   "|>"}]}]], "Metadata",
+ CellID->1919306197,ExpressionUUID->"171c38f6-df77-45ed-a8c3-b9afda06436d"],
+
+Cell[CellGroupData[{
+
+Cell["BTools", "Section",
+ CellID->427391392,ExpressionUUID->"ad6a7e67-dc7d-44eb-8175-a3c635777ced"],
+
+Cell["\<\
+BTools is a too-many-use package that implements all the development-oriented \
+things I've thought of. It's divided into subcontexts so that it doesn't \
+flood the namespace with symbols when loaded. The chunks are:\
+\>", "Text",
+ CellID->1981809776,ExpressionUUID->"51a2b9f4-50da-4534-af3e-46819b9b1469"],
+
+Cell[CellGroupData[{
+
+Cell["Paclets", "Item",
+ CellID->375420629,ExpressionUUID->"6d11635f-1383-4844-971d-78bb781dee84"],
+
+Cell["External", "Item",
+ CellID->1405342280,ExpressionUUID->"a61b381c-100f-4aa7-aafb-4509c44b8267"],
+
+Cell["Frameworks", "Item",
+ CellID->1359517504,ExpressionUUID->"f514cdd7-fdea-4621-852e-71e75283d804"],
+
+Cell["FrontEnd", "Item",
+ CellID->1794669807,ExpressionUUID->"d292f083-5deb-46ea-8830-4207d2eeb86c"],
+
+Cell["Web", "Item",
+ CellID->1267172744,ExpressionUUID->"62896f34-f3e7-414d-b721-179a15920ad7"],
+
+Cell["Developer", "Item",
+ CellID->1966959843,ExpressionUUID->"d29f1946-ee77-4c24-a4d1-8a7635624a5d"],
+
+Cell["Utilities", "Item",
+ CellID->2068828904,ExpressionUUID->"345f1d5e-7984-456f-b2b7-ce27329614e4"]
+}, Open  ]],
+
+Cell["\<\
+If you want anything documented let me know and I'll try to whip up some \
+pages.\
+\>", "Text",
+ CellID->682575713,ExpressionUUID->"e98c0d9e-b199-47ac-81fb-e5d7f349bbb0"],
+
+Cell["", "PageBreak",
+ PageBreakAbove->False,
+ PageBreakBelow->False,
+ CellID->805540262,ExpressionUUID->"5404553b-0257-4fad-803a-90c584777531"],
+
+Cell[CellGroupData[{
+
+Cell["Paclets", "Subsubsection",
+ CellID->978272746,ExpressionUUID->"df992e63-5f72-45d2-9c03-c46a36559572"],
+
+Cell[TextData[{
+ "There are too many functions in this context, but the big ones are ",
+ Cell[BoxData["PacletExecute"], "InlineInput",
+  FormatType->"StandardForm",ExpressionUUID->
+  "f94a38e3-60d0-4452-bda8-2ae1e61b36b1"],
+ ", ",
+ Cell[BoxData["AppExecute"], "InlineInput",
+  FormatType->"StandardForm",ExpressionUUID->
+  "ac5a9a65-7e08-4f92-98f3-370585bd2d30"],
+ ", and the ",
+ Cell[BoxData["PacletServer"], "InlineInput",
+  FormatType->"StandardForm",ExpressionUUID->
+  "c0a669e1-b325-4d51-8d70-3f09fa11e602"],
+ "-related ones (",
+ Cell[BoxData["DocGen"], "InlineInput",
+  FormatType->"StandardForm",ExpressionUUID->
+  "b32f5278-5e62-41a0-b7ee-f1272eab256f"],
+ " also does a ton, but it's on life support as I move to supporting more \
+SimpleDocs-style docs)"
+}], "Text",
+ InitializationCell->True,
+ CellID->895474948,ExpressionUUID->"b37161b5-dbd4-4329-b8af-b0d3ed37bc49"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Names", "[", "\"\<BTools`Paclets`*\>\"", "]"}]], "Code",
+ CellLabel->"In[2]:=",
+ CellID->2147359744,ExpressionUUID->"689457e8-4253-4ddc-bee1-8ec96a857f7a"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"\<\"BTools`Paclets`AppDocGen\"\>", 
+   ",", "\<\"BTools`Paclets`AppExecute\"\>", 
+   ",", "\<\"BTools`Paclets`AppGit\"\>", 
+   ",", "\<\"BTools`Paclets`AppPacletExecute\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen\"\>", 
+   ",", "\<\"BTools`Paclets`DocumentationSiteBuild\"\>", 
+   ",", "\<\"BTools`Paclets`DocumentationSiteDeploy\"\>", 
+   ",", "\<\"BTools`Paclets`PacletExecute\"\>", 
+   ",", "\<\"BTools`Paclets`PacletServerAdd\"\>", 
+   ",", "\<\"BTools`Paclets`PacletServerBuild\"\>", 
+   ",", "\<\"BTools`Paclets`PacletServerDeploy\"\>", 
+   ",", "\<\"BTools`Paclets`PacletServerExecute\"\>", 
+   ",", "\<\"BTools`Paclets`PacletServerInterface\"\>", 
+   ",", "\<\"BTools`Paclets`PacletServerRemove\"\>", 
+   ",", "\<\"BTools`Paclets`$DocGenSettings\"\>", 
+   ",", "\<\"BTools`Paclets`$PacletExecuteSettings\"\>", 
+   ",", "\<\"BTools`Paclets`$PacletServer\"\>", 
+   ",", "\<\"BTools`Paclets`$PacletServers\"\>"}], "}"}]], "Output",
+ CellLabel->"Out[2]=",
+ CellID->284859673,ExpressionUUID->"cb9a4356-5fb8-45ac-b348-7d2e36f7db80"]
+}, Open  ]],
+
+Cell["", "PageBreak",
+ PageBreakAbove->False,
+ PageBreakBelow->False,
+ CellID->458775878,ExpressionUUID->"475155b2-7bfe-4a10-bdc3-a3a2a432b858"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["External", "Subsubsection",
+ CellID->1179888816,ExpressionUUID->"7158ded9-eb5b-429c-aeb3-ea86b260b637"],
+
+Cell[TextData[{
+ "The big ones here are ",
+ Cell[BoxData["Git"], "InlineInput",
+  FormatType->"StandardForm",ExpressionUUID->
+  "9ac19e0d-ab35-4c46-9580-0f12e960350a"],
+ ", ",
+ Cell[BoxData["GiitHub"], "InlineInput",
+  FormatType->"StandardForm",ExpressionUUID->
+  "f36a9fa8-546a-4740-a424-e7059358491d"],
+ ", ",
+ Cell[BoxData["GoogleDrive"], "InlineInput",
+  FormatType->"StandardForm",ExpressionUUID->
+  "12a435f3-8655-45f2-9a82-40f144e64aa0"],
+ ", and ",
+ Cell[BoxData["GoogleAnalytics"], "InlineInput",
+  FormatType->"StandardForm",ExpressionUUID->
+  "b91aa92a-da75-4a9c-ac9e-7fba8a698d8c"],
+ " which are all moderately expansive API connections (esp. ",
+ Cell[BoxData["GitHub"], "InlineInput",
+  FormatType->"StandardForm",ExpressionUUID->
+  "667cb408-2a09-46f2-ac15-3286c310f94b"],
+ ")."
+}], "Text",
+ CellID->401030358,ExpressionUUID->"b74e659a-4379-4a92-95fa-a0cee8a280a8"],
+
+Cell[TextData[{
+ "There are also utilities for playing with python, but nothing that ",
+ ButtonBox["PyTools",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://github.com/b3m2a1/mathematica-PyTools"], None},
+  ButtonNote->"https://github.com/b3m2a1/mathematica-PyTools"],
+ " can't do better. I do make use of the ",
+ Cell[BoxData["PySimpleServer"], "InlineInput",
+  FormatType->"StandardForm",ExpressionUUID->
+  "321e0dac-d25a-422a-a565-c08c48f4d2db"],
+ "-stuff in many of the web related functions"
+}], "Text",
+ CellID->960257839,ExpressionUUID->"f16ee121-2a17-446d-a644-e04663a86bfc"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Names", "[", "\"\<BTools`External`*\>\"", "]"}]], "Code",
+ CellLabel->"In[3]:=",
+ CellID->239442829,ExpressionUUID->"db4be4a1-809b-4069-8ab4-13e06b2c0cc8"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"\<\"BTools`External`Git\"\>", 
+   ",", "\<\"BTools`External`GitHub\"\>", 
+   ",", "\<\"BTools`External`GoogleAnalytics\"\>", 
+   ",", "\<\"BTools`External`GoogleAPIData\"\>", 
+   ",", "\<\"BTools`External`GoogleDrive\"\>", 
+   ",", "\<\"BTools`External`ProcessRead\"\>", 
+   ",", "\<\"BTools`External`ProcessRun\"\>", 
+   ",", "\<\"BTools`External`ProcessStart\"\>", 
+   ",", "\<\"BTools`External`PySimpleServerKill\"\>", 
+   ",", "\<\"BTools`External`PySimpleServerOpen\"\>", 
+   ",", "\<\"BTools`External`PySimpleServerRunning\"\>", 
+   ",", "\<\"BTools`External`PySimpleServerStart\"\>", 
+   ",", "\<\"BTools`External`PyVenvKill\"\>", 
+   ",", "\<\"BTools`External`PyVenvNew\"\>", 
+   ",", "\<\"BTools`External`PyVenvRun\"\>", 
+   ",", "\<\"BTools`External`PyVenvStart\"\>", 
+   ",", "\<\"BTools`External`SVN\"\>", 
+   ",", "\<\"BTools`External`TerminalRun\"\>", 
+   ",", "\<\"BTools`External`TerminalRunNonBlocking\"\>", 
+   ",", "\<\"BTools`External`TerminalShell\"\>", 
+   ",", "\<\"BTools`External`$PySimpleServer\"\>", 
+   ",", "\<\"BTools`External`$PyVenv\"\>"}], "}"}]], "Output",
+ CellLabel->"Out[3]=",
+ CellID->149262922,ExpressionUUID->"543147c6-bbed-4c84-bd67-72b3e4eba377"]
+}, Open  ]],
+
+Cell["", "PageBreak",
+ PageBreakAbove->False,
+ PageBreakBelow->False,
+ CellID->1482432434,ExpressionUUID->"9781102f-82fa-4abb-a3b6-6ab48f103442"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Frameworks", "Subsubsection",
+ CellID->136645744,ExpressionUUID->"78fc0307-0155-4565-afe4-6d24c20b6f56"],
+
+Cell["\<\
+There are only two functions here, one for hooking into the ServiceConnection \
+framework and another for working with the DataPaclets framework. Conceivably \
+more might come, but these are hard functions to write and get robust.\
+\>", "Text",
+ CellID->1206442799,ExpressionUUID->"b175fc6a-0590-44d7-8741-59e9cc0ead0b"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Names", "[", "\"\<BTools`Frameworks`*\>\"", "]"}]], "Code",
+ CellLabel->"In[4]:=",
+ CellID->1980788506,ExpressionUUID->"815d89b6-541c-47ea-a170-45d3ac3c68e9"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"\<\"BTools`Frameworks`CuratedDataExport\"\>", 
+   ",", "\<\"BTools`Frameworks`CustomServiceConnection\"\>"}], 
+  "}"}]], "Output",
+ CellLabel->"Out[4]=",
+ CellID->514103240,ExpressionUUID->"3e9573f9-45cb-4526-93da-fb1fd5b9dad0"]
+}, Open  ]],
+
+Cell["", "PageBreak",
+ PageBreakAbove->False,
+ PageBreakBelow->False,
+ CellID->1956872756,ExpressionUUID->"682e8ab7-5c87-4044-ab0e-cd9686164f52"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["FrontEnd", "Subsubsection",
+ CellID->448356287,ExpressionUUID->"cf83a49a-f1d3-4714-ae10-c569c08cbacd"],
+
+Cell[TextData[{
+ "These functions all make it nicer to work with the front end, in particular \
+",
+ Cell[BoxData["StyleSheetNew"], "InlineInput",
+  FormatType->"StandardForm",ExpressionUUID->
+  "0e62f6f0-7a90-4d0d-811d-6cafae815a59"],
+ " and ",
+ Cell[BoxData["StyleSheetEdit"], "InlineInput",
+  FormatType->"StandardForm",ExpressionUUID->
+  "97e11ad3-6e45-4e4c-9a7e-04f819fb3c88"],
+ " which make working with stylesheets much, much cleaner. All the ",
+ Cell[BoxData["Indentation"], "InlineInput",
+  FormatType->"StandardForm",ExpressionUUID->
+  "60e06e30-af6c-46d8-8e1e-4275b4cad397"],
+ " stuff is what allows batch indent and indentation replacement in my \
+package stylesheets."
+}], "Text",
+ CellID->3998286,ExpressionUUID->"2135d8f5-25bf-445c-860e-0996af0fcd26"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Names", "[", "\"\<BTools`FrontEnd`*\>\"", "]"}]], "Code",
+ CellLabel->"In[5]:=",
+ CellID->1355751622,ExpressionUUID->"d72629e7-d515-480d-83b1-f29ea5809854"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"\<\"BTools`FrontEnd`BatchIndentationEvent\"\>", 
+   ",", "\<\"BTools`FrontEnd`IndentationEvent\"\>", 
+   ",", "\<\"BTools`FrontEnd`MakeIndentable\"\>", 
+   ",", "\<\"BTools`FrontEnd`StyleDefinitionsValue\"\>", 
+   ",", "\<\"BTools`FrontEnd`StyleSheetApplyEdits\"\>", 
+   ",", "\<\"BTools`FrontEnd`StyleSheetCells\"\>", 
+   ",", "\<\"BTools`FrontEnd`StyleSheetDefaultStyles\"\>", 
+   ",", "\<\"BTools`FrontEnd`StyleSheetDelete\"\>", 
+   ",", "\<\"BTools`FrontEnd`StyleSheetDrop\"\>", 
+   ",", "\<\"BTools`FrontEnd`StyleSheetEdit\"\>", 
+   ",", "\<\"BTools`FrontEnd`StyleSheetEditAliases\"\>", 
+   ",", "\<\"BTools`FrontEnd`StyleSheetEditAutoReplacements\"\>", 
+   ",", "\<\"BTools`FrontEnd`StyleSheetEditEvents\"\>", 
+   ",", "\<\"BTools`FrontEnd`StyleSheetEditTaggingRules\"\>", 
+   ",", "\<\"BTools`FrontEnd`StyleSheetNew\"\>", 
+   ",", "\<\"BTools`FrontEnd`StyleSheetNotebookGet\"\>", 
+   ",", "\<\"BTools`FrontEnd`StyleSheetNotebookObject\"\>", 
+   ",", "\<\"BTools`FrontEnd`StyleSheetOpen\"\>", 
+   ",", "\<\"BTools`FrontEnd`StyleSheetParentNotebook\"\>", 
+   ",", "\<\"BTools`FrontEnd`StyleSheetStyles\"\>", 
+   ",", "\<\"BTools`FrontEnd`StyleSheetSync\"\>", 
+   ",", "\<\"BTools`FrontEnd`StyleSheetTemplate\"\>", 
+   ",", "\<\"BTools`FrontEnd`StyleSheetUpdate\"\>", 
+   ",", "\<\"BTools`FrontEnd`StyleSheetValue\"\>", 
+   ",", "\<\"BTools`FrontEnd`SyntaxHiglightingApplyStyling\"\>", 
+   ",", "\<\"BTools`FrontEnd`SyntaxHiglightingClearStyling\"\>", 
+   ",", "\<\"BTools`FrontEnd`SyntaxHiglightingStylesheet\"\>", 
+   ",", "\<\"BTools`FrontEnd`$DefaultStyleSheetNotebook\"\>", 
+   ",", "\<\"BTools`FrontEnd`$StyleSheetCellDisplayStyleOptions\"\>", 
+   ",", "\<\"BTools`FrontEnd`$StyleSheetIOCellStyles\"\>", 
+   ",", "\<\"BTools`FrontEnd`$StyleSheetSectionCellStyles\"\>", 
+   ",", "\<\"BTools`FrontEnd`$StyleSheetTextCellStyles\"\>", 
+   ",", "\<\"BTools`FrontEnd`$StyleSheetTitleCellStyles\"\>", 
+   ",", "\<\"BTools`FrontEnd`$SyntaxHighlightingStyles\"\>", 
+   ",", "\<\"BTools`FrontEnd`$SyntaxHiglightingCommands\"\>", 
+   ",", "\<\"BTools`FrontEnd`$SyntaxHiglightingConstants\"\>", 
+   ",", "\<\"BTools`FrontEnd`$SyntaxHiglightingContextStyling\"\>", 
+   ",", "\<\"BTools`FrontEnd`$SyntaxHiglightingFormattingHeads\"\>", 
+   ",", "\<\"BTools`FrontEnd`$SyntaxHiglightingFunctions\"\>", 
+   ",", "\<\"BTools`FrontEnd`$SyntaxHiglightingPunctuation\"\>", 
+   ",", "\<\"BTools`FrontEnd`$SyntaxHiglightingTypes\"\>"}], "}"}]], "Output",\
+
+ CellLabel->"Out[5]=",
+ CellID->338763179,ExpressionUUID->"bf9549f6-92be-460d-a2de-a990e6f4798a"]
+}, Open  ]],
+
+Cell["", "PageBreak",
+ PageBreakAbove->False,
+ PageBreakBelow->False,
+ CellID->89019975,ExpressionUUID->"293e7f9f-62f9-46c2-83cc-34a55a91764a"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Web", "Subsubsection",
+ CellID->1510101513,ExpressionUUID->"b6fa4927-5a2f-4085-b920-fd4238574160"],
+
+Cell["These functions support site building, mostly.", "Text",
+ CellID->1314388745,ExpressionUUID->"d5d3cf51-1664-439f-afd9-15679d0638c7"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Names", "[", "\"\<BTools`Web`*\>\"", "]"}]], "Code",
+ CellLabel->"In[6]:=",
+ CellID->1914844173,ExpressionUUID->"927adc50-c006-43df-a5fd-d7a8c53a6fb4"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"\<\"BTools`Web`CSSGenerate\"\>", 
+   ",", "\<\"BTools`Web`MarkdownToXML\"\>", 
+   ",", "\<\"BTools`Web`NotebookMarkdownSave\"\>", 
+   ",", "\<\"BTools`Web`NotebookToMarkdown\"\>", 
+   ",", "\<\"BTools`Web`PelicanBuild\"\>", 
+   ",", "\<\"BTools`Web`PelicanDeploy\"\>", 
+   ",", "\<\"BTools`Web`PelicanNewFile\"\>", 
+   ",", "\<\"BTools`Web`PelicanNewSite\"\>", 
+   ",", "\<\"BTools`Web`PelicanNotebookSave\"\>", 
+   ",", "\<\"BTools`Web`PelicanNotebookToMarkdown\"\>", 
+   ",", "\<\"BTools`Web`PelicanThemes\"\>", 
+   ",", "\<\"BTools`Web`WebSiteBuild\"\>", 
+   ",", "\<\"BTools`Web`WebSiteContent\"\>", 
+   ",", "\<\"BTools`Web`WebSiteDeploy\"\>", 
+   ",", "\<\"BTools`Web`WebSiteFindTheme\"\>", 
+   ",", "\<\"BTools`Web`WebSiteInitialize\"\>", 
+   ",", "\<\"BTools`Web`WebSiteNewContent\"\>", 
+   ",", "\<\"BTools`Web`WebSiteNewTableOfContents\"\>", 
+   ",", "\<\"BTools`Web`WebSiteOptions\"\>", 
+   ",", "\<\"BTools`Web`WebSitePages\"\>", 
+   ",", "\<\"BTools`Web`WebSitePosts\"\>", ",", "\<\"BTools`Web`WebSites\"\>",
+    ",", "\<\"BTools`Web`WebSiteSetOptions\"\>", 
+   ",", "\<\"BTools`Web`WebSiteThemes\"\>", 
+   ",", "\<\"BTools`Web`$WebSiteBuildErrors\"\>", 
+   ",", "\<\"BTools`Web`$WebSiteDirectory\"\>", 
+   ",", "\<\"BTools`Web`$WebSitePath\"\>", 
+   ",", "\<\"BTools`Web`$WebSiteThemePath\"\>"}], "}"}]], "Output",
+ CellLabel->"Out[6]=",
+ CellID->313063143,ExpressionUUID->"8f296739-f597-488c-b8e4-241c8c403f9a"]
+}, Open  ]],
+
+Cell["", "PageBreak",
+ PageBreakAbove->False,
+ PageBreakBelow->False,
+ CellID->1853928950,ExpressionUUID->"0508b6db-2a85-4ad3-826c-c0dbabbeb65d"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Developer", "Subsubsection",
+ CellID->1143628327,ExpressionUUID->"e5c84bc0-bc0e-4c8c-96ba-b87c0a4e6c58"],
+
+Cell["\<\
+These functions aren't really useful at top level, but they're very useful \
+inside other code:\
+\>", "Text",
+ CellID->982651239,ExpressionUUID->"ee182218-94c2-46ba-85d6-4323f7da20ce"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Names", "[", "\"\<BTools`Developer`*\>\"", "]"}]], "Code",
+ CellLabel->"In[7]:=",
+ CellID->525392469,ExpressionUUID->"aa06691c-5edc-4130-8753-1229017522fe"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"\<\"BTools`Developer`AddFunctionArgCount\"\>", 
+   ",", "\<\"BTools`Developer`AddFunctionAutocompletions\"\>", 
+   ",", "\<\"BTools`Developer`AddFunctionSyntaxInformation\"\>", 
+   ",", "\<\"BTools`Developer`AddFunctionUsageTemplate\"\>", 
+   ",", "\<\"BTools`Developer`AuthDialog\"\>", 
+   ",", "\<\"BTools`Developer`AutoFunctionInfo\"\>", 
+   ",", "\<\"BTools`Developer`BannerDialog\"\>", 
+   ",", "\<\"BTools`Developer`BannerDialogInput\"\>", 
+   ",", "\<\"BTools`Developer`BoxesToString\"\>", 
+   ",", "\<\"BTools`Developer`BoxQ\"\>", 
+   ",", "\<\"BTools`Developer`ContextRemove\"\>", 
+   ",", "\<\"BTools`Developer`ContextScopeBlock\"\>", 
+   ",", "\<\"BTools`Developer`EncodedCache\"\>", 
+   ",", "\<\"BTools`Developer`EncodedCacheLoad\"\>", 
+   ",", "\<\"BTools`Developer`GenerateFunctionInfo\"\>", 
+   ",", "\<\"BTools`Developer`KeychainAdd\"\>", 
+   ",", "\<\"BTools`Developer`KeychainConnect\"\>", 
+   ",", "\<\"BTools`Developer`KeychainGet\"\>", 
+   ",", "\<\"BTools`Developer`KeychainRemove\"\>", 
+   ",", "\<\"BTools`Developer`Newlineate\"\>", 
+   ",", "\<\"BTools`Developer`NewlineateCode\"\>", 
+   ",", "\<\"BTools`Developer`NewlineateCodeRecursive\"\>", 
+   ",", "\<\"BTools`Developer`NewlineateInput\"\>", 
+   ",", "\<\"BTools`Developer`NewlineateInputRecursive\"\>", 
+   ",", "\<\"BTools`Developer`NewlineateRecursive\"\>", 
+   ",", "\<\"BTools`Developer`OAuthDialog\"\>", 
+   ",", "\<\"BTools`Developer`PasswordDialog\"\>", 
+   ",", "\<\"BTools`Developer`PrettyString\"\>", 
+   ",", "\<\"BTools`Developer`SetArgCount\"\>", 
+   ",", "\<\"BTools`Developer`SetAutocompletions\"\>", 
+   ",", "\<\"BTools`Developer`SymbolDetermineType\"\>", 
+   ",", "\<\"BTools`Developer`SymbolNameMatchQ\"\>", 
+   ",", "\<\"BTools`Developer`SyncPath\"\>", 
+   ",", "\<\"BTools`Developer`$EncodedCache\"\>", 
+   ",", "\<\"BTools`Developer`$EncodedCacheDirectory\"\>", 
+   ",", "\<\"BTools`Developer`$EncodedCachePassword\"\>", 
+   ",", "\<\"BTools`Developer`$EncodedCacheSettings\"\>", 
+   ",", "\<\"BTools`Developer`$Keychain\"\>", 
+   ",", "\<\"BTools`Developer`$KeychainCloudAccounts\"\>", 
+   ",", "\<\"BTools`Developer`$KeychainDirectory\"\>", 
+   ",", "\<\"BTools`Developer`$KeychainPassword\"\>", 
+   ",", "\<\"BTools`Developer`$KeychainSettings\"\>", 
+   ",", "\<\"BTools`Developer`$SymbolNameTypes\"\>", 
+   ",", "\<\"BTools`Developer`$SymbolTypeNames\"\>"}], "}"}]], "Output",
+ CellLabel->"Out[7]=",
+ CellID->343179235,ExpressionUUID->"05b17078-5ece-4cea-acd1-03d4fef3e8af"]
+}, Open  ]],
+
+Cell["", "PageBreak",
+ PageBreakAbove->False,
+ PageBreakBelow->False,
+ CellID->1685001055,ExpressionUUID->"59cf4517-e263-4d0d-9a06-648b2c13b4ee"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Utilities", "Subsubsection",
+ CellID->945878396,ExpressionUUID->"9887c45f-951f-41af-b2a5-308be932cd7e"],
+
+Cell["\<\
+These are actually very useful functions, but are highly unlikely to be used \
+within other code:\
+\>", "Text",
+ CellID->1704246478,ExpressionUUID->"937f518d-d993-4441-a3e2-096767dc52d8"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Names", "[", "\"\<BTools`Utilities`*\>\"", "]"}]], "Code",
+ CellLabel->"In[9]:=",
+ CellID->2137889852,ExpressionUUID->"8f52bad4-8621-4d8b-b2e8-ab505e03f765"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"\<\"BTools`Utilities`CtxFind\"\>", 
+   ",", "\<\"BTools`Utilities`DocFind\"\>", 
+   ",", "\<\"BTools`Utilities`FEAddResource\"\>", 
+   ",", "\<\"BTools`Utilities`FEAttachCell\"\>", 
+   ",", "\<\"BTools`Utilities`FEAttachCellSpec\"\>", 
+   ",", "\<\"BTools`Utilities`FEBoxEdit\"\>", 
+   ",", "\<\"BTools`Utilities`FEBoxGetOptions\"\>", 
+   ",", "\<\"BTools`Utilities`FEBoxObject\"\>", 
+   ",", "\<\"BTools`Utilities`FEBoxRead\"\>", 
+   ",", "\<\"BTools`Utilities`FEBoxRef\"\>", 
+   ",", "\<\"BTools`Utilities`FEBoxReplace\"\>", 
+   ",", "\<\"BTools`Utilities`FEBoxSelect\"\>", 
+   ",", "\<\"BTools`Utilities`FEBoxSetOptions\"\>", 
+   ",", "\<\"BTools`Utilities`FEChildren\"\>", 
+   ",", "\<\"BTools`Utilities`FEClickMouse\"\>", 
+   ",", "\<\"BTools`Utilities`FECopyScreen\"\>", 
+   ",", "\<\"BTools`Utilities`FEDragMouse\"\>", 
+   ",", "\<\"BTools`Utilities`FEExport\"\>", 
+   ",", "\<\"BTools`Utilities`FEFindFileOnPath\"\>", 
+   ",", "\<\"BTools`Utilities`FEFormatResource\"\>", 
+   ",", "\<\"BTools`Utilities`FEHiddenBlock\"\>", 
+   ",", "\<\"BTools`Utilities`FEImport\"\>", 
+   ",", "\<\"BTools`Utilities`FEKeyEventAdd\"\>", 
+   ",", "\<\"BTools`Utilities`FEKeyEventDrop\"\>", 
+   ",", "\<\"BTools`Utilities`FELoadResources\"\>", 
+   ",", "\<\"BTools`Utilities`FEMenuSetupAdd\"\>", 
+   ",", "\<\"BTools`Utilities`FEMenuSetupDrop\"\>", 
+   ",", "\<\"BTools`Utilities`FEMenuSetupGet\"\>", 
+   ",", "\<\"BTools`Utilities`FEMoveMouse\"\>", 
+   ",", "\<\"BTools`Utilities`FENextSibling\"\>", 
+   ",", "\<\"BTools`Utilities`FENotebooks\"\>", 
+   ",", "\<\"BTools`Utilities`FEPacketBrowser\"\>", 
+   ",", "\<\"BTools`Utilities`FEPacketExecute\"\>", 
+   ",", "\<\"BTools`Utilities`FEPackets\"\>", 
+   ",", "\<\"BTools`Utilities`FEParent\"\>", 
+   ",", "\<\"BTools`Utilities`FEPreviousSibling\"\>", 
+   ",", "\<\"BTools`Utilities`FEResetKeyEvents\"\>", 
+   ",", "\<\"BTools`Utilities`FEResetMenuSetup\"\>", 
+   ",", "\<\"BTools`Utilities`FEResourceBrowse\"\>", 
+   ",", "\<\"BTools`Utilities`FEResourceFind\"\>", 
+   ",", "\<\"BTools`Utilities`FEResourceGroup\"\>", 
+   ",", "\<\"BTools`Utilities`FEResourceKeys\"\>", 
+   ",", "\<\"BTools`Utilities`FEScreenPath\"\>", 
+   ",", "\<\"BTools`Utilities`FEScreenPosition\"\>", 
+   ",", "\<\"BTools`Utilities`FEScreenShot\"\>", 
+   ",", "\<\"BTools`Utilities`FESelectCells\"\>", 
+   ",", "\<\"BTools`Utilities`FESetMouseAppearance\"\>", 
+   ",", "\<\"BTools`Utilities`FESetSymbolColoring\"\>", 
+   ",", "\<\"BTools`Utilities`FESiblings\"\>", 
+   ",", "\<\"BTools`Utilities`FEToFileName\"\>", 
+   ",", "\<\"BTools`Utilities`FETokenBrowser\"\>", 
+   ",", "\<\"BTools`Utilities`FETokens\"\>", 
+   ",", "\<\"BTools`Utilities`FEUnicodeCharBrowser\"\>", 
+   ",", "\<\"BTools`Utilities`FEUserBaseFile\"\>", 
+   ",", "\<\"BTools`Utilities`FEValueBrowser\"\>", 
+   ",", "\<\"BTools`Utilities`FEValues\"\>", 
+   ",", "\<\"BTools`Utilities`FEWindowSize\"\>", 
+   ",", "\<\"BTools`Utilities`FileGrep\"\>", 
+   ",", "\<\"BTools`Utilities`FileSystemGrep\"\>", 
+   ",", "\<\"BTools`Utilities`FrontEndBlobIcon\"\>", 
+   ",", "\<\"BTools`Utilities`FrontEndFile\"\>", 
+   ",", "\<\"BTools`Utilities`FrontEndFiles\"\>", 
+   ",", "\<\"BTools`Utilities`FrontEndImage\"\>", 
+   ",", "\<\"BTools`Utilities`FrontEndImageBrowser\"\>", 
+   ",", "\<\"BTools`Utilities`FrontEndImageFiles\"\>", 
+   ",", "\<\"BTools`Utilities`GrepDirectory\"\>", 
+   ",", "\<\"BTools`Utilities`GrepSelect\"\>", 
+   ",", "\<\"BTools`Utilities`InternalDocumentationFiles\"\>", 
+   ",", "\<\"BTools`Utilities`InternalFiles\"\>", 
+   ",", "\<\"BTools`Utilities`InternalSystemFiles\"\>", 
+   ",", "\<\"BTools`Utilities`MsgFind\"\>", 
+   ",", "\<\"BTools`Utilities`OpsFind\"\>", 
+   ",", "\<\"BTools`Utilities`RefreshFETokens\"\>", 
+   ",", "\<\"BTools`Utilities`SpelunkCallsCases\"\>", 
+   ",", "\<\"BTools`Utilities`SpelunkDefinitions\"\>", 
+   ",", "\<\"BTools`Utilities`SpelunkGraph\"\>", 
+   ",", "\<\"BTools`Utilities`SpelunkObject\"\>", 
+   ",", "\<\"BTools`Utilities`SpelunkValues\"\>", 
+   ",", "\<\"BTools`Utilities`SpelunkValuesCases\"\>", 
+   ",", "\<\"BTools`Utilities`SpelunkValuesContains\"\>", 
+   ",", "\<\"BTools`Utilities`SystemArgSearch\"\>", 
+   ",", "\<\"BTools`Utilities`SystemContextSearch\"\>", 
+   ",", "\<\"BTools`Utilities`SystemExpressionsSearch\"\>", 
+   ",", "\<\"BTools`Utilities`SystemFunctionSearch\"\>", 
+   ",", "\<\"BTools`Utilities`SystemHeadSearch\"\>", 
+   ",", "\<\"BTools`Utilities`WithOverrideDefs\"\>", 
+   ",", "\<\"BTools`Utilities`$FEKeyEvents\"\>", 
+   ",", "\<\"BTools`Utilities`$FEKeyEventsDirectory\"\>", 
+   ",", "\<\"BTools`Utilities`$FEMenuSetup\"\>", 
+   ",", "\<\"BTools`Utilities`$FEMenuSetupDirectory\"\>", 
+   ",", "\<\"BTools`Utilities`$FEPacketList\"\>", 
+   ",", "\<\"BTools`Utilities`$FEResourceDirectory\"\>", 
+   ",", "\<\"BTools`Utilities`$FEResourceFiles\"\>", 
+   ",", "\<\"BTools`Utilities`$FEResourceGroups\"\>", 
+   ",", "\<\"BTools`Utilities`$FETokenList\"\>", 
+   ",", "\<\"BTools`Utilities`$FEValueList\"\>", 
+   ",", "\<\"BTools`Utilities`$FrontEndDirectory\"\>"}], "}"}]], "Output",
+ CellLabel->"Out[9]=",
+ CellID->1481068173,ExpressionUUID->"270ada4d-ce26-40d2-91ec-bc5a6a815cfc"]
+}, Open  ]],
+
+Cell["", "PageBreak",
+ PageBreakAbove->False,
+ PageBreakBelow->False,
+ CellID->1688513011,ExpressionUUID->"5b624b4c-0214-4415-bba6-578f88b0c239"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Others", "Subsubsection",
+ CellID->1989264419,ExpressionUUID->"1f9dda55-6155-4c9f-b83d-2f6f2adf59c0"],
+
+Cell["\<\
+All of these packages rely on lower-level packages and functions too, which \
+have more specialized functions that might be useful:\
+\>", "Text",
+ CellID->183301747,ExpressionUUID->"99178aad-3d52-4424-8d77-a131266223a5"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Names", "[", "\"\<BTools`*`*\>\"", "]"}], "//", 
+  RowBox[{"Select", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"StringFreeQ", "[", 
+      RowBox[{"#", ",", " ", "\"\<Private\>\""}], "]"}], "&&", 
+     RowBox[{
+      RowBox[{"StringCount", "[", 
+       RowBox[{"#", ",", " ", "\"\<`\>\""}], "]"}], "\[Equal]", "3"}]}], 
+    "&"}], "]"}]}]], "Code",
+ CellLabel->"In[12]:=",
+ CellID->1211588002,ExpressionUUID->"d4b04f1e-745c-43c3-8284-5b9a8b60e4fe"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"\<\"BTools`Formatting`FormattingTools`ActionDropDown\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppAddContent\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppAddContextFiles\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppAddDocPage\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppAddGuidePage\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppAddPackage\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppAddPalette\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppAddStylesheet\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppAddTest\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppAddTutorialPage\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppComponentFiles\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppConfigRegenerate\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppConfigure\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppConfigureSubapp\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppContexts\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppDirectory\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppDocumentationTemplate\"\>", 
+   ",", "\<\"BTools`Formatting`FormattingTools`AppearanceReadyImage\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppExportTests\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppFileNames\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppFindFile\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppFindTestingNotebook\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppFromFile\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppFunctionDependencies\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppGenerateDocumentation\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppGenerateHTMLDocumentation\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppGeneratePackageSymbolNotebook\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppGenerateSymbolNotebook\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppGenerateTestingNotebook\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppGet\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppGitClone\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppGitCommit\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppGitHubConfigure\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppGitHubCreateRelease\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppGitHubDelete\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppGitHubPull\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppGitHubPush\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppGitHubRepo\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppGitHubSetRemote\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppGitInit\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppGitRealignRemotes\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppGitSafeCommit\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppGuideNotebook\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppGuidePages\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppGuides\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppIndexDocs\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppListTests\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppLocate\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppMainContext\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppNames\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppNeeds\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppNewTestingNotebook\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPackage\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPackageDependencies\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPackageFunctions\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPackageGenerateDocumentation\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPackageGuideNotebook\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPackageOpen\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPackages\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPackageSaveGuide\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPackageSaveSymbolPages\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPackageSymbolNotebook\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPaclet\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPacletBackup\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPacletBundle\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPacletContexts\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPacletDirectoryAdd\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPacletInfo\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPacletInstallerURL\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPacletServerPage\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPacletSiteBundle\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPacletSiteInfo\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPacletSiteURL\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPacletUninstallerURL\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPacletUpload\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPalettes\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPath\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPathFormat\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppPublish\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppReconfigureSubapp\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppRegenerateBundleInfo\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppRegenerateContextLoadFiles\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppRegenerateDirectories\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppRegenerateDocInfo\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppRegenerateGitExclude\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppRegenerateGitIgnore\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppRegenerateInit\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppRegenerateLoadInfo\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppRegeneratePacletInfo\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppRegenerateReadme\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppRegenerateUploadInfo\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppSaveGuide\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppSaveSymbolPages\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppStylesheet\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppStyleSheets\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppSubpacletUpload\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppSymbolNotebook\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppSymbolPage\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppSymbolPages\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppTutorialNotebook\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`AppTutorials\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`AutoGenerateDetails\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`AutoGenerateExamples\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`AutoGenerateUsage\"\>", 
+   ",", "\<\"BTools`PackageScope`Package`BackupFile\"\>", 
+   ",", "\<\"BTools`Formatting`FormattingTools`ButtonActionMenu\"\>", 
+   ",", "\<\"BTools`Formatting`FormattingTools`ButtonActionPopup\"\>", 
+   ",", "\<\"BTools`Formatting`FormattingTools`ButtonPopupMenu\"\>", 
+   ",", "\<\"BTools`Formatting`FormattingTools`ColoredActionMenu\"\>", 
+   ",", "\<\"BTools`Formatting`FormattingTools`ColoredButton\"\>", 
+   ",", "\<\"BTools`Formatting`FormattingTools`ColoredButtonAppearances\"\>", 
+   ",", "\<\"BTools`Formatting`FormattingTools`ColoredPanel\"\>", 
+   ",", "\<\"BTools`Formatting`FormattingTools`ColoredPanelAppearances\"\>", 
+   ",", "\<\"BTools`Formatting`FormattingTools`ColoredPopupMenu\"\>", 
+   ",", "\<\"BTools`Formatting`FormattingTools`ColorizationAdjust\"\>", 
+   ",", "\<\"BTools`Formatting`FormattingTools`ColorizedAppearances\"\>", 
+   ",", "\<\"BTools`Utilities`DocFind`ContextNotebook\"\>", 
+   ",", "\<\"BTools`Utilities`DocFind`ContextOrdering\"\>", 
+   ",", "\<\"BTools`PackageScope`Package`CreateSyncBundle\"\>", 
+   ",", "\<\"BTools`Utilities`DocFind`DocFile\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`DocGenGenerateDocumentation\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`DocGenGenerateGuide\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`DocGenGenerateHTMLDocumentation\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`DocGenGenerateSymbolPages\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`DocGenGenerateTutorial\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`DocGenHTMLCloudDeploy\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`DocGenIndexDocumentation\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`DocGenLoadFE\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`DocGenRefLink\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`DocGenSaveGuide\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`DocGenSaveSymbolPages\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`DocGenSettingsLookup\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`DocLinkBase\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`DocMetadata\"\>", 
+   ",", "\<\"BTools`Utilities`DocFind`DocsDialog\"\>", 
+   ",", "\<\"BTools`PackageScope`Package`DownloadFile\"\>", 
+   ",", "\<\"BTools`Developer`Package`EncodedCacheExport\"\>", 
+   ",", "\<\"BTools`Developer`Package`EncodedCacheFile\"\>", 
+   ",", "\<\"BTools`Developer`Package`EncodedCacheLoaded\"\>", 
+   ",", "\<\"BTools`Developer`Package`EncodedCacheOption\"\>", 
+   ",", "\<\"BTools`Developer`Package`EncodedCacheOptionsExport\"\>", 
+   ",", "\<\"BTools`Developer`Package`EncodedCacheOptionsFile\"\>", 
+   ",", "\<\"BTools`Developer`Package`EncodedCacheOptionsLoad\"\>", 
+   ",", "\<\"BTools`Developer`Package`EncodedCachePassword\"\>", 
+   ",", "\<\"BTools`Developer`Package`EncodedCachePasswordDialog\"\>", 
+   ",", "\<\"BTools`Developer`Package`EncodedCachePasswordExport\"\>", 
+   ",", "\<\"BTools`Developer`Package`EncodedCachePasswordFile\"\>", 
+   ",", "\<\"BTools`Developer`Package`EncodedCachePasswordLoad\"\>", 
+   ",", "\<\"BTools`External`Git`FormatGitHubPath\"\>", 
+   ",", "\<\"BTools`Utilities`DocFind`FormattedDefs\"\>", 
+   ",", "\<\"BTools`Utilities`DocFind`FormattedUsage\"\>", 
+   ",", "\<\"BTools`Formatting`FormattingTools`FramedActionMenu\"\>", 
+   ",", "\<\"BTools`Formatting`FormattingTools`FramedButton\"\>", 
+   ",", "\<\"BTools`Formatting`FormattingTools`FramedPopupMenu\"\>", 
+   ",", "\<\"BTools`Formatting`FormattingTools`FrameMasked\"\>", 
+   ",", "\<\"BTools`External`Google`GAAGetReport\"\>", 
+   ",", "\<\"BTools`External`Google`GAAnalyticsReportsCall\"\>", 
+   ",", "\<\"BTools`External`Google`GAAnalyticsReportsRequest\"\>", 
+   ",", "\<\"BTools`External`Google`GACall\"\>", 
+   ",", "\<\"BTools`External`Google`GADriveCall\"\>", 
+   ",", "\<\"BTools`External`Google`GADriveRequest\"\>", 
+   ",", "\<\"BTools`External`Google`GAErrorString\"\>", 
+   ",", "\<\"BTools`External`Google`GAFileCreatePermissions\"\>", 
+   ",", "\<\"BTools`External`Google`GAFileDelete\"\>", 
+   ",", "\<\"BTools`External`Google`GAFileDeletePermissions\"\>", 
+   ",", "\<\"BTools`External`Google`GAFileDownload\"\>", 
+   ",", "\<\"BTools`External`Google`GAFileDownloadURL\"\>", 
+   ",", "\<\"BTools`External`Google`GAFileInfo\"\>", 
+   ",", "\<\"BTools`External`Google`GAFilePermissions\"\>", 
+   ",", "\<\"BTools`External`Google`GAFilePrivatize\"\>", 
+   ",", "\<\"BTools`External`Google`GAFilePublish\"\>", 
+   ",", "\<\"BTools`External`Google`GAFileSearch\"\>", 
+   ",", "\<\"BTools`External`Google`GAFileUpdate\"\>", 
+   ",", "\<\"BTools`External`Google`GAFileUpdatePermissions\"\>", 
+   ",", "\<\"BTools`External`Google`GAFileUpload\"\>", 
+   ",", "\<\"BTools`External`Google`GAOAuthCodeURL\"\>", 
+   ",", "\<\"BTools`External`Google`GAOAuthenticate\"\>", 
+   ",", "\<\"BTools`External`Google`GAOAuthRefreshRequest\"\>", 
+   ",", "\<\"BTools`External`Google`GAOAuthTokenData\"\>", 
+   ",", "\<\"BTools`External`Google`GAParse\"\>", 
+   ",", "\<\"BTools`External`Google`GAPrepParams\"\>", 
+   ",", "\<\"BTools`External`Google`GARequest\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`GenerateMultiPackageOverview\"\>", 
+   ",", "\<\"BTools`Utilities`DocFind`GetUsage\"\>", 
+   ",", "\<\"BTools`External`Git`GitAdd\"\>", 
+   ",", "\<\"BTools`External`Git`GitAddRemote\"\>", 
+   ",", "\<\"BTools`External`Git`GitBranch\"\>", 
+   ",", "\<\"BTools`External`Git`GitClone\"\>", 
+   ",", "\<\"BTools`External`Git`GitCommit\"\>", 
+   ",", "\<\"BTools`External`Git`GitConfig\"\>", 
+   ",", "\<\"BTools`External`Git`GitCreate\"\>", 
+   ",", "\<\"BTools`External`Git`GitFetch\"\>", 
+   ",", "\<\"BTools`External`Git`GitHelp\"\>", 
+   ",", "\<\"BTools`External`Git`GitHubCreate\"\>", 
+   ",", "\<\"BTools`External`Git`GitHubCreateRelease\"\>", 
+   ",", "\<\"BTools`External`Git`GitHubDelete\"\>", 
+   ",", "\<\"BTools`External`Git`GitHubDeleteRelease\"\>", 
+   ",", "\<\"BTools`External`Git`GitHubDeleteReleaseAsset\"\>", 
+   ",", "\<\"BTools`External`Git`GitHubDeployments\"\>", 
+   ",", "\<\"BTools`External`Git`GitHubEditRelease\"\>", 
+   ",", "\<\"BTools`External`Git`GitHubEditReleaseAsset\"\>", 
+   ",", "\<\"BTools`External`Git`GitHubGetReleaseAsset\"\>", 
+   ",", "\<\"BTools`External`Git`GitHubImport\"\>", 
+   ",", "\<\"BTools`External`Git`GitHubPath\"\>", 
+   ",", "\<\"BTools`External`Git`GitHubPathParse\"\>", 
+   ",", "\<\"BTools`External`Git`GitHubPathQ\"\>", 
+   ",", "\<\"BTools`External`Git`GitHubQuery\"\>", 
+   ",", "\<\"BTools`External`Git`GitHubReleaseQ\"\>", 
+   ",", "\<\"BTools`External`Git`GitHubReleases\"\>", 
+   ",", "\<\"BTools`External`Git`GitHubRepoQ\"\>", 
+   ",", "\<\"BTools`External`Git`GitHubRepositories\"\>", 
+   ",", "\<\"BTools`External`Git`GitHubUploadReleaseAsset\"\>", 
+   ",", "\<\"BTools`External`Git`GitIgnore\"\>", 
+   ",", "\<\"BTools`External`Git`GitInit\"\>", 
+   ",", "\<\"BTools`External`Git`GitListRemotes\"\>", 
+   ",", "\<\"BTools`External`Git`GitListTree\"\>", 
+   ",", "\<\"BTools`External`Git`GitListTreeRecursive\"\>", 
+   ",", "\<\"BTools`External`Git`GitLog\"\>", 
+   ",", "\<\"BTools`External`Git`GitPull\"\>", 
+   ",", "\<\"BTools`External`Git`GitPullOrigin\"\>", 
+   ",", "\<\"BTools`External`Git`GitPush\"\>", 
+   ",", "\<\"BTools`External`Git`GitPushOrigin\"\>", 
+   ",", "\<\"BTools`External`Git`GitRegisterFunction\"\>", 
+   ",", "\<\"BTools`External`Git`GitRemoveRemote\"\>", 
+   ",", "\<\"BTools`External`Git`GitRepo\"\>", 
+   ",", "\<\"BTools`External`Git`GitRepoQ\"\>", 
+   ",", "\<\"BTools`External`Git`GitRepositories\"\>", 
+   ",", "\<\"BTools`External`Git`GitRun\"\>", 
+   ",", "\<\"BTools`External`Git`GitShowBranch\"\>", 
+   ",", "\<\"BTools`External`Git`GitStatus\"\>", 
+   ",", "\<\"BTools`External`Google`GoogleAPIClearAuth\"\>", 
+   ",", "\<\"BTools`Formatting`FormattingTools`GradientAppearance\"\>", 
+   ",", "\<\"BTools`Formatting`FormattingTools`GradientButtonAppearance\"\>", 
+   ",", "\<\"BTools`Formatting`FormattingTools`GradientDropDownAppearance\"\>\
+", ",", "\<\"BTools`Formatting`FormattingTools`GradientPanelAppearance\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`GuideContextTemplate\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`GuideNotebook\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`GuideTemplate\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`LoadPacletServers\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`LocalPacletServerPattern\"\>", 
+   ",", "\<\"BTools`Developer`Package`MakeEncodedCacheSymbol\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`MultiPackageOverviewNotebook\"\>", 
+   ",", "\<\"BTools`Formatting`FormattingTools`NinePatchCreate\"\>", 
+   ",", "\<\"BTools`Utilities`DocFind`OpenDocs\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletAPIUpload\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletAutoPaclet\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletBundle\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletDownloadPaclet\"\>", 
+   ",", "\<\"BTools`PackageScope`Package`PacletExecuteSettingsLookup\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletFindBuiltFile\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletInfo\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletInfoAssociation\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletInfoExpression\"\>", 
+   ",", "\<\"BTools`PackageScope`Package`PacletInfoExpressionBundle\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletInfoGenerate\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletInstalledQ\"\>", 
+   ",", "\<\"BTools`PackageScope`Deprecated`PacletInstallerURL\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletInstallPaclet\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletLookup\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletOpen\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletRemove\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletServer\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletServerBundleSite\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletServerDataset\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletServerDelete\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletServerDeploymentURL\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletServerDirectory\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletServerExposedPaclets\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletServerFile\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletServerInitialize\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletServerURL\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletSiteBundle\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletSiteInfo\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletSiteInfoDataset\"\>", 
+   ",", "\<\"BTools`PackageScope`Deprecated`PacletSiteInstall\"\>", 
+   ",", "\<\"BTools`PackageScope`Deprecated`PacletSiteUninstall\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletSiteUpload\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletSiteURL\"\>", 
+   ",", "\<\"BTools`PackageScope`Deprecated`PacletUninstallerURL\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`PacletUpload\"\>", 
+   ",", "\<\"BTools`PackageScope`Deprecated`PacletUploadInstaller\"\>", 
+   ",", "\<\"BTools`PackageScope`Deprecated`PacletUploadUninstaller\"\>", 
+   ",", "\<\"BTools`Formatting`FormattingTools`PopupDropDown\"\>", 
+   ",", "\<\"BTools`PackageScope`Package`RestoreFile\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`SaveMultiPackageOverview\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`SetPacletFormatting\"\>", 
+   ",", "\<\"BTools`External`Git`SVNCheckOut\"\>", 
+   ",", "\<\"BTools`External`Git`SVNExport\"\>", 
+   ",", "\<\"BTools`External`Git`SVNFileNames\"\>", 
+   ",", "\<\"BTools`External`Git`SVNRun\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`SymbolPageContextTemplate\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`SymbolPageNotebook\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`SymbolPageTemplate\"\>", 
+   ",", "\<\"BTools`PackageScope`Package`SyncDownloadWork\"\>", 
+   ",", "\<\"BTools`PackageScope`Package`SyncPathQ\"\>", 
+   ",", "\<\"BTools`PackageScope`Package`SyncUploadWork\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`TutorialContextTemplate\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`TutorialNotebook\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`TutorialTemplate\"\>", 
+   ",", "\<\"BTools`PackageScope`Package`UploadFile\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`$AppCloudExtension\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`$AppDirectories\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`$AppDirectory\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`$AppDirectoryName\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`$AppDirectoryRoot\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`$AppDocGenMethodRouter\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`$AppExecuteMethods\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`$AppGitRouter\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`$AppPacletExecuteMethods\"\>", 
+   ",", "\<\"BTools`Paclets`AppBuilder`$AppPathMap\"\>", 
+   ",", "\<\"BTools`PackageScope`Package`$BackupDirectoryName\"\>", 
+   ",", "\<\"BTools`PackageScope`Package`$BundleMetaInformationFile\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`$DefaultPacletServer\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`$DocGenActive\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`$DocGenColoring\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`$DocGenDirectory\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`$DocGenFE\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`$DocGenFooter\"\>", 
+   ",", "\<\"BTools`PackageScope`Package`$DocGenFunction\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`$DocGenLine\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`$DocGenLinkBase\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`$DocGenMessageStack\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`$DocGenTmpDirectory\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`$DocGenURLBase\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`$DocGenWebDocsDirectory\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`$DocGenWebDocsTmpDirectory\"\>", 
+   ",", "\<\"BTools`Paclets`DocGen`$DocGenWebResourceBase\"\>", 
+   ",", "\<\"BTools`Utilities`DocFind`$DockDocDialog\"\>", 
+   ",", "\<\"BTools`Developer`Package`$EncodedCacheDefaultOptions\"\>", 
+   ",", "\<\"BTools`Developer`Package`$EncodedCachePasswords\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`$FormatPaclets\"\>", 
+   ",", "\<\"BTools`External`Google`$GAActiveHead\"\>", 
+   ",", "\<\"BTools`External`Google`$GAApplyRequests\"\>", 
+   ",", "\<\"BTools`External`Google`$GAClientID\"\>", 
+   ",", "\<\"BTools`External`Google`$GAClientSecret\"\>", 
+   ",", "\<\"BTools`External`Google`$GALastError\"\>", 
+   ",", "\<\"BTools`External`Google`$GAOAuthToken\"\>", 
+   ",", "\<\"BTools`External`Google`$GAParameters\"\>", 
+   ",", "\<\"BTools`External`Google`$GAParamMap\"\>", 
+   ",", "\<\"BTools`External`Google`$GAVersion\"\>", 
+   ",", "\<\"BTools`External`Git`$GitActions\"\>", 
+   ",", "\<\"BTools`External`Git`$GitCommandLog\"\>", 
+   ",", "\<\"BTools`External`Git`$GitHubActions\"\>", 
+   ",", "\<\"BTools`External`Git`$GitHubPassword\"\>", 
+   ",", "\<\"BTools`External`Git`$GitHubUsername\"\>", 
+   ",", "\<\"BTools`External`Git`$GitLogCommands\"\>", 
+   ",", "\<\"BTools`External`Git`$GitParamMap\"\>", 
+   ",", "\<\"BTools`External`Git`$GitRepo\"\>", 
+   ",", "\<\"BTools`External`Git`$GitRunFlags\"\>", 
+   ",", "\<\"BTools`External`Google`$GoogleAnalyticsCalls\"\>", 
+   ",", "\<\"BTools`External`Google`$GoogleAPIUsername\"\>", 
+   ",", "\<\"BTools`External`Google`$GoogleDriveCalls\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`$PacletBuildDirectory\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`$PacletBuildExtension\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`$PacletBuildRoot\"\>", 
+   ",", "\<\"BTools`PackageScope`Package`$PacletExecuteExpressionMethods\"\>",
+    ",", "\<\"BTools`PackageScope`Package`$PacletExecuteSiteMethods\"\>", 
+   ",", "\<\"BTools`PackageScope`Package`$PacletExecuteUploadMethods\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`$PacletExtension\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`$PacletFilePatterns\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`$PacletRemovePatterns\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`$PacletServerBase\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`$PacletUploadAccount\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`$PacletUploadPatterns\"\>", 
+   ",", "\<\"BTools`Paclets`PacletTools`$PacletUseKeychain\"\>", 
+   ",", "\<\"BTools`External`Git`$SVNActions\"\>", 
+   ",", "\<\"BTools`PackageScope`Package`$SyncUploads\"\>"}], "}"}]], "Output",\
+
+ CellLabel->"Out[12]=",
+ CellID->2066138973,ExpressionUUID->"750399c9-7e72-440d-9dba-809c1c9eaaf8"]
+}, Open  ]]
+}, Open  ]],
+
+Cell["Made with SimpleDocs", "Text", "Footer",
+ CellID->1574713038,ExpressionUUID->"0fdb4b58-a9e2-4917-9263-e57631db0bea"]
+}, Open  ]]
+},
+ScreenStyleEnvironment->"Editing",
+WindowSize->{808, 755},
+WindowMargins->{{12, Automatic}, {Automatic, 24}},
+TaggingRules->{
+ "Metadata" -> {
+   "built" -> "{2018, 11, 22, 2, 27, 21.122714}", 
+    "history" -> {"11.3", "", ""}, "context" -> "BTools`", "keywords" -> {}, 
+    "specialkeywords" -> {}, "tutorialcollectionlinks" -> {}, "index" -> True,
+     "label" -> "BTools", "language" -> "en", "paclet" -> "Mathematica", 
+    "status" -> "None", "summary" -> "", "synonyms" -> {}, "tabletags" -> {}, 
+    "title" -> "BTools", "titlemodifier" -> "", "windowtitle" -> "BTools", 
+    "type" -> "Guide", "uri" -> "BTools/guide/BTools"}, "LinkTrails" -> "", 
+  "SearchTextTranslated" -> "", "Paclet" -> "BTools"},
+FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
+2018)",
+StyleDefinitions->FrontEnd`FileName[{"SimpleDocs"}, "SimpleDocs.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 705, 17, 196, "Metadata",ExpressionUUID->"171c38f6-df77-45ed-a8c3-b9afda06436d",
+ CellID->1919306197],
+Cell[CellGroupData[{
+Cell[1288, 41, 100, 1, 54, "Section",ExpressionUUID->"ad6a7e67-dc7d-44eb-8175-a3c635777ced",
+ CellID->427391392],
+Cell[1391, 44, 316, 5, 58, "Text",ExpressionUUID->"51a2b9f4-50da-4534-af3e-46819b9b1469",
+ CellID->1981809776],
+Cell[CellGroupData[{
+Cell[1732, 53, 98, 1, 32, "Item",ExpressionUUID->"6d11635f-1383-4844-971d-78bb781dee84",
+ CellID->375420629],
+Cell[1833, 56, 100, 1, 32, "Item",ExpressionUUID->"a61b381c-100f-4aa7-aafb-4509c44b8267",
+ CellID->1405342280],
+Cell[1936, 59, 102, 1, 32, "Item",ExpressionUUID->"f514cdd7-fdea-4621-852e-71e75283d804",
+ CellID->1359517504],
+Cell[2041, 62, 100, 1, 32, "Item",ExpressionUUID->"d292f083-5deb-46ea-8830-4207d2eeb86c",
+ CellID->1794669807],
+Cell[2144, 65, 95, 1, 32, "Item",ExpressionUUID->"62896f34-f3e7-414d-b721-179a15920ad7",
+ CellID->1267172744],
+Cell[2242, 68, 101, 1, 32, "Item",ExpressionUUID->"d29f1946-ee77-4c24-a4d1-8a7635624a5d",
+ CellID->1966959843],
+Cell[2346, 71, 101, 1, 32, "Item",ExpressionUUID->"345f1d5e-7984-456f-b2b7-ce27329614e4",
+ CellID->2068828904]
+}, Open  ]],
+Cell[2462, 75, 180, 4, 35, "Text",ExpressionUUID->"e98c0d9e-b199-47ac-81fb-e5d7f349bbb0",
+ CellID->682575713],
+Cell[2645, 81, 144, 3, 4, "PageBreak",ExpressionUUID->"5404553b-0257-4fad-803a-90c584777531",
+ PageBreakAbove->False,
+ PageBreakBelow->False,
+ CellID->805540262],
+Cell[CellGroupData[{
+Cell[2814, 88, 107, 1, 33, "Subsubsection",ExpressionUUID->"df992e63-5f72-45d2-9c03-c46a36559572",
+ CellID->978272746],
+Cell[2924, 91, 876, 21, 81, "Text",ExpressionUUID->"b37161b5-dbd4-4329-b8af-b0d3ed37bc49",
+ InitializationCell->True,
+ CellID->895474948],
+Cell[CellGroupData[{
+Cell[3825, 116, 179, 3, 36, "Code",ExpressionUUID->"689457e8-4253-4ddc-bee1-8ec96a857f7a",
+ CellID->2147359744],
+Cell[4007, 121, 1072, 21, 203, "Output",ExpressionUUID->"cb9a4356-5fb8-45ac-b348-7d2e36f7db80",
+ CellID->284859673]
+}, Open  ]],
+Cell[5094, 145, 144, 3, 4, "PageBreak",ExpressionUUID->"475155b2-7bfe-4a10-bdc3-a3a2a432b858",
+ PageBreakAbove->False,
+ PageBreakBelow->False,
+ CellID->458775878]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5275, 153, 109, 1, 33, "Subsubsection",ExpressionUUID->"7158ded9-eb5b-429c-aeb3-ea86b260b637",
+ CellID->1179888816],
+Cell[5387, 156, 880, 23, 58, "Text",ExpressionUUID->"b74e659a-4379-4a92-95fa-a0cee8a280a8",
+ CellID->401030358],
+Cell[6270, 181, 595, 13, 58, "Text",ExpressionUUID->"f16ee121-2a17-446d-a644-e04663a86bfc",
+ CellID->960257839],
+Cell[CellGroupData[{
+Cell[6890, 198, 179, 3, 36, "Code",ExpressionUUID->"db4be4a1-809b-4069-8ab4-13e06b2c0cc8",
+ CellID->239442829],
+Cell[7072, 203, 1228, 25, 203, "Output",ExpressionUUID->"543147c6-bbed-4c84-bd67-72b3e4eba377",
+ CellID->149262922]
+}, Open  ]],
+Cell[8315, 231, 145, 3, 4, "PageBreak",ExpressionUUID->"9781102f-82fa-4abb-a3b6-6ab48f103442",
+ PageBreakAbove->False,
+ PageBreakBelow->False,
+ CellID->1482432434]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[8497, 239, 110, 1, 33, "Subsubsection",ExpressionUUID->"78fc0307-0155-4565-afe4-6d24c20b6f56",
+ CellID->136645744],
+Cell[8610, 242, 330, 5, 81, "Text",ExpressionUUID->"b175fc6a-0590-44d7-8741-59e9cc0ead0b",
+ CellID->1206442799],
+Cell[CellGroupData[{
+Cell[8965, 251, 182, 3, 36, "Code",ExpressionUUID->"815d89b6-541c-47ea-a170-45d3ac3c68e9",
+ CellID->1980788506],
+Cell[9150, 256, 268, 6, 34, "Output",ExpressionUUID->"3e9573f9-45cb-4526-93da-fb1fd5b9dad0",
+ CellID->514103240]
+}, Open  ]],
+Cell[9433, 265, 145, 3, 4, "PageBreak",ExpressionUUID->"682e8ab7-5c87-4044-ab0e-cd9686164f52",
+ PageBreakAbove->False,
+ PageBreakBelow->False,
+ CellID->1956872756]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[9615, 273, 108, 1, 33, "Subsubsection",ExpressionUUID->"cf83a49a-f1d3-4714-ae10-c569c08cbacd",
+ CellID->448356287],
+Cell[9726, 276, 765, 17, 81, "Text",ExpressionUUID->"2135d8f5-25bf-445c-860e-0996af0fcd26",
+ CellID->3998286],
+Cell[CellGroupData[{
+Cell[10516, 297, 180, 3, 36, "Code",ExpressionUUID->"d72629e7-d515-480d-83b1-f29ea5809854",
+ CellID->1355751622],
+Cell[10699, 302, 2581, 45, 560, "Output",ExpressionUUID->"bf9549f6-92be-460d-a2de-a990e6f4798a",
+ CellID->338763179]
+}, Open  ]],
+Cell[13295, 350, 143, 3, 4, "PageBreak",ExpressionUUID->"293e7f9f-62f9-46c2-83cc-34a55a91764a",
+ PageBreakAbove->False,
+ PageBreakBelow->False,
+ CellID->89019975]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[13475, 358, 104, 1, 33, "Subsubsection",ExpressionUUID->"b6fa4927-5a2f-4085-b920-fd4238574160",
+ CellID->1510101513],
+Cell[13582, 361, 138, 1, 35, "Text",ExpressionUUID->"d5d3cf51-1664-439f-afd9-15679d0638c7",
+ CellID->1314388745],
+Cell[CellGroupData[{
+Cell[13745, 366, 175, 3, 36, "Code",ExpressionUUID->"927adc50-c006-43df-a5fd-d7a8c53a6fb4",
+ CellID->1914844173],
+Cell[13923, 371, 1466, 30, 245, "Output",ExpressionUUID->"8f296739-f597-488c-b8e4-241c8c403f9a",
+ CellID->313063143]
+}, Open  ]],
+Cell[15404, 404, 145, 3, 4, "PageBreak",ExpressionUUID->"0508b6db-2a85-4ad3-826c-c0dbabbeb65d",
+ PageBreakAbove->False,
+ PageBreakBelow->False,
+ CellID->1853928950]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[15586, 412, 110, 1, 33, "Subsubsection",ExpressionUUID->"e5c84bc0-bc0e-4c8c-96ba-b87c0a4e6c58",
+ CellID->1143628327],
+Cell[15699, 415, 194, 4, 35, "Text",ExpressionUUID->"ee182218-94c2-46ba-85d6-4323f7da20ce",
+ CellID->982651239],
+Cell[CellGroupData[{
+Cell[15918, 423, 180, 3, 36, "Code",ExpressionUUID->"aa06691c-5edc-4130-8753-1229017522fe",
+ CellID->525392469],
+Cell[16101, 428, 2523, 47, 497, "Output",ExpressionUUID->"05b17078-5ece-4cea-acd1-03d4fef3e8af",
+ CellID->343179235]
+}, Open  ]],
+Cell[18639, 478, 145, 3, 1, "PageBreak",ExpressionUUID->"59cf4517-e263-4d0d-9a06-648b2c13b4ee",
+ PageBreakAbove->False,
+ PageBreakBelow->False,
+ CellID->1685001055]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[18821, 486, 109, 1, 33, "Subsubsection",ExpressionUUID->"9887c45f-951f-41af-b2a5-308be932cd7e",
+ CellID->945878396],
+Cell[18933, 489, 197, 4, 35, "Text",ExpressionUUID->"937f518d-d993-4441-a3e2-096767dc52d8",
+ CellID->1704246478],
+Cell[CellGroupData[{
+Cell[19155, 497, 181, 3, 36, "Code",ExpressionUUID->"8f52bad4-8621-4d8b-b2e8-ab505e03f765",
+ CellID->2137889852],
+Cell[19339, 502, 5183, 100, 1001, "Output",ExpressionUUID->"270ada4d-ce26-40d2-91ec-bc5a6a815cfc",
+ CellID->1481068173]
+}, Open  ]],
+Cell[24537, 605, 145, 3, 1, "PageBreak",ExpressionUUID->"5b624b4c-0214-4415-bba6-578f88b0c239",
+ PageBreakAbove->False,
+ PageBreakBelow->False,
+ CellID->1688513011]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[24719, 613, 107, 1, 33, "Subsubsection",ExpressionUUID->"1f9dda55-6155-4c9f-b83d-2f6f2adf59c0",
+ CellID->1989264419],
+Cell[24829, 616, 230, 4, 58, "Text",ExpressionUUID->"99178aad-3d52-4424-8d77-a131266223a5",
+ CellID->183301747],
+Cell[CellGroupData[{
+Cell[25084, 624, 484, 13, 36, "Code",ExpressionUUID->"d4b04f1e-745c-43c3-8284-5b9a8b60e4fe",
+ CellID->1211588002],
+Cell[25571, 639, 23017, 371, 5411, "Output",ExpressionUUID->"750399c9-7e72-440d-9dba-809c1c9eaaf8",
+ CellID->2066138973]
+}, Open  ]]
+}, Open  ]],
+Cell[48615, 1014, 122, 1, 62, "Text",ExpressionUUID->"0fdb4b58-a9e2-4917-9263-e57631db0bea",
+ CellID->1574713038]
+}, Open  ]]
+}
+]
+*)
+

@@ -1,3 +1,5 @@
+(* ::Package:: *)
+
 Paclet[
   Name -> "BTools",
   Version -> "2.1.35",
@@ -200,6 +202,11 @@ Paclet[
 Features include: distribution tools, documentation generation, front-end manipulation, and application editing
   ",
      		"License" -> "MIT"
+     	},
+    	{
+     		"Documentation",
+     		"Language" -> "English",
+     		"MainPage" -> "Guides/BTools"
      	}
     }
  ]

@@ -277,7 +277,8 @@ $NotebookToMarkdownCellStyles=
 $NotebookToMarkdownCellStyles["Section"]=
   {
     "Title", "Chapter", "Subchapter",
-    "Section","Subsection","Subsubsection"
+    "Section","Subsection","Subsubsection",
+    "Subsubsubsection", "Subsubsubsubsection"
     };
 $NotebookToMarkdownCellStyles["InputOutput"]=
   {
