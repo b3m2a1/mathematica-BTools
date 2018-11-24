@@ -13,6 +13,12 @@ $PackageDeclared::usage="Whether the package has been auto-loaded or not";
 $PackageFEHiddenSymbols::usage="";
 $PackageScopedSymbols::usage="";
 $PackageLoadSpecs::usage="";
+$PackageLoadingMode::usage=
+  "A flag that determines whether the package is primary or a dependency";
+$PackageDependencies::usage=
+   "A set of dependencies for the package to load";
+$PackageDependencyBase::usage=
+  "The server from which dependencies should be loaded";
 $AllowPackageSymbolDefinitions::usage="";
 $AllowPackageRescoping::usage="";
 $AllowPackageRecoloring::usage="";
@@ -101,6 +107,33 @@ $PackageLoadSpecs=
 
 
 (* ::Subsubsection::Closed:: *)
+(*Mode*)
+
+
+$Name["Mode"]:=$PackageLoadingMode
+$PackageLoadingMode=
+  Lookup[$PackageLoadSpecs, "Mode", "Primary"];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Dependencies*)
+
+
+$Name["Dependencies"]:=$PackageDependencies;
+$PackageDependencies=
+  Lookup[$PackageLoadSpecs, "Dependencies", {}];
+
+
+(* ::Subsubsection::Closed:: *)
+(*DependencyBase*)
+
+
+$Name["DependencyBase"]:=$PackageDependencyBase;
+$PackageDependencyBase=
+  Lookup[$PackageLoadSpecs, "DependencyBase", {}];
+
+
+(* ::Subsubsection::Closed:: *)
 (*Loading*)
 
 
@@ -109,11 +142,15 @@ $PackageListing=<||>;
 $Name["Contexts"]:=$PackageContexts;
 If[!ListQ@$PackageContexts,
   $PackageContexts=
-    {
-      "$Name`",
-      "$Name`PackageScope`Private`",
-      "$Name`PackageScope`Package`"
-      }
+    If[$PackageLoadingMode==="Dependency",
+      $RootContext<>#&/@#,
+      #
+      ]&@
+      {
+        "$Name`",
+        "$Name`PackageScope`Private`",
+        "$Name`PackageScope`Package`"
+        }
   ];
 $PackageDeclared=
   TrueQ[$PackageDeclared];

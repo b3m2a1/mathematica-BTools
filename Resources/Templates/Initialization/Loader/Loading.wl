@@ -25,6 +25,9 @@ PackageDecontext::usage="";
 PackageRecontext::usage="";
 
 
+PackageEnsureLoadDependencies::usage="Predeclared...";
+
+
 (* ::Subsubsection::Closed:: *)
 (*Begin*)
 
@@ -203,6 +206,7 @@ PackageLoadPackage[heldSym_,context_,pkgFile_->syms_]:=
 
 PackageDeclarePackage[pkgFile_->syms_]:=
   With[{c=$Context},
+    PackageEnsureLoadDependencies[];
     $DeclaredPackages[pkgFile]=syms;
     $PackageFileContexts[pkgFile]=c;
     Map[

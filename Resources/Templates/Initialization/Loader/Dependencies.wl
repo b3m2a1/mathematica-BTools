@@ -16,6 +16,7 @@ PackageInstallPacletDependency::usage="";
 PackageLoadPacletDependency::usage="";
 PackageUpdatePacletDependency::usage="";
 PackageLoadResourceDependency::usage="";
+PackageEnsureLoadDependencies::usage="Ensures all declared dependencies are loaded";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -105,11 +106,14 @@ PackageInstallPackageDependency[dep_String, ops:OptionsPattern[]]:=
 
 
 Options[PackageLoadPackageDependency]=
-  Options[PackageInstallPackageDependency];
+  Append[
+    Options[PackageInstallPackageDependency],
+    "Loading"->Needs
+    ];
 PackageLoadPackageDependency[dep_String, ops:OptionsPattern[]]:=
   Internal`WithLocalSettings[
     BeginPackage[dep];,
-    If[Quiet@Check[Needs[dep], $Failed]===$Failed&&
+    If[Quiet@Check[OptionValue["Loading"][dep], $Failed]===$Failed&&
         Quiet@Check[
           Get[FileNameJoin@@
             StringSplit[
@@ -314,6 +318,61 @@ PackageUpdatePacletDependency[
 
 (* ::Text:: *)
 (*Nothing I've implemented yet, but could be very useful for installing resources for a paclet*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*PackageEnsureLoadDependencies*)
+
+
+PackageEnsureLoadDependency[dep_, site_]:=
+  Module[
+    {
+      depsDir=PackageFilePath["Dependencies"],
+      foundFile
+      },
+     If[DirectoryQ@depsDir,
+       foundFile=
+         Block[
+           {
+             $Path=depsDir,
+             PacletManager`PacletManagerEnabled
+             },
+           FindFile[dep]
+           ]
+       ];
+     If[!StringQ@foundFile, foundFile=FindFile[dep]];
+     Quiet[(* this is a temporary hack until WRI fixes a $ContextPath bug *)
+       If[!StringQ@foundFile,
+         PackgeLoadPacletDependency[dep,
+           "Site"->site,
+           "Update"->True,
+           "Loading"->Get
+           ],
+         Get@foundFile 
+         (* I have my reasons to do this rather than Needs... but it could change... *)
+         ],
+      General::shdw
+      ]
+     ];
+
+
+PackageEnsureLoadDependencies[]:=
+  If[!TrueQ@$dependenciesLoaded,
+    $dependenciesLoaded=True;
+    Module[
+      {
+        deps=$PackageDependencies,
+        site=$PackageDependencyBase
+        },
+       PackageExecute[
+         Begin["`Dependencies`"];
+         PackageEnsureLoadDependency[#, site]&/@deps;
+         PackageExtendContextPath@
+           Map[$Context<>#&, deps];
+         End[]
+         ]
+      ];
+   ];
 
 
 (* ::Subsubsection:: *)

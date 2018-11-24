@@ -1,14 +1,12 @@
 (* ::Package:: *)
 
-Merge[
-	{
-		"PreLoad"-> None,
-		"FEHidden" ->
-			{
-				},
-		"PackageScope"->
-			{
-				}
-		},
-	Last
-	]
+{
+  "PreLoad"-> None,
+  "FEHidden" ->
+    {
+      },
+  "PackageScope"->
+    {
+      },
+  "Mode"->"Primary"
+  }

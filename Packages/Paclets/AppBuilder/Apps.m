@@ -13,13 +13,13 @@
 
 
 $AppExecuteMethods::usage=
-	"The set of methods known to AppExecute";
+  "The set of methods known to AppExecute";
 $AppDocGenMethodRouter::usage=
-	"The set of methods known to AppDocGen";
+  "The set of methods known to AppDocGen";
 $AppGitRouter::usage=
-	"The set of methods known to AppGit";
+  "The set of methods known to AppGit";
 $AppPacletExecuteMethods::usage=
-	"The set of methods known to AppPacletExecute";
+  "The set of methods known to AppPacletExecute";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -35,7 +35,7 @@ AppFileNames::usage="FileNames on an app";
 
 AppComponentFiles::usage="";
 AppPackages::usage=
-	"Finds the packages in a given app";
+  "Finds the packages in a given app";
 AppStyleSheets::usage="";
 AppPalettes::usage=""
 AppSymbolPages::usage="";
@@ -56,7 +56,7 @@ AppGuidePages::usage="";
 
 
 AppDirectory::usage=
-	"Used by AppPath find appropriate directories"
+  "Used by AppPath find appropriate directories"
 
 
 (* ::Subsubsection::Closed:: *)
@@ -73,25 +73,25 @@ AppAddTutorialPage::usage="Adds a tutorial page to the app";
 
 
 AppRegenerateDirectories::usage=
-	"Regenerates missing directories in the app";
+  "Regenerates missing directories in the app";
 AppRegenerateContextLoadFiles::usage=
-	"Regenerates missing contex loader files in the app";
+  "Regenerates missing contex loader files in the app";
 AppRegenerateInit::usage=
-	"Regenerates a default init file";
+  "Regenerates a default init file";
 AppRegenerateDocInfo::usage=
-	"Regenerates the DocInfo.m file";
+  "Regenerates the DocInfo.m file";
 AppRegenerateBundleInfo::usage=
-	"Regenerates the BundleInfo file";
+  "Regenerates the BundleInfo file";
 AppRegenerateLoadInfo::usage=
-	"Regenerates the LoadInfo file";
+  "Regenerates the LoadInfo file";
 AppRegenerateGitIgnore::usage=
-	"Rebuilds the .gitignore file";
+  "Rebuilds the .gitignore file";
 AppRegenerateGitExclude::usage=
-	"Rebuilds the .git/info/exclude file";
+  "Rebuilds the .git/info/exclude file";
 AppRegenerateReadme::usage=
-	"Generates a GitHub README.md file for the app";
+  "Generates a GitHub README.md file for the app";
 AppRegenerateUploadInfo::usage=
-	"Regenerates the UploadInfo.m file";
+  "Regenerates the UploadInfo.m file";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -100,15 +100,15 @@ AppRegenerateUploadInfo::usage=
 
 
 AppGenerateTestingNotebook::usage=
-	"Generates a standard testing notebook for an app";
+  "Generates a standard testing notebook for an app";
 
 
 AppPackageFunctions::usage=
-	"Gets the function names declared in a package or set of packages";
+  "Gets the function names declared in a package or set of packages";
 AppFunctionDependencies::usage=
-	"Gets the package dependency chain for a function";
+  "Gets the package dependency chain for a function";
 AppPackageDependencies::usage=
-	"Gets the dependency structure for a full app package";
+  "Gets the dependency structure for a full app package";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -158,29 +158,29 @@ Begin["`Private`"];
 
 
 $AppPathMap=
-	{
-			"Packages"->{"Packages"},
-			"Resources"->{"Resources"},
-			"Palettes"->{"FrontEnd","Palettes"},
-			"StyleSheets"->{"FrontEnd","StyleSheets"},
-			"TextResources"->{"FrontEnd","TextResources"},
-			"SystemResources"->{"FrontEnd","SystemResources"},
-			"Guides"->{"Documentation","English","Guides"},
-			"Tutorials"->{"Documentation", "English","Tutorials"},
-			"ReferencePages"->{"Documentation","English","ReferencePages"},
-			"Symbols"->{"Documentation", "English","ReferencePages","Symbols"},
-			"SymbolPages"->{"Documentation", "English","ReferencePages","Symbols"},
-			"MessagePages"->{"Documentation", "English","ReferencePages","Messages"},
-			"Objects"->{"Resources", "Objects"},
-			"Private"->{"Private"}
-			};
+  {
+      "Packages"->{"Packages"},
+      "Resources"->{"Resources"},
+      "Palettes"->{"FrontEnd","Palettes"},
+      "StyleSheets"->{"FrontEnd","StyleSheets"},
+      "TextResources"->{"FrontEnd","TextResources"},
+      "SystemResources"->{"FrontEnd","SystemResources"},
+      "Guides"->{"Documentation","English","Guides"},
+      "Tutorials"->{"Documentation", "English","Tutorials"},
+      "ReferencePages"->{"Documentation","English","ReferencePages"},
+      "Symbols"->{"Documentation", "English","ReferencePages","Symbols"},
+      "SymbolPages"->{"Documentation", "English","ReferencePages","Symbols"},
+      "MessagePages"->{"Documentation", "English","ReferencePages","Messages"},
+      "Objects"->{"Resources", "Objects"},
+      "Private"->{"Private"}
+      };
 
 
 AppPathFormat[pspec_]:=
-	Replace[
-		Flatten[{pspec}, 1],
-		$AppPathMap,
-		1]
+  Replace[
+    Flatten[{pspec}, 1],
+    $AppPathMap,
+    1]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -189,16 +189,16 @@ AppPathFormat[pspec_]:=
 
 
 AppLocate[app_]:=
-	Replace[
-		AppNames[app, False], 
-		{
-			{
-				f_,
-				___
-				}:>f,
-			_->$Failed
-			}
-		]
+  Replace[
+    AppNames[app, False], 
+    {
+      {
+        f_,
+        ___
+        }:>f,
+      _->$Failed
+      }
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -207,33 +207,33 @@ AppLocate[app_]:=
 
 
 Options[AppFileNames]=
-	Join[
-		Options[FileNames],
-		{
-			"DropDirectory"->True,
-			Select->Automatic
-			}
-		];
+  Join[
+    Options[FileNames],
+    {
+      "DropDirectory"->True,
+      Select->Automatic
+      }
+    ];
 AppFileNames[
-	app:_String|Automatic,
-	p___String,
-	pat:_?StringPattern`StringPatternQ:"*",
-	depth:_Integer?Positive|Infinity:1,
-	ops:OptionsPattern[]
-	]:=
-	With[{d=AppPath[app, p], sel=OptionValue[Select]},
-		If[TrueQ@OptionValue["DropDirectory"],
-			Map[FileNameDrop[#, FileNameDepth[d]]&],
-			Identity
-			]@
-			If[sel=!=Automatic, 
-				Select[TrueQ@sel[#]&], 
-				Identity
-				]@
-			FileNames[pat, d, depth,
-				FilterRules[{ops}, Options@FileNames]
-				]
-		]
+  app:_String|Automatic,
+  p___String,
+  pat:_?StringPattern`StringPatternQ:"*",
+  depth:_Integer?Positive|Infinity:1,
+  ops:OptionsPattern[]
+  ]:=
+  With[{d=AppPath[app, p], sel=OptionValue[Select]},
+    If[TrueQ@OptionValue["DropDirectory"],
+      Map[FileNameDrop[#, FileNameDepth[d]]&],
+      Identity
+      ]@
+      If[sel=!=Automatic, 
+        Select[TrueQ@sel[#]&], 
+        Identity
+        ]@
+      FileNames[pat, d, depth,
+        FilterRules[{ops}, Options@FileNames]
+        ]
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -242,50 +242,50 @@ AppFileNames[
 
 
 Options[AppComponentFiles]=
-	Join[
-		{
-			"DropExtension"->Automatic
-			},
-		Options[AppFileNames]
-		];
+  Join[
+    {
+      "DropExtension"->Automatic
+      },
+    Options[AppFileNames]
+    ];
 AppComponentFiles[
-	app:_String,
-	path___String,
-	ext:
-		Except[
-			"Palettes"|"Packages"|"StyleSheets"|
-				"SymbolPages"|"Guides"|"Tutorials",
-			_?StringPattern`StringPatternQ
-			],
-	o:OptionsPattern[]
-	]:=
-	If[TrueQ@OptionValue["DropExtension"]||
-		(OptionValue["DropExtension"]=!=False&&OptionValue["DropDirectory"]=!=False),
-		StringTrim[#, "."~~ext],
-		#
-		]&@
-		AppFileNames[
-			app,
-			path,
-			__~~"."~~ext,
-			Infinity,
-			IgnoreCase->True,
-			FilterRules[{o}, Options[AppFileNames]]
-			]	
+  app:_String,
+  path___String,
+  ext:
+    Except[
+      "Palettes"|"Packages"|"StyleSheets"|
+        "SymbolPages"|"Guides"|"Tutorials",
+      _?StringPattern`StringPatternQ
+      ],
+  o:OptionsPattern[]
+  ]:=
+  If[TrueQ@OptionValue["DropExtension"]||
+    (OptionValue["DropExtension"]=!=False&&OptionValue["DropDirectory"]=!=False),
+    StringTrim[#, "."~~ext],
+    #
+    ]&@
+    AppFileNames[
+      app,
+      path,
+      __~~"."~~ext,
+      Infinity,
+      IgnoreCase->True,
+      FilterRules[{o}, Options[AppFileNames]]
+      ]  
 
 
 AppComponentFiles[app_String, "Packages", ops:OptionsPattern[]]:=
-	AppComponentFiles[app, "Packages", "m"|"wl", ops];
+  AppComponentFiles[app, "Packages", "m"|"wl", ops];
 AppComponentFiles[app_String, "Palettes", ops:OptionsPattern[]]:=
-	AppComponentFiles[app, "Palettes", "nb", ops];
+  AppComponentFiles[app, "Palettes", "nb", ops];
 AppComponentFiles[app_String, "StyleSheets", ops:OptionsPattern[]]:=
-	AppComponentFiles[app, "StyleSheets", "nb", ops];
+  AppComponentFiles[app, "StyleSheets", "nb", ops];
 AppComponentFiles[app_String, "SymbolPages", ops:OptionsPattern[]]:=
-	AppComponentFiles[app, "SymbolPages", "nb", ops];
+  AppComponentFiles[app, "SymbolPages", "nb", ops];
 AppComponentFiles[app_String, "Guides", ops:OptionsPattern[]]:=
-	AppComponentFiles[app, "Guides", "nb", ops];
+  AppComponentFiles[app, "Guides", "nb", ops];
 AppComponentFiles[app_String, "Tutorials", ops:OptionsPattern[]]:=
-	AppComponentFiles[app, "Tutorials", "nb", ops];
+  AppComponentFiles[app, "Tutorials", "nb", ops];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -294,15 +294,15 @@ AppComponentFiles[app_String, "Tutorials", ops:OptionsPattern[]]:=
 
 
 Options[AppPackages]=
-	Options[AppComponentFiles]
+  Options[AppComponentFiles]
 AppPackages[
-	app:_String,
-	ops:OptionsPattern[]
-	]:=
-	Select[
-		AppComponentFiles[app, "Packages", "m"|"wl", ops],
-		StringFreeQ["__"]
-		]
+  app:_String,
+  ops:OptionsPattern[]
+  ]:=
+  Select[
+    AppComponentFiles[app, "Packages", "m"|"wl", ops],
+    StringFreeQ["__"]
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -311,18 +311,18 @@ AppPackages[
 
 
 AppPacletContexts[app_]:=
-	With[{pi=AppPacletInfo[app]},
-		Replace[
-			Fold[
-				Lookup[##, <||>]&,
-				If[AssociationQ@pi, pi, <||>],
-				{"Extensions", "Kernel", "Context"}
-				],
-			{
-				Except[{__String}]:>{}
-				}
-			]
-		]
+  With[{pi=AppPacletInfo[app]},
+    Replace[
+      Fold[
+        Lookup[##, <||>]&,
+        If[AssociationQ@pi, pi, <||>],
+        {"Extensions", "Kernel", "Context"}
+        ],
+      {
+        Except[{__String}]:>{}
+        }
+      ]
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -331,13 +331,13 @@ AppPacletContexts[app_]:=
 
 
 AppMainContext[app_]:=
-	Replace[
-		AppPacletContexts[app],
-		{
-			{s_String, ___}:>s,
-			_:>AppFromFile[app]<>"`"
-			}
-		]
+  Replace[
+    AppPacletContexts[app],
+    {
+      {s_String, ___}:>s,
+      _:>AppFromFile[app]<>"`"
+      }
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -349,41 +349,41 @@ AppContexts//Clear
 
 
 Options[AppContexts]=
-	{
-		"FullContext"->True
-		};
+  {
+    "FullContext"->True
+    };
 AppContexts[
-	app:_String,
-	ops:OptionsPattern[]
-	]:=
-	With[
-		{
-			subconts=
-				StringReplace[
-					AppFileNames[app, 
-						"Packages", 
-						WordCharacter..,
-						Infinity,
-						"DropDirectory"->True,
-						Select->DirectoryQ
-						],
-					$PathnameSeparator->"`"
-					]
-			},
-		If[Length@subconts==0,
-			If[!TrueQ@OptionValue["FullContext"], 
-				DeleteCases[""]@StringTrim[#, AppMainContext[app]]&, 
-				Identity
-				]@
-				AppPacletContexts[app],
-			If[TrueQ@OptionValue["FullContext"],
-				With[{mc=AppMainContext[app]},
-					Prepend[Map[mc<>#<>"`"&, subconts], mc]
-					],
-				#<>"`"&/@subconts
-				]
-			]
-		];
+  app:_String,
+  ops:OptionsPattern[]
+  ]:=
+  With[
+    {
+      subconts=
+        StringReplace[
+          AppFileNames[app, 
+            "Packages", 
+            WordCharacter..,
+            Infinity,
+            "DropDirectory"->True,
+            Select->DirectoryQ
+            ],
+          $PathnameSeparator->"`"
+          ]
+      },
+    If[Length@subconts==0,
+      If[!TrueQ@OptionValue["FullContext"], 
+        DeleteCases[""]@StringTrim[#, AppMainContext[app]]&, 
+        Identity
+        ]@
+        AppPacletContexts[app],
+      If[TrueQ@OptionValue["FullContext"],
+        With[{mc=AppMainContext[app]},
+          Prepend[Map[mc<>#<>"`"&, subconts], mc]
+          ],
+        #<>"`"&/@subconts
+        ]
+      ]
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -392,12 +392,12 @@ AppContexts[
 
 
 Options[AppStyleSheets]=
-	Options[AppComponentFiles]
+  Options[AppComponentFiles]
 AppStyleSheets[
-	app:_String,
-	ops:OptionsPattern[]
-	]:=
-	AppComponentFiles[app, "StyleSheets", "nb", ops]
+  app:_String,
+  ops:OptionsPattern[]
+  ]:=
+  AppComponentFiles[app, "StyleSheets", "nb", ops]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -406,12 +406,12 @@ AppStyleSheets[
 
 
 Options[AppPalettes]=
-	Options[AppComponentFiles]
+  Options[AppComponentFiles]
 AppPalettes[
-	app:_String,
-	ops:OptionsPattern[]
-	]:=
-	AppComponentFiles[app, "Palettes", "nb", ops]
+  app:_String,
+  ops:OptionsPattern[]
+  ]:=
+  AppComponentFiles[app, "Palettes", "nb", ops]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -420,12 +420,12 @@ AppPalettes[
 
 
 Options[AppSymbolPages]=
-	Options[AppComponentFiles]
+  Options[AppComponentFiles]
 AppSymbolPages[
-	app:_String,
-	ops:OptionsPattern[]
-	]:=
-	AppComponentFiles[app, "SymbolPages", "nb", ops]
+  app:_String,
+  ops:OptionsPattern[]
+  ]:=
+  AppComponentFiles[app, "SymbolPages", "nb", ops]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -434,12 +434,12 @@ AppSymbolPages[
 
 
 Options[AppGuides]=
-	Options[AppComponentFiles]
+  Options[AppComponentFiles]
 AppGuides[
-	app:_String,
-	ops:OptionsPattern[]
-	]:=
-	AppComponentFiles[app, "Guides", "nb", ops]
+  app:_String,
+  ops:OptionsPattern[]
+  ]:=
+  AppComponentFiles[app, "Guides", "nb", ops]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -448,12 +448,12 @@ AppGuides[
 
 
 Options[AppTutorials]=
-	Options[AppComponentFiles]
+  Options[AppComponentFiles]
 AppTutorials[
-	app:_String,
-	ops:OptionsPattern[]
-	]:=
-	AppComponentFiles[app, "Tutorials", "nb", ops]
+  app:_String,
+  ops:OptionsPattern[]
+  ]:=
+  AppComponentFiles[app, "Tutorials", "nb", ops]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -462,18 +462,18 @@ AppTutorials[
 
 
 AppFindFile[app_, path__String, exts_]:=
-	Replace[
-		AppPath[app, path],{
-			f_?(FileExistsQ[#]&&!DirectoryQ[#]&):>
-				f,
-			f_:>
-				If[FileExtension@f==="",
-					SelectFirst[f<>#&/@exts,
-						FileExistsQ
-						],
-					Missing["NotFound"]
-					]
-			}]
+  Replace[
+    AppPath[app, path],{
+      f_?(FileExistsQ[#]&&!DirectoryQ[#]&):>
+        f,
+      f_:>
+        If[FileExtension@f==="",
+          SelectFirst[f<>#&/@exts,
+            FileExistsQ
+            ],
+          Missing["NotFound"]
+          ]
+      }]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -482,7 +482,7 @@ AppFindFile[app_, path__String, exts_]:=
 
 
 AppPackage[app_, pkg_String]:=
-	AppFindFile[app, "Packages", pkg, {".nb", ".m", ".wl"}]
+  AppFindFile[app, "Packages", pkg, {".nb", ".m", ".wl"}]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -491,7 +491,7 @@ AppPackage[app_, pkg_String]:=
 
 
 AppStylesheet[app_, pkg_String]:=
-	AppFindFile[app, "Stylesheet", pkg, {".nb"}]
+  AppFindFile[app, "Stylesheet", pkg, {".nb"}]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -500,7 +500,7 @@ AppStylesheet[app_, pkg_String]:=
 
 
 AppPalette[app_, pkg_String]:=
-	AppFindFile[app, "Palette", pkg, {".nb"}]
+  AppFindFile[app, "Palette", pkg, {".nb"}]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -509,7 +509,7 @@ AppPalette[app_, pkg_String]:=
 
 
 AppSymbolPage[app_, pkg_String]:=
-	AppFindFile[app, "Symbols", pkg, {".nb"}]
+  AppFindFile[app, "Symbols", pkg, {".nb"}]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -518,7 +518,7 @@ AppSymbolPage[app_, pkg_String]:=
 
 
 AppSymbolPage[app_, pkg_String]:=
-	AppFindFile[app, "Guides", pkg, {".nb"}]
+  AppFindFile[app, "Guides", pkg, {".nb"}]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -527,7 +527,7 @@ AppSymbolPage[app_, pkg_String]:=
 
 
 AppSymbolPage[app_, pkg_String]:=
-	AppFindFile[app, "Tutorials", pkg, {".nb"}]
+  AppFindFile[app, "Tutorials", pkg, {".nb"}]
 
 
 (* ::Subsection:: *)
@@ -541,19 +541,19 @@ AppSymbolPage[app_, pkg_String]:=
 
 
 AppDirectory[app_, extensions___]:=
-	FileNameJoin@
-		Flatten@
-			{
-				Replace[
-					AppLocate[app],
-					$Failed:>
-						{
-							$AppDirectory,
-							app
-							}
-					],
-				AppPathFormat@{extensions}
-				};
+  FileNameJoin@
+    Flatten@
+      {
+        Replace[
+          AppLocate[app],
+          $Failed:>
+            {
+              $AppDirectory,
+              app
+              }
+          ],
+        AppPathFormat@{extensions}
+        };
 
 
 (* ::Subsubsection::Closed:: *)
@@ -561,54 +561,91 @@ AppDirectory[app_, extensions___]:=
 
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*cleanInitTemplate*)
+
+
+
+cleanInitTemplate[file_]:=
+  StringReplace[
+    StringReplace[
+      StringTrim[
+        Import[file, "Text"],
+        Verbatim["(* ::Package:: *)\n\n"]
+        ],
+      "`"->"`tick`"
+      ],
+    {
+      "$InitCode"->"`cores`",
+      "$Name"->"`name`"
+      }
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*applyInitTemplate*)
+
+
+
+applyInitTemplate[template_, pkg_]:=
+  TemplateApply[
+    template,
+    <|
+      "name"->pkg,
+      "tick"->"`"
+      |>
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$appInitStrings*)
+
+
+
 $appInitStrings:=
-	Association[
-		FileBaseName[#]->
-			StringReplace[
-				StringReplace[
-					StringTrim[
-						Import[#,"Text"],
-						Verbatim["(* ::Package:: *)\n\n"]
-						],
-					"`"->"`tick`"
-					],{
-				"$InitCode"->"`cores`",
-				"$Name"->"`name`"
-				}]&/@
-				FileNames[
-					"*.wl",
-					PackageFilePath[
-						"Resources",
-						"Templates",
-						"Initialization"
-						]
-					]
-			]
+  Association[
+    FileBaseName[#]->
+      cleanInitTemplate[#]&/@
+        FileNames[
+          "*.wl",
+          PackageFilePath[
+            "Resources",
+            "Templates",
+            "Initialization",
+            "Loader"
+            ]
+          ]
+      ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*appInitTemplate*)
+
+
+
+$appInitComponents=
+  {
+    "Constants", "Paths", "Loading",
+    "Dependencies", "Exceptions", "Autocomplete",
+    "FrontEnd"
+    }
 
 
 appInitTemplate[pkg_]:=
-	With[{strings=$appInitStrings},
-		TemplateApply[
-			TemplateApply[strings["init"],<|
-				"cores"->
-					StringRiffle[StringTrim/@{
-						strings["Constants"],
-						strings["Paths"],
-						strings["Loading"],
-						strings["Dependencies"],
-						strings["Exceptions"],
-						strings["Autocomplete"],
-						strings["FrontEnd"]
-						},
-						"\n"
-						],
-				"tick"->"`tick`",
-				"name"->"`name`"
-				|>],<|
-			"name"->pkg,
-			"tick"->"`"
-			|>]
-		];
+  With[{strings=$appInitStrings},
+    applyInitTemplate[
+      TemplateApply[strings["MainLoader"],<|
+        "cores"->
+          StringRiffle[
+            StringTrim@Lookup[strings, $appInitComponents],
+            "\n"
+            ],
+        "tick"->"`tick`",
+        "name"->"`name`"
+        |>],
+      pkg
+      ]
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -617,19 +654,37 @@ appInitTemplate[pkg_]:=
 
 
 AppRegenerateInit[name_String]:=
-	With[{
-		packageGet=name<>"`"<>name<>"`",
-		loaderGet=
-			"If[!TrueQ["<>name<>"`PackageScope`Private`$LoadCompleted],\n  <<"<>
-				name<>"`"<>name<>"Loader`\n  ]",
-		loader=AppDirectory[name,name<>"Loader.m"],
-		pkg=AppDirectory[name,name<>".wl"],
-		init=AppDirectory[name,"Kernel","init.m"]
-		},
-		Export[loader,appInitTemplate[name],"Text"];
-		Put[Unevaluated[Get[packageGet];],init];
-		Export[pkg, loaderGet, "Text"]
-		];
+  With[{
+    packageGet=
+      applyInitTemplate[
+        cleanInitTemplate@
+          PackageFilePath[
+            "Resources",
+            "Templates",
+            "Initialization",
+            "init.m"
+            ],
+        name
+        ],
+    loaderGet=
+      applyInitTemplate[
+        cleanInitTemplate@
+          PackageFilePath[
+            "Resources",
+            "Templates",
+            "Initialization",
+            "Main.wl"
+            ],
+        name
+        ],
+    loader=AppDirectory[name,name<>"Loader.wl"],
+    pkg=AppDirectory[name,name<>".wl"],
+    init=AppDirectory[name,"Kernel","init.m"]
+    },
+    Export[loader,appInitTemplate[name],"Text"];
+    Export[init, packageGet, "Text"];
+    Export[pkg, loaderGet, "Text"]
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -638,19 +693,19 @@ AppRegenerateInit[name_String]:=
 
 
 Options[AppRegenerateUploadInfo]=
-	Join[
-		Options@AppPacletSiteURL,
-		Options@AppPacletSiteMZ
-		];
+  Join[
+    Options@AppPacletSiteURL,
+    Options@AppPacletSiteMZ
+    ];
 AppRegenerateUploadInfo[app_String,ops:OptionsPattern[]]:=
-	Export[AppPath[app,"Config","UploadInfo.m"],
-		Flatten@{
-			ops,
-			"ServerName"->
-				Automatic,
-			CloudConnect->
-				False
-			}];
+  Export[AppPath[app,"Config","UploadInfo.m"],
+    Flatten@{
+      ops,
+      "ServerName"->
+        Automatic,
+      CloudConnect->
+        False
+      }];
 
 
 (* ::Subsection:: *)
@@ -664,27 +719,27 @@ AppRegenerateUploadInfo[app_String,ops:OptionsPattern[]]:=
 
 
 AppAddPackage[name_,file_]:=
-	AppAddContent[name,file,"Packages"];
+  AppAddContent[name,file,"Packages"];
 
 
 AppAddStylesheet[name_,file_]:=
-	AppAddContent[name,file,"StyleSheets"];
+  AppAddContent[name,file,"StyleSheets"];
 
 
 AppAddPalette[name_,file_]:=
-	AppAddContent[name,file,"Palettes"];
+  AppAddContent[name,file,"Palettes"];
 
 
 AppAddDocPage[name_,file_]:=
-	AppAddContent[name,file,"Symbols"];
+  AppAddContent[name,file,"Symbols"];
 
 
 AppAddGuidePage[name_,file_]:=
-	AppAddContent[name,file,"Guides"];
+  AppAddContent[name,file,"Guides"];
 
 
 AppAddTutorialPage[name_,file_]:=
-	AppAddContent[name,file,"Tutorials"];
+  AppAddContent[name,file,"Tutorials"];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -693,26 +748,26 @@ AppAddTutorialPage[name_,file_]:=
 
 
 Options[AppRegenerateBundleInfo]=
-	Options@AppPacletBundle;
+  Options@AppPacletBundle;
 AppRegenerateBundleInfo[app_String,ops:OptionsPattern[]]:=
-	Export[AppPath[app,"Config","BundleInfo.m"],
-		DeleteDuplicatesBy[First]@
-			Flatten@{
-				ops,
-				"RemovePaths"->{
-					"Private",
-					"project",
-					"GitHub",
-					".git"
-					},
-				"RemovePatterns"->{
-					"Packages/*.nb",
-					"Packages/*/*.nb",
-					"Packages/*/*/*.nb",
-					".DS_Store"
-					}
-				}
-		];
+  Export[AppPath[app,"Config","BundleInfo.m"],
+    DeleteDuplicatesBy[First]@
+      Flatten@{
+        ops,
+        "RemovePaths"->{
+          "Private",
+          "project",
+          "GitHub",
+          ".git"
+          },
+        "RemovePatterns"->{
+          "Packages/*.nb",
+          "Packages/*/*.nb",
+          "Packages/*/*/*.nb",
+          ".DS_Store"
+          }
+        }
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -721,19 +776,20 @@ AppRegenerateBundleInfo[app_String,ops:OptionsPattern[]]:=
 
 
 Options[AppRegenerateLoadInfo]=
-	{
-		"PreLoad"-> None,
-		"FEHidden" -> {},
-		"PackageScope"->None
-		};
+  {
+    "PreLoad"-> None,
+    "FEHidden" -> {},
+    "PackageScope"->None,
+    "Mode"->"Primary"
+    };
 AppRegenerateLoadInfo[app_String,ops:OptionsPattern[]]:=
-	Export[AppPath[app,"Config","LoadInfo.m"],
-		DeleteDuplicatesBy[First]@
-			Flatten@{
-				ops,
-				Options@AppRegenerateLoadInfo
-			}
-		];
+  Export[AppPath[app,"Config","LoadInfo.wl"],
+    DeleteDuplicatesBy[First]@
+      Flatten@{
+        ops,
+        Options@AppRegenerateLoadInfo
+      }
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -742,32 +798,32 @@ AppRegenerateLoadInfo[app_String,ops:OptionsPattern[]]:=
 
 
 AppRegenerateContextLoadFiles[app_]:=
-	With[
-		{
-			cts=Rest@AppContexts[app, "FullContext"->True],
-			ctf=
-				Import[
-					PackageFilePath["Resources", "Templates", "ContextLoader.wl"],
-					"Text"
-					]
-			},
-		Map[
-			With[
-				{
-					target=
-						AppPath[app, Sequence@@{#[[;;-2]], #[[-1]]<>".wl"}&@StringSplit[#, "`"]]
-					},
-				Quiet@
-					CreateDirectory[DirectoryName@target, CreateIntermediateDirectories->True];
-				WriteString[
-					target,
-					StringReplace[ctf, "$ContextDepth$"->ToString[StringCount[#, "`"]-1]]
-					];
-				Close[target]
-				]&,
-			cts
-			]
-		]
+  With[
+    {
+      cts=Rest@AppContexts[app, "FullContext"->True],
+      ctf=
+        Import[
+          PackageFilePath["Resources", "Templates", "ContextLoader.wl"],
+          "Text"
+          ]
+      },
+    Map[
+      With[
+        {
+          target=
+            AppPath[app, Sequence@@{#[[;;-2]], #[[-1]]<>".wl"}&@StringSplit[#, "`"]]
+          },
+        Quiet@
+          CreateDirectory[DirectoryName@target, CreateIntermediateDirectories->True];
+        WriteString[
+          target,
+          StringReplace[ctf, "$ContextDepth$"->ToString[StringCount[#, "`"]-1]]
+          ];
+        Close[target]
+        ]&,
+      cts
+      ]
+    ]
 
 
 (* ::Subsection:: *)
@@ -781,112 +837,112 @@ AppRegenerateContextLoadFiles[app_]:=
 
 
 AppGet[appName_,pkgName_String]:=
-	With[{
-		app=AppFromFile[appName],
-		cont=$Context
-		},
-		Replace[
-			Names[app<>"`*`PackageAppGet"],{
-				{n_, ___}:>
-					Replace[
-						FileNames[pkgName~~".wl"|".m",
-							AppPath[app,"Packages"],
-							\[Infinity]
-							],
-						{f_,___}:>
-							ToExpression[n][ExpandFileName@f]
-						],
-			_:>(
-				If[DirectoryQ@AppPath[app,"Packages",pkgName],
-					BeginPackage[app<>"`"];
-					Begin["`"<>StringTrim[StringReplace[pkgName,$PathnameSeparator->"`"],"`"]<>"`"];
-					FrontEnd`Private`GetUpdatedSymbolContexts[];
-					EndPackage[],
-					With[{
-						pkg=
-							SelectFirst[
-								SortBy[FileNameDepth]@
-									FileNames[
-										StringTrim[pkgName,".m"]<>".m",
-										AppPath[app,"Packages"],
-										Infinity
-										],
-								FileExistsQ
-								]
-						},
-						If[FileExistsQ@pkg,
-							With[{
-								pkCont=
-									StringReplace[
-										app<>"`"<>
-											StringReplace[
-												FileNameDrop[DirectoryName@pkg,
-													FileNameDepth@AppDirectory[app,"Packages"]],
-												$PathnameSeparator->"`"
-												]<>"`",
-										"``"->"`"
-										]
-								},
-								BeginPackage[pkCont]
-								];
-							$ContextPath=
-								DeleteDuplicates@
-									Join[
-										Replace[
-											ToExpression[
-												$Context<>"PackageScope`Private`$PackageContexts"
-												],
-											Except[{__String}]->{}
-											],
-										$ContextPath
-										];
-							CheckAbort[
-								Get@pkg;
-								EndPackage[],
-								EndPackage[];
-								Catch[
-									Catch[
-										Do[
-											If[i<100,
-												If[$Context===cont,Throw[$Context,"success"],End[]],
-												Throw[$Failed,"fail"]
-												],
-											{i,1000}
-											],
-										"fail",
-										Begin[cont]&
-										],
-									"success"
-									];
-								]
-							]
-						]
-					];
-				Catch[
-					Catch[
-						Do[
-							If[i<100,
-								If[$Context===cont, Throw[$Context,"success"],End[]],
-								Throw[$Failed,"fail"]
-								],
-							{i,1000}
-							],
-						"fail",
-						Begin[cont]&
-						],
-					"success"
-					]
-				)
-		}]
-	];
+  With[{
+    app=AppFromFile[appName],
+    cont=$Context
+    },
+    Replace[
+      Names[app<>"`*`PackageAppGet"],{
+        {n_, ___}:>
+          Replace[
+            FileNames[pkgName~~".wl"|".m",
+              AppPath[app,"Packages"],
+              \[Infinity]
+              ],
+            {f_,___}:>
+              ToExpression[n][ExpandFileName@f]
+            ],
+      _:>(
+        If[DirectoryQ@AppPath[app,"Packages",pkgName],
+          BeginPackage[app<>"`"];
+          Begin["`"<>StringTrim[StringReplace[pkgName,$PathnameSeparator->"`"],"`"]<>"`"];
+          FrontEnd`Private`GetUpdatedSymbolContexts[];
+          EndPackage[],
+          With[{
+            pkg=
+              SelectFirst[
+                SortBy[FileNameDepth]@
+                  FileNames[
+                    StringTrim[pkgName,".m"]<>".m",
+                    AppPath[app,"Packages"],
+                    Infinity
+                    ],
+                FileExistsQ
+                ]
+            },
+            If[FileExistsQ@pkg,
+              With[{
+                pkCont=
+                  StringReplace[
+                    app<>"`"<>
+                      StringReplace[
+                        FileNameDrop[DirectoryName@pkg,
+                          FileNameDepth@AppDirectory[app,"Packages"]],
+                        $PathnameSeparator->"`"
+                        ]<>"`",
+                    "``"->"`"
+                    ]
+                },
+                BeginPackage[pkCont]
+                ];
+              $ContextPath=
+                DeleteDuplicates@
+                  Join[
+                    Replace[
+                      ToExpression[
+                        $Context<>"PackageScope`Private`$PackageContexts"
+                        ],
+                      Except[{__String}]->{}
+                      ],
+                    $ContextPath
+                    ];
+              CheckAbort[
+                Get@pkg;
+                EndPackage[],
+                EndPackage[];
+                Catch[
+                  Catch[
+                    Do[
+                      If[i<100,
+                        If[$Context===cont,Throw[$Context,"success"],End[]],
+                        Throw[$Failed,"fail"]
+                        ],
+                      {i,1000}
+                      ],
+                    "fail",
+                    Begin[cont]&
+                    ],
+                  "success"
+                  ];
+                ]
+              ]
+            ]
+          ];
+        Catch[
+          Catch[
+            Do[
+              If[i<100,
+                If[$Context===cont, Throw[$Context,"success"],End[]],
+                Throw[$Failed,"fail"]
+                ],
+              {i,1000}
+              ],
+            "fail",
+            Begin[cont]&
+            ],
+          "success"
+          ]
+        )
+    }]
+  ];
 AppGet[appName_,pkgName:{__String}]:=
-	AppGet[appName,FileNameJoin@pkgName];
+  AppGet[appName,FileNameJoin@pkgName];
 AppGet[appName_,Optional[Automatic,Automatic]]:=
-	AppGet[appName,FileBaseName@NotebookFileName[]];
+  AppGet[appName,FileBaseName@NotebookFileName[]];
 AppGet[Optional[Automatic,Automatic]]:=
-	With[{app=FileNameTake[NotebookFileName[],{FileNameDepth@$AppDirectory+1}]},
-		AppGet[app,Automatic]
-		];
+  With[{app=FileNameTake[NotebookFileName[],{FileNameDepth@$AppDirectory+1}]},
+    AppGet[app,Automatic]
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -895,19 +951,19 @@ AppGet[Optional[Automatic,Automatic]]:=
 
 
 If[Not@AssociationQ@$AppLoadedPackages,
-	$AppLoadedPackages=<||>
-	];
+  $AppLoadedPackages=<||>
+  ];
 AppNeeds[appName_,pkgName_String]:=
-	If[!Lookup[$AppLoadedPackages,Key@{appName,pkgName},False],
-		$AppLoadedPackages[{appName,pkgName}]=True;
-		AppGet[appName,pkgName];
-		];
+  If[!Lookup[$AppLoadedPackages,Key@{appName,pkgName},False],
+    $AppLoadedPackages[{appName,pkgName}]=True;
+    AppGet[appName,pkgName];
+    ];
 AppNeeds[appName_,Optional[Automatic,Automatic]]:=
-	AppNeeds[appName,FileBaseName@NotebookFileName[]];
+  AppNeeds[appName,FileBaseName@NotebookFileName[]];
 AppNeeds[Optional[Automatic,Automatic]]:=
-	With[{app=FileNameTake[NotebookFileName[],{FileNameDepth@$AppDirectory+1}]},
-		AppNeeds[app,Automatic]
-		];
+  With[{app=FileNameTake[NotebookFileName[],{FileNameDepth@$AppDirectory+1}]},
+    AppNeeds[app,Automatic]
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -916,39 +972,39 @@ AppNeeds[Optional[Automatic,Automatic]]:=
 
 
 AppFromFile[f_String]:=
-	With[{
-		splitPath=FileNameSplit[DirectoryName[ExpandFileName@f]]
-		},
-		Replace[
-			SelectFirst[Range[Length@splitPath,1,-1],
-				FileExistsQ@FileNameJoin@Append[Take[splitPath,#], "PacletInfo.m"]&,
-				Which[
-					StringMatchQ[ExpandFileName@f,$AppDirectory~~__],
-						FileNameTake[
-							FileNameDrop[f,FileNameDepth@$AppDirectory],
-							1
-							],
-					StringMatchQ[f,"http*"~~"/"~~WordCharacter..],
-						URLParse[f]["Path"]//Last,
-					MemberQ[FileNameTake/@AppNames["*", False], f],
-						f,
-					Length@PacletManager`PacletFind[f]>0,	
-						PacletManager`PacletFind[f][[1]]["Location"]//FileBaseName,
-					True,
-						$Failed
-					]
-				],
-			i_Integer:>
-				splitPath[[i]]
-			]
-		];
+  With[{
+    splitPath=FileNameSplit[DirectoryName[ExpandFileName@f]]
+    },
+    Replace[
+      SelectFirst[Range[Length@splitPath,1,-1],
+        FileExistsQ@FileNameJoin@Append[Take[splitPath,#], "PacletInfo.m"]&,
+        Which[
+          StringMatchQ[ExpandFileName@f,$AppDirectory~~__],
+            FileNameTake[
+              FileNameDrop[f,FileNameDepth@$AppDirectory],
+              1
+              ],
+          StringMatchQ[f,"http*"~~"/"~~WordCharacter..],
+            URLParse[f]["Path"]//Last,
+          MemberQ[FileNameTake/@AppNames["*", False], f],
+            f,
+          Length@PacletManager`PacletFind[f]>0,  
+            PacletManager`PacletFind[f][[1]]["Location"]//FileBaseName,
+          True,
+            $Failed
+          ]
+        ],
+      i_Integer:>
+        splitPath[[i]]
+      ]
+    ];
 AppFromFile[nb_NotebookObject]:=
-	Replace[Quiet@NotebookFileName[nb],
-		s_String:>
-			AppFromFile[s]
-		];
+  Replace[Quiet@NotebookFileName[nb],
+    s_String:>
+      AppFromFile[s]
+    ];
 AppFromFile[Optional[Automatic,Automatic]]:=
-	AppFromFile@InputNotebook[];
+  AppFromFile@InputNotebook[];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -957,18 +1013,18 @@ AppFromFile[Optional[Automatic,Automatic]]:=
 
 
 AppPackageOpen[app_:Automatic,pkg_]:=
-	Replace[AppPackage[app,pkg<>".m"],{
-		f_String?FileExistsQ:>
-			SystemOpen@f,
-		_->$Failed
-		}];
+  Replace[AppPackage[app,pkg<>".m"],{
+    f_String?FileExistsQ:>
+      SystemOpen@f,
+    _->$Failed
+    }];
 AppPackageOpen[Optional[Automatic,Automatic]]:=
-	Replace[Quiet@NotebookFileName[],
-		f_String:>
-			AppPackageOpen[Automatic,
-				FileBaseName@f
-				]
-		]
+  Replace[Quiet@NotebookFileName[],
+    f_String:>
+      AppPackageOpen[Automatic,
+        FileBaseName@f
+        ]
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -978,46 +1034,46 @@ AppPackageOpen[Optional[Automatic,Automatic]]:=
 
 AppPackagePullDeclarationsAction//Clear
 AppPackagePullDeclarationsAction[
-	Hold[
-		_Begin|_BeginPackage|
-			CompoundExpression[_Begin|_BeginPackage,___]
-		]
-	]:=
-	Throw[Begin];
+  Hold[
+    _Begin|_BeginPackage|
+      CompoundExpression[_Begin|_BeginPackage,___]
+    ]
+  ]:=
+  Throw[Begin];
 AppPackagePullDeclarationsAction[e:Except[Hold[Expression]]]:=
-	Sow@e;
+  Sow@e;
 
 
 AppPackagePackagePullDeclarations[
-	pkgFile_,
-	casePattern_
-	]:=
-		Cases[
-			Reap[
-				With[{f=OpenRead[pkgFile]},
-					CheckAbort[
-						Catch@
-							Do[
-								If[
-									Length[
-										ReadList[
-											f,
-											AppPackagePullDeclarationsAction@Hold[Expression],
-											1
-											]
-										]===0,
-										Throw[EndOfFile]
-									],
-								Infinity
-								];
-						Close[f],
-						Close[f]
-						]
-					]
-				][[2,1]],
-			casePattern,
-			Infinity
-			]
+  pkgFile_,
+  casePattern_
+  ]:=
+    Cases[
+      Reap[
+        With[{f=OpenRead[pkgFile]},
+          CheckAbort[
+            Catch@
+              Do[
+                If[
+                  Length[
+                    ReadList[
+                      f,
+                      AppPackagePullDeclarationsAction@Hold[Expression],
+                      1
+                      ]
+                    ]===0,
+                    Throw[EndOfFile]
+                  ],
+                Infinity
+                ];
+            Close[f],
+            Close[f]
+            ]
+          ]
+        ][[2,1]],
+      casePattern,
+      Infinity
+      ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1026,68 +1082,68 @@ AppPackagePackagePullDeclarations[
 
 
 AppPackageFunctions[app:_String, pkgFile_String?FileExistsQ]:=
-	With[{
-		cont=
-			StringTrim[app, "`"]<>"`"
-		},
-		Block[{
-			pkgFuncCheckedCache=<||>,
-			$Context=
-				cont<>"Private`",
-			$ContextPath=
-				Join[
-					Replace[
-						ToExpression[cont<>"PackageScope`Private`$PackageContexts"],
-						Except[{__String}]->{}
-						],
-					{
-						cont,
-						"System`"
-						}
-					]
-			},
-			AppPackagePackagePullDeclarations[
-				pkgFile,
-				s_Symbol?(
-					Function[sym,
-						Not@KeyMemberQ[pkgFuncCheckedCache,Hold[sym]]&&
-							With[
-								{
-									v=
-										If[cont===None,
-											!StringMatchQ[
-												Quiet[Context[sym]],
-												"System`"|("*`*Private*")
-												],
-											With[{pcont=Quiet[Context[sym]]},
-												StringMatchQ[pcont, cont<>"*"]&&
-													!StringContainsQ[pcont,"Private`"]	
-												]
-											]
-									},
-								pkgFuncCheckedCache[Hold[sym]]=v
-								],
-						HoldFirst
-						]
-						):>
-						ToString[Unevaluated[s]]
-				]
-			]
-		];
+  With[{
+    cont=
+      StringTrim[app, "`"]<>"`"
+    },
+    Block[{
+      pkgFuncCheckedCache=<||>,
+      $Context=
+        cont<>"Private`",
+      $ContextPath=
+        Join[
+          Replace[
+            ToExpression[cont<>"PackageScope`Private`$PackageContexts"],
+            Except[{__String}]->{}
+            ],
+          {
+            cont,
+            "System`"
+            }
+          ]
+      },
+      AppPackagePackagePullDeclarations[
+        pkgFile,
+        s_Symbol?(
+          Function[sym,
+            Not@KeyMemberQ[pkgFuncCheckedCache,Hold[sym]]&&
+              With[
+                {
+                  v=
+                    If[cont===None,
+                      !StringMatchQ[
+                        Quiet[Context[sym]],
+                        "System`"|("*`*Private*")
+                        ],
+                      With[{pcont=Quiet[Context[sym]]},
+                        StringMatchQ[pcont, cont<>"*"]&&
+                          !StringContainsQ[pcont,"Private`"]  
+                        ]
+                      ]
+                  },
+                pkgFuncCheckedCache[Hold[sym]]=v
+                ],
+            HoldFirst
+            ]
+            ):>
+            ToString[Unevaluated[s]]
+        ]
+      ]
+    ];
 AppPackageFunctions[
-	app_String,
-	path_String
-	]:=
-	With[{pkg=AppPackage[app, StringTrim[path,".m"]<>".m"]},
-		AppPackageFunctions[app, pkg]/;FileExistsQ[pkg]
-		];
+  app_String,
+  path_String
+  ]:=
+  With[{pkg=AppPackage[app, StringTrim[path,".m"]<>".m"]},
+    AppPackageFunctions[app, pkg]/;FileExistsQ[pkg]
+    ];
 AppPackageFunctions[app_, paths:{__String}]:=
-	AssociationMap[
-		AppPackageFunctions[app,#]&,
-		paths
-		];
+  AssociationMap[
+    AppPackageFunctions[app,#]&,
+    paths
+    ];
 AppPackageFunctions[app_String]:=
-	AppPackageFunctions[app, AppPackages[app]]
+  AppPackageFunctions[app, AppPackages[app]]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1099,45 +1155,45 @@ AppFunctionPackage//Clear
 
 
 AppFunctionPackage[app_:Automatic,f:{__String}]:=
-	With[{funcs=AppPackageFunctions[app]},
-		AssociationMap[
-			Replace[Keys@Select[funcs,MemberQ[#]],{
-				{}->None,
-				{p_}:>p
-				}]&,
-			f
-			]
-		];
+  With[{funcs=AppPackageFunctions[app]},
+    AssociationMap[
+      Replace[Keys@Select[funcs,MemberQ[#]],{
+        {}->None,
+        {p_}:>p
+        }]&,
+      f
+      ]
+    ];
 AppFunctionPackage[app_:Automatic,f_String]:=
-	First@AppFunctionPackage[{f}];
+  First@AppFunctionPackage[{f}];
 AppFunctionPackage[app_:Automatic,f:{(_Symbol|_String)..}]:=
-	AppFunctionPackage[
-		Replace[app,
-			Automatic:>
-				FirstCase[Hold@f,s_Symbol:>StringTrim[Context[s],"`"],"System`",{2}]
-			],
-		First/@
-			Replace[
-				Thread[Hold[f]],
-				Hold[s_Symbol]:>Hold[SymbolName[Unevaluated@s]],
-				1]//Evaluate
-		];
+  AppFunctionPackage[
+    Replace[app,
+      Automatic:>
+        FirstCase[Hold@f,s_Symbol:>StringTrim[Context[s],"`"],"System`",{2}]
+      ],
+    First/@
+      Replace[
+        Thread[Hold[f]],
+        Hold[s_Symbol]:>Hold[SymbolName[Unevaluated@s]],
+        1]//Evaluate
+    ];
 AppFunctionPackage[app_:Automatic,f_Symbol]:=
-	AppFunctionPackage[
-		Replace[app,
-			Automatic:>StringTrim[Context[f],"`"]
-			],
-		SymbolName[Unevaluated@f]
-		];
+  AppFunctionPackage[
+    Replace[app,
+      Automatic:>StringTrim[Context[f],"`"]
+      ],
+    SymbolName[Unevaluated@f]
+    ];
 AppFunctionPackage[app_:Automatic,f:{__HoldPattern}]:=
-	Replace[Thread[f,HoldPattern],
-		Verbatim[HoldPattern][s_]:>
-			AppFunctionPackage[app,s]
-		];
+  Replace[Thread[f,HoldPattern],
+    Verbatim[HoldPattern][s_]:>
+      AppFunctionPackage[app,s]
+    ];
 AppFunctionPackage[app_:Automatic,e_]/;!TrueQ[AppFunctionPackage$recurseProtect]:=
-	Block[{AppFunctionPackage$recurseProtect=True},
-		AppFunctionPackage[app,Evaluate[e]]
-		];
+  Block[{AppFunctionPackage$recurseProtect=True},
+    AppFunctionPackage[app,Evaluate[e]]
+    ];
 AppFunctionPackage~SetAttributes~HoldAll
 
 
@@ -1152,39 +1208,39 @@ AppFunctionPackage~SetAttributes~HoldAll
 
 
 functionCallChain[conts_,function_]:=
-	With[{cpats=Alternatives@@Map[#<>"*"&,conts]},
-		HoldPattern@@@
-			FixedPoint[
-				Union[#,
-					Cases[
-						Flatten@
-							(Through[
-								Map[Apply, {DownValues,UpValues,OwnValues,SubValues}]@#
-								]&/@#),
-						s_Symbol?(
-							Function[Null,
-								Quiet[
-									StringMatchQ[Context[#],cpats]&&
-									Length[
-										Flatten@
-											Through[
-												Map[Apply,
-													{DownValues, UpValues, OwnValues, SubValues}
-													]@Hold[#]
-												]
-										]>0
-									],
-								HoldFirst
-								]
-							):>Hold[s],
-						\[Infinity],
-						Heads->True
-						]
-					]&,
-				Flatten@List@Thread@Hold[function],
-				50
-				]
-		];
+  With[{cpats=Alternatives@@Map[#<>"*"&,conts]},
+    HoldPattern@@@
+      FixedPoint[
+        Union[#,
+          Cases[
+            Flatten@
+              (Through[
+                Map[Apply, {DownValues,UpValues,OwnValues,SubValues}]@#
+                ]&/@#),
+            s_Symbol?(
+              Function[Null,
+                Quiet[
+                  StringMatchQ[Context[#],cpats]&&
+                  Length[
+                    Flatten@
+                      Through[
+                        Map[Apply,
+                          {DownValues, UpValues, OwnValues, SubValues}
+                          ]@Hold[#]
+                        ]
+                    ]>0
+                  ],
+                HoldFirst
+                ]
+              ):>Hold[s],
+            \[Infinity],
+            Heads->True
+            ]
+          ]&,
+        Flatten@List@Thread@Hold[function],
+        50
+        ]
+    ];
 functionCallChain~SetAttributes~HoldRest
 
 
@@ -1197,45 +1253,45 @@ AppFunctionDependencies//ClearAll
 
 
 AppFunctionDependencies[app_, function:_Symbol|{__Symbol}]:=
-	With[{conts=
-		{# ,#<>"Private`"}&@
-			Quiet@
-				Extract[Flatten@List@Thread@Hold[function], {1,1}, Context]
-		},
-		Replace[
-			AppFunctionPackage[
-				app,
-				Select[
-					functionCallChain[conts, function],
-					With[{c=Alternatives@@conts},
-						Quiet[
-							With[{cont=Context@@#},
-								StringStartsQ[cont, c]&&
-									StringFreeQ[cont, "`Private`"|"`PackagePrivate`"]
-								]
-							]&
-						]
-					]
-				],
-		{
-			a_Association:>
-				GroupBy[First->Last]@
-					KeyValueMap[Thread[#2->#]&,a],
-			_:>
-				<||>
-			}]
-		];
+  With[{conts=
+    {# ,#<>"Private`"}&@
+      Quiet@
+        Extract[Flatten@List@Thread@Hold[function], {1,1}, Context]
+    },
+    Replace[
+      AppFunctionPackage[
+        app,
+        Select[
+          functionCallChain[conts, function],
+          With[{c=Alternatives@@conts},
+            Quiet[
+              With[{cont=Context@@#},
+                StringStartsQ[cont, c]&&
+                  StringFreeQ[cont, "`Private`"|"`PackagePrivate`"]
+                ]
+              ]&
+            ]
+          ]
+        ],
+    {
+      a_Association:>
+        GroupBy[First->Last]@
+          KeyValueMap[Thread[#2->#]&,a],
+      _:>
+        <||>
+      }]
+    ];
 AppFunctionDependencies[app_, Hold[function_Symbol]]:=
-	AppFunctionDependencies[app, function];
+  AppFunctionDependencies[app, function];
 AppFunctionDependencies[app_, functions:{Hold[_Symbol]..}]:=
-	Replace[Thread[functions, Hold],
-		Hold[s_]:>AppFunctionDependencies[app, s]
-		];
+  Replace[Thread[functions, Hold],
+    Hold[s_]:>AppFunctionDependencies[app, s]
+    ];
 AppFunctionDependencies[app_:Automatic,f_]/;
-	!TrueQ[AppFunctionDependencies$recurseProtect]:=
-	Block[{AppFunctionDependencies$recurseProtect=True},
-		AppFunctionDependencies[app,Evaluate[f]]
-		];
+  !TrueQ[AppFunctionDependencies$recurseProtect]:=
+  Block[{AppFunctionDependencies$recurseProtect=True},
+    AppFunctionDependencies[app,Evaluate[f]]
+    ];
 AppFunctionDependencies~SetAttributes~HoldAll
 
 
@@ -1250,41 +1306,41 @@ AppFunctionDependencies~SetAttributes~HoldAll
 
 
 AppPackageDependencies[app_, pkg:_String|{__String}]:=
-	(
-		AppNeeds[app, #]&/@AppPackages[app];
-		AppFunctionDependencies[
-			app,
-			ToExpression[
-				Names[
-					app<>"`*`"<>#&/@
-						Flatten@Apply[List, AppPackageFunctions[app, pkg]]
-					],
-				StandardForm,
-				Function[
-					Null,
-					If[Length@Flatten@
-								Through[
-									Map[Apply, {DownValues,UpValues,OwnValues,SubValues}]@
-										Hold[#]
-									]==0,
-						Nothing,
-						Hold@#
-						],
-					HoldFirst
-					]
-				]
-			]
-		);
+  (
+    AppNeeds[app, #]&/@AppPackages[app];
+    AppFunctionDependencies[
+      app,
+      ToExpression[
+        Names[
+          app<>"`*`"<>#&/@
+            Flatten@Apply[List, AppPackageFunctions[app, pkg]]
+          ],
+        StandardForm,
+        Function[
+          Null,
+          If[Length@Flatten@
+                Through[
+                  Map[Apply, {DownValues,UpValues,OwnValues,SubValues}]@
+                    Hold[#]
+                  ]==0,
+            Nothing,
+            Hold@#
+            ],
+          HoldFirst
+          ]
+        ]
+      ]
+    );
 AppPackageDependencies[app_:Automatic, f_Symbol]:=
-	AppPackageDependencies[
-		Replace[app,
-			Automatic:>
-				StringSplit[Context[f], "`"][[1]]
-			],
-		AppFunctionPackage[app, f]
-		];
+  AppPackageDependencies[
+    Replace[app,
+      Automatic:>
+        StringSplit[Context[f], "`"][[1]]
+      ],
+    AppFunctionPackage[app, f]
+    ];
 AppPackageDependencies[app_]:=
-	AppPackageDependencies[app, AppPackages[app]]
+  AppPackageDependencies[app, AppPackages[app]]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1293,31 +1349,31 @@ AppPackageDependencies[app_]:=
 
 
 AppGenerateTestingNotebook[app_]:=
-	Notebook[{
-		Cell[app<>" Testing","CodeChapter"],
-		Cell[BoxData@RowBox@{"<<",app<>"`"},"CodeInput"],
-		MapIndexed[
-			Cell[
-				CellGroupData[Flatten@{
-					Cell[First@#,"Section"],
-					Cell[BoxData@RowBox@{
-							"AppGet","[","\""<>app<>"\"",",",
-							"\""<>First@#<>"\"","]"
-							},
-						"CodeInput"
-						]
-					},
-					If[First@#2==1,Open,Closed]
-					]
-				]&,
-			Normal@AppPackageFunctions[app]
-			]
-		},
-		StyleDefinitions->
-			FrontEnd`FileName[Evaluate@{$PackageName},"CodeNotebook.nb"]
-		];
+  Notebook[{
+    Cell[app<>" Testing","CodeChapter"],
+    Cell[BoxData@RowBox@{"<<",app<>"`"},"CodeInput"],
+    MapIndexed[
+      Cell[
+        CellGroupData[Flatten@{
+          Cell[First@#,"Section"],
+          Cell[BoxData@RowBox@{
+              "AppGet","[","\""<>app<>"\"",",",
+              "\""<>First@#<>"\"","]"
+              },
+            "CodeInput"
+            ]
+          },
+          If[First@#2==1,Open,Closed]
+          ]
+        ]&,
+      Normal@AppPackageFunctions[app]
+      ]
+    },
+    StyleDefinitions->
+      FrontEnd`FileName[Evaluate@{$PackageName},"CodeNotebook.nb"]
+    ];
 AppGenerateTestingNotebook[Optional[Automatic,Automatic]]:=
-	AppGenerateTestingNotebook[AppFromFile[]]
+  AppGenerateTestingNotebook[AppFromFile[]]
 
 
 (* ::Subsection:: *)
@@ -1335,42 +1391,42 @@ $AppBackupDirectoryName="_appcache"
 
 
 AppInstall[
-		name_String?(StringMatchQ[Except[WhitespaceCharacter|"/"|"_"|"."]..]),
-		loadFE_:Automatic]:=
-	With[{},
-		If[!DirectoryQ@AppDirectory@name,AppDownload@name];
-		If[Replace[loadFE,
-			Automatic:>(FileNames["*",{
-				AppDirectory[name,"Palettes"],
-				AppDirectory[name,"StyleSheets"]}
-				]=!={})
-			],
-			DialogInput[Column@{
+    name_String?(StringMatchQ[Except[WhitespaceCharacter|"/"|"_"|"."]..]),
+    loadFE_:Automatic]:=
+  With[{},
+    If[!DirectoryQ@AppDirectory@name,AppDownload@name];
+    If[Replace[loadFE,
+      Automatic:>(FileNames["*",{
+        AppDirectory[name,"Palettes"],
+        AppDirectory[name,"StyleSheets"]}
+        ]=!={})
+      ],
+      DialogInput[Column@{
 "Front end must quit to complete installation. 
 Would you like to do that now?",
-				Row@{
-					DefaultButton["Quit Now",
-						FrontEndTokenExecute@"FrontEndQuit"],
-					Button["Wait",
-						DialogReturn[]]
-					}
-				},
-				WindowTitle->"Quit Mathematica"
-				];
-			];
-		Get@FileNameJoin@{$UserBaseDirectory,"Applications",name,"Kernel","init.m"};
-	];
+        Row@{
+          DefaultButton["Quit Now",
+            FrontEndTokenExecute@"FrontEndQuit"],
+          Button["Wait",
+            DialogReturn[]]
+          }
+        },
+        WindowTitle->"Quit Mathematica"
+        ];
+      ];
+    Get@FileNameJoin@{$UserBaseDirectory,"Applications",name,"Kernel","init.m"};
+  ];
 
 
 AppInstall[try___]:=
-	With[{result=AppDownload[try]},
-		Replace[result,{
-			_AppDownload:>$Failed,
-			f_:>If[DirectoryQ@AppDirectory@FileNameTake@f,
-					AppInstall@f
-					];
-			}]
-		]
+  With[{result=AppDownload[try]},
+    Replace[result,{
+      _AppDownload:>$Failed,
+      f_:>If[DirectoryQ@AppDirectory@FileNameTake@f,
+          AppInstall@f
+          ];
+      }]
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1379,81 +1435,81 @@ AppInstall[try___]:=
 
 
 Options[AppDownload]:=
-	Options@DownloadFile;
+  Options@DownloadFile;
 AppDownload[
-		file:File[_String?DirectoryQ]|_String?DirectoryQ,
-		name:(
-				_String?(StringMatchQ[Except[WhitespaceCharacter|"/"|"_"|"."]..])|
-				Automatic
-				):Automatic,
-		root:File[_String?DirectoryQ]|_String?DirectoryQ|Automatic:Automatic,
-		ops:OptionsPattern[]
-		]:=
-	With[{appName=StringReplace[
-		FileBaseName@file,{
-			Whitespace->"",
-			Except[WordCharacter|DigitCharacter]->"$"
-			}]},
-			Block[{$BackupDirectoryName=$AppBackupDirectoryName},
-				BackupCopyFile[file,name,Replace[root,Automatic:>$AppDirectory],ops]
-				]
-			];
-
-
-AppDownload[
-		file:(
-				File[_String?(FileExtension@#==="zip"&)]|
-				_String?(FileExtension@#==="zip"&)
-				),
-		name:(
-				_String?(StringMatchQ[Except[WhitespaceCharacter|"/"|"_"|"."]..])|
-				Automatic
-				):Automatic,
-		root:File[_String?DirectoryQ]|_String?DirectoryQ|Automatic:Automatic,
-		ops:OptionsPattern[]
-		]:=
-	Block[{$BackupDirectoryName=$AppBackupDirectoryName},
-		DownloadFile[file,name,Replace[root,Automatic:>$AppDirectory],ops]
-		];
+    file:File[_String?DirectoryQ]|_String?DirectoryQ,
+    name:(
+        _String?(StringMatchQ[Except[WhitespaceCharacter|"/"|"_"|"."]..])|
+        Automatic
+        ):Automatic,
+    root:File[_String?DirectoryQ]|_String?DirectoryQ|Automatic:Automatic,
+    ops:OptionsPattern[]
+    ]:=
+  With[{appName=StringReplace[
+    FileBaseName@file,{
+      Whitespace->"",
+      Except[WordCharacter|DigitCharacter]->"$"
+      }]},
+      Block[{$BackupDirectoryName=$AppBackupDirectoryName},
+        BackupCopyFile[file,name,Replace[root,Automatic:>$AppDirectory],ops]
+        ]
+      ];
 
 
 AppDownload[
-		file:(_CloudObject|_URL|_String),
-		name:(
-				_String?(StringMatchQ[Except[WhitespaceCharacter|"/"|"_"|"."]..])|
-				Automatic
-				):Automatic,
-		root:File[_String?DirectoryQ]|_String?DirectoryQ|Automatic:Automatic,
-		ops:OptionsPattern[]
-		]:=
-	Block[{$BackupDirectoryName=$AppBackupDirectoryName},
-		DownloadFile[
-			Replace[file,_String:>
-				Switch[
-					OptionValue@"DownloadFrom",
-					CloudObject,
-						URLBuild@{$AppCloudExtension,file},
-					"Google Drive",
-						FileNameJoin@{$AppDirectoryName,file}
-					]
-				],
-			name,
-			Replace[root,Automatic:>$AppDirectory],
-			ops]
-		];
+    file:(
+        File[_String?(FileExtension@#==="zip"&)]|
+        _String?(FileExtension@#==="zip"&)
+        ),
+    name:(
+        _String?(StringMatchQ[Except[WhitespaceCharacter|"/"|"_"|"."]..])|
+        Automatic
+        ):Automatic,
+    root:File[_String?DirectoryQ]|_String?DirectoryQ|Automatic:Automatic,
+    ops:OptionsPattern[]
+    ]:=
+  Block[{$BackupDirectoryName=$AppBackupDirectoryName},
+    DownloadFile[file,name,Replace[root,Automatic:>$AppDirectory],ops]
+    ];
 
 
 AppDownload[
-	file_,
-	name:(
-				_String?(StringMatchQ[Except[WhitespaceCharacter|"/"|"_"|"."]..])|
-				Automatic
-				):Automatic,
-	root:File[_String?DirectoryQ]|_String?DirectoryQ,
-	source:Except[_Rule],
-	ops:OptionsPattern[]
-	]:=
-	AppDownload[file,name,root,"DownloadFrom"->source,ops];
+    file:(_CloudObject|_URL|_String),
+    name:(
+        _String?(StringMatchQ[Except[WhitespaceCharacter|"/"|"_"|"."]..])|
+        Automatic
+        ):Automatic,
+    root:File[_String?DirectoryQ]|_String?DirectoryQ|Automatic:Automatic,
+    ops:OptionsPattern[]
+    ]:=
+  Block[{$BackupDirectoryName=$AppBackupDirectoryName},
+    DownloadFile[
+      Replace[file,_String:>
+        Switch[
+          OptionValue@"DownloadFrom",
+          CloudObject,
+            URLBuild@{$AppCloudExtension,file},
+          "Google Drive",
+            FileNameJoin@{$AppDirectoryName,file}
+          ]
+        ],
+      name,
+      Replace[root,Automatic:>$AppDirectory],
+      ops]
+    ];
+
+
+AppDownload[
+  file_,
+  name:(
+        _String?(StringMatchQ[Except[WhitespaceCharacter|"/"|"_"|"."]..])|
+        Automatic
+        ):Automatic,
+  root:File[_String?DirectoryQ]|_String?DirectoryQ,
+  source:Except[_Rule],
+  ops:OptionsPattern[]
+  ]:=
+  AppDownload[file,name,root,"DownloadFrom"->source,ops];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1462,69 +1518,69 @@ AppDownload[
 
 
 Options[AppBundle]:=
-	Join[
-		Options@CreateSyncBundle,{
-		"BundleInfo"->Automatic
-		}];
+  Join[
+    Options@CreateSyncBundle,{
+    "BundleInfo"->Automatic
+    }];
 AppBundle[
-	paths:_String|{__String},
-	exportDir:_String?DirectoryQ|Automatic:Automatic,
-	metadata:{(_Rule|_RuleDelayed)..}|_Assocation:{},
-	ops:OptionsPattern[]]:=
-	Replace[OptionValue["BundleInfo"],{
-		Automatic:>
-			AppBundle[paths,exportDir,metadata,
-				"BundleInfo"->
-					Replace[
-						AppPath[First@Flatten@{paths},
-							"Config","BundleInfo.m"],
-						Except[_String?FileExistsQ]:>
-							AppPath[First@Flatten@{paths},
-								"Config","BundleInfo.wl"]
-						],
-				ops
-				],
-		f:(_String|_File)?FileExistsQ|_URL:>
-			AppBundle[paths,exportDir,metadata,
-				"BundleInfo"->None,
-				Replace[Import[f],{
-					o:{__?OptionQ}:>
-						(Sequence@@FilterRules[o,Options@AppBundle]),
-					_:>(Sequence@@{})
-					}],
-				ops
-				],
-		_:>
-			bundleApp[paths,exportDir,metadata,ops]
-		}];
+  paths:_String|{__String},
+  exportDir:_String?DirectoryQ|Automatic:Automatic,
+  metadata:{(_Rule|_RuleDelayed)..}|_Assocation:{},
+  ops:OptionsPattern[]]:=
+  Replace[OptionValue["BundleInfo"],{
+    Automatic:>
+      AppBundle[paths,exportDir,metadata,
+        "BundleInfo"->
+          Replace[
+            AppPath[First@Flatten@{paths},
+              "Config","BundleInfo.m"],
+            Except[_String?FileExistsQ]:>
+              AppPath[First@Flatten@{paths},
+                "Config","BundleInfo.wl"]
+            ],
+        ops
+        ],
+    f:(_String|_File)?FileExistsQ|_URL:>
+      AppBundle[paths,exportDir,metadata,
+        "BundleInfo"->None,
+        Replace[Import[f],{
+          o:{__?OptionQ}:>
+            (Sequence@@FilterRules[o,Options@AppBundle]),
+          _:>(Sequence@@{})
+          }],
+        ops
+        ],
+    _:>
+      bundleApp[paths,exportDir,metadata,ops]
+    }];
 Options[bundleApp]=
-	Options@AppBundle;
+  Options@AppBundle;
 bundleApp[paths_,
-	exportDir:_String?DirectoryQ|Automatic:Automatic,
-	metadata:{(_Rule|_RuleDelayed)..}|_Assocation:{},
-	ops:OptionsPattern[]]:=
-	With[{bundle=
-		CreateSyncBundle[
-			Table[If[!FileExistsQ@app,AppDirectory@app,app],{app,Flatten@{paths}}],
-			metadata,
-			FilterRules[{
-				ops,
-				Directory->
-					Automatic,
-				Root->
-					If[!FileExistsQ@First@Flatten@{paths},
-						AppDirectory@First@Flatten@{paths},
-						$AppDirectory
-						]
-				},
-				Options@CreateSyncBundle
-				]
-			]},
-		If[exportDir=!=Automatic,
-			RenameFile[bundle,FileNameJoin@{exportDir,FileNameTake@bundle}],
-			bundle
-			]
-		];
+  exportDir:_String?DirectoryQ|Automatic:Automatic,
+  metadata:{(_Rule|_RuleDelayed)..}|_Assocation:{},
+  ops:OptionsPattern[]]:=
+  With[{bundle=
+    CreateSyncBundle[
+      Table[If[!FileExistsQ@app,AppDirectory@app,app],{app,Flatten@{paths}}],
+      metadata,
+      FilterRules[{
+        ops,
+        Directory->
+          Automatic,
+        Root->
+          If[!FileExistsQ@First@Flatten@{paths},
+            AppDirectory@First@Flatten@{paths},
+            $AppDirectory
+            ]
+        },
+        Options@CreateSyncBundle
+        ]
+      ]},
+    If[exportDir=!=Automatic,
+      RenameFile[bundle,FileNameJoin@{exportDir,FileNameTake@bundle}],
+      bundle
+      ]
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1534,46 +1590,46 @@ bundleApp[paths_,
 
 (* ::CodeInput::Plain:: *)
 Options[AppUpload]:=
-	Join[
-		Options@AppBundle,
-		Options@UploadFile,
-		{
-			Directory->Automatic
-			}
-		];
+  Join[
+    Options@AppBundle,
+    Options@UploadFile,
+    {
+      Directory->Automatic
+      }
+    ];
 AppUpload[
-	appName_String,
-	ops:OptionsPattern[]]:=
-	With[{dir=
-		Block[{
-			$AppDirectoryRoot=
-				Replace[
-					OptionValue@Directory,
-					Except[_String?DirectoryQ]:>
-						$AppDirectoryRoot
-					]},
-			If[!FileExistsQ@appName,AppDirectory@appName,appName]
-			]},
-		UploadFile[
-			If[FileExistsQ@appName,
-				appName,
-				AppBundle[appName,
-					FilterRules[{ops},Options@AppBundle]]
-				],
-			$AppCloudExtension,
-			ops
-			]
-		];
+  appName_String,
+  ops:OptionsPattern[]]:=
+  With[{dir=
+    Block[{
+      $AppDirectoryRoot=
+        Replace[
+          OptionValue@Directory,
+          Except[_String?DirectoryQ]:>
+            $AppDirectoryRoot
+          ]},
+      If[!FileExistsQ@appName,AppDirectory@appName,appName]
+      ]},
+    UploadFile[
+      If[FileExistsQ@appName,
+        appName,
+        AppBundle[appName,
+          FilterRules[{ops},Options@AppBundle]]
+        ],
+      $AppCloudExtension,
+      ops
+      ]
+    ];
 
 
 AppUpload[
-	appName_,
-	sourceLink:"Google Drive"|CloudObject|Automatic,
-	ops:OptionsPattern[]
-	]:=
-	AppUpload[appName,
-		"UploadTo"->sourceLink,
-		ops]
+  appName_,
+  sourceLink:"Google Drive"|CloudObject|Automatic,
+  ops:OptionsPattern[]
+  ]:=
+  AppUpload[appName,
+    "UploadTo"->sourceLink,
+    ops]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1582,11 +1638,11 @@ AppUpload[
 
 
 AppBackup[appName_]:=
-	With[{
-		appDir=AppDirectory[appName]
-		},
-		BackupFile[appDir,$AppDirectory,$AppBackupDirectoryName]
-		];	
+  With[{
+    appDir=AppDirectory[appName]
+    },
+    BackupFile[appDir,$AppDirectory,$AppBackupDirectoryName]
+    ];  
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1606,7 +1662,7 @@ AppIndex[]:=Table[
 
 
 AppBackups[appName_:""]:=
-	FileBackups[appName,AppDirectory@$AppBackupDirectoryName];
+  FileBackups[appName,AppDirectory@$AppBackupDirectoryName];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1615,11 +1671,11 @@ AppBackups[appName_:""]:=
 
 
 AppRestore[appName_]:=
-	RestoreFile[
-		appName,
-		AppDirectory@$AppBackupDirectoryName,
-		$AppDirectory
-		];
+  RestoreFile[
+    appName,
+    AppDirectory@$AppBackupDirectoryName,
+    $AppDirectory
+    ];
 
 
 (* ::Subsection:: *)
@@ -1638,39 +1694,39 @@ $AppProjectCSS="css";
 
 
 Options[AppDeployReadme]=
-	{
-		"UploadTo"->"Paclet"
-		};
+  {
+    "UploadTo"->"Paclet"
+    };
 AppDeployReadme[appName_,ops:OptionsPattern[]]:=
-	With[{app=AppFromFile[appName]},
-		If[FileExistsQ@AppPath[app,"README.md"],
-			Replace[OptionValue["UploadTo"],{
-				"Paclet":>
-					XMLDeploy[
-						MarkdownGenerate[AppPath[app,"README.md"]],
-						URLBuild@{AppPacletSiteURL[app],"README"},
-						Permissions->"Public"
-						],
-				CloudObject[o_,___]:>
-					XMLDeploy[
-						MarkdownGenerate[AppPath[app,"README.md"]],
-						URLBuild@{o,"README"},
-						Permissions->"Public"
-						],
-				d_String?DirectoryQ:>
-					XMLExport[
-						MarkdownGenerate[AppPath[app,"README.md"]],
-						FileNameJoin@{d,"README.html"}
-						],
-				d_String?SyncPathQ:>
-					XMLExport[
-						MarkdownGenerate[AppPath[app,"README.md"]],
-						FileNameJoin@{SyncPath[d],"README.html"}
-						]
-				}
-				]
-			]
-		];
+  With[{app=AppFromFile[appName]},
+    If[FileExistsQ@AppPath[app,"README.md"],
+      Replace[OptionValue["UploadTo"],{
+        "Paclet":>
+          XMLDeploy[
+            MarkdownGenerate[AppPath[app,"README.md"]],
+            URLBuild@{AppPacletSiteURL[app],"README"},
+            Permissions->"Public"
+            ],
+        CloudObject[o_,___]:>
+          XMLDeploy[
+            MarkdownGenerate[AppPath[app,"README.md"]],
+            URLBuild@{o,"README"},
+            Permissions->"Public"
+            ],
+        d_String?DirectoryQ:>
+          XMLExport[
+            MarkdownGenerate[AppPath[app,"README.md"]],
+            FileNameJoin@{d,"README.html"}
+            ],
+        d_String?SyncPathQ:>
+          XMLExport[
+            MarkdownGenerate[AppPath[app,"README.md"]],
+            FileNameJoin@{SyncPath[d],"README.html"}
+            ]
+        }
+        ]
+      ]
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1679,77 +1735,77 @@ AppDeployReadme[appName_,ops:OptionsPattern[]]:=
 
 
 Options[AppDeployImages]=
-	{
-		"UploadTo"->"Paclet"
-		};
+  {
+    "UploadTo"->"Paclet"
+    };
 AppDeployImages[appName_,ops:OptionsPattern[]]:=
-	With[{app=AppFromFile[appName]},
-		With[{imgFiles=
-			FileNames["*."~~
-				Alternatives@@ToLowerCase@Image`$ExportImageFormats,
-				AppPath[app,$AppProjectExtension,$AppProjectImages]
-				]
-			},
-			If[Length@imgFiles>0,
-				Replace[OptionValue["UploadTo"],{
-					"Paclet":>
-						Map[
-							CopyFile[File[#],
-								CloudObject[
-									URLBuild@{
-										AppPacletSiteURL[app],
-										$AppProjectExtension,$AppProjectImages,
-										FileNameTake[#]
-										},
-									Permissions->"Public"
-									]
-								]&,
-							imgFiles
-							],
-					CloudObject[o_,___]:>
-						Map[
-							CopyFile[File[#],
-								CloudObject[
-									URLBuild@{
-										o,
-										$AppProjectExtension,$AppProjectImages,
-										FileNameTake[#]
-										},
-									Permissions->"Public"
-									]
-								]&,
-							imgFiles
-							],
-					d_String?DirectoryQ:>
-						Map[
-							CopyFile[
-								#,
-								FileNameJoin@{
-									d,
-									$AppProjectExtension,$AppProjectImages,
-									FileNameTake[#]
-									}
-								]&,
-							imgFiles
-							],
-					d_String?SyncPathQ:>
-						Map[
-							CopyFile[
-								#,
-								FileNameJoin@{
-									SyncPath[d],
-									$AppProjectExtension,
-									$AppProjectImages,
-									FileNameTake[#]
-									}
-								]&,
-							imgFiles
-							]
-					}
-					]
-				]
-			]
-		];
+  With[{app=AppFromFile[appName]},
+    With[{imgFiles=
+      FileNames["*."~~
+        Alternatives@@ToLowerCase@Image`$ExportImageFormats,
+        AppPath[app,$AppProjectExtension,$AppProjectImages]
+        ]
+      },
+      If[Length@imgFiles>0,
+        Replace[OptionValue["UploadTo"],{
+          "Paclet":>
+            Map[
+              CopyFile[File[#],
+                CloudObject[
+                  URLBuild@{
+                    AppPacletSiteURL[app],
+                    $AppProjectExtension,$AppProjectImages,
+                    FileNameTake[#]
+                    },
+                  Permissions->"Public"
+                  ]
+                ]&,
+              imgFiles
+              ],
+          CloudObject[o_,___]:>
+            Map[
+              CopyFile[File[#],
+                CloudObject[
+                  URLBuild@{
+                    o,
+                    $AppProjectExtension,$AppProjectImages,
+                    FileNameTake[#]
+                    },
+                  Permissions->"Public"
+                  ]
+                ]&,
+              imgFiles
+              ],
+          d_String?DirectoryQ:>
+            Map[
+              CopyFile[
+                #,
+                FileNameJoin@{
+                  d,
+                  $AppProjectExtension,$AppProjectImages,
+                  FileNameTake[#]
+                  }
+                ]&,
+              imgFiles
+              ],
+          d_String?SyncPathQ:>
+            Map[
+              CopyFile[
+                #,
+                FileNameJoin@{
+                  SyncPath[d],
+                  $AppProjectExtension,
+                  $AppProjectImages,
+                  FileNameTake[#]
+                  }
+                ]&,
+              imgFiles
+              ]
+          }
+          ]
+        ]
+      ]
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1758,76 +1814,76 @@ AppDeployImages[appName_,ops:OptionsPattern[]]:=
 
 
 Options[AppDeployCSS]=
-	{
-		"UploadTo"->"Paclet"
-		};
+  {
+    "UploadTo"->"Paclet"
+    };
 AppDeployCSS[appName_,ops:OptionsPattern[]]:=
-	With[{app=AppFromFile[appName]},
-		With[{cssFiles=
-			FileNames["*.css",
-				AppPath[app,$AppProjectExtension,$AppProjectCSS]
-				]
-			},
-			If[Length@cssFiles>0,
-				Replace[OptionValue["UploadTo"],{
-					"Paclet":>
-						Map[
-							CopyFile[File[#],
-								CloudObject[
-									URLBuild@{
-										AppPacletSiteURL[app],
-										$AppProjectExtension,$AppProjectCSS,
-										FileNameTake[#]
-										},
-									Permissions->"Public"
-									]
-								]&,
-							cssFiles
-							],
-					CloudObject[o_,___]:>
-						Map[
-							CopyFile[File[#],
-								CloudObject[
-									URLBuild@{
-										o,
-										$AppProjectExtension,$AppProjectCSS,
-										FileNameTake[#]
-										},
-									Permissions->"Public"
-									]
-								]&,
-							cssFiles
-							],
-					d_String?DirectoryQ:>
-						Map[
-							CopyFile[
-								#,
-								FileNameJoin@{
-									d,
-									$AppProjectExtension,$AppProjectCSS,
-									FileNameTake[#]
-									}
-								]&,
-							cssFiles
-							],
-					d_String?SyncPathQ:>
-						Map[
-							CopyFile[
-								#,
-								FileNameJoin@{
-									SyncPath[d],
-									$AppProjectExtension,
-									$AppProjectCSS,
-									FileNameTake[#]
-									}
-								]&,
-							cssFiles
-							]
-					}
-					]
-				]
-			]
-		];
+  With[{app=AppFromFile[appName]},
+    With[{cssFiles=
+      FileNames["*.css",
+        AppPath[app,$AppProjectExtension,$AppProjectCSS]
+        ]
+      },
+      If[Length@cssFiles>0,
+        Replace[OptionValue["UploadTo"],{
+          "Paclet":>
+            Map[
+              CopyFile[File[#],
+                CloudObject[
+                  URLBuild@{
+                    AppPacletSiteURL[app],
+                    $AppProjectExtension,$AppProjectCSS,
+                    FileNameTake[#]
+                    },
+                  Permissions->"Public"
+                  ]
+                ]&,
+              cssFiles
+              ],
+          CloudObject[o_,___]:>
+            Map[
+              CopyFile[File[#],
+                CloudObject[
+                  URLBuild@{
+                    o,
+                    $AppProjectExtension,$AppProjectCSS,
+                    FileNameTake[#]
+                    },
+                  Permissions->"Public"
+                  ]
+                ]&,
+              cssFiles
+              ],
+          d_String?DirectoryQ:>
+            Map[
+              CopyFile[
+                #,
+                FileNameJoin@{
+                  d,
+                  $AppProjectExtension,$AppProjectCSS,
+                  FileNameTake[#]
+                  }
+                ]&,
+              cssFiles
+              ],
+          d_String?SyncPathQ:>
+            Map[
+              CopyFile[
+                #,
+                FileNameJoin@{
+                  SyncPath[d],
+                  $AppProjectExtension,
+                  $AppProjectCSS,
+                  FileNameTake[#]
+                  }
+                ]&,
+              cssFiles
+              ]
+          }
+          ]
+        ]
+      ]
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1836,75 +1892,75 @@ AppDeployCSS[appName_,ops:OptionsPattern[]]:=
 
 
 Options[AppDeployHTML]=
-	{
-		"UploadTo"->"Paclet"
-		};
+  {
+    "UploadTo"->"Paclet"
+    };
 AppDeployHTML[appName_,ops:OptionsPattern[]]:=
-	With[{app=AppFromFile[appName]},
-		With[{htmlFiles=
-			FileNames["*.html",
-				AppPath[app,$AppProjectExtension]
-				]
-			},
-			If[Length@htmlFiles>0,
-				Replace[OptionValue["UploadTo"],{
-					"Paclet":>
-						Map[
-							CopyFile[File[#],
-								CloudObject[
-									URLBuild@{
-										AppPacletSiteURL[app],
-										$AppProjectExtension,
-										FileNameTake[#]
-										},
-									Permissions->"Public"
-									]
-								]&,
-							htmlFiles
-							],
-					CloudObject[o_,___]:>
-						Map[
-							CopyFile[File[#],
-								CloudObject[
-									URLBuild@{
-										o,
-										$AppProjectExtension,
-										FileNameTake[#]
-										},
-									Permissions->"Public"
-									]
-								]&,
-							htmlFiles
-							],
-					d_String?DirectoryQ:>
-						Map[
-							CopyFile[
-								#,
-								FileNameJoin@{
-									d,
-									$AppProjectExtension,
-									FileNameTake[#]
-									}
-								]&,
-							htmlFiles
-							],
-					d_String?SyncPathQ:>
-						Map[
-							CopyFile[
-								#,
-								FileNameJoin@{
-									SyncPath[d],
-									$AppProjectExtension,
-									FileNameTake[#]
-									}
-								]&,
-							htmlFiles
-							]
-					}
-					]
-				]
-			]
-		];
+  With[{app=AppFromFile[appName]},
+    With[{htmlFiles=
+      FileNames["*.html",
+        AppPath[app,$AppProjectExtension]
+        ]
+      },
+      If[Length@htmlFiles>0,
+        Replace[OptionValue["UploadTo"],{
+          "Paclet":>
+            Map[
+              CopyFile[File[#],
+                CloudObject[
+                  URLBuild@{
+                    AppPacletSiteURL[app],
+                    $AppProjectExtension,
+                    FileNameTake[#]
+                    },
+                  Permissions->"Public"
+                  ]
+                ]&,
+              htmlFiles
+              ],
+          CloudObject[o_,___]:>
+            Map[
+              CopyFile[File[#],
+                CloudObject[
+                  URLBuild@{
+                    o,
+                    $AppProjectExtension,
+                    FileNameTake[#]
+                    },
+                  Permissions->"Public"
+                  ]
+                ]&,
+              htmlFiles
+              ],
+          d_String?DirectoryQ:>
+            Map[
+              CopyFile[
+                #,
+                FileNameJoin@{
+                  d,
+                  $AppProjectExtension,
+                  FileNameTake[#]
+                  }
+                ]&,
+              htmlFiles
+              ],
+          d_String?SyncPathQ:>
+            Map[
+              CopyFile[
+                #,
+                FileNameJoin@{
+                  SyncPath[d],
+                  $AppProjectExtension,
+                  FileNameTake[#]
+                  }
+                ]&,
+              htmlFiles
+              ]
+          }
+          ]
+        ]
+      ]
+    ];
 
 
 End[];
