@@ -1849,7 +1849,7 @@ relatedFunctionNames[s_String,c:_String|Automatic:Automatic]:=
       ]
     ];
 relatedFunctionNames[s_Symbol,c:_String|Automatic:Automatic]:=
-  relatedFunctionNames[Evaluate@ToString@Unevaluated[s],
+  relatedFunctionNames[Evaluate@SymbolName@Unevaluated[s],
     Replace[c,
       Automatic:>Context[s]
       ]];

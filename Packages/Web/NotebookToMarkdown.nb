@@ -19,566 +19,13 @@ Cell[BoxData[{
   3.722549431018907*^9}},ExpressionUUID->"2dbdeb45-3e26-4ee8-913e-\
 9dbde1ba6a3e"],
 
+Cell[CellGroupData[{
+
 Cell[BoxData[
  RowBox[{
   RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
   ";"}]], "InputSection",ExpressionUUID->"58e034d9-3a4f-4373-a898-\
 a7a25da5e895"],
-
-Cell[CellGroupData[{
-
-Cell["\[LeftCeiling]NotebookToMarkdown\[RightFloor]", "CodeSubsection",
- Evaluatable->True,
- CellChangeTimes->{
-  3.712619058911902*^9},ExpressionUUID->"0c16843e-4e1f-4831-8e76-\
-efd10dbbf636"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"$MarkdownSiteRoot", "=", "\n", "\t", 
-   RowBox[{"FileNameJoin", "@", 
-    RowBox[{"{", "\n", "\t\t", 
-     RowBox[{"$WebTemplatingRoot", ",", "\n", "\t\t", "\"\<markdown\>\""}], 
-     "\n", "\t\t", "}"}]}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.709687329813738*^9, 3.709687342092918*^9}, {
-  3.712619242450061*^9, 3.712619246281229*^9}, {3.712619483533847*^9, 
-  3.712619484419449*^9}, {3.734804584908942*^9, 
-  3.7348045853303623`*^9}},ExpressionUUID->"1650ff80-d2eb-4eda-bfbd-\
-f1a13eb7f12f"],
-
-Cell[CellGroupData[{
-
-Cell["\[LeftCeiling]Site\[RightFloor]", "CodeSubsubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.709910400904351*^9, 3.709910402921986*^9}, 
-   3.709910462258342*^9, 
-   3.712935232999382*^9},ExpressionUUID->"0c202a14-9baa-460c-95ec-\
-dfcf4e77f51c"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"$MarkdownStandardContentExtensions", "=", "\n", "\t", 
-   RowBox[{"{", "\n", "\t\t", 
-    RowBox[{
-    "\"\<content\>\"", ",", "\n", "\t\t", "\"\<project\>\"", ",", "\n", 
-     "\t\t", "\"\<proj\>\""}], "\n", "\t\t", "}"}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.712935234886813*^9, 
-  3.712935234892394*^9}},ExpressionUUID->"33ae259c-6696-4d2a-ad10-\
-aa1f9bd6070c"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"MarkdownSiteBase", "[", "f_String", "]"}], ":=", "\n", "\t", 
-  RowBox[{"Replace", "[", 
-   RowBox[{
-    RowBox[{"FileNameSplit", "[", "f", "]"}], ",", 
-    RowBox[{"{", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{
-       RowBox[{"{", 
-        RowBox[{
-         RowBox[{"d", ":", 
-          RowBox[{"Shortest", "[", "___", "]"}]}], ",", "\n", "\t\t\t", 
-         RowBox[{
-          RowBox[{"(", 
-           RowBox[{
-           "Alternatives", "@@", "$MarkdownStandardContentExtensions"}], 
-           ")"}], "|", "\"\<output\>\""}], ",", "___"}], "}"}], 
-       "\[RuleDelayed]", "\n", "\t\t\t", 
-       RowBox[{"FileNameJoin", "@", 
-        RowBox[{"{", "d", "}"}]}]}], ",", "\n", "\t\t", 
-      RowBox[{"_", "\[RuleDelayed]", 
-       RowBox[{"If", "[", 
-        RowBox[{
-         RowBox[{"DirectoryQ", "@", "f"}], ",", "f", ",", 
-         RowBox[{"DirectoryName", "[", "f", "]"}]}], "]"}]}]}], "\n", "\t\t", 
-     "}"}]}], "]"}]}]], "CodeInput",
- CellChangeTimes->{{3.7099104036505413`*^9, 3.709910456058681*^9}, {
-  3.709910487347702*^9, 3.709910539208179*^9}, {3.712619290817182*^9, 
-  3.712619291738019*^9}, {3.712935252258628*^9, 3.712935265978619*^9}, {
-  3.712935353164048*^9, 
-  3.712935365610303*^9}},ExpressionUUID->"f273d6f0-18a7-419f-b09f-\
-6973e4af524e"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{
-   RowBox[{"MarkdownContentExtension", "[", "root_", "]"}], ":=", "\n", "\t", 
-   
-   RowBox[{"SelectFirst", "[", 
-    RowBox[{"$MarkdownStandardContentExtensions", ",", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{"DirectoryQ", "@", 
-       RowBox[{"FileNameJoin", "@", 
-        RowBox[{"{", 
-         RowBox[{"root", ",", "#"}], "}"}]}]}], "&"}], ",", "\n", "\t\t", 
-     "Nothing"}], "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.712934672299851*^9, 3.712934681273697*^9}, {
-  3.712934831866921*^9, 3.7129348672392387`*^9}, {3.712935184443366*^9, 
-  3.712935232354887*^9}, {3.712935284003347*^9, 
-  3.7129353207628*^9}},ExpressionUUID->"8bfb9812-3ae9-4052-b283-74961101cb91"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"MarkdownContentPath", "[", "f_String", "]"}], ":=", "\n", "\t", 
-  RowBox[{"Replace", "[", 
-   RowBox[{
-    RowBox[{"FileNameSplit", "[", "f", "]"}], ",", 
-    RowBox[{"{", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{
-       RowBox[{"{", 
-        RowBox[{
-         RowBox[{"Shortest", "[", "___", "]"}], ",", "\n", "\t\t\t", 
-         RowBox[{"Alternatives", "@@", "$MarkdownStandardContentExtensions"}],
-          ",", "p___"}], "}"}], "\[RuleDelayed]", "\n", "\t\t\t", 
-       RowBox[{"FileNameJoin", "@", 
-        RowBox[{"{", "p", "}"}]}]}], ",", "\n", "\t\t", 
-      RowBox[{"_", "\[RuleDelayed]", "f"}]}], "\n", "\t\t", "}"}]}], 
-   "]"}]}]], "CodeInput",
- CellChangeTimes->{{3.7099104036505413`*^9, 3.7099104993223257`*^9}, {
-  3.709910542466214*^9, 3.709910542818048*^9}, {3.71261928308251*^9, 
-  3.7126192840097523`*^9}, {3.7129352743813667`*^9, 
-  3.712935279914081*^9}},ExpressionUUID->"539c0213-2624-4a93-a205-\
-0dd4609d5663"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"MarkdownOutputPath", "[", "f_String", "]"}], ":=", "\n", "\t", 
-  RowBox[{"Replace", "[", 
-   RowBox[{
-    RowBox[{"FileNameSplit", "[", "f", "]"}], ",", 
-    RowBox[{"{", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{
-       RowBox[{"{", 
-        RowBox[{
-         RowBox[{"Shortest", "[", "___", "]"}], ",", "\"\<output\>\"", ",", 
-         "p___"}], "}"}], "\[RuleDelayed]", 
-       RowBox[{"FileNameJoin", "@", 
-        RowBox[{"{", "p", "}"}]}]}], ",", "\n", "\t\t", 
-      RowBox[{"_", "\[RuleDelayed]", "f"}]}], "\n", "\t\t", "}"}]}], 
-   "]"}]}]], "CodeInput",
- CellChangeTimes->{{3.7099104036505413`*^9, 3.7099104993223257`*^9}, {
-  3.709910542466214*^9, 3.709910542818048*^9}, {3.7099106943765087`*^9, 
-  3.709910699887433*^9}, {3.7126192939800987`*^9, 
-  3.712619295010029*^9}},ExpressionUUID->"ee478361-eb7a-47b1-a52a-\
-eb49de381e0b"]
-}, Closed]],
-
-Cell[CellGroupData[{
-
-Cell["\[LeftCeiling]File Templates\[RightFloor]", "CodeSubsubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.7096808579402943`*^9, 3.7096808610114393`*^9}, {
-  3.709682493181614*^9, 3.709682505836833*^9}, {3.7126198336586447`*^9, 
-  3.712619835646366*^9}, {3.7348048897527113`*^9, 
-  3.7348048922539988`*^9}},ExpressionUUID->"cce9f491-95f7-498d-892d-\
-278ac6c8a09a"],
-
-Cell[CellGroupData[{
-
-Cell["\[LeftCeiling]Template\[RightFloor]", "CodeSubsubsubsection",
- Evaluatable->True,
- CellChangeTimes->{
-  3.709682510569744*^9},ExpressionUUID->"2eca5a06-1a3d-42cd-8227-\
-3f67fc73c28b"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{
-  "$markdownnewmdfiletemplate", "=", "\n", "\"\<`headers`\n\n`body`\n\>\""}], 
-  ";"}]], "CodeInput",
- CellChangeTimes->{{3.7096820831601152`*^9, 3.7096821132858953`*^9}, {
-  3.709682145291258*^9, 3.709682189834934*^9}, {3.7126197353289213`*^9, 
-  3.712619751251297*^9}, {3.712619803042438*^9, 
-  3.712619824350039*^9}},ExpressionUUID->"5b6a928a-60cd-4452-8479-\
-601f9c43d39c"]
-}, Closed]],
-
-Cell[CellGroupData[{
-
-Cell["\[LeftCeiling]Metadata\[RightFloor]", "CodeSubsubsubsection",
- Evaluatable->True,
- CellChangeTimes->{
-  3.709682510569744*^9, {3.709683021911436*^9, 
-   3.709683023302143*^9}},ExpressionUUID->"9c143128-63a6-491f-b7a9-\
-62797b85275e"],
-
-Cell[CellGroupData[{
-
-Cell["\[LeftCeiling]NameToSlug\[RightFloor]", "CodeSubsubsubsubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.734804895834289*^9, 
-  3.734804918080662*^9}},ExpressionUUID->"763935d6-6219-4a32-98d0-\
-db164c003456"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"markdownNameToSlug", "[", "t_", "]"}], ":=", "\n", "\t", 
-  RowBox[{"ToLowerCase", "@", "\n", "\t\t", 
-   RowBox[{"StringReplace", "[", "\n", "\t\t\t", 
-    RowBox[{"t", ",", "\n", "\t\t\t", 
-     RowBox[{"{", "\n", "\t\t\t\t", 
-      RowBox[{
-       RowBox[{"Whitespace", "\[Rule]", "\"\<-\>\""}], ",", "\n", "\t\t\t\t", 
-       
-       RowBox[{
-        RowBox[{"Except", "[", "WordCharacter", "]"}], "\[Rule]", 
-        "\"\<\>\""}]}], "\n", "\t\t\t\t", "}"}]}], "\n", "\t\t\t", 
-    "]"}]}]}]], "CodeInput",
- CellChangeTimes->{{3.731355525224739*^9, 
-  3.731355557093646*^9}},ExpressionUUID->"f46e83fe-7852-4c35-a6ec-\
-f03e4170623b"]
-}, Closed]],
-
-Cell[CellGroupData[{
-
-Cell["\[LeftCeiling]Title\[RightFloor]", "CodeSubsubsubsubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.7348049045366297`*^9, 
-  3.734804907592318*^9}},ExpressionUUID->"58a5f7ee-7331-40b0-8632-\
-6ea1adcdab4b"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{
-   RowBox[{"markdownFileMetadataTitle", "[", 
-    RowBox[{"t_", ",", "name_", ",", "opsassoc_"}], "]"}], ":=", "\n", "\t", 
-   RowBox[{"Replace", "[", 
-    RowBox[{"t", ",", "\n", "\t\t", 
-     RowBox[{"{", "\n", "\t\t\t", 
-      RowBox[{"Automatic", "\[RuleDelayed]", "name"}], "\n", "\t", "\t\t", 
-      "}"}]}], "]"}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.7096825131593847`*^9, 3.709682560249235*^9}, 
-   3.7096826234213057`*^9, 3.712619751263452*^9, {3.712715093199716*^9, 
-   3.7127150936577578`*^9}},ExpressionUUID->"e2c7c89d-6be0-48dc-85ca-\
-521ea1c08e40"]
-}, Closed]],
-
-Cell[CellGroupData[{
-
-Cell["\[LeftCeiling]Slug\[RightFloor]", "CodeSubsubsubsubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.7348049045366297`*^9, 
-  3.734804915553749*^9}},ExpressionUUID->"869ce462-8724-45da-97f9-\
-5064890dca72"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"markdownFileMetadataSlug", "[", 
-   RowBox[{"t_", ",", "name_", ",", "opsassoc_"}], "]"}], ":=", "\n", "\t", 
-  RowBox[{"Replace", "[", 
-   RowBox[{"t", ",", "\n", "\t\t", 
-    RowBox[{"{", "\n", "\t\t\t", 
-     RowBox[{"Automatic", "\[RuleDelayed]", "\n", "\t\t\t\t", 
-      RowBox[{"markdownNameToSlug", "@", "\n", "\t\t\t\t\t", 
-       RowBox[{"markdownFileMetadataTitle", "[", "\n", "\t\t\t\t\t\t", 
-        RowBox[{
-         RowBox[{"Lookup", "[", 
-          RowBox[{"opsassoc", ",", "\"\<Title\>\"", ",", "t"}], "]"}], ",", 
-         "\n", "\t\t\t\t\t\t", "name", ",", "\n", "\t\t\t\t\t\t", 
-         "opsassoc"}], "\n", "\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", 
-     "}"}]}], "\n", "\t\t", "]"}]}]], "CodeInput",
- CellChangeTimes->{{3.709682771103484*^9, 3.709682821698436*^9}, {
-  3.710444391328595*^9, 3.710444408112303*^9}, {3.7126197512725763`*^9, 
-  3.7126197512769938`*^9}, {3.712715091523325*^9, 3.712715115883935*^9}, {
-  3.712802210440275*^9, 3.712802218552761*^9}, {3.7313555618669643`*^9, 
-  3.7313555729908323`*^9}},ExpressionUUID->"2fb2b224-4225-4966-8311-\
-3f59bd294281"]
-}, Closed]],
-
-Cell[CellGroupData[{
-
-Cell["\[LeftCeiling]Metadata\[RightFloor]", "CodeSubsubsubsubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.7348049045366297`*^9, 
-  3.734804926098143*^9}},ExpressionUUID->"04991048-b104-4e58-a1de-\
-924e4a42af44"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"markdownFileMetadata", "[", 
-   RowBox[{"val_", ",", "opsassoc_"}], "]"}], ":=", "\n", "\t", 
-  RowBox[{"Replace", "[", 
-   RowBox[{"val", ",", 
-    RowBox[{"{", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{"_List", ":>", "\n", "\t\t\t", 
-       RowBox[{"StringRiffle", "[", 
-        RowBox[{
-         RowBox[{"ToString", "/@", "val"}], ",", "\"\<,\>\""}], "]"}]}], ",", 
-      "\n", "\t\t", 
-      RowBox[{"_DateObject", ":>", "\n", "\t\t\t", 
-       RowBox[{"StringReplace", "[", 
-        RowBox[{
-         RowBox[{"DateString", "[", 
-          RowBox[{"val", ",", "\"\<ISODateTime\>\""}], "]"}], ",", 
-         RowBox[{"\"\<T\>\"", "\[Rule]", "\"\< \>\""}]}], "]"}]}]}], "\n", 
-     "\t\t", "}"}]}], "]"}]}]], "CodeInput",
- CellChangeTimes->{{3.709682631779891*^9, 3.70968274102518*^9}, 
-   3.712619751285172*^9, {3.712715084084697*^9, 
-   3.7127150875370007`*^9}},ExpressionUUID->"20d34739-8aaf-4fb9-85b9-\
-2d5b6d219c18"]
-}, Closed]],
-
-Cell[CellGroupData[{
-
-Cell["\[LeftCeiling]MetadataFormat\[RightFloor]", "CodeSubsubsubsubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.734804933817149*^9, 
-  3.734804936242429*^9}},ExpressionUUID->"42173373-d8c5-435e-ba6e-\
-b6cdff291185"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{
-   RowBox[{"markdownMetadataFormat", "[", 
-    RowBox[{"name_", ",", "ops_"}], "]"}], ":=", "\n", "\t", 
-   RowBox[{"With", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"opsassoc", "=", 
-       RowBox[{"Association", "@", "ops"}]}], "}"}], ",", "\n", "\t\t", 
-     RowBox[{"Block", "[", 
-      RowBox[{
-       RowBox[{"{", 
-        RowBox[{"Internal`$ContextMarks", "=", "False"}], "}"}], ",", "\n", 
-       "\t", "\t\t", 
-       RowBox[{
-        RowBox[{"Function", "[", 
-         RowBox[{"StringRiffle", "[", 
-          RowBox[{
-           RowBox[{"ToString", "/@", "#"}], ",", "\"\<\\n\>\""}], "]"}], 
-         "]"}], "@", "\n", "\t", "\t\t\t", 
-        RowBox[{"KeyValueMap", "[", "\n", "\t", "\t\t\t\t", 
-         RowBox[{
-          RowBox[{
-           RowBox[{
-            RowBox[{"ToString", "[", "#", "]"}], "<>", "\"\<: \>\"", "<>", 
-            "\n", "\t", "\t\t\t\t\t", 
-            RowBox[{"ToString", "@", "\n", "\t", "\t\t\t\t\t\t", 
-             RowBox[{"StringReplace", "[", "\n", "\t", "\t\t\t\t\t\t\t", 
-              RowBox[{
-               RowBox[{"ToString", "@", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
-                RowBox[{"Switch", "[", 
-                 RowBox[{
-                 "#", ",", "\n", "\t", "\t", "\t", "\t", "\t", "\t\t\t\t\t", 
-                  "\"\<Title\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
-                  "\t\t\t\t\t\t\t", 
-                  RowBox[{"markdownFileMetadataTitle", "[", 
-                   RowBox[{"#2", ",", "name", ",", "opsassoc"}], "]"}], ",", 
-                  "\n", "\t", "\t", "\t", "\t", "\t\t\t\t\t\t", 
-                  "\"\<Slug\>\"", ",", "\n", "\t", "\t", "\t", "\t", 
-                  "\t\t\t\t\t\t\t", 
-                  RowBox[{"markdownFileMetadataSlug", "[", 
-                   RowBox[{"#2", ",", "name", ",", "opsassoc"}], "]"}], ",", 
-                  "\n", "\t", "\t", "\t", "\t\t\t\t\t\t\t", "_", ",", "\n", 
-                  "\t", "\t", "\t", "\t\t\t\t\t\t\t\t", 
-                  RowBox[{"markdownFileMetadata", "[", 
-                   RowBox[{"#2", ",", "opsassoc"}], "]"}]}], "\n", "\t", "\t",
-                  "\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t", "\t", 
-               "\t\t\t\t\t\t", 
-               RowBox[{"\"\<\\n\>\"", "\[Rule]", "\"\<\\ \>\""}]}], "\n", 
-              "\t", "\t", "\t\t\t\t\t\t", "]"}]}]}], "&"}], ",", "\n", "\t", 
-          "\t\t\t\t", 
-          RowBox[{
-           RowBox[{"KeySortBy", "[", "\n", "\t", "\t", "\t\t\t\t", 
-            RowBox[{
-             RowBox[{"Switch", "[", 
-              RowBox[{
-              "#", ",", "\"\<Title\>\"", ",", "0", ",", "_", ",", "1"}], 
-              "]"}], "&"}], "\n", "\t", "\t", "\t\t\t\t", "]"}], "@", 
-           "opsassoc"}]}], "\n", "\t", "\t\t\t\t", "]"}]}]}], "\n", "\t", 
-      "\t\t", "]"}]}], "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.7097802192632523`*^9, 3.709780263855653*^9}, {
-  3.709783989413759*^9, 3.709783996185376*^9}, {3.709784105155528*^9, 
-  3.70978411813308*^9}, {3.70978421729281*^9, 3.709784260964595*^9}, {
-  3.712619751295491*^9, 3.712619751307551*^9}, {3.712715055240801*^9, 
-  3.712715089266406*^9}, {3.7127637201957703`*^9, 3.712763754333201*^9}, {
-  3.734804558735921*^9, 3.7348045597336407`*^9}, {3.734804960740212*^9, 
-  3.7348049936452837`*^9}},ExpressionUUID->"4297fe84-3986-45b2-9ac2-\
-43147d6fa028"]
-}, Closed]]
-}, Closed]]
-}, Closed]],
-
-Cell[CellGroupData[{
-
-Cell["\[LeftCeiling]NotebookMetadata\[RightFloor]", "CodeSubsubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.709910798412724*^9, 
-  3.709910802212143*^9}},ExpressionUUID->"cedabbe8-2136-42aa-829b-\
-f30e4e50b0c2"],
-
-Cell[BoxData[{
- RowBox[{
-  RowBox[{
-   RowBox[{"MarkdownNotebookMetadata", "[", 
-    RowBox[{"c", ":", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"Cell", "[", 
-        RowBox[{"_BoxData", ",", "\"\<Metadata\>\"", ",", "___"}], "]"}], 
-       "..."}], "}"}]}], "]"}], ":=", "\n", "\t", 
-   RowBox[{"Join", "@@", 
-    RowBox[{"Select", "[", 
-     RowBox[{
-      RowBox[{
-       RowBox[{
-        RowBox[{"Normal", "@", 
-         RowBox[{"ToExpression", "[", 
-          RowBox[{"First", "@", 
-           RowBox[{"First", "@", "#"}]}], "]"}]}], "&"}], "/@", "c"}], ",", 
-      "OptionQ"}], "]"}]}]}], ";"}], "\n", 
- RowBox[{
-  RowBox[{
-   RowBox[{"MarkdownNotebookMetadata", "[", "nb_Notebook", "]"}], ":=", "\n", 
-   "\t", 
-   RowBox[{"MarkdownNotebookMetadata", "@", "\n", "\t\t", 
-    RowBox[{"Cases", "[", "\n", "\t\t\t", 
-     RowBox[{
-      RowBox[{"NotebookTools`FlattenCellGroups", "[", 
-       RowBox[{"First", "@", "nb"}], "]"}], ",", "\n", "\t\t\t", 
-      RowBox[{"Cell", "[", 
-       RowBox[{"_BoxData", ",", "\"\<Metadata\>\"", ",", "___"}], "]"}]}], 
-     "\n", "\t\t\t", "]"}]}]}], ";"}], "\n", 
- RowBox[{
-  RowBox[{"MarkdownNotebookMetadata", "[", "nb_NotebookObject", "]"}], ":=", 
-  "\n", "\t", 
-  RowBox[{"MarkdownNotebookMetadata", "@", "\n", "\t\t", 
-   RowBox[{"Cases", "[", "\n", "\t\t\t", 
-    RowBox[{
-     RowBox[{"NotebookRead", "@", 
-      RowBox[{"Cells", "[", 
-       RowBox[{"nb", ",", 
-        RowBox[{"CellStyle", "\[Rule]", "\"\<Metadata\>\""}]}], "]"}]}], ",", 
-     "\n", "\t\t\t", 
-     RowBox[{"Cell", "[", 
-      RowBox[{"_BoxData", ",", "___"}], "]"}]}], "\n", "\t\t\t", 
-    "]"}]}]}]}], "CodeInput",
- CellChangeTimes->{{3.709910803994576*^9, 3.7099108078766317`*^9}, {
-  3.709910839403371*^9, 3.7099109935280457`*^9}, {3.709911035856867*^9, 
-  3.7099110933513813`*^9}, {3.709916833967338*^9, 3.709916944452261*^9}, {
-  3.71261951970252*^9, 
-  3.712619519722413*^9}},ExpressionUUID->"7face0dc-8beb-4b13-819f-\
-8a02e9ae51be"]
-}, Closed]],
-
-Cell[CellGroupData[{
-
-Cell["\[LeftCeiling]MarkdownNotebook*\[RightFloor]", "CodeSubsubsection",
- Evaluatable->True,
- CellChangeTimes->{
-  3.710163735173656*^9, 3.7126193929620934`*^9, {3.712943443860395*^9, 
-   3.7129434483721533`*^9}, {3.712966864372746*^9, 
-   3.712966870032791*^9}},ExpressionUUID->"18a07c87-ac97-4e4d-9fa6-\
-2d207b432542"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{
-   RowBox[{"MarkdownNotebookDirectory", "[", "nb_", "]"}], ":=", "\n", "\t", 
-   RowBox[{"Replace", "[", 
-    RowBox[{
-     RowBox[{"Quiet", "@", 
-      RowBox[{"NotebookDirectory", "[", "nb", "]"}]}], ",", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{"Except", "[", 
-       RowBox[{"_String", "?", "DirectoryQ"}], "]"}], ":>", "\n", "\t\t\t", 
-      RowBox[{"With", "[", 
-       RowBox[{
-        RowBox[{"{", "\n", "\t\t\t\t", 
-         RowBox[{"d", "=", "\n", "\t\t\t\t\t", 
-          RowBox[{"FileNameJoin", "@", 
-           RowBox[{"{", "\n", "\t\t\t\t\t\t", 
-            RowBox[{
-            "$TemporaryDirectory", ",", "\n", "\t\t\t\t\t\t", 
-             "\"\<markdown_export\>\""}], "\n", "\t\t\t\t\t\t", "}"}]}]}], 
-         "\n", "\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t", 
-        RowBox[{
-         RowBox[{"If", "[", 
-          RowBox[{
-           RowBox[{"!", 
-            RowBox[{"DirectoryQ", "[", "d", "]"}]}], ",", "\n", "\t\t\t\t\t", 
-           
-           RowBox[{"CreateDirectory", "[", "d", "]"}]}], "\n", "\t\t\t\t\t", 
-          "]"}], ";", "\n", "\t\t\t\t", "d"}]}], "\n", "\t\t\t\t", "]"}]}]}], 
-    "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.712930390178055*^9, 
-  3.712930414604615*^9}},ExpressionUUID->"c6ce2a36-825c-45fb-8c72-\
-329d9fe72346"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{
-   RowBox[{"MarkdownNotebookFileName", "[", "nb_", "]"}], ":=", "\n", "\t", 
-   RowBox[{"Replace", "[", 
-    RowBox[{
-     RowBox[{"Quiet", "@", 
-      RowBox[{"NotebookFileName", "[", "nb", "]"}]}], ",", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{"Except", "[", 
-       RowBox[{"_String", "?", "FileExistsQ"}], "]"}], "\[RuleDelayed]", "\n",
-       "\t\t\t", 
-      RowBox[{"FileNameJoin", "@", 
-       RowBox[{"{", "\n", "\t\t\t\t", 
-        RowBox[{
-        "$TemporaryDirectory", ",", "\n", "\t\t\t\t", 
-         "\"\<markdown_export\>\"", ",", "\n", "\t\t\t\t", 
-         "\"\<markdown_notebook.nb\>\""}], "\n", "\t\t\t\t", "}"}]}]}]}], 
-    "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.712930390178055*^9, 3.712930414604615*^9}, {
-  3.712943420604184*^9, 
-  3.7129434365864487`*^9}},ExpressionUUID->"bc37ed63-4220-49d5-b2ea-\
-8697b3e707fb"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{
-   RowBox[{"MarkdownNotebookContentPath", "[", "nb_", "]"}], ":=", "\n", "\t", 
-   RowBox[{"MarkdownContentPath", "@", "\n", "\t\t", 
-    RowBox[{"MarkdownNotebookFileName", "[", "nb", "]"}]}]}], 
-  ";"}]], "CodeInput",
- CellChangeTimes->{{3.712930390178055*^9, 3.712930434031337*^9}, {
-  3.712943427201076*^9, 
-  3.712943435373227*^9}},ExpressionUUID->"f744c8ac-81a3-4fe6-9796-\
-075433c466cd"],
-
-Cell[BoxData[{
- RowBox[{
-  RowBox[{
-   RowBox[{"NotebookToMarkdown", "::", "nocont"}], "=", "\n", "\t", 
-   "\"\<Can't handle notebook with implicit CellContext ``. Use a string \
-instead.\>\""}], ";"}], "\n", 
- RowBox[{
-  RowBox[{"MarkdownNotebookContext", "[", "nb_", "]"}], ":=", "\n", "\t", 
-  RowBox[{"Replace", "[", 
-   RowBox[{
-    RowBox[{"CurrentValue", "[", 
-     RowBox[{"nb", ",", " ", "CellContext"}], "]"}], ",", "\n", "\t\t", 
-    RowBox[{
-     RowBox[{"c", ":", 
-      RowBox[{"Except", "[", 
-       RowBox[{"_String", "?", 
-        RowBox[{"(", 
-         RowBox[{"StringEndsQ", "[", "\"\<`\>\"", "]"}], ")"}]}], "]"}]}], 
-     "\[RuleDelayed]", "\n", "\t\t\t", 
-     RowBox[{"(", "\n", "\t\t\t\t", 
-      RowBox[{"(*", 
-       RowBox[{
-        RowBox[{"PackageRaiseException", "[", "\n", "\t\t\t\t\t", 
-         RowBox[{"Automatic", ",", "\n", "\t", "\t\t\t\t", 
-          RowBox[{"Evaluate", "[", 
-           RowBox[{"NotebookToMarkdown", "::", "nocont"}], "]"}], ",", "\n", 
-          "\t\t\t\t\t", "c"}], "\n", "\t\t\t\t\t", "]"}], ";"}], "*)"}], "\n",
-       "\t\t\t\t", 
-      RowBox[{"(*", " ", 
-       RowBox[{"hmm", "..."}], " ", "*)"}], "\n", "\t\t\t\t", 
-      "\"\<Global`\>\"", "\n", "\t\t\t\t", ")"}]}]}], "\n", "\t\t", 
-   "]"}]}]}], \
-"CodeInput",ExpressionUUID->"8b078e2b-e4df-409c-86f1-799f192e1056"]
-}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -683,7 +130,7 @@ Cell[BoxData[
    3.7229730579157267`*^9}, {3.722989091635777*^9, 
    3.722989091969878*^9}},ExpressionUUID->"80e30a58-93c4-4d9d-aa06-\
 7490d7c1c198"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -4209,14 +3656,15 @@ Cell[BoxData[{
          RowBox[{"exportStrings", "=", "\n", "\t\t\t", 
           RowBox[{
            RowBox[{
-            RowBox[{"With", "[", "\n", "\t\t\t\t", 
-             RowBox[{
-              RowBox[{"{", "\n", "\t\t\t\t\t", 
-               RowBox[{
-                RowBox[{"fn", "=", "\n", "\t\t\t\t\t\t", 
-                 RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t\t", 
-                  RowBox[{
-                   RowBox[{"Lookup", "[", 
+            RowBox[{
+             RowBox[{"With", "[", "\n", "\t\t\t\t", 
+              RowBox[{
+               RowBox[{"{", "\n", "\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"fn", "=", "\n", "\t\t\t\t\t\t", 
+                  RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"Lookup", "[", 
                     RowBox[{"cstyles", ",", " ", 
                     RowBox[{"If", "[", 
                     RowBox[{
@@ -4225,57 +3673,58 @@ Cell[BoxData[{
                     RowBox[{"#", "[", 
                     RowBox[{"[", "2", "]"}], "]"}], ",", " ", "Automatic"}], 
                     "]"}], ",", " ", "Automatic"}], "]"}], ",", "\n", 
-                   "\t\t\t\t\t\t\t", 
-                   RowBox[{"Automatic", ":>", 
+                    "\t\t\t\t\t\t\t", 
+                    RowBox[{"Automatic", ":>", 
                     RowBox[{"Lookup", "[", 
                     RowBox[{
                     "cstyles", ",", " ", "Automatic", ",", " ", 
                     "iNotebookToMarkdown"}], "]"}]}]}], "\n", 
-                  "\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t\t", 
-                RowBox[{"opp", "=", "\n", "\t\t\t\t\t\t", 
-                 RowBox[{"<|", "\n", "\t", "\t\t\t\t\t\t", 
-                  RowBox[{
-                   RowBox[{"\"\<Root\>\"", "\[Rule]", "dir"}], ",", "\n", 
-                   "\t", "\t", "\t\t\t\t\t", 
-                   RowBox[{"\"\<Path\>\"", "\[Rule]", "path"}], ",", "\n", 
-                   "\t", "\t", "\t\t\t\t\t", 
-                   RowBox[{"\"\<Name\>\"", "\[Rule]", "name"}], ",", "\n", 
-                   "\t", "\t", "\t\t\t\t\t", 
-                   RowBox[{"\"\<ContentExtension\>\"", "\[Rule]", "cext"}], 
-                   ",", "\n", "\t", "\t", "\t\t\t\t\t", 
-                   RowBox[{"\"\<Meta\>\"", "->", "meta"}], ",", "\n", "\t", 
-                   "\t", "\t\t\t\t\t", 
-                   RowBox[{"\"\<NotebookObject\>\"", "\[Rule]", "nbo"}], ",", 
-                   "\n", "\t", "\t", "\t\t\t\t\t", 
-                   RowBox[{"\"\<CellObjects\>\"", "\[Rule]", "cells"}], ",", 
-                   "\n", "\t", "\t", "\t\t\t\t\t", 
-                   RowBox[{"\"\<Context\>\"", "\[Rule]", "cont"}], ",", "\n", 
-                   "\t", "\t", "\t\t\t\t\t", 
-                   RowBox[{"\"\<UseHTML\>\"", "->", "ps"}], ",", "\n", 
-                   "\t\t\t\t\t\t\t", 
-                   RowBox[{"\"\<UseImageInput\>\"", "\[Rule]", 
+                   "\t\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t\t", 
+                 RowBox[{"opp", "=", "\n", "\t\t\t\t\t\t", 
+                  RowBox[{"<|", "\n", "\t", "\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"\"\<Root\>\"", "\[Rule]", "dir"}], ",", "\n", 
+                    "\t", "\t", "\t\t\t\t\t", 
+                    RowBox[{"\"\<Path\>\"", "\[Rule]", "path"}], ",", "\n", 
+                    "\t", "\t", "\t\t\t\t\t", 
+                    RowBox[{"\"\<Name\>\"", "\[Rule]", "name"}], ",", "\n", 
+                    "\t", "\t", "\t\t\t\t\t", 
+                    RowBox[{"\"\<ContentExtension\>\"", "\[Rule]", "cext"}], 
+                    ",", "\n", "\t", "\t", "\t\t\t\t\t", 
+                    RowBox[{"\"\<Meta\>\"", "->", "meta"}], ",", "\n", "\t", 
+                    "\t", "\t\t\t\t\t", 
+                    RowBox[{"\"\<NotebookObject\>\"", "\[Rule]", "nbo"}], ",",
+                     "\n", "\t", "\t", "\t\t\t\t\t", 
+                    RowBox[{"\"\<CellObjects\>\"", "\[Rule]", "cells"}], ",", 
+                    "\n", "\t", "\t", "\t\t\t\t\t", 
+                    RowBox[{"\"\<Context\>\"", "\[Rule]", "cont"}], ",", "\n",
+                     "\t", "\t", "\t\t\t\t\t", 
+                    RowBox[{"\"\<UseHTML\>\"", "->", "ps"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t", 
+                    RowBox[{"\"\<UseImageInput\>\"", "\[Rule]", 
                     RowBox[{"TrueQ", "@", 
                     RowBox[{
                     "OptionValue", "[", "\"\<UseImageInput\>\"", "]"}]}]}], 
-                   ",", "\n", "\t\t\t\t\t\t\t", 
-                   RowBox[{"\"\<PacletResolve\>\"", "->", "prf"}], ",", "\n", 
-                   "\t", "\t", "\t\t\t\t\t", 
-                   RowBox[{"\"\<ImagePath\>\"", "->", "imexp"}], ",", "\n", 
-                   "\t", "\t\t\t\t\t\t", 
-                   RowBox[{"\"\<StyleExporters\>\"", "->", "cstyles"}], ",", 
-                   "\n", "\t\t\t\t\t\t\t", 
-                   RowBox[{"\"\<CodeIndentation\>\"", "->", "co"}], ",", "\n",
-                    "\t\t\t\t\t\t\t", 
-                   RowBox[{
-                   "\"\<ContentPathExtension\>\"", "\[Rule]", "cpe"}]}], "\n",
-                   "\t\t\t\t\t\t\t", "|>"}]}]}], "\n", "\t\t\t\t\t", "}"}], 
-              ",", "\n", "\t\t\t\t", 
-              RowBox[{"iNotebookToMarkdown", "[", 
-               RowBox[{"opp", ",", " ", 
-                RowBox[{"fn", "[", 
-                 RowBox[{"opp", ",", " ", "#"}], "]"}]}], "]"}]}], "\n", 
-             "\t\t\t\t", "]"}], "&"}], "/@", 
-           RowBox[{"First", "@", "nb"}]}]}], ";", "\n", "\t\t", 
+                    ",", "\n", "\t\t\t\t\t\t\t", 
+                    RowBox[{"\"\<PacletResolve\>\"", "->", "prf"}], ",", "\n",
+                     "\t", "\t", "\t\t\t\t\t", 
+                    RowBox[{"\"\<ImagePath\>\"", "->", "imexp"}], ",", "\n", 
+                    "\t", "\t\t\t\t\t\t", 
+                    RowBox[{"\"\<StyleExporters\>\"", "->", "cstyles"}], ",", 
+                    "\n", "\t\t\t\t\t\t\t", 
+                    RowBox[{"\"\<CodeIndentation\>\"", "->", "co"}], ",", 
+                    "\n", "\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "\"\<ContentPathExtension\>\"", "\[Rule]", "cpe"}]}], 
+                   "\n", "\t\t\t\t\t\t\t", "|>"}]}]}], "\n", "\t\t\t\t\t", 
+                "}"}], ",", "\n", "\t\t\t\t", 
+               RowBox[{"iNotebookToMarkdown", "[", 
+                RowBox[{"opp", ",", " ", 
+                 RowBox[{"fn", "[", 
+                  RowBox[{"opp", ",", " ", "#"}], "]"}]}], "]"}]}], "\n", 
+              "\t\t\t\t", "]"}], "&"}], "/@", 
+            RowBox[{"First", "@", "nb"}]}], "//", "Flatten"}]}], ";", "\n", 
+         "\t\t", 
          RowBox[{"exportPick", "=", "\n", "\t\t\t", 
           RowBox[{"Map", "[", 
            RowBox[{
@@ -4415,10 +3864,10 @@ Cell[BoxData[
       RowBox[{"name", "=", "\n", "\t\t\t\t", 
        RowBox[{"Replace", "[", 
         RowBox[{
-         RowBox[{"OptionValue", "[", "\"\<Name\>\"", "]"}], ",", "\n", "\t", 
-         "\t\t\t\t", 
-         RowBox[{"Automatic", ":>", "\n", "\t", "\t\t\t\t\t", 
-          RowBox[{"markdownNameToSlug", "@", "\n", "\t", "\t", "\t\t\t\t\t", 
+         RowBox[{"OptionValue", "[", "\"\<Name\>\"", "]"}], ",", "\n", 
+         "\t\t\t\t\t", 
+         RowBox[{"Automatic", ":>", "\n", "\t\t\t\t\t\t", 
+          RowBox[{"MarkdownNameToSlug", "@", "\n", "\t\t\t\t\t\t\t", 
            RowBox[{"Replace", "[", "\n", "\t", "\t", "\t\t\t\t\t\t", 
             RowBox[{
              RowBox[{"Lookup", "[", 
@@ -4663,7 +4112,7 @@ Cell[BoxData[
    3.7330311489610767`*^9, 
    3.733031212363727*^9}},ExpressionUUID->"28911e07-ea46-45b1-a3d9-\
 d23bbc36a35e"]
-}, Open  ]]
+}, Closed]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -4699,6 +4148,17 @@ Cell[BoxData[
    3.723486663969408*^9, 
    3.7234981939076366`*^9},ExpressionUUID->"73474e83-680e-4de7-90d1-\
 fc9af3ae5436"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"iNotebookToMarkdown", "[", 
+    RowBox[{"pathInfo_", ",", " ", "l_List"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"iNotebookToMarkdown", "[", 
+      RowBox[{"pathInfo", ",", " ", "#"}], "]"}], "&"}], "/@", "l"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"03728110-8208-4f41-8fb8-f4b8c5ed847f"],
 
 Cell[BoxData[
  RowBox[{"iNotebookToMarkdownRegister", "/:", "\n", "\t", 
@@ -7232,8 +6692,8 @@ Cell[BoxData[{
   RowBox[{"notebookToMarkdownCleanPrintStyle", "[", "a", "]"}]}], "\n", 
  RowBox[{
   RowBox[{"notebookToMarkdownCleanPrintStyle", "[", "e_", "]"}], ":=", 
-  "e"}]}], "CodeInput",ExpressionUUID->"8c5c5987-2fbe-426d-8167-37113904acad"]\
-
+  "e"}]}], \
+"CodeInput",ExpressionUUID->"8c5c5987-2fbe-426d-8167-37113904acad"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -8581,7 +8041,7 @@ Cell[BoxData[
        "&"}], "@@", "d"}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"d1aa37ec-9fda-4cf3-bfa1-21e0a30c0380"]
 }, Open  ]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -8833,18 +8293,26 @@ Cell["\[LeftCeiling]HashExport\[RightFloor]", "CodeSubsubsubsection",
   3.710119816520711*^9}},ExpressionUUID->"e73231bb-4da0-4a70-ab9b-\
 a1c282e4c9b6"],
 
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]markdownNotebookExportFilePath\[RightFloor]", \
+"CodeSubsubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"4a6b4cff-1bf7-478f-a9ed-83954b6ec235"],
+
 Cell[BoxData[
  RowBox[{
-  RowBox[{"markdownNotebookExportImagePath", "[", 
-   RowBox[{"pathInfo_", ",", " ", "fname_"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"markdownNotebookExportFilePath", "[", 
+   RowBox[{"pathInfo_", ",", " ", "resType_", ",", " ", "fname_"}], "]"}], ":=",
+   "\n", "\t", 
   RowBox[{"StringRiffle", "[", 
    RowBox[{
     RowBox[{"{", "\n", "\t\t\t", 
      RowBox[{
       RowBox[{"Lookup", "[", 
        RowBox[{
-       "pathInfo", ",", " ", "\"\<FileExtension\>\"", ",", "\n", "\t\t\t\t", 
-        RowBox[{"Switch", "[", 
+       "pathInfo", ",", " ", "\n", "\t\t\t\t", "\"\<FileBaseExtension\>\"", 
+        ",", "\n", "\t\t\t\t", 
+        RowBox[{"Switch", "[", "\n", "\t\t\t\t\t", 
          RowBox[{
           RowBox[{"pathInfo", "[", "\"\<ContentExtension\>\"", "]"}], ",", 
           "\n", "\t\t\t\t\t", "\"\<content\>\"", ",", "\n", "\t\t\t\t\t\t", 
@@ -8863,10 +8331,34 @@ Cell[BoxData[
            RowBox[{"pathInfo", "[", "\"\<ContentExtension\>\"", "]"}]}], ",", 
           "\n", "\t\t\t\t\t", "_", ",", "\n", "\t\t\t\t\t\t", "Nothing"}], 
          "\n", "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "]"}], ",", "\n", 
-      "\t\t\t", "\"\<img\>\"", ",", "\n", "\t\t\t", "fname"}], "\n", "\t\t\t",
-      "}"}], ",", "\"\</\>\""}], 
+      "\t\t\t", "resType", ",", "\n", "\t\t\t", "fname"}], "\n", "\t\t\t", 
+     "}"}], ",", "\n", "\t\t", "\"\</\>\""}], "\n", "\t\t", 
    "]"}]}]], \
-"CodeInput",ExpressionUUID->"7e4a5d13-d33c-4d8c-9afa-3499671dee20"],
+"CodeInput",ExpressionUUID->"7e4a5d13-d33c-4d8c-9afa-3499671dee20"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]markdownNotebookExportImagePath\[RightFloor]", \
+"CodeSubsubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"b3f86262-7b77-4ca8-92f2-eae22e9bb937"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"markdownNotebookExportImagePath", "[", 
+    RowBox[{"pathInfo_", ",", " ", "fname_"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"markdownNotebookExportFilePath", "[", 
+    RowBox[{"pathInfo", ",", " ", "\"\<img\>\"", ",", " ", "fname"}], "]"}]}],
+   ";"}]], "CodeInput",ExpressionUUID->"d6ac0ece-0fba-4a6f-b7c5-50714e6c00a4"]\
+
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]markdownNotebookHashExport\[RightFloor]", \
+"CodeSubsubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"4b2e38a5-e822-4ba6-a2be-5058737f56fd"],
 
 Cell[BoxData[
  RowBox[{"markdownNotebookHashExport", "//", "Clear"}]], "CodeInput",
@@ -8953,7 +8445,8 @@ Cell[BoxData[
       "]"}]}]}], "\n", "\t\t", 
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"bb34abb8-74df-484d-bc45-c9904b9a159a"]
-}, Closed]],
+}, Closed]]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -9766,18 +9259,17 @@ Cell[BoxData[
       RowBox[{"\"\<*\>\"", "\[Rule]", "\"\<_\>\""}]}], "]"}], ",", "\n", "\t",
      "\t", 
     RowBox[{"StringTrim", "@", "\n", "\t", "\t\t", 
-     RowBox[{"TemplateApply", "[", "\n", "\t", "\t\t\t", 
-      RowBox[{"$markdownnewmdfiletemplate", ",", "\n", "\t", "\t\t\t", 
-       RowBox[{"<|", "\n", "\t", "\t\t\t\t", 
+     RowBox[{"TemplateApply", "[", "\n", "\t\t\t\t", 
+      RowBox[{"$MarkdownNewMDFileTemplate", ",", "\n", "\t\t\t\t", 
+       RowBox[{"<|", "\n", "\t\t\t\t\t", 
         RowBox[{
          RowBox[{"\"\<headers\>\"", "\[Rule]", "\n", "\t", "\t\t\t\t\t", 
           RowBox[{"If", "[", 
            RowBox[{
             RowBox[{
-             RowBox[{"Length", "@", "meta"}], ">", "0"}], ",", "\n", "\t", 
-            "\t\t\t\t\t\t", 
-            RowBox[{
-            "markdownMetadataFormat", "[", "\n", "\t", "\t\t\t\t\t\t\t", 
+             RowBox[{"Length", "@", "meta"}], ">", "0"}], ",", "\n", 
+            "\t\t\t\t\t\t\t", 
+            RowBox[{"MarkdownMetadataFormat", "[", "\n", "\t\t\t\t\t\t\t\t", 
              RowBox[{
               RowBox[{"FileBaseName", "@", "file"}], ",", "\n", "\t", 
               "\t\t\t\t\t\t\t", 
@@ -9796,11 +9288,8 @@ Cell[BoxData[
         "\t\t\t\t", "|>"}]}], "\n", "\t", "\t\t\t", "]"}]}], ",", "\n", "\t", 
     "\t", "\"\<Text\>\"", ",", "\n", "\t", "\t", 
     RowBox[{"CharacterEncoding", "\[Rule]", "\"\<UTF-8\>\""}]}], "\n", "\t", 
-   "\t", "]"}]}]], "CodeInput",
- CellChangeTimes->{{3.732831764086224*^9, 3.7328318630027447`*^9}, {
-  3.7328319893875113`*^9, 
-  3.732832002764284*^9}},ExpressionUUID->"a77ffdeb-1247-421a-90ce-\
-7e0bf7571bcc"]
+   "\t", "]"}]}]], \
+"CodeInput",ExpressionUUID->"a77ffdeb-1247-421a-90ce-7e0bf7571bcc"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -9914,8 +9403,8 @@ Cell[BoxData[
              "]"}], "===", "False"}]}], " ", 
           RowBox[{"(*", "Legacy", "*)"}], ",", " ", "\n", "\t\t\t\t", 
           RowBox[{"Throw", "[", 
-           RowBox[{"Null", ",", " ", "\"\<NotebookSaveAbort\>\""}], "]"}]}], 
-         "\n", "\t\t\t\t", "]"}], ";", "\n", "\t\t\t", 
+           RowBox[{"$Canceled", ",", " ", "\"\<NotebookSaveAbort\>\""}], 
+           "]"}]}], "\n", "\t\t\t\t", "]"}], ";", "\n", "\t\t\t", 
         RowBox[{"md", "=", "\n", "\t\t\t\t", 
          RowBox[{"Reap", "[", "\n", "\t\t\t\t\t", 
           RowBox[{
@@ -9941,8 +9430,8 @@ Cell[BoxData[
                RowBox[{"[", "1", "]"}], "]"}]}]}], "==", "0"}]}], ",", " ", 
           "\n", "\t\t\t\t", 
           RowBox[{"Throw", "[", 
-           RowBox[{"Null", ",", " ", "\"\<NotebookSaveAbort\>\""}], "]"}]}], 
-         "\n", "\t\t\t\t", "]"}], ";", "\n", "\t\t\t", 
+           RowBox[{"$Failed", ",", " ", "\"\<NotebookSaveAbort\>\""}], 
+           "]"}]}], "\n", "\t\t\t\t", "]"}], ";", "\n", "\t\t\t", 
         RowBox[{"nbDir", "=", 
          RowBox[{"MarkdownNotebookDirectory", "[", "nb", "]"}]}], ";", "\n", 
         "\t\t\t", 
@@ -10082,7 +9571,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"0792ebaa-1dc2-414d-9656-\
 e65bfc12151a"]
 },
 WindowSize->{812, 759},
-WindowMargins->{{Automatic, 250}, {Automatic, 0}},
+WindowMargins->{{302, Automatic}, {41, Automatic}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

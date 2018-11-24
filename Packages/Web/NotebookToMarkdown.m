@@ -9,255 +9,6 @@ NotebookMarkdownSave::usage="Saves a notebook as markdown";
 Begin["`Private`"];
 
 
-(* ::Subsection:: *)
-(*NotebookToMarkdown*)
-
-
-
-$MarkdownSiteRoot=
-  FileNameJoin@{
-    $WebTemplatingRoot,
-    "markdown"
-    };
-
-
-(* ::Subsubsection::Closed:: *)
-(*Site*)
-
-
-
-$MarkdownStandardContentExtensions=
-  {
-    "content",
-    "project",
-    "proj"
-    };
-
-
-MarkdownSiteBase[f_String]:=
-  Replace[FileNameSplit[f],{
-    {d:Shortest[___],
-      (Alternatives@@$MarkdownStandardContentExtensions)|"output",___}:>
-      FileNameJoin@{d},
-    _:>If[DirectoryQ@f,f,DirectoryName[f]]
-    }]
-
-
-MarkdownContentExtension[root_]:=
-  SelectFirst[$MarkdownStandardContentExtensions,
-    DirectoryQ@FileNameJoin@{root,#}&,
-    Nothing
-    ];
-
-
-MarkdownContentPath[f_String]:=
-  Replace[FileNameSplit[f],{
-    {Shortest[___],
-      Alternatives@@$MarkdownStandardContentExtensions,p___}:>
-      FileNameJoin@{p},
-    _:>f
-    }]
-
-
-MarkdownOutputPath[f_String]:=
-  Replace[FileNameSplit[f],{
-    {Shortest[___],"output",p___}:>FileNameJoin@{p},
-    _:>f
-    }]
-
-
-(* ::Subsubsection::Closed:: *)
-(*File Templates*)
-
-
-
-(* ::Subsubsubsection::Closed:: *)
-(*Template*)
-
-
-
-$markdownnewmdfiletemplate=
-"`headers`
-
-`body`
-";
-
-
-(* ::Subsubsubsection::Closed:: *)
-(*Metadata*)
-
-
-
-(* ::Subsubsubsubsection::Closed:: *)
-(*NameToSlug*)
-
-
-
-markdownNameToSlug[t_]:=
-  ToLowerCase@
-    StringReplace[
-      t,
-      {
-        Whitespace->"-",
-        Except[WordCharacter]->""
-        }
-      ]
-
-
-(* ::Subsubsubsubsection::Closed:: *)
-(*Title*)
-
-
-
-markdownFileMetadataTitle[t_,name_,opsassoc_]:=
-  Replace[t,
-    {
-      Automatic:>name
-      }];
-
-
-(* ::Subsubsubsubsection::Closed:: *)
-(*Slug*)
-
-
-
-markdownFileMetadataSlug[t_,name_,opsassoc_]:=
-  Replace[t,
-    {
-      Automatic:>
-        markdownNameToSlug@
-          markdownFileMetadataTitle[
-            Lookup[opsassoc,"Title",t],
-            name,
-            opsassoc
-            ]
-      }
-    ]
-
-
-(* ::Subsubsubsubsection::Closed:: *)
-(*Metadata*)
-
-
-
-markdownFileMetadata[val_,opsassoc_]:=
-  Replace[val,{
-    _List:>
-      StringRiffle[ToString/@val,","],
-    _DateObject:>
-      StringReplace[DateString[val,"ISODateTime"],"T"->" "]
-    }]
-
-
-(* ::Subsubsubsubsection::Closed:: *)
-(*MetadataFormat*)
-
-
-
-markdownMetadataFormat[name_,ops_]:=
-  With[{opsassoc=Association@ops},
-    Block[{Internal`$ContextMarks=False},
-      Function[StringRiffle[ToString/@#,"\n"]]@
-        KeyValueMap[
-          ToString[#]<>": "<>
-            ToString@
-              StringReplace[
-                ToString@
-                  Switch[#,
-                    "Title",
-                      markdownFileMetadataTitle[#2,name,opsassoc],
-                    "Slug",
-                      markdownFileMetadataSlug[#2,name,opsassoc],
-                    _,
-                      markdownFileMetadata[#2,opsassoc]
-                    ],
-                "\n"->"\ "
-                ]&,
-          KeySortBy[
-            Switch[#,"Title",0,_,1]&
-            ]@opsassoc
-          ]
-      ]
-    ];
-
-
-(* ::Subsubsection::Closed:: *)
-(*NotebookMetadata*)
-
-
-
-MarkdownNotebookMetadata[c:{Cell[_BoxData,"Metadata",___]...}]:=
-  Join@@Select[Normal@ToExpression[First@First@#]&/@c,OptionQ];
-MarkdownNotebookMetadata[nb_Notebook]:=
-  MarkdownNotebookMetadata@
-    Cases[
-      NotebookTools`FlattenCellGroups[First@nb],
-      Cell[_BoxData,"Metadata",___]
-      ];
-MarkdownNotebookMetadata[nb_NotebookObject]:=
-  MarkdownNotebookMetadata@
-    Cases[
-      NotebookRead@Cells[nb,CellStyle->"Metadata"],
-      Cell[_BoxData,___]
-      ]
-
-
-(* ::Subsubsection::Closed:: *)
-(*MarkdownNotebook**)
-
-
-
-MarkdownNotebookDirectory[nb_]:=
-  Replace[Quiet@NotebookDirectory[nb],
-    Except[_String?DirectoryQ]:>
-      With[{
-        d=
-          FileNameJoin@{
-            $TemporaryDirectory,
-            "markdown_export"
-            }
-        },
-        If[!DirectoryQ[d],
-          CreateDirectory[d]
-          ];
-        d
-        ]
-    ];
-
-
-MarkdownNotebookFileName[nb_]:=
-  Replace[Quiet@NotebookFileName[nb],
-    Except[_String?FileExistsQ]:>
-      FileNameJoin@{
-        $TemporaryDirectory,
-        "markdown_export",
-        "markdown_notebook.nb"
-        }
-    ];
-
-
-MarkdownNotebookContentPath[nb_]:=
-  MarkdownContentPath@
-    MarkdownNotebookFileName[nb];
-
-
-NotebookToMarkdown::nocont=
-  "Can't handle notebook with implicit CellContext ``. Use a string instead.";
-MarkdownNotebookContext[nb_]:=
-  Replace[CurrentValue[nb, CellContext],
-    c:Except[_String?(StringEndsQ["`"])]:>
-      (
-        (*PackageRaiseException[
-					Automatic,
-					Evaluate[NotebookToMarkdown::nocont],
-					c
-					];*)
-        (* hmm... *)
-        "Global`"
-        )
-    ]
-
-
 (* ::Subsubsection::Closed:: *)
 (*NotebookToMarkdown*)
 
@@ -1818,7 +1569,7 @@ NotebookToMarkdown[
               |>
           },
         iNotebookToMarkdown[opp, fn[opp, #]]
-        ]&/@First@nb;
+        ]&/@First@nb//Flatten;
     exportPick=
       Map[#=!=""&, exportStrings];
     exportStrings=
@@ -1888,7 +1639,7 @@ NotebookToMarkdown[nb_NotebookObject, ops:OptionsPattern[]]:=
       name=
         Replace[OptionValue["Name"],
           Automatic:>
-            markdownNameToSlug@
+            MarkdownNameToSlug@
               Replace[
                 Lookup[meta, "Slug", Automatic],
                 Automatic:>
@@ -2003,6 +1754,10 @@ iNotebookToMarkdownRegister//Clear;
 
 iNotebookToMarkdown[pathInfo_][e___]:=
   iNotebookToMarkdown[pathInfo, e]
+
+
+iNotebookToMarkdown[pathInfo_, l_List]:=
+  iNotebookToMarkdown[pathInfo, #]&/@l;
 
 
 iNotebookToMarkdownRegister/:
@@ -4023,10 +3778,17 @@ iNotebookToMarkdownRegister[
 
 
 
-markdownNotebookExportImagePath[pathInfo_, fname_]:=
+(* ::Subsubsubsubsection::Closed:: *)
+(*markdownNotebookExportFilePath*)
+
+
+
+markdownNotebookExportFilePath[pathInfo_, resType_, fname_]:=
   StringRiffle[{
-      Lookup[pathInfo, "FileExtension",
-        Switch[pathInfo["ContentExtension"],
+      Lookup[pathInfo, 
+        "FileBaseExtension",
+        Switch[
+          pathInfo["ContentExtension"],
           "content",
             pathInfo["ContentPathExtension"],
           _String,
@@ -4037,9 +3799,25 @@ markdownNotebookExportImagePath[pathInfo_, fname_]:=
             Nothing
           ]
         ],
-      "img",
+      resType,
       fname
-      },"/"]
+      },
+    "/"
+    ]
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*markdownNotebookExportImagePath*)
+
+
+
+markdownNotebookExportImagePath[pathInfo_, fname_]:=
+  markdownNotebookExportFilePath[pathInfo, "img", fname];
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*markdownNotebookHashExport*)
+
 
 
 markdownNotebookHashExport//Clear
@@ -4475,11 +4253,11 @@ NotebookMarkdownSaveExportMDFile[file_, body_, meta_]:=
     StringReplace[file, "*"->"_"],
     StringTrim@
       TemplateApply[
-        $markdownnewmdfiletemplate,
+        $MarkdownNewMDFileTemplate,
         <|
           "headers"->
             If[Length@meta>0,
-              markdownMetadataFormat[
+              MarkdownMetadataFormat[
                 FileBaseName@file,
                 Association@
                   Flatten[
@@ -4550,7 +4328,7 @@ NotebookMarkdownSave[
       If[
         Lookup[expOps, "Save", True]===False||
           Lookup[meta, "_Save", True]===False (*Legacy*), 
-        Throw[Null, "NotebookSaveAbort"]
+        Throw[$Canceled, "NotebookSaveAbort"]
         ];
       md=
         Reap[
@@ -4559,7 +4337,7 @@ NotebookMarkdownSave[
           "MarkdownExport"
           ];
       If[!StringQ@md[[1]]||StringLength@StringTrim@md[[1]]==0, 
-        Throw[Null, "NotebookSaveAbort"]
+        Throw[$Failed, "NotebookSaveAbort"]
         ];
       nbDir=MarkdownNotebookDirectory[nb];
       siteBase=MarkdownSiteBase@nbDir;

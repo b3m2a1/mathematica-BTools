@@ -91,7 +91,7 @@ Cell[BoxData[
    3.700005314189981*^9}, {3.704469306097993*^9, 3.704469317782192*^9}, 
    3.723733899910136*^9},ExpressionUUID->"b3865ffe-03d4-4b9d-9b14-\
 262af85f322a"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -518,55 +518,66 @@ Cell[BoxData[{
 
 Cell[BoxData[
  RowBox[{
+  RowBox[{
+   RowBox[{"getActiveDoc", "[", "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"Replace", "[", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"s_String", "?", 
+       RowBox[{"(", 
+        RowBox[{"PacletExecute", "[", "\"\<InstalledQ\>\"", "]"}], ")"}]}], ":>",
+       "\n", "\t\t\t", 
+      RowBox[{"Lookup", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"First", "@", 
+         RowBox[{"Lookup", "[", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"PacletExecute", "[", 
+            RowBox[{
+            "\"\<Lookup\>\"", ",", " ", "s", ",", " ", "\"\<Extensions\>\"", 
+             ",", " ", 
+             RowBox[{"<|", "|>"}]}], "]"}], ",", "\n", "\t", "\t\t\t\t", 
+           "\"\<Documentation\>\"", ",", "\n", "\t", "\t\t\t\t", 
+           RowBox[{"<|", "|>"}]}], "\n", "\t", "\t\t\t\t", "]"}]}], ",", "\n",
+         "\t", "\t\t\t", "\"\<LinkBase\>\"", ",", "\n", "\t", "\t\t\t", 
+        RowBox[{"StringTrim", "[", 
+         RowBox[{
+          RowBox[{"FileBaseName", "[", "s", "]"}], ",", " ", 
+          "\"\<Documentation_\>\""}], "]"}]}], "\n", "\t", "\t\t\t", "]"}]}], 
+     "\n", "\t", "\t", "]"}], "@", "\n", "\t", 
+    RowBox[{"Replace", "[", 
+     RowBox[{
+      RowBox[{"DocGenSettingsLookup", "[", "\"\<CurrentPaclet\>\"", "]"}], 
+      ",", "\n", "\t", "\t", 
+      RowBox[{
+       RowBox[{"Except", "[", "_String", "]"}], ":>", "\n", "\t\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{
+         RowBox[{"findPacletDirectory", "@", 
+          RowBox[{"Quiet", "@", 
+           RowBox[{"NotebookFileName", "[", "]"}]}]}], ",", "\n", "\t", 
+         "\t\t\t", 
+         RowBox[{"{", "\n", "\t", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"$Failed", "\[Rule]", "\"\<System\>\""}], ",", "\n", 
+           "\t\t\t\t\t", 
+           RowBox[{"d_String", "\[RuleDelayed]", 
+            RowBox[{"FileBaseName", "[", "d", "]"}]}]}], "\n", "\t", 
+          "\t\t\t\t", "}"}]}], "\n", "\t", "\t\t\t", "]"}]}]}], "\n", "\t", 
+     "\t", "]"}]}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"969e5966-4a1d-49b8-9226-f951f78a3109"],
+
+Cell[BoxData[
+ RowBox[{
   RowBox[{"If", "[", 
    RowBox[{
     RowBox[{
      RowBox[{"Length", "@", 
       RowBox[{"OwnValues", "@", "$DocGenActive"}]}], "\[Equal]", "0"}], ",", 
     "\n", "\t", 
+    RowBox[{"$DocGenActive", ":=", 
+     RowBox[{"getActiveDoc", "[", "]"}]}], ",", "\n", "\t", 
     RowBox[{
-     RowBox[{"$DocGenActive", ":=", "\n", "\t\t", 
-      RowBox[{
-       RowBox[{"Replace", "[", "\n", "\t\t\t", 
-        RowBox[{
-         RowBox[{"s_String", "?", 
-          RowBox[{"(", 
-           RowBox[{"PacletExecute", "[", "\"\<InstalledQ\>\"", "]"}], ")"}]}],
-          ":>", "\n", "\t\t\t\t", 
-         RowBox[{"Lookup", "[", "\n", "\t\t\t\t\t", 
-          RowBox[{
-           RowBox[{"Lookup", "[", "\n", "\t", "\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{"PacletExecute", "[", 
-              RowBox[{
-              "\"\<Lookup\>\"", ",", " ", "s", ",", " ", "\"\<Extensions\>\"",
-                ",", " ", 
-               RowBox[{"<|", "|>"}]}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
-             "\"\<Documentation\>\"", ",", "\n", "\t", "\t", "\t\t\t\t", 
-             RowBox[{"<|", "|>"}]}], "\n", "\t", "\t", "\t\t\t\t", "]"}], ",",
-            "\n", "\t", "\t\t\t\t", "\"\<LinkBase\>\"", ",", "\n", "\t", 
-           "\t\t\t\t", 
-           RowBox[{"StringTrim", "[", 
-            RowBox[{
-             RowBox[{"FileBaseName", "[", "s", "]"}], ",", " ", 
-             "\"\<Documentation_\>\""}], "]"}]}], "\n", "\t\t\t\t\t", "]"}]}],
-         "\n", "\t\t\t", "]"}], "@", "\n", "\t\t", 
-       RowBox[{"Replace", "[", 
-        RowBox[{
-         RowBox[{"DocGenSettingsLookup", "[", "\"\<CurrentPaclet\>\"", "]"}], 
-         ",", "\n", "\t\t\t", 
-         RowBox[{
-          RowBox[{"Except", "[", "_String", "]"}], ":>", "\n", "\t\t\t\t", 
-          RowBox[{"Replace", "[", 
-           RowBox[{
-            RowBox[{"findPacletDirectory", "@", 
-             RowBox[{"Quiet", "@", 
-              RowBox[{"NotebookFileName", "[", "]"}]}]}], ",", "\n", 
-            "\t\t\t\t\t", 
-            RowBox[{"{", "\n", "\t\t\t\t\t\t", 
-             RowBox[{"$Failed", "\[Rule]", "\"\<System\>\""}], "\n", 
-             "\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t", "]"}]}]}], "\n", 
-        "\t\t\t", "]"}]}]}], ";", "\n", "\t", 
      RowBox[{"$DocGenActive", "/:", "\n", "\t\t", 
       RowBox[{"HoldPattern", "[", 
        RowBox[{"Set", "[", 
@@ -596,7 +607,7 @@ Cell[BoxData[
         RowBox[{"Default", ",", " ", "\"\<CurrentPaclet\>\""}], "]"}], "=", 
        "None"}]}], ";"}]}], "\n", "\t", "]"}], 
   ";"}]], "CodeInput",ExpressionUUID->"734b7e0d-51e1-41a5-8e64-e527c950e07f"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -5918,7 +5929,7 @@ Cell[BoxData[{
          "\t\t\t\t\t", "|>"}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", 
     "]"}]}], ";"}]}], \
 "CodeInput",ExpressionUUID->"b8adc850-6f0f-4f51-a729-5523fa0f6077"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -6782,7 +6793,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"9ab021fd-32c8-4218-8fb2-\
 ca6d068d55c2"]
 },
 WindowSize->{804, 758},
-WindowMargins->{{Automatic, 207}, {Automatic, 0}},
+WindowMargins->{{Automatic, 261}, {Automatic, 0}},
 TaggingRules->{
  "DocuToolsSettingsInternal" -> {"$CondensedBlogMenus" -> "True"}, 
   "SearchTextTranslated" -> "", "LinkTrails" -> "", 
