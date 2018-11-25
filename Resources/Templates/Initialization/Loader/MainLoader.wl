@@ -406,6 +406,10 @@ System`Private`RestoreContextPath[]
 EndPackage[];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Cleanup*)
+
+
 If[Temp`PackageScope`$NameLoading`Private`$DependencyLoad,
   If[
     (Clear@`$Name`PackageScope`Private`$loadAbort;!#)&@

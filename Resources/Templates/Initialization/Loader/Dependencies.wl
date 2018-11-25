@@ -17,6 +17,7 @@ PackageLoadPacletDependency::usage="";
 PackageUpdatePacletDependency::usage="";
 PackageLoadResourceDependency::usage="";
 PackageEnsureLoadDependencies::usage="Ensures all declared dependencies are loaded";
+PackageExposeDependencies::usage="";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -348,11 +349,11 @@ PackageEnsureLoadDependency[dep_, site_]:=
            "Update"->True,
            "Loading"->Get
            ],
-         Get@foundFile 
+         Get@foundFile
          (* I have my reasons to do this rather than Needs... but it could change... *)
          ],
       General::shdw
-      ]
+      ];
      ];
 
 
@@ -368,11 +369,38 @@ PackageEnsureLoadDependencies[]:=
          Begin["`Dependencies`"];
          PackageEnsureLoadDependency[#, site]&/@deps;
          PackageExtendContextPath@
-           Map[$Context<>#&, deps];
+           Map[
+             If[MemberQ[$Packages, $Context<>#], $Context<>#, #]&, 
+             deps
+             ];
          End[]
          ]
       ];
    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*PackageExposeDependencies*)
+
+
+PackageExposeDependencies[deps_, permanent:True|False:False]:=
+  Module[
+    {
+      cdeps,
+      loadQ
+      },
+    (* 
+      someday I'll need this to be more sophisticated, but today is not that day
+      *)
+    cdeps=$PackageContexts[[1]]<>"Dependencies`"<>#&/@deps;
+    $ContextPath=
+      DeleteDuplicates@
+        Join[cdeps, $ContextPath];
+    If[permanent,
+      PackageExtendContextPath@cdeps
+      ];
+    cdeps
+    ]
 
 
 (* ::Subsubsection:: *)
