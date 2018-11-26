@@ -348,7 +348,7 @@ WebSiteNewTableOfContents[dir_String?DirectoryQ]:=
         AssociationMap[
           Association@
           Map[
-            Rule@@StringTrim@StringSplit[#, ":",2]&,
+            Rule@@StringTrim@StringSplit[#, ":", 2]&,
             StringSplit[
               StringSplit[Import[#,"Text"], "\n\n",2][[1]],
               "\n"
@@ -2474,7 +2474,7 @@ WebSiteExtractFileData[root_, content_, config_]:=
           (_File|_String)?FileExistsQ:>
             Switch[FileExtension[content],
               "md",
-                MarkdownToXML[Import[content,"Text"]],
+                MarkdownToXML[Import[content, "Text"]],
               "html"|"xml",
                 Import[content, {"HTML","XMLObject"}]
               ]

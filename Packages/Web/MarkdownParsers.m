@@ -17,14 +17,18 @@ markdownToXMLFormat//ClearAll
 
 
 
-markdownToXMLFormat["Meta",text_]:=
-  XMLElement["meta",
-    Normal@AssociationThread[
-      {"name","content"},
-      StringTrim@
-        StringSplit[#,":",2]
-      ],
-    {}
+markdownToXMLFormat["Meta", text_]:=
+  With[{bits=StringSplit[#, ":", 2]},
+    If[Length@bits<2,
+      Nothing,
+      XMLElement["meta",
+        Normal@AssociationThread[
+          {"name","content"},
+          StringTrim@bits
+          ],
+        {}
+        ]
+      ]
     ]&/@StringSplit[text,"\n"];
 
 
@@ -276,7 +280,8 @@ markdownToXMLFormat[
     Which[
       StringLength[t]-StringLength[new]<4,
         XMLElement["em", {}, 
-          markdownToXML[new,
+          markdownToXML[
+            new,
             Join[
               $markdownToXMLElementRules,
               $markdownToXMLOneTimeElementRules
@@ -285,7 +290,8 @@ markdownToXMLFormat[
           ],
       StringLength[t]-StringLength[new]<6,
         XMLElement["strong", {}, 
-          markdownToXML[new,
+          markdownToXML[
+            new,
             Join[
               $markdownToXMLElementRules,
               $markdownToXMLOneTimeElementRules
@@ -296,7 +302,8 @@ markdownToXMLFormat[
         XMLElement["em", {},
           {
             XMLElement["strong", {}, 
-              markdownToXML[new,
+              markdownToXML[
+                new,
                 Join[
                   $markdownToXMLElementRules,
                   $markdownToXMLOneTimeElementRules
@@ -330,6 +337,7 @@ markdownToXMLFormat[
   "CodeLine",
   text_
   ]:=
+  echoTimingLabel["FormatCodeLine"]@
   With[{
     striptext=
       StringTrim[
@@ -349,16 +357,25 @@ markdownToXMLFormat[
 
 
 
+importXMLSlow[text_]:=
+  FirstCase[
+      ImportString[text, {"HTML", "XMLObject"}],
+      XMLElement["body"|"head", _, b_]|b:XMLElement["script", __]:>b,
+      "",
+      \[Infinity]
+      ]
+
+
 markdownToXMLFormat[
   "XMLBlock"|"XMLLine",
   text_
   ]:=
-  FirstCase[
-    ImportString[text, {"HTML", "XMLObject"}],
-    XMLElement["body"|"head", _, b_]|b:XMLElement["script", __]:>b,
-    "",
-    \[Infinity]
-    ]
+  echoTimingLabel["FormatXML"]@
+    Module[{h=ToString@Hash[text]},
+      $tmpMap[h]=text;
+      Sow[h->text, "XMLExportKeys"];
+      "XMLToExport"[h]
+      ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -496,6 +513,28 @@ markdownToXMLFormat[t_,text_String]:=
 
 
 (* ::Subsubsection::Closed:: *)
+(*makeTempHashKey*)
+
+
+
+makeTempHashKey[h_]:=
+  "-hash-!!!"<>h<>"!!!-hash-";
+matchTempHashKey=
+  "-hash-!!!"~~hashInt:NumberString~~"!!!-hash-":>$tmpMap[hashInt];
+
+
+makeHashRef[orphans_, tag_, main_]:=
+  With[{h=ToString@Hash[main]},
+    $tmpMap[h]=tag->main;
+    "Reinsert"->{orphans, makeTempHashKey@h}
+    ];
+makeHashRef[a_->b_]:=
+  makeHashRef["", a, b];
+makeHashRef[a_, b_]:=
+  makeHashRef["", a, b];
+
+
+(* ::Subsubsection::Closed:: *)
 (*markdownToXMLValidateXMLBlock*)
 
 
@@ -505,19 +544,19 @@ markdownToXMLValidateXMLBlock[block_, start_, end_]:=
     With[
       {
         splits=
-          StringCases[block,
-            {
-              ("<"~~(Whitespace|"")~~(Whitespace|"")~~start)->
-                "Open",
-              ("<"~~(Whitespace|"")~~"/"~~(Whitespace|"")~~end)->
-                "Close"
-              }
-            ]
+          Developer`ToPackedArray@
+            StringCases[block,
+              {
+                ("<"~~(Whitespace|"")~~(Whitespace|"")~~start)->
+                  {1, 0},
+                ("<"~~(Whitespace|"")~~"/"~~(Whitespace|"")~~end)->
+                  {0, 1}
+                }
+              ]
         },
-      Count[splits, "Open"]==Count[splits, "Close"]&&
+      (#[[1]]==#[[2]]&[Total[splits]])&&
       AllTrue[
-        Accumulate@
-          Replace[Most@splits, {"Open"->{1, 0}, "Close"->{0, 1}}, 1],
+        Accumulate@Most@splits,
         #[[1]]>#[[2]]&
         ]
       ]
@@ -719,14 +758,14 @@ markdownToXMLValidateLink[o_]:=
     !markdownToXMLLinkPairedBrackets[StringSplit[o, "]", 2][[2]]]
 
 
+badLinkChars="!"(*|"*"|"_"*);
+
+
 $markdownToXMLLink=
-  l:(o:Except["!"|"*"|"_"]|StartOfLine|StartOfString)~~
+  l:(o:Except[badLinkChars]|StartOfLine|StartOfString)~~
     link:("["~~Except["\n"]..~~"]("~~Except[WhitespaceCharacter]..~~")")/;
       markdownToXMLValidateLink[link]:>
-    {
-      "Orphan"->o,
-      "Link"->link
-      }
+        makeHashRef[o, "Link", link]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -737,7 +776,7 @@ $markdownToXMLLink=
 $markdownToXMLImage=
   img:("!["~~Except["\n"]..~~"]("~~Except[WhitespaceCharacter]..~~")")/;
     markdownToXMLValidateLink[img]:>
-    "Image"->img
+    makeHashRef["Image"->img]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -747,7 +786,7 @@ $markdownToXMLImage=
 
 $markdownToXMLImageRef=
   img:("!["~~Except["]"]..~~"]["~~Except["]"]..~~"]"):>
-    "ImageRef"->img
+    makeHashRef["ImageRef"->img]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -770,7 +809,7 @@ $markdownToXMLImageRefLinkBlock=
 $markdownToXMLImageRefLink=
   img:((Whitespace|"")~~"["~~Except["]"]..~~"]:"~~(Whitespace|"")~~
     Except[WhitespaceCharacter]..~~(Whitespace|"")):>
-    "ImageRefLink"->img
+    makeHashRef["ImageRefLink"->img]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -787,10 +826,10 @@ $markdownToXMLCodeLine=
           (b:"`"..)
         )/;StringLength[r]==StringLength[b]&&StringCount[mid, "`"]<StringLength[r]
     ]:>
-    {
-      "Orphan"->o,
-      "CodeLine"->code
-      }
+    makeHashRef[o,
+      "CodeLine",
+      code
+      ]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -800,7 +839,7 @@ $markdownToXMLCodeLine=
 
 $markdownToXMLMathLine=
   math:Shortest[("$$"~~__~~"$$")]:>
-    ("MathLine"->math)
+    makeHashRef[("MathLine"->math)]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -823,8 +862,21 @@ $markdownToXMLXMLLine=
 $markdownToXMLXMLBlock=
   cont:(
     "<"~~t:WordCharacter..~~__~~
-      "</"~~(Whitespace|"")~~t2:WordCharacter..~~(Whitespace|"")~~">"
-    )/;markdownToXMLValidateXMLBlock[cont, t, t2]:>
+      "</"~~(Whitespace|"")~~t__(*t2:WordCharacter..*)~~(Whitespace|"")~~">"
+    )/;markdownToXMLValidateXMLBlock[cont, t, t]:>
+    ("XMLBlock"->cont);
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*$markdownToXMLSimpleXMLBlock*)
+
+
+
+$markdownToXMLSimpleXMLBlock=
+  cont:(
+    "<"~~t:WordCharacter..~~Except[">"]...~~">"~~Except["<"]...~~
+      "</"~~(Whitespace|"")~~t__~~(Whitespace|"")~~">"
+    ):>
     ("XMLBlock"->cont);
 
 
@@ -833,12 +885,39 @@ $markdownToXMLXMLBlock=
 
 
 
-$markdownToXMLRawXMLBlock=
+(*$markdownToXMLCommonXMLBlock=
+	cont:(
+		(StartOfLine|StartOfString)~~
+			"<"~~(Whitespace|"")~~t:WordCharacter..~~..~~"\n\n"~~
+				"</"~~(Whitespace|"")~~t__~~(Whitespace|"")~~">"
+		)/;markdownToXMLValidateXMLBlock[cont, t, t]\[RuleDelayed]
+		("XMLBlock"\[Rule]cont);*)
+
+
+$markdownToXMLShortXMLBlock=
+  cont:Shortest[(
+    (StartOfLine|StartOfString)~~
+      "<"~~(Whitespace|"")~~t:WordCharacter..~~__~~
+        "</"~~(Whitespace|"")~~t__~~(Whitespace|"")~~">"
+    )]/;markdownToXMLValidateXMLBlock[cont, t, t]:>
+    ("XMLBlock"->cont);
+
+
+$markdownToXMLCompleXMLBlock=
   cont:(
-    (StartOfLine|StartOfString)~~"<"~~t:WordCharacter..~~__~~
-      "</"~~(Whitespace|"")~~t__~~(Whitespace|"")~~">"
+    (StartOfLine|StartOfString)~~
+      "<"~~(Whitespace|"")~~t:WordCharacter..~~__~~
+        "</"~~(Whitespace|"")~~t__~~(Whitespace|"")~~">"
     )/;markdownToXMLValidateXMLBlock[cont, t, t]:>
-    ("XMLBlock"->cont)
+    ("XMLBlock"->cont);
+
+
+$markdownToXMLRawXMLBlock=
+  {
+    (*$markdownToXMLCommonXMLBlock,*)
+    $markdownToXMLShortXMLBlock,
+    $markdownToXMLCompleXMLBlock
+    };
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -848,7 +927,7 @@ $markdownToXMLRawXMLBlock=
 
 $markdownToXMLItalBold=
   o:(a:(("*"|"_")..)~~Shortest[t:Except["\n"]..]~~a_):>
-    "ItalBold"->o
+    makeHashRef["", "ItalBold", o]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -877,15 +956,15 @@ $markdownToXMLBlockRules={
 
 $markdownToXMLElementRules=
   {
-    $markdownToXMLMathLine,
+    $markdownToXMLXMLBlock,
+    $markdownToXMLXMLLine,
     $markdownToXMLLink,
     $markdownToXMLImageRef,
     $markdownToXMLImageRefLink,
     $markdownToXMLImage,
     $markdownToXMLCodeLine,
     $markdownToXMLItalBold,
-    $markdownToXMLXMLBlock,
-    $markdownToXMLXMLLine
+    $markdownToXMLMathLine
     };
 
 
@@ -921,7 +1000,8 @@ markdownToXMLPrep[text_String, rules:_List|Automatic:Automatic]:=
                 ],
               {
                 baseString_String:>
-                  Replace[StringReplace[baseString, #2],
+                  Replace[
+                    StringReplace[baseString, #2],
                     StringExpression[l__]:>
                       List[l]
                     ]
@@ -934,19 +1014,37 @@ markdownToXMLPrep[text_String, rules:_List|Automatic:Automatic]:=
             ]
           ]
         },
-      If[StringQ@baseData,
-        baseData,
-        Flatten@
-          ReplaceAll[
-            ("Orphan"->_):>Sequence@@{}
-            ]@
-          ReplaceRepeated[
-            Flatten[List@@baseData],
-            {a___, t_ String, "Orphan"->o_, b___}:>
-              {a, markdownToXMLPrep[t<>o], b}
-            ]
+      Which[
+        StringQ@baseData,
+          {baseData},
+        AllTrue[baseData, StringQ],
+          baseData,
+        True,
+          Flatten@markdownPrepRecursive[baseData, rules]
         ]
       ]
+
+
+markdownPrepRecursive[baseData_, rules_]:=
+  If[StringQ@#, markdownToXMLPrep[#, rules], #]&/@
+    Flatten@
+      Replace[
+        Flatten@
+        ReplaceRepeated[
+          Flatten[List@@baseData],
+          {
+            {a___, t_String, "Reinsert"->o_, b_String, c___}:>
+              {a, markdownToXMLPrep[t<>o<>b], c},
+            {a___, t_String, "Orphan"->o_, b___}:>
+              {a, markdownToXMLPrep[t<>o], b}
+            }
+          ],
+        {
+          ("Orphan"->s_):>s(*Sequence@@{}*),
+          ("Reinsert"->s_):>s
+          },
+        1
+        ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -954,12 +1052,52 @@ markdownToXMLPrep[text_String, rules:_List|Automatic:Automatic]:=
 
 
 
-markdownToXMLReinsertRefs[{expr_, ops_}]:=
-  With[{oppp=Association@Cases[Flatten@ops, _Rule|_RuleDelayed]},
-  expr/.
+markdownToXMLReinsertRefs[eeex_]:=
+  Module[{reap, oppp, expr, ops},
+    reap=Reap[eeex];
+    {expr, ops}=reap;
+    oppp=Association@Cases[Flatten@ops, _Rule|_RuleDelayed];
+    expr/.
     "ImageRefLink"[x_]:>
       Lookup[oppp, Key@{"ImageRefLink", x}, x]
-    ]
+    ];
+markdownToXMLReinsertRefs~SetAttributes~HoldFirst;
+
+
+(* ::Subsubsection::Closed:: *)
+(*markdownToXMLReinsertXML*)
+
+
+
+markdownToXMLReinsertXML[expr_]:=
+  Module[{reap, ex, keys, exported, expass},
+    reap=
+      Reap[expr, "XMLExportKeys"];
+    keys=Flatten@reap[[2]];
+    ex=reap[[1]];
+    exported=
+      ImportString[
+        StringJoin@{
+          "<div>",
+          "<div id=\""<>#[[1]]<>"\" class=\"hash-cell\">"<>
+            #[[2]]<>"</div>"&/@
+            keys,
+          "</div>"
+          },
+        {"HTML", "XMLObject"}
+        ];
+    expass=
+      Association@
+        Cases[exported, 
+          XMLElement["div", 
+            {___, "class"->"hash-cell", "id"->id_, ___},
+            b_
+            ]:>(id->b),
+          \[Infinity]
+          ];
+    ex/."XMLToExport"[h_]:>Sequence@@Lookup[expass, h, Echo[h](*Nothing*)]
+    ];
+markdownToXMLReinsertXML~SetAttributes~HoldFirst;
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1003,7 +1141,8 @@ markdownToXML[
       },
     Flatten@
       Replace[
-        markdownToXMLPrep[text, rules],{
+        (*echoTimingLabel["Prep"]@*)
+          markdownToXMLPrep[text, rules], {
           s_String:>
             If[rules===Automatic,
               Flatten@List@
@@ -1016,10 +1155,26 @@ markdownToXML[
                 s_String:>
                   If[rules===Automatic,
                     markdownToXMLPostProcess1[s],
-                    s
+                    Module[
+                      {withHashes},
+                      withHashes=
+                        StringReplace[s, matchTempHashKey];
+                      If[StringQ@withHashes,
+                        withHashes,
+                        Sequence@@Flatten@List@
+                          Map[
+                            If[StringQ@#,
+                              #,
+                              markdownToXMLFormat@@#//echoTimingLabel["Format"]
+                              ]&,
+                            List@@withHashes
+                            ]
+                        ]
+                      ]
                     ],
                 (r_->s_):>
-                  markdownToXMLFormat[r, s]
+                  echoTimingLabel["Format"]@
+                    markdownToXMLFormat[r, s]
                 },
               1
               ]
@@ -1032,28 +1187,52 @@ markdownToXML[
 
 
 
+recursiveConvertToXML[string_]:=
+  Replace[
+    DeleteCases[_String?(StringMatchQ[Whitespace])]@
+      Flatten@List@
+        markdownToXML[string, $markdownToXMLElementRules],
+    {
+      {e_XMLElement}:>e,
+      e:Except[{_XMLElement}]:>
+        XMLElement["p",
+          {},
+          Flatten@{e}
+          ]
+      }
+    ]
+
+
+splitWhiteSpaceBlocks[s_]:=
+  Select[Not@*StringMatchQ[Whitespace]]@
+    StringSplit[s,"\n\n"]
+
+
 markdownToXMLPostProcess1[s_]:=
-  SplitBy[
-    Replace[
-      DeleteCases[_String?(StringMatchQ[Whitespace])]@
-        Flatten@List@
-          markdownToXML[#, $markdownToXMLElementRules],
-      {
-        {e_XMLElement}:>e,
-        e:Except[{_XMLElement}]:>
-          XMLElement["p",
-            {},
-            Flatten@{e}
-            ]
-        }
-      ]&/@
-      Select[Not@*StringMatchQ[Whitespace]]@
-        StringSplit[s,"\n\n"]//Flatten,
-    Replace[{
-      XMLElement[Alternatives@@$markdownToXMLNewLineElements, __]:>
-        RandomReal[],
-      _->True
-      }]
+  Module[{withHashes},
+    withHashes=
+      StringReplace[s, matchTempHashKey];
+    If[StringQ@withHashes,
+      SplitBy[
+        recursiveConvertToXML/@
+          splitWhiteSpaceBlocks[withHashes]//Flatten,
+        Replace[
+          {
+            XMLElement[Alternatives@@$markdownToXMLNewLineElements, __]:>
+              RandomReal[],
+            _->True
+            }
+          ]
+        ],
+      Sequence@@
+        Map[
+          If[StringQ@#,
+            markdownToXMLPostProcess1@#,
+            markdownToXMLFormat@@#
+            ]&,
+          List@@withHashes
+          ]
+      ]
     ]
 
 
@@ -1076,6 +1255,9 @@ markdownToXMLPreProcess[t_String]:=
 
 
 
+MarkdownToXML//Clear
+
+
 Options[MarkdownToXML]=
   {
     "StripMetaInformation"->True,
@@ -1084,53 +1266,65 @@ Options[MarkdownToXML]=
     "ElementRules"->{}
     };
 MarkdownToXML[
-  s_String?(Not@*FileExistsQ),
+  _String?(StringLength[StringTrim[#]]==0&),
+  ops:OptionsPattern[]
+  ]:="";
+MarkdownToXML[
+  s_String?(StringLength[StringTrim[#]]>0&&Not@FileExistsQ[#]&),
   ops:OptionsPattern[]
   ]:=
-  With[{
-    sm=TrueQ@OptionValue["StripMetaInformation"],
-    he=OptionValue["HeaderElements"],
-    er=Replace[OptionValue["ElementRules"],Except[_?OptionQ]:>{}],
-    br=Replace[OptionValue["BlockRules"],Except[_?OptionQ]:>{}]
+  Block[
+  {
+    $tmpMap=<||>,
+    $timings
     },
-    Replace[
-      GatherBy[
-        markdownToXMLReinsertRefs@
-          Reap@
-            markdownToXML[
-              markdownToXMLPreProcess[s],
-              Automatic,
-              br,
-              er,
-              If[sm,
-                {
-                  $markdownToXMLMeta
-                  },
-                {}
-                ],
-              {}
-              ],
-        With[{base=StringMatchQ[Alternatives@@he]},
-          Head[#]==XMLElement&&Length[#]>0&&base@First[#]&
-          ]
-        ],
-    {
-      {h_,b_}:>
-        XMLElement["html",
-          {},
-          {
-            XMLElement["head", {}, DeleteDuplicates@h],
-            XMLElement["body", {}, b]
-            }
+    With[{
+      sm=TrueQ@OptionValue["StripMetaInformation"],
+      he=OptionValue["HeaderElements"],
+      er=Replace[OptionValue["ElementRules"],Except[_?OptionQ]:>{}],
+      br=Replace[OptionValue["BlockRules"],Except[_?OptionQ]:>{}]
+      },
+      Replace[
+        GatherBy[
+          echoTimingLabel["Refs"]@
+          markdownToXMLReinsertRefs@
+            markdownToXMLReinsertXML@
+              echoTimingLabel["Create"]@
+                markdownToXML[
+                  markdownToXMLPreProcess[s],
+                  Automatic,
+                  br,
+                  er,
+                  If[sm,
+                    {
+                      $markdownToXMLMeta
+                      },
+                    {}
+                    ],
+                  {}
+                  ],
+          With[{base=StringMatchQ[Alternatives@@he]},
+            Head[#]==XMLElement&&Length[#]>0&&base@First[#]&
+            ]
           ],
-      {b_}:>
-        XMLElement["html",
-          {},
-          {
-            XMLElement["body",{},b]
-            }
-          ]
-      }]
+      {
+        {h_,b_}:>
+          XMLElement["html",
+            {},
+            {
+              XMLElement["head", {}, DeleteDuplicates@h],
+              XMLElement["body", {}, b]
+              }
+            ],
+        {b_}:>
+          XMLElement["html",
+            {},
+            {
+              XMLElement["body",{},b]
+              }
+            ]
+        }]
+      ]
     ];
 MarkdownToXML[f:(_File|_String?FileExistsQ)]:=
   MarkdownToXML@

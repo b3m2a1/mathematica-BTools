@@ -938,10 +938,10 @@ PacletInfoExpressionBundle[
         $Context="PacletManager`Private`",
         $ContextPath={"System`", "PacletManager`", "PacletManager`Private`"}
         },
-      Export[pacletFile, 
-        prettyFormatPacletString[cleanPacletForExport[paclet]],
-        "Text"
-        ]
+      WriteString[pacletFile, 
+        prettyFormatPacletString[cleanPacletForExport[paclet]]
+        ];
+      Close[pacletFile];
       ];
     pacletFile
     ];
