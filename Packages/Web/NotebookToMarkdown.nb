@@ -67,6 +67,8 @@ Cell[BoxData[
       "\t\t", 
      RowBox[{"\"\<UseMathJAX\>\"", "\[Rule]", "False"}], ",", "\n", "\t\t", 
      RowBox[{"\"\<UseImageInput\>\"", "\[Rule]", "False"}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<ImageInputCellExpressions\>\"", "\[Rule]", "False"}], ",", 
+     "\n", "\t\t", 
      RowBox[{"\"\<CodeIndentation\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
      "\t\t", 
      RowBox[{"\"\<ContentPathExtension\>\"", "\[Rule]", "Automatic"}], ",", 
@@ -350,9 +352,14 @@ Cell[BoxData[
                     RowBox[{
                     "\"\<ContentPathExtension\>\"", "\[Rule]", "cpe"}], ",", 
                     "\n", "\t\t\t\t\t\t\t", 
-                    RowBox[{"\"\<LinkFunction\>\"", "->", "linkFormat"}]}], 
-                    "\n", "\t\t\t\t\t\t\t", "|>"}]}]}], "\n", "\t\t\t\t\t", 
-                 "}"}], ",", "\n", "\t\t\t\t", 
+                    RowBox[{"\"\<LinkFunction\>\"", "->", "linkFormat"}], ",",
+                     "\n", "\t\t\t\t\t\t\t", 
+                    RowBox[{"\"\<ImageInputCellExpressions\>\"", "\[Rule]", 
+                    RowBox[{"TrueQ", "@", 
+                    RowBox[{
+                    "OptionValue", "[", "\"\<ImageInputCellExpressions\>\"", 
+                    "]"}]}]}]}], "\n", "\t\t\t\t\t\t\t", "|>"}]}]}], "\n", 
+                 "\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t", 
                 RowBox[{"iNotebookToMarkdown", "[", 
                  RowBox[{"opp", ",", " ", 
                   RowBox[{"fn", "[", 
@@ -1140,7 +1147,7 @@ Cell[BoxData[
       RowBox[{"[", "1", "]"}], "]"}], ",", "\n", "\t\t", "True", ",", "\n", 
      "\t\t\t", "s"}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"7ec0094f-78f5-45ae-923a-afb47fe5e372"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -2393,12 +2400,30 @@ Cell[BoxData[
      "$copyableCodeTemplate", "\n", "\t\t\t", "~", "TemplateApply", "~", 
       RowBox[{"{", "\n", "\t\t\t\t", 
        RowBox[{"exp", ",", "\n", "\t\t\t\t", 
-        RowBox[{"ToString", "[", 
-         RowBox[{"cexpr", ",", " ", "InputForm"}], "]"}]}], "\n", "\t\t\t", 
-       "}"}]}]}]}], "\n", "\t\t", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"TrueQ", "@", 
+           RowBox[{
+           "pathInfo", "[", "\"\<ImageInputCellExpressions\>\"", "]"}]}], ",",
+           "\n", "\t\t\t\t\t", 
+          RowBox[{"ToString", "[", 
+           RowBox[{"cexpr", ",", " ", "InputForm"}], "]"}], ",", "\n", 
+          "\t\t\t\t\t", 
+          RowBox[{"ToExpression", "[", 
+           RowBox[{
+            RowBox[{"First", "@", "cexpr"}], ",", " ", "StandardForm", ",", 
+            "\n", "\t\t\t\t\t\t", 
+            RowBox[{"Function", "[", 
+             RowBox[{"Null", ",", " ", 
+              RowBox[{"ToString", "[", 
+               RowBox[{
+                RowBox[{"Unevaluated", "[", "#", "]"}], ",", " ", 
+                "InputForm"}], "]"}], ",", " ", "HoldFirst"}], "]"}]}], "\n", 
+           "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "]"}]}], "\n", 
+       "\t\t\t", "}"}]}]}]}], "\n", "\t\t", 
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"dd2428a9-c7f0-4b89-bc6d-0df6319ec6b2"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -2419,14 +2444,18 @@ Cell[BoxData[
         RowBox[{"MarkdownToXML", "@", "\n", "\t\t\t\t\t", 
          RowBox[{"StringReplace", "[", 
           RowBox[{"e", ",", " ", "\n", "\t\t\t\t\t\t", 
-           RowBox[{"Append", "[", "\n", "\t\t\t\t\t\t\t", 
+           RowBox[{"Join", "[", "\n", "\t\t\t\t\t\t\t", 
             RowBox[{
              RowBox[{
              "$MarkdownSettings", "[", "\"\<HTMLCharacterReplacements\>\"", 
               "]"}], ",", "\n", "\t\t\t\t\t\t\t", 
-             RowBox[{"\"\<\\n\>\"", "\[Rule]", "\"\<</br>\>\""}]}], "\n", 
-            "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t", "]"}]}], ",", 
-        "\n", "\t\t\t\t", 
+             RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"\"\<\\n\>\"", "\[Rule]", "\"\<</br>\>\""}], ",", "\n",
+                "\t\t\t\t\t\t\t\t", 
+               RowBox[{"\"\<\\\\n\>\"", "\[Rule]", "\"\<</br>\>\""}]}], "\n", 
+              "\t\t\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}], 
+          "\n", "\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t", 
         RowBox[{
          RowBox[{"XMLElement", "[", 
           RowBox[{"\"\<p\>\"", ",", " ", "_", ",", " ", 
@@ -2943,8 +2972,8 @@ Cell[BoxData[
      RowBox[{"Select", "[", 
       RowBox[{
        RowBox[{"{", "o", "}"}], ",", " ", "OptionQ"}], "]"}]}], "\n", "\t\t", 
-    "]"}]}], ";"}]], \
-"CodeInput",ExpressionUUID->"a9644b3b-375e-4499-a65d-9a1ef15f8998"],
+    "]"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"a9644b3b-375e-4499-a65d-9a1ef15f8998"],
 
 Cell[BoxData[
  RowBox[{
@@ -6502,7 +6531,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"0792ebaa-1dc2-414d-9656-\
 e65bfc12151a"]
 },
 WindowSize->{812, 759},
-WindowMargins->{{Automatic, 148}, {Automatic, 0}},
+WindowMargins->{{15, Automatic}, {0, Automatic}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

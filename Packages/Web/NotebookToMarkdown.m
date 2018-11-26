@@ -33,6 +33,7 @@ Options[NotebookToMarkdown]=
     "UseHTMLFormatting"->Automatic,
     "UseMathJAX"->False,
     "UseImageInput"->False,
+    "ImageInputCellExpressions"->False,
     "CodeIndentation"->Automatic,
     "ContentPathExtension"->Automatic,
     "PacletLinkResolutionFunction"->Automatic,
@@ -152,7 +153,8 @@ NotebookToMarkdown[
               "StyleExporters"->cstyles,
               "CodeIndentation"->co,
               "ContentPathExtension"->cpe,
-              "LinkFunction"->linkFormat
+              "LinkFunction"->linkFormat,
+              "ImageInputCellExpressions"->TrueQ@OptionValue["ImageInputCellExpressions"]
               |>
           },
         iNotebookToMarkdown[opp, fn[opp, #]]
@@ -1203,7 +1205,12 @@ markdownCodeCellExportCopyable[pathInfo_, cell_]:=
     $copyableCodeTemplate
       ~TemplateApply~{
         exp,
-        ToString[cexpr, InputForm]
+        If[TrueQ@pathInfo["ImageInputCellExpressions"],
+          ToString[cexpr, InputForm],
+          ToExpression[First@cexpr, StandardForm,
+            Function[Null, ToString[Unevaluated[#], InputForm], HoldFirst]
+            ]
+          ]
       }
     ]
 
@@ -1219,9 +1226,12 @@ notebookToMarkdownBasicXMLExport[e_]:=
       ReplaceRepeated[
         MarkdownToXML@
           StringReplace[e, 
-            Append[
+            Join[
               $MarkdownSettings["HTMLCharacterReplacements"],
-              "\n"->"</br>"
+              {
+                "\n"->"</br>",
+                "\\n"->"</br>"
+                }
               ]
             ],
         XMLElement["p", _, {a___}]:>a
