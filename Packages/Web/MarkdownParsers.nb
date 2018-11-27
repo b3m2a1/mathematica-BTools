@@ -580,36 +580,33 @@ Cell[BoxData[
  RowBox[{
   RowBox[{"markdownToXMLFormat", "[", "\n", "\t", 
    RowBox[{"\"\<CodeLine\>\"", ",", "\n", "\t", "text_"}], "\n", "\t", "]"}], 
-  ":=", "\n", "\t", 
-  RowBox[{
-   RowBox[{"echoTimingLabel", "[", "\"\<FormatCodeLine\>\"", "]"}], "@", "\n",
-    "\t", 
-   RowBox[{"With", "[", 
-    RowBox[{
-     RowBox[{"{", "\n", "\t\t", 
-      RowBox[{"striptext", "=", "\n", "\t\t\t", 
-       RowBox[{"StringTrim", "[", "\n", "\t\t\t\t", 
-        RowBox[{"text", ",", "\n", "\t\t\t\t", 
-         RowBox[{"StringRepeat", "[", 
-          RowBox[{"\"\<`\>\"", ",", "\n", "\t\t\t\t\t", 
-           RowBox[{
-            RowBox[{"StringLength", "@", "text"}], "-", "\n", "\t", "\t", 
-            "\t\t\t\t", 
-            RowBox[{"StringLength", "@", 
-             RowBox[{"StringTrim", "[", 
-              RowBox[{"text", ",", 
-               RowBox[{"StartOfString", "~~", 
-                RowBox[{"(", 
-                 RowBox[{"\"\<`\>\"", ".."}], ")"}]}]}], "]"}]}]}]}], "\n", 
-          "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t", 
-      "}"}], ",", "\n", "\t\t", 
-     RowBox[{"XMLElement", "[", 
-      RowBox[{"\"\<code\>\"", ",", 
-       RowBox[{"{", "}"}], ",", 
-       RowBox[{"{", "striptext", "}"}]}], "]"}]}], "\n", "\t\t", 
-    "]"}]}]}]], \
+  ":=", "\n", "\t", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{"striptext", "=", "\n", "\t\t\t", 
+      RowBox[{"StringTrim", "[", "\n", "\t\t\t\t", 
+       RowBox[{"text", ",", "\n", "\t\t\t\t", 
+        RowBox[{"StringRepeat", "[", 
+         RowBox[{"\"\<`\>\"", ",", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"StringLength", "@", "text"}], "-", "\n", "\t", "\t", 
+           "\t\t\t\t", 
+           RowBox[{"StringLength", "@", 
+            RowBox[{"StringTrim", "[", 
+             RowBox[{"text", ",", 
+              RowBox[{"StartOfString", "~~", 
+               RowBox[{"(", 
+                RowBox[{"\"\<`\>\"", ".."}], ")"}]}]}], "]"}]}]}]}], "\n", 
+         "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t", 
+     "}"}], ",", "\n", "\t\t", 
+    RowBox[{"XMLElement", "[", 
+     RowBox[{"\"\<code\>\"", ",", 
+      RowBox[{"{", "}"}], ",", 
+      RowBox[{"{", "striptext", "}"}]}], "]"}]}], "\n", "\t\t", 
+   "]"}]}]], \
 "CodeInput",ExpressionUUID->"8514dd20-ae2b-48ff-a3b5-115e15c90c66"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -623,13 +620,13 @@ Cell["\[LeftCeiling]XML\[RightFloor]", "CodeSubsubsection",
 Cell[BoxData[
  RowBox[{
   RowBox[{"importXMLSlow", "[", "text_", "]"}], ":=", "\n", "\t", 
-  RowBox[{"FirstCase", "[", "\n", "\t\t\t", 
+  RowBox[{"FirstCase", "[", "\n", "\t\t", 
    RowBox[{
     RowBox[{"ImportString", "[", 
      RowBox[{"text", ",", " ", 
       RowBox[{"{", 
        RowBox[{"\"\<HTML\>\"", ",", " ", "\"\<XMLObject\>\""}], "}"}]}], 
-     "]"}], ",", "\n", "\t", "\t\t", 
+     "]"}], ",", "\n", "\t\t", 
     RowBox[{
      RowBox[{
       RowBox[{"XMLElement", "[", 
@@ -639,8 +636,8 @@ Cell[BoxData[
       RowBox[{"b", ":", 
        RowBox[{"XMLElement", "[", 
         RowBox[{"\"\<script\>\"", ",", " ", "__"}], "]"}]}]}], 
-     "\[RuleDelayed]", "b"}], ",", "\n", "\t", "\t\t", "\"\<\>\"", ",", "\n", 
-    "\t", "\t\t", "\[Infinity]"}], "\n", "\t", "\t\t", 
+     "\[RuleDelayed]", "b"}], ",", "\n", "\t\t", "\"\<\>\"", ",", "\n", 
+    "\t\t", "\[Infinity]"}], "\n", "\t\t", 
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"b7a351b0-4c26-4e53-87b9-5f0a82ff6488"],
 
@@ -650,26 +647,23 @@ Cell[BoxData[
    RowBox[{
     RowBox[{"\"\<XMLBlock\>\"", "|", "\"\<XMLLine\>\""}], ",", "\n", "\t", 
     "text_"}], "\n", "\t", "]"}], ":=", "\n", "\t", 
-  RowBox[{
-   RowBox[{"echoTimingLabel", "[", "\"\<FormatXML\>\"", "]"}], "@", "\n", 
-   "\t\t", 
-   RowBox[{"Module", "[", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"h", "=", 
+      RowBox[{"ToString", "@", 
+       RowBox[{"Hash", "[", "text", "]"}]}]}], "}"}], ",", "\n", "\t\t", 
     RowBox[{
-     RowBox[{"{", 
-      RowBox[{"h", "=", 
-       RowBox[{"ToString", "@", 
-        RowBox[{"Hash", "[", "text", "]"}]}]}], "}"}], ",", "\n", "\t\t\t", 
      RowBox[{
+      RowBox[{"$tmpMap", "[", "h", "]"}], "=", "text"}], ";", "\n", "\t\t", 
+     RowBox[{"Sow", "[", 
       RowBox[{
-       RowBox[{"$tmpMap", "[", "h", "]"}], "=", "text"}], ";", "\n", "\t\t\t", 
-      RowBox[{"Sow", "[", 
-       RowBox[{
-        RowBox[{"h", "\[Rule]", "text"}], ",", " ", "\"\<XMLExportKeys\>\""}],
-        "]"}], ";", "\n", "\t\t\t", 
-      RowBox[{"\"\<XMLToExport\>\"", "[", "h", "]"}]}]}], "\n", "\t\t\t", 
-    "]"}]}]}]], \
+       RowBox[{"h", "\[Rule]", "text"}], ",", " ", "\"\<XMLExportKeys\>\""}], 
+      "]"}], ";", "\n", "\t\t", 
+     RowBox[{"\"\<XMLToExport\>\"", "[", "h", "]"}]}]}], "\n", "\t\t", 
+   "]"}]}]], \
 "CodeInput",ExpressionUUID->"78926e6d-0878-4488-b0c1-8093879ad81d"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -2313,7 +2307,7 @@ Cell[BoxData[{
      RowBox[{"{", 
       RowBox[{
       "reap", ",", " ", "ex", ",", " ", "keys", ",", " ", "exported", ",", 
-       " ", "expass"}], "}"}], ",", "\n", "\t\t", 
+       " ", "expass", ",", " ", "expass2"}], "}"}], ",", "\n", "\t\t", 
      RowBox[{
       RowBox[{"reap", "=", "\n", "\t\t\t", 
        RowBox[{"Reap", "[", 
@@ -2326,59 +2320,107 @@ Cell[BoxData[{
       RowBox[{"ex", "=", 
        RowBox[{"reap", "[", 
         RowBox[{"[", "1", "]"}], "]"}]}], ";", "\n", "\t\t", 
-      RowBox[{"exported", "=", "\n", "\t\t\t", 
-       RowBox[{"ImportString", "[", "\n", "\t\t\t\t", 
-        RowBox[{
-         RowBox[{"StringJoin", "@", 
-          RowBox[{"{", "\n", "\t\t\t\t\t", 
-           RowBox[{"\"\<<div>\>\"", ",", "\n", "\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{
-              RowBox[{"\"\<<div id=\\\"\>\"", "<>", 
-               RowBox[{"#", "[", 
-                RowBox[{"[", "1", "]"}], "]"}], "<>", 
-               "\"\<\\\" class=\\\"hash-cell\\\">\>\"", "<>", "\n", 
-               "\t\t\t\t\t\t", 
-               RowBox[{"#", "[", 
-                RowBox[{"[", "2", "]"}], "]"}], "<>", "\"\<</div>\>\""}], 
-              "&"}], "/@", "\n", "\t\t\t\t\t\t", "keys"}], ",", "\n", 
-            "\t\t\t\t\t", "\"\<</div>\>\""}], "\n", "\t\t\t\t\t", "}"}]}], 
-         ",", "\n", "\t\t\t\t", 
-         RowBox[{"{", 
-          RowBox[{"\"\<HTML\>\"", ",", " ", "\"\<XMLObject\>\""}], "}"}]}], 
-        "\n", "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
-      RowBox[{"expass", "=", "\n", "\t\t\t", 
-       RowBox[{"Association", "@", "\n", "\t\t\t\t", 
-        RowBox[{"Cases", "[", 
-         RowBox[{"exported", ",", " ", "\n", "\t", "\t", "\t\t\t", 
-          RowBox[{
-           RowBox[{"XMLElement", "[", 
-            RowBox[{"\"\<div\>\"", ",", " ", "\n", "\t\t\t\t\t\t", 
-             RowBox[{"{", 
-              RowBox[{"___", ",", " ", 
-               RowBox[{"\"\<class\>\"", "\[Rule]", "\"\<hash-cell\>\""}], ",",
-                " ", 
-               RowBox[{"\"\<id\>\"", "\[Rule]", "id_"}], ",", " ", "___"}], 
-              "}"}], ",", "\n", "\t\t\t\t\t\t", "b_"}], "\n", "\t\t\t\t\t\t", 
-            "]"}], "\[RuleDelayed]", 
-           RowBox[{"(", 
-            RowBox[{"id", "\[Rule]", "b"}], ")"}]}], ",", "\n", "\t\t\t\t\t", 
-          "\[Infinity]"}], "\n", "\t\t\t\t\t", "]"}]}]}], ";", "\n", "\t\t", 
-      RowBox[{"ex", "/.", 
+      RowBox[{"If", "[", 
        RowBox[{
-        RowBox[{"\"\<XMLToExport\>\"", "[", "h_", "]"}], "\[RuleDelayed]", 
-        RowBox[{"Sequence", "@@", 
-         RowBox[{"Lookup", "[", 
-          RowBox[{"expass", ",", " ", "h", ",", " ", 
-           RowBox[{"Echo", "[", "h", "]"}]}], 
-          RowBox[{"(*", "Nothing", "*)"}], "]"}]}]}]}]}]}], "\n", "\t\t", 
-    "]"}]}], ";"}], "\n", 
+        RowBox[{
+         RowBox[{"Length", "@", "keys"}], ">", "0"}], ",", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"exported", "=", "\n", "\t\t\t\t", 
+          RowBox[{"ImportString", "[", "\n", "\t", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"StringJoin", "@", 
+             RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
+              RowBox[{"\"\<<div>\>\"", ",", "\n", "\t", "\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"\"\<<div id=\\\"\>\"", "<>", 
+                  RowBox[{"#", "[", 
+                   RowBox[{"[", "1", "]"}], "]"}], "<>", 
+                  "\"\<\\\" class=\\\"hash-cell\\\">\>\"", "<>", "\n", "\t", 
+                  "\t\t\t\t\t\t", 
+                  RowBox[{"#", "[", 
+                   RowBox[{"[", "2", "]"}], "]"}], "<>", "\"\<</div>\>\""}], 
+                 "&"}], "/@", "\n", "\t", "\t\t\t\t\t\t", "keys"}], ",", "\n",
+                "\t", "\t\t\t\t\t", "\"\<</div>\>\""}], "\n", "\t", 
+              "\t\t\t\t\t", "}"}]}], ",", "\n", "\t", "\t\t\t\t", 
+            RowBox[{"{", 
+             RowBox[{"\"\<HTML\>\"", ",", " ", "\"\<XMLObject\>\""}], "}"}]}],
+            "\n", "\t", "\t\t\t\t", "]"}]}], ";", "\n", "\t", "\t\t", 
+         RowBox[{"expass", "=", "\n", "\t", "\t\t\t", 
+          RowBox[{"Association", "@", "\n", "\t", "\t\t\t\t", 
+           RowBox[{"Cases", "[", 
+            RowBox[{"exported", ",", " ", "\n", "\t", "\t", "\t", "\t\t\t", 
+             RowBox[{
+              RowBox[{"XMLElement", "[", 
+               RowBox[{"\"\<div\>\"", ",", " ", "\n", "\t", "\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"{", 
+                  RowBox[{"___", ",", " ", 
+                   RowBox[{"\"\<class\>\"", "\[Rule]", "\"\<hash-cell\>\""}], 
+                   ",", " ", 
+                   RowBox[{"\"\<id\>\"", "\[Rule]", "id_"}], ",", " ", 
+                   "___"}], "}"}], "|", "\n", "\t", "\t\t\t\t\t\t\t", 
+                 RowBox[{"{", 
+                  RowBox[{"___", ",", " ", 
+                   RowBox[{"\"\<id\>\"", "\[Rule]", "id_"}], ",", " ", 
+                   RowBox[{"\"\<class\>\"", "\[Rule]", "\"\<hash-cell\>\""}], 
+                   ",", " ", "___"}], "}"}]}], ",", "\n", "\t", 
+                "\t\t\t\t\t\t", "b_"}], "\n", "\t", "\t\t\t\t\t\t", "]"}], 
+              "\[RuleDelayed]", 
+              RowBox[{"(", 
+               RowBox[{"id", "\[Rule]", "b"}], ")"}]}], ",", "\n", "\t", 
+             "\t\t\t\t\t", "\[Infinity]"}], "\n", "\t", "\t\t\t\t\t", 
+            "]"}]}]}], ";", "\n", "\t", "\t\t", 
+         RowBox[{"expass2", "=", "\n", "\t", "\t\t\t", 
+          RowBox[{"AssociationMap", "[", "\n", "\t", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"ReplaceRepeated", "[", "\n", "\t", "\t\t\t\t\t", 
+              RowBox[{"#", ",", "\n", "\t", "\t\t\t\t\t", 
+               RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"XMLElement", "[", 
+                  RowBox[{
+                  "\"\<div\>\"", ",", " ", "\n", "\t", "\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"___", ",", " ", 
+                    RowBox[{"\"\<class\>\"", "\[Rule]", "\"\<hash-cell\>\""}],
+                     ",", " ", 
+                    RowBox[{"\"\<id\>\"", "\[Rule]", "id_"}], ",", " ", 
+                    "___"}], "}"}], "|", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{"{", 
+                    RowBox[{"___", ",", " ", 
+                    RowBox[{"\"\<id\>\"", "\[Rule]", "id_"}], ",", " ", 
+                    RowBox[{"\"\<class\>\"", "\[Rule]", "\"\<hash-cell\>\""}],
+                     ",", " ", "___"}], "}"}]}], ",", "\n", "\t", 
+                   "\t\t\t\t\t\t\t", "_"}], "\n", "\t", "\t\t\t\t\t\t\t", 
+                  "]"}], "\[RuleDelayed]", 
+                 RowBox[{"Sequence", "@@", 
+                  RowBox[{"Lookup", "[", 
+                   RowBox[{"expass", ",", " ", "id", ",", " ", 
+                    RowBox[{"Echo", "[", "id", "]"}]}], 
+                   RowBox[{"(*", "Nothing", "*)"}], "]"}]}]}], "\n", "\t", 
+                "\t\t\t\t\t\t", "}"}]}], "\n", "\t", "\t\t\t\t\t", "]"}], 
+             "&"}], ",", " ", "\n", "\t", "\t\t\t\t", "expass"}], "\n", "\t", 
+           "\t\t\t\t", "]"}]}], ";", " ", "\n", "\t\t\t", 
+         RowBox[{"ex", "/.", 
+          RowBox[{
+           RowBox[{"\"\<XMLToExport\>\"", "[", "h_", "]"}], "\[RuleDelayed]", 
+           
+           RowBox[{"Sequence", "@@", 
+            RowBox[{"Lookup", "[", 
+             RowBox[{"expass2", ",", " ", "h", ",", " ", 
+              RowBox[{"Echo", "[", "h", "]"}]}], 
+             RowBox[{"(*", "Nothing", "*)"}], "]"}]}]}]}]}], ",", "\n", 
+        "\t\t\t", "ex"}], "\n", "\t\t\t", "]"}]}]}], "\n", "\t\t", "]"}]}], 
+  ";"}], "\n", 
  RowBox[{
   RowBox[{
   "markdownToXMLReinsertXML", "~", "SetAttributes", "~", "HoldFirst"}], 
   ";"}]}], "CodeInput",ExpressionUUID->"637bb3fb-55f7-4c06-8123-b26acffefe80"]\
 
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -2449,11 +2491,7 @@ Cell[BoxData[
       "$markdownToXMLOneTimeElementRules", "=", "\n", "\t\t\t\t", 
        "oneTimeElementRules"}]}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
     RowBox[{"Flatten", "@", "\n", "\t\t\t", 
-     RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
-      RowBox[{"(*", 
-       RowBox[{
-        RowBox[{"echoTimingLabel", "[", "\"\<Prep\>\"", "]"}], "@"}], "*)"}], 
-      "\n", "\t\t\t\t\t", 
+     RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
       RowBox[{
        RowBox[{"markdownToXMLPrep", "[", 
         RowBox[{"text", ",", " ", "rules"}], "]"}], ",", " ", 
@@ -2509,12 +2547,9 @@ Cell[BoxData[
                     RowBox[{"StringQ", "@", "#"}], ",", "\n", 
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "#", ",", "\n", 
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"markdownToXMLFormat", "@@", "#"}], "//", 
-                    RowBox[{
-                    "echoTimingLabel", "[", "\"\<Format\>\"", "]"}]}]}], "\n",
-                     "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "]"}], "&"}], ",", 
-                    "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"markdownToXMLFormat", "@@", "#"}]}], "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "]"}], "&"}], ",", "\n",
+                     "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"List", "@@", "withHashes"}]}], "\n", 
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "]"}]}]}]}]}], "\n", 
                     "\t\t\t\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", 
@@ -2524,12 +2559,9 @@ Cell[BoxData[
               RowBox[{
                RowBox[{"(", 
                 RowBox[{"r_", "\[Rule]", "s_"}], ")"}], ":>", "\n", 
-               "\t\t\t\t\t\t\t\t\t", 
-               RowBox[{
-                RowBox[{"echoTimingLabel", "[", "\"\<Format\>\"", "]"}], "@", 
-                "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                RowBox[{"markdownToXMLFormat", "[", 
-                 RowBox[{"r", ",", " ", "s"}], "]"}]}]}]}], "\n", 
+               "\t\t\t\t\t\t\t\t\t", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+               RowBox[{"markdownToXMLFormat", "[", 
+                RowBox[{"r", ",", " ", "s"}], "]"}]}]}], "\n", 
              "\t\t\t\t\t\t\t\t", "}"}], ",", "\n", "\t", "\t\t\t\t\t\t", 
             "1"}], "\n", "\t", "\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", 
         "}"}]}], "]"}]}]}], "\n", "\t\t", 
@@ -2780,33 +2812,26 @@ Cell[BoxData[{
         RowBox[{
          RowBox[{"GatherBy", "[", "\n", "\t\t\t\t\t", 
           RowBox[{
-           RowBox[{
-            RowBox[{"echoTimingLabel", "[", "\"\<Refs\>\"", "]"}], "@", "\n", 
-            "\t\t\t\t\t", 
-            RowBox[{"markdownToXMLReinsertRefs", "@", "\n", "\t\t\t\t\t\t", 
-             RowBox[{
-             "markdownToXMLReinsertXML", "@", "\n", "\t\t\t\t\t\t\t", 
+           RowBox[{"markdownToXMLReinsertRefs", "@", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"markdownToXMLReinsertXML", "@", "\n", "\t\t\t\t\t\t\t\t", 
+             RowBox[{"markdownToXML", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
               RowBox[{
-               RowBox[{"echoTimingLabel", "[", "\"\<Create\>\"", "]"}], "@", 
-               "\n", "\t", "\t\t\t\t\t\t\t", 
-               RowBox[{"markdownToXML", "[", "\n", "\t", "\t\t\t\t\t\t\t\t", 
-                RowBox[{
-                 RowBox[{"markdownToXMLPreProcess", "[", "s", "]"}], ",", 
-                 "\n", "\t", "\t", "\t\t\t\t\t\t\t", "Automatic", ",", "\n", 
-                 "\t", "\t", "\t\t\t\t\t\t\t", "br", ",", "\n", "\t", "\t", 
-                 "\t\t\t\t\t\t\t", "er", ",", "\n", "\t", "\t", 
+               RowBox[{"markdownToXMLPreProcess", "[", "s", "]"}], ",", "\n", 
+               "\t", "\t", "\t\t\t\t\t\t\t", "Automatic", ",", "\n", "\t", 
+               "\t", "\t\t\t\t\t\t\t", "br", ",", "\n", "\t", "\t", 
+               "\t\t\t\t\t\t\t", "er", ",", "\n", "\t", "\t", 
+               "\t\t\t\t\t\t\t", 
+               RowBox[{"If", "[", 
+                RowBox[{"sm", ",", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                 "{", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t", 
+                  "$markdownToXMLMeta", "\n", "\t", "\t", 
+                  "\t\t\t\t\t\t\t\t\t", "}"}], ",", "\n", "\t", "\t", "\t", 
                  "\t\t\t\t\t\t\t", 
-                 RowBox[{"If", "[", 
-                  RowBox[{"sm", ",", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
-                   RowBox[{
-                   "{", "\n", "\t", "\t", "\t\t\t\t\t\t\t\t\t", 
-                    "$markdownToXMLMeta", "\n", "\t", "\t", 
-                    "\t\t\t\t\t\t\t\t\t", "}"}], ",", "\n", "\t", "\t", "\t", 
-                   "\t\t\t\t\t\t\t", 
-                   RowBox[{"{", "}"}]}], "\n", "\t", "\t", "\t\t\t\t\t\t\t\t",
-                   "]"}], ",", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
-                 RowBox[{"{", "}"}]}], "\n", "\t", "\t\t\t\t\t\t\t\t", 
-                "]"}]}]}]}]}], ",", "\n", "\t", "\t\t\t\t", 
+                 RowBox[{"{", "}"}]}], "\n", "\t", "\t", "\t\t\t\t\t\t\t\t", 
+                "]"}], ",", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
+               RowBox[{"{", "}"}]}], "\n", "\t", "\t\t\t\t\t\t\t\t", 
+              "]"}]}]}], ",", "\n", "\t", "\t\t\t\t", 
            RowBox[{"With", "[", 
             RowBox[{
              RowBox[{"{", 
@@ -2883,7 +2908,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"0792ebaa-1dc2-414d-9656-\
 e65bfc12151a"]
 },
 WindowSize->{808, 755},
-WindowMargins->{{258, Automatic}, {42, Automatic}},
+WindowMargins->{{207, Automatic}, {38, Automatic}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

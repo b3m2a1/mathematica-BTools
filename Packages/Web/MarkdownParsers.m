@@ -337,7 +337,7 @@ markdownToXMLFormat[
   "CodeLine",
   text_
   ]:=
-  echoTimingLabel["FormatCodeLine"]@
+  
   With[{
     striptext=
       StringTrim[
@@ -359,23 +359,22 @@ markdownToXMLFormat[
 
 importXMLSlow[text_]:=
   FirstCase[
-      ImportString[text, {"HTML", "XMLObject"}],
-      XMLElement["body"|"head", _, b_]|b:XMLElement["script", __]:>b,
-      "",
-      \[Infinity]
-      ]
+    ImportString[text, {"HTML", "XMLObject"}],
+    XMLElement["body"|"head", _, b_]|b:XMLElement["script", __]:>b,
+    "",
+    \[Infinity]
+    ]
 
 
 markdownToXMLFormat[
   "XMLBlock"|"XMLLine",
   text_
   ]:=
-  echoTimingLabel["FormatXML"]@
-    Module[{h=ToString@Hash[text]},
-      $tmpMap[h]=text;
-      Sow[h->text, "XMLExportKeys"];
-      "XMLToExport"[h]
-      ]
+  Module[{h=ToString@Hash[text]},
+    $tmpMap[h]=text;
+    Sow[h->text, "XMLExportKeys"];
+    "XMLToExport"[h]
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1070,32 +1069,50 @@ markdownToXMLReinsertRefs~SetAttributes~HoldFirst;
 
 
 markdownToXMLReinsertXML[expr_]:=
-  Module[{reap, ex, keys, exported, expass},
+  Module[{reap, ex, keys, exported, expass, expass2},
     reap=
       Reap[expr, "XMLExportKeys"];
     keys=Flatten@reap[[2]];
     ex=reap[[1]];
-    exported=
-      ImportString[
-        StringJoin@{
-          "<div>",
-          "<div id=\""<>#[[1]]<>"\" class=\"hash-cell\">"<>
-            #[[2]]<>"</div>"&/@
-            keys,
-          "</div>"
-          },
-        {"HTML", "XMLObject"}
-        ];
-    expass=
-      Association@
-        Cases[exported, 
-          XMLElement["div", 
-            {___, "class"->"hash-cell", "id"->id_, ___},
-            b_
-            ]:>(id->b),
-          \[Infinity]
+    If[Length@keys>0,
+      exported=
+        ImportString[
+          StringJoin@{
+            "<div>",
+            "<div id=\""<>#[[1]]<>"\" class=\"hash-cell\">"<>
+              #[[2]]<>"</div>"&/@
+              keys,
+            "</div>"
+            },
+          {"HTML", "XMLObject"}
           ];
-    ex/."XMLToExport"[h_]:>Sequence@@Lookup[expass, h, Echo[h](*Nothing*)]
+      expass=
+        Association@
+          Cases[exported, 
+            XMLElement["div", 
+              {___, "class"->"hash-cell", "id"->id_, ___}|
+                {___, "id"->id_, "class"->"hash-cell", ___},
+              b_
+              ]:>(id->b),
+            \[Infinity]
+            ];
+      expass2=
+        AssociationMap[
+          ReplaceRepeated[
+            #,
+            {
+              XMLElement["div", 
+                {___, "class"->"hash-cell", "id"->id_, ___}|
+                  {___, "id"->id_, "class"->"hash-cell", ___},
+                _
+                ]:>Sequence@@Lookup[expass, id, Echo[id](*Nothing*)]
+              }
+            ]&, 
+          expass
+          ]; 
+      ex/."XMLToExport"[h_]:>Sequence@@Lookup[expass2, h, Echo[h](*Nothing*)],
+      ex
+      ]
     ];
 markdownToXMLReinsertXML~SetAttributes~HoldFirst;
 
@@ -1141,7 +1158,6 @@ markdownToXML[
       },
     Flatten@
       Replace[
-        (*echoTimingLabel["Prep"]@*)
           markdownToXMLPrep[text, rules], {
           s_String:>
             If[rules===Automatic,
@@ -1165,7 +1181,7 @@ markdownToXML[
                           Map[
                             If[StringQ@#,
                               #,
-                              markdownToXMLFormat@@#//echoTimingLabel["Format"]
+                              markdownToXMLFormat@@#
                               ]&,
                             List@@withHashes
                             ]
@@ -1173,7 +1189,7 @@ markdownToXML[
                       ]
                     ],
                 (r_->s_):>
-                  echoTimingLabel["Format"]@
+                  
                     markdownToXMLFormat[r, s]
                 },
               1
@@ -1286,10 +1302,8 @@ MarkdownToXML[
       },
       Replace[
         GatherBy[
-          echoTimingLabel["Refs"]@
           markdownToXMLReinsertRefs@
             markdownToXMLReinsertXML@
-              echoTimingLabel["Create"]@
                 markdownToXML[
                   markdownToXMLPreProcess[s],
                   Automatic,

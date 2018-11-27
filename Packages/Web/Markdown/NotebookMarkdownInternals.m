@@ -50,6 +50,20 @@ MarkdownMetadataFormat::usage="";
 $MarkdownSettings::usage="";
 
 
+(* ::Subsubsection::Closed:: *)
+(*iNotebookToMarkdown*)
+
+
+
+iNotebookToMarkdown::usage=
+  "
+	The true functions that exports things to Markdown. 
+I think it worth exposing at this point...
+";
+iNotebookToMarkdownValid::usage=
+  "Tests if a form *could* be exported";
+
+
 Begin["`Private`"];
 
 
@@ -376,6 +390,12 @@ $NotebookToMarkdownStyles:=
 
 $NotebookToMarkdownHTMLCharReplacements=
   {
+    "<"->"&lt;",
+    ">"->"&gt;",
+    "&"->"&amp;",
+    "\""->"&quot;",
+    "\'"->"&apos;",
+    
     "\[Rule]"->"->",
     "\[RuleDelayed]"->":>",
     "\[LeftGuillemet]"->"&laquo;",
@@ -1774,8 +1794,2756 @@ $MarkdownSettings=
     "CellStyles":>$NotebookToMarkdownStyles,
     "RasterizationOptions"->$NotebookToMarkdownRasterizationOptions,
     "AnimationOptions"->{"AnimationRepetitions"->\[Infinity]},
-    "PelicanPathExtension"->"{filename}"
+    "PelicanPathExtension"->"{filename}",
+    "MathJAXInlineTemplate"->"$``$",
+    "MathJAXBlockTemplate"->"$$``$$",
+    "PacletLinkResolutionFunction"->notebookToMarkdownResolvePacletURL,
+    "ImageExportPathFunction"->markdownNotebookExportImagePath,
+    "LinkFormattingFunction"->linkFormatFunction
     |>;
+
+
+(* ::Subsection:: *)
+(*iNotebookToMarkdown*)
+
+
+
+iNotebookToMarkdown//Clear;
+iNotebookToMarkdownValid//Clear;
+iNotebookToMarkdownRegister//Clear;
+
+
+iNotebookToMarkdown[pathInfo_][e___]:=
+  iNotebookToMarkdown[pathInfo, e]
+
+
+iNotebookToMarkdown[pathInfo_, l_List]:=
+  iNotebookToMarkdown[pathInfo, #]&/@l;
+
+
+iNotebookToMarkdownRegister/:
+  HoldPattern[iNotebookToMarkdownRegister[pathInfo_, p__]~SetDelayed~d_]:=
+    (
+      iNotebookToMarkdown[pathInfo, p]:=d;
+      iNotebookToMarkdownValid[pathInfo, p]:=True;
+      )
+
+
+iNotebookToMarkdownValid[e__]:=False
+
+
+(* ::Subsubsection::Closed:: *)
+(*Boxes*)
+
+
+
+$iNotebookToMarkdownBasicBoxHeads=
+  Alternatives[
+    _RowBox,_GridBox,_SuperscriptBox,
+    _SubscriptBox,_SubsuperscriptBox,_OverscriptBox,
+    _UnderscriptBox,_UnderoverscriptBox,_FractionBox,
+    _SqrtBox,_RadicalBox,_StyleBox,
+    _FrameBox,_AdjustmentBox,_ButtonBox,
+    _FormBox,_InterpretationBox,_TagBox,
+    _ErrorBox,_CounterBox,_ValueBox,
+    _OptionValueBox,_GraphicsArray,_GraphicsGrid,
+    _SurfaceGraphics,_ContourGraphics,_DensityGraphics,
+    _AnimatorBox,_CheckboxBox,_DynamicBox,
+    _InputFieldBox,_OpenerBox,
+    _PopupMenuBox,_RadioButtonBox,_SliderBox,_TooltipBox,
+    _System`Convert`TeXFormDump`AreaSliderBox,
+    _PaneSelectorBox,_TemplateBox,_TabViewBox
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Math*)
+
+
+
+$iNotebookToMarkdownMathBoxHeads=
+  _SubscriptBox|_SuperscriptBox|_FractionBox|_OverscriptBox|
+  _SubsuperscriptBox
+
+
+(* ::Subsubsection::Closed:: *)
+(*IgnoredOutput Forms*)
+
+
+
+$iNotebookToMarkdownIgnoredIOBaseForms=
+  OutputFormData[_, _]|
+    TemplateBox[__, "EmbeddedHTML", ___];
+$iNotebookToMarkdownIgnoredIOForms=
+  $iNotebookToMarkdownIgnoredIOBaseForms|
+    BoxData[$iNotebookToMarkdownIgnoredIOBaseForms]|
+    TextData[$iNotebookToMarkdownIgnoredIOBaseForms]
+
+
+(* ::Subsubsection::Closed:: *)
+(*IgnoredBoxHeads*)
+
+
+
+$iNotebookToMarkdownIgnoredBoxHeads=
+  TooltipBox|InterpretationBox|FormBox|FrameBox;
+
+
+(* ::Subsubsection::Closed:: *)
+(*ToString Forms*)
+
+
+
+$iNotebookToMarkdownOutputStringBaseForms=
+  _GraphicsBox|_Graphics3DBox|
+  TagBox[__,_Manipulate`InterpretManipulate]|
+  TagBox[_GridBox, "Column"|"Grid"]|
+  TemplateBox[_, "Legended"|"EmbeddedHTML", ___];
+$iNotebookToMarkdownOutputStringForms=
+  $iNotebookToMarkdownOutputStringBaseForms|
+  $iNotebookToMarkdownIgnoredBoxHeads[
+    $iNotebookToMarkdownOutputStringBaseForms,
+    __
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Rasterize Forms*)
+
+
+
+$iNotebookToMarkdownRasterizeBaseForms=
+  TemplateBox[__,
+    InterpretationFunction->("Dataset[<>]"& ),
+    ___
+    ]|
+  TemplateBox[__,
+    "DateObject"|"CellObject"|"BoxObject"|"NotebookObject"|"NotebookObjectUnsaved",
+    ___
+    ]|
+  InterpretationBox[
+    RowBox[{
+      TagBox[_String,"SummaryHead",___]|
+        StyleBox[TagBox[_String,"SummaryHead",___],"NonInterpretableSummary"],
+      __
+      }],
+    __
+    ]|
+  _DynamicBox|_DynamicModuleBox|
+  _CheckboxBox|_DynamicBox|
+  _InputFieldBox|_OpenerBox|
+  _PopupMenuBox|_RadioButtonBox|_SliderBox|
+  _ButtonBox?(FreeQ[BaseStyle->"Link"|"Hyperlink"])|
+  _PanelBox|_PaneBox|_TogglerBox|
+  $iNotebookToMarkdownRasterizeBoxHeads?(Not@*FreeQ[_DynamicBox])|
+  TagBox[__, _InterpretTemplate, ___]|
+  _GraphicsBox|_GraphicsBox3D;
+$iNotebookToMarkdownRasterizeForms=
+  $iNotebookToMarkdownRasterizeBaseForms|
+    $iNotebookToMarkdownBasicBoxHeads?(
+      Not@*FreeQ[
+        $iNotebookToMarkdownRasterizeBaseForms|
+          $iNotebookToMarkdownOutputStringBaseForms
+        ])
+
+
+(* ::Subsubsection::Closed:: *)
+(*markdownCodeCellIOReformat*)
+
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*flags*)
+
+
+
+(* ::Text:: *)
+(*
+	A bunch of tags to be used when cleaning the data
+*)
+
+
+
+$iNotebookToMarkdownToStripStartBlockFlag=
+  "\n\"<!--<<<[[<<!\"\n";
+$iNotebookToMarkdownToStripEndBlockFlag=
+  "\n\"!>>]]>>>--!>\"\n";
+
+
+$iNotebookToMarkdownToStripStart=
+  "\"<!--STRIP_ME_FROM_OUTPUT>";
+$iNotebookToMarkdownToStripEnd=
+  "<STRIP_ME_FROM_OUTPUT--!>\"";
+
+
+$iNotebookToMarkdownUnIndentedLine=
+  "\"<!NO_INDENT>\"";
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*notebookToMarkdownStripBlock*)
+
+
+
+(* ::Text:: *)
+(*
+	StripBlock
+	
+	Preps a string by adding the tags that tell the post-processor to strip IO lines and things
+*)
+
+
+
+notebookToMarkdownStripBlock[s_]:=
+  $iNotebookToMarkdownToStripStartBlockFlag<>
+    $iNotebookToMarkdownUnIndentedLine<>
+      $iNotebookToMarkdownToStripStart<>
+        StringTrim@s<>
+      $iNotebookToMarkdownToStripEnd<>
+  $iNotebookToMarkdownToStripEndBlockFlag
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*markdownCodeCellIOReformatPreClean*)
+
+
+
+(* ::Text:: *)
+(*
+	PreClean
+	
+	Precleans the boxes before exporting, allowing for the pre-rasterization of rasterizable forms
+*)
+
+
+
+markdownCodeCellIOReformatPreClean[pathInfo_, e_, style_]:=
+  ReplaceAll[
+    e,
+    {
+      b:$iNotebookToMarkdownRasterizeForms:>
+        Replace[
+          iNotebookToMarkdown[
+            pathInfo,
+            b,
+            Replace[style,
+              {
+                "PlainText"->"Text",
+                "InputText"->"Input",
+                _->Last@Flatten@{style}
+                }
+              ]
+            ],
+          s:Except["", _String]:>
+            RawBoxes[s]
+        ],
+      (*
+			Converts tabs into spaces because it looks better		
+			*)
+      g:$iNotebookToMarkdownOutputStringForms:>
+        Replace[
+          iNotebookToMarkdown[pathInfo, g],
+          s:Except["", _String]:>
+            RawBoxes[s]
+          ],
+      (*
+			Converts tabs into spaces because it looks better		
+			*)
+      s_String?(StringMatchQ["\t"..]):>
+        StringReplace[s, "\t"->"  "],
+      s_String:>
+        notebookToMarkdownCodeStringExport@s
+      }
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*markdownCodeCellIOReformatBaseExport*)
+
+
+
+(* ::Text:: *)
+(*
+	BaseExport
+	
+	Performs the basic export to string for the IO data
+*)
+
+
+
+(* ::Text:: *)
+(*
+	This is currently super kludgy. 
+	I need a better way to handle what should and what should not be exported via ExportPacket...
+*)
+
+
+
+markdownCodeCellIOReformatBaseExport[
+  pathInfo_,
+  e_,
+  style_,
+  postFormat_,
+  Hold[stack_],
+  ops:OptionsPattern[]
+  ]:=
+  Replace[
+    If[Length@Flatten@{ops}>0, $$pass, iNotebookToMarkdown[##]],
+    {
+      Except[_String]:>
+        notebookToMarkdownFEExport[
+          #,
+          #2,
+          First@Flatten@{style},
+          Rest@Flatten@{style},
+          Flatten@{
+            ops
+            }
+          ]
+      }
+    ]&[
+      pathInfo,
+      ReplaceAll[
+        {
+          r:RawBoxes[s_]:>
+            (stack["Raw", ToString@Hash[r]]=s;ToString@Hash[r]),
+          p:ExportPacket[s_, t_]:>
+            (
+              If[!KeyMemberQ[stack, t], stack[t]=<||>];
+              stack[t, ToString@Hash[p]]=s;ToString@Hash[p]
+              )
+          }
+        ]@
+      markdownCodeCellIOReformatPreClean[
+        pathInfo,
+        e,
+        style
+        ]
+      ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*markdownCodeCellIOReformatReinsertStack*)
+
+
+
+(* ::Text:: *)
+(*
+	ReinsertStack:
+	
+	Reinserts the stack of removed forms. Special tags include \[OpenCurlyDoubleQuote]Raw\[CloseCurlyDoubleQuote] and \[OpenCurlyDoubleQuote]Indented\[CloseCurlyDoubleQuote]
+*)
+
+
+
+markdownCodeCellIOReformatReinsertStack[s_, stack_]:=
+  StringReplace[s,
+    Join[
+      {
+        k:Apply[Alternatives, Keys[stack["Raw"]]]:>
+          notebookToMarkdownStripBlock@
+            stack["Raw", k],
+        k:Apply[Alternatives, Keys[Lookup[stack, "Indented", <||>]]]:>
+            stack["Indented", k]
+        },
+      KeyValueMap[
+        Function[
+          k:Apply[Alternatives, #2]:>
+            #<>": "<>stack[#, k]
+          ],
+        KeyDrop[stack, {"Raw", "Indented"}]
+        ]
+      ]
+    ];
+markdownCodeCellIOReformatReinsertStack[Hold[stack_]][s_]:=
+  markdownCodeCellIOReformatReinsertStack[s, stack];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*markdownCodeCellIOReformatStripIndents*)
+
+
+
+(* ::Text:: *)
+(*
+	StripIndents:
+	
+	Strips indentation where tagged to
+*)
+
+
+
+markdownCodeCellIOReformatStripIndents[s_]:=
+  StringReplace[s,
+    {
+      (* The replacement for \t is two spaces *)
+      $iNotebookToMarkdownUnIndentedLine~~"  \\\n"~~(Whitespace|"")->
+        $iNotebookToMarkdownUnIndentedLine,
+      $iNotebookToMarkdownToStripStart~~
+        inner:Shortest[__]~~
+        $iNotebookToMarkdownToStripEnd:>
+          StringReplace[inner,
+            {
+              StartOfLine->$iNotebookToMarkdownUnIndentedLine,
+              StartOfLine~~Whitespace->"",
+              "\\\n"~~(Whitespace|"")->""
+              }
+            ]
+      }
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*markdownCodeCellIOReformatStripFlags*)
+
+
+
+(* ::Text:: *)
+(*
+	StripFlags:
+	
+	Strips block-start flags and such
+*)
+
+
+
+markdownCodeCellIOReformatStripFlags[s_]:=
+  StringReplace[s, 
+    {
+      $iNotebookToMarkdownToStripStartBlockFlag~~
+        inner:Shortest[__]~~
+        $iNotebookToMarkdownToStripEndBlockFlag:>
+          StringReplace[
+            StringReplace[inner, {"\\\n"->""}],{
+            $iNotebookToMarkdownToStripStart|
+              $iNotebookToMarkdownToStripEnd->"",
+            StartOfLine->$iNotebookToMarkdownUnIndentedLine
+            }]
+      }];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*markdownCodeCellIOReformatHaveEffectCellStyles*)
+
+
+
+(* ::Text:: *)
+(*
+	HaveEffectCellStyles:
+	
+	The cell styles that do something and should not be ignored
+*)
+
+
+
+markdownCodeCellIOReformatHaveEffectCellStyles=
+  {
+    ShowStringCharacters, ShowSpecialCharacters,
+    ShowShortBoxForm
+    };
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*markdownCodeCellIOXMLExport*)
+
+
+
+markdownCodeCellIOXMLExport[s_, post_]:=
+  post@
+    With[{baseWhitespace=StringCases[s, StartOfString~~Whitespace, 1]},
+      "<pre >\n<code>\n"<>
+        If[Length@baseWhitespace>0,
+          StringReplace[s, 
+            StartOfLine~~baseWhitespace[[1]]->""
+            ],
+          s
+          ]<>
+      "\n</code>\n</pre>"
+      ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*markdownCodeCellIOStringExport*)
+
+
+
+markdownCodeCellIOStringExport[s_, post_]:=
+  StringReplace[
+    post@s,
+    {
+      ("    "...)~~$iNotebookToMarkdownUnIndentedLine->
+        "",
+      (* Clean up the replacements for \t *)
+      "  \\\n"->
+        "\n",
+      "\\\n"~~(Whitespace|"")->
+        ""
+      }]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*markdownCodeCellIOMDXMLExport*)
+
+
+
+markdownCodeCellIOMDXMLExport[s_, post_]:=
+  markdownCodeCellIOXMLExport[
+    ExportString[
+      FirstCase[
+        MarkdownToXML[markdownCodeCellIOStringExport[s, Identity]],
+        XMLElement["body", _, b_]:>XMLElement["span", {}, b],
+        XMLElement["p", {}, {"Export failed ;_____;"}],
+        \[Infinity]
+        ],
+      "XML"
+      ], 
+    post
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*markdownCodeCellIOReformat*)
+
+
+
+(* ::Text:: *)
+(*
+	IOReformat:
+	
+	Performs the total reformatting of the IO data
+*)
+
+
+
+markdownCodeCellIOReformat[
+  pathInfo_,
+  e_,
+  style_,
+  postFormat_,
+  postFormat2_,
+  ops:OptionsPattern[]
+  ]:=
+  If[TrueQ@pathInfo["UseImageInput"],
+    If[Flatten[{style}][[-1]]==="Output"
+      (* should have some setting for this but we'll hard code for now... *),
+      markdownNotebookHashExport[
+        pathInfo,
+        Cell[e, "Output"],
+        "png",
+        Automatic,
+        Automatic,
+        Identity,
+        Hash@e
+        ],
+      markdownCodeCellExportCopyable[pathInfo, e]
+      ],
+    Module[{stack=<|"Raw"-><||>|>},
+      Replace[
+        {
+          s_String?(StringContainsQ["<"~~__~~">"~~___~~"</"~~__~~">"]):>
+            markdownCodeCellIOXMLExport[s, postFormat2],
+          s_String?(StringContainsQ["!["~~__~~"]"]):>
+            markdownCodeCellIOMDXMLExport[s, postFormat2],
+          s:Except["", _String]:>
+            markdownCodeCellIOStringExport[s, postFormat]
+          }
+        ]@
+        markdownCodeCellIOReformatStripIndents@
+        markdownCodeCellIOReformatStripFlags@
+        markdownCodeCellIOReformatReinsertStack[Hold[stack]]@
+          markdownCodeCellIOReformatBaseExport[
+            pathInfo,
+            e,
+            style,
+            postFormat,
+            Hold[stack],
+            FilterRules[Flatten@{ops},
+              Alternatives@@markdownCodeCellIOReformatHaveEffectCellStyles
+              ]
+          ]
+      ]
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Helper Functions*)
+
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*ital/bold/boldital*)
+
+
+
+italicize[s_]:=
+  $MarkdownSettings["ItalicCharacter"]<>s<>
+    $MarkdownSettings["ItalicCharacter"];
+boldify[s_]:=
+  $MarkdownSettings["BoldCharacter"]<>s<>
+    $MarkdownSettings["BoldCharacter"];
+bolditalicize[s_]:=
+  $MarkdownSettings["BoldItalicCharacter"]<>s<>
+    $MarkdownSettings["BoldItalicCharacter"];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*notebookToMarkdownCodeStringExport*)
+
+
+
+notebookToMarkdownCodeStringExport[s_String]:=
+  Which[
+    StringStartsQ[s, "\""]&&StringContainsQ[s, "\!\("|"\\!\\("],
+      ToExpression@s,
+    StringStartsQ[s, "\""], 
+      FrontEndExecute[
+        ExportPacket[Cell[BoxData@s, "Input"], "InputText"]
+        ][[1]],
+    True,
+      s
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*notebookToMarkdownCleanStringExport*)
+
+
+
+notebookToMarkdownCleanStringExport[s_String]:=
+  Which[
+    StringStartsQ[s, "\""]&&StringContainsQ[s, "\!\("|"\\!\\("],
+      ToExpression@s,
+    StringStartsQ[s, "\""], 
+      FrontEndExecute[
+        ExportPacket[Cell[BoxData@s, "Output"], "PlainText"]
+        ][[1]],
+    True,
+      s
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*notebookToMarkdownMathJAXExport*)
+
+
+
+notebookToMarkdownNoMathJAX[ass_]:=
+  ass["UseMathJAX"]===False
+
+
+notebookToMarkdownMathJAXExport//Clear
+
+
+notebookToMarkdownMathJAXExport[
+  pathInfo_,
+  boxes_,
+  temp_:"$``$"
+  ]:=
+    Module[
+      {
+        box,
+        expr,
+        res
+        },
+      box=
+        Quiet@
+          Check[System`FEDump`processBoxesForCopyAsTeX[TraditionalForm, boxes],
+            $Failed
+            ];
+      If[box=!=$Failed,
+        expr=Quiet[Check[MakeExpression[box, StandardForm], $Failed]];
+        box=
+          If[expr=!=$Failed&&(Head@expr=!=ErrorBox),
+            ToBoxes[Extract[expr, 1, HoldForm], TraditionalForm],
+            box
+            ];
+        res=Quiet@Check[System`FEDump`transformProcessedBoxesToTeX@box, $Failed]
+        ];
+      If[StringQ@res,
+        temp~TemplateApply~res,
+        markdownNotebookHashExport[
+          pathInfo,
+          Cell[BoxData@boxes, "Output"],
+          "png",
+          Automatic,
+          Automatic,
+          Identity,
+          Hash@boxes
+          ]
+        ]
+      ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*notebookToMarkdownHTMLExport*)
+
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*HTML Allowed*)
+
+
+
+notebookToMarkdownHTMLExport[
+  pathInfo_?(#["UseHTML"]=!=False&),
+  expr_,
+  part_,
+  repSpec_,
+  repLevel_
+  ]:=
+  Module[
+    {
+      base=expr,
+      holder=<||>,
+      str,
+      rep
+      },
+    rep=
+      ReplaceAll[
+        repPlaceHolder:>repSpec,
+        {
+          Verbatim[repExpr_]:>
+            (holder[ToString@Hash[repExpr]]=repExpr;ToString@Hash[repExpr]),
+          repPlaceHolder:>
+            repSpec
+          }
+        ];
+    base=
+      If[part===All,
+        Replace[base,
+          rep,
+          repLevel
+          ],
+        ReplacePart[base,
+          part->
+            Replace[
+              base[[part]],
+              rep,
+              repLevel
+              ]
+          ]
+        ];
+    str=
+      ExportString[base, "HTMLFragment"];
+    holder=
+      Map[
+        Replace[
+          iNotebookToMarkdown[pathInfo, ToBoxes@#],
+          {
+            s:Except["", _String]:>
+              StringTrim[
+                With[{x=MarkdownToXML[s]},
+                  Replace[
+                    ExportString[x, "HTMLFragment"],
+                    {
+                      e:Except[_String]:>
+                        (Print[x];"")
+                      }
+                    ]
+                  ],
+                "<html><body>"|"</body></html>"
+                ],
+            e_:>ToString[#]
+            }
+          ]&,
+        holder
+        ];
+    RawBoxes@
+      StringReplace[str,
+        k:Apply[Alternatives, Map[ToString,Keys@holder]]:>
+          holder[k]
+        ]
+    ];
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*HTML Not Allowed*)
+
+
+
+notebookToMarkdownHTMLExport[
+  pathInfo_?(#["UseHTML"]===False&), 
+  expr_,
+  part_,
+  repSpec_,
+  repLevel_
+  ]:=
+  notebookToMarkdownFEExport[
+    pathInfo,
+    BoxData@ToBoxes@expr,
+    "InputText",
+    "Code"
+    ]
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*ToExpression HTML Allowed*)
+
+
+
+notebookToMarkdownHTMLToExpressionExport[
+  pathInfo_?(#["UseHTML"]=!=False&), 
+  boxes_,
+  part_,
+  repSpec_,
+  repLevel_
+  ]:=
+  With[{expr=ToExpression[boxes, StandardForm, HoldComplete]},
+    Replace[
+      Thread[
+        DeleteDuplicates@Cases[expr, 
+          sym_Symbol?(
+            Function[Null,
+              Context[#]=!="System`",
+              HoldAllComplete
+              ]
+            ):>HoldComplete[sym],
+          \[Infinity],
+          Heads->True
+          ],
+        HoldComplete
+        ],
+      {
+        HoldComplete[{syms___}]|
+          {syms___}:>
+          Block[{syms},
+            notebookToMarkdownHTMLExport[
+              pathInfo,
+              ReleaseHold[expr],
+              part,
+              repSpec,
+              repLevel
+              ]
+            ],
+        _:>
+          notebookToMarkdownHTMLExport[
+            pathInfo,
+            ReleaseHold[expr],
+            All,
+            repExpr_,
+            {1}
+            ]
+        }
+      ]
+    ];
+
+
+(* ::Subsubsubsubsection::Closed:: *)
+(*ToExpression HTML Not Allowed*)
+
+
+
+notebookToMarkdownHTMLToExpressionExport[
+  pathInfo_?(#["UseHTML"]===False&), 
+  boxes_,
+  part_,
+  repSpec_,
+  repLevel_
+  ]:=
+  notebookToMarkdownFEExport[
+    pathInfo,
+    BoxData@boxes,
+    "InputText",
+    "Code"
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*notebookToMarkdownPlainTextExport*)
+
+
+
+notebookToMarkdownPlainTextExport[t_,ops:OptionsPattern[]]:=
+  FrontEndExecute[
+    FrontEnd`ExportPacket[
+      Cell[t],
+      "PlainText"
+      ]
+    ][[1]]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*notebookToMarkdownFEExport*)
+
+
+
+notebookToMarkdownFEExport[
+  pathInfo_, t_, type_, style_, ops:OptionsPattern[]
+  ]:=
+  Replace[
+    FrontEndExecute[
+      FrontEnd`ExportPacket[
+        Cell[
+          If[type=="InputText",
+            t/.TextData->BoxData,
+            t
+            ], 
+          First@Flatten@{style}, 
+          Flatten@{ops}
+          ],
+        type
+        ]
+      ][[1]],
+    {
+      s_String?(StringContainsQ["\\!\\("|"\!\("]):>
+        iNotebookToMarkdown[pathInfo, s]
+      }
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*markdownCodeCellExportCopyable*)
+
+
+
+$copyableCodeTemplate=
+    "
+<div class=\"ce-notebook-expression ce-white ce-colorTipContainer\">
+<img src=\"`1`\"></img>
+<textarea style=\"display: none;\">`2`</textarea>
+<span class=\"ce-colorTip\" style=\"margin-left: -60px; display: none;\"><span class=\"ce-content\">Copy input</span><span class=\"ce-pointyTipShadow\"></span><span class=\"ce-pointyTip\"></span></span></div>
+"
+
+
+markdownCodeCellExportCopyable[pathInfo_, cell_]:=
+  Module[
+    {
+      exp,
+      cexpr
+      },
+    cexpr=
+      If[Head@cell=!=Cell,
+        Cell[cell, "Input"],
+        cell
+        ];
+    exp=
+      markdownNotebookHashExport[
+        pathInfo,
+        cexpr,
+        "png",
+        Automatic,
+        Automatic,
+        Identity,
+        Hash@cell,
+        #2&
+        ];
+    $copyableCodeTemplate
+      ~TemplateApply~{
+        exp,
+        If[TrueQ@pathInfo["ImageInputCellExpressions"],
+          ToString[cexpr, InputForm],
+          ToExpression[First@cexpr, StandardForm,
+            Function[Null, 
+              ToString[Unevaluated[##], InputForm], 
+              HoldAllComplete
+              ]
+            ]
+          ]
+      }
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*notebookToMarkdownBasicXMLExport*)
+
+
+
+notebookToMarkdownBasicXMLExport[e_]:=
+  StringTrim[
+    ExportString[
+      ReplaceRepeated[
+        MarkdownToXML@
+          StringReplace[e, 
+            Join[
+              $MarkdownSettings["HTMLCharacterReplacements"],
+              {
+                "\n"->"<br></br>",
+                "\\n"->"<br></br>"
+                }
+              ]
+            ],
+        {
+          XMLElement["p", _, {a___}]:>a
+          }
+        ],
+      "HTMLFragment"
+      ],
+    "<html><body>"|"</body></html>"
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Hooks*)
+
+
+
+markdownIDHook[id_String, style_:"no"]:=
+  TemplateApply[
+    $MarkdownSettings["LinkAnchorTemplate"],
+    {
+      ToLowerCase@
+        StringReplace[
+          StringTrim@id,
+          {Whitespace->"-", Except[WordCharacter]->""}
+          ],
+      style
+      }
+    ];
+markdownLinkAnchor[t_, style_]:=
+  If[TrueQ@$MarkdownSettings["LinkAnchors"]||
+      MemberQ[$MarkdownSettings["LinkAnchors"], style],
+    Replace[
+      FrontEndExecute@
+        ExportPacket[Cell[t], "PlainText"],
+      {
+        {id_String,___}:>
+          markdownIDHook[id, style]<>"\n\n",
+          _->""
+        }
+      ],
+    ""
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*markdownNotebookExportFilePath*)
+
+
+
+markdownNotebookExportFilePath[pathInfo_, resType_, fname_]:=
+  StringRiffle[{
+      Lookup[pathInfo, 
+        "FileBaseExtension",
+        Switch[
+          pathInfo["ContentExtension"],
+          "content",
+            Replace[pathInfo["ContentPathExtension"],
+              Except[_String]->$MarkdownSettings["PelicanPathExtension"]
+              ],
+          _String,
+            pathInfo["Path"]<>
+              If[StringLength[pathInfo["Path"]]>0, "/", ""]<>
+              pathInfo["ContentExtension"],
+          _,
+            Replace[pathInfo["ContentPathExtension"],
+              Except[_String]->Nothing
+              ]
+          ]
+        ],
+      resType,
+      fname
+      },
+    "/"
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*markdownNotebookExportImagePath*)
+
+
+
+markdownNotebookExportImagePath[pathInfo_, fname_]:=
+  markdownNotebookExportFilePath[pathInfo, "img", fname];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*markdownNotebookHashExport*)
+
+
+
+markdownNotebookHashExport//Clear
+
+
+markdownNotebookHashExport[
+  pathInfo_,
+  expr_,
+  ext_,
+  fbase_:Automatic,
+  alt_:Automatic,
+  pre_:Identity,
+  hash_:Automatic,
+  fmt_:Automatic
+  ]:=
+  With[{
+    fname=
+      Replace[fbase,
+        Automatic:>
+          ToLowerCase[
+            StringReplace[
+              StringTrim[
+                pathInfo["Name"],
+                FileExtension@pathInfo["Name"]
+                ],{
+              Whitespace|$PathnameSeparator->"-",
+              Except[WordCharacter]->""
+              }]
+            ]<>"-"<>ToString@Replace[hash,Automatic:>Hash[expr]]<>"."<>ext
+        ]
+    },
+    Sow[
+      {"img", fname}->pre@expr,
+      "MarkdownExport"
+      ];
+    Replace[fmt,
+      Automatic->
+        Function[
+          "!["<>#<>"]("<>#2<>")"
+          ]
+      ][
+        Replace[alt,
+          Automatic:>StringTrim[fname,"."<>ext]
+          ],
+        Lookup[pathInfo, "ImagePath", markdownNotebookExportImagePath][pathInfo, fname]
+        ]
+    ]
+
+
+(* ::Subsubsection::Closed:: *)
+(*skipConversion*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_, 
+  skipConversion[e_]
+  ]:=
+  e
+
+
+(* ::Subsubsection::Closed:: *)
+(*Input / Output *)
+
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*ExternalLanguage*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_, 
+  Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "ExternalLanguage", o___]
+  ]:=
+  With[
+    {
+      cl=
+        Replace[Lookup[{o}, CellEvaluationLanguage, "Python"],
+          {
+            s_String?(StringContainsQ[#, "Python", IgnoreCase->True]&):>
+              "python",
+            s_String?(StringContainsQ[#, "NodeJS", IgnoreCase->True]&)
+              "javascript",
+            s_String:>ToLowerCase[s]
+            }
+          ]
+      },
+    markdownCodeCellIOReformat[
+      pathInfo,
+      ReplaceAll[e, BoxData->TextData],
+      {"PlainText", "Code"},
+      "```"<>cl<>"\n"<>#<>"\n"<>"```"&,
+      StringReplace[#, 
+        "<code>"->"<code class='language-"<>cl<>"'>",
+        1
+        ]&,
+      Select[{o, PageWidth->10000}, OptionQ]
+      ]
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*FencedCode*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_, 
+  Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "FencedCode", o___]]:=
+  markdownCodeCellIOReformat[
+    pathInfo,
+    ReplaceAll[e, BoxData->TextData],
+    {"PlainText", "Code"},
+    Replace[
+      ReplacePart[#, 
+        1->StringTrim@StringTrim[#[[1]], "(*"|"*)"]
+        ]&@
+        StringSplit[#,"\n",2],
+      {
+        {
+          s_?(StringContainsQ["="]),
+          b_
+          }:>
+          "<?prettify "<>s<>" ?>\n"<>"```\n"<>b<>"\n"<>"```",
+        {
+          s_?(StringMatchQ[Except[WhitespaceCharacter]..]@*StringTrim),
+          b_
+          }:>
+          "```"<>StringTrim[s]<>"\n"<>b<>"\n```",
+        _:>
+          "```\n"<>#<>"\n"<>"```"
+        }
+      ]&,
+    Identity,
+    Select[{o, PageWidth->10000}, OptionQ]
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*MathematicaLanguageCode*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_, 
+  Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "MathematicaLanguageCode", o___]]:=
+  markdownCodeCellIOReformat[
+    pathInfo,
+    e,
+    {"InputText", "Code"},
+    "```mathematica\n"<>StringDelete[#, "\\\n"]<>"\n```"&,
+    StringReplace[#, 
+      "<code>"->"<code class='language-mathematica'>",
+      1
+      ]&,
+    Select[{o}, OptionQ]
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Code/Input*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_,
+  Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "Code", o___]]:=
+  markdownCodeCellIOReformat[
+    pathInfo,
+    e,
+    {"InputText", "Code"},
+    StringReplace[#, 
+      {
+        (StartOfLine|StartOfString)->pathInfo["CodeIndentation"],
+        "\\\n"->""
+        }]&,
+    Identity,
+    Select[{o}, OptionQ]
+    ];
+
+
+iNotebookToMarkdownRegister[pathInfo_,
+  Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "Input", o___]]:=
+  iNotebookToMarkdown[
+    pathInfo,
+    Cell[
+      e(*BoxData@FrontEndExecute@
+				FrontEnd`ReparseBoxStructurePacket@Echo@First@
+					FrontEndExecute@ExportPacket[Cell[e, "Input"], "InputText"]*),
+      "Code",
+      o
+      ]
+  ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*InlineInput*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_,
+  Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "InlineInput", o___]]:=
+  markdownCodeCellIOReformat[pathInfo,
+    Replace[e,
+      BoxData@$iNotebookToMarkdownIgnoredBoxHeads[expr_, ___]:>BoxData@expr
+      ],
+    {"InputText", "Code"},
+    "```"<>#<>If[StringEndsQ[#,"`"], " ", ""]<>"```"&,
+    Identity,
+    Select[{o}, OptionQ]
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*InlineText*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_,
+  Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms],"InlineText", o___]]:=
+  markdownCodeCellIOReformat[pathInfo,
+    Replace[e,
+      {
+        BoxData@FormBox[expr_, _]:>TextData@expr,
+        BoxData@FormBox[expr_, _]:>TextData@expr
+        }
+      ],
+    {"PlainText", "Text"},
+    "```"<>#<>If[StringEndsQ[#,"`"]," ",""]<>"```"&,
+    Identity,
+    Select[{o}, OptionQ]
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Output*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_,
+  Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "Output", o___]]:=
+  markdownCodeCellIOReformat[pathInfo, 
+    e,
+    {"InputText", "Output"},
+    StringReplace["(*Out:*)\n\n"<>#,
+      {
+        StartOfLine->"    "
+        }
+      ]&,
+    StringReplace[#, 
+      "<code>"->"<code>\n(*Out:*)\n",
+      1
+      ]&,
+    Select[{o}, OptionQ]
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*FormattedOutput*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_,
+  Cell[
+    (e:Except[$iNotebookToMarkdownIgnoredIOForms])|
+      OutputFormData[_, e_],
+    "FormattedOutput",
+    o___
+    ]|
+    Cell[OutputFormData[_, e_], o___]
+  ]:=
+  markdownCodeCellIOReformat[pathInfo,
+    e,
+    {"PlainText", "Output"},
+    StringTrim[
+      ExportString[
+        XMLElement["pre",{"class"->"program"},{
+          XMLElement["code",
+            {"style"->"width: 100%; white-space: pre-wrap;"},
+            {"(*Out:*)\n"<>#}
+            ]
+          }],
+        "HTMLFragment"
+        ],
+      "<html><body>"|"</body></html"
+      ]&,
+    StringReplace[#, 
+      "<code>"->"<code>\n(*Out:*)",
+      1
+      ]&,
+    Select[
+      {
+        o,
+        ShowStringCharacters->False
+        }, 
+      OptionQ
+      ]
+    ]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Section Styles*)
+
+
+
+(* ::Text:: *)
+(*
+	Not currently used for anything, but it could be used to dynamically change whether the Title is the h1 or the section is
+*)
+
+
+
+$iNotebookToMarkdownSectionStyleRanking=
+  <|
+    "Title"->1,
+    "Chapter"->2,
+    "Subchapter"->3,
+    "Section"->3,
+    "Subsection"->4,
+    "Subsubsection"->5,
+    "Subsubsubsection"->6,
+    "Subsubsubsection"->7,
+    "Subsubsubsubsection"->8
+    |>;
+
+
+iNotebookToMarkdownRegister[pathInfo_, Cell[t_, "Title", ___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,t],
+    s:Except["", _String]:>
+      markdownLinkAnchor[t, "Section"]<>
+        $MarkdownSettings["SectionCharacter"]<>" "<>
+          boldify@s<>
+          "\n"<>$MarkdownSettings["DividerCharacter"]
+    ];
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_, "Chapter", ___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,t],
+    s:Except["", _String]:>
+      markdownLinkAnchor[t, "Section"]<>
+        $MarkdownSettings["SectionCharacter"]<>" "<>
+          bolditalicize@s
+    ];
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_, "Subchapter", ___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,t],
+    s:Except["", _String]:>
+      markdownLinkAnchor[t, "Section"]<>
+        $MarkdownSettings["SectionCharacter"]<>" "<>
+        italicize@s
+    ];
+
+
+iNotebookToMarkdownRegister[pathInfo_, Cell[t_,"Section",___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,t],
+    s:Except["", _String]:>
+      markdownLinkAnchor[t, "Section"]<>
+        $MarkdownSettings["SectionCharacter"]<>" "<>s
+    ];
+iNotebookToMarkdownRegister[pathInfo_, Cell[t_,"Subsection",___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,t],
+    s:Except[""]:>
+      markdownLinkAnchor[t, "Subsection"]<>
+        StringRepeat[
+          $MarkdownSettings["SectionCharacter"],
+          2
+          ]<>" "<>s
+    ];
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Subsubsection",___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,t],
+    s:Except[""]:>
+      markdownLinkAnchor[t, "Subsubsection"]<>
+        "### "<>s
+    ];
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Subsubsubsection",___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,t],
+    s:Except[""]:>
+      markdownLinkAnchor[t, "Subsubsubsection"]<>
+        StringRepeat[
+          $MarkdownSettings["SectionCharacter"],
+          3
+          ]<>" "<>s
+    ];
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Subsubsubsubsection",___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,t],
+    s:Except[""]:>
+      markdownLinkAnchor[t, "Subsubsubsubsection"]<>
+        StringRepeat[
+          $MarkdownSettings["SectionCharacter"],
+          4
+          ]<>" "<>s
+    ];
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Subsububsubsubsection",___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,t],
+    s:Except[""]:>
+      markdownLinkAnchor[t, "Subsububsubsubsection"]<>
+        StringRepeat[
+          $MarkdownSettings["SectionCharacter"],
+          5
+          ]<>" "<>s
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Page Break*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"PageBreak",___]]:=
+  "---"
+
+
+(* ::Subsubsection::Closed:: *)
+(*Text Styles*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Text",___]]:=
+  iNotebookToMarkdown[pathInfo,t];
+
+
+iNotebookToMarkdownRegister[pathInfo_, Cell[t_, "CodeText", ___]]:=
+  iNotebookToMarkdown[pathInfo,t];
+
+
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Quote",___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,t],
+    s:Except[""]:>
+      StringReplace[s, 
+        StartOfString->($MarkdownSettings["QuoteCharacter"]<>" ")
+        ]
+    ];
+
+
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Program",___]]:=
+  With[{md=notebookToMarkdownPlainTextExport[t]},
+    ExportString[
+      XMLElement["pre",{"class"->"program"},{XMLElement["code",{},{"\n"<>md<>"\n"}]}],
+      "XML"
+      ]
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Print Styles*)
+
+
+
+(* ::Text:: *)
+(*
+	Need a good way to both handle linear-syntax strings *and* handle basic strings. Might make sense to just check for a standard string...?
+*)
+
+
+
+notebookToMarkdownCleanPrintStyle//Clear
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*notebookToMarkdownCleanPrintStyle*)
+
+
+
+notebookToMarkdownCleanPrintStyle[s_String]:=
+  notebookToMarkdownCleanStringExport[s];
+notebookToMarkdownCleanPrintStyle[_[s_String, ___]]:=
+  notebookToMarkdownCleanPrintStyle[s];
+notebookToMarkdownCleanPrintStyle[BoxData[a_]]:=
+  (* I need to be more sophisticated in how I handle this, I think... *)
+  notebookToMarkdownCleanPrintStyle[a];
+notebookToMarkdownCleanPrintStyle[e_]:=e;
+
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*notebookToMarkdownExportPrintStyle*)
+
+
+
+notebookToMarkdownExportPrintStyle[
+  pathInfo_,
+  template1_,
+  template2_,
+  expr_,
+  otherArgs:_Association:<||>,
+  postProcess2:Except[_Association]:Identity
+  ]:=
+  If[pathInfo["UseHTML"]=!=False, 
+    Identity,
+    postProcess2
+    ]@
+  TemplateApply[
+    If[pathInfo["UseHTML"]=!=False,
+      template1,
+      template2
+      ],
+    <|
+      "body"->
+        notebookToMarkdownBasicXMLExport@
+          iNotebookToMarkdown[pathInfo, 
+            notebookToMarkdownCleanPrintStyle@expr
+            ],
+      otherArgs
+      |>
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*MessageTemplate*)
+
+
+
+$notebookToMarkdownMessagePrintTemplate=
+  StringDelete["\n"]@StringTrim@
+  "
+<div 
+	class='mma-message-wrapper'
+	style='font-size: 12px; font-family: monospace;'>
+	<div class='mma-message'>
+		<span 
+			class='mma-message-name-wrapper'
+			style='color: #dd0000'>
+			<span class='mma-message-name'>`head`::`name`:</span>
+		</span>
+		<span 
+			class='mma-message-text-wrapper'
+			style='color: gray'>
+			<span class='mma-message-text'>`body`</span>
+		</span>
+	</div>
+</div>
+";
+
+
+iNotebookToMarkdownRegister[pathInfo_,
+  TemplateBox[{msgHead_,msgName_,text_,___}, 
+    "MessageTemplate"|"MessageTemplate2",
+    ___
+    ]
+  ]:=
+  notebookToMarkdownExportPrintStyle[
+    pathInfo,
+    $notebookToMarkdownMessagePrintTemplate,
+    "(*message*)\n`head`::`name`: `body`",
+    Replace[text, RowBox[{a_, ___, _ButtonBox}]:>a, {1}],
+    <|
+      "head"->msgHead,
+      "name"->msgName
+      |>,
+    StringReplace[(StartOfLine|StartOfString)->"    "]
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*PrintUsage*)
+
+
+
+$notebookToMarkdownUsagePrintTemplate=
+  StringDelete["\n"]@StringTrim@
+"
+<div 
+	class='mma-print-usage-wrapper'
+	style='margin-top: -2px; padding: 0px; font-size: 12px; color: rgb(128, 128, 128); background-color: aliceblue; border-top : solid 2px lightblue; padding: 5px 0 5px 0;'>
+	<div class='mma-print-usage'>
+		`body`
+	</div>
+</div>
+";
+
+
+iNotebookToMarkdownRegister[pathInfo_, Cell[t_, "Print", "PrintUsage", ___]]:=
+  notebookToMarkdownExportPrintStyle[
+    pathInfo,
+    $notebookToMarkdownUsagePrintTemplate,
+    "(*Usage*)\n`body`",
+    Replace[t, RowBox[{a_, ___, _ButtonBox}]:>a, {1}],
+    StringReplace[(StartOfLine|StartOfString)->"    "]
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Print*)
+
+
+
+$notebookToMarkdownPrintPrintTemplate=
+  StringDelete["\n"]@StringTrim@
+"
+<div 
+	class='mma-print-wrapper'
+	style='font-size 12px; color : rgb(55, 55, 55);'>	
+	<div class='mma-print'>
+		`body`
+	</div>
+</div>
+";
+
+
+iNotebookToMarkdownRegister[pathInfo_, 
+  Cell[t_,"Print",___]
+  ]:=
+  notebookToMarkdownExportPrintStyle[
+    pathInfo,
+    $notebookToMarkdownPrintPrintTemplate,
+    "`body`",
+    Replace[t, RowBox[{a_, ___, _ButtonBox}]:>a, {1}],
+    StringReplace[(StartOfLine|StartOfString)->"> "]
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Echo*)
+
+
+
+$notebookToMarkdownEchoPrintTemplate=
+  StringDelete["\n"]@StringTrim@
+"
+<div 
+	class='mma-echo-wrapper'
+	style='font-size 12px; color : rgb(55, 55, 55);'>
+	<div class='mma-echo mma-print'>
+		<span 
+			class='mma-echo-text-wrapper'
+			style='color:orange;'>
+			<span class='mma-echo-prompt' > >> </span>
+		</span>
+		`body`
+</div>
+";
+
+
+iNotebookToMarkdownRegister[pathInfo_, Cell[t_,"Echo",___]]:=
+  notebookToMarkdownExportPrintStyle[
+    pathInfo,
+    $notebookToMarkdownEchoPrintTemplate,
+    ">> `body`",
+    Replace[t, RowBox[{a_, ___, _ButtonBox}]:>a, {1}],
+    StringReplace[(StartOfLine|StartOfString)->"> "]
+    ]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Items*)
+
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Item*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Item",___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,t],
+    s:Except[""]:>
+      $MarkdownSettings["ItemCharacter"]<>
+        $MarkdownSettings["ItemTextSpacing"]<>s
+    ];
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Subitem",___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,t],
+    s:Except[""]:>
+      $MarkdownSettings["SubitemSpacing"]<>$MarkdownSettings["ItemCharacter"]<>
+        $MarkdownSettings["ItemTextSpacing"]<>s
+    ];
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Subsubitem",___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,t],
+    s:Except[""]:>
+      StringRepeat[$MarkdownSettings["SubitemSpacing"], 2]<>
+        $MarkdownSettings["ItemCharacter"]<>
+        $MarkdownSettings["ItemTextSpacing"]<>s
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*ItemParagraph*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"ItemParagraph",___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,t],
+    s:Except[""]:>
+        $MarkdownSettings["ItemTextSpacing"]<>s
+    ];
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"SubitemParagraph",___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,t],
+    s:Except[""]:>
+      $MarkdownSettings["SubitemSpacing"]<>
+        $MarkdownSettings["ItemTextSpacing"]<>s
+    ];
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"SubsubitemParagraph",___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,t],
+    s:Except[""]:>
+      StringRepeat[$MarkdownSettings["SubitemSpacing"], 2]<>
+        $MarkdownSettings["ItemTextSpacing"]<>s
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*ItemNumbered*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"ItemNumbered",___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,t],
+    s:Except[""]:>
+      $MarkdownSettings["ItemNumberedCharacter"]<>
+        $MarkdownSettings["ItemTextSpacing"]<>s
+    ];
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"SubitemNumbered",___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,t],
+    s:Except[""]:>
+      $MarkdownSettings["SubitemSpacing"]<>
+        $MarkdownSettings["ItemNumberedCharacter"]<>
+        $MarkdownSettings["ItemTextSpacing"]<>s
+    ];
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"SubsubitemNumbered",___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,t],
+    s:Except[""]:>
+      StringRepeat[$MarkdownSettings["SubitemSpacing"], 2]<>
+        $MarkdownSettings["ItemNumberedCharacter"]<>
+        $MarkdownSettings["ItemTextSpacing"]<>s
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Raw Forms*)
+
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Raw Stuff*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"RawMarkdown",___]]:=
+  notebookToMarkdownPlainTextExport[t];
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"RawTaggedHTML",___]]:=
+  With[{md=notebookToMarkdownPlainTextExport[t]},
+    With[{block=StringSplit[md,"\n",2]},
+      "<"<>block[[1]]<>">\n"<>
+        block[[2]]<>
+        "\n</"<>StringSplit[block[[1]]][[1]]<>">"
+      ]
+    ];
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"RawPre",___]]:=
+  With[{md=notebookToMarkdownPlainTextExport[t]},
+    ExportString[XMLElement["pre",{},{md}],"XML"]
+    ];
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_, "RawCode", ___]]:=
+  With[{md=notebookToMarkdownPlainTextExport[t]},
+    ExportString[XMLElement["code",{},{md}], "XML"]
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Basic Elements*)
+
+
+
+(* ::Text:: *)
+(*
+	This probably needs to be a bit more robust than it is... but it is what it is for now.
+*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"HTMLElement",___]]:=
+  With[{md=Replace[iNotebookToMarkdown[pathInfo, t], RawBoxes[s_]:>s]},
+    With[{block=StringSplit[md,"\n",2]},
+      "<"<>block[[1]]<>">\n"<>
+        block[[2]]<>
+        "\n</"<>StringSplit[block[[1]]][[1]]<>">"
+      ]
+    ];
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"PreElement",___]]:=
+  With[{md=Replace[iNotebookToMarkdown[pathInfo, t], RawBoxes[s_]:>s]},
+    ExportString[XMLElement["pre",{},{md}],"XML"]
+    ];
+iNotebookToMarkdownRegister[pathInfo_,Cell[t_, "CodeElement", ___]]:=
+  With[{md=Replace[iNotebookToMarkdown[pathInfo, t], RawBoxes[s_]:>s]},
+    ExportString[XMLElement["code",{},{md}], "XML"]
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*EmbeddedHTML*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_,
+  TemplateBox[
+    {
+      InterpretationBox[_, EmbeddedHTML[s_]], 
+      ___
+      },
+    "EmbeddedHTML",
+    ___
+    ]
+  ]:=
+  ExportPacket["\n"<>s<>"\n", "Indented"];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Styled Text*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_,
+  StyleBox[a__,FontSlant->"Italic",b___]]:=
+  Replace[
+    iNotebookToMarkdown[pathInfo,StyleBox[a,b]],
+    s:Except[""]:>
+      "*"<>s<>"*"
+    ];
+iNotebookToMarkdownRegister[pathInfo_,
+  StyleBox[a___,FontWeight->"Bold"|Bold,b___]]:=
+  Replace[
+    iNotebookToMarkdown[pathInfo,StyleBox[a,b]],
+    s:Except[""]:>
+      "**"<>s<>"**"
+    ];
+iNotebookToMarkdownRegister[pathInfo_,
+  StyleBox[a_, style_String, ___]]:=
+  iNotebookToMarkdown[pathInfo, 
+    StyleBox[a, 
+      Sequence@@CurrentValue[{StyleDefinitions, style}]
+      ]
+    ];
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  StyleBox[a_, ___]
+  ]:=
+  Replace[
+    iNotebookToMarkdown[pathInfo,a],
+    s:Except[""]:>
+      s
+    ];
+
+
+iNotebookToMarkdownRegister[pathInfo_,Cell[a___,CellTags->t_,b___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,Cell[a,b]],
+    s:Except[""]:>
+      markdownIDHook[
+        ToLowerCase@StringJoin@Flatten@{t}
+        ]<>"\n\n"<>s
+    ];
+iNotebookToMarkdownRegister[pathInfo_,Cell[a___, FontSlant->"Italic"|Italic,b___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,Cell[a,b]],
+    s:Except[""]:>
+      "*"<>s<>"*"
+    ];
+iNotebookToMarkdownRegister[pathInfo_,Cell[a___,FontWeight->"Bold"|Bold,b___]]:=
+  Replace[iNotebookToMarkdown[pathInfo,Cell[a,b]],
+    s:Except[""]:>
+      "**"<>s<>"**"
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Tag Boxes*)
+
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*FullForm|InputForm*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_, 
+  TagBox[g_, FullForm|InputForm]
+  ]:=
+  iNotebookToMarkdown[
+    pathInfo,
+    g
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*StyleBox*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_, 
+  TagBox[StyleBox[g_, ___],__]
+  ]:=
+  iNotebookToMarkdown[
+    pathInfo,
+    g
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Fallback*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_, 
+  TagBox[g_, __]
+  ]:=
+  iNotebookToMarkdown[
+    pathInfo,
+    g
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Math Cells*)
+
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*SuperscriptBox*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_, 
+  box:SuperscriptBox[a_, b_]
+  ]:=
+  If[TrueQ[pathInfo["UsePlainScriptBoxes"]]||notebookToMarkdownNoMathJAX[pathInfo],
+    TemplateApply[
+      "``<sup>``</sup>",
+      iNotebookToMarkdown[pathInfo]/@{
+        a, 
+        b
+        }
+      ],
+    notebookToMarkdownFEExport[
+      pathInfo,
+      BoxData@box,
+      "InputText",
+      "Output"
+      ]
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*SubscriptBox*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_, 
+  box:SubscriptBox[a_, b_]
+  ]:=
+  If[TrueQ[pathInfo["UsePlainScriptBoxes"]]||notebookToMarkdownNoMathJAX[pathInfo],
+    TemplateApply[
+      "``<sub>``</sub>",
+      iNotebookToMarkdown[pathInfo]/@{a,b}
+      ],
+    notebookToMarkdownFEExport[
+      pathInfo,
+      BoxData@box,
+      "InputText",
+      "Output"
+      ]
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*SubsuperscriptBox*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_, 
+  box:SubsuperscriptBox[a_, b_, c_]
+  ]:=
+  If[TrueQ[pathInfo["UsePlainScriptBoxes"]]||notebookToMarkdownNoMathJAX[pathInfo],
+    TemplateApply[
+      "``<sub>``</sub><sup>``</sup>",
+      iNotebookToMarkdown[pathInfo]/@{a,b,c}
+      ],
+    notebookToMarkdownFEExport[
+      pathInfo,
+      BoxData@box,
+      "InputText",
+      "Output"
+      ]
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*FractionBox*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_, 
+  box:FractionBox[a_, b_]
+  ]:=
+  If[TrueQ[pathInfo["UsePlainScriptBoxes"]]||notebookToMarkdownNoMathJAX[pathInfo],
+    TemplateApply[
+      "<sup>``</sup>&frasl;<sub>``</sub>",
+      iNotebookToMarkdown[pathInfo]/@{a, b}
+      ],
+    notebookToMarkdownFEExport[
+      pathInfo,
+      BoxData@box,
+      "InputText",
+      "Output"
+      ]
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*DisplayFormula*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  Cell[
+    e_,
+    "InlineFormula", 
+    o___
+    ]
+  ]:=
+  If[pathInfo["UseMathJAX"]=!=False,
+    notebookToMarkdownMathJAXExport[
+      pathInfo,
+      e,
+      Lookup[
+        pathInfo,
+        "MathJAXBlockTemplate",
+        "$$``$$"
+        ]
+      ],
+    iNotebookToMarkdownExport[pathInfo, e]
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*DisplayFormulaNumbered*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  Cell[
+    e_,
+    "DisplayFormulaNumbered", 
+    o___
+    ]
+  ]:=
+  With[{cv=$iNotebookToMarkdownCounters["DisplayFormulaNumbered"]},
+    If[!IntegerQ@cv,
+      $iNotebookToMarkdownCounters["DisplayFormulaNumbered"]=1,
+      $iNotebookToMarkdownCounters["DisplayFormulaNumbered"]++
+      ];
+    If[pathInfo["UseMathJAX"]=!=False,
+      notebookToMarkdownMathJAXExport[
+        pathInfo,
+        e,
+        StringReplace[
+          Lookup[
+            pathInfo,
+            "MathJAXBlockTemplate",
+            "$$``$$"
+            ],
+          "$$"~~EndOfString->"\\quad ("<>ToString[cv+1]<>")$$"
+          ]
+        ],
+      iNotebookToMarkdownExport[pathInfo, e]
+      ];
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*InlineFormula*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  Cell[
+    e_,
+    "InlineFormula",
+    o___
+    ]
+  ]:=
+  If[pathInfo["UseMathJAX"]=!=False,
+    notebookToMarkdownMathJAXExport[
+      pathInfo,
+      e,
+      Lookup[
+        pathInfo,
+        "MathJAXInlineTemplate",
+        "$``$"
+        ]
+      ],
+    iNotebookToMarkdownExport[pathInfo, e]
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*TraditionalForm*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  FormBox[bd_, TraditionalForm]
+  ]:=
+  If[pathInfo["UseMathJAX"]=!=False,
+    notebookToMarkdownMathJAXExport[
+      pathInfo,
+      bd
+      ],
+    iNotebookToMarkdownExport[pathInfo, bd]
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Grid / Column / Row*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_, 
+  g:TagBox[_GridBox, "Grid"]
+  ]:=
+  notebookToMarkdownHTMLToExpressionExport[
+    pathInfo,
+    g,
+    1,
+    repExpr_,
+    {2}
+    ];
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  g:TagBox[_GridBox, "Column"]
+  ]:=
+  ReplaceAll[s_String:>StringDelete[s, "\n"~~"ItemSize->{Automatic,Automatic}"]]@
+  notebookToMarkdownHTMLToExpressionExport[
+    pathInfo,
+    g,
+    1,
+    repExpr_,
+    {1}
+    ];
+iNotebookToMarkdownRegister[
+  pathInfo_, 
+  TemplateBox[g_, "RowDefault"]
+  ]:=
+  iNotebookToMarkdown[
+    pathInfo,
+    TagBox[GridBox[{g}], "Grid"]
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*RowBox*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_, RowBox[g_, ___]]:=
+  StringJoin[
+    iNotebookToMarkdown[
+      pathInfo,
+      #
+      ]&/@g
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Hyperlinks*)
+
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*formatDownloadLink*)
+
+
+
+formatDownloadLink[pathInfo_, t_, s_]:=
+  With[{parse=URLParse[s]},
+    If[MatchQ[Lookup[parse["Query"],"_download",False],True|"True"],
+      (*Download links*)
+      "<a href=\""<>
+        URLBuild@
+          ReplacePart[parse,
+            "Query"->
+              Normal@
+                KeyDrop[Association@parse["Query"],"_download"]
+            ]<>"\" download>"<>t<>"</a>",
+      formatStandardLink[pathInfo, t, s]
+      ]
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*linkPathFunction*)
+
+
+
+linkFormatFunction[s_]:=
+  URLBuild@URLParse[s]
+
+
+formatStandardLink[pathInfo_, t_, e_]:=
+  "["<>t<>"]("<>
+    Lookup[
+      pathInfo,
+      "LinkFunction",
+      linkFormatFunction
+      ][iNotebookToMarkdown[pathInfo,e]]<>
+    ")"
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Hyperlink*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  ButtonBox[d_,
+    o___,
+    BaseStyle->"Hyperlink",
+    r___
+    ]]:=
+  With[{t=iNotebookToMarkdown[pathInfo, d]},
+    Replace[
+      FirstCase[
+        Flatten@List@
+          Replace[
+            Lookup[Select[OptionQ]@{o,r},ButtonData,t],
+            s_String?(StringFreeQ["/"]):>"#"<>s
+            ],
+        _String|_FrontEnd`FileName|_URL|_File,
+        t
+        ],{
+      URL[s_String?(StringContainsQ["_download=True"])]:>
+        formatDownloadLink[pathInfo, t, s],
+      e_:>
+        formatStandardLink[pathInfo, t, e]
+      }]
+    
+    ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Hyperlink*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  TemplateBox[d_, "HyperlinkURL", ___]
+  ]:=
+  iNotebookToMarkdown[
+    pathInfo,
+    ButtonBox[
+      ToExpression[#],
+      BaseStyle->"Hyperlink",
+      ButtonData->{URL[#2],None},
+      ButtonNote->#2
+      ]&@@d
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Paclet Links*)
+
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*notebookToMarkdownResolvePacletURL*)
+
+
+
+notebookToMarkdownResolvePacletURL[s_String]:=
+  If[StringStartsQ[s,"paclet:"],
+    With[{page=Documentation`ResolveLink[s]},
+      URLBuild@
+        Flatten@{
+          If[StringQ[page]&&StringStartsQ[page,$InstallationDirectory],
+            "https://reference.wolfram.com/language",
+            "https://www.wolframcloud.com/objects/b3m2a1.docs/reference"
+            ],
+          URLParse[s,"Path"]
+          }<>".html"
+      ],
+    With[{page=
+      Replace[Documentation`ResolveLink[s],{
+        Null:>
+          If[StringStartsQ[s,"paclet:"],
+            FileNameJoin@URLParse[s,"Path"],
+            FileNameJoin@{"ref",s}
+            ]
+        }]
+      },
+      URLBuild@
+        Flatten@{
+          If[StringStartsQ[page,$InstallationDirectory],
+            "https://reference.wolfram.com/language",
+            "https://www.wolframcloud.com/objects/b3m2a1.paclets/reference"
+            ],
+          ReplacePart[#,
+            If[Length[#]==2,1,2]->
+              ToLowerCase@
+                StringReplace[
+                  #[[If[Length[#]==2,1,2]]],
+                  "ReferencePages"->"ref"
+                  ]
+            ]&@DeleteCases["System"]@
+          FileNameSplit@
+            (StringTrim[#,"."~~FileExtension[#]]<>".html")&@
+              Replace[
+                Replace[FileNameSplit[page],{a___,"Symbols",b_}:>{a,b}],{
+                {___,p_,"Documentation","English",e___}:>
+                  FileNameJoin@{p,e},
+                {___,a_,b_,c_}:>
+                  FileNameJoin@{a,b,c},
+                _:>
+                  page
+                }]
+        }
+      ]
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Link*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  ButtonBox[d_,
+    o___,
+    BaseStyle->"Link"|{___, "Link", ___},
+    r___
+    ]]:=
+  Module[
+    {
+      t=iNotebookToMarkdown[pathInfo,d],
+      url,
+      baseURL
+      },
+    baseURL=
+      FirstCase[
+        Flatten@{Lookup[{o,r},ButtonData,t]},
+        _String,
+        t
+        ];
+    url=
+      Replace[baseURL, 
+        s_String:>
+          Lookup[pathInfo, "PacletResolve", notebookToMarkdownResolvePacletURL][s]
+        ];
+    If[
+      StringQ[baseURL]&&StringContainsQ[baseURL, "/ref"]||
+        StringEndsQ[url, "ref/"~~Except["/"].. ],
+      "[```"<>t<>If[StringEndsQ[t,"`"]," ",""]<>"```]("<>url<>")",
+      "["<>t<>"]("<>url<>")"
+      ]
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Interpretation*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  InterpretationBox[
+    g_?(MatchQ[$iNotebookToMarkdownOutputStringForms]),
+    __
+    ],
+  fbase_:Automatic,
+  alt_:Automatic
+  ]:=
+  iNotebookToMarkdown[
+    pathInfo,
+    g
+    ];
+iNotebookToMarkdownRegister[pathInfo_,
+  InterpretationBox[e_,___]
+  ]:=
+  iNotebookToMarkdown[pathInfo, e];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Tooltip*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  TooltipBox[
+    g:$iNotebookToMarkdownOutputStringForms,
+    t_,
+    ___],
+  fbase_:Automatic,
+  alt_:Automatic
+  ]:=
+  iNotebookToMarkdown[
+    root,
+    path,
+    name,
+    g,
+    fbase,
+    If[alt===Automatic,iNotebookToMarkdown@t,alt]
+    ]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Rasterizable*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  g:$iNotebookToMarkdownRasterizeForms,
+  style_:"Output"
+  ]:=
+  markdownNotebookHashExport[
+    pathInfo,
+    g,
+    "png",
+    Automatic,
+    Automatic,
+    Rasterize[
+      Cell[Flatten[BoxData@#, Infinity, BoxData], style,
+        CellContext->pathInfo["Context"]
+        ]
+      ]&
+    ]
+
+
+(* ::Subsubsection::Closed:: *)
+(*GIF*)
+
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  g:TagBox[__,_Manipulate`InterpretManipulate],
+  fbase_:Automatic,
+  alt_:Automatic
+  ]:=
+  With[{
+    expr=
+      Replace[
+        ToExpression[g],
+        (AnimationRunning->False)->
+          (AnimationRunning->True),
+        1
+        ]
+    },
+    markdownNotebookHashExport[
+      pathInfo,
+      expr,
+      "gif",
+      alt,
+      fbase,
+      Identity,
+      Replace[expr,{
+        m:Verbatim[Manipulate][
+          _,
+          l__List,
+          ___
+          ]:>
+          With[{syms=
+            Alternatives@@
+              ReleaseHold[
+                Function[
+                  Null,
+                  FirstCase[
+                    Hold[#],
+                    s_Symbol:>HoldPattern[s],
+                    nosym,
+                    \[Infinity]
+                    ],
+                  HoldFirst
+                  ]/@Hold[l]
+                ]
+            },
+            Hash@DeleteCases[Hold[m],syms,\[Infinity]]
+            ],
+        _:>Automatic
+        }]
+      ]
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*PNG*)
+
+
+
+$iNotebookToMarkdownBaseGraphicsBoxes=
+  _GraphicsBox|_Graphics3DBox|TemplateBox[_,"Legended",___];
+$iNotebookToMarkdownGraphicsBoxes=
+  $iNotebookToMarkdownBaseGraphicsBoxes|
+    TagBox[$iNotebookToMarkdownBaseGraphicsBoxes,___]
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  g:$iNotebookToMarkdownBaseGraphicsBoxes,
+  fbase_:Automatic,
+  alt_:Automatic
+  ]:=
+  markdownNotebookHashExport[
+    pathInfo,
+    g,
+    "png",
+    alt,
+    fbase,
+    Cell[BoxData[#],"Output"]&
+    ]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Files*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_,f_FrontEnd`FileName]:=
+  StringRiffle[FileNameSplit[ToFileName[f]],"/"];
+iNotebookToMarkdownRegister[pathInfo_,u:_URL]:=
+  First@u;
+iNotebookToMarkdownRegister[pathInfo_,f_File]:=
+  StringRiffle[FileNameSplit[First[f]],"/"];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Box Structure Strings*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_,
+  s_String?(StringStartsQ["\!\("|"\\!\\("])
+  ]:=
+  iNotebookToMarkdown[
+    pathInfo,
+    Cell@BoxData@
+    NestWhile[
+      Replace[
+        FrontEndExecute[
+          FrontEnd`UndocumentedTestFEParserPacket[#, False]
+          ],
+        {
+          l_List:>l[[1,1]],
+          _:>#
+          }
+        ]&,
+      s,
+      StringQ[#]&&#=!=#2&,
+      2
+      ]
+    ];
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  s_String?(StringContainsQ["\\!\\("~~__])
+  ]:=
+  StringReplace[s,
+    interp:Longest["\\!\\("~~__~~"\\)"]/;
+      StringCount[interp, "\\!\\("]==1:>
+    iNotebookToMarkdown[
+      pathInfo,
+      interp
+      ]
+    ];
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  s_String?(StringContainsQ["\!\("~~__])
+  ]:=
+  StringReplace[s,
+    interp:Longest["\!\("~~__~~"\)"]/;
+      StringCount[interp, "\!\("]==1:>
+    iNotebookToMarkdown[
+      pathInfo,
+      interp
+      ]
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*PaneSelectorBox*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_, 
+  PaneSelectorBox[a_, setting_, ___]
+  ]:=
+  iNotebookToMarkdown[pathInfo,
+    Replace[
+      setting/.a,
+      setting->Lookup[a[[1]], False, a[[1,2]]]
+      ]
+    ]
+
+
+(* ::Subsubsection::Closed:: *)
+(*MarkdownLinkedImage*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_, 
+  TemplateBox[{alt_, url_}, "MarkdownLinkedImage", ___]
+  ]:=
+  "!["<>iNotebookToMarkdown[pathInfo, alt]<>"]("<>
+    iNotebookToMarkdown[pathInfo, url]<>
+    ")"
+
+
+(* ::Subsubsection::Closed:: *)
+(*MarkdownLinkedImageLink*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_, 
+  TemplateBox[{alt_, url_, link_}, "MarkdownLinkedImageLink", ___]
+  ]:=
+  "["<>"!["<>iNotebookToMarkdown[pathInfo, alt]<>"]("<>
+    iNotebookToMarkdown[pathInfo, url]<>
+    ")"<>"]("<>iNotebookToMarkdown[pathInfo, link]<>")"
+
+
+(* ::Subsubsection::Closed:: *)
+(*TemplateBox*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_, 
+  TemplateBox[a_, ___, DisplayFunction->f_, ___]
+  ]:=
+  iNotebookToMarkdown[pathInfo,
+    f@@a
+    ];
+iNotebookToMarkdownRegister[pathInfo_, 
+  TemplateBox[a_, s_, ___]
+  ]:=
+  With[
+    {
+      df=
+        CurrentValue[
+          Replace[pathInfo["Notebook"], 
+            Except[_NotebookObject]:>
+              Notebooks[][[1]]
+            ],
+          {StyleDefinitions, s, "TemplateBoxOptionsDisplayFunction"}
+          ]
+      },
+    iNotebookToMarkdown[pathInfo,
+      Replace[df@@a,
+        _df:>RowBox@a
+        ]
+      ]
+    ]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Fallbacks*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_, Cell[e_,___]]:=
+  iNotebookToMarkdown[pathInfo, e]
+iNotebookToMarkdownRegister[pathInfo_, s_String]:=
+  s;
+iNotebookToMarkdownRegister[pathInfo_, s_TextData]:=
+  StringRiffle[
+    Map[
+      Replace[
+        iNotebookToMarkdown[pathInfo, #], 
+        m_String:>
+          StringTrim[m, StartOfString~~Whitespace]
+        ]&, 
+      List@@s//Flatten
+      ]
+    ];
+iNotebookToMarkdownRegister[pathInfo_, b_BoxData]:=
+  Replace[
+    iNotebookToMarkdown[pathInfo, First@b],
+    "":>
+      notebookToMarkdownFEExport[
+        pathInfo,
+        b,
+        "PlainText",
+        "Text"
+        ]
+    ];
+iNotebookToMarkdownRegister[pathInfo_, $iNotebookToMarkdownIgnoredBoxHeads[e_,___]]:=
+  iNotebookToMarkdown[pathInfo, e]
+iNotebookToMarkdownRegister[pathInfo_, e_, ___]:=
+  If[BoxQ@e,
+    notebookToMarkdownFEExport[
+      pathInfo,
+      BoxData@e,
+      "InputText",
+      "Output"
+      ],
+    ""
+    ];
 
 
 End[];

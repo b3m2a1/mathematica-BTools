@@ -1,6 +1,6 @@
 Paclet[
   Name -> "BTools",
-  Version -> "2.1.36",
+  Version -> "2.1.37",
   Creator -> "b3m2a1@gmail.com",
   URL -> "https://github.com/b3m2a1/mathematica-BTools",
   Description -> "A suite of development tools",
@@ -81,36 +81,12 @@ Paclet[
         				"Templates/CuratedDataTemplate.nb"
         			},
        			{
-        				"Autocomplete",
-        				"Templates/Initialization/Autocomplete.wl"
-        			},
-       			{
-        				"Constants",
-        				"Templates/Initialization/Constants.wl"
-        			},
-       			{
-        				"Dependencies",
-        				"Templates/Initialization/Dependencies.wl"
-        			},
-       			{
-        				"Exceptions",
-        				"Templates/Initialization/Exceptions.wl"
-        			},
-       			{
-        				"FrontEnd",
-        				"Templates/Initialization/FrontEnd.wl"
-        			},
-       			{
         				"init",
-        				"Templates/Initialization/init.wl"
+        				"Templates/Initialization/init.m"
         			},
        			{
-        				"Loading",
-        				"Templates/Initialization/Loading.wl"
-        			},
-       			{
-        				"Paths",
-        				"Templates/Initialization/Paths.wl"
+        				"Main",
+        				"Templates/Initialization/Main.wl"
         			},
        			{
         				"README",
@@ -135,6 +111,10 @@ Paclet[
        			{
         				"Initialization",
         				"Templates/Initialization"
+        			},
+       			{
+        				"Loader",
+        				"Templates/Initialization/Loader"
         			},
        			{
         				"SiteBuilder",

@@ -1,0 +1,66 @@
+<style>
+.footer-notebook {
+  border-top: solid 1px rgb(225, 225, 225);background-color: white;
+  position: sticky;width: auto;bottom: -2px;right: 0;left: 0;
+}
+
+.footer-notebook-hidden {height: 1px;width: 100%;overflow: hidden;}
+
+.footer-notebook-visible {height: 400px;width: 100%;}
+
+.footer-notebook-thumb {
+    position: absolute;top: 0;left: 65px;height: 25px;width: 85px;padding: 0;
+    margin-top: -25px;border: solid 1px hsl(210, 0%, 80%);
+    background-size: 75% 75%;background-repeat: no-repeat;
+    background-position: center;background-color: hsl(210, 0%, 97%);
+    border-bottom: solid 1px hsl(210, 0%, 97%);border-top-left-radius: 10px;
+    border-top-right-radius: 10px;outline: none;cursor: pointer;
+  }
+
+/*.footer-notebook-thumb-visible {background-image: url(../img/cloud-notebook-close.png);
+}
+
+.footer-notebook-thumb-hidden {background-image: url(../img/cloud-notebook-open.png);
+}*/
+.footer-notebook-thumb:hover,
+.footer-notebook-thumb:focus{ background-color: hsl(210, 0%, 100%); border-bottom: solid 1px hsl(210, 0%, 100%);}
+</style>
+
+<script>
+function footerNotebookOpen() {
+    var thumb = document.getElementById("footer-notebook-thumb");
+    var nb = document.getElementById("footer-notebook");
+    thumb.onclick= footerNotebookClose;
+    nb.classList.add("footer-notebook-visible");
+    nb.classList.remove("footer-notebook-hidden");
+    thumb.classList.add("footer-notebook-thumb-visible");
+    thumb.classList.remove("footer-notebook-thumb-hidden");
+    }
+
+  function footerNotebookClose() {
+    var thumb = document.getElementById("footer-notebook-thumb");
+    var nb = document.getElementById("footer-notebook");
+    thumb.onclick= footerNotebookOpen;
+    nb.classList.remove("footer-notebook-visible");
+    nb.classList.add("footer-notebook-hidden");
+    thumb.classList.remove("footer-notebook-thumb-visible");
+    thumb.classList.add("footer-notebook-thumb-hidden");
+    }
+</script>
+
+<div class="footer-notebook embedded-notebook">
+  <button
+    class="footer-notebook-thumb footer-notebook-thumb-hidden"
+    onclick="footerNotebookOpen()"
+    id="footer-notebook-thumb"
+    >
+  </button>
+  <div class="footer-notebook-hidden" id="footer-notebook">
+    <wolfram:expr>
+      $$templateLib["embedNotebook"][
+        "Style"->"position: relative",
+        "Height"->400
+        ]
+    </wolfram:expr>
+  </div>
+</div>
