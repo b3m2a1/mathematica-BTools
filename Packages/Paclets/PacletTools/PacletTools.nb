@@ -203,17 +203,14 @@ Cell[BoxData[{
    "\"\<Formats a PacletSite into a Dataset\>\""}], ";"}], "\n", 
  RowBox[{
   RowBox[{
+   RowBox[{"PacletSiteFromDataset", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<...\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
    RowBox[{"PacletSiteBundle", "::", "usage"}], "=", "\n", "\t", 
    "\"\<Bundles a PacletSite.mz from a collection of PacletInfo specs\>\""}], 
-  ";"}]}], "CodeInput",
- CellChangeTimes->{{3.702674262810955*^9, 3.702674447232442*^9}, {
-   3.702676576244383*^9, 3.702676616276352*^9}, {3.702731948773188*^9, 
-   3.702731951042912*^9}, {3.70273422404478*^9, 3.7027342341417837`*^9}, {
-   3.702734392045323*^9, 3.702734392480304*^9}, 3.70273443322906*^9, 
-   3.7028330759089193`*^9, 3.7036092827184134`*^9, {3.712793023808983*^9, 
-   3.712793063461972*^9}, {3.727879944978608*^9, 
-   3.7278799510492163`*^9}},ExpressionUUID->"04fea9c9-2368-4f48-80cb-\
-1689744eb8ef"]
+  ";"}]}], "CodeInput",ExpressionUUID->"04fea9c9-2368-4f48-80cb-1689744eb8ef"]\
+
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -718,7 +715,7 @@ Cell[BoxData[{
    3.729731021584388*^9}, {3.731004233953917*^9, 
    3.731004276496203*^9}},ExpressionUUID->"ca3af5cb-2248-4467-a704-\
 9de97960ca3f"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -877,7 +874,7 @@ Cell[BoxData[{
       RowBox[{"#", ",", " ", "ops"}], "]"}], "&"}], "/@", "l"}]}], 
   ";"}]}], "CodeInput",ExpressionUUID->"20a6dee5-1cf6-44c6-aca2-37038f17ee42"]\
 
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1697,7 +1694,7 @@ Cell[BoxData[{
   ";"}]}], "CodeInput",ExpressionUUID->"89c7319f-2fbc-4d11-9bd8-b47b4935fd98"]\
 
 }, Open  ]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -2071,7 +2068,7 @@ Cell[BoxData[
         RowBox[{"Options", "@", "PacletInfoExpression"}]}], "]"}]}], "\n", 
      "\t\t", "]"}]}]}]}]], \
 "CodeInput",ExpressionUUID->"507f4a61-2570-4901-bb08-89f59e336bc8"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -2082,7 +2079,27 @@ Cell["\[LeftCeiling]PacletInfoExpressionBundle\[RightFloor]", \
    3.727893892600696*^9},ExpressionUUID->"54c542e7-40c7-4077-bcb4-\
 0e759a17a7e7"],
 
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]$cleanPacletExcludedElements\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"896d5867-2420-4b6c-8a31-ed59843b53e4"],
+
 Cell[BoxData[
+ RowBox[{
+  RowBox[{"$cleanPacletExcludedElements", "=", "\n", "\t", 
+   RowBox[{"{", 
+    RowBox[{"\"\<Location\>\"", ",", " ", "\"\<Resources\>\""}], "}"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"130782ac-d6dd-42fb-9f5c-db23a8a28f6a"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]cleanPacletForExport\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"6e2ee02d-a94d-442b-8e8b-71c97bc2c96a"],
+
+Cell[BoxData[{
+ RowBox[{"cleanPacletForExport", "//", "Clear"}], "\n", 
  RowBox[{
   RowBox[{"cleanPacletForExport", "[", "pac_PacletManager`Paclet", "]"}], ":=",
    "\n", "\t", 
@@ -2108,28 +2125,24 @@ Cell[BoxData[
       RowBox[{"Select", "[", "\n", "\t", "\t\t\t", 
        RowBox[{
         RowBox[{"DeleteCases", "[", 
-         RowBox[{"pac", ",", " ", "\n", "\t", "\t\t\t\t", 
-          RowBox[{"(", "\n", "\t", "\t\t\t\t\t", 
-           RowBox[{"\"\<Location\>\"", "\[Rule]", 
+         RowBox[{"pac", ",", " ", "\n", "\t\t\t\t\t", 
+          RowBox[{"Alternatives", "@@", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"Join", "[", "\n", "\t\t\t\t\t\t\t", 
             RowBox[{
-             RowBox[{"_", "|", "\"\<Resources\>\""}], "\[Rule]", 
-             RowBox[{
-              RowBox[{"_", "|", "\n", "\t", "\t\t\t\t\t", 
-               RowBox[{"_Symbol", "?", 
-                RowBox[{"(", 
-                 RowBox[{
-                  RowBox[{
-                   RowBox[{"SymbolName", "[", "#", "]"}], "\[Equal]", 
-                   "\"\<Location\>\""}], "&"}], ")"}]}]}], "\[Rule]", 
-              RowBox[{
-               RowBox[{"_", "|", "\n", "\t", "\t\t\t\t\t", 
-                RowBox[{"_Symbol", "?", 
-                 RowBox[{"(", 
-                  RowBox[{
-                   RowBox[{
-                    RowBox[{"SymbolName", "[", "#", "]"}], "\[Equal]", 
-                    "\"\<Resources\>\""}], "&"}], ")"}]}]}], "\[Rule]", 
-               "_"}]}]}]}], ")"}]}], "]"}], ",", " ", "\n", "\t", "\t\t\t", 
+            "$cleanPacletExcludedElements", ",", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{"Thread", "[", 
+              RowBox[{"$cleanPacletExcludedElements", "\[Rule]", "_"}], "]"}],
+              ",", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{"_Symbol", "?", 
+               RowBox[{"(", 
+                RowBox[{
+                 RowBox[{"MemberQ", "[", 
+                  RowBox[{"$cleanPacletExcludedElements", ",", " ", 
+                   RowBox[{"SymbolName", "[", "#", "]"}]}], "]"}], "&"}], 
+                ")"}]}], "\n", "\t\t\t\t\t\t\t\t", "}"}]}], "\n", 
+            "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t", "]"}], ",", " ", 
+        "\n", "\t\t\t\t", 
         RowBox[{"MatchQ", "[", 
          RowBox[{
           RowBox[{"_String", "|", "_Symbol"}], "\[Rule]", "_"}], "]"}]}], 
@@ -2145,13 +2158,15 @@ Cell[BoxData[
         RowBox[{"(", 
          RowBox[{"s_", "\[Rule]", "_"}], ")"}], "\[RuleDelayed]", "s"}]}], 
       "\n", "\t\t\t\t", "}"}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
-   "]"}]}]], "CodeInput",
- CellChangeTimes->{{3.729867098955209*^9, 3.7298671225526867`*^9}, {
-  3.729867159120882*^9, 3.729867243387334*^9}, {3.732850441651808*^9, 
-  3.7328504602713223`*^9}, {3.7328506633368673`*^9, 3.732850693740868*^9}, {
-  3.733455042762212*^9, 
-  3.733455091186112*^9}},ExpressionUUID->"eb4ef6c1-5f86-4409-92db-\
-7c745feca3e2"],
+   "]"}]}]}], \
+"CodeInput",ExpressionUUID->"eb4ef6c1-5f86-4409-92db-7c745feca3e2"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]prettyFormatPacletElement\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"2d202840-5ede-4401-b643-36bc93324c5e"],
 
 Cell[BoxData[
  RowBox[{
@@ -2205,7 +2220,14 @@ Cell[BoxData[
    3.733360117038782*^9}, {3.733360251836339*^9, 3.733360252615505*^9}, {
    3.7333616680735407`*^9, 
    3.733361680528223*^9}},ExpressionUUID->"5fec4882-9c94-490c-9cc1-\
-92f02d8a7745"],
+92f02d8a7745"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]prettyFormatPacletString\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"d1275290-afcf-4558-a983-cf20ab9902e0"],
 
 Cell[BoxData[
  RowBox[{
@@ -2233,15 +2255,70 @@ Cell[BoxData[
   3.733358961752967*^9}, {3.733359448009704*^9, 3.733359458117593*^9}, {
   3.7333594961795197`*^9, 3.733359531993919*^9}, {3.733454153268018*^9, 
   3.7334541645233727`*^9}},ExpressionUUID->"9759c9c0-360b-4d96-896d-\
-232d1fba8482"],
+232d1fba8482"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]PacletInfoExpressionStrings\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"69d5a45e-9067-494c-b3a0-c2987a3351c2"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"PacletInfoExpressionStrings", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"pacs", ":", 
+     RowBox[{"{", "__PacletManager`Paclet", "}"}]}], ",", "\n", "\t", 
+    "exclude_"}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+  RowBox[{"Block", "[", "\n", "\t\t\t", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t\t\t", 
+     RowBox[{
+      RowBox[{"$Context", "=", "\"\<PacletManager`Private`\>\""}], ",", "\n", 
+      "\t", "\t\t\t", 
+      RowBox[{"$ContextPath", "=", 
+       RowBox[{"{", 
+        RowBox[{
+        "\"\<System`\>\"", ",", " ", "\"\<PacletManager`\>\"", ",", " ", 
+         "\"\<PacletManager`Private`\>\""}], "}"}]}], ",", "\n", "\t\t\t\t", 
+      RowBox[{"$cleanPacletExcludedElements", "=", "\n", "\t\t\t\t\t", 
+       RowBox[{"Replace", "[", 
+        RowBox[{"exclude", ",", "\n", "\t\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Except", "[", "_List", "]"}], ":>", 
+          "$cleanPacletExcludedElements"}]}], "\n", "\t\t\t\t\t\t", "]"}]}]}],
+      "\n", "\t\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"prettyFormatPacletString", "[", 
+       RowBox[{"cleanPacletForExport", "[", "#", "]"}], "]"}], "&"}], "/@", 
+     "\n", "\t\t\t\t", "pacs"}]}], "\n", "\t\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"045e6598-44b4-4af4-bbdd-b8993cdc49c3"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]PacletInfoExpressionBundle\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"984fe222-3a71-4451-babc-f77882e3468e"],
 
 Cell[BoxData[{
+ RowBox[{
+  RowBox[{"PacletInfoExpressionBundle", "//", "Clear"}], ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{
     RowBox[{"Options", "[", "PacletInfoExpressionBundle", "]"}], "=", "\n", 
     "\t", 
-    RowBox[{"Options", "[", "PacletInfoExpression", "]"}]}], ";"}], 
+    RowBox[{"Join", "[", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Options", "[", "PacletInfoExpression", "]"}], ",", "\n", 
+      "\t\t", 
+      RowBox[{"{", "\n", "\t\t\t", 
+       RowBox[{"\"\<ExcludedElements\>\"", "\[Rule]", "Automatic"}], "\n", 
+       "\t\t\t", "}"}]}], "\n", "\t\t", "]"}]}], ";"}], 
   RowBox[{"(*", "\n", 
    RowBox[{
     RowBox[{
@@ -2253,38 +2330,30 @@ Cell[BoxData[{
   RowBox[{
    RowBox[{"PacletInfoExpressionBundle", "[", "\n", "\t", 
     RowBox[{"paclet_PacletManager`Paclet", ",", "\n", "\t", 
-     RowBox[{"dest_String", "?", "DirectoryQ"}]}], "\n", "\t", "]"}], ":=", 
-   "\n", "\t", 
+     RowBox[{"dest_String", "?", "DirectoryQ"}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
    RowBox[{"With", "[", 
     RowBox[{
      RowBox[{"{", 
       RowBox[{"pacletFile", "=", 
        RowBox[{"FileNameJoin", "@", 
         RowBox[{"{", 
-         RowBox[{"dest", ",", "\"\<PacletInfo.m\>\""}], "}"}]}]}], "}"}], ",",
-      "\n", "\t\t", 
+         RowBox[{"dest", ",", " ", "\"\<PacletInfo.m\>\""}], "}"}]}]}], "}"}],
+      ",", "\n", "\t\t", 
      RowBox[{
-      RowBox[{"Block", "[", "\n", "\t\t\t", 
-       RowBox[{
-        RowBox[{"{", "\n", "\t\t\t\t", 
-         RowBox[{
-          RowBox[{"$Context", "=", "\"\<PacletManager`Private`\>\""}], ",", 
-          "\n", "\t", "\t\t\t", 
-          RowBox[{"$ContextPath", "=", 
-           RowBox[{"{", 
-            RowBox[{
-            "\"\<System`\>\"", ",", " ", "\"\<PacletManager`\>\"", ",", " ", 
-             "\"\<PacletManager`Private`\>\""}], "}"}]}]}], "\n", "\t\t\t\t", 
-         "}"}], ",", "\n", "\t\t\t", 
-        RowBox[{
-         RowBox[{"WriteString", "[", 
-          RowBox[{"pacletFile", ",", " ", "\n", "\t\t\t\t", 
-           RowBox[{"prettyFormatPacletString", "[", 
-            RowBox[{"cleanPacletForExport", "[", "paclet", "]"}], "]"}]}], 
-          "\n", "\t\t\t\t", "]"}], ";", "\n", "\t\t\t", 
-         RowBox[{"Close", "[", "pacletFile", "]"}], ";"}]}], "\n", "\t\t\t", 
-       "]"}], ";", "\n", "\t\t", "pacletFile"}]}], "\n", "\t\t", "]"}]}], 
-  ";"}], "\n", 
+      RowBox[{"WriteString", "[", 
+       RowBox[{"pacletFile", ",", " ", "\n", "\t\t\t", 
+        RowBox[{"First", "@", "\n", "\t\t\t\t", 
+         RowBox[{"PacletInfoExpressionStrings", "[", 
+          RowBox[{
+           RowBox[{"{", "paclet", "}"}], ",", "\n", "\t", "\t\t\t\t", 
+           RowBox[{"OptionValue", "[", "\"\<ExcludedElements\>\"", "]"}]}], 
+          "\n", "\t", "\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "]"}], ";", "\n",
+       "\t\t", 
+      RowBox[{"Close", "[", "pacletFile", "]"}], ";", "\n", "\t\t", 
+      "pacletFile"}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"PacletInfoExpressionBundle", "[", "\n", "\t", 
@@ -2296,8 +2365,16 @@ Cell[BoxData[{
    RowBox[{"PacletInfoExpressionBundle", "[", "\n", "\t\t", 
     RowBox[{
      RowBox[{"PacletInfoExpression", "[", 
-      RowBox[{"dest", ",", "ops"}], "]"}], ",", "\n", "\t\t", "dest"}], "\n", 
-    "\t\t", "]"}]}], 
+      RowBox[{"dest", ",", " ", "\n", "\t\t\t", 
+       RowBox[{"FilterRules", "[", 
+        RowBox[{
+         RowBox[{"{", "ops", "}"}], ",", " ", 
+         RowBox[{"Except", "[", "\"\<ExcludedElements\>\"", "]"}]}], "]"}]}], 
+      "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", "dest", ",", "\n", "\t\t", 
+     RowBox[{"FilterRules", "[", 
+      RowBox[{
+       RowBox[{"{", "ops", "}"}], ",", " ", "\"\<ExcludedElements\>\""}], 
+      "]"}]}], "\n", "\t\t", "]"}]}], 
   ";"}]}], "CodeInput",ExpressionUUID->"c0090a1b-253f-4931-b8c0-88aa0a62c9ab"],
 
 Cell[BoxData[{
@@ -2318,6 +2395,7 @@ Cell[BoxData[{
   3.72789389234583*^9, 
   3.727893892350543*^9}},ExpressionUUID->"89dc3829-2454-49ae-a388-\
 a820bdef8ad5"]
+}, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -3918,7 +3996,7 @@ Cell[BoxData[{
       "\n", "\t\t\t", "]"}]}]}], 
   ";"}]}], "CodeInput",ExpressionUUID->"57e80772-0550-4462-bacd-eb502c58a934"]\
 
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -4613,17 +4691,62 @@ Cell[BoxData[{
 
 Cell[CellGroupData[{
 
+Cell["\[LeftCeiling]PacletSiteFromDataset\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"6e82a64f-9497-4d20-ab94-f042a45fd29f"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"PacletSiteFromDataset", "[", "\n", "\t", 
+    RowBox[{"ds", ":", 
+     RowBox[{"{", "__Association", "}"}]}], "\n", "\t", "]"}], ":=", "\n", 
+   "\t", 
+   RowBox[{"PacletManager`PacletSite", "@@", "\n", "\t\t", 
+    RowBox[{"Apply", "[", "\n", "\t\t\t", 
+     RowBox[{"PacletInfoExpression", ",", "\n", "\t\t\t", 
+      RowBox[{"Normal", "/@", "\n", "\t\t\t\t", 
+       RowBox[{"MapAt", "[", "\n", "\t\t\t\t\t", 
+        RowBox[{
+         RowBox[{"KeyValueMap", "[", 
+          RowBox[{
+           RowBox[{"Prepend", "[", 
+            RowBox[{
+             RowBox[{"Normal", "@", "#2"}], ",", " ", "#"}], "]"}], "&"}], 
+          "]"}], ",", "\n", "\t\t\t\t\t", "ds", ",", "\n", "\t\t\t\t\t", 
+         RowBox[{"{", 
+          RowBox[{"All", ",", " ", "\"\<Extensions\>\""}], "}"}]}], "\n", 
+        "\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t", 
+      RowBox[{"{", "1", "}"}]}], "\n", "\t\t\t", "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+   "PacletSiteFromDataset", "[", "\n", "\t", "ds_Dataset", "\n", "\t", "]"}], 
+   ":=", 
+   RowBox[{"PacletSiteFromDataset", "[", 
+    RowBox[{"Normal", "[", "ds", "]"}], "]"}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"d4660a17-1af6-4b9b-989f-418073abadfc"]\
+
+}, Open  ]],
+
+Cell[CellGroupData[{
+
 Cell["\[LeftCeiling]PacletSiteBundle\[RightFloor]", "CodeSubsubsection",
  Evaluatable->True,
  CellChangeTimes->{{3.702673024637313*^9, 
   3.702673031483593*^9}},ExpressionUUID->"e6f6d9b4-2c79-4db5-9a34-\
 ab78ebf125e1"],
 
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]pacletSiteFileName\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"b4b359d5-21b2-4f7f-80fc-2248015451cc"],
+
 Cell[BoxData[
  RowBox[{
   RowBox[{"pacletSiteFileName", "[", 
-   RowBox[{"br_", ",", " ", "fp_", ",", " ", "if_", ",", " ", "baseName_"}], 
-   "]"}], ":=", "\n", "\t", 
+   RowBox[{
+   "br_", ",", " ", "fp_", ",", " ", "be_", ",", " ", "dest_", ",", " ", 
+    "baseName_"}], "]"}], ":=", "\n", "\t", 
   RowBox[{"FileNameJoin", "@", 
    RowBox[{"{", "\n", "\t\t", 
     RowBox[{
@@ -4633,17 +4756,28 @@ Cell[BoxData[
         RowBox[{"d", "=", "\n", "\t\t\t", 
          RowBox[{"FileNameJoin", "@", 
           RowBox[{"{", "\n", "\t\t\t\t", 
-           RowBox[{"br", ",", "\n", "\t\t\t\t", "$PacletBuildExtension"}], 
-           "\n", "\t\t\t\t", "}"}]}]}], "\n", "\t\t\t", "}"}], ",", "\n", 
-       "\t\t\t", 
+           RowBox[{
+            RowBox[{"Replace", "[", 
+             RowBox[{"br", ",", " ", "\n", "\t\t\t\t\t", 
+              RowBox[{"Automatic", ":>", "\n", "\t\t\t\t\t\t", 
+               RowBox[{"If", "[", 
+                RowBox[{
+                 RowBox[{"DirectoryQ", "@", "dest"}], ",", " ", "dest", ",", 
+                 " ", 
+                 RowBox[{"DirectoryName", "[", "dest", "]"}]}], "]"}]}]}], 
+             "\n", "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
+            RowBox[{"Replace", "[", 
+             RowBox[{"be", ",", " ", "\n", "\t\t\t\t\t", 
+              RowBox[{"Automatic", "\[Rule]", "$PacletBuildExtension"}]}], 
+             "\n", "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "}"}]}]}], "\n", 
+        "\t\t\t", "}"}], ",", "\n", "\t\t\t", 
        RowBox[{
         RowBox[{"If", "[", 
          RowBox[{
           RowBox[{"!", 
-           RowBox[{"FileExistsQ", "@", "d"}]}], ",", "\n", "\t\t\t\t", 
-          RowBox[{"CreateDirectory", "@", "d"}]}], "\n", "\t\t\t\t", "]"}], 
-        ";", "\n", "\t\t\t", "d"}]}], "\n", "\t\t\t", "]"}], ",", "\n", 
-     "\t\t", 
+           RowBox[{"FileExistsQ", "@", "d"}]}], ",", " ", 
+          RowBox[{"CreateDirectory", "@", "d"}]}], "]"}], ";", "\n", "\t\t\t",
+         "d"}]}], "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
      RowBox[{
       RowBox[{"Replace", "[", 
        RowBox[{"fp", ",", 
@@ -4651,31 +4785,28 @@ Cell[BoxData[
          RowBox[{
           RowBox[{"Automatic", "\[RuleDelayed]", "\n", "\t\t\t\t", 
            RowBox[{
-            RowBox[{"With", "[", 
+            RowBox[{"If", "[", 
              RowBox[{
-              RowBox[{"{", 
-               RowBox[{"f", "=", 
-                RowBox[{"First", "@", "if"}]}], "}"}], ",", "\n", 
+              RowBox[{"DirectoryQ", "@", "dest"}], ",", "\n", "\t\t\t\t\t", 
+              RowBox[{"FileBaseName", "[", "dest", "]"}], ",", "\n", 
               "\t\t\t\t\t", 
-              RowBox[{"If", "[", 
-               RowBox[{
-                RowBox[{"StringMatchQ", "[", 
-                 RowBox[{
-                  RowBox[{"FileNameTake", "[", "f", "]"}], ",", 
-                  "\"\<*.*\>\""}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
-                RowBox[{"DirectoryName", "[", "f", "]"}], ",", "\n", 
-                "\t\t\t\t\t\t", 
-                RowBox[{"FileBaseName", "[", "f", "]"}]}], "\n", 
-               "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "]"}], "<>", 
-            "\"\<-\>\""}]}], ",", "\n", "\t\t\t", 
+              RowBox[{"FileBaseName", "@", 
+               RowBox[{"DirectoryName", "[", "dest", "]"}]}]}], "\n", 
+             "\t\t\t\t\t", "]"}], "<>", "\"\<-\>\""}]}], ",", "\n", "\t\t\t", 
+          
           RowBox[{"s_String", "\[RuleDelayed]", 
            RowBox[{"(", 
             RowBox[{"s", "<>", "\"\<-\>\""}], ")"}]}], ",", "\n", "\t\t\t", 
           RowBox[{"_", "\[Rule]", "\"\<\>\""}]}], "\n", "\t\t\t", "}"}]}], 
-       "]"}], "<>", "baseName"}]}], "\n", "\t\t", "}"}]}]}]], "CodeInput",
- CellChangeTimes->{{3.7298660290800447`*^9, 3.729866119038437*^9}, 
-   3.7298662208641043`*^9},ExpressionUUID->"b0c82589-5692-4975-9e53-\
-f95a55996976"],
+       "]"}], "<>", "baseName"}]}], "\n", "\t\t", 
+    "}"}]}]}]], \
+"CodeInput",ExpressionUUID->"b0c82589-5692-4975-9e53-f95a55996976"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]PacletSiteBundle\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"45ef0268-ff6f-4116-b890-4d6ed0ab9827"],
 
 Cell[BoxData[{
  RowBox[{
@@ -4686,11 +4817,14 @@ Cell[BoxData[{
      RowBox[{
       RowBox[{"{", "\n", "\t\t\t", 
        RowBox[{
-        RowBox[{
-        "\"\<BuildRoot\>\"", "\[RuleDelayed]", "$TemporaryDirectory"}], ",", 
-        "\n", "\t", "\t\t", 
-        RowBox[{"\"\<FilePrefix\>\"", "\[Rule]", "None"}]}], "\n", "\t\t\t", 
-       "}"}], ",", "\n", "\t\t", 
+        RowBox[{"\"\<BuildRoot\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
+        "\t\t\t", 
+        RowBox[{"\"\<FilePrefix\>\"", "\[Rule]", "None"}], ",", "\n", 
+        "\t\t\t", 
+        RowBox[{"\"\<BuildExtension\>\"", "\[RuleDelayed]", "Automatic"}], 
+        ",", "\n", "\t\t\t", 
+        RowBox[{"\"\<ExcludedElements\>\"", "\[Rule]", "Automatic"}]}], "\n", 
+       "\t\t\t", "}"}], ",", "\n", "\t\t", 
       RowBox[{"Options", "@", "PacletSiteInfo"}]}], "\n", "\t\t", "]"}]}], 
    ";"}], "\n", 
   RowBox[{"(*", 
@@ -4700,6 +4834,8 @@ Cell[BoxData[{
      "PackageAddUsage", "~~", "\n", "\t", 
      "\"\<bundles the PacletInfo.m files found in infoFiles into a compressed \
 PacletSite file\>\""}], ";"}], "*)"}]}], "\n", 
+ RowBox[{
+  RowBox[{"PacletSiteBundle", "//", "Clear"}], ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"PacletSiteBundle", "[", 
@@ -4711,15 +4847,13 @@ PacletSite file\>\""}], ";"}], "*)"}]}], "\n",
     RowBox[{
      RowBox[{"FileNames", "[", 
       RowBox[{"\"\<*.paclet\>\"", ",", "dir", ",", "2"}], "]"}], ",", "\n", 
-     "\t\t", "ops"}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+     "\t\t", "dir", ",", "\n", "\t\t", "ops"}], "\n", "\t\t", "]"}]}], 
+  ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"PacletSiteBundle", "[", "\n", "\t", 
-    RowBox[{
-     RowBox[{"infoFiles", ":", 
-      RowBox[{"$PacletFilePatterns", "|", 
-       RowBox[{"{", 
-        RowBox[{"$PacletFilePatterns", "..."}], "}"}]}]}], ",", "\n", "\t", 
+    RowBox[{"ps_PacletManager`PacletSite", ",", "\n", "\t", 
+     RowBox[{"dest_String", "?", "DirectoryQ"}], ",", "\n", "\t", 
      RowBox[{"ops", ":", 
       RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
     "\t", 
@@ -4727,72 +4861,77 @@ PacletSite file\>\""}], ";"}], "*)"}]}], "\n",
     RowBox[{
      RowBox[{"{", "\n", "\t\t\t", 
       RowBox[{
-       RowBox[{"$ContextPath", "=", 
-        RowBox[{"{", 
+      "pacletStrings", ",", "\n", "\t\t\t", "pacletSiteString", ",", "\n", 
+       "\t\t\t", "file"}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"pacletStrings", "=", "\n", "\t\t\t", 
+       RowBox[{"StringReplace", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"PacletInfoExpressionStrings", "[", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"List", "@@", "ps"}], ",", "\n", "\t", "\t\t\t\t", 
+           RowBox[{"OptionValue", "[", "\"\<ExcludedElements\>\"", "]"}]}], 
+          "\n", "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
          RowBox[{
-         "\"\<System`\>\"", ",", " ", "\"\<PacletManager`Private`\>\"", ",", 
-          " ", "\"\<PacletManager`\>\""}], "}"}]}], ",", " ", "\n", "\t\t\t", 
-       
-       RowBox[{"$Context", "=", "\"\<PacletManager`Private`\>\""}], ",", "\n",
-        "\t\t\t", 
-       RowBox[{"Internal`$ContextMarks", "=", "False"}]}], "\n", "\t\t\t", 
-      "}"}], ",", "\n", "\t\t", 
-     RowBox[{"Export", "[", "\n", "\t\t\t", 
-      RowBox[{
+          RowBox[{"StartOfString", "|", "StartOfLine"}], "\[Rule]", 
+          "\"\<\\t\>\""}]}], "\n", "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
+      RowBox[{"pacletSiteString", "=", "\n", "\t\t\t", 
+       RowBox[{"\"\<PacletSite[\\n\>\"", "<>", "\n", "\t\t\t\t", 
+        RowBox[{"StringRiffle", "[", 
+         RowBox[{"pacletStrings", ",", " ", "\"\<,\\n\>\""}], "]"}], "<>", 
+        "\n", "\t\t\t\t", "\"\<\\n\\t]\>\""}]}], ";", "\n", "\t\t", 
+      RowBox[{"file", "=", "\n", "\t\t\t", 
        RowBox[{"pacletSiteFileName", "[", "\n", "\t\t\t\t", 
         RowBox[{
          RowBox[{"OptionValue", "[", "\"\<BuildRoot\>\"", "]"}], ",", " ", 
          "\n", "\t\t\t\t", 
          RowBox[{"OptionValue", "[", "\"\<FilePrefix\>\"", "]"}], ",", "\n", 
          "\t\t\t\t", 
-         RowBox[{"{", "infoFiles", "}"}], ",", "\n", "\t\t\t\t", 
-         "\"\<PacletSite.mz\>\""}], "\n", "\t\t\t\t", "]"}], ",", "\n", 
-       "\t\t\t", 
-       RowBox[{"Map", "[", "\n", "\t\t\t\t", 
-        RowBox[{"cleanPacletForExport", ",", "\n", "\t\t\t\t", 
-         RowBox[{"PacletSiteInfo", "[", "\n", "\t\t\t\t\t", 
-          RowBox[{"infoFiles", ",", "\n", "\t\t\t\t\t", 
-           RowBox[{"FilterRules", "[", 
-            RowBox[{
-             RowBox[{"{", "ops", "}"}], ",", "\n", "\t", "\t", "\t\t\t\t", 
-             RowBox[{"Options", "@", "PacletSiteInfo"}]}], "\n", 
-            "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "]"}]}], "\n", 
-        "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
-       RowBox[{"{", 
-        RowBox[{"\"\<ZIP\>\"", ",", " ", "\"\<PacletSite.m\>\""}], "}"}]}], 
-      "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
- CellChangeTimes->{{3.7026730569256353`*^9, 3.702673149505384*^9}, {
-   3.702673204665799*^9, 3.702673374942368*^9}, {3.7026745849650497`*^9, 
-   3.702674589930685*^9}, {3.7026747648811903`*^9, 3.702674766527083*^9}, {
-   3.702674817787299*^9, 3.702674825778707*^9}, 3.702675448062183*^9, {
-   3.702678369451384*^9, 3.702678403871648*^9}, {3.702728908832263*^9, 
-   3.702729108166376*^9}, {3.702729217195292*^9, 3.702729218218507*^9}, {
-   3.70272971059762*^9, 3.702730040622971*^9}, {3.7027300794702387`*^9, 
-   3.702730207141556*^9}, {3.70273027682262*^9, 3.702730286799938*^9}, 
-   3.7027303461429577`*^9, {3.702732088523975*^9, 3.7027320904193*^9}, {
-   3.7027321901926727`*^9, 3.702732216734212*^9}, 3.70273225006988*^9, {
-   3.702732547469306*^9, 3.702732566259075*^9}, {3.70273260323367*^9, 
-   3.702732721442505*^9}, 3.702733058704808*^9, {3.702733153170539*^9, 
-   3.7027331759210052`*^9}, {3.702733233079164*^9, 3.7027332583815823`*^9}, {
-   3.7027333570869417`*^9, 3.7027333702455997`*^9}, {3.7027334088558273`*^9, 
-   3.7027334097327538`*^9}, {3.7027334537740297`*^9, 3.70273345461165*^9}, {
-   3.7027334909784718`*^9, 3.70273351158195*^9}, {3.704667021640421*^9, 
-   3.704667031198544*^9}, {3.704667666806999*^9, 3.704667740296835*^9}, {
-   3.70466792414219*^9, 3.704667924469254*^9}, {3.704668166637393*^9, 
-   3.704668167419466*^9}, {3.7046713582331533`*^9, 3.7046714143860073`*^9}, 
-   3.705177422961046*^9, {3.712808041359943*^9, 3.712808041366025*^9}, {
-   3.717154135057994*^9, 3.717154139903426*^9}, {3.717154831056136*^9, 
-   3.71715483747402*^9}, {3.7171549202181263`*^9, 3.7171549317293997`*^9}, {
-   3.717154989430588*^9, 3.717155048349924*^9}, {3.720578093873444*^9, 
-   3.720578127508074*^9}, {3.720578195574143*^9, 3.72057821718172*^9}, {
-   3.720578515304449*^9, 3.7205785427347317`*^9}, 3.72694166270709*^9, {
-   3.729865782983305*^9, 3.72986584882657*^9}, {3.729865886714628*^9, 
-   3.7298661036627903`*^9}, {3.729866831212927*^9, 3.729866885345845*^9}, {
-   3.729866982346985*^9, 3.729867005833757*^9}, {3.72986706363146*^9, 
-   3.729867091361129*^9}, 3.729867333265709*^9, {3.733454686626834*^9, 
-   3.7334547290412083`*^9}},ExpressionUUID->"1f2797c9-339d-42b4-ba15-\
-09f8f8975dc1"]
-}, Closed]]
+         RowBox[{"OptionValue", "[", "\"\<BuildExtension\>\"", "]"}], ",", 
+         "\n", "\t\t\t\t", "dest", ",", "\n", "\t\t\t\t", 
+         "\"\<PacletSite.mz\>\""}], "\n", "\t\t\t\t", "]"}]}], ";", "\n", 
+      "\t\t", 
+      RowBox[{"Export", "[", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"StringTrim", "[", 
+         RowBox[{"file", ",", " ", 
+          RowBox[{"\"\<z\>\"", "~~", "EndOfString"}]}], "]"}], ",", "\n", 
+        "\t\t\t", "pacletSiteString", ",", "\n", "\t\t\t", "\"\<Text\>\""}], 
+       "\n", "\t\t\t", "]"}], ";", "\n", "\t\t", 
+      RowBox[{"Export", "[", "\n", "\t\t\t", 
+       RowBox[{"file", ",", "\n", "\t\t\t", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"\"\<PacletSite.m\>\"", ",", " ", "\"\<Text\>\""}], "}"}], 
+          "->", "pacletSiteString"}], "}"}], ",", "\n", "\t\t\t", 
+        "\"\<ZIP\>\""}], "\n", "\t\t\t", "]"}]}]}], "\n", "\t\t", "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"PacletSiteBundle", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"infoFiles", ":", 
+     RowBox[{"$PacletFilePatterns", "|", 
+      RowBox[{"{", 
+       RowBox[{"$PacletFilePatterns", "..."}], "}"}]}]}], ",", "\n", "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"PacletSiteBundle", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"PacletSiteInfo", "[", "\n", "\t\t\t", 
+     RowBox[{"infoFiles", ",", "\n", "\t", "\t\t", 
+      RowBox[{"FilterRules", "[", 
+       RowBox[{
+        RowBox[{"{", "ops", "}"}], ",", "\n", "\t", "\t\t\t", 
+        RowBox[{"Options", "@", "PacletSiteInfo"}]}], "\n", "\t\t\t\t", 
+       "]"}]}], "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
+    RowBox[{"DirectoryName", "@", 
+     RowBox[{"First", "@", "infoFiles"}]}], ",", "\n", "\t\t", "ops"}], "\n", 
+   "\t\t", "]"}]}]}], \
+"CodeInput",ExpressionUUID->"1f2797c9-339d-42b4-ba15-09f8f8975dc1"]
+}, Open  ]]
+}, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -5226,8 +5365,8 @@ Cell[BoxData[{
                      "\t", "\t\t\t\t\t\t\t\t\t   \t\t\t\t", 
                     "PacletManager`Private`rest__"}], "}"}], " ", ":>", " ", 
                     "\n", "\t", "\t\t\t\t\t\t\t\t\t   \t\t\t\t", 
-                    RowBox[{"{", "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t\t   \t\t\t\t\t", 
+                    RowBox[{
+                    "{", "\n", "\t", "\t\t\t\t\t\t\t\t\t   \t\t\t\t\t", 
                     RowBox[{
                     "PacletManager`Private`a", ",", " ", "\n", "\t", 
                     "\t\t\t\t\t\t\t\t\t   \t\t\t\t\t", 
@@ -5388,7 +5527,7 @@ Cell[BoxData[{
    3.712199372299415*^9, 
    3.712199537396647*^9}},ExpressionUUID->"89cd3dd4-8317-4639-b4d7-\
 abe216d3f8e9"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -5897,7 +6036,7 @@ Cell[BoxData[{
    3.704031913736383*^9}, {3.71219955378981*^9, 
    3.7121995616451406`*^9}},ExpressionUUID->"da0bb5b5-36f1-427f-adef-\
 95e80ec406be"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -8049,7 +8188,7 @@ Cell[BoxData[{
 
 }, Open  ]]
 }, Open  ]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -9791,7 +9930,7 @@ Cell[BoxData[{
   ";"}]}], "CodeInput",ExpressionUUID->"627b9902-c8b5-4a07-9623-f0f559e48ab0"]\
 
 }, Open  ]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -10341,7 +10480,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"da815cab-e579-48bc-a264-\
 f175938d2794"]
 },
 WindowSize->{815, 780},
-WindowMargins->{{Automatic, 100}, {Automatic, 0}},
+WindowMargins->{{Automatic, 238}, {Automatic, 0}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->Notebook[{

@@ -279,13 +279,12 @@ Cell[BoxData[
      "\"\<SiteDataset\>\"", "->", "\n", "\t\t\t", "PacletSiteInfoDataset"}], 
      ",", "\n", "\t\t", 
      RowBox[{
+     "\"\<SiteFromDataset\>\"", "->", "\n", "\t\t\t", 
+      "PacletSiteFromDataset"}], ",", "\n", "\t\t", 
+     RowBox[{
      "\"\<BundleSite\>\"", "->", "\n", "\t\t\t", "PacletSiteBundle"}]}], "\n",
-     "\t\t", "|>"}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.728933666169627*^9, 3.728933723000733*^9}, {
-  3.728933766269594*^9, 3.728933849112599*^9}, {3.728934110082984*^9, 
-  3.7289341105590982`*^9}, {3.728966343608183*^9, 
-  3.728966345524398*^9}},ExpressionUUID->"123ba537-c6be-41f4-8484-\
-a89dd4be1425"],
+     "\t\t", "|>"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"123ba537-c6be-41f4-8484-a89dd4be1425"],
 
 Cell[BoxData[
  RowBox[{
@@ -450,10 +449,14 @@ Cell[BoxData[
        ")"}]}], ",", "\n", "\t", 
      RowBox[{"pac", ":", 
       RowBox[{
+       RowBox[{"Except", "[", 
+        RowBox[{"_", "?", "OptionQ"}], "]"}], "..."}]}], 
+     RowBox[{"(*", 
+      RowBox[{
        RowBox[{"_", "?", 
         RowBox[{"(", 
          RowBox[{"MatchQ", "[", "$PacletFilePatterns", "]"}], ")"}]}], "|", 
-       "None"}], ":", "None"}], ",", "\n", "\t", 
+       RowBox[{"None", ":", "None"}]}], "*)"}], ",", "\n", "\t", 
      RowBox[{"args___", "?", "OptionQ"}]}], "\n", "\t", "]"}], ":=", "\n", 
    "\t", 
    RowBox[{"With", "[", 
@@ -468,13 +471,8 @@ Cell[BoxData[
         RowBox[{"{", 
          RowBox[{"res", "=", 
           RowBox[{"fn", "[", 
-           RowBox[{
-            RowBox[{"If", "[", 
-             RowBox[{
-              RowBox[{"pac", "===", "None"}], ",", " ", 
-              RowBox[{"Sequence", "@@", 
-               RowBox[{"{", "}"}]}], ",", " ", "pac"}], "]"}], ",", " ", 
-            "args"}], "]"}]}], "}"}], ",", "\n", "\t\t\t", 
+           RowBox[{"pac", ",", " ", "args"}], "]"}]}], "}"}], ",", "\n", 
+        "\t\t\t", 
         RowBox[{"res", "/;", 
          RowBox[{
           RowBox[{"Head", "[", "res", "]"}], "=!=", "fn"}]}]}], "\n", 

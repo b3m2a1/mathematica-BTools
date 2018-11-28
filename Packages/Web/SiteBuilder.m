@@ -1893,9 +1893,9 @@ WebSiteTemplateGatherArgs[fileContent_, args_]:=
             bit=
               Length@
                 Replace[
-                  Lookup[args, "URL",
-                    FileNameSplit@
-                      Lookup[args, "FilePath", "??"]
+                  Lookup[args, 
+                    "URL",
+                    FileNameSplit@Lookup[args, "FilePath", "??"]
                     ],
                   s_String:>
                     URLParse[s,"Path"]
@@ -1906,7 +1906,7 @@ WebSiteTemplateGatherArgs[fileContent_, args_]:=
               {
                 1->".",
                 n_:>
-                  URLBuild@ConstantArray["..",n-1]
+                  URLBuild@ConstantArray["..", n-1]
                 }
               ]
             ]
@@ -2099,6 +2099,31 @@ WebSiteTemplateApply[
 
 
 
+webSiteTEAutoConfig[
+  failinput_,
+  fout_,
+  root_,
+  content_,
+  templates_,
+  config_
+  ]:=
+  Join[
+    <|
+      "FilePath"->
+        Replace[
+          SelectFirst[root, 
+            StringStartsQ[fout, #]&
+            ],
+          {
+            f_String:>FileNameDrop[fout, FileNameDepth[f]+1],
+            _:>StringSplit[fout, "output"][[-1]]
+            }
+          ]
+      |>,
+    config
+    ]
+
+
 WebSiteTemplateExport[
   failinput_,
   fout_,
@@ -2112,7 +2137,10 @@ WebSiteTemplateExport[
       root,
       content,
       templates,
-      config
+      webSiteTEAutoConfig[
+        failinput, fout, root, 
+        content, templates, config
+        ]
       ],
     {
       (f_->html_String):>
@@ -3220,7 +3248,7 @@ WebSiteGenerateContent[
 
 
 (* ::Subsubsection::Closed:: *)
-(*WebSiteGenerateSearchPage*)
+(*GenerateSearchPage*)
 
 
 
@@ -3621,6 +3649,92 @@ WebSiteGenerateSearchPage[
 
 
 (* ::Subsubsection::Closed:: *)
+(*GenerateRedirectPages*)
+
+
+
+Options[WebSiteGenerateRedirectPages]=
+  {
+    "RedirectPages"->{},
+    Monitor->True
+    };
+WebSiteGenerateRedirectPages[
+  dir_, 
+  outDir_,
+  theme_,
+  config_, 
+  ops:OptionsPattern[]
+  ]:=
+  Block[
+    {
+      from, 
+      to,
+      thm=
+        WebSiteFindTheme[dir, theme, "DownloadTheme"->True],
+      pages=
+        Association@
+          Replace[OptionValue["RedirectPages"],
+            Except[_?OptionQ]:>{}
+            ],
+      pagesDefault
+      },
+    pages=
+      Association/@
+        Select[
+          Map[
+            Replace[s_String:>
+              {
+                "RedirectURL"->s
+                }
+              ],
+            pages
+            ],
+          OptionQ
+          ];
+    pagesDefault=
+      <|
+        "PauseTime"->0
+        |>;
+    pages=
+      Join[pagesDefault, #]&/@pages;
+    If[TrueQ@OptionValue[Monitor], 
+          Function[Null, 
+            Monitor[#, 
+              Internal`LoadingPanel@
+                TemplateApply[
+                  "Generating redirect for `` to ``",
+                  {from, to}
+                  ]
+                ], 
+            HoldFirst
+            ],
+          Identity
+          ]@
+      KeyValueMap[
+        Function[
+          from=#;
+          to=Lookup[#2, "RedirectURL"];
+          WebSiteTemplateExport[
+            #,
+            FileNameJoin@{outDir, #<>".html"},
+            {
+              FileNameJoin@{thm, "templates"},
+              dir
+              },
+            None,
+            {"redirect.html"},
+            Join[
+              #2,
+              config
+              ]
+            ]
+          ],
+        pages
+        ]
+    ]
+
+
+(* ::Subsubsection::Closed:: *)
 (*Logging*)
 
 
@@ -3693,6 +3807,7 @@ Options[iWebSiteBuild]=
         "GenerateIndex"->Automatic,
         "GenerateAggregations"->Automatic,
         "GenerateSearchPage"->False,
+        "GenerateRedirectPages"->False,
         "PageSize"->0,
         "UseCache"->True,
         "LastBuild"->Automatic
@@ -3700,7 +3815,8 @@ Options[iWebSiteBuild]=
       Options[WebSiteGenerateContent],
       Options[WebSiteGenerateIndex],
       Options[WebSiteGenerateAggregations],
-      Options[WebSiteGenerateSearchPage]
+      Options[WebSiteGenerateSearchPage],
+      Options[WebSiteGenerateRedirectPages]
       ];
 iWebSiteBuild[
   dir_,
@@ -3757,6 +3873,12 @@ iWebSiteBuild[
       genSP=
         Replace[
           OptionValue["GenerateSearchPage"],
+          Automatic:>
+            OptionValue["GenerateContent"]
+          ],
+      genRed=
+        Replace[
+          OptionValue["GenerateRedirectPages"],
           Automatic:>
             OptionValue["GenerateContent"]
           ],
@@ -3887,6 +4009,18 @@ iWebSiteBuild[
           FilterRules[
             {ops},
             Options[WebSiteGenerateSearchPage]
+            ]
+          ]
+        ];
+      If[genRed,
+        WebSiteGenerateRedirectPages[
+          dir,
+          outDir,
+          thm,
+          newconf,
+          FilterRules[
+            {ops},
+            Options[WebSiteGenerateRedirectPages]
             ]
           ]
         ];

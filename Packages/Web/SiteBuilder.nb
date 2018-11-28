@@ -3508,7 +3508,7 @@ Cell[BoxData[
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"833b78ee-1c86-42e6-991f-4fcdaded7366"]
 }, Closed]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -3843,10 +3843,9 @@ Cell[BoxData[
                RowBox[{
                 RowBox[{"Lookup", "[", 
                  RowBox[{
-                 "args", ",", " ", "\"\<URL\>\"", ",", "\n", 
-                  "\t\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{
-                  "FileNameSplit", "@", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                 "args", ",", " ", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                  "\"\<URL\>\"", ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"FileNameSplit", "@", 
                    RowBox[{"Lookup", "[", 
                     RowBox[{
                     "args", ",", " ", "\"\<FilePath\>\"", ",", " ", 
@@ -3866,7 +3865,7 @@ Cell[BoxData[
                RowBox[{"n_", ":>", "\n", "\t\t\t\t\t\t\t\t\t", 
                 RowBox[{"URLBuild", "@", 
                  RowBox[{"ConstantArray", "[", 
-                  RowBox[{"\"\<..\>\"", ",", 
+                  RowBox[{"\"\<..\>\"", ",", " ", 
                    RowBox[{"n", "-", "1"}]}], "]"}]}]}]}], "\n", 
               "\t\t\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}], 
           "\n", "\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", "]"}]}], ";", 
@@ -4001,7 +4000,7 @@ Cell[BoxData[
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"17b78b98-9484-4a98-800f-2bbd2202e38f"]
 }, Closed]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -4229,6 +4228,44 @@ Cell["\[LeftCeiling]TemplateExport\[RightFloor]", "CodeSubsubsection",
 
 Cell[BoxData[
  RowBox[{
+  RowBox[{"webSiteTEAutoConfig", "[", "\n", "\t", 
+   RowBox[{
+   "failinput_", ",", "\n", "\t", "fout_", ",", "\n", "\t", "root_", ",", 
+    "\n", "\t", "content_", ",", "\n", "\t", "templates_", ",", "\n", "\t", 
+    "config_"}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+  RowBox[{"Join", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"<|", "\n", "\t\t\t", 
+     RowBox[{"\"\<FilePath\>\"", "\[Rule]", "\n", "\t\t\t\t", 
+      RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
+       RowBox[{
+        RowBox[{"SelectFirst", "[", 
+         RowBox[{"root", ",", " ", "\n", "\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"StringStartsQ", "[", 
+            RowBox[{"fout", ",", " ", "#"}], "]"}], "&"}]}], "\n", 
+         "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t", 
+        RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"f_String", ":>", 
+           RowBox[{"FileNameDrop", "[", 
+            RowBox[{"fout", ",", " ", 
+             RowBox[{
+              RowBox[{"FileNameDepth", "[", "f", "]"}], "+", "1"}]}], "]"}]}],
+           ",", "\n", "\t\t\t\t\t\t", 
+          RowBox[{"_", "\[RuleDelayed]", 
+           RowBox[{
+            RowBox[{"StringSplit", "[", 
+             RowBox[{"fout", ",", " ", "\"\<output\>\""}], "]"}], "[", 
+            RowBox[{"[", 
+             RowBox[{"-", "1"}], "]"}], "]"}]}]}], "\n", "\t\t\t\t\t\t", 
+         "}"}]}], "\n", "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t", "|>"}], ",", 
+    "\n", "\t\t", "config"}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"f1c51cfa-9cf3-4493-87bd-87e226e9b27e"],
+
+Cell[BoxData[
+ RowBox[{
   RowBox[{
    RowBox[{"WebSiteTemplateExport", "[", "\n", "\t", 
     RowBox[{
@@ -4240,8 +4277,12 @@ Cell[BoxData[
      RowBox[{"WebSiteTemplateApply", "[", "\n", "\t\t\t", 
       RowBox[{
       "root", ",", "\n", "\t\t\t", "content", ",", "\n", "\t\t\t", 
-       "templates", ",", "\n", "\t\t\t", "config"}], "\n", "\t\t\t", "]"}], 
-     ",", "\n", "\t\t", 
+       "templates", ",", "\n", "\t\t\t", 
+       RowBox[{"webSiteTEAutoConfig", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+        "failinput", ",", " ", "fout", ",", " ", "root", ",", " ", "\n", 
+         "\t\t\t\t", "content", ",", " ", "templates", ",", " ", "config"}], 
+        "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
      RowBox[{"{", "\n", "\t\t\t", 
       RowBox[{
        RowBox[{
@@ -4321,7 +4362,7 @@ Cell[BoxData[
            "]"}], ";", "$Failed"}], "\n", "\t\t\t\t\t", ")"}]}]}], "\n", 
       "\t\t\t", "}"}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"a4acfcfa-a2aa-4e40-bf79-a25ab7cf40d6"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -5089,7 +5130,7 @@ Cell[BoxData[{
       "$Failed"}]}], "\n", "\t\t", "]"}]}], 
   ";"}]}], "CodeInput",ExpressionUUID->"17b9a487-d09f-4da2-a795-74f7f49e1260"]\
 
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -5212,7 +5253,7 @@ Cell[BoxData[{
       "]"}]}], "\n", "\t\t", "]"}]}], 
   ";"}]}], "CodeInput",ExpressionUUID->"9b5d4437-c058-4b6a-bbb6-5c639823803d"]\
 
-}, Open  ]]
+}, Closed]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -6618,8 +6659,7 @@ Cell[BoxData[{
 
 Cell[CellGroupData[{
 
-Cell["\[LeftCeiling]WebSiteGenerateSearchPage\[RightFloor]", \
-"CodeSubsubsection",
+Cell["\[LeftCeiling]GenerateSearchPage\[RightFloor]", "CodeSubsubsection",
  Evaluatable->True,ExpressionUUID->"6d579557-8e44-4831-8c2b-ba126903325e"],
 
 Cell[CellGroupData[{
@@ -7428,7 +7468,132 @@ Cell[BoxData[{
    "]"}]}]}], \
 "CodeInput",ExpressionUUID->"b454a146-f827-4914-9fc7-973e5726e337"]
 }, Open  ]]
-}, Closed]],
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]GenerateRedirectPages\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"ac79fd63-fc70-472c-baf4-53202d804ab6"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "WebSiteGenerateRedirectPages", "]"}], "=", "\n", 
+   "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"\"\<RedirectPages\>\"", "\[Rule]", 
+      RowBox[{"{", "}"}]}], ",", "\n", "\t\t", 
+     RowBox[{"Monitor", "\[Rule]", "True"}]}], "\n", "\t\t", "}"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"WebSiteGenerateRedirectPages", "[", "\n", "\t", 
+   RowBox[{
+   "dir_", ",", " ", "\n", "\t", "outDir_", ",", "\n", "\t", "theme_", ",", 
+    "\n", "\t", "config_", ",", " ", "\n", "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"Block", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{"from", ",", " ", "\n", "\t\t\t", "to", ",", "\n", "\t\t\t", 
+      RowBox[{"thm", "=", "\n", "\t\t\t\t", 
+       RowBox[{"WebSiteFindTheme", "[", 
+        RowBox[{"dir", ",", " ", "theme", ",", " ", 
+         RowBox[{"\"\<DownloadTheme\>\"", "\[Rule]", "True"}]}], "]"}]}], ",",
+       "\n", "\t\t\t", 
+      RowBox[{"pages", "=", "\n", "\t\t\t\t", 
+       RowBox[{"Association", "@", "\n", "\t\t\t\t\t", 
+        RowBox[{"Replace", "[", 
+         RowBox[{
+          RowBox[{"OptionValue", "[", "\"\<RedirectPages\>\"", "]"}], ",", 
+          "\n", "\t", "\t", "\t", "\t\t\t", 
+          RowBox[{
+           RowBox[{"Except", "[", 
+            RowBox[{"_", "?", "OptionQ"}], "]"}], "\[RuleDelayed]", 
+           RowBox[{"{", "}"}]}]}], "\n", "\t\t\t\t\t\t", "]"}]}]}], ",", "\n",
+       "\t\t\t", "pagesDefault"}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"pages", "=", "\n", "\t\t\t", 
+      RowBox[{"Association", "/@", "\n", "\t\t\t\t", 
+       RowBox[{"Select", "[", "\n", "\t\t\t\t\t", 
+        RowBox[{
+         RowBox[{"Map", "[", "\n", "\t\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Replace", "[", 
+            RowBox[{"s_String", "\[RuleDelayed]", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{"\"\<RedirectURL\>\"", "\[Rule]", "s"}], "\n", 
+              "\t\t\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t\t\t", "]"}], ",",
+            "\n", "\t\t\t\t\t\t", "pages"}], "\n", "\t\t\t\t\t\t", "]"}], ",",
+          "\n", "\t\t\t\t\t", "OptionQ"}], "\n", "\t\t\t\t\t", "]"}]}]}], ";",
+      "\n", "\t\t", 
+     RowBox[{"pagesDefault", "=", "\n", "\t\t\t", 
+      RowBox[{"<|", "\n", "\t\t\t\t", 
+       RowBox[{"\"\<PauseTime\>\"", "\[Rule]", "0"}], "\n", "\t\t\t\t", 
+       "|>"}]}], ";", "\n", "\t\t", 
+     RowBox[{"pages", "=", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Join", "[", 
+         RowBox[{"pagesDefault", ",", " ", "#"}], "]"}], "&"}], "/@", 
+       "pages"}]}], ";", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"TrueQ", "@", 
+         RowBox[{"OptionValue", "[", "Monitor", "]"}]}], ",", " ", "\n", 
+        "\t\t\t\t\t", 
+        RowBox[{"Function", "[", 
+         RowBox[{"Null", ",", " ", "\n", "\t", "\t", "\t", "\t\t\t", 
+          RowBox[{"Monitor", "[", 
+           RowBox[{"#", ",", " ", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{"Internal`LoadingPanel", "@", "\n", "\t\t\t\t\t\t\t\t", 
+             RowBox[{"TemplateApply", "[", "\n", "\t\t\t\t\t\t\t\t\t", 
+              RowBox[{
+              "\"\<Generating redirect for `` to ``\>\"", ",", "\n", 
+               "\t\t\t\t\t\t\t\t\t", 
+               RowBox[{"{", 
+                RowBox[{"from", ",", " ", "to"}], "}"}]}], "\n", 
+              "\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t\t\t", 
+           "]"}], ",", " ", "\n", "\t\t\t\t\t\t", "HoldFirst"}], "\n", 
+         "\t\t\t\t\t\t", "]"}], ",", "\n", "\t", "\t", "\t", "\t\t", 
+        "Identity"}], "\n", "\t\t\t\t\t", "]"}], "@", "\n", "\t\t\t", 
+      RowBox[{"KeyValueMap", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"Function", "[", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"from", "=", "#"}], ";", "\n", "\t\t\t\t\t", 
+          RowBox[{"to", "=", 
+           RowBox[{"Lookup", "[", 
+            RowBox[{"#2", ",", " ", "\"\<RedirectURL\>\""}], "]"}]}], ";", 
+          "\n", "\t\t\t\t\t", 
+          RowBox[{"WebSiteTemplateExport", "[", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"#", ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"FileNameJoin", "@", 
+             RowBox[{"{", 
+              RowBox[{"outDir", ",", " ", 
+               RowBox[{"#", "<>", "\"\<.html\>\""}]}], "}"}]}], ",", "\n", 
+            "\t", "\t", "\t\t\t\t", 
+            RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"FileNameJoin", "@", 
+               RowBox[{"{", 
+                RowBox[{"thm", ",", " ", "\"\<templates\>\""}], "}"}]}], ",", 
+              "\n", "\t", "\t", "\t\t\t\t\t", "dir"}], "\n", "\t", "\t", 
+             "\t\t\t\t\t", "}"}], ",", "\n", "\t", "\t", "\t\t\t\t", "None", 
+            ",", "\n", "\t", "\t", "\t\t\t\t", 
+            RowBox[{"{", "\"\<redirect.html\>\"", "}"}], ",", "\n", "\t", 
+            "\t\t\t\t\t", 
+            RowBox[{"Join", "[", "\n", "\t", "\t\t\t\t\t\t", 
+             RowBox[{"#2", ",", "\n", "\t", "\t\t\t\t\t\t", "config"}], "\n", 
+             "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t", "]"}]}], "\n", 
+         "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", "pages"}], "\n", 
+       "\t\t\t\t", "]"}]}]}]}], "\n", "\t\t", 
+   "]"}]}]}], \
+"CodeInput",ExpressionUUID->"deea6f44-bff9-4ef3-8c20-99501e6e4efd"]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -7561,6 +7726,8 @@ Cell[BoxData[{
          "\n", "\t\t\t\t", 
         RowBox[{"\"\<GenerateSearchPage\>\"", "\[Rule]", "False"}], ",", "\n",
          "\t\t\t\t", 
+        RowBox[{"\"\<GenerateRedirectPages\>\"", "\[Rule]", "False"}], ",", 
+        "\n", "\t\t\t\t", 
         RowBox[{"\"\<PageSize\>\"", "\[Rule]", "0"}], ",", "\n", "\t\t\t\t", 
         RowBox[{"\"\<UseCache\>\"", "\[Rule]", "True"}], ",", "\n", 
         "\t\t\t\t", 
@@ -7572,7 +7739,9 @@ Cell[BoxData[{
       "\t\t\t", 
       RowBox[{"Options", "[", "WebSiteGenerateAggregations", "]"}], ",", "\n",
        "\t\t\t", 
-      RowBox[{"Options", "[", "WebSiteGenerateSearchPage", "]"}]}], "\n", 
+      RowBox[{"Options", "[", "WebSiteGenerateSearchPage", "]"}], ",", "\n", 
+      "\t\t\t", 
+      RowBox[{"Options", "[", "WebSiteGenerateRedirectPages", "]"}]}], "\n", 
      "\t\t\t", "]"}]}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
@@ -7662,6 +7831,14 @@ Cell[BoxData[{
         RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
          RowBox[{
           RowBox[{"OptionValue", "[", "\"\<GenerateSearchPage\>\"", "]"}], 
+          ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"Automatic", ":>", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"OptionValue", "[", "\"\<GenerateContent\>\"", "]"}]}]}], 
+         "\n", "\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"genRed", "=", "\n", "\t\t\t\t", 
+        RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"OptionValue", "[", "\"\<GenerateRedirectPages\>\"", "]"}], 
           ",", "\n", "\t\t\t\t\t", 
           RowBox[{"Automatic", ":>", "\n", "\t\t\t\t\t\t", 
            RowBox[{"OptionValue", "[", "\"\<GenerateContent\>\"", "]"}]}]}], 
@@ -7870,6 +8047,19 @@ Cell[BoxData[{
            RowBox[{
             RowBox[{"{", "ops", "}"}], ",", "\n", "\t\t\t\t\t\t", 
             RowBox[{"Options", "[", "WebSiteGenerateSearchPage", "]"}]}], 
+           "\n", "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "]"}]}], "\n", 
+       "\t\t\t\t", "]"}], ";", "\n", "\t\t\t", 
+      RowBox[{"If", "[", 
+       RowBox[{"genRed", ",", "\n", "\t\t\t\t", 
+        RowBox[{"WebSiteGenerateRedirectPages", "[", "\n", "\t\t\t\t\t", 
+         RowBox[{
+         "dir", ",", "\n", "\t\t\t\t\t", "outDir", ",", "\n", "\t\t\t\t\t", 
+          "thm", ",", "\n", "\t\t\t\t\t", "newconf", ",", "\n", "\t\t\t\t\t", 
+          
+          RowBox[{"FilterRules", "[", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"{", "ops", "}"}], ",", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"Options", "[", "WebSiteGenerateRedirectPages", "]"}]}], 
            "\n", "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "]"}]}], "\n", 
        "\t\t\t\t", "]"}], ";"}]}], "\n", "\t\t\t", "]"}]}], 
   ";"}]}], "CodeInput",ExpressionUUID->"b207c801-bd72-4899-b5b1-0589f6d9b138"]\
@@ -8345,7 +8535,7 @@ $WebSiteBuildErrors.\>\""}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}],
        ";", "\n", "\t\t", "res"}]}], "\n", "\t\t", "]"}]}], 
   ";"}]}], "CodeInput",ExpressionUUID->"9d4353a9-dbe4-477d-b228-d70bbae52773"]\
 
-}, Open  ]]
+}, Closed]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -8747,9 +8937,8 @@ Cell[BoxData[
           "\n", "\t\t\t\t\t", 
           RowBox[{"OptionValue", "@", "\"\<IncludeFiles\>\""}]}], "\n", 
          "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t", 
-    "]"}]}], 
-  "*)"}]], "CodeInput",ExpressionUUID->"25ffec1f-4c5e-420e-bf1c-76a062f46225"]\
-
+    "]"}]}], "*)"}]], \
+"CodeInput",ExpressionUUID->"25ffec1f-4c5e-420e-bf1c-76a062f46225"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -8966,7 +9155,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"4900c668-e5de-468b-908d-\
 3bbe427549a1"]
 },
 WindowSize->{808, 756},
-WindowMargins->{{Automatic, 185}, {3, Automatic}},
+WindowMargins->{{Automatic, 262}, {Automatic, 1}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
