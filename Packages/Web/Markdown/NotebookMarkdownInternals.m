@@ -3202,7 +3202,7 @@ iNotebookToMarkdownRegister[pathInfo_, Cell[t_, "Title", ___]]:=
 
 
 
-iNotebookToMarkdownRegister[pathInfo_,Cell[t_, "Chapter", ___]]:=
+iNotebookToMarkdownRegister[pathInfo_, Cell[t_, "Chapter", ___]]:=
   Replace[iNotebookToMarkdown[pathInfo,t],
     s:Except["", _String]:>
       markdownLinkAnchor[s, "Section"]<>

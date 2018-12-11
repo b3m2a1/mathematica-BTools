@@ -1,0 +1,1933 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     94621,       1925]
+NotebookOptionsPosition[     34319,       1037]
+NotebookOutlinePosition[     76790,       1637]
+CellTagsIndexPosition[     76110,       1613]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[TextData[{
+ "BTools  ",
+ Cell[BoxData[
+  TemplateBox[{PanelBox[
+     TagBox[
+      InputFieldBox[
+       Dynamic[
+        CurrentValue[
+         EvaluationNotebook[], {
+         TaggingRules, "Bugs", "SearchInterface", "SearchText"}, ""]], String,
+        Appearance -> "Frameless"], 
+      EventHandlerTag[{"ReturnKeyDown" :> (Replace[
+           BugTracker`Package`BugsNotebookLocate[
+            EvaluationNotebook[], 
+            CurrentValue[
+             EvaluationNotebook[], {
+             TaggingRules, "Bugs", "SearchInterface", 
+              "SearchText"}]], $Failed :> Beep[]]; CurrentValue[
+            EvaluationNotebook[], {
+            TaggingRules, "Bugs", "SearchInterface", "SearchText"}] = ""), 
+        Method -> "Preemptive", PassEventsDown -> Automatic, PassEventsUp -> 
+        True}]], FrameMargins -> {{5, 5}, {5, 5}}, 
+     Appearance -> {
+      "Hover" -> FrontEnd`FileName[{"BugTracker"}, 
+         "SearchBackground-Hover.png"]}],TemplateBox[{5}, "Spacer1"],
+    ButtonBox["\"\"", ButtonFunction :> (Replace[
+        BugTracker`Package`BugsNotebookLocate[
+         EvaluationNotebook[], 
+         CurrentValue[
+          EvaluationNotebook[], {
+          TaggingRules, "Bugs", "SearchInterface", "SearchText"}]], $Failed :> 
+        Beep[]]; CurrentValue[
+         EvaluationNotebook[], {
+         TaggingRules, "Bugs", "SearchInterface", "SearchText"}] = ""), 
+     Appearance -> {
+      "Default" -> FrontEnd`FileName[{"BugTracker"}, "Search-Default.png"], 
+       "Hover" -> FrontEnd`FileName[{"BugTracker"}, "Search-Hover.png"], 
+       "Pressed" -> FrontEnd`FileName[{"BugTracker"}, "Search-Pressed.png"]}, 
+     ImageSize -> {16, 16}, Evaluator -> Automatic, Method -> "Preemptive"]},
+   "RowDefault"]], "Text", "BugSearchBar",ExpressionUUID->
+  "937dc8dc-718c-4edb-87d6-d8ad74197c7d"]
+}], "Chapter", "BugsNotebookHeader",
+ CellChangeTimes->{{3.753511534582324*^9, 
+  3.753511537871969*^9}},ExpressionUUID->"094f3b09-e94f-4d1a-bf1a-\
+858035ae547f"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  ButtonBox["\<\"View List\"\>",
+   Appearance->{
+    "Default" -> 
+     FrontEnd`FileName[{"BugTracker"}, "ButtonAppearanceLeft-Default.png"], 
+     "Hover" -> FrontEnd`FileName[{"BugTracker"}, 
+       "ButtonAppearanceLeft-Hover.png"], "Pressed" -> 
+     FrontEnd`FileName[{"BugTracker"}, "ButtonAppearanceLeft-Pressed.png"]},
+   ButtonFunction:>(Needs["BugTracker`"]; 
+    BugTracker`Package`BugsNotebookWriteViewCell[
+      BugTracker`Package`BugsNotebookToBugs[
+       EvaluationNotebook[]]]),
+   Evaluator->Automatic,
+   FrameMargins->{{10, 10}, {5, 5}},
+   Method->"Preemptive"]], "Text",ExpressionUUID->
+  "a87672e3-44b4-48ac-94db-1291f20001af"],
+ Cell[BoxData[
+  ButtonBox["\<\"View Dataset\"\>",
+   Appearance->{
+    "Default" -> 
+     FrontEnd`FileName[{"BugTracker"}, "ButtonAppearanceRight-Default.png"], 
+     "Hover" -> FrontEnd`FileName[{"BugTracker"}, 
+       "ButtonAppearanceRight-Hover.png"], "Pressed" -> 
+     FrontEnd`FileName[{"BugTracker"}, "ButtonAppearanceRight-Pressed.png"]},
+   ButtonFunction:>(Needs["BugTracker`"]; 
+    BugTracker`Package`BugsNotebookWriteViewCell[
+      BugTracker`Package`BugsToDataset[
+       BugTracker`Package`BugsNotebookToBugs[
+        EvaluationNotebook[]]]]),
+   Evaluator->Automatic,
+   FrameMargins->{{10, 10}, {5, 5}},
+   Method->"Preemptive"]], "Text",ExpressionUUID->
+  "97599db2-6978-4a1d-a838-41038ab70200"]
+}], "Text", \
+"BugsNotebookButtonBar",ExpressionUUID->"381deb48-9244-4199-ac60-\
+38f0c87b1845"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[GridBox[{
+   {
+    ItemBox[Cell["Integrate BTools and BugTracker", "Section", "BugTitle",
+      CellFrame->None,
+      StripOnInput->False,ExpressionUUID->
+      "034ef84e-2111-4d1b-b725-f349ec9c5b3e"],
+     Alignment->Left,
+     ItemSize->Scaled[0.8],
+     StripOnInput->False], 
+    ItemBox[Cell[BoxData[
+      TogglerBox[Dynamic[
+        CurrentValue[
+         EvaluationCell[], {
+         TaggingRules, "Bugs", "bugs-integration", "Resolved"}, False]], {
+       True->"\[CheckmarkedBox]", False->"\[EmptySquare]"}, "\[CheckedBox]"]],
+       "BugResolved",
+      Selectable->False,
+      Deletable->False,
+      Deployed->True,
+      TaggingRules->{"Bugs" -> {"bugs-integration" -> {"Resolved" -> True}}},
+      ExpressionUUID->"ac332c2f-0233-4864-8fa7-10fc9be2af0c"],
+     Alignment->Right,
+     ItemSize->Scaled[0.1],
+     StripOnInput->False]}
+  },
+  AutoDelete->False,
+  GridBoxItemSize->{
+   "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}]], "Section", \
+"BugTitle",
+ CellChangeTimes->{3.753512719240637*^9},
+ CellTags->{
+  "Bug", "bugs-integration", 
+   "Title"},ExpressionUUID->"31959117-be91-4f92-a9fc-29d5a42e2371"],
+
+Cell["Mon 25 Jun 2018 00:20:48", "Text", "BugAnnotation", "BugTimestamp", "BugCreated",
+ CellTags->{
+  "Bug", "bugs-integration", 
+   "CreationDate"},ExpressionUUID->"1b299b33-9e92-4043-aede-c48be037c2e0"],
+
+Cell["", "Text", "BugAnnotation", "BugTimestamp", "BugResolved",
+ CellTags->{
+  "Bug", "bugs-integration", 
+   "ResolutionDate"},ExpressionUUID->"4f76adb6-0f53-4129-9e18-ecac833fc1d0"],
+
+Cell["1", "Text", "BugAnnotation", "BugID",
+ CellTags->{
+  "Bug", "bugs-integration", 
+   "ID"},ExpressionUUID->"8b593c24-f0da-4492-a054-8510994e0d1c"],
+
+Cell["BTools", "Text", "BugAnnotation", "BugPackage",
+ CellTags->{
+  "Bug", "bugs-integration", 
+   "Package"},ExpressionUUID->"e6f43983-79f0-40db-a09e-97e2ebd8d71f"],
+
+Cell["", "Text", "BugAnnotation", "BugOwner",
+ CellTags->{
+  "Bug", "bugs-integration", 
+   "Owner"},ExpressionUUID->"940ab152-8b95-4827-9cc4-cccaf50e639f"],
+
+Cell["integrations, bugs, testing", "Text", "BugAnnotation", "BugKeywords",
+ CellTags->{
+  "Bug", "bugs-integration", 
+   "Keywords"},ExpressionUUID->"22e4b554-ecbb-4174-9757-348e4639f7d7"],
+
+Cell[CellGroupData[{
+
+Cell["Description", "Subsection",ExpressionUUID->"f807a93e-623f-4dcd-a883-3a437dd5f0fa"],
+
+Cell["BTools should have a way to directly add bugs to projects", "Text", "BugDescription",
+ CellTags->{
+  "Bug", "bugs-integration", 
+   "Description"},ExpressionUUID->"a41d08c2-ec94-4c41-bd9c-3632fbd52a2e"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Examples", "Subsection", "BugExamples",
+ CellTags->{
+  "Bug", "bugs-integration", 
+   "Examples"},ExpressionUUID->"f43be997-b06d-4680-bc4c-bbb0a0c70b90"],
+
+Cell["<<Example>>", "Text",ExpressionUUID->"017cf38a-5afb-48e9-9d1d-0a8774cbba3d"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Notes", "Subsection", "BugNotes",
+ CellTags->{
+  "Bug", "bugs-integration", 
+   "Notes"},ExpressionUUID->"f8616d0c-b768-49ff-8deb-d26300eeb2bd"],
+
+Cell["<<Note>>", "Text",ExpressionUUID->"bd41eb83-da66-4149-9555-0fcbbc935f24"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[GridBox[{
+   {
+    ItemBox[Cell["Bugs & Validation", "Section", "BugTitle",
+      CellFrame->None,
+      StripOnInput->False,ExpressionUUID->
+      "6b374358-5e8e-427b-943f-988b2b168454"],
+     Alignment->Left,
+     ItemSize->Scaled[0.8],
+     StripOnInput->False], 
+    ItemBox[Cell[BoxData[
+      TogglerBox[Dynamic[
+        CurrentValue[
+         EvaluationCell[], {TaggingRules, "Bugs", "bugs-testing", "Resolved"},
+          False]], {True->"\[CheckmarkedBox]", False->"\[EmptySquare]"}, 
+       "\[CheckedBox]"]], "BugResolved",
+      Selectable->False,
+      Deletable->False,
+      Deployed->True,
+      TaggingRules->{"Bugs" -> {"bugs-testing" -> {"Resolved" -> False}}},
+      ExpressionUUID->"cc883a79-da55-4ec0-a6cf-13b20d3584cb"],
+     Alignment->Right,
+     ItemSize->Scaled[0.1],
+     StripOnInput->False]}
+  },
+  AutoDelete->False,
+  GridBoxItemSize->{
+   "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}]], "Section", \
+"BugTitle",
+ CellChangeTimes->{{3.7535115573046637`*^9, 3.753511557305086*^9}},
+ CellTags->{
+  "Bug", "bugs-testing", 
+   "Title"},ExpressionUUID->"23529aca-8e53-4780-93d7-9f8dbceaa674"],
+
+Cell["Mon 25 Jun 2018 00:21:30", "Text", "BugAnnotation", "BugTimestamp", "BugCreated",
+ CellTags->{
+  "Bug", "bugs-testing", 
+   "CreationDate"},ExpressionUUID->"317d12a1-e040-4163-8c43-00b0227dff1d"],
+
+Cell["", "Text", "BugAnnotation", "BugTimestamp", "BugResolved",
+ CellTags->{
+  "Bug", "bugs-testing", 
+   "ResolutionDate"},ExpressionUUID->"3001467e-db12-40e8-a28b-3bf0d05dc949"],
+
+Cell["2", "Text", "BugAnnotation", "BugID",
+ CellTags->{
+  "Bug", "bugs-testing", 
+   "ID"},ExpressionUUID->"0509f567-9f6f-4be9-b1f7-0b0372cf6e38"],
+
+Cell["BugTracker", "Text", "BugAnnotation", "BugPackage",
+ CellTags->{
+  "Bug", "bugs-testing", 
+   "Package"},ExpressionUUID->"dda5dde1-d09c-4bd8-829d-20ec903ab599"],
+
+Cell["", "Text", "BugAnnotation", "BugOwner",
+ CellTags->{
+  "Bug", "bugs-testing", 
+   "Owner"},ExpressionUUID->"92331e88-32a7-41ca-8962-ac74abf5fb51"],
+
+Cell["validation", "Text", "BugAnnotation", "BugKeywords",
+ CellTags->{
+  "Bug", "bugs-testing", 
+   "Keywords"},ExpressionUUID->"9d38034b-d4a2-48b2-9299-095219e8dd76"],
+
+Cell[CellGroupData[{
+
+Cell["Description", "Subsection",ExpressionUUID->"bada1b78-0af2-4a20-ad1d-b42a4ee1757a"],
+
+Cell["Bugs should be able to have attached validation tests ", "Text", "BugDescription",
+ CellTags->{
+  "Bug", "bugs-testing", 
+   "Description"},ExpressionUUID->"5a403b01-90ac-4d5c-b6c1-6a1cf3780e6a"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Examples", "Subsection", "BugExamples",
+ CellTags->{
+  "Bug", "bugs-testing", 
+   "Examples"},ExpressionUUID->"a8da2d74-fd43-4bc3-bdf2-79f4eeca3b45"],
+
+Cell["<<Example>>", "Text",ExpressionUUID->"6acae494-a59c-48c4-aede-a5d3ec784020"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Notes", "Subsection", "BugNotes",
+ CellTags->{
+  "Bug", "bugs-testing", 
+   "Notes"},ExpressionUUID->"8796dbe2-11b2-4b67-86c0-e174a7d861f7"],
+
+Cell["<<Note>>", "Text",ExpressionUUID->"ad485a82-1f25-40f6-b1cc-d95e3ad332e3"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[GridBox[{
+   {
+    ItemBox[Cell["Add testing framework to BTools", "Section", "BugTitle",
+      CellFrame->None,
+      StripOnInput->False,ExpressionUUID->
+      "ffab5277-40f3-436b-b366-5ea0d373fac6"],
+     Alignment->Left,
+     ItemSize->Scaled[0.8],
+     StripOnInput->False], 
+    ItemBox[Cell[BoxData[
+      TogglerBox[Dynamic[
+        CurrentValue[
+         EvaluationCell[], {
+         TaggingRules, "Bugs", "btools-testing", "Resolved"}, False]], {True->
+       "\[CheckmarkedBox]", False->"\[EmptySquare]"}, "\[CheckedBox]"]], 
+      "BugResolved",
+      Selectable->False,
+      Deletable->False,
+      Deployed->True,
+      TaggingRules->{
+       "Bugs" -> {
+         "SearchInterface" -> {"SearchText" -> ""}, 
+          "btools-testing" -> {"Resolved" -> False}}},ExpressionUUID->
+      "9b54b882-a851-43fe-96ec-34a9dea2a91b"],
+     Alignment->Right,
+     ItemSize->Scaled[0.1],
+     StripOnInput->False]}
+  },
+  AutoDelete->False,
+  GridBoxItemSize->{
+   "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}]], "Section", \
+"BugTitle",
+ CellTags->{
+  "Bug", "btools-testing", 
+   "Title"},ExpressionUUID->"84b84a6c-55f2-47a5-9aab-19bdc567eb31"],
+
+Cell["Mon 25 Jun 2018 00:22:13", "Text", "BugAnnotation", "BugTimestamp", "BugCreated",
+ CellTags->{
+  "Bug", "btools-testing", 
+   "CreationDate"},ExpressionUUID->"8fa8678c-0095-4d3c-b41f-5f6ab71b83eb"],
+
+Cell["", "Text", "BugAnnotation", "BugTimestamp", "BugResolved",
+ CellTags->{
+  "Bug", "btools-testing", 
+   "ResolutionDate"},ExpressionUUID->"0f42956f-9488-4b2a-be48-ea3d36f5dc1c"],
+
+Cell["3", "Text", "BugAnnotation", "BugID",
+ CellTags->{
+  "Bug", "btools-testing", 
+   "ID"},ExpressionUUID->"fd0b5273-2192-4871-85b2-bf11011f81a4"],
+
+Cell["BTools", "Text", "BugAnnotation", "BugPackage",
+ CellTags->{
+  "Bug", "btools-testing", 
+   "Package"},ExpressionUUID->"a2b804f5-f6f2-44f2-a9eb-fba4866bc498"],
+
+Cell["", "Text", "BugAnnotation", "BugOwner",
+ CellTags->{
+  "Bug", "btools-testing", 
+   "Owner"},ExpressionUUID->"c44a574f-1bd7-4af2-bf31-d9fb1d534ee4"],
+
+Cell["testing", "Text", "BugAnnotation", "BugKeywords",
+ CellTags->{
+  "Bug", "btools-testing", 
+   "Keywords"},ExpressionUUID->"452ea9b3-3dcc-4afb-9a2d-35e01fb344d6"],
+
+Cell[CellGroupData[{
+
+Cell["Description", "Subsection",ExpressionUUID->"153aa166-6838-468d-acd4-8b2df51d5183"],
+
+Cell["\<\
+BTools needs to hook into MUnit in some nice way to allow that integration\
+\>", "Text", "BugDescription",
+ CellTags->{
+  "Bug", "btools-testing", 
+   "Description"},ExpressionUUID->"9f4f3089-ab8d-4905-b842-4f4e82970d15"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Examples", "Subsection", "BugExamples",
+ CellTags->{
+  "Bug", "btools-testing", 
+   "Examples"},ExpressionUUID->"64772f4b-0fa6-4f9d-9255-cfce1a356353"],
+
+Cell["<<Example>>", "Text",ExpressionUUID->"d381dd8f-1246-4e45-a3d4-4b87c96137b7"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Notes", "Subsection", "BugNotes",
+ CellTags->{
+  "Bug", "btools-testing", 
+   "Notes"},ExpressionUUID->"3afdc6b5-47ab-41b8-ba2d-272cca89d163"],
+
+Cell["Should be able to do a few things:", "Text",ExpressionUUID->"37b695c5-5eb3-4f49-a1b1-0857d45bbeb2"],
+
+Cell["Find the testing notebook", "Text",ExpressionUUID->"b3ab41cc-f1cc-48c4-b889-7e8b4c0cae61"],
+
+Cell["Create a testing notebook", "Text",ExpressionUUID->"f2ae2419-090f-48ce-b43a-39fc22f6fd6b"],
+
+Cell["Add a test ? (Probably easier via interface)", "Text",ExpressionUUID->"af3c2396-7215-4a20-b524-b30f7578c7d3"],
+
+Cell["Export tests ? (Probably easier via interface)", "Text",ExpressionUUID->"bc30c906-adab-45a4-8182-17220dfe913c"],
+
+Cell["Import tests", "Text",ExpressionUUID->"9f43c02a-c793-4baf-9ab0-29b7761af75a"],
+
+Cell["Link test resources", "Text",ExpressionUUID->"91f3e241-4320-4459-b0ea-487af4e7a93b"],
+
+Cell["Run validation tests", "Text",ExpressionUUID->"32f5d3fc-b122-4d16-a6b0-aae09ac09554"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[GridBox[{
+   {
+    ItemBox[Cell["RSS feeder for SiteBuilder", "Section", "BugTitle",
+      CellFrame->None,
+      StripOnInput->False,ExpressionUUID->
+      "92deb8a2-9b5f-449b-a7a2-d9fc211b8489"],
+     Alignment->Left,
+     ItemSize->Scaled[0.8],
+     StripOnInput->False], 
+    ItemBox[Cell[BoxData[
+      TogglerBox[Dynamic[
+        CurrentValue[
+         EvaluationCell[], {TaggingRules, "Bugs", "rss-feeder", "Resolved"}, 
+         True]], {True->"\[CheckmarkedBox]", False->"\[EmptySquare]"}, 
+       "\[CheckedBox]"]], "BugResolved",
+      Selectable->False,
+      Deletable->False,
+      Deployed->True,
+      TaggingRules->{
+       "Bugs" -> {
+         "SearchInterface" -> {"SearchText" -> ""}, 
+          "rss-feeder" -> {"Resolved" -> True}}},ExpressionUUID->
+      "4c75ec74-3e4e-46db-8206-07fadd4c6259"],
+     Alignment->Right,
+     ItemSize->Scaled[0.1],
+     StripOnInput->False]}
+  },
+  AutoDelete->False,
+  GridBoxItemSize->{
+   "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}]], "Section", \
+"BugTitle",
+ CellTags->{
+  "Bug", "rss-feeder", 
+   "Title"},ExpressionUUID->"a4748ce3-7223-4869-9a52-c0d7bc1a9234"],
+
+Cell["Tue 26 Jun 2018 13:43:01", "Text", "BugAnnotation", "BugTimestamp", "BugCreated",
+ CellTags->{
+  "Bug", "rss-feeder", 
+   "CreationDate"},ExpressionUUID->"fa16c673-8fb9-4e1a-868f-9e677ee5a44f"],
+
+Cell["Fri 29 Jun 2018 15:25:50", "Text", "BugAnnotation", "BugTimestamp", "BugResolved",
+ CellTags->{
+  "Bug", "rss-feeder", 
+   "ResolutionDate"},ExpressionUUID->"415b4b66-fea5-4a17-96f5-69e9f67a6504"],
+
+Cell["4", "Text", "BugAnnotation", "BugID",
+ CellTags->{
+  "Bug", "rss-feeder", 
+   "ID"},ExpressionUUID->"b602e127-a61f-49a7-80a6-43b95e779f1d"],
+
+Cell["BTools", "Text", "BugAnnotation", "BugPackage",
+ CellTags->{
+  "Bug", "rss-feeder", 
+   "Package"},ExpressionUUID->"e9a89001-c26c-4387-adc9-cc15c2946774"],
+
+Cell["", "Text", "BugAnnotation", "BugOwner",
+ CellTags->{
+  "Bug", "rss-feeder", 
+   "Owner"},ExpressionUUID->"d3557648-3e46-4d2a-92cc-aa530e0ee40c"],
+
+Cell["rss-feed", "Text", "BugAnnotation", "BugKeywords",
+ CellTags->{
+  "Bug", "rss-feeder", 
+   "Keywords"},ExpressionUUID->"4d366270-057d-462b-a3e1-d8f2bbdeb7fb"],
+
+Cell[CellGroupData[{
+
+Cell["Description", "Subsection",ExpressionUUID->"92970cc1-cc70-40a5-839f-d769e33092a2"],
+
+Cell["\<\
+SiteBuilder needs an RSS feeder so that it can hook into all sorts of \
+integrations, in particular the StackExchange chat system.\
+\>", "Text", "BugDescription",
+ CellTags->{
+  "Bug", "rss-feeder", 
+   "Description"},ExpressionUUID->"9fa0e09d-53cf-4253-9595-7ef1cb9f1556"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Examples", "Subsection", "BugExamples",
+ CellTags->{
+  "Bug", "rss-feeder", 
+   "Examples"},ExpressionUUID->"dc884294-dc6f-4916-9b55-e5f3d3a6ba6c"],
+
+Cell["<<Example>>", "Text",ExpressionUUID->"390951ca-c864-43db-9339-d13c631d3d79"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Notes", "Subsection", "BugNotes",
+ CellTags->{
+  "Bug", "rss-feeder", 
+   "Notes"},ExpressionUUID->"039c8e87-fe8f-4426-a4d1-fba828fa0baa"],
+
+Cell["<<Note>>", "Text",ExpressionUUID->"336627af-1482-49a1-8d6f-8aeb1b1848b6"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[GridBox[{
+   {
+    ItemBox[Cell[
+     "Split Formatting package into high- and low-level stuff", "Section", 
+      "BugTitle",
+      CellFrame->None,
+      StripOnInput->False,ExpressionUUID->
+      "cec73e46-4714-42d8-bb93-fa48fcbaf46e"],
+     Alignment->Left,
+     ItemSize->Scaled[0.8],
+     StripOnInput->False], 
+    ItemBox[Cell[BoxData[
+      TogglerBox[Dynamic[
+        CurrentValue[
+         EvaluationCell[], {
+         TaggingRules, "Bugs", "btools-formatting-split", "Resolved"}, 
+         True]], {True->"\[CheckmarkedBox]", False->"\[EmptySquare]"}, 
+       "\[CheckedBox]"]], "BugResolved",
+      Selectable->False,
+      Deletable->False,
+      Deployed->True,
+      TaggingRules->{
+       "Bugs" -> {
+         "SearchInterface" -> {"SearchText" -> ""}, 
+          "btools-formatting-split" -> {"Resolved" -> True}}},ExpressionUUID->
+      "151272eb-be5e-45fc-9797-2debe14adafb"],
+     Alignment->Right,
+     ItemSize->Scaled[0.1],
+     StripOnInput->False]}
+  },
+  AutoDelete->False,
+  GridBoxItemSize->{
+   "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}]], "Section", \
+"BugTitle",
+ CellTags->{
+  "Bug", "btools-formatting-split", 
+   "Title"},ExpressionUUID->"fe3655cb-1b5a-4779-b7d7-b47b786c89da"],
+
+Cell["Wed 27 Jun 2018 12:56:44", "Text", "BugAnnotation", "BugTimestamp", "BugCreated",
+ CellTags->{
+  "Bug", "btools-formatting-split", 
+   "CreationDate"},ExpressionUUID->"78c755cd-e296-4bf8-bd38-f0688d6b7c6a"],
+
+Cell["Wed 27 Jun 2018 14:07:39", "Text", "BugAnnotation", "BugTimestamp", "BugResolved",
+ CellTags->{
+  "Bug", "btools-formatting-split", 
+   "ResolutionDate"},ExpressionUUID->"5e4870c4-6226-451a-901f-b1d5b3ceacf8"],
+
+Cell["5", "Text", "BugAnnotation", "BugID",
+ CellTags->{
+  "Bug", "btools-formatting-split", 
+   "ID"},ExpressionUUID->"10a9727c-a458-42c7-8f6a-e9e7b7be5a4e"],
+
+Cell["BTools", "Text", "BugAnnotation", "BugPackage",
+ CellTags->{
+  "Bug", "btools-formatting-split", 
+   "Package"},ExpressionUUID->"828003cd-cd9d-4d8e-9e86-39f1d3e1c0b4"],
+
+Cell["", "Text", "BugAnnotation", "BugOwner",
+ CellTags->{
+  "Bug", "btools-formatting-split", 
+   "Owner"},ExpressionUUID->"d2df4297-88b2-486c-974e-9a2c246454b8"],
+
+Cell["formatting, splits", "Text", "BugAnnotation", "BugKeywords",
+ CellTags->{
+  "Bug", "btools-formatting-split", 
+   "Keywords"},ExpressionUUID->"5b949f90-27df-4fb3-aa14-104588a2dfb1"],
+
+Cell[CellGroupData[{
+
+Cell["Description", "Subsection",ExpressionUUID->"51f27936-360e-4595-a019-aa931d7bb186"],
+
+Cell["\<\
+The formatting package is bloated and should be partitioned into the \
+high-level utilities like GradientButton and the lower stuff like \
+GradientButtonAppearance / unusued stuff like ColoredButton\
+\>", "Text", "BugDescription",
+ CellTags->{
+  "Bug", "btools-formatting-split", 
+   "Description"},ExpressionUUID->"6a846ddf-7107-4f48-ae1a-9aa645274c55"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Examples", "Subsection", "BugExamples",
+ CellTags->{
+  "Bug", "btools-formatting-split", 
+   "Examples"},ExpressionUUID->"ac7a5f1d-b263-4b36-a39c-910c67609d43"],
+
+Cell["<<Example>>", "Text",ExpressionUUID->"a049ad64-8900-4c1b-a838-6ac712ff5c17"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Notes", "Subsection", "BugNotes",
+ CellTags->{
+  "Bug", "btools-formatting-split", 
+   "Notes"},ExpressionUUID->"c60e6c03-ded6-4f77-bd16-f9088e8f5846"],
+
+Cell["<<Note>>", "Text",ExpressionUUID->"a569d8e3-20cb-4543-82f2-b2711ed6bd1d"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[GridBox[{
+   {
+    ItemBox[Cell["PacletServer update dates", "Section", "BugTitle",
+      CellFrame->None,
+      StripOnInput->False,ExpressionUUID->
+      "7b997a80-4810-47b0-b03a-9092f615f5a3"],
+     Alignment->Left,
+     ItemSize->Scaled[0.8],
+     StripOnInput->False], 
+    ItemBox[Cell[BoxData[
+      TogglerBox[Dynamic[
+        CurrentValue[
+         EvaluationCell[], {
+         TaggingRules, "Bugs", "paclets-update-times", "Resolved"}, True]], {
+       True->"\[CheckmarkedBox]", False->"\[EmptySquare]"}, "\[CheckedBox]"]],
+       "BugResolved",
+      Selectable->False,
+      Deletable->False,
+      Deployed->True,
+      TaggingRules->{
+       "Bugs" -> {
+         "SearchInterface" -> {"SearchText" -> ""}, 
+          "paclets-update-times" -> {"Resolved" -> True}}},ExpressionUUID->
+      "d64f0e1d-f763-4591-918c-aad100fddfec"],
+     Alignment->Right,
+     ItemSize->Scaled[0.1],
+     StripOnInput->False]}
+  },
+  AutoDelete->False,
+  GridBoxItemSize->{
+   "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}]], "Section", \
+"BugTitle",
+ CellTags->{
+  "Bug", "paclets-update-times", 
+   "Title"},ExpressionUUID->"cd1fcbe7-117c-4d46-be0d-a13ba6af3e55"],
+
+Cell["Fri 29 Jun 2018 15:25:30", "Text", "BugAnnotation", "BugTimestamp", "BugCreated",
+ CellTags->{
+  "Bug", "paclets-update-times", 
+   "CreationDate"},ExpressionUUID->"bc94d77f-b444-43cf-a0c8-428b6171c6dd"],
+
+Cell["Fri 29 Jun 2018 15:50:30", "Text", "BugAnnotation", "BugTimestamp", "BugResolved",
+ CellTags->{
+  "Bug", "paclets-update-times", 
+   "ResolutionDate"},ExpressionUUID->"c9686cf9-3c44-4081-864f-96db4c244fe0"],
+
+Cell["6", "Text", "BugAnnotation", "BugID",
+ CellTags->{
+  "Bug", "paclets-update-times", 
+   "ID"},ExpressionUUID->"c342b708-2590-477d-8433-a26e76841100"],
+
+Cell["BTools", "Text", "BugAnnotation", "BugPackage",
+ CellTags->{
+  "Bug", "paclets-update-times", 
+   "Package"},ExpressionUUID->"054884bb-2ddd-47af-90bb-c0701adc43f7"],
+
+Cell["", "Text", "BugAnnotation", "BugOwner",
+ CellTags->{
+  "Bug", "paclets-update-times", 
+   "Owner"},ExpressionUUID->"a156b90c-5dc0-4cfd-8a7d-e505ed205bf6"],
+
+Cell["paclets, dates", "Text", "BugAnnotation", "BugKeywords",
+ CellTags->{
+  "Bug", "paclets-update-times", 
+   "Keywords"},ExpressionUUID->"c74aa4af-7d05-4df5-b35c-e67cc3453e52"],
+
+Cell[CellGroupData[{
+
+Cell["Description", "Subsection",ExpressionUUID->"305b35c2-24f6-41bd-a15a-ef8a041475ae"],
+
+Cell["PacletServer should provide update times for packages", "Text", "BugDescription",
+ CellTags->{
+  "Bug", "paclets-update-times", 
+   "Description"},ExpressionUUID->"de5bae87-cc70-4953-8b61-18645e5469fa"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Examples", "Subsection", "BugExamples",
+ CellTags->{
+  "Bug", "paclets-update-times", 
+   "Examples"},ExpressionUUID->"c21ea85f-2879-46f3-b376-3ad60ca73233"],
+
+Cell["<<Example>>", "Text",ExpressionUUID->"214344fe-7d25-4edd-8724-50c492f78db1"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Notes", "Subsection", "BugNotes",
+ CellTags->{
+  "Bug", "paclets-update-times", 
+   "Notes"},ExpressionUUID->"df5e2a3d-55fa-4af0-9dca-cbbc7f85b52f"],
+
+Cell["Turns out it was already on there...", "Text",ExpressionUUID->"79454cad-624d-4821-b998-3348c816e189"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[GridBox[{
+   {
+    ItemBox[Cell[
+     "Notebook to Markdown needs context aware HTML", "Section", "BugTitle",
+      CellFrame->None,
+      StripOnInput->False,ExpressionUUID->
+      "40588c45-348e-4876-ae1c-bad491a350f9"],
+     Alignment->Left,
+     ItemSize->Scaled[0.8],
+     StripOnInput->False], 
+    ItemBox[Cell[BoxData[
+      TogglerBox[Dynamic[
+        CurrentValue[
+         EvaluationCell[], {
+         TaggingRules, "Bugs", "markdown-html-switching", "Resolved"}, 
+         False]], {True->"\[CheckmarkedBox]", False->"\[EmptySquare]"}, 
+       "\[CheckedBox]"]], "BugResolved",
+      Selectable->False,
+      Deletable->False,
+      Deployed->True,
+      TaggingRules->{
+       "Bugs" -> {
+         "SearchInterface" -> {"SearchText" -> ""}, 
+          "markdown-html-switching" -> {"Resolved" -> False}}},
+      ExpressionUUID->"252f790a-67ac-469c-8d4a-c9b33cfc6e16"],
+     Alignment->Right,
+     ItemSize->Scaled[0.1],
+     StripOnInput->False]}
+  },
+  AutoDelete->False,
+  GridBoxItemSize->{
+   "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}]], "Section", \
+"BugTitle",
+ CellTags->{
+  "Bug", "markdown-html-switching", 
+   "Title"},ExpressionUUID->"f3a9603e-aa7c-4abb-989c-fa3b76d9728a"],
+
+Cell["Mon 23 Jul 2018 03:55:31", "Text", "BugAnnotation", "BugTimestamp", "BugCreated",
+ CellTags->{
+  "Bug", "markdown-html-switching", 
+   "CreationDate"},ExpressionUUID->"6939ab33-7b87-410b-a70a-3264b4e106c6"],
+
+Cell["", "Text", "BugAnnotation", "BugTimestamp", "BugResolved",
+ CellTags->{
+  "Bug", "markdown-html-switching", 
+   "ResolutionDate"},ExpressionUUID->"1464524d-abb0-4b1f-89eb-3001f0a32e6c"],
+
+Cell["7", "Text", "BugAnnotation", "BugID",
+ CellTags->{
+  "Bug", "markdown-html-switching", 
+   "ID"},ExpressionUUID->"30dc556c-0b12-40f8-abd0-550f66bbd026"],
+
+Cell["BTools", "Text", "BugAnnotation", "BugPackage",
+ CellTags->{
+  "Bug", "markdown-html-switching", 
+   "Package"},ExpressionUUID->"f2d6046a-3afa-4045-8973-6316ed119975"],
+
+Cell["", "Text", "BugAnnotation", "BugOwner",
+ CellTags->{
+  "Bug", "markdown-html-switching", 
+   "Owner"},ExpressionUUID->"52d463ab-d981-4d7f-b7ac-cb7c34917dcd"],
+
+Cell["markdown", "Text", "BugAnnotation", "BugKeywords",
+ CellTags->{
+  "Bug", "markdown-html-switching", 
+   "Keywords"},ExpressionUUID->"09fb7c58-2886-44d2-8492-7fd5bdced767"],
+
+Cell[CellGroupData[{
+
+Cell["Description", "Subsection",ExpressionUUID->"9534cb55-305a-433b-85e2-6119201f3450"],
+
+Cell["\<\
+The Notebook to Markdown system should use HTML in PrintUsage cells but not \
+in Input, by modifying the pathInfo passed through\
+\>", "Text", "BugDescription",
+ CellTags->{
+  "Bug", "markdown-html-switching", 
+   "Description"},ExpressionUUID->"6a25e659-1528-46ed-87ae-c2b5d25e3d53"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Examples", "Subsection", "BugExamples",
+ CellTags->{
+  "Bug", "markdown-html-switching", 
+   "Examples"},ExpressionUUID->"6aa60c1f-2bad-430c-ace8-9938d5e55b24"],
+
+Cell["<<Example>>", "Text",ExpressionUUID->"8e514bdf-d492-4e98-af30-f8174094ef18"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Notes", "Subsection", "BugNotes",
+ CellTags->{
+  "Bug", "markdown-html-switching", 
+   "Notes"},ExpressionUUID->"0998b5f5-7e14-4d41-97a3-d32469118b8f"],
+
+Cell["<<Note>>", "Text",ExpressionUUID->"d7d0a4b7-cb49-41ae-b28f-b13d42d99db0"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[GridBox[{
+   {
+    ItemBox[Cell[
+     "Integrate BugTracker with packages and with GitHub", "Section", 
+      "BugTitle",
+      CellFrame->None,
+      StripOnInput->False,ExpressionUUID->
+      "64f7f0c6-d3c7-4771-90c4-bb6dfb01d8ed"],
+     Alignment->Left,
+     ItemSize->Scaled[0.8],
+     StripOnInput->False], 
+    ItemBox[Cell[BoxData[
+      TogglerBox[Dynamic[
+        CurrentValue[
+         EvaluationCell[], {
+         TaggingRules, "Bugs", "bug-tracker-github", "Resolved"}, False]], {
+       True->"\[CheckmarkedBox]", False->"\[EmptySquare]"}, "\[CheckedBox]"]],
+       "BugResolved",
+      Selectable->False,
+      Deletable->False,
+      Deployed->True,
+      TaggingRules->{
+       "Bugs" -> {
+         "SearchInterface" -> {"SearchText" -> ""}, 
+          "bug-tracker-github" -> {"Resolved" -> False}}},ExpressionUUID->
+      "ac49acf3-154e-4bba-8611-3c26ab7ae58d"],
+     Alignment->Right,
+     ItemSize->Scaled[0.1],
+     StripOnInput->False]}
+  },
+  AutoDelete->False,
+  GridBoxItemSize->{
+   "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}]], "Section", \
+"BugTitle",
+ CellTags->{
+  "Bug", "bug-tracker-github", 
+   "Title"},ExpressionUUID->"841c6ffb-0489-4323-87b4-1ba200300719"],
+
+Cell["Wed 28 Nov 2018 16:52:49", "Text", "BugAnnotation", "BugTimestamp", "BugCreated",
+ CellTags->{
+  "Bug", "bug-tracker-github", 
+   "CreationDate"},ExpressionUUID->"7805837a-f31d-4576-bf45-f596b32ef671"],
+
+Cell["", "Text", "BugAnnotation", "BugTimestamp", "BugResolved",
+ CellTags->{
+  "Bug", "bug-tracker-github", 
+   "ResolutionDate"},ExpressionUUID->"a9a1c552-9f99-436a-a652-8a78d4fa098d"],
+
+Cell["8", "Text", "BugAnnotation", "BugID",
+ CellTags->{
+  "Bug", "bug-tracker-github", 
+   "ID"},ExpressionUUID->"b4336756-a19d-4cf9-97f6-9a1e72e91951"],
+
+Cell["BugTracker", "Text", "BugAnnotation", "BugPackage",
+ CellTags->{
+  "Bug", "bug-tracker-github", 
+   "Package"},ExpressionUUID->"55f2d1f0-f223-4d98-9b16-0adf38ef628e"],
+
+Cell["", "Text", "BugAnnotation", "BugOwner",
+ CellTags->{
+  "Bug", "bug-tracker-github", 
+   "Owner"},ExpressionUUID->"219aaa1e-a119-4fce-823f-30f45f9692e7"],
+
+Cell["bugs", "Text", "BugAnnotation", "BugKeywords",
+ CellTags->{
+  "Bug", "bug-tracker-github", 
+   "Keywords"},ExpressionUUID->"85e421f5-958d-4869-9ba2-880a9b1773f2"],
+
+Cell[CellGroupData[{
+
+Cell["Description", "Subsection",ExpressionUUID->"e75e34b6-b808-48ee-ae5e-657cb7377b4e"],
+
+Cell["\<\
+The bug tracker should be set up as a dependency paclet to be dropped into a \
+BTools style package. It should also provide a way to upload to GitHub in the \
+packages projects folder.\
+\>", "Text", "BugDescription",
+ CellTags->{
+  "Bug", "bug-tracker-github", 
+   "Description"},ExpressionUUID->"2b1b6300-e04d-4fb0-b9c4-600b10f087a0"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Examples", "Subsection", "BugExamples",
+ CellTags->{
+  "Bug", "bug-tracker-github", 
+   "Examples"},ExpressionUUID->"274a62cc-f8bf-44f6-9d4f-bd956d0025f1"],
+
+Cell["<<Example>>", "Text",ExpressionUUID->"c568294e-e0d3-4372-a878-6d075efecadb"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Notes", "Subsection", "BugNotes",
+ CellTags->{
+  "Bug", "bug-tracker-github", 
+   "Notes"},ExpressionUUID->"39b5a6d2-0054-4b6b-a035-882619471585"],
+
+Cell["<<Note>>", "Text",ExpressionUUID->"555d28c7-1fd3-4e6b-ae54-66b3d5ec654b"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[GridBox[{
+   {
+    ItemBox[Cell[
+     "Add $PackageConfig to Paclet Loader", "Section", "BugTitle",
+      CellFrame->None,
+      StripOnInput->False,ExpressionUUID->
+      "6780c86f-10f1-4f49-b7f8-b19492a0111e"],
+     Alignment->Left,
+     ItemSize->Scaled[0.8],
+     StripOnInput->False], 
+    ItemBox[Cell[BoxData[
+      TogglerBox[Dynamic[
+        CurrentValue[
+         EvaluationCell[], {
+         TaggingRules, "Bugs", "paclet-loader-config", "Resolved"}, False]], {
+       True->"\[CheckmarkedBox]", False->"\[EmptySquare]"}, "\[CheckedBox]"]],
+       "BugResolved",
+      Selectable->False,
+      Deletable->False,
+      Deployed->True,
+      TaggingRules->{
+       "Bugs" -> {
+         "SearchInterface" -> {"SearchText" -> ""}, 
+          "paclet-loader-config" -> {"Resolved" -> False}}},ExpressionUUID->
+      "e630be6a-891b-48f0-986b-53ddd22bec9b"],
+     Alignment->Right,
+     ItemSize->Scaled[0.1],
+     StripOnInput->False]}
+  },
+  AutoDelete->False,
+  GridBoxItemSize->{
+   "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}]], "Section", \
+"BugTitle",
+ CellTags->{
+  "Bug", "paclet-loader-config", 
+   "Title"},ExpressionUUID->"cb0156ca-1a93-450b-9cb3-863ecfaf8c04"],
+
+Cell["Mon 10 Dec 2018 16:15:37", "Text", "BugAnnotation", "BugTimestamp", "BugCreated",
+ CellTags->{
+  "Bug", "paclet-loader-config", 
+   "CreationDate"},ExpressionUUID->"e4c61f96-3754-40ee-a8b6-fa724a96a497"],
+
+Cell["", "Text", "BugAnnotation", "BugTimestamp", "BugResolved",
+ CellTags->{
+  "Bug", "paclet-loader-config", 
+   "ResolutionDate"},ExpressionUUID->"0fe3a9d9-dec9-46e9-b8b0-e2a5340ad861"],
+
+Cell["9", "Text", "BugAnnotation", "BugID",
+ CellTags->{
+  "Bug", "paclet-loader-config", 
+   "ID"},ExpressionUUID->"7098ecb8-c854-4083-95ef-98e5de76b2f1"],
+
+Cell["BTools", "Text", "BugAnnotation", "BugPackage",
+ CellTags->{
+  "Bug", "paclet-loader-config", 
+   "Package"},ExpressionUUID->"8993bd84-2cc5-4fce-8726-e010d3abfca7"],
+
+Cell["", "Text", "BugAnnotation", "BugOwner",
+ CellTags->{
+  "Bug", "paclet-loader-config", 
+   "Owner"},ExpressionUUID->"9ed3f925-14b3-4a23-9f67-ebdc260cc5c7"],
+
+Cell["paclets, config", "Text", "BugAnnotation", "BugKeywords",
+ CellTags->{
+  "Bug", "paclet-loader-config", 
+   "Keywords"},ExpressionUUID->"b8975ff5-ee13-438e-b05a-7ef19c353751"],
+
+Cell[CellGroupData[{
+
+Cell["Description", "Subsection",ExpressionUUID->"b6208bf9-ab8e-41f6-8cb5-edc5bf53808c"],
+
+Cell["https://github.com/b3m2a1/mathematica-BTools/issues/14", "Text", "BugDescription",
+ CellTags->{
+  "Bug", "paclet-loader-config", 
+   "Description"},ExpressionUUID->"cf7c5144-ce83-47d0-9115-b8fc3cf148fa"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Examples", "Subsection", "BugExamples",
+ CellTags->{
+  "Bug", "paclet-loader-config", 
+   "Examples"},ExpressionUUID->"79fe44e9-873f-408e-b684-a7fbcb51d28b"],
+
+Cell["<<Example>>", "Text",ExpressionUUID->"52b8f86c-166c-4803-b511-ebfa9f55d94d"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Notes", "Subsection", "BugNotes",
+ CellTags->{
+  "Bug", "paclet-loader-config", 
+   "Notes"},ExpressionUUID->"7a9f5ba9-536a-4d87-8106-e204c3cfd717"],
+
+Cell["<<Note>>", "Text",ExpressionUUID->"bd31bb6a-b008-4f2c-a43e-6b7892b0c298"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "BTools","MarkdownExport",
+   "\"NotebookToMarkdown generated empty output \\!\\(\\*RowBox[{\\\"\\\\\\\"\
+\\\\\\\"\\\"}]\\)\"",2,137,48,28053439454112781477,"Local","BTools`BTools"},
+  "MessageTemplate2"]], "Message", "MSG",
+ CellChangeTimes->{3.753512860005733*^9},
+ CellLabel->"",ExpressionUUID->"75369774-d5d8-48c9-98e9-746604ec33ca"]
+}, Open  ]]
+}, Closed]]
+}, Open  ]]
+},
+WindowSize->{808, 755},
+WindowMargins->{{Automatic, 271}, {Automatic, 26}},
+TaggingRules->{"Bugs" -> {"SearchInterface" -> {"SearchText" -> ""}}},
+FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
+2018)",
+StyleDefinitions->FrontEnd`FileName[{"BugTracker", "Private"}, 
+  "BugTracker.nb", CharacterEncoding -> "UTF-8"]
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "btools-formatting-split"->{
+  Cell[17369, 517, 1236, 36, 117, "Section",ExpressionUUID->"fe3655cb-1b5a-4779-b7d7-b47b786c89da",
+   CellTags->{"Bug", "btools-formatting-split", "Title"}],
+  Cell[18608, 555, 212, 3, 17, "Text",ExpressionUUID->"78c755cd-e296-4bf8-bd38-f0688d6b7c6a",
+   CellTags->{"Bug", "btools-formatting-split", "CreationDate"}],
+  Cell[18823, 560, 215, 3, 17, "Text",ExpressionUUID->"5e4870c4-6226-451a-901f-b1d5b3ceacf8",
+   CellTags->{"Bug", "btools-formatting-split", "ResolutionDate"}],
+  Cell[19041, 565, 158, 3, 17, "Text",ExpressionUUID->"10a9727c-a458-42c7-8f6a-e9e7b7be5a4e",
+   CellTags->{"Bug", "btools-formatting-split", "ID"}],
+  Cell[19202, 570, 173, 3, 17, "Text",ExpressionUUID->"828003cd-cd9d-4d8e-9e86-39f1d3e1c0b4",
+   CellTags->{"Bug", "btools-formatting-split", "Package"}],
+  Cell[19378, 575, 163, 3, 17, "Text",ExpressionUUID->"d2df4297-88b2-486c-974e-9a2c246454b8",
+   CellTags->{"Bug", "btools-formatting-split", "Owner"}],
+  Cell[19544, 580, 187, 3, 17, "Text",ExpressionUUID->"5b949f90-27df-4fb3-aa14-104588a2dfb1",
+   CellTags->{"Bug", "btools-formatting-split", "Keywords"}],
+  Cell[19847, 589, 364, 7, 58, "Text",ExpressionUUID->"6a846ddf-7107-4f48-ae1a-9aa645274c55",
+   CellTags->{"Bug", "btools-formatting-split", "Description"}],
+  Cell[20248, 601, 166, 3, 70, "Subsection",ExpressionUUID->"ac7a5f1d-b263-4b36-a39c-910c67609d43",
+   CellTags->{"Bug", "btools-formatting-split", "Examples"}],
+  Cell[20536, 611, 157, 3, 70, "Subsection",ExpressionUUID->"c60e6c03-ded6-4f77-bd16-f9088e8f5846",
+   CellTags->{"Bug", "btools-formatting-split", "Notes"}]},
+ "btools-testing"->{
+  Cell[10315, 301, 1171, 34, 83, "Section",ExpressionUUID->"84b84a6c-55f2-47a5-9aab-19bdc567eb31",
+   CellTags->{"Bug", "btools-testing", "Title"}],
+  Cell[11489, 337, 203, 3, 17, "Text",ExpressionUUID->"8fa8678c-0095-4d3c-b41f-5f6ab71b83eb",
+   CellTags->{"Bug", "btools-testing", "CreationDate"}],
+  Cell[11695, 342, 182, 3, 17, "Text",ExpressionUUID->"0f42956f-9488-4b2a-be48-ea3d36f5dc1c",
+   CellTags->{"Bug", "btools-testing", "ResolutionDate"}],
+  Cell[11880, 347, 149, 3, 17, "Text",ExpressionUUID->"fd0b5273-2192-4871-85b2-bf11011f81a4",
+   CellTags->{"Bug", "btools-testing", "ID"}],
+  Cell[12032, 352, 164, 3, 17, "Text",ExpressionUUID->"a2b804f5-f6f2-44f2-a9eb-fba4866bc498",
+   CellTags->{"Bug", "btools-testing", "Package"}],
+  Cell[12199, 357, 154, 3, 17, "Text",ExpressionUUID->"c44a574f-1bd7-4af2-bf31-d9fb1d534ee4",
+   CellTags->{"Bug", "btools-testing", "Owner"}],
+  Cell[12356, 362, 167, 3, 17, "Text",ExpressionUUID->"452ea9b3-3dcc-4afb-9a2d-35e01fb344d6",
+   CellTags->{"Bug", "btools-testing", "Keywords"}],
+  Cell[12639, 371, 231, 5, 35, "Text",ExpressionUUID->"9f4f3089-ab8d-4905-b842-4f4e82970d15",
+   CellTags->{"Bug", "btools-testing", "Description"}],
+  Cell[12907, 381, 157, 3, 54, "Subsection",ExpressionUUID->"64772f4b-0fa6-4f9d-9255-cfce1a356353",
+   CellTags->{"Bug", "btools-testing", "Examples"}],
+  Cell[13186, 391, 148, 3, 54, "Subsection",ExpressionUUID->"3afdc6b5-47ab-41b8-ba2d-272cca89d163",
+   CellTags->{"Bug", "btools-testing", "Notes"}]},
+ "Bug"->{
+  Cell[4097, 108, 1146, 32, 97, "Section",ExpressionUUID->"31959117-be91-4f92-a9fc-29d5a42e2371",
+   CellTags->{"Bug", "bugs-integration", "Title"}],
+  Cell[5246, 142, 205, 3, 17, "Text",ExpressionUUID->"1b299b33-9e92-4043-aede-c48be037c2e0",
+   CellTags->{"Bug", "bugs-integration", "CreationDate"}],
+  Cell[5454, 147, 184, 3, 17, "Text",ExpressionUUID->"4f76adb6-0f53-4129-9e18-ecac833fc1d0",
+   CellTags->{"Bug", "bugs-integration", "ResolutionDate"}],
+  Cell[5641, 152, 151, 3, 17, "Text",ExpressionUUID->"8b593c24-f0da-4492-a054-8510994e0d1c",
+   CellTags->{"Bug", "bugs-integration", "ID"}],
+  Cell[5795, 157, 166, 3, 17, "Text",ExpressionUUID->"e6f43983-79f0-40db-a09e-97e2ebd8d71f",
+   CellTags->{"Bug", "bugs-integration", "Package"}],
+  Cell[5964, 162, 156, 3, 17, "Text",ExpressionUUID->"940ab152-8b95-4827-9cc4-cccaf50e639f",
+   CellTags->{"Bug", "bugs-integration", "Owner"}],
+  Cell[6123, 167, 189, 3, 17, "Text",ExpressionUUID->"22e4b554-ecbb-4174-9757-348e4639f7d7",
+   CellTags->{"Bug", "bugs-integration", "Keywords"}],
+  Cell[6428, 176, 208, 3, 35, "Text",ExpressionUUID->"a41d08c2-ec94-4c41-bd9c-3632fbd52a2e",
+   CellTags->{"Bug", "bugs-integration", "Description"}],
+  Cell[6673, 184, 159, 3, 54, "Subsection",ExpressionUUID->"f43be997-b06d-4680-bc4c-bbb0a0c70b90",
+   CellTags->{"Bug", "bugs-integration", "Examples"}],
+  Cell[6954, 194, 150, 3, 54, "Subsection",ExpressionUUID->"f8616d0c-b768-49ff-8deb-d26300eeb2bd",
+   CellTags->{"Bug", "bugs-integration", "Notes"}],
+  Cell[7235, 205, 1140, 31, 83, "Section",ExpressionUUID->"23529aca-8e53-4780-93d7-9f8dbceaa674",
+   CellTags->{"Bug", "bugs-testing", "Title"}],
+  Cell[8378, 238, 201, 3, 17, "Text",ExpressionUUID->"317d12a1-e040-4163-8c43-00b0227dff1d",
+   CellTags->{"Bug", "bugs-testing", "CreationDate"}],
+  Cell[8582, 243, 180, 3, 17, "Text",ExpressionUUID->"3001467e-db12-40e8-a28b-3bf0d05dc949",
+   CellTags->{"Bug", "bugs-testing", "ResolutionDate"}],
+  Cell[8765, 248, 147, 3, 17, "Text",ExpressionUUID->"0509f567-9f6f-4be9-b1f7-0b0372cf6e38",
+   CellTags->{"Bug", "bugs-testing", "ID"}],
+  Cell[8915, 253, 166, 3, 17, "Text",ExpressionUUID->"dda5dde1-d09c-4bd8-829d-20ec903ab599",
+   CellTags->{"Bug", "bugs-testing", "Package"}],
+  Cell[9084, 258, 152, 3, 17, "Text",ExpressionUUID->"92331e88-32a7-41ca-8962-ac74abf5fb51",
+   CellTags->{"Bug", "bugs-testing", "Owner"}],
+  Cell[9239, 263, 168, 3, 17, "Text",ExpressionUUID->"9d38034b-d4a2-48b2-9299-095219e8dd76",
+   CellTags->{"Bug", "bugs-testing", "Keywords"}],
+  Cell[9523, 272, 201, 3, 35, "Text",ExpressionUUID->"5a403b01-90ac-4d5c-b6c1-6a1cf3780e6a",
+   CellTags->{"Bug", "bugs-testing", "Description"}],
+  Cell[9761, 280, 155, 3, 54, "Subsection",ExpressionUUID->"a8da2d74-fd43-4bc3-bdf2-79f4eeca3b45",
+   CellTags->{"Bug", "bugs-testing", "Examples"}],
+  Cell[10038, 290, 146, 3, 54, "Subsection",ExpressionUUID->"8796dbe2-11b2-4b67-86c0-e174a7d861f7",
+   CellTags->{"Bug", "bugs-testing", "Notes"}],
+  Cell[10315, 301, 1171, 34, 83, "Section",ExpressionUUID->"84b84a6c-55f2-47a5-9aab-19bdc567eb31",
+   CellTags->{"Bug", "btools-testing", "Title"}],
+  Cell[11489, 337, 203, 3, 17, "Text",ExpressionUUID->"8fa8678c-0095-4d3c-b41f-5f6ab71b83eb",
+   CellTags->{"Bug", "btools-testing", "CreationDate"}],
+  Cell[11695, 342, 182, 3, 17, "Text",ExpressionUUID->"0f42956f-9488-4b2a-be48-ea3d36f5dc1c",
+   CellTags->{"Bug", "btools-testing", "ResolutionDate"}],
+  Cell[11880, 347, 149, 3, 17, "Text",ExpressionUUID->"fd0b5273-2192-4871-85b2-bf11011f81a4",
+   CellTags->{"Bug", "btools-testing", "ID"}],
+  Cell[12032, 352, 164, 3, 17, "Text",ExpressionUUID->"a2b804f5-f6f2-44f2-a9eb-fba4866bc498",
+   CellTags->{"Bug", "btools-testing", "Package"}],
+  Cell[12199, 357, 154, 3, 17, "Text",ExpressionUUID->"c44a574f-1bd7-4af2-bf31-d9fb1d534ee4",
+   CellTags->{"Bug", "btools-testing", "Owner"}],
+  Cell[12356, 362, 167, 3, 17, "Text",ExpressionUUID->"452ea9b3-3dcc-4afb-9a2d-35e01fb344d6",
+   CellTags->{"Bug", "btools-testing", "Keywords"}],
+  Cell[12639, 371, 231, 5, 35, "Text",ExpressionUUID->"9f4f3089-ab8d-4905-b842-4f4e82970d15",
+   CellTags->{"Bug", "btools-testing", "Description"}],
+  Cell[12907, 381, 157, 3, 54, "Subsection",ExpressionUUID->"64772f4b-0fa6-4f9d-9255-cfce1a356353",
+   CellTags->{"Bug", "btools-testing", "Examples"}],
+  Cell[13186, 391, 148, 3, 54, "Subsection",ExpressionUUID->"3afdc6b5-47ab-41b8-ba2d-272cca89d163",
+   CellTags->{"Bug", "btools-testing", "Notes"}],
+  Cell[14200, 416, 1145, 33, 96, "Section",ExpressionUUID->"a4748ce3-7223-4869-9a52-c0d7bc1a9234",
+   CellTags->{"Bug", "rss-feeder", "Title"}],
+  Cell[15348, 451, 199, 3, 17, "Text",ExpressionUUID->"fa16c673-8fb9-4e1a-868f-9e677ee5a44f",
+   CellTags->{"Bug", "rss-feeder", "CreationDate"}],
+  Cell[15550, 456, 202, 3, 17, "Text",ExpressionUUID->"415b4b66-fea5-4a17-96f5-69e9f67a6504",
+   CellTags->{"Bug", "rss-feeder", "ResolutionDate"}],
+  Cell[15755, 461, 145, 3, 17, "Text",ExpressionUUID->"b602e127-a61f-49a7-80a6-43b95e779f1d",
+   CellTags->{"Bug", "rss-feeder", "ID"}],
+  Cell[15903, 466, 160, 3, 17, "Text",ExpressionUUID->"e9a89001-c26c-4387-adc9-cc15c2946774",
+   CellTags->{"Bug", "rss-feeder", "Package"}],
+  Cell[16066, 471, 150, 3, 17, "Text",ExpressionUUID->"d3557648-3e46-4d2a-92cc-aa530e0ee40c",
+   CellTags->{"Bug", "rss-feeder", "Owner"}],
+  Cell[16219, 476, 164, 3, 17, "Text",ExpressionUUID->"4d366270-057d-462b-a3e1-d8f2bbdeb7fb",
+   CellTags->{"Bug", "rss-feeder", "Keywords"}],
+  Cell[16499, 485, 283, 6, 58, "Text",ExpressionUUID->"9fa0e09d-53cf-4253-9595-7ef1cb9f1556",
+   CellTags->{"Bug", "rss-feeder", "Description"}],
+  Cell[16819, 496, 153, 3, 54, "Subsection",ExpressionUUID->"dc884294-dc6f-4916-9b55-e5f3d3a6ba6c",
+   CellTags->{"Bug", "rss-feeder", "Examples"}],
+  Cell[17094, 506, 144, 3, 70, "Subsection",ExpressionUUID->"039c8e87-fe8f-4426-a4d1-fba828fa0baa",
+   CellTags->{"Bug", "rss-feeder", "Notes"}],
+  Cell[17369, 517, 1236, 36, 117, "Section",ExpressionUUID->"fe3655cb-1b5a-4779-b7d7-b47b786c89da",
+   CellTags->{"Bug", "btools-formatting-split", "Title"}],
+  Cell[18608, 555, 212, 3, 17, "Text",ExpressionUUID->"78c755cd-e296-4bf8-bd38-f0688d6b7c6a",
+   CellTags->{"Bug", "btools-formatting-split", "CreationDate"}],
+  Cell[18823, 560, 215, 3, 17, "Text",ExpressionUUID->"5e4870c4-6226-451a-901f-b1d5b3ceacf8",
+   CellTags->{"Bug", "btools-formatting-split", "ResolutionDate"}],
+  Cell[19041, 565, 158, 3, 17, "Text",ExpressionUUID->"10a9727c-a458-42c7-8f6a-e9e7b7be5a4e",
+   CellTags->{"Bug", "btools-formatting-split", "ID"}],
+  Cell[19202, 570, 173, 3, 17, "Text",ExpressionUUID->"828003cd-cd9d-4d8e-9e86-39f1d3e1c0b4",
+   CellTags->{"Bug", "btools-formatting-split", "Package"}],
+  Cell[19378, 575, 163, 3, 17, "Text",ExpressionUUID->"d2df4297-88b2-486c-974e-9a2c246454b8",
+   CellTags->{"Bug", "btools-formatting-split", "Owner"}],
+  Cell[19544, 580, 187, 3, 17, "Text",ExpressionUUID->"5b949f90-27df-4fb3-aa14-104588a2dfb1",
+   CellTags->{"Bug", "btools-formatting-split", "Keywords"}],
+  Cell[19847, 589, 364, 7, 58, "Text",ExpressionUUID->"6a846ddf-7107-4f48-ae1a-9aa645274c55",
+   CellTags->{"Bug", "btools-formatting-split", "Description"}],
+  Cell[20248, 601, 166, 3, 70, "Subsection",ExpressionUUID->"ac7a5f1d-b263-4b36-a39c-910c67609d43",
+   CellTags->{"Bug", "btools-formatting-split", "Examples"}],
+  Cell[20536, 611, 157, 3, 70, "Subsection",ExpressionUUID->"c60e6c03-ded6-4f77-bd16-f9088e8f5846",
+   CellTags->{"Bug", "btools-formatting-split", "Notes"}],
+  Cell[20824, 622, 1181, 34, 82, "Section",ExpressionUUID->"cd1fcbe7-117c-4d46-be0d-a13ba6af3e55",
+   CellTags->{"Bug", "paclets-update-times", "Title"}],
+  Cell[22008, 658, 209, 3, 17, "Text",ExpressionUUID->"bc94d77f-b444-43cf-a0c8-428b6171c6dd",
+   CellTags->{"Bug", "paclets-update-times", "CreationDate"}],
+  Cell[22220, 663, 212, 3, 17, "Text",ExpressionUUID->"c9686cf9-3c44-4081-864f-96db4c244fe0",
+   CellTags->{"Bug", "paclets-update-times", "ResolutionDate"}],
+  Cell[22435, 668, 155, 3, 17, "Text",ExpressionUUID->"c342b708-2590-477d-8433-a26e76841100",
+   CellTags->{"Bug", "paclets-update-times", "ID"}],
+  Cell[22593, 673, 170, 3, 17, "Text",ExpressionUUID->"054884bb-2ddd-47af-90bb-c0701adc43f7",
+   CellTags->{"Bug", "paclets-update-times", "Package"}],
+  Cell[22766, 678, 160, 3, 17, "Text",ExpressionUUID->"a156b90c-5dc0-4cfd-8a7d-e505ed205bf6",
+   CellTags->{"Bug", "paclets-update-times", "Owner"}],
+  Cell[22929, 683, 180, 3, 17, "Text",ExpressionUUID->"c74aa4af-7d05-4df5-b35c-e67cc3453e52",
+   CellTags->{"Bug", "paclets-update-times", "Keywords"}],
+  Cell[23225, 692, 208, 3, 70, "Text",ExpressionUUID->"de5bae87-cc70-4953-8b61-18645e5469fa",
+   CellTags->{"Bug", "paclets-update-times", "Description"}],
+  Cell[23470, 700, 163, 3, 70, "Subsection",ExpressionUUID->"c21ea85f-2879-46f3-b376-3ad60ca73233",
+   CellTags->{"Bug", "paclets-update-times", "Examples"}],
+  Cell[23755, 710, 154, 3, 70, "Subsection",ExpressionUUID->"df5e2a3d-55fa-4af0-9dca-cbbc7f85b52f",
+   CellTags->{"Bug", "paclets-update-times", "Notes"}],
+  Cell[24068, 721, 1221, 35, 117, "Section",ExpressionUUID->"f3a9603e-aa7c-4abb-989c-fa3b76d9728a",
+   CellTags->{"Bug", "markdown-html-switching", "Title"}],
+  Cell[25292, 758, 212, 3, 70, "Text",ExpressionUUID->"6939ab33-7b87-410b-a70a-3264b4e106c6",
+   CellTags->{"Bug", "markdown-html-switching", "CreationDate"}],
+  Cell[25507, 763, 191, 3, 70, "Text",ExpressionUUID->"1464524d-abb0-4b1f-89eb-3001f0a32e6c",
+   CellTags->{"Bug", "markdown-html-switching", "ResolutionDate"}],
+  Cell[25701, 768, 158, 3, 70, "Text",ExpressionUUID->"30dc556c-0b12-40f8-abd0-550f66bbd026",
+   CellTags->{"Bug", "markdown-html-switching", "ID"}],
+  Cell[25862, 773, 173, 3, 70, "Text",ExpressionUUID->"f2d6046a-3afa-4045-8973-6316ed119975",
+   CellTags->{"Bug", "markdown-html-switching", "Package"}],
+  Cell[26038, 778, 163, 3, 70, "Text",ExpressionUUID->"52d463ab-d981-4d7f-b7ac-cb7c34917dcd",
+   CellTags->{"Bug", "markdown-html-switching", "Owner"}],
+  Cell[26204, 783, 177, 3, 70, "Text",ExpressionUUID->"09fb7c58-2886-44d2-8492-7fd5bdced767",
+   CellTags->{"Bug", "markdown-html-switching", "Keywords"}],
+  Cell[26497, 792, 294, 6, 70, "Text",ExpressionUUID->"6a25e659-1528-46ed-87ae-c2b5d25e3d53",
+   CellTags->{"Bug", "markdown-html-switching", "Description"}],
+  Cell[26828, 803, 166, 3, 70, "Subsection",ExpressionUUID->"6aa60c1f-2bad-430c-ace8-9938d5e55b24",
+   CellTags->{"Bug", "markdown-html-switching", "Examples"}],
+  Cell[27116, 813, 157, 3, 70, "Subsection",ExpressionUUID->"0998b5f5-7e14-4d41-97a3-d32469118b8f",
+   CellTags->{"Bug", "markdown-html-switching", "Notes"}],
+  Cell[27404, 824, 1215, 36, 117, "Section",ExpressionUUID->"841c6ffb-0489-4323-87b4-1ba200300719",
+   CellTags->{"Bug", "bug-tracker-github", "Title"}],
+  Cell[28622, 862, 207, 3, 70, "Text",ExpressionUUID->"7805837a-f31d-4576-bf45-f596b32ef671",
+   CellTags->{"Bug", "bug-tracker-github", "CreationDate"}],
+  Cell[28832, 867, 186, 3, 70, "Text",ExpressionUUID->"a9a1c552-9f99-436a-a652-8a78d4fa098d",
+   CellTags->{"Bug", "bug-tracker-github", "ResolutionDate"}],
+  Cell[29021, 872, 153, 3, 70, "Text",ExpressionUUID->"b4336756-a19d-4cf9-97f6-9a1e72e91951",
+   CellTags->{"Bug", "bug-tracker-github", "ID"}],
+  Cell[29177, 877, 172, 3, 70, "Text",ExpressionUUID->"55f2d1f0-f223-4d98-9b16-0adf38ef628e",
+   CellTags->{"Bug", "bug-tracker-github", "Package"}],
+  Cell[29352, 882, 158, 3, 70, "Text",ExpressionUUID->"219aaa1e-a119-4fce-823f-30f45f9692e7",
+   CellTags->{"Bug", "bug-tracker-github", "Owner"}],
+  Cell[29513, 887, 168, 3, 70, "Text",ExpressionUUID->"85e421f5-958d-4869-9ba2-880a9b1773f2",
+   CellTags->{"Bug", "bug-tracker-github", "Keywords"}],
+  Cell[29797, 896, 345, 7, 70, "Text",ExpressionUUID->"2b1b6300-e04d-4fb0-b9c4-600b10f087a0",
+   CellTags->{"Bug", "bug-tracker-github", "Description"}],
+  Cell[30179, 908, 161, 3, 70, "Subsection",ExpressionUUID->"274a62cc-f8bf-44f6-9d4f-bd956d0025f1",
+   CellTags->{"Bug", "bug-tracker-github", "Examples"}],
+  Cell[30462, 918, 152, 3, 70, "Subsection",ExpressionUUID->"39b5a6d2-0054-4b6b-a035-882619471585",
+   CellTags->{"Bug", "bug-tracker-github", "Notes"}],
+  Cell[30745, 929, 1199, 35, 83, "Section",ExpressionUUID->"cb0156ca-1a93-450b-9cb3-863ecfaf8c04",
+   CellTags->{"Bug", "paclet-loader-config", "Title"}],
+  Cell[31947, 966, 209, 3, 70, "Text",ExpressionUUID->"e4c61f96-3754-40ee-a8b6-fa724a96a497",
+   CellTags->{"Bug", "paclet-loader-config", "CreationDate"}],
+  Cell[32159, 971, 188, 3, 70, "Text",ExpressionUUID->"0fe3a9d9-dec9-46e9-b8b0-e2a5340ad861",
+   CellTags->{"Bug", "paclet-loader-config", "ResolutionDate"}],
+  Cell[32350, 976, 155, 3, 70, "Text",ExpressionUUID->"7098ecb8-c854-4083-95ef-98e5de76b2f1",
+   CellTags->{"Bug", "paclet-loader-config", "ID"}],
+  Cell[32508, 981, 170, 3, 70, "Text",ExpressionUUID->"8993bd84-2cc5-4fce-8726-e010d3abfca7",
+   CellTags->{"Bug", "paclet-loader-config", "Package"}],
+  Cell[32681, 986, 160, 3, 70, "Text",ExpressionUUID->"9ed3f925-14b3-4a23-9f67-ebdc260cc5c7",
+   CellTags->{"Bug", "paclet-loader-config", "Owner"}],
+  Cell[32844, 991, 181, 3, 70, "Text",ExpressionUUID->"b8975ff5-ee13-438e-b05a-7ef19c353751",
+   CellTags->{"Bug", "paclet-loader-config", "Keywords"}],
+  Cell[33141, 1000, 209, 3, 70, "Text",ExpressionUUID->"cf7c5144-ce83-47d0-9115-b8fc3cf148fa",
+   CellTags->{"Bug", "paclet-loader-config", "Description"}],
+  Cell[33387, 1008, 163, 3, 70, "Subsection",ExpressionUUID->"79fe44e9-873f-408e-b684-a7fbcb51d28b",
+   CellTags->{"Bug", "paclet-loader-config", "Examples"}],
+  Cell[33672, 1018, 154, 3, 70, "Subsection",ExpressionUUID->"7a9f5ba9-536a-4d87-8106-e204c3cfd717",
+   CellTags->{"Bug", "paclet-loader-config", "Notes"}]},
+ "bugs-integration"->{
+  Cell[4097, 108, 1146, 32, 97, "Section",ExpressionUUID->"31959117-be91-4f92-a9fc-29d5a42e2371",
+   CellTags->{"Bug", "bugs-integration", "Title"}],
+  Cell[5246, 142, 205, 3, 17, "Text",ExpressionUUID->"1b299b33-9e92-4043-aede-c48be037c2e0",
+   CellTags->{"Bug", "bugs-integration", "CreationDate"}],
+  Cell[5454, 147, 184, 3, 17, "Text",ExpressionUUID->"4f76adb6-0f53-4129-9e18-ecac833fc1d0",
+   CellTags->{"Bug", "bugs-integration", "ResolutionDate"}],
+  Cell[5641, 152, 151, 3, 17, "Text",ExpressionUUID->"8b593c24-f0da-4492-a054-8510994e0d1c",
+   CellTags->{"Bug", "bugs-integration", "ID"}],
+  Cell[5795, 157, 166, 3, 17, "Text",ExpressionUUID->"e6f43983-79f0-40db-a09e-97e2ebd8d71f",
+   CellTags->{"Bug", "bugs-integration", "Package"}],
+  Cell[5964, 162, 156, 3, 17, "Text",ExpressionUUID->"940ab152-8b95-4827-9cc4-cccaf50e639f",
+   CellTags->{"Bug", "bugs-integration", "Owner"}],
+  Cell[6123, 167, 189, 3, 17, "Text",ExpressionUUID->"22e4b554-ecbb-4174-9757-348e4639f7d7",
+   CellTags->{"Bug", "bugs-integration", "Keywords"}],
+  Cell[6428, 176, 208, 3, 35, "Text",ExpressionUUID->"a41d08c2-ec94-4c41-bd9c-3632fbd52a2e",
+   CellTags->{"Bug", "bugs-integration", "Description"}],
+  Cell[6673, 184, 159, 3, 54, "Subsection",ExpressionUUID->"f43be997-b06d-4680-bc4c-bbb0a0c70b90",
+   CellTags->{"Bug", "bugs-integration", "Examples"}],
+  Cell[6954, 194, 150, 3, 54, "Subsection",ExpressionUUID->"f8616d0c-b768-49ff-8deb-d26300eeb2bd",
+   CellTags->{"Bug", "bugs-integration", "Notes"}]},
+ "bugs-testing"->{
+  Cell[7235, 205, 1140, 31, 83, "Section",ExpressionUUID->"23529aca-8e53-4780-93d7-9f8dbceaa674",
+   CellTags->{"Bug", "bugs-testing", "Title"}],
+  Cell[8378, 238, 201, 3, 17, "Text",ExpressionUUID->"317d12a1-e040-4163-8c43-00b0227dff1d",
+   CellTags->{"Bug", "bugs-testing", "CreationDate"}],
+  Cell[8582, 243, 180, 3, 17, "Text",ExpressionUUID->"3001467e-db12-40e8-a28b-3bf0d05dc949",
+   CellTags->{"Bug", "bugs-testing", "ResolutionDate"}],
+  Cell[8765, 248, 147, 3, 17, "Text",ExpressionUUID->"0509f567-9f6f-4be9-b1f7-0b0372cf6e38",
+   CellTags->{"Bug", "bugs-testing", "ID"}],
+  Cell[8915, 253, 166, 3, 17, "Text",ExpressionUUID->"dda5dde1-d09c-4bd8-829d-20ec903ab599",
+   CellTags->{"Bug", "bugs-testing", "Package"}],
+  Cell[9084, 258, 152, 3, 17, "Text",ExpressionUUID->"92331e88-32a7-41ca-8962-ac74abf5fb51",
+   CellTags->{"Bug", "bugs-testing", "Owner"}],
+  Cell[9239, 263, 168, 3, 17, "Text",ExpressionUUID->"9d38034b-d4a2-48b2-9299-095219e8dd76",
+   CellTags->{"Bug", "bugs-testing", "Keywords"}],
+  Cell[9523, 272, 201, 3, 35, "Text",ExpressionUUID->"5a403b01-90ac-4d5c-b6c1-6a1cf3780e6a",
+   CellTags->{"Bug", "bugs-testing", "Description"}],
+  Cell[9761, 280, 155, 3, 54, "Subsection",ExpressionUUID->"a8da2d74-fd43-4bc3-bdf2-79f4eeca3b45",
+   CellTags->{"Bug", "bugs-testing", "Examples"}],
+  Cell[10038, 290, 146, 3, 54, "Subsection",ExpressionUUID->"8796dbe2-11b2-4b67-86c0-e174a7d861f7",
+   CellTags->{"Bug", "bugs-testing", "Notes"}]},
+ "bug-tracker-github"->{
+  Cell[27404, 824, 1215, 36, 117, "Section",ExpressionUUID->"841c6ffb-0489-4323-87b4-1ba200300719",
+   CellTags->{"Bug", "bug-tracker-github", "Title"}],
+  Cell[28622, 862, 207, 3, 70, "Text",ExpressionUUID->"7805837a-f31d-4576-bf45-f596b32ef671",
+   CellTags->{"Bug", "bug-tracker-github", "CreationDate"}],
+  Cell[28832, 867, 186, 3, 70, "Text",ExpressionUUID->"a9a1c552-9f99-436a-a652-8a78d4fa098d",
+   CellTags->{"Bug", "bug-tracker-github", "ResolutionDate"}],
+  Cell[29021, 872, 153, 3, 70, "Text",ExpressionUUID->"b4336756-a19d-4cf9-97f6-9a1e72e91951",
+   CellTags->{"Bug", "bug-tracker-github", "ID"}],
+  Cell[29177, 877, 172, 3, 70, "Text",ExpressionUUID->"55f2d1f0-f223-4d98-9b16-0adf38ef628e",
+   CellTags->{"Bug", "bug-tracker-github", "Package"}],
+  Cell[29352, 882, 158, 3, 70, "Text",ExpressionUUID->"219aaa1e-a119-4fce-823f-30f45f9692e7",
+   CellTags->{"Bug", "bug-tracker-github", "Owner"}],
+  Cell[29513, 887, 168, 3, 70, "Text",ExpressionUUID->"85e421f5-958d-4869-9ba2-880a9b1773f2",
+   CellTags->{"Bug", "bug-tracker-github", "Keywords"}],
+  Cell[29797, 896, 345, 7, 70, "Text",ExpressionUUID->"2b1b6300-e04d-4fb0-b9c4-600b10f087a0",
+   CellTags->{"Bug", "bug-tracker-github", "Description"}],
+  Cell[30179, 908, 161, 3, 70, "Subsection",ExpressionUUID->"274a62cc-f8bf-44f6-9d4f-bd956d0025f1",
+   CellTags->{"Bug", "bug-tracker-github", "Examples"}],
+  Cell[30462, 918, 152, 3, 70, "Subsection",ExpressionUUID->"39b5a6d2-0054-4b6b-a035-882619471585",
+   CellTags->{"Bug", "bug-tracker-github", "Notes"}]},
+ "CreationDate"->{
+  Cell[5246, 142, 205, 3, 17, "Text",ExpressionUUID->"1b299b33-9e92-4043-aede-c48be037c2e0",
+   CellTags->{"Bug", "bugs-integration", "CreationDate"}],
+  Cell[8378, 238, 201, 3, 17, "Text",ExpressionUUID->"317d12a1-e040-4163-8c43-00b0227dff1d",
+   CellTags->{"Bug", "bugs-testing", "CreationDate"}],
+  Cell[11489, 337, 203, 3, 17, "Text",ExpressionUUID->"8fa8678c-0095-4d3c-b41f-5f6ab71b83eb",
+   CellTags->{"Bug", "btools-testing", "CreationDate"}],
+  Cell[15348, 451, 199, 3, 17, "Text",ExpressionUUID->"fa16c673-8fb9-4e1a-868f-9e677ee5a44f",
+   CellTags->{"Bug", "rss-feeder", "CreationDate"}],
+  Cell[18608, 555, 212, 3, 17, "Text",ExpressionUUID->"78c755cd-e296-4bf8-bd38-f0688d6b7c6a",
+   CellTags->{"Bug", "btools-formatting-split", "CreationDate"}],
+  Cell[22008, 658, 209, 3, 17, "Text",ExpressionUUID->"bc94d77f-b444-43cf-a0c8-428b6171c6dd",
+   CellTags->{"Bug", "paclets-update-times", "CreationDate"}],
+  Cell[25292, 758, 212, 3, 70, "Text",ExpressionUUID->"6939ab33-7b87-410b-a70a-3264b4e106c6",
+   CellTags->{"Bug", "markdown-html-switching", "CreationDate"}],
+  Cell[28622, 862, 207, 3, 70, "Text",ExpressionUUID->"7805837a-f31d-4576-bf45-f596b32ef671",
+   CellTags->{"Bug", "bug-tracker-github", "CreationDate"}],
+  Cell[31947, 966, 209, 3, 70, "Text",ExpressionUUID->"e4c61f96-3754-40ee-a8b6-fa724a96a497",
+   CellTags->{"Bug", "paclet-loader-config", "CreationDate"}]},
+ "Description"->{
+  Cell[6428, 176, 208, 3, 35, "Text",ExpressionUUID->"a41d08c2-ec94-4c41-bd9c-3632fbd52a2e",
+   CellTags->{"Bug", "bugs-integration", "Description"}],
+  Cell[9523, 272, 201, 3, 35, "Text",ExpressionUUID->"5a403b01-90ac-4d5c-b6c1-6a1cf3780e6a",
+   CellTags->{"Bug", "bugs-testing", "Description"}],
+  Cell[12639, 371, 231, 5, 35, "Text",ExpressionUUID->"9f4f3089-ab8d-4905-b842-4f4e82970d15",
+   CellTags->{"Bug", "btools-testing", "Description"}],
+  Cell[16499, 485, 283, 6, 58, "Text",ExpressionUUID->"9fa0e09d-53cf-4253-9595-7ef1cb9f1556",
+   CellTags->{"Bug", "rss-feeder", "Description"}],
+  Cell[19847, 589, 364, 7, 58, "Text",ExpressionUUID->"6a846ddf-7107-4f48-ae1a-9aa645274c55",
+   CellTags->{"Bug", "btools-formatting-split", "Description"}],
+  Cell[23225, 692, 208, 3, 70, "Text",ExpressionUUID->"de5bae87-cc70-4953-8b61-18645e5469fa",
+   CellTags->{"Bug", "paclets-update-times", "Description"}],
+  Cell[26497, 792, 294, 6, 70, "Text",ExpressionUUID->"6a25e659-1528-46ed-87ae-c2b5d25e3d53",
+   CellTags->{"Bug", "markdown-html-switching", "Description"}],
+  Cell[29797, 896, 345, 7, 70, "Text",ExpressionUUID->"2b1b6300-e04d-4fb0-b9c4-600b10f087a0",
+   CellTags->{"Bug", "bug-tracker-github", "Description"}],
+  Cell[33141, 1000, 209, 3, 70, "Text",ExpressionUUID->"cf7c5144-ce83-47d0-9115-b8fc3cf148fa",
+   CellTags->{"Bug", "paclet-loader-config", "Description"}]},
+ "Examples"->{
+  Cell[6673, 184, 159, 3, 54, "Subsection",ExpressionUUID->"f43be997-b06d-4680-bc4c-bbb0a0c70b90",
+   CellTags->{"Bug", "bugs-integration", "Examples"}],
+  Cell[9761, 280, 155, 3, 54, "Subsection",ExpressionUUID->"a8da2d74-fd43-4bc3-bdf2-79f4eeca3b45",
+   CellTags->{"Bug", "bugs-testing", "Examples"}],
+  Cell[12907, 381, 157, 3, 54, "Subsection",ExpressionUUID->"64772f4b-0fa6-4f9d-9255-cfce1a356353",
+   CellTags->{"Bug", "btools-testing", "Examples"}],
+  Cell[16819, 496, 153, 3, 54, "Subsection",ExpressionUUID->"dc884294-dc6f-4916-9b55-e5f3d3a6ba6c",
+   CellTags->{"Bug", "rss-feeder", "Examples"}],
+  Cell[20248, 601, 166, 3, 70, "Subsection",ExpressionUUID->"ac7a5f1d-b263-4b36-a39c-910c67609d43",
+   CellTags->{"Bug", "btools-formatting-split", "Examples"}],
+  Cell[23470, 700, 163, 3, 70, "Subsection",ExpressionUUID->"c21ea85f-2879-46f3-b376-3ad60ca73233",
+   CellTags->{"Bug", "paclets-update-times", "Examples"}],
+  Cell[26828, 803, 166, 3, 70, "Subsection",ExpressionUUID->"6aa60c1f-2bad-430c-ace8-9938d5e55b24",
+   CellTags->{"Bug", "markdown-html-switching", "Examples"}],
+  Cell[30179, 908, 161, 3, 70, "Subsection",ExpressionUUID->"274a62cc-f8bf-44f6-9d4f-bd956d0025f1",
+   CellTags->{"Bug", "bug-tracker-github", "Examples"}],
+  Cell[33387, 1008, 163, 3, 70, "Subsection",ExpressionUUID->"79fe44e9-873f-408e-b684-a7fbcb51d28b",
+   CellTags->{"Bug", "paclet-loader-config", "Examples"}]},
+ "ID"->{
+  Cell[5641, 152, 151, 3, 17, "Text",ExpressionUUID->"8b593c24-f0da-4492-a054-8510994e0d1c",
+   CellTags->{"Bug", "bugs-integration", "ID"}],
+  Cell[8765, 248, 147, 3, 17, "Text",ExpressionUUID->"0509f567-9f6f-4be9-b1f7-0b0372cf6e38",
+   CellTags->{"Bug", "bugs-testing", "ID"}],
+  Cell[11880, 347, 149, 3, 17, "Text",ExpressionUUID->"fd0b5273-2192-4871-85b2-bf11011f81a4",
+   CellTags->{"Bug", "btools-testing", "ID"}],
+  Cell[15755, 461, 145, 3, 17, "Text",ExpressionUUID->"b602e127-a61f-49a7-80a6-43b95e779f1d",
+   CellTags->{"Bug", "rss-feeder", "ID"}],
+  Cell[19041, 565, 158, 3, 17, "Text",ExpressionUUID->"10a9727c-a458-42c7-8f6a-e9e7b7be5a4e",
+   CellTags->{"Bug", "btools-formatting-split", "ID"}],
+  Cell[22435, 668, 155, 3, 17, "Text",ExpressionUUID->"c342b708-2590-477d-8433-a26e76841100",
+   CellTags->{"Bug", "paclets-update-times", "ID"}],
+  Cell[25701, 768, 158, 3, 70, "Text",ExpressionUUID->"30dc556c-0b12-40f8-abd0-550f66bbd026",
+   CellTags->{"Bug", "markdown-html-switching", "ID"}],
+  Cell[29021, 872, 153, 3, 70, "Text",ExpressionUUID->"b4336756-a19d-4cf9-97f6-9a1e72e91951",
+   CellTags->{"Bug", "bug-tracker-github", "ID"}],
+  Cell[32350, 976, 155, 3, 70, "Text",ExpressionUUID->"7098ecb8-c854-4083-95ef-98e5de76b2f1",
+   CellTags->{"Bug", "paclet-loader-config", "ID"}]},
+ "Keywords"->{
+  Cell[6123, 167, 189, 3, 17, "Text",ExpressionUUID->"22e4b554-ecbb-4174-9757-348e4639f7d7",
+   CellTags->{"Bug", "bugs-integration", "Keywords"}],
+  Cell[9239, 263, 168, 3, 17, "Text",ExpressionUUID->"9d38034b-d4a2-48b2-9299-095219e8dd76",
+   CellTags->{"Bug", "bugs-testing", "Keywords"}],
+  Cell[12356, 362, 167, 3, 17, "Text",ExpressionUUID->"452ea9b3-3dcc-4afb-9a2d-35e01fb344d6",
+   CellTags->{"Bug", "btools-testing", "Keywords"}],
+  Cell[16219, 476, 164, 3, 17, "Text",ExpressionUUID->"4d366270-057d-462b-a3e1-d8f2bbdeb7fb",
+   CellTags->{"Bug", "rss-feeder", "Keywords"}],
+  Cell[19544, 580, 187, 3, 17, "Text",ExpressionUUID->"5b949f90-27df-4fb3-aa14-104588a2dfb1",
+   CellTags->{"Bug", "btools-formatting-split", "Keywords"}],
+  Cell[22929, 683, 180, 3, 17, "Text",ExpressionUUID->"c74aa4af-7d05-4df5-b35c-e67cc3453e52",
+   CellTags->{"Bug", "paclets-update-times", "Keywords"}],
+  Cell[26204, 783, 177, 3, 70, "Text",ExpressionUUID->"09fb7c58-2886-44d2-8492-7fd5bdced767",
+   CellTags->{"Bug", "markdown-html-switching", "Keywords"}],
+  Cell[29513, 887, 168, 3, 70, "Text",ExpressionUUID->"85e421f5-958d-4869-9ba2-880a9b1773f2",
+   CellTags->{"Bug", "bug-tracker-github", "Keywords"}],
+  Cell[32844, 991, 181, 3, 70, "Text",ExpressionUUID->"b8975ff5-ee13-438e-b05a-7ef19c353751",
+   CellTags->{"Bug", "paclet-loader-config", "Keywords"}]},
+ "markdown-html-switching"->{
+  Cell[24068, 721, 1221, 35, 117, "Section",ExpressionUUID->"f3a9603e-aa7c-4abb-989c-fa3b76d9728a",
+   CellTags->{"Bug", "markdown-html-switching", "Title"}],
+  Cell[25292, 758, 212, 3, 70, "Text",ExpressionUUID->"6939ab33-7b87-410b-a70a-3264b4e106c6",
+   CellTags->{"Bug", "markdown-html-switching", "CreationDate"}],
+  Cell[25507, 763, 191, 3, 70, "Text",ExpressionUUID->"1464524d-abb0-4b1f-89eb-3001f0a32e6c",
+   CellTags->{"Bug", "markdown-html-switching", "ResolutionDate"}],
+  Cell[25701, 768, 158, 3, 70, "Text",ExpressionUUID->"30dc556c-0b12-40f8-abd0-550f66bbd026",
+   CellTags->{"Bug", "markdown-html-switching", "ID"}],
+  Cell[25862, 773, 173, 3, 70, "Text",ExpressionUUID->"f2d6046a-3afa-4045-8973-6316ed119975",
+   CellTags->{"Bug", "markdown-html-switching", "Package"}],
+  Cell[26038, 778, 163, 3, 70, "Text",ExpressionUUID->"52d463ab-d981-4d7f-b7ac-cb7c34917dcd",
+   CellTags->{"Bug", "markdown-html-switching", "Owner"}],
+  Cell[26204, 783, 177, 3, 70, "Text",ExpressionUUID->"09fb7c58-2886-44d2-8492-7fd5bdced767",
+   CellTags->{"Bug", "markdown-html-switching", "Keywords"}],
+  Cell[26497, 792, 294, 6, 70, "Text",ExpressionUUID->"6a25e659-1528-46ed-87ae-c2b5d25e3d53",
+   CellTags->{"Bug", "markdown-html-switching", "Description"}],
+  Cell[26828, 803, 166, 3, 70, "Subsection",ExpressionUUID->"6aa60c1f-2bad-430c-ace8-9938d5e55b24",
+   CellTags->{"Bug", "markdown-html-switching", "Examples"}],
+  Cell[27116, 813, 157, 3, 70, "Subsection",ExpressionUUID->"0998b5f5-7e14-4d41-97a3-d32469118b8f",
+   CellTags->{"Bug", "markdown-html-switching", "Notes"}]},
+ "Notes"->{
+  Cell[6954, 194, 150, 3, 54, "Subsection",ExpressionUUID->"f8616d0c-b768-49ff-8deb-d26300eeb2bd",
+   CellTags->{"Bug", "bugs-integration", "Notes"}],
+  Cell[10038, 290, 146, 3, 54, "Subsection",ExpressionUUID->"8796dbe2-11b2-4b67-86c0-e174a7d861f7",
+   CellTags->{"Bug", "bugs-testing", "Notes"}],
+  Cell[13186, 391, 148, 3, 54, "Subsection",ExpressionUUID->"3afdc6b5-47ab-41b8-ba2d-272cca89d163",
+   CellTags->{"Bug", "btools-testing", "Notes"}],
+  Cell[17094, 506, 144, 3, 70, "Subsection",ExpressionUUID->"039c8e87-fe8f-4426-a4d1-fba828fa0baa",
+   CellTags->{"Bug", "rss-feeder", "Notes"}],
+  Cell[20536, 611, 157, 3, 70, "Subsection",ExpressionUUID->"c60e6c03-ded6-4f77-bd16-f9088e8f5846",
+   CellTags->{"Bug", "btools-formatting-split", "Notes"}],
+  Cell[23755, 710, 154, 3, 70, "Subsection",ExpressionUUID->"df5e2a3d-55fa-4af0-9dca-cbbc7f85b52f",
+   CellTags->{"Bug", "paclets-update-times", "Notes"}],
+  Cell[27116, 813, 157, 3, 70, "Subsection",ExpressionUUID->"0998b5f5-7e14-4d41-97a3-d32469118b8f",
+   CellTags->{"Bug", "markdown-html-switching", "Notes"}],
+  Cell[30462, 918, 152, 3, 70, "Subsection",ExpressionUUID->"39b5a6d2-0054-4b6b-a035-882619471585",
+   CellTags->{"Bug", "bug-tracker-github", "Notes"}],
+  Cell[33672, 1018, 154, 3, 70, "Subsection",ExpressionUUID->"7a9f5ba9-536a-4d87-8106-e204c3cfd717",
+   CellTags->{"Bug", "paclet-loader-config", "Notes"}]},
+ "Owner"->{
+  Cell[5964, 162, 156, 3, 17, "Text",ExpressionUUID->"940ab152-8b95-4827-9cc4-cccaf50e639f",
+   CellTags->{"Bug", "bugs-integration", "Owner"}],
+  Cell[9084, 258, 152, 3, 17, "Text",ExpressionUUID->"92331e88-32a7-41ca-8962-ac74abf5fb51",
+   CellTags->{"Bug", "bugs-testing", "Owner"}],
+  Cell[12199, 357, 154, 3, 17, "Text",ExpressionUUID->"c44a574f-1bd7-4af2-bf31-d9fb1d534ee4",
+   CellTags->{"Bug", "btools-testing", "Owner"}],
+  Cell[16066, 471, 150, 3, 17, "Text",ExpressionUUID->"d3557648-3e46-4d2a-92cc-aa530e0ee40c",
+   CellTags->{"Bug", "rss-feeder", "Owner"}],
+  Cell[19378, 575, 163, 3, 17, "Text",ExpressionUUID->"d2df4297-88b2-486c-974e-9a2c246454b8",
+   CellTags->{"Bug", "btools-formatting-split", "Owner"}],
+  Cell[22766, 678, 160, 3, 17, "Text",ExpressionUUID->"a156b90c-5dc0-4cfd-8a7d-e505ed205bf6",
+   CellTags->{"Bug", "paclets-update-times", "Owner"}],
+  Cell[26038, 778, 163, 3, 70, "Text",ExpressionUUID->"52d463ab-d981-4d7f-b7ac-cb7c34917dcd",
+   CellTags->{"Bug", "markdown-html-switching", "Owner"}],
+  Cell[29352, 882, 158, 3, 70, "Text",ExpressionUUID->"219aaa1e-a119-4fce-823f-30f45f9692e7",
+   CellTags->{"Bug", "bug-tracker-github", "Owner"}],
+  Cell[32681, 986, 160, 3, 70, "Text",ExpressionUUID->"9ed3f925-14b3-4a23-9f67-ebdc260cc5c7",
+   CellTags->{"Bug", "paclet-loader-config", "Owner"}]},
+ "Package"->{
+  Cell[5795, 157, 166, 3, 17, "Text",ExpressionUUID->"e6f43983-79f0-40db-a09e-97e2ebd8d71f",
+   CellTags->{"Bug", "bugs-integration", "Package"}],
+  Cell[8915, 253, 166, 3, 17, "Text",ExpressionUUID->"dda5dde1-d09c-4bd8-829d-20ec903ab599",
+   CellTags->{"Bug", "bugs-testing", "Package"}],
+  Cell[12032, 352, 164, 3, 17, "Text",ExpressionUUID->"a2b804f5-f6f2-44f2-a9eb-fba4866bc498",
+   CellTags->{"Bug", "btools-testing", "Package"}],
+  Cell[15903, 466, 160, 3, 17, "Text",ExpressionUUID->"e9a89001-c26c-4387-adc9-cc15c2946774",
+   CellTags->{"Bug", "rss-feeder", "Package"}],
+  Cell[19202, 570, 173, 3, 17, "Text",ExpressionUUID->"828003cd-cd9d-4d8e-9e86-39f1d3e1c0b4",
+   CellTags->{"Bug", "btools-formatting-split", "Package"}],
+  Cell[22593, 673, 170, 3, 17, "Text",ExpressionUUID->"054884bb-2ddd-47af-90bb-c0701adc43f7",
+   CellTags->{"Bug", "paclets-update-times", "Package"}],
+  Cell[25862, 773, 173, 3, 70, "Text",ExpressionUUID->"f2d6046a-3afa-4045-8973-6316ed119975",
+   CellTags->{"Bug", "markdown-html-switching", "Package"}],
+  Cell[29177, 877, 172, 3, 70, "Text",ExpressionUUID->"55f2d1f0-f223-4d98-9b16-0adf38ef628e",
+   CellTags->{"Bug", "bug-tracker-github", "Package"}],
+  Cell[32508, 981, 170, 3, 70, "Text",ExpressionUUID->"8993bd84-2cc5-4fce-8726-e010d3abfca7",
+   CellTags->{"Bug", "paclet-loader-config", "Package"}]},
+ "paclets-update-times"->{
+  Cell[20824, 622, 1181, 34, 82, "Section",ExpressionUUID->"cd1fcbe7-117c-4d46-be0d-a13ba6af3e55",
+   CellTags->{"Bug", "paclets-update-times", "Title"}],
+  Cell[22008, 658, 209, 3, 17, "Text",ExpressionUUID->"bc94d77f-b444-43cf-a0c8-428b6171c6dd",
+   CellTags->{"Bug", "paclets-update-times", "CreationDate"}],
+  Cell[22220, 663, 212, 3, 17, "Text",ExpressionUUID->"c9686cf9-3c44-4081-864f-96db4c244fe0",
+   CellTags->{"Bug", "paclets-update-times", "ResolutionDate"}],
+  Cell[22435, 668, 155, 3, 17, "Text",ExpressionUUID->"c342b708-2590-477d-8433-a26e76841100",
+   CellTags->{"Bug", "paclets-update-times", "ID"}],
+  Cell[22593, 673, 170, 3, 17, "Text",ExpressionUUID->"054884bb-2ddd-47af-90bb-c0701adc43f7",
+   CellTags->{"Bug", "paclets-update-times", "Package"}],
+  Cell[22766, 678, 160, 3, 17, "Text",ExpressionUUID->"a156b90c-5dc0-4cfd-8a7d-e505ed205bf6",
+   CellTags->{"Bug", "paclets-update-times", "Owner"}],
+  Cell[22929, 683, 180, 3, 17, "Text",ExpressionUUID->"c74aa4af-7d05-4df5-b35c-e67cc3453e52",
+   CellTags->{"Bug", "paclets-update-times", "Keywords"}],
+  Cell[23225, 692, 208, 3, 70, "Text",ExpressionUUID->"de5bae87-cc70-4953-8b61-18645e5469fa",
+   CellTags->{"Bug", "paclets-update-times", "Description"}],
+  Cell[23470, 700, 163, 3, 70, "Subsection",ExpressionUUID->"c21ea85f-2879-46f3-b376-3ad60ca73233",
+   CellTags->{"Bug", "paclets-update-times", "Examples"}],
+  Cell[23755, 710, 154, 3, 70, "Subsection",ExpressionUUID->"df5e2a3d-55fa-4af0-9dca-cbbc7f85b52f",
+   CellTags->{"Bug", "paclets-update-times", "Notes"}]},
+ "paclet-loader-config"->{
+  Cell[30745, 929, 1199, 35, 83, "Section",ExpressionUUID->"cb0156ca-1a93-450b-9cb3-863ecfaf8c04",
+   CellTags->{"Bug", "paclet-loader-config", "Title"}],
+  Cell[31947, 966, 209, 3, 70, "Text",ExpressionUUID->"e4c61f96-3754-40ee-a8b6-fa724a96a497",
+   CellTags->{"Bug", "paclet-loader-config", "CreationDate"}],
+  Cell[32159, 971, 188, 3, 70, "Text",ExpressionUUID->"0fe3a9d9-dec9-46e9-b8b0-e2a5340ad861",
+   CellTags->{"Bug", "paclet-loader-config", "ResolutionDate"}],
+  Cell[32350, 976, 155, 3, 70, "Text",ExpressionUUID->"7098ecb8-c854-4083-95ef-98e5de76b2f1",
+   CellTags->{"Bug", "paclet-loader-config", "ID"}],
+  Cell[32508, 981, 170, 3, 70, "Text",ExpressionUUID->"8993bd84-2cc5-4fce-8726-e010d3abfca7",
+   CellTags->{"Bug", "paclet-loader-config", "Package"}],
+  Cell[32681, 986, 160, 3, 70, "Text",ExpressionUUID->"9ed3f925-14b3-4a23-9f67-ebdc260cc5c7",
+   CellTags->{"Bug", "paclet-loader-config", "Owner"}],
+  Cell[32844, 991, 181, 3, 70, "Text",ExpressionUUID->"b8975ff5-ee13-438e-b05a-7ef19c353751",
+   CellTags->{"Bug", "paclet-loader-config", "Keywords"}],
+  Cell[33141, 1000, 209, 3, 70, "Text",ExpressionUUID->"cf7c5144-ce83-47d0-9115-b8fc3cf148fa",
+   CellTags->{"Bug", "paclet-loader-config", "Description"}],
+  Cell[33387, 1008, 163, 3, 70, "Subsection",ExpressionUUID->"79fe44e9-873f-408e-b684-a7fbcb51d28b",
+   CellTags->{"Bug", "paclet-loader-config", "Examples"}],
+  Cell[33672, 1018, 154, 3, 70, "Subsection",ExpressionUUID->"7a9f5ba9-536a-4d87-8106-e204c3cfd717",
+   CellTags->{"Bug", "paclet-loader-config", "Notes"}]},
+ "ResolutionDate"->{
+  Cell[5454, 147, 184, 3, 17, "Text",ExpressionUUID->"4f76adb6-0f53-4129-9e18-ecac833fc1d0",
+   CellTags->{"Bug", "bugs-integration", "ResolutionDate"}],
+  Cell[8582, 243, 180, 3, 17, "Text",ExpressionUUID->"3001467e-db12-40e8-a28b-3bf0d05dc949",
+   CellTags->{"Bug", "bugs-testing", "ResolutionDate"}],
+  Cell[11695, 342, 182, 3, 17, "Text",ExpressionUUID->"0f42956f-9488-4b2a-be48-ea3d36f5dc1c",
+   CellTags->{"Bug", "btools-testing", "ResolutionDate"}],
+  Cell[15550, 456, 202, 3, 17, "Text",ExpressionUUID->"415b4b66-fea5-4a17-96f5-69e9f67a6504",
+   CellTags->{"Bug", "rss-feeder", "ResolutionDate"}],
+  Cell[18823, 560, 215, 3, 17, "Text",ExpressionUUID->"5e4870c4-6226-451a-901f-b1d5b3ceacf8",
+   CellTags->{"Bug", "btools-formatting-split", "ResolutionDate"}],
+  Cell[22220, 663, 212, 3, 17, "Text",ExpressionUUID->"c9686cf9-3c44-4081-864f-96db4c244fe0",
+   CellTags->{"Bug", "paclets-update-times", "ResolutionDate"}],
+  Cell[25507, 763, 191, 3, 70, "Text",ExpressionUUID->"1464524d-abb0-4b1f-89eb-3001f0a32e6c",
+   CellTags->{"Bug", "markdown-html-switching", "ResolutionDate"}],
+  Cell[28832, 867, 186, 3, 70, "Text",ExpressionUUID->"a9a1c552-9f99-436a-a652-8a78d4fa098d",
+   CellTags->{"Bug", "bug-tracker-github", "ResolutionDate"}],
+  Cell[32159, 971, 188, 3, 70, "Text",ExpressionUUID->"0fe3a9d9-dec9-46e9-b8b0-e2a5340ad861",
+   CellTags->{"Bug", "paclet-loader-config", "ResolutionDate"}]},
+ "rss-feeder"->{
+  Cell[14200, 416, 1145, 33, 96, "Section",ExpressionUUID->"a4748ce3-7223-4869-9a52-c0d7bc1a9234",
+   CellTags->{"Bug", "rss-feeder", "Title"}],
+  Cell[15348, 451, 199, 3, 17, "Text",ExpressionUUID->"fa16c673-8fb9-4e1a-868f-9e677ee5a44f",
+   CellTags->{"Bug", "rss-feeder", "CreationDate"}],
+  Cell[15550, 456, 202, 3, 17, "Text",ExpressionUUID->"415b4b66-fea5-4a17-96f5-69e9f67a6504",
+   CellTags->{"Bug", "rss-feeder", "ResolutionDate"}],
+  Cell[15755, 461, 145, 3, 17, "Text",ExpressionUUID->"b602e127-a61f-49a7-80a6-43b95e779f1d",
+   CellTags->{"Bug", "rss-feeder", "ID"}],
+  Cell[15903, 466, 160, 3, 17, "Text",ExpressionUUID->"e9a89001-c26c-4387-adc9-cc15c2946774",
+   CellTags->{"Bug", "rss-feeder", "Package"}],
+  Cell[16066, 471, 150, 3, 17, "Text",ExpressionUUID->"d3557648-3e46-4d2a-92cc-aa530e0ee40c",
+   CellTags->{"Bug", "rss-feeder", "Owner"}],
+  Cell[16219, 476, 164, 3, 17, "Text",ExpressionUUID->"4d366270-057d-462b-a3e1-d8f2bbdeb7fb",
+   CellTags->{"Bug", "rss-feeder", "Keywords"}],
+  Cell[16499, 485, 283, 6, 58, "Text",ExpressionUUID->"9fa0e09d-53cf-4253-9595-7ef1cb9f1556",
+   CellTags->{"Bug", "rss-feeder", "Description"}],
+  Cell[16819, 496, 153, 3, 54, "Subsection",ExpressionUUID->"dc884294-dc6f-4916-9b55-e5f3d3a6ba6c",
+   CellTags->{"Bug", "rss-feeder", "Examples"}],
+  Cell[17094, 506, 144, 3, 70, "Subsection",ExpressionUUID->"039c8e87-fe8f-4426-a4d1-fba828fa0baa",
+   CellTags->{"Bug", "rss-feeder", "Notes"}]},
+ "Title"->{
+  Cell[4097, 108, 1146, 32, 97, "Section",ExpressionUUID->"31959117-be91-4f92-a9fc-29d5a42e2371",
+   CellTags->{"Bug", "bugs-integration", "Title"}],
+  Cell[7235, 205, 1140, 31, 83, "Section",ExpressionUUID->"23529aca-8e53-4780-93d7-9f8dbceaa674",
+   CellTags->{"Bug", "bugs-testing", "Title"}],
+  Cell[10315, 301, 1171, 34, 83, "Section",ExpressionUUID->"84b84a6c-55f2-47a5-9aab-19bdc567eb31",
+   CellTags->{"Bug", "btools-testing", "Title"}],
+  Cell[14200, 416, 1145, 33, 96, "Section",ExpressionUUID->"a4748ce3-7223-4869-9a52-c0d7bc1a9234",
+   CellTags->{"Bug", "rss-feeder", "Title"}],
+  Cell[17369, 517, 1236, 36, 117, "Section",ExpressionUUID->"fe3655cb-1b5a-4779-b7d7-b47b786c89da",
+   CellTags->{"Bug", "btools-formatting-split", "Title"}],
+  Cell[20824, 622, 1181, 34, 82, "Section",ExpressionUUID->"cd1fcbe7-117c-4d46-be0d-a13ba6af3e55",
+   CellTags->{"Bug", "paclets-update-times", "Title"}],
+  Cell[24068, 721, 1221, 35, 117, "Section",ExpressionUUID->"f3a9603e-aa7c-4abb-989c-fa3b76d9728a",
+   CellTags->{"Bug", "markdown-html-switching", "Title"}],
+  Cell[27404, 824, 1215, 36, 117, "Section",ExpressionUUID->"841c6ffb-0489-4323-87b4-1ba200300719",
+   CellTags->{"Bug", "bug-tracker-github", "Title"}],
+  Cell[30745, 929, 1199, 35, 83, "Section",ExpressionUUID->"cb0156ca-1a93-450b-9cb3-863ecfaf8c04",
+   CellTags->{"Bug", "paclet-loader-config", "Title"}]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"btools-formatting-split", 34792, 1050},
+ {"btools-testing", 36389, 1071},
+ {"Bug", 37884, 1092},
+ {"bugs-integration", 51551, 1273},
+ {"bugs-testing", 53065, 1294},
+ {"bug-tracker-github", 54546, 1315},
+ {"CreationDate", 56091, 1336},
+ {"Description", 57497, 1355},
+ {"Examples", 58892, 1374},
+ {"ID", 60308, 1393},
+ {"Keywords", 61621, 1412},
+ {"markdown-html-switching", 63003, 1431},
+ {"Notes", 64591, 1452},
+ {"Owner", 65984, 1471},
+ {"Package", 67323, 1490},
+ {"paclets-update-times", 68693, 1509},
+ {"paclet-loader-config", 70265, 1530},
+ {"ResolutionDate", 71834, 1551},
+ {"rss-feeder", 73257, 1570},
+ {"Title", 74714, 1591}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 1990, 44, 71, "Chapter",ExpressionUUID->"094f3b09-e94f-4d1a-bf1a-858035ae547f"],
+Cell[2573, 68, 1499, 36, 54, "Text",ExpressionUUID->"381deb48-9244-4199-ac60-38f0c87b1845"],
+Cell[CellGroupData[{
+Cell[4097, 108, 1146, 32, 97, "Section",ExpressionUUID->"31959117-be91-4f92-a9fc-29d5a42e2371",
+ CellTags->{"Bug", "bugs-integration", "Title"}],
+Cell[5246, 142, 205, 3, 17, "Text",ExpressionUUID->"1b299b33-9e92-4043-aede-c48be037c2e0",
+ CellTags->{"Bug", "bugs-integration", "CreationDate"}],
+Cell[5454, 147, 184, 3, 17, "Text",ExpressionUUID->"4f76adb6-0f53-4129-9e18-ecac833fc1d0",
+ CellTags->{"Bug", "bugs-integration", "ResolutionDate"}],
+Cell[5641, 152, 151, 3, 17, "Text",ExpressionUUID->"8b593c24-f0da-4492-a054-8510994e0d1c",
+ CellTags->{"Bug", "bugs-integration", "ID"}],
+Cell[5795, 157, 166, 3, 17, "Text",ExpressionUUID->"e6f43983-79f0-40db-a09e-97e2ebd8d71f",
+ CellTags->{"Bug", "bugs-integration", "Package"}],
+Cell[5964, 162, 156, 3, 17, "Text",ExpressionUUID->"940ab152-8b95-4827-9cc4-cccaf50e639f",
+ CellTags->{"Bug", "bugs-integration", "Owner"}],
+Cell[6123, 167, 189, 3, 17, "Text",ExpressionUUID->"22e4b554-ecbb-4174-9757-348e4639f7d7",
+ CellTags->{"Bug", "bugs-integration", "Keywords"}],
+Cell[CellGroupData[{
+Cell[6337, 174, 88, 0, 54, "Subsection",ExpressionUUID->"f807a93e-623f-4dcd-a883-3a437dd5f0fa"],
+Cell[6428, 176, 208, 3, 35, "Text",ExpressionUUID->"a41d08c2-ec94-4c41-bd9c-3632fbd52a2e",
+ CellTags->{"Bug", "bugs-integration", "Description"}]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6673, 184, 159, 3, 54, "Subsection",ExpressionUUID->"f43be997-b06d-4680-bc4c-bbb0a0c70b90",
+ CellTags->{"Bug", "bugs-integration", "Examples"}],
+Cell[6835, 189, 82, 0, 35, "Text",ExpressionUUID->"017cf38a-5afb-48e9-9d1d-0a8774cbba3d"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6954, 194, 150, 3, 54, "Subsection",ExpressionUUID->"f8616d0c-b768-49ff-8deb-d26300eeb2bd",
+ CellTags->{"Bug", "bugs-integration", "Notes"}],
+Cell[7107, 199, 79, 0, 35, "Text",ExpressionUUID->"bd41eb83-da66-4149-9555-0fcbbc935f24"]
+}, Open  ]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[7235, 205, 1140, 31, 83, "Section",ExpressionUUID->"23529aca-8e53-4780-93d7-9f8dbceaa674",
+ CellTags->{"Bug", "bugs-testing", "Title"}],
+Cell[8378, 238, 201, 3, 17, "Text",ExpressionUUID->"317d12a1-e040-4163-8c43-00b0227dff1d",
+ CellTags->{"Bug", "bugs-testing", "CreationDate"}],
+Cell[8582, 243, 180, 3, 17, "Text",ExpressionUUID->"3001467e-db12-40e8-a28b-3bf0d05dc949",
+ CellTags->{"Bug", "bugs-testing", "ResolutionDate"}],
+Cell[8765, 248, 147, 3, 17, "Text",ExpressionUUID->"0509f567-9f6f-4be9-b1f7-0b0372cf6e38",
+ CellTags->{"Bug", "bugs-testing", "ID"}],
+Cell[8915, 253, 166, 3, 17, "Text",ExpressionUUID->"dda5dde1-d09c-4bd8-829d-20ec903ab599",
+ CellTags->{"Bug", "bugs-testing", "Package"}],
+Cell[9084, 258, 152, 3, 17, "Text",ExpressionUUID->"92331e88-32a7-41ca-8962-ac74abf5fb51",
+ CellTags->{"Bug", "bugs-testing", "Owner"}],
+Cell[9239, 263, 168, 3, 17, "Text",ExpressionUUID->"9d38034b-d4a2-48b2-9299-095219e8dd76",
+ CellTags->{"Bug", "bugs-testing", "Keywords"}],
+Cell[CellGroupData[{
+Cell[9432, 270, 88, 0, 54, "Subsection",ExpressionUUID->"bada1b78-0af2-4a20-ad1d-b42a4ee1757a"],
+Cell[9523, 272, 201, 3, 35, "Text",ExpressionUUID->"5a403b01-90ac-4d5c-b6c1-6a1cf3780e6a",
+ CellTags->{"Bug", "bugs-testing", "Description"}]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[9761, 280, 155, 3, 54, "Subsection",ExpressionUUID->"a8da2d74-fd43-4bc3-bdf2-79f4eeca3b45",
+ CellTags->{"Bug", "bugs-testing", "Examples"}],
+Cell[9919, 285, 82, 0, 35, "Text",ExpressionUUID->"6acae494-a59c-48c4-aede-a5d3ec784020"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[10038, 290, 146, 3, 54, "Subsection",ExpressionUUID->"8796dbe2-11b2-4b67-86c0-e174a7d861f7",
+ CellTags->{"Bug", "bugs-testing", "Notes"}],
+Cell[10187, 295, 79, 0, 35, "Text",ExpressionUUID->"ad485a82-1f25-40f6-b1cc-d95e3ad332e3"]
+}, Open  ]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[10315, 301, 1171, 34, 83, "Section",ExpressionUUID->"84b84a6c-55f2-47a5-9aab-19bdc567eb31",
+ CellTags->{"Bug", "btools-testing", "Title"}],
+Cell[11489, 337, 203, 3, 17, "Text",ExpressionUUID->"8fa8678c-0095-4d3c-b41f-5f6ab71b83eb",
+ CellTags->{"Bug", "btools-testing", "CreationDate"}],
+Cell[11695, 342, 182, 3, 17, "Text",ExpressionUUID->"0f42956f-9488-4b2a-be48-ea3d36f5dc1c",
+ CellTags->{"Bug", "btools-testing", "ResolutionDate"}],
+Cell[11880, 347, 149, 3, 17, "Text",ExpressionUUID->"fd0b5273-2192-4871-85b2-bf11011f81a4",
+ CellTags->{"Bug", "btools-testing", "ID"}],
+Cell[12032, 352, 164, 3, 17, "Text",ExpressionUUID->"a2b804f5-f6f2-44f2-a9eb-fba4866bc498",
+ CellTags->{"Bug", "btools-testing", "Package"}],
+Cell[12199, 357, 154, 3, 17, "Text",ExpressionUUID->"c44a574f-1bd7-4af2-bf31-d9fb1d534ee4",
+ CellTags->{"Bug", "btools-testing", "Owner"}],
+Cell[12356, 362, 167, 3, 17, "Text",ExpressionUUID->"452ea9b3-3dcc-4afb-9a2d-35e01fb344d6",
+ CellTags->{"Bug", "btools-testing", "Keywords"}],
+Cell[CellGroupData[{
+Cell[12548, 369, 88, 0, 54, "Subsection",ExpressionUUID->"153aa166-6838-468d-acd4-8b2df51d5183"],
+Cell[12639, 371, 231, 5, 35, "Text",ExpressionUUID->"9f4f3089-ab8d-4905-b842-4f4e82970d15",
+ CellTags->{"Bug", "btools-testing", "Description"}]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[12907, 381, 157, 3, 54, "Subsection",ExpressionUUID->"64772f4b-0fa6-4f9d-9255-cfce1a356353",
+ CellTags->{"Bug", "btools-testing", "Examples"}],
+Cell[13067, 386, 82, 0, 35, "Text",ExpressionUUID->"d381dd8f-1246-4e45-a3d4-4b87c96137b7"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[13186, 391, 148, 3, 54, "Subsection",ExpressionUUID->"3afdc6b5-47ab-41b8-ba2d-272cca89d163",
+ CellTags->{"Bug", "btools-testing", "Notes"}],
+Cell[13337, 396, 105, 0, 35, "Text",ExpressionUUID->"37b695c5-5eb3-4f49-a1b1-0857d45bbeb2"],
+Cell[13445, 398, 96, 0, 35, "Text",ExpressionUUID->"b3ab41cc-f1cc-48c4-b889-7e8b4c0cae61"],
+Cell[13544, 400, 96, 0, 35, "Text",ExpressionUUID->"f2ae2419-090f-48ce-b43a-39fc22f6fd6b"],
+Cell[13643, 402, 115, 0, 35, "Text",ExpressionUUID->"af3c2396-7215-4a20-b524-b30f7578c7d3"],
+Cell[13761, 404, 117, 0, 35, "Text",ExpressionUUID->"bc30c906-adab-45a4-8182-17220dfe913c"],
+Cell[13881, 406, 83, 0, 35, "Text",ExpressionUUID->"9f43c02a-c793-4baf-9ab0-29b7761af75a"],
+Cell[13967, 408, 90, 0, 35, "Text",ExpressionUUID->"91f3e241-4320-4459-b0ea-487af4e7a93b"],
+Cell[14060, 410, 91, 0, 35, "Text",ExpressionUUID->"32f5d3fc-b122-4d16-a6b0-aae09ac09554"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[14200, 416, 1145, 33, 96, "Section",ExpressionUUID->"a4748ce3-7223-4869-9a52-c0d7bc1a9234",
+ CellTags->{"Bug", "rss-feeder", "Title"}],
+Cell[15348, 451, 199, 3, 17, "Text",ExpressionUUID->"fa16c673-8fb9-4e1a-868f-9e677ee5a44f",
+ CellTags->{"Bug", "rss-feeder", "CreationDate"}],
+Cell[15550, 456, 202, 3, 17, "Text",ExpressionUUID->"415b4b66-fea5-4a17-96f5-69e9f67a6504",
+ CellTags->{"Bug", "rss-feeder", "ResolutionDate"}],
+Cell[15755, 461, 145, 3, 17, "Text",ExpressionUUID->"b602e127-a61f-49a7-80a6-43b95e779f1d",
+ CellTags->{"Bug", "rss-feeder", "ID"}],
+Cell[15903, 466, 160, 3, 17, "Text",ExpressionUUID->"e9a89001-c26c-4387-adc9-cc15c2946774",
+ CellTags->{"Bug", "rss-feeder", "Package"}],
+Cell[16066, 471, 150, 3, 17, "Text",ExpressionUUID->"d3557648-3e46-4d2a-92cc-aa530e0ee40c",
+ CellTags->{"Bug", "rss-feeder", "Owner"}],
+Cell[16219, 476, 164, 3, 17, "Text",ExpressionUUID->"4d366270-057d-462b-a3e1-d8f2bbdeb7fb",
+ CellTags->{"Bug", "rss-feeder", "Keywords"}],
+Cell[CellGroupData[{
+Cell[16408, 483, 88, 0, 54, "Subsection",ExpressionUUID->"92970cc1-cc70-40a5-839f-d769e33092a2"],
+Cell[16499, 485, 283, 6, 58, "Text",ExpressionUUID->"9fa0e09d-53cf-4253-9595-7ef1cb9f1556",
+ CellTags->{"Bug", "rss-feeder", "Description"}]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[16819, 496, 153, 3, 54, "Subsection",ExpressionUUID->"dc884294-dc6f-4916-9b55-e5f3d3a6ba6c",
+ CellTags->{"Bug", "rss-feeder", "Examples"}],
+Cell[16975, 501, 82, 0, 35, "Text",ExpressionUUID->"390951ca-c864-43db-9339-d13c631d3d79"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[17094, 506, 144, 3, 70, "Subsection",ExpressionUUID->"039c8e87-fe8f-4426-a4d1-fba828fa0baa",
+ CellTags->{"Bug", "rss-feeder", "Notes"}],
+Cell[17241, 511, 79, 0, 70, "Text",ExpressionUUID->"336627af-1482-49a1-8d6f-8aeb1b1848b6"]
+}, Open  ]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[17369, 517, 1236, 36, 117, "Section",ExpressionUUID->"fe3655cb-1b5a-4779-b7d7-b47b786c89da",
+ CellTags->{"Bug", "btools-formatting-split", "Title"}],
+Cell[18608, 555, 212, 3, 17, "Text",ExpressionUUID->"78c755cd-e296-4bf8-bd38-f0688d6b7c6a",
+ CellTags->{"Bug", "btools-formatting-split", "CreationDate"}],
+Cell[18823, 560, 215, 3, 17, "Text",ExpressionUUID->"5e4870c4-6226-451a-901f-b1d5b3ceacf8",
+ CellTags->{"Bug", "btools-formatting-split", "ResolutionDate"}],
+Cell[19041, 565, 158, 3, 17, "Text",ExpressionUUID->"10a9727c-a458-42c7-8f6a-e9e7b7be5a4e",
+ CellTags->{"Bug", "btools-formatting-split", "ID"}],
+Cell[19202, 570, 173, 3, 17, "Text",ExpressionUUID->"828003cd-cd9d-4d8e-9e86-39f1d3e1c0b4",
+ CellTags->{"Bug", "btools-formatting-split", "Package"}],
+Cell[19378, 575, 163, 3, 17, "Text",ExpressionUUID->"d2df4297-88b2-486c-974e-9a2c246454b8",
+ CellTags->{"Bug", "btools-formatting-split", "Owner"}],
+Cell[19544, 580, 187, 3, 17, "Text",ExpressionUUID->"5b949f90-27df-4fb3-aa14-104588a2dfb1",
+ CellTags->{"Bug", "btools-formatting-split", "Keywords"}],
+Cell[CellGroupData[{
+Cell[19756, 587, 88, 0, 54, "Subsection",ExpressionUUID->"51f27936-360e-4595-a019-aa931d7bb186"],
+Cell[19847, 589, 364, 7, 58, "Text",ExpressionUUID->"6a846ddf-7107-4f48-ae1a-9aa645274c55",
+ CellTags->{"Bug", "btools-formatting-split", "Description"}]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[20248, 601, 166, 3, 70, "Subsection",ExpressionUUID->"ac7a5f1d-b263-4b36-a39c-910c67609d43",
+ CellTags->{"Bug", "btools-formatting-split", "Examples"}],
+Cell[20417, 606, 82, 0, 70, "Text",ExpressionUUID->"a049ad64-8900-4c1b-a838-6ac712ff5c17"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[20536, 611, 157, 3, 70, "Subsection",ExpressionUUID->"c60e6c03-ded6-4f77-bd16-f9088e8f5846",
+ CellTags->{"Bug", "btools-formatting-split", "Notes"}],
+Cell[20696, 616, 79, 0, 70, "Text",ExpressionUUID->"a569d8e3-20cb-4543-82f2-b2711ed6bd1d"]
+}, Open  ]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[20824, 622, 1181, 34, 82, "Section",ExpressionUUID->"cd1fcbe7-117c-4d46-be0d-a13ba6af3e55",
+ CellTags->{"Bug", "paclets-update-times", "Title"}],
+Cell[22008, 658, 209, 3, 17, "Text",ExpressionUUID->"bc94d77f-b444-43cf-a0c8-428b6171c6dd",
+ CellTags->{"Bug", "paclets-update-times", "CreationDate"}],
+Cell[22220, 663, 212, 3, 17, "Text",ExpressionUUID->"c9686cf9-3c44-4081-864f-96db4c244fe0",
+ CellTags->{"Bug", "paclets-update-times", "ResolutionDate"}],
+Cell[22435, 668, 155, 3, 17, "Text",ExpressionUUID->"c342b708-2590-477d-8433-a26e76841100",
+ CellTags->{"Bug", "paclets-update-times", "ID"}],
+Cell[22593, 673, 170, 3, 17, "Text",ExpressionUUID->"054884bb-2ddd-47af-90bb-c0701adc43f7",
+ CellTags->{"Bug", "paclets-update-times", "Package"}],
+Cell[22766, 678, 160, 3, 17, "Text",ExpressionUUID->"a156b90c-5dc0-4cfd-8a7d-e505ed205bf6",
+ CellTags->{"Bug", "paclets-update-times", "Owner"}],
+Cell[22929, 683, 180, 3, 17, "Text",ExpressionUUID->"c74aa4af-7d05-4df5-b35c-e67cc3453e52",
+ CellTags->{"Bug", "paclets-update-times", "Keywords"}],
+Cell[CellGroupData[{
+Cell[23134, 690, 88, 0, 70, "Subsection",ExpressionUUID->"305b35c2-24f6-41bd-a15a-ef8a041475ae"],
+Cell[23225, 692, 208, 3, 70, "Text",ExpressionUUID->"de5bae87-cc70-4953-8b61-18645e5469fa",
+ CellTags->{"Bug", "paclets-update-times", "Description"}]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[23470, 700, 163, 3, 70, "Subsection",ExpressionUUID->"c21ea85f-2879-46f3-b376-3ad60ca73233",
+ CellTags->{"Bug", "paclets-update-times", "Examples"}],
+Cell[23636, 705, 82, 0, 70, "Text",ExpressionUUID->"214344fe-7d25-4edd-8724-50c492f78db1"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[23755, 710, 154, 3, 70, "Subsection",ExpressionUUID->"df5e2a3d-55fa-4af0-9dca-cbbc7f85b52f",
+ CellTags->{"Bug", "paclets-update-times", "Notes"}],
+Cell[23912, 715, 107, 0, 70, "Text",ExpressionUUID->"79454cad-624d-4821-b998-3348c816e189"]
+}, Open  ]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[24068, 721, 1221, 35, 117, "Section",ExpressionUUID->"f3a9603e-aa7c-4abb-989c-fa3b76d9728a",
+ CellTags->{"Bug", "markdown-html-switching", "Title"}],
+Cell[25292, 758, 212, 3, 70, "Text",ExpressionUUID->"6939ab33-7b87-410b-a70a-3264b4e106c6",
+ CellTags->{"Bug", "markdown-html-switching", "CreationDate"}],
+Cell[25507, 763, 191, 3, 70, "Text",ExpressionUUID->"1464524d-abb0-4b1f-89eb-3001f0a32e6c",
+ CellTags->{"Bug", "markdown-html-switching", "ResolutionDate"}],
+Cell[25701, 768, 158, 3, 70, "Text",ExpressionUUID->"30dc556c-0b12-40f8-abd0-550f66bbd026",
+ CellTags->{"Bug", "markdown-html-switching", "ID"}],
+Cell[25862, 773, 173, 3, 70, "Text",ExpressionUUID->"f2d6046a-3afa-4045-8973-6316ed119975",
+ CellTags->{"Bug", "markdown-html-switching", "Package"}],
+Cell[26038, 778, 163, 3, 70, "Text",ExpressionUUID->"52d463ab-d981-4d7f-b7ac-cb7c34917dcd",
+ CellTags->{"Bug", "markdown-html-switching", "Owner"}],
+Cell[26204, 783, 177, 3, 70, "Text",ExpressionUUID->"09fb7c58-2886-44d2-8492-7fd5bdced767",
+ CellTags->{"Bug", "markdown-html-switching", "Keywords"}],
+Cell[CellGroupData[{
+Cell[26406, 790, 88, 0, 70, "Subsection",ExpressionUUID->"9534cb55-305a-433b-85e2-6119201f3450"],
+Cell[26497, 792, 294, 6, 70, "Text",ExpressionUUID->"6a25e659-1528-46ed-87ae-c2b5d25e3d53",
+ CellTags->{"Bug", "markdown-html-switching", "Description"}]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[26828, 803, 166, 3, 70, "Subsection",ExpressionUUID->"6aa60c1f-2bad-430c-ace8-9938d5e55b24",
+ CellTags->{"Bug", "markdown-html-switching", "Examples"}],
+Cell[26997, 808, 82, 0, 70, "Text",ExpressionUUID->"8e514bdf-d492-4e98-af30-f8174094ef18"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[27116, 813, 157, 3, 70, "Subsection",ExpressionUUID->"0998b5f5-7e14-4d41-97a3-d32469118b8f",
+ CellTags->{"Bug", "markdown-html-switching", "Notes"}],
+Cell[27276, 818, 79, 0, 70, "Text",ExpressionUUID->"d7d0a4b7-cb49-41ae-b28f-b13d42d99db0"]
+}, Open  ]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[27404, 824, 1215, 36, 117, "Section",ExpressionUUID->"841c6ffb-0489-4323-87b4-1ba200300719",
+ CellTags->{"Bug", "bug-tracker-github", "Title"}],
+Cell[28622, 862, 207, 3, 70, "Text",ExpressionUUID->"7805837a-f31d-4576-bf45-f596b32ef671",
+ CellTags->{"Bug", "bug-tracker-github", "CreationDate"}],
+Cell[28832, 867, 186, 3, 70, "Text",ExpressionUUID->"a9a1c552-9f99-436a-a652-8a78d4fa098d",
+ CellTags->{"Bug", "bug-tracker-github", "ResolutionDate"}],
+Cell[29021, 872, 153, 3, 70, "Text",ExpressionUUID->"b4336756-a19d-4cf9-97f6-9a1e72e91951",
+ CellTags->{"Bug", "bug-tracker-github", "ID"}],
+Cell[29177, 877, 172, 3, 70, "Text",ExpressionUUID->"55f2d1f0-f223-4d98-9b16-0adf38ef628e",
+ CellTags->{"Bug", "bug-tracker-github", "Package"}],
+Cell[29352, 882, 158, 3, 70, "Text",ExpressionUUID->"219aaa1e-a119-4fce-823f-30f45f9692e7",
+ CellTags->{"Bug", "bug-tracker-github", "Owner"}],
+Cell[29513, 887, 168, 3, 70, "Text",ExpressionUUID->"85e421f5-958d-4869-9ba2-880a9b1773f2",
+ CellTags->{"Bug", "bug-tracker-github", "Keywords"}],
+Cell[CellGroupData[{
+Cell[29706, 894, 88, 0, 70, "Subsection",ExpressionUUID->"e75e34b6-b808-48ee-ae5e-657cb7377b4e"],
+Cell[29797, 896, 345, 7, 70, "Text",ExpressionUUID->"2b1b6300-e04d-4fb0-b9c4-600b10f087a0",
+ CellTags->{"Bug", "bug-tracker-github", "Description"}]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[30179, 908, 161, 3, 70, "Subsection",ExpressionUUID->"274a62cc-f8bf-44f6-9d4f-bd956d0025f1",
+ CellTags->{"Bug", "bug-tracker-github", "Examples"}],
+Cell[30343, 913, 82, 0, 70, "Text",ExpressionUUID->"c568294e-e0d3-4372-a878-6d075efecadb"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[30462, 918, 152, 3, 70, "Subsection",ExpressionUUID->"39b5a6d2-0054-4b6b-a035-882619471585",
+ CellTags->{"Bug", "bug-tracker-github", "Notes"}],
+Cell[30617, 923, 79, 0, 70, "Text",ExpressionUUID->"555d28c7-1fd3-4e6b-ae54-66b3d5ec654b"]
+}, Open  ]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[30745, 929, 1199, 35, 83, "Section",ExpressionUUID->"cb0156ca-1a93-450b-9cb3-863ecfaf8c04",
+ CellTags->{"Bug", "paclet-loader-config", "Title"}],
+Cell[31947, 966, 209, 3, 70, "Text",ExpressionUUID->"e4c61f96-3754-40ee-a8b6-fa724a96a497",
+ CellTags->{"Bug", "paclet-loader-config", "CreationDate"}],
+Cell[32159, 971, 188, 3, 70, "Text",ExpressionUUID->"0fe3a9d9-dec9-46e9-b8b0-e2a5340ad861",
+ CellTags->{"Bug", "paclet-loader-config", "ResolutionDate"}],
+Cell[32350, 976, 155, 3, 70, "Text",ExpressionUUID->"7098ecb8-c854-4083-95ef-98e5de76b2f1",
+ CellTags->{"Bug", "paclet-loader-config", "ID"}],
+Cell[32508, 981, 170, 3, 70, "Text",ExpressionUUID->"8993bd84-2cc5-4fce-8726-e010d3abfca7",
+ CellTags->{"Bug", "paclet-loader-config", "Package"}],
+Cell[32681, 986, 160, 3, 70, "Text",ExpressionUUID->"9ed3f925-14b3-4a23-9f67-ebdc260cc5c7",
+ CellTags->{"Bug", "paclet-loader-config", "Owner"}],
+Cell[32844, 991, 181, 3, 70, "Text",ExpressionUUID->"b8975ff5-ee13-438e-b05a-7ef19c353751",
+ CellTags->{"Bug", "paclet-loader-config", "Keywords"}],
+Cell[CellGroupData[{
+Cell[33050, 998, 88, 0, 70, "Subsection",ExpressionUUID->"b6208bf9-ab8e-41f6-8cb5-edc5bf53808c"],
+Cell[33141, 1000, 209, 3, 70, "Text",ExpressionUUID->"cf7c5144-ce83-47d0-9115-b8fc3cf148fa",
+ CellTags->{"Bug", "paclet-loader-config", "Description"}]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[33387, 1008, 163, 3, 70, "Subsection",ExpressionUUID->"79fe44e9-873f-408e-b684-a7fbcb51d28b",
+ CellTags->{"Bug", "paclet-loader-config", "Examples"}],
+Cell[33553, 1013, 82, 0, 70, "Text",ExpressionUUID->"52b8f86c-166c-4803-b511-ebfa9f55d94d"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[33672, 1018, 154, 3, 70, "Subsection",ExpressionUUID->"7a9f5ba9-536a-4d87-8106-e204c3cfd717",
+ CellTags->{"Bug", "paclet-loader-config", "Notes"}],
+Cell[33829, 1023, 79, 0, 70, "Text",ExpressionUUID->"bd31bb6a-b008-4f2c-a43e-6b7892b0c298"],
+Cell[33911, 1025, 368, 7, 70, "Message",ExpressionUUID->"75369774-d5d8-48c9-98e9-746604ec33ca"]
+}, Open  ]]
+}, Closed]]
+}, Open  ]]
+}
+]
+*)
+

@@ -46,6 +46,55 @@ Options[NotebookToMarkdown]=
 
 
 (* ::Subsubsection::Closed:: *)
+(*getNotebookName*)
+
+
+
+getNotebookName[name_, meta_, nb_]:=
+  Replace[name,
+    Automatic:>
+      MarkdownNameToSlug@
+        Replace[
+          Lookup[meta, "Slug", Automatic],
+          Automatic:>
+            Replace[Quiet@FileBaseName@MarkdownNotebookFileName[nb],
+              Except[_String]->"Title"
+              ]
+          ]
+    ]
+
+
+(* ::Subsubsection::Closed:: *)
+(*getNotebookDirectory*)
+
+
+
+getNotebookDirectory[dop_, dir_]:=
+  MarkdownSiteBase@
+    Replace[dop,
+      Automatic:>MarkdownSiteBase[dir]
+      ]
+
+
+(* ::Subsubsection::Closed:: *)
+(*getNotebookPath*)
+
+
+
+getNotebookPath[pa_, dir_]:=
+  Replace[pa,
+    Automatic:>
+      If[StringMatchQ[dir, MarkdownContentPath[dir]~~___],
+        "",
+        URLBuild@
+          ConstantArray["..",
+            1+FileNameDepth[MarkdownContentPath[dir]]
+            ]
+        ]
+    ]
+
+
+(* ::Subsubsection::Closed:: *)
 (*Notebook Export*)
 
 
@@ -234,8 +283,7 @@ NotebookToMarkdown[nb_NotebookObject, ops:OptionsPattern[]]:=
   Module[
     {
       meta=MarkdownNotebookMetadata[nb],
-      dir=
-        MarkdownNotebookDirectory[nb],
+      dir=MarkdownNotebookDirectory[nb],
       name,
       d2,
       cext,
@@ -245,42 +293,21 @@ NotebookToMarkdown[nb_NotebookObject, ops:OptionsPattern[]]:=
       cells
       },
       name=
-        Replace[OptionValue["Name"],
-          Automatic:>
-            MarkdownNameToSlug@
-              Replace[
-                Lookup[meta, "Slug", Automatic],
-                Automatic:>
-                  Replace[Quiet@FileBaseName@MarkdownNotebookFileName[nb],
-                    Except[_String]->"Title"
-                    ]
-                ]
-          ];
+        getNotebookName[OptionValue["Name"], meta, name];
+      dir=
+        getNotebookDirectory[OptionValue["Directory"], dir];
       If[!DirectoryQ[dir],
         PackageRaiseException[Automatic,
           "Directory `` doesn't exist",
           dir
           ],
-        d2=
-          MarkdownSiteBase@
-            Replace[OptionValue["Directory"],
-              Automatic:>MarkdownSiteBase[dir]
-              ];
+        d2=dir;
         cext=
           Replace[OptionValue["ContentExtension"],
             Automatic:>MarkdownContentExtension[MarkdownSiteBase@dir]
             ];
         path=
-          Replace[OptionValue["Path"],
-            Automatic:>
-              If[StringMatchQ[dir, MarkdownContentPath[dir]~~___],
-                "",
-                URLBuild@
-                  ConstantArray["..",
-                    1+FileNameDepth[MarkdownContentPath[dir]]
-                    ]
-                ]
-            ];
+          getNotebookPath[OptionValue["Path"], dir];
         cont=
           Replace[OptionValue["Context"],
             Automatic:>MarkdownNotebookContext@nb
@@ -303,8 +330,7 @@ NotebookToMarkdown[nb_NotebookObject, ops:OptionsPattern[]]:=
               ];
         cells=
           Cells[nb,
-            CellStyle->
-              Keys@cstyles
+            CellStyle->Keys@cstyles
             ];
         NotebookToMarkdown[
           Notebook[
@@ -518,7 +544,16 @@ NotebookMarkdownSave[
       md=
         Reap[
           exporter[nb, 
-            FilterRules[Normal@expOps, Options[exporter]]],
+            FilterRules[
+              {
+                Normal@expOps,
+                "Name"->getNotebookName[None, meta, nb],
+                "Directory"->getNotebookDirectory[None, MarkdownNotebookDirectory[nb]],
+                "Path"->getNotebookPath[None, MarkdownNotebookDirectory[nb]]
+                }, 
+              Options[exporter]
+              ]
+            ],
           "MarkdownExport"
           ];
       If[!StringQ@md[[1]],
