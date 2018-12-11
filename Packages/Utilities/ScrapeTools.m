@@ -8,6 +8,10 @@ FileSystemGrep::usage=
   "Combines FileSystemMap and FileGrep";
 
 
+Grep::usage=
+  "Call in to grep";
+
+
 GrepDirectory::usage=
   "Greps a directory for a pattern (can be applied to a list of files or directories)";
 
@@ -18,6 +22,8 @@ GrepSelect::usage=
 
 SystemExpressionsSearch::usage=
   "Scrapes data from internal files";
+SystemTextSearch::usage=
+  "Scrapes text from internal files";
 SystemHeadSearch::usage=
   "Scrapes for usage of a head";
 SystemArgSearch::usage=
@@ -56,13 +62,265 @@ WithOverrideDefs::usage=
 Begin["`Private`"];
 
 
+(* ::Subsection:: *)
+(*Grep*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*Grep*)
+
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*grepOpsMap*)
+
+
+
+grepOpsMap=
+  <|
+    "TrailingLines"->"A",
+    "LeadingLines"->"B",
+    "DirectoryAction"->"d",
+    "SearchPattern"->"e",
+    "ExcludedFiles"->"exclude",
+    "IncludedFiles"->"include",
+    "EcludedDirectories"->"exclude-dir",
+    "IncludedDirectories"->"include-dir",
+    "UseRegex"->"E",
+    "UseFixedStrings"->"F",
+    "UseBasicGrep"->"G",
+    "PrintFileNames"->"H",
+    "SuppressFileNames"->"h",
+    "PrintLineNumbers"->"n",
+    "ReturnMatchCount"->"c",
+    "IgnoreBinaries"->"I",
+    "IgnoreCase"->"i",
+    "ReturnNotContaining"->"L",
+    "ReturnContaining"->"l",
+    "MaxNumberOfMatches"->"m",
+    "Quiet"->"q",
+    "Recursive"->"R",
+    "OppositeDay"->"v"
+    |>;
+grepOpsExceptions=
+  <|
+    "IgnoreBinaries"->True
+    |>;
+grepTrueOps=
+  AssociationMap[
+    Lookup[grepOpsExceptions, #, Automatic]&,
+    Keys@grepOpsMap
+    ];
+
+
+getGrepKeyString[k_]:=
+  Lookup[grepOpsMap, k];
+getGrepNotKeyString[k_]:=
+  If[StringLength[#]===1,
+    If[UpperCaseQ[#], ToLowerCase[#], ToUpperCase[#]],
+    StringReplace[#, {"exclude"->"include", "include"->"exclude"}]
+    ]&@
+    Lookup[grepOpsMap, k]
+
+
+formatGrepKey[k_]:=
+  If[StringLength[k]===1, "-"<>k, "--"<>k]
+formatGrepKeyPair[{k_, v_}]:=
+  If[StringLength[k]===1, 
+    "-"<>k<>" "<>ToString[v], 
+    "--"<>k<>"="<>ToString[v]
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*parseGrepOps*)
+
+
+
+parseGrepOps[ops:OptionsPattern[]]:=
+  Sequence@@
+    Module[
+      {
+        fullOps=
+          FilterRules[
+            Normal@Merge[{ops, Options[Grep]}, First],
+            Normal@grepOpsMap
+            ]
+        },
+      Replace[
+        fullOps,
+        {
+          (k_->Automatic):>
+            Nothing,
+          (k_->True):>
+            formatGrepKey@getGrepKeyString[k],
+          (k_->False):>
+            formatGrepKey@getGrepNotKeyString[k],
+          (k_->l_List):>
+            Apply[Sequence,
+              Map[formatGrepKeyPair, Thread[{getGrepKeyString@k, l}]]
+              ],
+          (k_->v:_?NumericQ|_String):>
+            formatGrepKeyPair[{getGrepKeyString@k, v}],
+          _->Nothing
+          },
+        1
+        ]
+      ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*getGrepPat*)
+
+
+
+getGrepPat[pat_, useFixed_]:=
+  If[TrueQ@useFixed&&StringQ@pat,
+    pat,
+    If[StringPattern`StringPatternQ[pat],
+      StringTrim[
+        StringPattern`PatternConvert[pat][[1]], 
+        "(?ms)"
+        ],
+      Nothing
+      ]
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*grepPostProcessor*)
+
+
+
+nTrue=Except[True];
+
+
+grepPostProcessor//Clear
+grepPostProcessor[ops:OptionsPattern[]]:=
+  grepPostProcessor@@
+    Lookup[Flatten@{ops}, 
+      {
+        "ReturnContaining",
+        "ReturnNotContaining",
+        "ReturnMatchCount",
+        "PrintFileNames",
+        "SuppressFileNames",
+        "PrintLineNumbers"
+        },
+      Automatic
+      ];
+grepPostProcessor[_, _, True, True, _, _]:=
+  Floor@Map[
+    Internal`StringToDouble,
+    StringSplit[#, "\n"]
+    ]&
+grepPostProcessor[_, _, True, nTrue, _, _]:=
+  Floor@Map[
+    Internal`StringToDouble,
+    AssociationThread@@
+      Transpose@
+        StringSplit[
+          StringSplit[#, "\n"],
+          ":",
+          2
+          ]
+    ]&;
+grepPostProcessor[True, _, _, _, _, _]:=
+  StringSplit[#, "\n"]&
+grepPostProcessor[_, True, _, _, _, _]:=
+  StringSplit[#, "\n"]&
+grepPostProcessor[nTrue, nTrue, nTrue, _, nTrue, True]:=
+  GroupBy[
+    StringSplit[
+      StringSplit[#, "\n"],
+      ":",
+      3
+      ],
+    First->(Rule@@#[[2;;]]&),
+    KeyMap[Floor[Internal`StringToDouble[#]]&]@*Association
+    ]&;
+grepPostProcessor[nTrue, nTrue, nTrue, _, nTrue, nTrue]:=
+  GroupBy[
+    StringSplit[
+      StringSplit[#, "\n"],
+      ":",
+      2
+      ],
+    First->(#[[2]]&)
+    ]&;
+grepPostProcessor[nTrue, nTrue, nTrue, _, True, nTrue]:=
+  StringSplit[#, "\n"]&
+grepPostProcessor[nTrue, nTrue, nTrue, _, True, True]:=
+  Map[
+    Floor@Internal`StringToDouble@First[#]->#[[2]]&,
+    StringSplit[
+      StringSplit[#, "\n"],
+      ":",
+      2
+      ]
+    ]&;
+grepPostProcessor[___]:=
+  Identity;
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Grep*)
+
+
+
+Options[Grep]=
+  Join[
+    Normal@grepTrueOps,
+    Options[RunProcess],
+    {
+      "PostProcess"->True
+      }
+    ];
+Grep[files_, pat_, ops:OptionsPattern[]]:=
+  Module[{res},
+    res=
+      RunProcess[
+        {
+          "grep",
+          parseGrepOps[ops],
+          getGrepPat[pat, OptionValue["UseFixedStrings"]],
+          Sequence@@Flatten@{files}
+          },
+        FilterRules[{ops}, Options[RunProcess]]
+        ];
+    If[
+      StringQ@res["StandardError"]&&
+        StringLength@StringTrim@res["StandardError"]>0,
+      PackageThrowMessage[
+        "Grep",
+        StringTrim@res["StandardError"]
+        ]
+      ];
+    If[OptionValue["PostProcess"], grepPostProcessor[ops], Identity]@
+      StringTrim[res["StandardOutput"], "\n"~~EndOfString]
+    ]
+
+
+(* ::Subsubsection::Closed:: *)
+(*FileGrep*)
+
+
+
 filePattern=(_String?FileExistsQ|_File);
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*fileGrepSingleLine*)
+
+
+
 fileGrepSingleLine[file_,pat_,containsQ_]:=
-  Block[{
-    fileGrepOpened=OpenRead[file],fileGrepChunkSize=100000,
-    fileGrepChunk,fileGrepFlag},
+  Block[
+    {
+      fileGrepOpened=OpenRead[file],fileGrepChunkSize=100000,
+      fileGrepChunk,fileGrepFlag
+      },
     fileGrepChunk=
       ReadList[fileGrepOpened,String,fileGrepChunkSize];
     fileGrepFlag:=
@@ -100,13 +358,25 @@ fileGrepSingleLine[file_,pat_,containsQ_]:=
     ];
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*fastTextImport*)
+
+
+
 fastTextImport[file_]:=
-  With[{text=
-    StringJoin@Riffle[ReadList[file,Record,NullRecords->True],"\n"]
-    },
+  With[
+    {
+      text=ReadString[file]
+      (*StringJoin@Riffle[ReadList[file,Record,NullRecords\[Rule]True],"\n"]*)
+      },
     Close@file;
     text
     ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*fileGrepMultiLine*)
+
 
 
 fileGrepMultiLine[file_,pat_,containsQ_]:=
@@ -140,36 +410,56 @@ fileGrepMultiLine[file_,pat_,containsQ_]:=
     ];
 
 
-Options[FileGrep]={
-  "ContainsQ"->False,
-  "IncludeLine"->False,
-  "IncludeLineNumbers"->True,
-  "MultilineMatch"->False
-  };
-FileGrep[file:filePattern?(Not@*DirectoryQ),pat_,ops:OptionsPattern[]]:=
-  With[{function=
-    If[OptionValue["MultilineMatch"]//TrueQ,
-      fileGrepMultiLine,
-      fileGrepSingleLine
-      ]},
-    If[OptionValue["ContainsQ"]//TrueQ,
-      function[file,pat,True],
-      function[file,
-        If[OptionValue@"IncludeLine"//TrueQ,
-          (Except["\n"]...)~~pat~~(Except["\n"]...),
-          pat
-          ],
-        False]//
-          If[OptionValue@"IncludeLineNumbers"//Not@*TrueQ,
-            Values,
-            Identity
-            ]
-      ]
-    ];
+(* ::Subsubsubsection::Closed:: *)
+(*FileGrep*)
+
+
+
+(* ::Text:: *)
+(*
+	Legacy version
+*)
+
+
+
+(*With[{function=
+		If[OptionValue["MultilineMatch"]//TrueQ,
+			fileGrepMultiLine,
+			fileGrepSingleLine
+			]},
+		If[OptionValue["ContainsQ"]//TrueQ,
+			function[file,pat,True],
+			function[file,
+				If[OptionValue@"IncludeLine"//TrueQ,
+					(Except["\n"]...)~~pat~~(Except["\n"]...),
+					pat
+					],
+				False]//
+					If[OptionValue@"IncludeLineNumbers"//Not@*TrueQ,
+						Values,
+						Identity
+						]
+			]
+		]*)
+
+
+Options[FileGrep]=
+  Options[Grep];
+FileGrep[
+  file:filePattern?(Not@*DirectoryQ),
+  pat_,
+  ops:OptionsPattern[]
+  ]:=
+  Grep[file, pat, ops];
 FileGrep[files:{filePattern..},pat_,ops:OptionsPattern[]]:=
-  AssociationMap[FileGrep[#,pat,ops]&,files]
+  Grep[files, pat, ops](*AssociationMap[FileGrep[#,pat,ops]&,files]*)
 FileGrep[dir:filePattern?DirectoryQ,pat_,ops:OptionsPattern[]]:=
   FileGrep[FileNames["*",dir],pat,ops]
+
+
+(* ::Subsubsection::Closed:: *)
+(*FileSystemGrep*)
+
 
 
 Options[FileSystemGrep]=
@@ -190,36 +480,32 @@ FileSystemGrep[pat_,fsMap:Except[_Rule]..,ops:OptionsPattern[]]:=
     ];
 
 
-Options[GrepDirectory]={
-  "GrepRecursive"->True,
-  "GrepMatch"->False
-  };
-GrepDirectory[dir_String?DirectoryQ,pat_String,ops:OptionsPattern[]]:=
-  If[!TrueQ@OptionValue@"GrepMatch",
+(* ::Subsubsection::Closed:: *)
+(*GrepDirectory*)
+
+
+
+Options[GrepDirectory]=
+  FilterRules[
+    Options[Grep],
+    Except[Alternatives@@Keys@Options[RunProcess]]
+    ];
+GrepDirectory[dir_String?DirectoryQ, pat_String, ops:OptionsPattern[]]:=
+  If[!TrueQ@OptionValue@"ReturnContaining",
     Identity,
     First@#->StringJoin@Rest@#&/@StringSplit[#,":"<>pat->pat,2]&
     ]@
-  StringReplace[
-    StringSplit[
-      RunProcess[
-      {"grep",
-        Replace[OptionValue@"GrepRecursive",{
-          True->"-r",
-          _->Nothing
-          }],
-        Replace[OptionValue@"GrepMatch",{
-          False->"-l",
-          _->Nothing
-          }],
-          pat,"."},
-      "StandardOutput",
-      ProcessDirectory->
-        ExpandFileName@dir
-      ],
-      "\n"],
-    "./"->
-      StringJoin@{StringTrim[dir,$PathnameSeparator~~EndOfString],$PathnameSeparator}
-    ];
+    StringReplace[
+      Grep[ExpandFileName@dir, pat, 
+        {
+          ops,
+          "Recursive"->True,
+          "ReturnContaining"->True
+          }
+        ],
+      "./"-> 
+        StringJoin@{StringTrim[dir,$PathnameSeparator~~EndOfString], $PathnameSeparator}
+      ];
 GrepDirectory[dirs:{__String?DirectoryQ},pat_String,ops:OptionsPattern[]]:=
   GrepDirectory[#,pat,ops]&/@
     DeleteDuplicates@dirs//Flatten; 
@@ -227,16 +513,118 @@ GrepDirectory[files:{__String?(FileExistsQ)},pat_String,ops:OptionsPattern[]]:=
   GrepDirectory[DirectoryName/@files,pat,ops];
 
 
+(* ::Subsubsection::Closed:: *)
+(*GrepSelect*)
+
+
+
 GrepSelect[files:{__String?(FileExistsQ)},pattern_String]:=
   Intersection[
-    GrepDirectory[DirectoryName/@Select[files,Not@*DirectoryQ],pattern,
-      "GrepRecursive"->True,
-      "GrepFileNames"->True],
+    GrepDirectory[DirectoryName/@Select[files,Not@*DirectoryQ],
+      pattern,
+      "Recursive"->True,
+      "ReturnContaining"->True
+      ],
     ExpandFileName/@files
     ];
 
 
 SystemExpressionsSearch//Clear
+
+
+Options[SystemBaseSearch]=
+  Flatten@{
+    Monitor->True,
+    "Batch"->False,
+    "ChunkSize"->False
+    };
+SystemBaseSearch[
+  fn_,
+  files:(
+    Except[
+      "All"|"Notebooks"|"Packages"|"TextResources",
+      _?StringPattern`StringPatternQ
+      ]|_List
+    )..,
+  function:InternalFiles|FrontEndFiles|InternalSystemFiles:InternalFiles,
+  ops:OptionsPattern[]
+  ]:=
+  Internal`WithLocalSettings[
+    Begin["SystemSearchDump`"];
+    SetDirectory@$TemporaryDirectory;,
+    Module[{
+      fileListing=
+        Replace[
+          Flatten[{files}, 1],
+          {
+            {_String?FileExistsQ, ___String}:>files,
+            _List:>function[Alternatives@@files],
+            Except@_String?FileExistsQ:>function[files]
+            }
+          ],
+      filesNew,
+      fileChunks
+      },
+      filesNew=
+        AssociationMap[Missing["UnProcessed"]&,fileListing];
+      Which[
+        TrueQ@OptionValue["Batch"],
+          If[OptionValue@Monitor//TrueQ,
+            Monitor[
+              fn[fileListing],
+              Internal`LoadingPanel@
+                Row@{"Searching ", Length@fileListing, " files"}
+              ],  
+            fn[fileListing]
+            ],
+        IntegerQ@OptionValue["ChunkSize"],
+          fileChunks=Partition[fileListing, UpTo[OptionValue["ChunkSize"]]];
+          With[{fcs=fileChunks},
+            fileChunks=ConstantArray[Missing["Unprocessed"], Length@fileChunks];
+            CheckAbort[
+              If[OptionValue@Monitor//TrueQ,
+                Function[Null, 
+                  Monitor[
+                    #, 
+                    Internal`LoadingPanel@
+                      Row@{"Searching chunk ", i, " of ", Length@fileChunks}
+                    ],
+                  HoldFirst
+                  ],
+                #&
+                ]@Do[
+                    fileChunks[[i]]=Quiet@fn[fcs[[i]]],
+                    {i, Length@fcs}
+                    ];
+              DeleteMissing@fileChunks,
+              DeleteMissing@fileChunks
+              ]
+            ],
+        True,
+          CheckAbort[
+            If[OptionValue@Monitor//TrueQ,
+              Monitor[
+                Do[
+                  filesNew[fileListing[[i]]]=
+                    Quiet@fn@fileListing[[i]],
+                  {i, Length@fileListing}
+                  ],
+                Internal`LoadingPanel@
+                  Row@{"Scanning file ", i, " of ", Length@fileListing}
+                ],  
+              Do[
+                filesNew[f]=Quiet@fn[f],
+                {f,fileListing}
+                ]
+              ];
+            DeleteMissing@filesNew,
+            DeleteMissing@filesNew
+            ]
+        ]
+      ],
+    ResetDirectory[];
+    Quiet@End[];
+    ];
 
 
 trFileExpressions[f_]:=
@@ -268,76 +656,29 @@ SystemExpressionsSearch[
   function:InternalFiles|FrontEndFiles|InternalSystemFiles:InternalFiles,
   ops:OptionsPattern[]
   ]:=
-  CompoundExpression[
-    Begin["SystemSearchDump`"],
-    SetDirectory@$TemporaryDirectory;
-    (ResetDirectory[];Quiet@End[];
-      Select[#,Length@#>0&]
-      )&@
-      Module[{
-        fileListing=
-          Replace[
-            Flatten[{files}, 1],
-            {
-              {_String?FileExistsQ, ___String}:>files,
-              _List:>function[Alternatives@@files],
-              Except@_String?FileExistsQ:>function[files]
-              }
-            ],
-        filesNew
-        },
-        filesNew=
-          AssociationMap[Missing["UnProcessed"]&,fileListing];
-        DeleteMissing@
-        CheckAbort[
-          If[OptionValue@Monitor//TrueQ,
-            Monitor[
-              Table[
-                filesNew[fileListing[[i]]]=
-                  Quiet@
-                    Cases[
-                      Switch[FileExtension@fileListing[[i]],
-                        "m"|"wl",
-                          Import[fileListing[[i]],"HeldExpressions"],
-                        "tr",
-                          trFileExpressions[fileListing[[i]]],
-                        _,
-                          Get[fileListing[[i]]]
-                        ],
-                      pat,
-                      \[Infinity],
-                      Heads->OptionValue@Heads
-                      ],
-                  {i,Length@fileListing}
-                  ],
-              Internal`LoadingPanel@
-                Row@{"Scanning file ",i," of ",Length@fileListing}
-              ],  
-            Table[
-              filesNew[f]=
-                Quiet@
-                  Cases[
-                    Switch[FileExtension@f,
-                      "m"|"wl",
-                        Import[f,"HeldExpressions"],
-                      "tr",
-                        trFileExpressions[f],
-                      _,
-                        Import[f]
-                      ],
-                    pat,
-                    \[Infinity],
-                    Heads->OptionValue@Heads
-                    ],
-                  {f,fileListing}
-                  ]
-            ];
-          filesNew,
-          End[];
-          filesNew
+  Select[Length[#]>0&]@
+    SystemBaseSearch[
+      With[{clops=FilterRules[{ops}, Options@Cases]},
+        Function[
+          Cases[
+            Switch[FileExtension@#,
+              "m"|"wl",
+                Import[#,"HeldExpressions"],
+              "tr",
+                trFileExpressions[#],
+              _,
+                Get[#]
+              ],
+            pat,
+            \[Infinity],
+            clops
+            ]
           ]
-      ]
-    ];
+        ],
+      files,
+      function,
+      FilterRules[{ops}, Options@SystemBaseSearch]
+      ];
 
 
 SystemExpressionsSearch[
@@ -442,6 +783,77 @@ SystemFunctionSearch[s_Symbol,
     ]
 
 
+Options[SystemTextSearch]=
+  Flatten@{
+    Monitor->True,
+    Options@FileGrep
+    };
+SystemTextSearch[
+  text_,
+  files:(
+    Except[
+      "All"|"Notebooks"|"Packages"|"TextResources",
+      _?StringPattern`StringPatternQ
+      ]|_List
+    )..,
+  function:InternalFiles|FrontEndFiles|InternalSystemFiles:InternalFiles,
+  ops:OptionsPattern[]
+  ]:=
+  Join@@
+    SystemBaseSearch[
+      With[{frops=FilterRules[{ops, "ReturnContaining"->True}, Options@Grep]},
+        Function[
+          Grep[#, text, frops]
+          ]
+        ],
+      files,
+      function,
+      FilterRules[{ops, "ChunkSize"->225}, Options@SystemBaseSearch]
+      ];
+
+
+SystemTextSearch[
+  pat_,
+  Optional["All", "All"],
+  function:InternalFiles|FrontEndFiles|InternalSystemFiles:InternalFiles,
+  ops:OptionsPattern[]]:=
+    SystemTextSearch[pat,
+      "*.tr"|"*.m"|"*.nb",
+      function,
+      ops
+      ];
+SystemTextSearch[
+  pat_,
+  "Notebooks",
+  function:InternalFiles|FrontEndFiles|InternalSystemFiles:InternalFiles,
+  ops:OptionsPattern[]]:=
+    SystemTextSearch[pat,
+      "*.nb",
+      function,
+      ops
+      ];
+SystemTextSearch[
+  pat_,
+  "Packages",
+  function:InternalFiles|FrontEndFiles|InternalSystemFiles:InternalFiles,
+  ops:OptionsPattern[]]:=
+    SystemTextSearch[pat,
+      "*.m"|"*.wl",
+      function,
+      ops
+      ];
+SystemTextSearch[
+  pat_,
+  "TextResources",
+  function:InternalFiles|FrontEndFiles|InternalSystemFiles:InternalFiles,
+  ops:OptionsPattern[]]:=
+    SystemTextSearch[pat,
+      "*.tr",
+      function,
+      ops
+      ];
+
+
 PackageAddAutocompletions[
   Map[
     SymbolName[#]->
@@ -458,7 +870,8 @@ PackageAddAutocompletions[
       SystemHeadSearch,
       SystemArgSearch,
       SystemContextSearch,
-      SystemFunctionSearch
+      SystemFunctionSearch,
+      SystemTextSearch
       }
     ]
   ]

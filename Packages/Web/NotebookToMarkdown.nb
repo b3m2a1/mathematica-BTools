@@ -1031,10 +1031,10 @@ Cell[BoxData[
             RowBox[{"Automatic", "\[RuleDelayed]", 
              RowBox[{"InputNotebook", "[", "]"}]}]}], "]"}]}], ",", "\n", 
          "\t", "\t\t\t", "meta", ",", "\n", "\t\t\t\t", "expOps", ",", "\n", 
-         "\t\t\t\t", "md", ",", "\n", "\t\t\t\t", "root", ",", "\n", 
-         "\t\t\t\t", "expDir", ",", "\n", "\t\t\t\t", "expName", ",", "\n", 
-         "\t\t\t\t", "nbDir", ",", "\n", "\t\t\t\t", "siteBase", ",", "\n", 
-         "\t\t\t\t", 
+         "\t\t\t\t", "exporter", ",", "\n", "\t\t\t\t", "md", ",", "\n", 
+         "\t\t\t\t", "root", ",", "\n", "\t\t\t\t", "expDir", ",", "\n", 
+         "\t\t\t\t", "expName", ",", "\n", "\t\t\t\t", "nbDir", ",", "\n", 
+         "\t\t\t\t", "siteBase", ",", "\n", "\t\t\t\t", 
          RowBox[{"flops", "=", 
           RowBox[{"Flatten", "@", 
            RowBox[{"{", "ops", "}"}]}]}], ",", "\n", "\t\t\t\t", "rast"}], 
@@ -1117,17 +1117,25 @@ Cell[BoxData[
              "$MarkdownSettings", "[", "\"\<RasterizationOptions\>\"", 
               "]"}]}], "\n", "\t\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t", 
            "First"}], "\n", "\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t", 
+        RowBox[{"exporter", "=", "\n", "\t\t\t\t", 
+         RowBox[{"Lookup", "[", 
+          RowBox[{
+          "expOps", ",", " ", "\"\<ExportFunction\>\"", ",", " ", "\n", 
+           "\t\t\t\t\t", 
+           RowBox[{
+           "$MarkdownSettings", "[", "\"\<ExportFunction\>\"", "]"}]}], "\n", 
+          "\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t", 
         RowBox[{"md", "=", "\n", "\t\t\t\t", 
          RowBox[{"Reap", "[", "\n", "\t\t\t\t\t", 
           RowBox[{
-           RowBox[{"NotebookToMarkdown", "[", 
+           RowBox[{"exporter", "[", 
             RowBox[{"nb", ",", " ", "\n", "\t", "\t\t\t\t\t", 
              RowBox[{"FilterRules", "[", 
               RowBox[{
                RowBox[{"Normal", "@", "expOps"}], ",", " ", 
-               RowBox[{"Options", "[", "NotebookToMarkdown", "]"}]}], "]"}]}],
-             "]"}], ",", "\n", "\t\t\t\t\t", "\"\<MarkdownExport\>\""}], "\n",
-           "\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t", 
+               RowBox[{"Options", "[", "exporter", "]"}]}], "]"}]}], "]"}], 
+           ",", "\n", "\t\t\t\t\t", "\"\<MarkdownExport\>\""}], "\n", 
+          "\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t", 
         RowBox[{"If", "[", 
          RowBox[{
           RowBox[{"!", 
@@ -1296,7 +1304,7 @@ Cell[BoxData[
            RowBox[{"meta", ",", " ", "$NotebookMarkdownSaveIgnoredMeta"}], 
            "]"}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "]"}]}]}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"48057806-ccf9-44ea-9205-568729567131"]
-}, Closed]]
+}, Open  ]]
 }, Open  ]],
 
 Cell[BoxData[

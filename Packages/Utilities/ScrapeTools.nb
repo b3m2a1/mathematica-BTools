@@ -36,6 +36,13 @@ Cell["Grep", "CodeSubsubsection",
 Cell[BoxData[
  RowBox[{
   RowBox[{
+   RowBox[{"Grep", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Call in to grep\>\""}], 
+  ";"}]], "CodeInput",ExpressionUUID->"1f206c09-3c1c-4998-98fd-0d0bd71a9c5b"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
    RowBox[{"GrepDirectory", "::", "usage"}], "=", "\n", "\t", 
    "\"\<Greps a directory for a pattern (can be applied to a list of files or \
 directories)\>\""}], ";"}]], "CodeInput",
@@ -52,7 +59,7 @@ pattern\>\""}], ";"}]], "CodeInput",
  CellChangeTimes->{{3.697326626038823*^9, 
   3.697326658740971*^9}},ExpressionUUID->"e0784321-c0f6-4c00-a493-\
 66f5ae45b3f8"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -69,6 +76,10 @@ Cell[BoxData[{
    "\"\<Scrapes data from internal files\>\""}], ";"}], "\n", 
  RowBox[{
   RowBox[{
+   RowBox[{"SystemTextSearch", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Scrapes text from internal files\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
    RowBox[{"SystemHeadSearch", "::", "usage"}], "=", "\n", "\t", 
    "\"\<Scrapes for usage of a head\>\""}], ";"}], "\n", 
  RowBox[{
@@ -82,12 +93,10 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{
    RowBox[{"SystemFunctionSearch", "::", "usage"}], "=", "\n", "\t", 
-   "\"\<Scrapes for usage of a function\>\""}], ";"}]}], "CodeInput",
- CellChangeTimes->{{3.703700725132243*^9, 3.703700742649107*^9}, {
-  3.703701226844474*^9, 3.7037012479077272`*^9}, {3.703702407691681*^9, 
-  3.703702430362728*^9}},ExpressionUUID->"b132fdf2-6da6-4297-b890-\
-6c6bc62eb83b"]
-}, Closed]],
+   "\"\<Scrapes for usage of a function\>\""}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"b132fdf2-6da6-4297-b890-6c6bc62eb83b"]\
+
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -184,7 +193,8 @@ bfce8cbccf67"],
 
 Cell[CellGroupData[{
 
-Cell["Grep", "Subsection",
+Cell["\[LeftCeiling]Grep\[RightFloor]", "CodeSubsection",
+ Evaluatable->True,
  DefaultNewCellStyle->"CodeInput",
  CellChangeTimes->{{3.70234020850025*^9, 
   3.702340209129081*^9}},ExpressionUUID->"240ee8fd-6262-4926-9ec6-\
@@ -192,10 +202,497 @@ b75f2150de10"],
 
 Cell[CellGroupData[{
 
-Cell["FileSystemGrep", "CodeSubsubsection",
- CellChangeTimes->{{3.697977925160885*^9, 
-  3.697977928527053*^9}},ExpressionUUID->"34d2ecae-cdde-4978-a75e-\
-ce3cec471517"],
+Cell["\[LeftCeiling]Grep\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"936a74ad-9a9a-4eed-aced-b11cb79862ad"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]grepOpsMap\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"5a2899c4-0b83-41fd-9720-f3008f2b91ce"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"grepOpsMap", "=", "\n", "\t", 
+   RowBox[{"<|", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"\"\<TrailingLines\>\"", "\[Rule]", "\"\<A\>\""}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<LeadingLines\>\"", "\[Rule]", "\"\<B\>\""}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<DirectoryAction\>\"", "\[Rule]", "\"\<d\>\""}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<SearchPattern\>\"", "\[Rule]", "\"\<e\>\""}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<ExcludedFiles\>\"", "\[Rule]", "\"\<exclude\>\""}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"\"\<IncludedFiles\>\"", "\[Rule]", "\"\<include\>\""}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"\"\<EcludedDirectories\>\"", "\[Rule]", "\"\<exclude-dir\>\""}],
+      ",", "\n", "\t\t", 
+     RowBox[{
+     "\"\<IncludedDirectories\>\"", "\[Rule]", "\"\<include-dir\>\""}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"\"\<UseRegex\>\"", "\[Rule]", "\"\<E\>\""}], ",", "\n", "\t\t", 
+     
+     RowBox[{"\"\<UseFixedStrings\>\"", "\[Rule]", "\"\<F\>\""}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<UseBasicGrep\>\"", "\[Rule]", "\"\<G\>\""}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<PrintFileNames\>\"", "\[Rule]", "\"\<H\>\""}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<SuppressFileNames\>\"", "\[Rule]", "\"\<h\>\""}], ",", "\n",
+      "\t\t", 
+     RowBox[{"\"\<PrintLineNumbers\>\"", "\[Rule]", "\"\<n\>\""}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<ReturnMatchCount\>\"", "\[Rule]", "\"\<c\>\""}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<IgnoreBinaries\>\"", "\[Rule]", "\"\<I\>\""}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<IgnoreCase\>\"", "\[Rule]", "\"\<i\>\""}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<ReturnNotContaining\>\"", "\[Rule]", "\"\<L\>\""}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"\"\<ReturnContaining\>\"", "\[Rule]", "\"\<l\>\""}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<MaxNumberOfMatches\>\"", "\[Rule]", "\"\<m\>\""}], ",", 
+     "\n", "\t\t", 
+     RowBox[{"\"\<Quiet\>\"", "\[Rule]", "\"\<q\>\""}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<Recursive\>\"", "\[Rule]", "\"\<R\>\""}], ",", "\n", "\t\t", 
+     RowBox[{"\"\<OppositeDay\>\"", "\[Rule]", "\"\<v\>\""}]}], "\n", "\t\t", 
+    "|>"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"grepOpsExceptions", "=", "\n", "\t", 
+   RowBox[{"<|", "\n", "\t\t", 
+    RowBox[{"\"\<IgnoreBinaries\>\"", "\[Rule]", "True"}], "\n", "\t\t", 
+    "|>"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"grepTrueOps", "=", "\n", "\t", 
+   RowBox[{"AssociationMap", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Lookup", "[", 
+       RowBox[{"grepOpsExceptions", ",", " ", "#", ",", " ", "Automatic"}], 
+       "]"}], "&"}], ",", "\n", "\t\t", 
+     RowBox[{"Keys", "@", "grepOpsMap"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"d44092a6-7050-4624-ba55-9cde72b506b0"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"getGrepKeyString", "[", "k_", "]"}], ":=", "\n", "\t", 
+   RowBox[{"Lookup", "[", 
+    RowBox[{"grepOpsMap", ",", " ", "k"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"getGrepNotKeyString", "[", "k_", "]"}], ":=", "\n", "\t", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"StringLength", "[", "#", "]"}], "===", "1"}], ",", "\n", 
+      "\t\t", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"UpperCaseQ", "[", "#", "]"}], ",", " ", 
+        RowBox[{"ToLowerCase", "[", "#", "]"}], ",", " ", 
+        RowBox[{"ToUpperCase", "[", "#", "]"}]}], "]"}], ",", "\n", "\t\t", 
+      RowBox[{"StringReplace", "[", 
+       RowBox[{"#", ",", " ", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"\"\<exclude\>\"", "\[Rule]", "\"\<include\>\""}], ",", " ", 
+          RowBox[{"\"\<include\>\"", "\[Rule]", "\"\<exclude\>\""}]}], 
+         "}"}]}], "]"}]}], "\n", "\t\t", "]"}], "&"}], "@", "\n", "\t\t", 
+   RowBox[{"Lookup", "[", 
+    RowBox[{"grepOpsMap", ",", " ", "k"}], 
+    "]"}]}]}]}], \
+"CodeInput",ExpressionUUID->"2066b7c9-bf5e-420d-921f-9a3b90b60713"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"formatGrepKey", "[", "k_", "]"}], ":=", "\n", "\t", 
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"StringLength", "[", "k", "]"}], "===", "1"}], ",", " ", 
+    RowBox[{"\"\<-\>\"", "<>", "k"}], ",", " ", 
+    RowBox[{"\"\<--\>\"", "<>", "k"}]}], "]"}]}], "\n", 
+ RowBox[{
+  RowBox[{"formatGrepKeyPair", "[", 
+   RowBox[{"{", 
+    RowBox[{"k_", ",", " ", "v_"}], "}"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"StringLength", "[", "k", "]"}], "===", "1"}], ",", " ", "\n", 
+    "\t\t", 
+    RowBox[{"\"\<-\>\"", "<>", "k", "<>", "\"\< \>\"", "<>", 
+     RowBox[{"ToString", "[", "v", "]"}]}], ",", " ", "\n", "\t\t", 
+    RowBox[{"\"\<--\>\"", "<>", "k", "<>", "\"\<=\>\"", "<>", 
+     RowBox[{"ToString", "[", "v", "]"}]}]}], "\n", "\t\t", 
+   "]"}]}]}], \
+"CodeInput",ExpressionUUID->"1028910b-8138-47e9-b540-ed4c6a56961a"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]parseGrepOps\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"211202c6-7f07-4f21-94a5-1ca34ea90733"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"parseGrepOps", "[", 
+   RowBox[{"ops", ":", 
+    RowBox[{"OptionsPattern", "[", "]"}]}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Sequence", "@@", "\n", "\t\t", 
+   RowBox[{"Module", "[", "\n", "\t\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t\t", 
+      RowBox[{"fullOps", "=", "\n", "\t\t\t\t\t", 
+       RowBox[{"FilterRules", "[", "\n", "\t\t\t\t\t\t", 
+        RowBox[{
+         RowBox[{"Normal", "@", 
+          RowBox[{"Merge", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"ops", ",", " ", 
+              RowBox[{"Options", "[", "Grep", "]"}]}], "}"}], ",", " ", 
+            "First"}], "]"}]}], ",", "\n", "\t\t\t\t\t\t", 
+         RowBox[{"Normal", "@", "grepOpsMap"}]}], "\n", "\t\t\t\t\t\t", 
+        "]"}]}], "\n", "\t\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+     RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
+      RowBox[{"fullOps", ",", "\n", "\t", "\t\t\t", 
+       RowBox[{"{", "\n", "\t", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"k_", "\[Rule]", "Automatic"}], ")"}], ":>", "\n", "\t", 
+          "\t\t\t\t\t", "Nothing"}], ",", "\n", "\t", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"k_", "\[Rule]", "True"}], ")"}], ":>", "\n", "\t", 
+          "\t\t\t\t\t", 
+          RowBox[{"formatGrepKey", "@", 
+           RowBox[{"getGrepKeyString", "[", "k", "]"}]}]}], ",", "\n", "\t", 
+         "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"k_", "\[Rule]", "False"}], ")"}], ":>", "\n", "\t", 
+          "\t\t\t\t\t", 
+          RowBox[{"formatGrepKey", "@", 
+           RowBox[{"getGrepNotKeyString", "[", "k", "]"}]}]}], ",", "\n", 
+         "\t", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"k_", "\[Rule]", "l_List"}], ")"}], ":>", "\n", "\t", 
+          "\t\t\t\t\t", 
+          RowBox[{"Apply", "[", 
+           RowBox[{"Sequence", ",", "\n", "\t", "\t\t\t\t\t\t", 
+            RowBox[{"Map", "[", 
+             RowBox[{"formatGrepKeyPair", ",", " ", 
+              RowBox[{"Thread", "[", 
+               RowBox[{"{", 
+                RowBox[{
+                 RowBox[{"getGrepKeyString", "@", "k"}], ",", " ", "l"}], 
+                "}"}], "]"}]}], "]"}]}], "\n", "\t", "\t\t\t\t\t\t", "]"}]}], 
+         ",", "\n", "\t", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"k_", "\[Rule]", 
+            RowBox[{"v", ":", 
+             RowBox[{
+              RowBox[{"_", "?", "NumericQ"}], "|", "_String"}]}]}], ")"}], ":>",
+           "\n", "\t", "\t\t\t\t\t", 
+          RowBox[{"formatGrepKeyPair", "[", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"getGrepKeyString", "@", "k"}], ",", " ", "v"}], "}"}], 
+           "]"}]}], ",", "\n", "\t", "\t\t\t\t", 
+         RowBox[{"_", "->", "Nothing"}]}], "\n", "\t", "\t\t\t\t", "}"}], ",",
+        "\n", "\t", "\t\t\t", "1"}], "\n", "\t", "\t\t\t", "]"}]}], "\n", 
+    "\t", "\t\t", 
+    "]"}]}]}]], \
+"CodeInput",ExpressionUUID->"ac9f69d1-c29f-4472-8071-f3b0cd1c0cd4"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]getGrepPat\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"e2947039-5421-499e-84e3-448a105c5f8f"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"getGrepPat", "[", 
+   RowBox[{"pat_", ",", " ", "useFixed_"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"TrueQ", "@", "useFixed"}], "&&", 
+     RowBox[{"StringQ", "@", "pat"}]}], ",", "\n", "\t\t", "pat", ",", "\n", 
+    "\t\t", 
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{"StringPattern`StringPatternQ", "[", "pat", "]"}], ",", "\n", 
+      "\t", "\t\t", 
+      RowBox[{"StringTrim", "[", "\n", "\t", "\t\t\t", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"StringPattern`PatternConvert", "[", "pat", "]"}], "[", 
+         RowBox[{"[", "1", "]"}], "]"}], ",", " ", "\n", "\t", "\t\t\t", 
+        "\"\<(?ms)\>\""}], "\n", "\t", "\t\t\t", "]"}], ",", "\n", "\t\t\t", 
+      "Nothing"}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"46714645-78d7-42ef-86cd-0ea24befc949"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]grepPostProcessor\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"35766237-db8a-4c7e-94a1-66fb5a9ea1b3"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"nTrue", "=", 
+   RowBox[{"Except", "[", "True", "]"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"362d802e-c3b1-4131-8093-c7b3e0ae7862"],
+
+Cell[BoxData[{
+ RowBox[{"grepPostProcessor", "//", "Clear"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"grepPostProcessor", "[", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"grepPostProcessor", "@@", "\n", "\t\t", 
+    RowBox[{"Lookup", "[", 
+     RowBox[{
+      RowBox[{"Flatten", "@", 
+       RowBox[{"{", "ops", "}"}]}], ",", " ", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{
+       "\"\<ReturnContaining\>\"", ",", "\n", "\t\t\t\t", 
+        "\"\<ReturnNotContaining\>\"", ",", "\n", "\t\t\t\t", 
+        "\"\<ReturnMatchCount\>\"", ",", "\n", "\t\t\t\t", 
+        "\"\<PrintFileNames\>\"", ",", "\n", "\t\t\t\t", 
+        "\"\<SuppressFileNames\>\"", ",", "\n", "\t\t\t\t", 
+        "\"\<PrintLineNumbers\>\""}], "\n", "\t\t\t\t", "}"}], ",", "\n", 
+      "\t\t\t", "Automatic"}], "\n", "\t\t\t", "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"grepPostProcessor", "[", 
+   RowBox[{
+   "_", ",", " ", "_", ",", " ", "True", ",", " ", "True", ",", " ", "_", ",",
+     " ", "_"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{
+   RowBox[{"Floor", "@", 
+    RowBox[{"Map", "[", "\n", "\t\t", 
+     RowBox[{"Internal`StringToDouble", ",", "\n", "\t\t", 
+      RowBox[{"StringSplit", "[", 
+       RowBox[{"#", ",", " ", "\"\<\\n\>\""}], "]"}]}], "\n", "\t\t", "]"}]}],
+    "&"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"grepPostProcessor", "[", 
+    RowBox[{
+    "_", ",", " ", "_", ",", " ", "True", ",", " ", "nTrue", ",", " ", "_", 
+     ",", " ", "_"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"Floor", "@", 
+     RowBox[{"Map", "[", "\n", "\t\t", 
+      RowBox[{"Internal`StringToDouble", ",", "\n", "\t\t", 
+       RowBox[{"AssociationThread", "@@", "\n", "\t\t\t", 
+        RowBox[{"Transpose", "@", "\n", "\t", "\t\t\t", 
+         RowBox[{"StringSplit", "[", "\n", "\t", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"StringSplit", "[", 
+            RowBox[{"#", ",", " ", "\"\<\\n\>\""}], "]"}], ",", "\n", "\t", 
+           "\t\t\t\t", "\"\<:\>\"", ",", "\n", "\t\t\t\t\t", "2"}], "\n", 
+          "\t\t\t\t\t", "]"}]}]}]}], "\n", "\t\t", "]"}]}], "&"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"grepPostProcessor", "[", 
+   RowBox[{
+   "True", ",", " ", "_", ",", " ", "_", ",", " ", "_", ",", " ", "_", ",", 
+    " ", "_"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{
+   RowBox[{"StringSplit", "[", 
+    RowBox[{"#", ",", " ", "\"\<\\n\>\""}], "]"}], "&"}]}], "\n", 
+ RowBox[{
+  RowBox[{"grepPostProcessor", "[", 
+   RowBox[{
+   "_", ",", " ", "True", ",", " ", "_", ",", " ", "_", ",", " ", "_", ",", 
+    " ", "_"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{
+   RowBox[{"StringSplit", "[", 
+    RowBox[{"#", ",", " ", "\"\<\\n\>\""}], "]"}], "&"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"grepPostProcessor", "[", 
+    RowBox[{
+    "nTrue", ",", " ", "nTrue", ",", " ", "nTrue", ",", " ", "_", ",", " ", 
+     "nTrue", ",", " ", "True"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"GroupBy", "[", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"StringSplit", "[", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"StringSplit", "[", 
+         RowBox[{"#", ",", " ", "\"\<\\n\>\""}], "]"}], ",", "\n", "\t\t\t", 
+        "\"\<:\>\"", ",", "\n", "\t\t\t", "3"}], "\n", "\t\t\t", "]"}], ",", 
+      "\n", "\t\t", 
+      RowBox[{"First", "\[Rule]", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"Rule", "@@", 
+          RowBox[{"#", "[", 
+           RowBox[{"[", 
+            RowBox[{"2", ";;"}], "]"}], "]"}]}], "&"}], ")"}]}], ",", "\n", 
+      "\t\t", 
+      RowBox[{
+       RowBox[{"KeyMap", "[", 
+        RowBox[{
+         RowBox[{"Floor", "[", 
+          RowBox[{"Internal`StringToDouble", "[", "#", "]"}], "]"}], "&"}], 
+        "]"}], "@*", "Association"}]}], "\n", "\t\t", "]"}], "&"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"grepPostProcessor", "[", 
+    RowBox[{
+    "nTrue", ",", " ", "nTrue", ",", " ", "nTrue", ",", " ", "_", ",", " ", 
+     "nTrue", ",", " ", "nTrue"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"GroupBy", "[", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"StringSplit", "[", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"StringSplit", "[", 
+         RowBox[{"#", ",", " ", "\"\<\\n\>\""}], "]"}], ",", "\n", "\t\t\t", 
+        "\"\<:\>\"", ",", "\n", "\t\t\t", "2"}], "\n", "\t\t\t", "]"}], ",", 
+      "\n", "\t\t", 
+      RowBox[{"First", "\[Rule]", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"#", "[", 
+          RowBox[{"[", "2", "]"}], "]"}], "&"}], ")"}]}]}], "\n", "\t\t", 
+     "]"}], "&"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"grepPostProcessor", "[", 
+   RowBox[{
+   "nTrue", ",", " ", "nTrue", ",", " ", "nTrue", ",", " ", "_", ",", " ", 
+    "True", ",", " ", "nTrue"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{
+   RowBox[{"StringSplit", "[", 
+    RowBox[{"#", ",", " ", "\"\<\\n\>\""}], "]"}], "&"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"grepPostProcessor", "[", 
+    RowBox[{
+    "nTrue", ",", " ", "nTrue", ",", " ", "nTrue", ",", " ", "_", ",", " ", 
+     "True", ",", " ", "True"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{
+    RowBox[{"Map", "[", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        RowBox[{"Floor", "@", 
+         RowBox[{"Internal`StringToDouble", "@", 
+          RowBox[{"First", "[", "#", "]"}]}]}], "\[Rule]", 
+        RowBox[{"#", "[", 
+         RowBox[{"[", "2", "]"}], "]"}]}], "&"}], ",", "\n", "\t\t", 
+      RowBox[{"StringSplit", "[", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"StringSplit", "[", 
+         RowBox[{"#", ",", " ", "\"\<\\n\>\""}], "]"}], ",", "\n", "\t\t\t", 
+        "\"\<:\>\"", ",", "\n", "\t\t\t", "2"}], "\n", "\t\t\t", "]"}]}], 
+     "\n", "\t\t", "]"}], "&"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"grepPostProcessor", "[", "___", "]"}], ":=", "\n", "\t", 
+   "Identity"}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"aa16f4b4-5683-4cd0-984c-f7d33125d77c"]\
+
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Grep\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"5a3b6ca4-e80a-4fd3-8e2d-2f106baa3793"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "Grep", "]"}], "=", "\n", "\t", 
+   RowBox[{"Join", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Normal", "@", "grepTrueOps"}], ",", "\n", "\t\t", 
+     RowBox[{"Options", "[", "RunProcess", "]"}], ",", "\n", "\t\t", 
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{"\"\<PostProcess\>\"", "\[Rule]", "True"}], "\n", "\t\t\t", 
+      "}"}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"Grep", "[", 
+   RowBox[{"files_", ",", " ", "pat_", ",", " ", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", "res", "}"}], ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"res", "=", "\n", "\t\t\t", 
+      RowBox[{"RunProcess", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"{", "\n", "\t\t\t\t\t", 
+         RowBox[{"\"\<grep\>\"", ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"parseGrepOps", "[", "ops", "]"}], ",", "\n", "\t\t\t\t\t", 
+          
+          RowBox[{"getGrepPat", "[", 
+           RowBox[{"pat", ",", " ", 
+            RowBox[{"OptionValue", "[", "\"\<UseFixedStrings\>\"", "]"}]}], 
+           "]"}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"Sequence", "@@", 
+           RowBox[{"Flatten", "@", 
+            RowBox[{"{", "files", "}"}]}]}]}], "\n", "\t", "\t", "\t\t\t", 
+         "}"}], ",", "\n", "\t", "\t", "\t\t", 
+        RowBox[{"FilterRules", "[", 
+         RowBox[{
+          RowBox[{"{", "ops", "}"}], ",", " ", 
+          RowBox[{"Options", "[", "RunProcess", "]"}]}], "]"}]}], "\n", 
+       "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
+     RowBox[{"If", "[", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"StringQ", "@", 
+         RowBox[{"res", "[", "\"\<StandardError\>\"", "]"}]}], "&&", "\n", 
+        "\t", "\t\t\t", 
+        RowBox[{
+         RowBox[{"StringLength", "@", 
+          RowBox[{"StringTrim", "@", 
+           RowBox[{"res", "[", "\"\<StandardError\>\"", "]"}]}]}], ">", 
+         "0"}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"PackageThrowMessage", "[", "\n", "\t\t\t\t", 
+        RowBox[{"\"\<Grep\>\"", ",", "\n", "\t\t\t\t", 
+         RowBox[{"StringTrim", "@", 
+          RowBox[{"res", "[", "\"\<StandardError\>\"", "]"}]}]}], "\n", 
+        "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}], ";", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"OptionValue", "[", "\"\<PostProcess\>\"", "]"}], ",", " ", 
+        RowBox[{"grepPostProcessor", "[", "ops", "]"}], ",", " ", 
+        "Identity"}], "]"}], "@", "\n", "\t\t\t", 
+      RowBox[{"StringTrim", "[", 
+       RowBox[{
+        RowBox[{"res", "[", "\"\<StandardOutput\>\"", "]"}], ",", " ", 
+        RowBox[{"\"\<\\n\>\"", "~~", "EndOfString"}]}], "]"}]}]}]}], "\n", 
+   "\t\t", "]"}]}]}], \
+"CodeInput",ExpressionUUID->"6279f463-4f3d-431a-927c-b80614419b10"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]FileGrep\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"34d2ecae-cdde-4978-a75e-ce3cec471517"],
 
 Cell[BoxData[
  RowBox[{
@@ -208,20 +705,26 @@ Cell[BoxData[
   3.697978301118904*^9}},ExpressionUUID->"70831bb7-ad76-4640-94bb-\
 7d275bb4bc62"],
 
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]fileGrepSingleLine\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"1f6240ac-6bd2-4a95-bb1c-fc195fc50f3f"],
+
 Cell[BoxData[
  RowBox[{
   RowBox[{
    RowBox[{"fileGrepSingleLine", "[", 
     RowBox[{"file_", ",", "pat_", ",", "containsQ_"}], "]"}], ":=", "\n", 
    "\t", 
-   RowBox[{"Block", "[", 
+   RowBox[{"Block", "[", "\n", "\t\t", 
     RowBox[{
-     RowBox[{"{", "\n", "\t\t", 
+     RowBox[{"{", "\n", "\t\t\t", 
       RowBox[{
        RowBox[{"fileGrepOpened", "=", 
         RowBox[{"OpenRead", "[", "file", "]"}]}], ",", 
-       RowBox[{"fileGrepChunkSize", "=", "100000"}], ",", "\n", "\t\t", 
-       "fileGrepChunk", ",", "fileGrepFlag"}], "}"}], ",", "\n", "\t\t", 
+       RowBox[{"fileGrepChunkSize", "=", "100000"}], ",", "\n", "\t\t\t", 
+       "fileGrepChunk", ",", "fileGrepFlag"}], "\n", "\t\t\t", "}"}], ",", 
+     "\n", "\t\t", 
      RowBox[{
       RowBox[{"fileGrepChunk", "=", "\n", "\t\t\t", 
        RowBox[{"ReadList", "[", 
@@ -303,38 +806,42 @@ Cell[BoxData[
                RowBox[{"{", "}"}]}], "}"}], ":>", "\n", "\t\t\t\t\t\t\t", 
              RowBox[{"<|", "|>"}]}]}], "\n", "\t\t\t\t\t\t", "}"}], "]"}]}], 
         "\n", "\t\t\t\t\t", "]"}]}]}]}], "\n", "\t\t", "]"}]}], 
-  ";"}]], "CodeInput",
- CellChangeTimes->{{3.6979796891406527`*^9, 3.697980027292883*^9}, {
-   3.697980120616947*^9, 3.697980121576089*^9}, {3.697980163184157*^9, 
-   3.6979801887969313`*^9}, {3.6979832576800127`*^9, 3.697983260105098*^9}, 
-   3.697983315850101*^9, {3.6979833530753803`*^9, 3.697983359354267*^9}, {
-   3.697990723818325*^9, 
-   3.6979907288891497`*^9}},ExpressionUUID->"803bc923-7be5-4172-8c1a-\
-8a5095f8e94d"],
+  ";"}]], "CodeInput",ExpressionUUID->"803bc923-7be5-4172-8c1a-8a5095f8e94d"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]fastTextImport\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"88bf57f9-062d-46a3-a4cb-9860da0f94ca"],
 
 Cell[BoxData[
  RowBox[{
   RowBox[{
    RowBox[{"fastTextImport", "[", "file_", "]"}], ":=", "\n", "\t", 
-   RowBox[{"With", "[", 
+   RowBox[{"With", "[", "\n", "\t\t", 
     RowBox[{
-     RowBox[{"{", 
-      RowBox[{"text", "=", "\n", "\t\t", 
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{"text", "=", 
+       RowBox[{"ReadString", "[", "file", "]"}]}], "\n", "\t", "\t\t", 
+      RowBox[{"(*", 
        RowBox[{"StringJoin", "@", 
         RowBox[{"Riffle", "[", 
          RowBox[{
           RowBox[{"ReadList", "[", 
            RowBox[{"file", ",", "Record", ",", 
             RowBox[{"NullRecords", "\[Rule]", "True"}]}], "]"}], ",", 
-          "\"\<\\n\>\""}], "]"}]}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
-     
+          "\"\<\\n\>\""}], "]"}]}], "*)"}], "\n", "\t", "\t\t", "}"}], ",", 
+     "\n", "\t\t", 
      RowBox[{
       RowBox[{"Close", "@", "file"}], ";", "\n", "\t\t", "text"}]}], "\n", 
-    "\t\t", "]"}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.697981516417968*^9, 3.6979815287906017`*^9}, {
-  3.697990735025083*^9, 
-  3.697990747662483*^9}},ExpressionUUID->"715c7f03-c6c6-4a28-ba10-\
-78a6583b94e4"],
+    "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"715c7f03-c6c6-4a28-ba10-78a6583b94e4"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]fileGrepMultiLine\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"963d7378-484f-4d78-a795-71da5fb87614"],
 
 Cell[BoxData[
  RowBox[{
@@ -435,88 +942,108 @@ Cell[BoxData[
   3.6979819681735983`*^9}, {3.697982111512238*^9, 3.6979821168240843`*^9}, {
   3.6979830129116488`*^9, 3.697983021447742*^9}, {3.697983061041237*^9, 
   3.6979830766478662`*^9}},ExpressionUUID->"25a4f152-5956-4d09-ac11-\
-9a9a85c2edb2"],
+9a9a85c2edb2"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]FileGrep\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"3b85f1c1-4d6c-4c4f-a49c-6001fbd4336a"],
+
+Cell["\<\
+\[LeftCeiling]
+\tLegacy version
+\[RightFloor]\
+\>", "Text",
+ Evaluatable->True,ExpressionUUID->"023a1519-78d7-488b-adf6-c29fbeeefeee"],
+
+Cell[BoxData[
+ RowBox[{"(*", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"function", "=", "\n", "\t\t", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"OptionValue", "[", "\"\<MultilineMatch\>\"", "]"}], "//", 
+         "TrueQ"}], ",", "\n", "\t\t\t", "fileGrepMultiLine", ",", "\n", 
+        "\t\t\t", "fileGrepSingleLine"}], "\n", "\t\t\t", "]"}]}], "}"}], ",",
+     "\n", "\t\t", 
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"OptionValue", "[", "\"\<ContainsQ\>\"", "]"}], "//", 
+       "TrueQ"}], ",", "\n", "\t\t\t", 
+      RowBox[{"function", "[", 
+       RowBox[{"file", ",", "pat", ",", "True"}], "]"}], ",", "\n", "\t\t\t", 
+      
+      RowBox[{
+       RowBox[{"function", "[", 
+        RowBox[{"file", ",", "\n", "\t\t\t\t", 
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"OptionValue", "@", "\"\<IncludeLine\>\""}], "//", 
+            "TrueQ"}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"Except", "[", "\"\<\\n\>\"", "]"}], "..."}], ")"}], "~~",
+             "pat", "~~", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"Except", "[", "\"\<\\n\>\"", "]"}], "..."}], ")"}]}], 
+           ",", "\n", "\t\t\t\t\t", "pat"}], "\n", "\t\t\t\t\t", "]"}], ",", 
+         "\n", "\t\t\t\t", "False"}], "]"}], "//", "\n", "\t\t\t\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"OptionValue", "@", "\"\<IncludeLineNumbers\>\""}], "//", 
+          RowBox[{"Not", "@*", "TrueQ"}]}], ",", "\n", "\t\t\t\t\t\t", 
+         "Values", ",", "\n", "\t\t\t\t\t\t", "Identity"}], "\n", 
+        "\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+   "]"}], "*)"}]], \
+"CodeInput",ExpressionUUID->"5ea2b45b-fdd3-4629-a0de-aa8e7998ad90"],
 
 Cell[BoxData[{
  RowBox[{
   RowBox[{
-   RowBox[{"Options", "[", "FileGrep", "]"}], "=", 
-   RowBox[{"{", "\n", "\t", 
-    RowBox[{
-     RowBox[{"\"\<ContainsQ\>\"", "\[Rule]", "False"}], ",", "\n", "\t", 
-     RowBox[{"\"\<IncludeLine\>\"", "\[Rule]", "False"}], ",", "\n", "\t", 
-     RowBox[{"\"\<IncludeLineNumbers\>\"", "\[Rule]", "True"}], ",", "\n", 
-     "\t", 
-     RowBox[{"\"\<MultilineMatch\>\"", "\[Rule]", "False"}]}], "\n", "\t", 
-    "}"}]}], ";"}], "\n", 
+   RowBox[{"Options", "[", "FileGrep", "]"}], "=", "\n", "\t", 
+   RowBox[{"Options", "[", "Grep", "]"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
-   RowBox[{"FileGrep", "[", 
+   RowBox[{"FileGrep", "[", "\n", "\t", 
     RowBox[{
      RowBox[{"file", ":", 
       RowBox[{"filePattern", "?", 
        RowBox[{"(", 
-        RowBox[{"Not", "@*", "DirectoryQ"}], ")"}]}]}], ",", "pat_", ",", 
+        RowBox[{"Not", "@*", "DirectoryQ"}], ")"}]}]}], ",", "\n", "\t", 
+     "pat_", ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"Grep", "[", 
+    RowBox[{"file", ",", " ", "pat", ",", " ", "ops"}], "]"}]}], ";"}], "\n", 
+
+ RowBox[{
+  RowBox[{
+   RowBox[{"FileGrep", "[", 
+    RowBox[{
+     RowBox[{"files", ":", 
+      RowBox[{"{", 
+       RowBox[{"filePattern", ".."}], "}"}]}], ",", "pat_", ",", 
      RowBox[{"ops", ":", 
       RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
-   RowBox[{"With", "[", 
+   RowBox[{"Grep", "[", 
+    RowBox[{"files", ",", " ", "pat", ",", " ", "ops"}], "]"}]}], 
+  RowBox[{"(*", 
+   RowBox[{"AssociationMap", "[", 
     RowBox[{
-     RowBox[{"{", 
-      RowBox[{"function", "=", "\n", "\t\t", 
-       RowBox[{"If", "[", 
-        RowBox[{
-         RowBox[{
-          RowBox[{"OptionValue", "[", "\"\<MultilineMatch\>\"", "]"}], "//", 
-          "TrueQ"}], ",", "\n", "\t\t\t", "fileGrepMultiLine", ",", "\n", 
-         "\t\t\t", "fileGrepSingleLine"}], "\n", "\t\t\t", "]"}]}], "}"}], 
-     ",", "\n", "\t\t", 
-     RowBox[{"If", "[", 
-      RowBox[{
-       RowBox[{
-        RowBox[{"OptionValue", "[", "\"\<ContainsQ\>\"", "]"}], "//", 
-        "TrueQ"}], ",", "\n", "\t\t\t", 
-       RowBox[{"function", "[", 
-        RowBox[{"file", ",", "pat", ",", "True"}], "]"}], ",", "\n", "\t\t\t", 
-       RowBox[{
-        RowBox[{"function", "[", 
-         RowBox[{"file", ",", "\n", "\t\t\t\t", 
-          RowBox[{"If", "[", 
-           RowBox[{
-            RowBox[{
-             RowBox[{"OptionValue", "@", "\"\<IncludeLine\>\""}], "//", 
-             "TrueQ"}], ",", "\n", "\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{"(", 
-              RowBox[{
-               RowBox[{"Except", "[", "\"\<\\n\>\"", "]"}], "..."}], ")"}], "~~",
-              "pat", "~~", 
-             RowBox[{"(", 
-              RowBox[{
-               RowBox[{"Except", "[", "\"\<\\n\>\"", "]"}], "..."}], ")"}]}], 
-            ",", "\n", "\t\t\t\t\t", "pat"}], "\n", "\t\t\t\t\t", "]"}], ",", 
-          "\n", "\t\t\t\t", "False"}], "]"}], "//", "\n", "\t\t\t\t\t", 
-        RowBox[{"If", "[", 
-         RowBox[{
-          RowBox[{
-           RowBox[{"OptionValue", "@", "\"\<IncludeLineNumbers\>\""}], "//", 
-           RowBox[{"Not", "@*", "TrueQ"}]}], ",", "\n", "\t\t\t\t\t\t", 
-          "Values", ",", "\n", "\t\t\t\t\t\t", "Identity"}], "\n", 
-         "\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
-    "]"}]}], ";"}], "\n", 
- RowBox[{
-  RowBox[{"FileGrep", "[", 
-   RowBox[{
-    RowBox[{"files", ":", 
-     RowBox[{"{", 
-      RowBox[{"filePattern", ".."}], "}"}]}], ",", "pat_", ",", 
-    RowBox[{"ops", ":", 
-     RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
-  RowBox[{"AssociationMap", "[", 
-   RowBox[{
-    RowBox[{
-     RowBox[{"FileGrep", "[", 
-      RowBox[{"#", ",", "pat", ",", "ops"}], "]"}], "&"}], ",", "files"}], 
-   "]"}]}], "\n", 
+     RowBox[{
+      RowBox[{"FileGrep", "[", 
+       RowBox[{"#", ",", "pat", ",", "ops"}], "]"}], "&"}], ",", "files"}], 
+    "]"}], "*)"}]}], "\n", 
  RowBox[{
   RowBox[{"FileGrep", "[", 
    RowBox[{
@@ -528,18 +1055,15 @@ Cell[BoxData[{
    RowBox[{
     RowBox[{"FileNames", "[", 
      RowBox[{"\"\<*\>\"", ",", "dir"}], "]"}], ",", "pat", ",", "ops"}], 
-   "]"}]}]}], "CodeInput",
- CellChangeTimes->{{3.6979782553918867`*^9, 3.6979782717521763`*^9}, {
-   3.6979783200958652`*^9, 3.697978354958789*^9}, {3.697978751648736*^9, 
-   3.69797885142241*^9}, {3.6979790040186443`*^9, 3.6979790861550694`*^9}, {
-   3.697979319282545*^9, 3.6979793350172653`*^9}, {3.697979392792409*^9, 
-   3.697979557935542*^9}, {3.697979589891903*^9, 3.697979624213704*^9}, {
-   3.697979664058132*^9, 3.697979681430417*^9}, {3.69798021619203*^9, 
-   3.697980223172844*^9}, {3.697982337640543*^9, 3.697982517464143*^9}, {
-   3.697982565545066*^9, 3.6979826564103603`*^9}, 3.69798386233806*^9, {
-   3.6990277147265177`*^9, 
-   3.699027793879286*^9}},ExpressionUUID->"2deaf30b-434c-4483-8437-\
-b6998dd8c49b"],
+   "]"}]}]}], \
+"CodeInput",ExpressionUUID->"2deaf30b-434c-4483-8437-b6998dd8c49b"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]FileSystemGrep\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"a0a4427d-cdd3-4a3a-92cc-8843cf655e33"],
 
 Cell[BoxData[{
  RowBox[{
@@ -590,7 +1114,8 @@ Cell[BoxData[{
 
 Cell[CellGroupData[{
 
-Cell["GrepDirectory", "Subsubsection",
+Cell["\[LeftCeiling]GrepDirectory\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
  DefaultNewCellStyle->"CodeInput",
  CellChangeTimes->{{3.697326568805251*^9, 
   3.697326573147627*^9}},ExpressionUUID->"c4217e39-f3cd-4111-91ad-\
@@ -599,17 +1124,21 @@ f616dbec3e4b"],
 Cell[BoxData[{
  RowBox[{
   RowBox[{
-   RowBox[{"Options", "[", "GrepDirectory", "]"}], "=", 
-   RowBox[{"{", "\n", "\t", 
+   RowBox[{"Options", "[", "GrepDirectory", "]"}], "=", "\n", "\t", 
+   RowBox[{"FilterRules", "[", "\n", "\t\t", 
     RowBox[{
-     RowBox[{"\"\<GrepRecursive\>\"", "\[Rule]", "True"}], ",", "\n", "\t", 
-     RowBox[{"\"\<GrepMatch\>\"", "\[Rule]", "False"}]}], "\n", "\t", "}"}]}],
-   ";"}], "\n", 
+     RowBox[{"Options", "[", "Grep", "]"}], ",", "\n", "\t\t", 
+     RowBox[{"Except", "[", 
+      RowBox[{"Alternatives", "@@", 
+       RowBox[{"Keys", "@", 
+        RowBox[{"Options", "[", "RunProcess", "]"}]}]}], "]"}]}], "\n", 
+    "\t\t", "]"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"GrepDirectory", "[", 
     RowBox[{
-     RowBox[{"dir_String", "?", "DirectoryQ"}], ",", "pat_String", ",", 
+     RowBox[{"dir_String", "?", "DirectoryQ"}], ",", " ", "pat_String", ",", 
+     " ", 
      RowBox[{"ops", ":", 
       RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
    RowBox[{
@@ -617,8 +1146,8 @@ Cell[BoxData[{
      RowBox[{
       RowBox[{"!", 
        RowBox[{"TrueQ", "@", 
-        RowBox[{"OptionValue", "@", "\"\<GrepMatch\>\""}]}]}], ",", "\n", 
-      "\t\t", "Identity", ",", "\n", "\t\t", 
+        RowBox[{"OptionValue", "@", "\"\<ReturnContaining\>\""}]}]}], ",", 
+      "\n", "\t\t", "Identity", ",", "\n", "\t\t", 
       RowBox[{
        RowBox[{
         RowBox[{
@@ -630,46 +1159,29 @@ Cell[BoxData[{
          RowBox[{"#", ",", 
           RowBox[{
            RowBox[{"\"\<:\>\"", "<>", "pat"}], "\[Rule]", "pat"}], ",", "2"}],
-          "]"}]}], "&"}]}], "\n", "\t\t", "]"}], "@", "\n", "\t", 
-    RowBox[{"StringReplace", "[", "\n", "\t\t", 
+          "]"}]}], "&"}]}], "\n", "\t\t", "]"}], "@", "\n", "\t\t", 
+    RowBox[{"StringReplace", "[", "\n", "\t\t\t", 
      RowBox[{
-      RowBox[{"StringSplit", "[", "\n", "\t\t\t", 
+      RowBox[{"Grep", "[", 
        RowBox[{
-        RowBox[{"RunProcess", "[", "\n", "\t\t\t", 
-         RowBox[{
-          RowBox[{"{", 
-           RowBox[{"\"\<grep\>\"", ",", "\n", "\t\t\t\t", 
-            RowBox[{"Replace", "[", 
-             RowBox[{
-              RowBox[{"OptionValue", "@", "\"\<GrepRecursive\>\""}], ",", 
-              RowBox[{"{", "\n", "\t\t\t\t\t", 
-               RowBox[{
-                RowBox[{"True", "->", "\"\<-r\>\""}], ",", "\n", "\t\t\t\t\t", 
-                RowBox[{"_", "\[Rule]", "Nothing"}]}], "\n", "\t\t\t\t\t", 
-               "}"}]}], "]"}], ",", "\n", "\t\t\t\t", 
-            RowBox[{"Replace", "[", 
-             RowBox[{
-              RowBox[{"OptionValue", "@", "\"\<GrepMatch\>\""}], ",", 
-              RowBox[{"{", "\n", "\t\t\t\t\t", 
-               RowBox[{
-                RowBox[{"False", "->", "\"\<-l\>\""}], ",", "\n", 
-                "\t\t\t\t\t", 
-                RowBox[{"_", "\[Rule]", "Nothing"}]}], "\n", "\t\t\t\t\t", 
-               "}"}]}], "]"}], ",", "\n", "\t\t\t\t\t", "pat", ",", 
-            "\"\<.\>\""}], "}"}], ",", "\n", "\t\t\t", 
-          "\"\<StandardOutput\>\"", ",", "\n", "\t\t\t", 
-          RowBox[{"ProcessDirectory", "\[Rule]", "\n", "\t\t\t\t", 
-           RowBox[{"ExpandFileName", "@", "dir"}]}]}], "\n", "\t\t\t", "]"}], 
-        ",", "\n", "\t\t\t", "\"\<\\n\>\""}], "]"}], ",", "\n", "\t\t", 
-      RowBox[{"\"\<./\>\"", "\[Rule]", "\n", "\t\t\t", 
+        RowBox[{"ExpandFileName", "@", "dir"}], ",", " ", "pat", ",", " ", 
+        "\n", "\t\t\t\t", 
+        RowBox[{"{", "\n", "\t\t\t\t\t", 
+         RowBox[{"ops", ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"\"\<Recursive\>\"", "\[Rule]", "True"}], ",", "\n", 
+          "\t\t\t\t\t", 
+          RowBox[{"\"\<ReturnContaining\>\"", "\[Rule]", "True"}]}], "\n", 
+         "\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
+      
+      RowBox[{"\"\<./\>\"", "\[Rule]", " ", "\n", "\t\t\t\t", 
        RowBox[{"StringJoin", "@", 
         RowBox[{"{", 
          RowBox[{
           RowBox[{"StringTrim", "[", 
            RowBox[{"dir", ",", 
             RowBox[{"$PathnameSeparator", "~~", "EndOfString"}]}], "]"}], ",",
-           "$PathnameSeparator"}], "}"}]}]}]}], "\n", "\t\t", "]"}]}]}], 
-  ";"}], "\n", 
+           " ", "$PathnameSeparator"}], "}"}]}]}]}], "\n", "\t\t\t", 
+     "]"}]}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{
@@ -703,22 +1215,14 @@ Cell[BoxData[{
    RowBox[{"GrepDirectory", "[", 
     RowBox[{
      RowBox[{"DirectoryName", "/@", "files"}], ",", "pat", ",", "ops"}], 
-    "]"}]}], ";"}]}], "CodeInput",
- CellChangeTimes->{{3.697322938086891*^9, 3.6973229787453337`*^9}, {
-   3.69732301066926*^9, 3.697323179645576*^9}, {3.697323222488995*^9, 
-   3.6973234222701674`*^9}, {3.6973236251801033`*^9, 3.697323760527689*^9}, {
-   3.6973237921930637`*^9, 3.697323901669528*^9}, {3.69732396648497*^9, 
-   3.697324007507288*^9}, {3.697324050029801*^9, 3.697324121168674*^9}, {
-   3.697324186057961*^9, 3.697324294651637*^9}, {3.6973243251054173`*^9, 
-   3.697324379211404*^9}, {3.697324418929626*^9, 3.697324448818736*^9}, {
-   3.6973251946102543`*^9, 3.697325219680079*^9}, 
-   3.697326576511064*^9},ExpressionUUID->"5a55c372-c39d-484d-a1bc-\
-b582002cb52e"]
-}, Closed]],
+    "]"}]}], ";"}]}], \
+"CodeInput",ExpressionUUID->"5a55c372-c39d-484d-a1bc-b582002cb52e"]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
-Cell["GrepSelect", "CodeSubsubsection",
+Cell["\[LeftCeiling]GrepSelect\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,
  CellChangeTimes->{{3.697326577401114*^9, 
   3.697326582410858*^9}},ExpressionUUID->"24a82a6a-8c55-4582-8f7c-\
 a83bf144053f"],
@@ -740,25 +1244,15 @@ Cell[BoxData[
        RowBox[{"DirectoryName", "/@", 
         RowBox[{"Select", "[", 
          RowBox[{"files", ",", 
-          RowBox[{"Not", "@*", "DirectoryQ"}]}], "]"}]}], ",", "pattern", ",",
-        "\n", "\t\t\t", 
-       RowBox[{"\"\<GrepRecursive\>\"", "\[Rule]", "True"}], ",", "\n", 
-       "\t\t\t", 
-       RowBox[{"\"\<GrepFileNames\>\"", "\[Rule]", "True"}]}], "]"}], ",", 
-     "\n", "\t\t", 
+          RowBox[{"Not", "@*", "DirectoryQ"}]}], "]"}]}], ",", "\n", "\t\t\t",
+        "pattern", ",", "\n", "\t\t\t", 
+       RowBox[{"\"\<Recursive\>\"", "\[Rule]", "True"}], ",", "\n", "\t\t\t", 
+       
+       RowBox[{"\"\<ReturnContaining\>\"", "\[Rule]", "True"}]}], "\n", 
+      "\t\t\t", "]"}], ",", "\n", "\t\t", 
      RowBox[{"ExpandFileName", "/@", "files"}]}], "\n", "\t\t", "]"}]}], 
-  ";"}]], "CodeInput",
- CellChangeTimes->{{3.697322938086891*^9, 3.6973229787453337`*^9}, {
-   3.69732301066926*^9, 3.697323179645576*^9}, {3.697323222488995*^9, 
-   3.6973234222701674`*^9}, {3.6973236251801033`*^9, 3.697323760527689*^9}, {
-   3.6973237921930637`*^9, 3.697323901669528*^9}, {3.69732396648497*^9, 
-   3.697324007507288*^9}, {3.697324050029801*^9, 3.697324121168674*^9}, {
-   3.697324186057961*^9, 3.697324294651637*^9}, {3.6973243251054173`*^9, 
-   3.697324379211404*^9}, {3.697324418929626*^9, 3.697324448818736*^9}, {
-   3.6973251946102543`*^9, 3.697325219680079*^9}, 
-   3.697326576511064*^9},ExpressionUUID->"a33c35a5-14e2-4134-8d4e-\
-0c9d2056d20f"]
-}, Closed]]
+  ";"}]], "CodeInput",ExpressionUUID->"a33c35a5-14e2-4134-8d4e-0c9d2056d20f"]
+}, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -776,7 +1270,248 @@ Cell[BoxData[
 
 Cell[CellGroupData[{
 
-Cell["SystemExpressionsSearch", "Subsubsection",
+Cell["SystemBaseSearch", \
+"CodeSubsubsection",ExpressionUUID->"789f4ef7-fd2b-4d5a-944e-3f13d82161a8"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "SystemBaseSearch", "]"}], "=", "\n", "\t", 
+   RowBox[{"Flatten", "@", 
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Monitor", "\[Rule]", "True"}], ",", "\n", "\t\t", 
+      RowBox[{"\"\<Batch\>\"", "\[Rule]", "False"}], ",", "\n", "\t\t", 
+      RowBox[{"\"\<ChunkSize\>\"", "\[Rule]", "False"}]}], "\n", "\t\t", 
+     "}"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SystemBaseSearch", "[", "\n", "\t", 
+    RowBox[{"fn_", ",", "\n", "\t", 
+     RowBox[{"files", ":", 
+      RowBox[{
+       RowBox[{"(", "\n", "\t\t", 
+        RowBox[{
+         RowBox[{"Except", "[", "\n", "\t\t\t", 
+          RowBox[{
+           RowBox[{
+           "\"\<All\>\"", "|", "\"\<Notebooks\>\"", "|", "\"\<Packages\>\"", 
+            "|", "\"\<TextResources\>\""}], ",", "\n", "\t\t\t", 
+           RowBox[{"_", "?", "StringPattern`StringPatternQ"}]}], "\n", 
+          "\t\t\t", "]"}], "|", "_List"}], "\n", "\t\t", ")"}], ".."}]}], ",",
+      "\n", "\t", 
+     RowBox[{"function", ":", 
+      RowBox[{
+      "InternalFiles", "|", "FrontEndFiles", "|", "InternalSystemFiles"}], 
+      ":", "InternalFiles"}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"Internal`WithLocalSettings", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Begin", "[", "\"\<SystemSearchDump`\>\"", "]"}], ";", "\n", 
+      "\t\t", 
+      RowBox[{"SetDirectory", "@", "$TemporaryDirectory"}], ";"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"Module", "[", 
+      RowBox[{
+       RowBox[{"{", "\n", "\t\t\t", 
+        RowBox[{
+         RowBox[{"fileListing", "=", "\n", "\t\t\t\t", 
+          RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"Flatten", "[", 
+             RowBox[{
+              RowBox[{"{", "files", "}"}], ",", " ", "1"}], "]"}], ",", "\n", 
+            "\t\t\t\t\t", 
+            RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{
+                 RowBox[{"_String", "?", "FileExistsQ"}], ",", " ", 
+                 "___String"}], "}"}], "\[RuleDelayed]", "files"}], ",", "\n",
+               "\t\t\t\t\t\t", 
+              RowBox[{"_List", ":>", 
+               RowBox[{"function", "[", 
+                RowBox[{"Alternatives", "@@", "files"}], "]"}]}], ",", "\n", 
+              "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Except", "@", 
+                RowBox[{"_String", "?", "FileExistsQ"}]}], ":>", 
+               RowBox[{"function", "[", "files", "]"}]}]}], "\n", 
+             "\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t", "]"}]}], ",", "\n", 
+         "\t\t\t", "filesNew", ",", "\n", "\t\t\t", "fileChunks"}], "\n", 
+        "\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"filesNew", "=", "\n", "\t\t\t\t", 
+         RowBox[{"AssociationMap", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Missing", "[", "\"\<UnProcessed\>\"", "]"}], "&"}], ",", 
+           "fileListing"}], "]"}]}], ";", "\n", "\t\t\t", 
+        RowBox[{"Which", "[", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"TrueQ", "@", 
+           RowBox[{"OptionValue", "[", "\"\<Batch\>\"", "]"}]}], ",", "\n", 
+          "\t\t\t\t\t", 
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"OptionValue", "@", "Monitor"}], "//", "TrueQ"}], ",", 
+            "\n", "\t\t\t\t\t\t", 
+            RowBox[{"Monitor", "[", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"fn", "[", "fileListing", "]"}], ",", "\n", 
+              "\t\t\t\t\t\t\t", 
+              RowBox[{
+              "Internal`LoadingPanel", "@", "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{"Row", "@", 
+                RowBox[{"{", 
+                 RowBox[{"\"\<Searching \>\"", ",", " ", 
+                  RowBox[{"Length", "@", "fileListing"}], ",", " ", 
+                  "\"\< files\>\""}], "}"}]}]}]}], "\n", "\t\t\t\t\t\t\t", 
+             "]"}], ",", "\t", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"fn", "[", "fileListing", "]"}]}], "\n", "\t\t\t\t\t\t", 
+           "]"}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"IntegerQ", "@", 
+           RowBox[{"OptionValue", "[", "\"\<ChunkSize\>\"", "]"}]}], ",", 
+          "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"fileChunks", "=", 
+            RowBox[{"Partition", "[", 
+             RowBox[{"fileListing", ",", " ", 
+              RowBox[{"UpTo", "[", 
+               RowBox[{"OptionValue", "[", "\"\<ChunkSize\>\"", "]"}], 
+               "]"}]}], "]"}]}], ";", "\n", "\t\t\t\t\t", 
+           RowBox[{"With", "[", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"fcs", "=", "fileChunks"}], "}"}], ",", "\n", 
+             "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"fileChunks", "=", 
+               RowBox[{"ConstantArray", "[", 
+                RowBox[{
+                 RowBox[{"Missing", "[", "\"\<Unprocessed\>\"", "]"}], ",", 
+                 " ", 
+                 RowBox[{"Length", "@", "fileChunks"}]}], "]"}]}], ";", "\n", 
+              "\t\t\t\t\t\t", 
+              RowBox[{"CheckAbort", "[", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"If", "[", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"OptionValue", "@", "Monitor"}], "//", "TrueQ"}], 
+                    ",", "\n", "\t", "\t\t\t\t\t\t\t", 
+                    RowBox[{"Function", "[", 
+                    RowBox[{
+                    "Null", ",", " ", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "Monitor", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"#", ",", " ", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "Internal`LoadingPanel", "@", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Row", "@", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    "\"\<Searching chunk \>\"", ",", " ", "i", ",", " ", 
+                    "\"\< of \>\"", ",", " ", 
+                    RowBox[{"Length", "@", "fileChunks"}]}], "}"}]}]}]}], 
+                    "\n", "\t", "\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t", "HoldFirst"}], "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t", 
+                    "\t\t\t\t\t\t\t", 
+                    RowBox[{"#", "&"}]}], "\n", "\t", "\t\t\t\t\t\t\t", "]"}],
+                   "@", 
+                  RowBox[{"Do", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"fileChunks", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "=", 
+                    RowBox[{"Quiet", "@", 
+                    RowBox[{"fn", "[", 
+                    RowBox[{"fcs", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "]"}]}]}], ",", "\n", 
+                    "\t", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"{", 
+                    RowBox[{"i", ",", " ", 
+                    RowBox[{"Length", "@", "fcs"}]}], "}"}]}], "\n", 
+                   "\t\t\t\t\t\t\t\t\t\t", "]"}]}], ";", "\n", 
+                 "\t\t\t\t\t\t\t", 
+                 RowBox[{"DeleteMissing", "@", "fileChunks"}]}], ",", "\n", 
+                "\t\t\t\t\t\t\t", 
+                RowBox[{"DeleteMissing", "@", "fileChunks"}]}], "\n", 
+               "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t", "]"}]}], 
+          ",", "\n", "\t\t\t\t", "True", ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"CheckAbort", "[", "\n", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"If", "[", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"OptionValue", "@", "Monitor"}], "//", "TrueQ"}], ",",
+                "\n", "\t", "\t\t\t\t\t\t", 
+               RowBox[{"Monitor", "[", "\n", "\t", "\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"Do", "[", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+                  RowBox[{
+                   RowBox[{
+                    RowBox[{"filesNew", "[", 
+                    RowBox[{"fileListing", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "]"}], "=", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Quiet", "@", 
+                    RowBox[{"fn", "@", 
+                    RowBox[{"fileListing", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}]}]}]}], ",", "\n", "\t", 
+                   "\t\t\t\t\t\t\t\t", 
+                   RowBox[{"{", 
+                    RowBox[{"i", ",", " ", 
+                    RowBox[{"Length", "@", "fileListing"}]}], "}"}]}], "\n", 
+                  "\t", "\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t", 
+                 "\t\t\t\t\t\t\t", 
+                 RowBox[{
+                 "Internal`LoadingPanel", "@", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+                  RowBox[{"Row", "@", 
+                   RowBox[{"{", 
+                    RowBox[{
+                    "\"\<Scanning file \>\"", ",", " ", "i", ",", " ", 
+                    "\"\< of \>\"", ",", " ", 
+                    RowBox[{"Length", "@", "fileListing"}]}], "}"}]}]}]}], 
+                "\n", "\t", "\t", "\t", "\t\t\t\t\t", "]"}], ",", "\t", "\n", 
+               "\t", "\t\t\t\t\t\t", 
+               RowBox[{"Do", "[", "\n", "\t", "\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"filesNew", "[", "f", "]"}], "=", 
+                  RowBox[{"Quiet", "@", 
+                   RowBox[{"fn", "[", "f", "]"}]}]}], ",", "\n", "\t", 
+                 "\t\t\t\t\t\t\t", 
+                 RowBox[{"{", 
+                  RowBox[{"f", ",", "fileListing"}], "}"}]}], "\n", "\t", 
+                "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t", "\t\t\t\t\t\t", "]"}], 
+             ";", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"DeleteMissing", "@", "filesNew"}]}], ",", "\n", 
+            "\t\t\t\t\t\t", 
+            RowBox[{"DeleteMissing", "@", "filesNew"}]}], "\n", 
+           "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", 
+      "\t\t\t", "]"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"ResetDirectory", "[", "]"}], ";", "\n", "\t\t", 
+      RowBox[{"Quiet", "@", 
+       RowBox[{"End", "[", "]"}]}], ";"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"5f632bec-7469-48da-ba64-fd3398f431a2"]\
+
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["SystemExpressionsSearch", "CodeSubsubsection",
  CellChangeTimes->{{3.685214898317061*^9, 3.685214904140082*^9}, 
    3.6907264740824203`*^9, {3.6973267263810053`*^9, 3.697326731162464*^9}, {
    3.703700705405449*^9, 
@@ -852,207 +1587,50 @@ Cell[BoxData[{
      RowBox[{"ops", ":", 
       RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
     "\t", 
-   RowBox[{"CompoundExpression", "[", "\n", "\t\t", 
-    RowBox[{
-     RowBox[{"Begin", "[", "\"\<SystemSearchDump`\>\"", "]"}], ",", "\n", 
-     "\t\t", 
+   RowBox[{
+    RowBox[{"Select", "[", 
      RowBox[{
-      RowBox[{"SetDirectory", "@", "$TemporaryDirectory"}], ";", "\n", "\t\t", 
       RowBox[{
+       RowBox[{"Length", "[", "#", "]"}], ">", "0"}], "&"}], "]"}], "@", "\n",
+     "\t\t", 
+    RowBox[{"SystemBaseSearch", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"With", "[", 
        RowBox[{
-        RowBox[{"(", 
-         RowBox[{
-          RowBox[{"ResetDirectory", "[", "]"}], ";", 
-          RowBox[{"Quiet", "@", 
-           RowBox[{"End", "[", "]"}]}], ";", "\n", "\t\t\t", 
-          RowBox[{"Select", "[", 
-           RowBox[{"#", ",", 
-            RowBox[{
-             RowBox[{
-              RowBox[{"Length", "@", "#"}], ">", "0"}], "&"}]}], "]"}]}], 
-         "\n", "\t\t\t", ")"}], "&"}], "@", "\n", "\t\t\t", 
-       RowBox[{"Module", "[", 
-        RowBox[{
-         RowBox[{"{", "\n", "\t\t\t\t", 
+        RowBox[{"{", 
+         RowBox[{"clops", "=", 
+          RowBox[{"FilterRules", "[", 
+           RowBox[{
+            RowBox[{"{", "ops", "}"}], ",", " ", 
+            RowBox[{"Options", "@", "Cases"}]}], "]"}]}], "}"}], ",", "\n", 
+        "\t", "\t\t\t", 
+        RowBox[{"Function", "[", "\n", "\t", "\t\t\t\t", 
+         RowBox[{"Cases", "[", "\n", "\t", "\t", "\t\t\t\t", 
           RowBox[{
-           RowBox[{"fileListing", "=", "\n", "\t\t\t\t\t", 
-            RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t", 
-             RowBox[{
-              RowBox[{"Flatten", "[", 
-               RowBox[{
-                RowBox[{"{", "files", "}"}], ",", " ", "1"}], "]"}], ",", 
-              "\n", "\t\t\t\t\t\t", 
-              RowBox[{"{", "\n", "\t\t\t\t\t\t\t", 
-               RowBox[{
-                RowBox[{
-                 RowBox[{"{", 
-                  RowBox[{
-                   RowBox[{"_String", "?", "FileExistsQ"}], ",", " ", 
-                   "___String"}], "}"}], "\[RuleDelayed]", "files"}], ",", 
-                "\n", "\t\t\t\t\t\t\t", 
-                RowBox[{"_List", ":>", 
-                 RowBox[{"function", "[", 
-                  RowBox[{"Alternatives", "@@", "files"}], "]"}]}], ",", "\n",
-                 "\t\t\t\t\t\t\t", 
-                RowBox[{
-                 RowBox[{"Except", "@", 
-                  RowBox[{"_String", "?", "FileExistsQ"}]}], ":>", 
-                 RowBox[{"function", "[", "files", "]"}]}]}], "\n", 
-               "\t\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t\t", "]"}]}], ",", 
-           "\n", "\t\t\t\t", "filesNew"}], "\n", "\t\t\t\t", "}"}], ",", "\n",
-          "\t\t\t\t", 
-         RowBox[{
-          RowBox[{"filesNew", "=", "\n", "\t\t\t\t\t", 
-           RowBox[{"AssociationMap", "[", 
+           RowBox[{"Switch", "[", 
             RowBox[{
-             RowBox[{
-              RowBox[{"Missing", "[", "\"\<UnProcessed\>\"", "]"}], "&"}], 
-             ",", "fileListing"}], "]"}]}], ";", "\n", "\t\t\t\t", 
-          RowBox[{"DeleteMissing", "@", "\n", "\t\t\t\t", 
-           RowBox[{"CheckAbort", "[", "\n", "\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{
-              RowBox[{"If", "[", 
-               RowBox[{
-                RowBox[{
-                 RowBox[{"OptionValue", "@", "Monitor"}], "//", "TrueQ"}], 
-                ",", "\n", "\t", "\t", "\t\t\t\t", 
-                RowBox[{"Monitor", "[", "\n", "\t", "\t\t\t\t\t\t", 
-                 RowBox[{
-                  RowBox[{"Table", "[", "\n", "\t\t\t\t\t\t\t\t", 
-                   RowBox[{
-                    RowBox[{
-                    RowBox[{"filesNew", "[", 
-                    RowBox[{"fileListing", "[", 
-                    RowBox[{"[", "i", "]"}], "]"}], "]"}], "=", "\n", 
-                    "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"Quiet", "@", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "Cases", "[", "\n", "\t", "\t", "\t", "\t", "\t", "\t", 
-                    "\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"Switch", "[", 
-                    RowBox[{
-                    RowBox[{"FileExtension", "@", 
-                    RowBox[{"fileListing", "[", 
-                    RowBox[{"[", "i", "]"}], "]"}]}], ",", "\n", "\t", "\t", 
-                    "\t", "\t", "\t", "\t", "\t", "\t", "\t\t\t\t", 
-                    RowBox[{"\"\<m\>\"", "|", "\"\<wl\>\""}], ",", "\n", "\t",
-                     "\t", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"Import", "[", 
-                    RowBox[{
-                    RowBox[{"fileListing", "[", 
-                    RowBox[{"[", "i", "]"}], "]"}], ",", 
-                    "\"\<HeldExpressions\>\""}], "]"}], ",", "\n", "\t", "\t",
-                     "\t", "\t", "\t", "\t", "\t", "\t", "\t\t\t\t", 
-                    "\"\<tr\>\"", ",", "\n", "\t", "\t", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"trFileExpressions", "[", 
-                    RowBox[{"fileListing", "[", 
-                    RowBox[{"[", "i", "]"}], "]"}], "]"}], ",", "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t", "_", ",", "\n", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"Get", "[", 
-                    RowBox[{"fileListing", "[", 
-                    RowBox[{"[", "i", "]"}], "]"}], "]"}]}], "\n", "\t", "\t",
-                     "\t", "\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t", "\t",
-                     "\t", "\t\t\t\t\t\t\t\t", "pat", ",", "\n", "\t", "\t", 
-                    "\t", "\t", "\t", "\t", "\t", "\t", "\t\t\t", 
-                    "\[Infinity]", ",", "\n", "\t", "\t", "\t", "\t", "\t", 
-                    "\t", "\t", "\t", "\t\t\t", 
-                    RowBox[{"Heads", "\[Rule]", 
-                    RowBox[{"OptionValue", "@", "Heads"}]}]}], "\n", "\t", 
-                    "\t", "\t", "\t", "\t", "\t", "\t", "\t", "\t\t\t", 
-                    "]"}]}]}], ",", "\n", "\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"{", 
-                    RowBox[{"i", ",", 
-                    RowBox[{"Length", "@", "fileListing"}]}], "}"}]}], "\n", 
-                   "\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t\t\t", 
-                  RowBox[{
-                  "Internal`LoadingPanel", "@", "\n", "\t\t\t\t\t\t\t\t", 
-                   RowBox[{"Row", "@", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "\"\<Scanning file \>\"", ",", "i", ",", "\"\< of \>\"", 
-                    ",", 
-                    RowBox[{"Length", "@", "fileListing"}]}], "}"}]}]}]}], 
-                 "\n", "\t", "\t", "\t\t\t\t\t", "]"}], ",", "\t", "\n", "\t",
-                 "\t\t\t\t\t", 
-                RowBox[{"Table", "[", "\n", "\t", "\t\t\t\t\t\t", 
-                 RowBox[{
-                  RowBox[{
-                   RowBox[{"filesNew", "[", "f", "]"}], "=", "\n", "\t", 
-                   "\t\t\t\t\t\t\t", 
-                   RowBox[{"Quiet", "@", "\n", "\t", "\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "Cases", "[", "\n", "\t", "\t", "\t", "\t", "\t", 
-                    "\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"Switch", "[", 
-                    RowBox[{
-                    RowBox[{"FileExtension", "@", "f"}], ",", "\n", "\t", 
-                    "\t", "\t", "\t", "\t", "\t", "\t", "\t\t\t\t", 
-                    RowBox[{"\"\<m\>\"", "|", "\"\<wl\>\""}], ",", "\n", "\t",
-                     "\t", "\t", "\t", "\t", "\t", "\t", "\t\t\t\t\t", 
-                    RowBox[{"Import", "[", 
-                    RowBox[{"f", ",", "\"\<HeldExpressions\>\""}], "]"}], ",",
-                     "\n", "\t", "\t", "\t", "\t", "\t", "\t", "\t", 
-                    "\t\t\t\t", "\"\<tr\>\"", ",", "\n", "\t", "\t", "\t", 
-                    "\t", "\t", "\t", "\t", "\t\t\t\t\t", 
-                    RowBox[{"trFileExpressions", "[", "f", "]"}], ",", "\n", 
-                    "\t", "\t", "\t", "\t", "\t", "\t", "\t", "\t\t\t\t", "_",
-                     ",", "\n", "\t", "\t", "\t", "\t", "\t", "\t", "\t", 
-                    "\t\t\t\t\t", 
-                    RowBox[{"Import", "[", "f", "]"}]}], "\n", "\t", "\t", 
-                    "\t", "\t", "\t", "\t", "\t", "\t\t\t\t", "]"}], ",", 
-                    "\n", "\t", "\t", "\t", "\t", "\t", "\t", "\t", "\t\t\t", 
-                    "pat", ",", "\n", "\t", "\t", "\t", "\t", "\t", "\t", 
-                    "\t", "\t\t\t", "\[Infinity]", ",", "\n", "\t", "\t", 
-                    "\t", "\t", "\t", "\t", "\t", "\t\t\t", 
-                    RowBox[{"Heads", "\[Rule]", 
-                    RowBox[{"OptionValue", "@", "Heads"}]}]}], "\n", "\t", 
-                    "\t", "\t", "\t", "\t", "\t", "\t", "\t\t\t", "]"}]}]}], 
-                  ",", "\n", "\t", "\t", "\t", "\t", "\t", "\t", "\t", "\t\t", 
-                  RowBox[{"{", 
-                   RowBox[{"f", ",", "fileListing"}], "}"}]}], "\n", 
-                 "\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t", "]"}], 
-              ";", "\n", "\t\t\t\t\t", "filesNew"}], ",", "\n", "\t\t\t\t\t", 
-             
-             RowBox[{
-              RowBox[{"End", "[", "]"}], ";", "\n", "\t", "\t\t\t\t", 
-              "filesNew"}]}], "\n", "\t\t\t\t\t", "]"}]}]}]}], "\n", "\t\t\t",
-         "]"}]}]}]}], "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
- CellChangeTimes->{{3.6902659829280043`*^9, 3.690266030910046*^9}, {
-   3.690266097571241*^9, 3.690266105898765*^9}, {3.690266137587193*^9, 
-   3.690266179280486*^9}, {3.690266285624652*^9, 3.6902663122956057`*^9}, {
-   3.690266399053239*^9, 3.690266401955661*^9}, {3.6902689666866207`*^9, 
-   3.690268967377555*^9}, {3.6902715227194223`*^9, 3.690271523245742*^9}, {
-   3.6902717497397127`*^9, 3.690271750138117*^9}, {3.6907263050449038`*^9, 
-   3.690726305184124*^9}, {3.690729414158478*^9, 3.6907294270277767`*^9}, {
-   3.6909088226687593`*^9, 3.690908827740857*^9}, {3.690909118903357*^9, 
-   3.690909146065773*^9}, {3.690909190554636*^9, 3.690909207695697*^9}, {
-   3.690909239942327*^9, 3.690909264219198*^9}, {3.690909331683463*^9, 
-   3.690909357600278*^9}, 3.690910333835197*^9, {3.6910885356875973`*^9, 
-   3.691088551973854*^9}, {3.6972930050742273`*^9, 3.6972930444363728`*^9}, 
-   3.697293111871002*^9, {3.697294720071105*^9, 3.697295001783237*^9}, {
-   3.6972950783128443`*^9, 3.697295083540532*^9}, {3.697295147141114*^9, 
-   3.697295155685478*^9}, {3.6981016998938828`*^9, 3.698101737057518*^9}, {
-   3.703700751155418*^9, 3.7037007517722178`*^9}, {3.703701462386388*^9, 
-   3.703701525761467*^9}, {3.703701612426303*^9, 3.7037016268766727`*^9}, {
-   3.7037042112774353`*^9, 3.7037042117364807`*^9}, {3.703704242064115*^9, 
-   3.703704247436694*^9}, {3.703709965340496*^9, 3.7037099789921494`*^9}, {
-   3.7037100845629673`*^9, 3.7037101022872057`*^9}, {3.703710154007115*^9, 
-   3.703710155025901*^9}, {3.711946736737924*^9, 3.711946847415647*^9}, {
-   3.711946880962376*^9, 3.7119469568853416`*^9}, {3.7119470522162743`*^9, 
-   3.711947060462696*^9}, {3.7119471046632557`*^9, 3.711947134339551*^9}, {
-   3.711947216305975*^9, 3.711947217616946*^9}, {3.711947263941918*^9, 
-   3.7119472735143147`*^9}, {3.7119473251520443`*^9, 3.711947332904727*^9}, {
-   3.712249516578351*^9, 3.7122495385679293`*^9}, {3.725483135220585*^9, 
-   3.7254831356754723`*^9}, {3.7287536929803534`*^9, 
-   3.7287537018597403`*^9}, {3.728753797011491*^9, 3.7287539202142267`*^9}, {
-   3.7287541478954973`*^9, 3.728754179875349*^9}, {3.7287542907534513`*^9, 
-   3.728754293158719*^9}},ExpressionUUID->"2f9a14b3-7f33-458a-b961-\
-ee9414204477"],
+             RowBox[{"FileExtension", "@", "#"}], ",", "\n", "\t", "\t", 
+             "\t\t\t\t\t", 
+             RowBox[{"\"\<m\>\"", "|", "\"\<wl\>\""}], ",", "\n", "\t", "\t", 
+             "\t\t\t\t\t\t", 
+             RowBox[{"Import", "[", 
+              RowBox[{"#", ",", "\"\<HeldExpressions\>\""}], "]"}], ",", "\n",
+              "\t", "\t", "\t", "\t\t\t\t", "\"\<tr\>\"", ",", "\n", "\t", 
+             "\t", "\t\t\t\t\t\t", 
+             RowBox[{"trFileExpressions", "[", "#", "]"}], ",", "\n", "\t", 
+             "\t", "\t\t\t\t\t", "_", ",", "\n", "\t", "\t", "\t\t\t\t\t\t", 
+             RowBox[{"Get", "[", "#", "]"}]}], "\n", "\t", "\t", "\t\t\t\t\t",
+             "]"}], ",", "\n", "\t", "\t", "\t\t\t\t", "pat", ",", "\n", "\t",
+            "\t\t\t\t\t", "\[Infinity]", ",", "\n", "\t", "\t\t\t\t\t", 
+           "clops"}], "\n", "\t", "\t\t\t\t\t", "]"}], "\n", "\t", "\t\t\t\t",
+          "]"}]}], "\n", "\t", "\t\t\t", "]"}], ",", "\n", "\t", "\t\t", 
+      "files", ",", "\n", "\t", "\t\t", "function", ",", "\n", "\t", "\t\t", 
+      RowBox[{"FilterRules", "[", 
+       RowBox[{
+        RowBox[{"{", "ops", "}"}], ",", " ", 
+        RowBox[{"Options", "@", "SystemBaseSearch"}]}], "]"}]}], "\n", "\t", 
+     "\t\t", "]"}]}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"2f9a14b3-7f33-458a-b961-ee9414204477"],
 
 Cell[BoxData[{
  RowBox[{
@@ -1124,7 +1702,7 @@ Cell[BoxData[{
   3.728753933469879*^9, 
   3.728754004400858*^9}},ExpressionUUID->"42db8a37-d10a-46e2-83fc-\
 081cc676a2f7"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -1278,6 +1856,142 @@ Cell[BoxData[{
 
 Cell[CellGroupData[{
 
+Cell["SystemTextSearch", \
+"CodeSubsubsection",ExpressionUUID->"088a997d-2452-4fea-89ba-e931d716e4fb"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "SystemTextSearch", "]"}], "=", "\n", "\t", 
+   RowBox[{"Flatten", "@", 
+    RowBox[{"{", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"Monitor", "\[Rule]", "True"}], ",", "\n", "\t\t", 
+      RowBox[{"Options", "@", "FileGrep"}]}], "\n", "\t\t", "}"}]}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SystemTextSearch", "[", "\n", "\t", 
+    RowBox[{"text_", ",", "\n", "\t", 
+     RowBox[{"files", ":", 
+      RowBox[{
+       RowBox[{"(", "\n", "\t\t", 
+        RowBox[{
+         RowBox[{"Except", "[", "\n", "\t\t\t", 
+          RowBox[{
+           RowBox[{
+           "\"\<All\>\"", "|", "\"\<Notebooks\>\"", "|", "\"\<Packages\>\"", 
+            "|", "\"\<TextResources\>\""}], ",", "\n", "\t\t\t", 
+           RowBox[{"_", "?", "StringPattern`StringPatternQ"}]}], "\n", 
+          "\t\t\t", "]"}], "|", "_List"}], "\n", "\t\t", ")"}], ".."}]}], ",",
+      "\n", "\t", 
+     RowBox[{"function", ":", 
+      RowBox[{
+      "InternalFiles", "|", "FrontEndFiles", "|", "InternalSystemFiles"}], 
+      ":", "InternalFiles"}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"Join", "@@", "\n", "\t\t", 
+    RowBox[{"SystemBaseSearch", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"With", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"frops", "=", 
+          RowBox[{"FilterRules", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"ops", ",", " ", 
+              RowBox[{"\"\<ReturnContaining\>\"", "\[Rule]", "True"}]}], 
+             "}"}], ",", " ", 
+            RowBox[{"Options", "@", "Grep"}]}], "]"}]}], "}"}], ",", "\n", 
+        "\t", "\t\t\t", 
+        RowBox[{"Function", "[", "\n", "\t", "\t\t\t\t", 
+         RowBox[{"Grep", "[", 
+          RowBox[{"#", ",", " ", "text", ",", " ", "frops"}], "]"}], "\n", 
+         "\t", "\t\t\t\t", "]"}]}], "\n", "\t", "\t\t\t", "]"}], ",", "\n", 
+      "\t", "\t\t", "files", ",", "\n", "\t", "\t\t", "function", ",", "\n", 
+      "\t", "\t\t", 
+      RowBox[{"FilterRules", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"ops", ",", " ", 
+          RowBox[{"\"\<ChunkSize\>\"", "\[Rule]", "225"}]}], "}"}], ",", " ", 
+        
+        RowBox[{"Options", "@", "SystemBaseSearch"}]}], "]"}]}], "\n", "\t", 
+     "\t\t", "]"}]}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"ea92ecbd-d5af-491a-92f6-58f45fa1f10f"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"SystemTextSearch", "[", "\n", "\t", 
+    RowBox[{"pat_", ",", "\n", "\t", 
+     RowBox[{"Optional", "[", 
+      RowBox[{"\"\<All\>\"", ",", " ", "\"\<All\>\""}], "]"}], ",", "\n", 
+     "\t", 
+     RowBox[{"function", ":", 
+      RowBox[{
+      "InternalFiles", "|", "FrontEndFiles", "|", "InternalSystemFiles"}], 
+      ":", "InternalFiles"}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t\t", 
+   RowBox[{"SystemTextSearch", "[", 
+    RowBox[{"pat", ",", "\n", "\t\t\t", 
+     RowBox[{"\"\<*.tr\>\"", "|", "\"\<*.m\>\"", "|", "\"\<*.nb\>\""}], ",", 
+     "\n", "\t\t\t", "function", ",", "\n", "\t\t\t", "ops"}], "\n", "\t\t\t",
+     "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SystemTextSearch", "[", "\n", "\t", 
+    RowBox[{"pat_", ",", "\n", "\t", "\"\<Notebooks\>\"", ",", "\n", "\t", 
+     RowBox[{"function", ":", 
+      RowBox[{
+      "InternalFiles", "|", "FrontEndFiles", "|", "InternalSystemFiles"}], 
+      ":", "InternalFiles"}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t\t", 
+   RowBox[{"SystemTextSearch", "[", 
+    RowBox[{
+    "pat", ",", "\n", "\t\t\t", "\"\<*.nb\>\"", ",", "\n", "\t\t\t", 
+     "function", ",", "\n", "\t\t\t", "ops"}], "\n", "\t\t\t", "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SystemTextSearch", "[", "\n", "\t", 
+    RowBox[{"pat_", ",", "\n", "\t", "\"\<Packages\>\"", ",", "\n", "\t", 
+     RowBox[{"function", ":", 
+      RowBox[{
+      "InternalFiles", "|", "FrontEndFiles", "|", "InternalSystemFiles"}], 
+      ":", "InternalFiles"}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t\t", 
+   RowBox[{"SystemTextSearch", "[", 
+    RowBox[{"pat", ",", "\n", "\t\t\t", 
+     RowBox[{"\"\<*.m\>\"", "|", "\"\<*.wl\>\""}], ",", "\n", "\t\t\t", 
+     "function", ",", "\n", "\t\t\t", "ops"}], "\n", "\t\t\t", "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SystemTextSearch", "[", "\n", "\t", 
+    RowBox[{"pat_", ",", "\n", "\t", "\"\<TextResources\>\"", ",", "\n", "\t", 
+     RowBox[{"function", ":", 
+      RowBox[{
+      "InternalFiles", "|", "FrontEndFiles", "|", "InternalSystemFiles"}], 
+      ":", "InternalFiles"}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t\t", 
+   RowBox[{"SystemTextSearch", "[", 
+    RowBox[{
+    "pat", ",", "\n", "\t\t\t", "\"\<*.tr\>\"", ",", "\n", "\t\t\t", 
+     "function", ",", "\n", "\t\t\t", "ops"}], "\n", "\t\t\t", "]"}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"524159fc-ee74-488f-ab1f-ebbda2706ea1"]\
+
+}, Open  ]],
+
+Cell[CellGroupData[{
+
 Cell["FEs", "CodeSubsubsection",
  CellChangeTimes->{{3.728753756978092*^9, 
   3.728753757936514*^9}},ExpressionUUID->"5582e165-10c2-4610-8f91-\
@@ -1307,14 +2021,10 @@ Cell[BoxData[
      RowBox[{
      "SystemExpressionsSearch", ",", "\n", "\t\t\t", "SystemHeadSearch", ",", 
       "\n", "\t\t\t", "SystemArgSearch", ",", "\n", "\t\t\t", 
-      "SystemContextSearch", ",", "\n", "\t\t\t", "SystemFunctionSearch"}], 
-     "\n", "\t\t\t", "}"}]}], "\n", "\t\t", "]"}], "\n", "\t", 
-  "]"}]], "CodeInput",
- CellChangeTimes->{{3.728753759485578*^9, 3.728753785770088*^9}, {
-   3.72875401630767*^9, 3.7287541351268053`*^9}, 3.728754203762671*^9, {
-   3.728754234733954*^9, 3.728754237521501*^9}, {3.7287542997494707`*^9, 
-   3.728754304069083*^9}},ExpressionUUID->"e4878cac-418d-468a-a7fc-\
-1cf2b8373f43"]
+      "SystemContextSearch", ",", "\n", "\t\t\t", "SystemFunctionSearch", ",",
+       "\n", "\t\t\t", "SystemTextSearch"}], "\n", "\t\t\t", "}"}]}], "\n", 
+   "\t\t", "]"}], "\n", "\t", 
+  "]"}]], "CodeInput",ExpressionUUID->"e4878cac-418d-468a-a7fc-1cf2b8373f43"]
 }, Open  ]]
 }, Open  ]],
 
@@ -2171,8 +2881,8 @@ Cell[BoxData[{
                     RowBox[{"n", ",", 
                     RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{
-                    RowBox[{"highlight", ":>", "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "highlight", ":>", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"Sequence", "@@", 
                     RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{
@@ -3697,7 +4407,7 @@ Cell[BoxData[
   "]"}]], "Input",ExpressionUUID->"aac4f72d-42e6-4ba4-a169-ef05c119ed06"]
 },
 WindowSize->{808, 755},
-WindowMargins->{{Automatic, 250}, {Automatic, 19}},
+WindowMargins->{{295, Automatic}, {Automatic, 0}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->Notebook[{

@@ -467,6 +467,7 @@ NotebookMarkdownSave[
         nb=Replace[nbObj,Automatic:>InputNotebook[]],
         meta,
         expOps,
+        exporter,
         md,
         root,
         expDir,
@@ -510,10 +511,14 @@ NotebookMarkdownSave[
             },
           First
           ];
+      exporter=
+        Lookup[expOps, "ExportFunction", 
+          $MarkdownSettings["ExportFunction"]
+          ];
       md=
         Reap[
-          NotebookToMarkdown[nb, 
-            FilterRules[Normal@expOps, Options[NotebookToMarkdown]]],
+          exporter[nb, 
+            FilterRules[Normal@expOps, Options[exporter]]],
           "MarkdownExport"
           ];
       If[!StringQ@md[[1]],

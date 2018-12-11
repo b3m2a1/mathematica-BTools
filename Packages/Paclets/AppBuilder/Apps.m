@@ -783,12 +783,15 @@ Options[AppRegenerateLoadInfo]=
     "Mode"->"Primary"
     };
 AppRegenerateLoadInfo[app_String,ops:OptionsPattern[]]:=
-  Export[AppPath[app,"Config","LoadInfo.wl"],
-    DeleteDuplicatesBy[First]@
-      Flatten@{
-        ops,
-        Options@AppRegenerateLoadInfo
-      }
+  Export[
+    AppPath[app,"Config","LoadInfo.wl"],
+    PrettyString@
+      DeleteDuplicatesBy[First]@
+        Flatten@{
+          ops,
+          Options@AppRegenerateLoadInfo
+        },
+    "Text"
     ];
 
 

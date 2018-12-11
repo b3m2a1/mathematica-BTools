@@ -2782,7 +2782,7 @@ PacletSiteUpload[
   With[{mz=
     PacletSiteBundle[
       infoFiles,
-      FilterRules[{ops},Options@PacletSiteBundle]
+      FilterRules[{ops}, Options@PacletSiteBundle]
       ]
     },
     With[{res=
@@ -3203,14 +3203,15 @@ pacletUpload[
                 (k_->_):>k
                 ],
               FilterRules[
-                {
+                Flatten@{
                   ops,
                   "MergePacletInfo"->
                     If[OptionValue["OverwriteSiteFile"]//TrueQ,
                       None,
                       site
-                      ]
-                    },
+                      ],
+                  Options[PacletUpload]
+                  },
                 Options@PacletSiteBundle
                 ]
               ]
@@ -3229,8 +3230,15 @@ pacletUpload[
             "PacletSiteFile"->
               If[OptionValue["UploadSiteFile"]//TrueQ,
                 Replace[
-                  PacletSiteUpload[CloudObject@site,pacletMZ,
-                    FilterRules[{ops},Options@PacletSiteUpload]
+                  PacletSiteUpload[
+                    CloudObject@site,pacletMZ,
+                    FilterRules[
+                      {
+                        ops,
+                        Options[PacletUpload]
+                        },
+                      Options@PacletSiteUpload
+                      ]
                     ],
                   _PacletSiteUpload->$Failed
                   ],

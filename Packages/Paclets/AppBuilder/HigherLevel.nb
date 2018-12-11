@@ -2133,6 +2133,111 @@ cfaa68e0c68e"]
 
 Cell[CellGroupData[{
 
+Cell["\[LeftCeiling]AppAddDependency\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"bd937203-4f25-445d-bda4-51bc22a47728"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppAddDependency", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"name_", "?", "StringQ"}], ",", "\n", "\t", 
+     RowBox[{"dependency_String", "?", "DirectoryQ"}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"$AppDirectoryRoot", "=", "\n", "\t\t\t", 
+        RowBox[{"Replace", "[", 
+         RowBox[{
+          RowBox[{"OptionValue", "@", "Directory"}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"Automatic", "\[RuleDelayed]", "$AppDirectoryRoot"}]}], 
+         "]"}]}], ",", "\n", "\t\t", 
+       RowBox[{"$AppDirectoryName", "=", "\n", "\t\t\t", 
+        RowBox[{"Replace", "[", 
+         RowBox[{
+          RowBox[{"OptionValue", "@", "Extension"}], ",", 
+          RowBox[{"{", "\n", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{"Automatic", "\[RuleDelayed]", "$AppDirectoryName"}], ",",
+             "\n", "\t\t\t\t", 
+            RowBox[{
+             RowBox[{"Except", "[", "_String", "]"}], "\[Rule]", 
+             "Nothing"}]}], "\n", "\t\t\t\t", "}"}]}], "]"}]}], ",", "\n", 
+       "\t\t", "deppath", ",", "\n", "\t\t", "newload"}], "\n", "\t\t", "}"}],
+      ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"deppath", "=", 
+       RowBox[{"AppPath", "[", 
+        RowBox[{"name", ",", " ", "\"\<Dependencies\>\"", ",", " ", 
+         RowBox[{"FileBaseName", "[", "dependency", "]"}]}], "]"}]}], ";", 
+      "\n", "\t\t", 
+      RowBox[{"Quiet", "@", "\n", "\t\t\t", 
+       RowBox[{"DeleteDirectory", "[", 
+        RowBox[{"deppath", ",", " ", 
+         RowBox[{"DeleteContents", "\[Rule]", "True"}]}], "]"}]}], ";", "\n", 
+      "\t\t", 
+      RowBox[{"CopyDirectory", "[", "\n", "\t\t\t", 
+       RowBox[{"dependency", ",", "\n", "\t\t\t", "deppath"}], "\n", "\t\t\t",
+        "]"}], ";", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Quiet", "@", "\n", "\t\t\t", 
+         RowBox[{"DeleteDirectory", "[", 
+          RowBox[{
+           RowBox[{"FileNameJoin", "@", 
+            RowBox[{"{", 
+             RowBox[{"deppath", ",", " ", "#"}], "}"}]}], ",", " ", 
+           RowBox[{"DeleteContents", "\[Rule]", "True"}]}], "]"}]}], "&"}], 
+       "/", "\n", "\t\t\t\t", 
+       RowBox[{"{", 
+        RowBox[{
+        "\"\<project\>\"", ",", " ", "\"\<Documentation\>\"", ",", " ", 
+         "\"\<.git\>\"", ",", " ", "\"\<Private\>\""}], "}"}]}], ";", "\n", 
+      "\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Quiet", "@", "\n", "\t\t\t", 
+         RowBox[{"DeleteFile", "[", 
+          RowBox[{"FileNameJoin", "@", 
+           RowBox[{"{", 
+            RowBox[{"deppath", ",", " ", "#"}], "}"}]}], "]"}]}], "&"}], "/", 
+       "\n", "\t\t\t\t", 
+       RowBox[{"{", "\"\<.gitignore\>\"", "}"}]}], ";", "\n", "\t\t", 
+      RowBox[{"newload", "=", "\n", "\t\t\t", 
+       RowBox[{"Merge", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"{", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Quiet", "@", 
+            RowBox[{"Replace", "[", 
+             RowBox[{
+              RowBox[{"Import", "@", 
+               RowBox[{"AppPath", "[", 
+                RowBox[{
+                "deppath", ",", " ", "\"\<Config\>\"", ",", " ", 
+                 "\"\<LoadInfo.wl\>\""}], "]"}]}], ",", "\n", "\t", "\t", 
+              "\t\t\t\t", 
+              RowBox[{
+               RowBox[{"Except", "[", 
+                RowBox[{"_", "?", "OptionQ"}], "]"}], "\[Rule]", 
+               RowBox[{"{", "}"}]}]}], "\n", "\t\t\t\t\t\t", "]"}]}], ",", 
+           "\n", "\t\t\t\t\t", 
+           RowBox[{"\"\<Mode\>\"", "\[Rule]", "\"\<Dependency\>\""}]}], "\n", 
+          "\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t", "Last"}], "\n", 
+        "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
+      RowBox[{"AppRegenerateBuildInfo", "[", 
+       RowBox[{"deppath", ",", " ", "\n", "\t\t\t", "newload"}], "\n", 
+       "\t\t\t", "]"}], ";", "\n", "\t\t", "deppath"}]}], "\n", "\t\t", 
+    "]"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"fa75908d-2844-4e5e-a079-7e616064f862"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
 Cell["\[LeftCeiling]Regens\[RightFloor]", "CodeSubsubsection",
  Evaluatable->True,ExpressionUUID->"77e33381-bfa7-4aeb-b595-79bf4dd9e8a3"],
 
@@ -3236,8 +3341,8 @@ Cell[BoxData[{
    
    RowBox[{"AppFromFile", "@", 
     RowBox[{"InputNotebook", "[", "]"}]}]}], 
-  ";"}]}], "CodeInput",ExpressionUUID->"d2c0a0dd-f6e9-451f-87a5-57b6fc710ddc"]\
-
+  ";"}]}], \
+"CodeInput",ExpressionUUID->"d2c0a0dd-f6e9-451f-87a5-57b6fc710ddc"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -3298,7 +3403,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"51af92ef-62b7-4e37-bdaf-\
 538e35eb72a6"]
 },
 WindowSize->{798, 764},
-WindowMargins->{{Automatic, 182}, {Automatic, 33}},
+WindowMargins->{{Automatic, 224}, {16, Automatic}},
 Visible->True,
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",

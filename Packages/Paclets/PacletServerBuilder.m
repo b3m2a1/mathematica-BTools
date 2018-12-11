@@ -1545,10 +1545,20 @@ PacletMarkdownNotebook[p_PacletManager`Paclet]:=
   With[{a=PacletInfoAssociation@p},
     PacletMarkdownNotebook[a]
     ];
-PacletMarkdownNotebook[f_String?FileExistsQ,a_,regen_:Automatic]:=
+PacletMarkdownNotebook[f_String?FileExistsQ, a_, regen_:Automatic]:=
   PacletMarkdownNotebookUpdate[f, a, regen];
 PacletMarkdownNotebook[f_String, a_, regen_:Automatic]:=
   With[{nb=PacletMarkdownNotebook[a]},
+    exportNBIfChanges[f, nb, regen]
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*exportNBIfChanges*)
+
+
+
+exportNBIfChanges[f_, nb_, regen_]:=
     Switch[nb,
       _Notebook,
         If[!DirectoryQ@DirectoryName@f,
@@ -1557,7 +1567,7 @@ PacletMarkdownNotebook[f_String, a_, regen_:Automatic]:=
             ]
           ];
         If[FileExistsQ@f,
-          If[TrueQ[regen]||Import[f]=!=nb,
+          If[TrueQ[regen]||checkNBEquiv[f, nb],
             Export[f,nb]
             ],
           Export[f,nb]
@@ -1565,6 +1575,32 @@ PacletMarkdownNotebook[f_String, a_, regen_:Automatic]:=
       _,
         $Failed
       ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*checkNBEquiv*)
+
+
+
+checkNBEquiv[f_, nb_]:=
+  Module[
+    {
+      a=Get[f][[;;1]], 
+      b=nb[[;;1]]
+      },
+    a=NotebookTools`FlattenCellGroups[a]/.
+      {
+        ((ExpressionUUID|CellID)->_):>Sequence@@{},
+        (CellTags->_):>Sequence@@{}
+        };
+    b=NotebookTools`FlattenCellGroups[b]/.
+      {
+        ((ExpressionUUID|CellID)->_):>Sequence@@{},
+        (CellTags->_):>Sequence@@{}
+        };
+    a=DeleteCases[a, Cell[CellGroupData[{}, ___]], {2}];
+    b=DeleteCases[b, Cell[CellGroupData[{}, ___]], {2}];
+    a=!=b
     ]
 
 
@@ -1738,18 +1774,37 @@ PacletMarkdownNotebookUpdate[notebook_Notebook,infAss_]:=
     nb
     ];
 PacletMarkdownNotebookUpdate[f_String?FileExistsQ,a_,regen_:Automatic]:=
-  With[{nb=Import[f]},
-    Switch[nb,
-      _Notebook,
-        With[{new=PacletMarkdownNotebookUpdate[nb, a]},
-          If[TrueQ[regen]||new=!=nb,
-            Export[f,new]
-            ]
-          ],
-      _,
-        $Failed
+  Module[
+    {
+      old=Get[f],
+      nb
+      },
+    If[MatchQ[old, _Notebook],
+      nb = PacletMarkdownNotebookUpdate[old, a];
+      exportNBIfChanges[f, nb, regen],
+      $Failed
       ]
     ]
+
+
+(* ::Subsubsection::Closed:: *)
+(*ExportPacletMarkdownNotebook*)
+
+
+
+ExportPacletMarkdownNotebook[out_, params_, regen_:Automatic]:=
+  Module[
+    {
+      fdate1=If[FileExistsQ@out, FileDate[out], None],
+      fdate2
+      },
+    PacletMarkdownNotebook[out, params, regen];
+    fdate2=FileDate[out];
+    If[fdate1===None||fdate1<fdate2,
+      Function[NotebookMarkdownSave[#];NotebookClose[#]]@
+        NotebookOpen[out,Visible->False]
+      ]
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1814,23 +1869,28 @@ PacletServerInitialize[server:localPacletServerPatOrDir]:=
 
 
 copyThumbnailFromPaclet[pacF_, ico_, imgDir_]:=
-  Module[
-    {
-      outpath=FileNameJoin@Flatten@{imgDir, URLParse[ico, "Path"]}
-      },
-    If[!DirectoryQ@DirectoryName@outpath,
-      CreateDirectory[DirectoryName@outpath,
-        CreateIntermediateDirectories->True
+  If[StringQ@ico&&FileExistsQ@pacF,
+    Module[
+      {
+        outpath=FileNameJoin@Flatten@{imgDir, URLParse[ico, "Path"]},
+        icoFile=FileNameJoin@Prepend[URLParse[ico, "Path"], FileBaseName[pacF]],
+        icoImg
+        },
+      icoImg=
+          Quiet[
+            Import[pacF,
+              {"ZIP", icoFile, "String"}
+              ],
+            Import::nffil
+            ];
+      If[StringQ@icoImg,
+        If[!DirectoryQ@DirectoryName@outpath,
+          CreateDirectory[DirectoryName@outpath,
+            CreateIntermediateDirectories->True
+            ]
+          ];
+        Export[outpath, icoImg, "String"]
         ]
-      ];
-    Export[
-      outpath,
-      Import[pacF,
-        {"ZIP", 
-          FileNameJoin@Prepend[FileBaseName[pacF], URLParse[ico, "Path"]],
-           "Text"}
-        ],
-      "Text"
       ]
     ];
 
@@ -1938,16 +1998,24 @@ getServerConfigOptions[server_, confFile_, confOps_]:=
 
 
 
-regeneratePacletPages[server_, servDir_, pacletsDir_]:=
+regeneratePacletPages[server_, servDir_, pacletsDir_, siteData_, 
+  mon_, regen_
+  ]:=
   Module[
     {
       thm,
       nbout, pacF,
       ico, imgDir,
-      siteData
+      siteDS
       },
     thm=WebSiteFindTheme[servDir, "DownloadTheme"->True];
-    If[OptionValue[Monitor],
+    siteDS=
+      SortBy[
+        Association/@siteData,
+        {#["Name"]&, -1*ToExpression@StringSplit[#["Version"], "-"]&}
+        ];
+    siteDS=DeleteDuplicatesBy[siteDS, #["Name"]&];
+    If[mon,
       Function[Null,
         Monitor[#, 
           If[StringQ@md,
@@ -1962,9 +2030,8 @@ regeneratePacletPages[server_, servDir_, pacletsDir_]:=
       Block[{md},
         nbout=PacletServerFile[server, {"content","posts",#Name<>".nb"}];
         pacF=
-          FileNameJoin[pacletsDir, 
-            {"Paclets",#Name<>"-"<>#Version<>".paclet"}
-            ];
+          FileNameJoin@
+            {pacletsDir, #Name<>"-"<>#Version<>".paclet"};
         ico=Lookup[#, "Thumbnail", Lookup[#, "Icon"]];
         imgDir=PacletServerFile[server, {"content", "img", #Name}];
         (* Copy in Thumbnail file *)
@@ -1985,7 +2052,7 @@ regeneratePacletPages[server_, servDir_, pacletsDir_]:=
             ]
           ];
         (* Create notebook and export *)
-        PacletMarkdownNotebook[
+        ExportPacletMarkdownNotebook[
           nbout,
           Join[
             <|
@@ -2001,11 +2068,12 @@ regeneratePacletPages[server_, servDir_, pacletsDir_]:=
               "Tags"->StringSplit[Lookup[#,"Keywords",""],","]
               |>,
             #
-            ]
+            ],
+          regen
           ];
         Function[NotebookMarkdownSave[#];NotebookClose[#]]@
           NotebookOpen[nbout,Visible->False];
-        ]&/@Association/@siteData
+        ]&/@siteDS
       ];
 
 
@@ -2059,7 +2127,9 @@ PacletServerBuild[
           PacletServerFile[server, {"Paclets"}]
         ];
       If[MatchQ[OptionValue["RegenerateContent"], True|Automatic],
-         regeneratePacletPages[server, servDir, pacsDir]
+         regeneratePacletPages[server, servDir, pacsDir, siteData, 
+           OptionValue[Monitor], OptionValue["RegenerateContent"]
+           ]
         ];
       (* Basic site building procedure *)
       s=

@@ -2700,6 +2700,26 @@ WebSiteCopyTheme[dir_,outDir_, theme_,
 
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*webSiteCopyContentSpec*)
+
+
+
+webSiteCopyContentSpec[True|Automatic]:=
+  Except["posts"|"pages"];
+webSiteCopyContentSpec[l:{__String}]:=
+  Alternatives@@l;
+webSiteCopyContentSpec[l:{(_String|{__String})...}]:=
+  webSiteCopyContentSpec[Replace[l, f:{__String}:>FileNameJoin[f], 1]];
+webSiteCopyContentSpec[e_]:=
+  e;
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*WebSiteCopyContent*)
+
+
+
 WebSiteCopyContent//Clear
 
 
@@ -2708,24 +2728,22 @@ Options[WebSiteCopyContent]=
     Monitor->True
     };
 WebSiteCopyContent[
-  dir_,outDir_,
-  sel:Except[_?OptionQ]:Automatic,
+  dir_,
+  outDir_,
+  sel:_?StringPattern`StringPatternQ,
   ops:OptionsPattern[]
   ]:=
   With[{
-    selPat=
-      Replace[sel,
-        Automatic:>Except["posts"|"pages"]
-        ],
+    selPat=sel,
     contDir=
-      FileNameJoin@{dir,"content"},
+      FileNameJoin@{dir, "content"}(* TODO: generalize this path *),
     monitor=
       TrueQ@OptionValue[Monitor]
     },
     With[{
       fils=
         Select[
-          MatchQ[FileNameTake[#,{FileNameDepth[contDir]+1}],selPat]&
+          MatchQ[FileNameTake[#, {FileNameDepth[contDir]+1}], selPat]&
           ]@
           Select[Not@*DirectoryQ]@
             FileNames["*",contDir,\[Infinity]]
@@ -2767,6 +2785,18 @@ WebSiteCopyContent[
         ]
       ];
     outDir
+    ];
+WebSiteCopyContent[
+  dir_,
+  outDir_,
+  e:Except[_?OptionQ]:Automatic,
+  ops:OptionsPattern[]
+  ]:=
+  With[{s=webSiteCopyContentSpec[e]},
+    If[StringPattern`StringPatternQ[s],
+      WebSiteCopyContent[dir, outDir, s, ops],
+      {}
+      ]
     ]
 
 
@@ -4196,30 +4226,24 @@ WebSiteBuild[
           ]
         ]
       ];
-    Replace[
+    WebSiteCopyContent[
+      dir,
+      outDir,
       Lookup[confOps, 
         "CopyContent", 
         OptionValue["CopyContent"]
         ],
-      {
-        p:Except[False|None]:>
-          WebSiteCopyContent[
-            dir,
-            outDir,
-            Replace[p, True->Automatic],
-            FilterRules[
-              Normal@
-                Merge[
-                  {
-                    buildOps,
-                    Monitor->OptionValue[Monitor]
-                    },
-                  First
-                  ],
-              Options[WebSiteCopyContent]
-              ]
-            ]
-        }
+      FilterRules[
+        Normal@
+          Merge[
+            {
+              buildOps,
+              Monitor->OptionValue[Monitor]
+              },
+            First
+            ],
+        Options[WebSiteCopyContent]
+        ]
       ];
     iWebSiteBuild[
       dir,
