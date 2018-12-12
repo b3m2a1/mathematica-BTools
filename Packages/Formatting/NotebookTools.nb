@@ -149,12 +149,17 @@ Cell["\[LeftCeiling]acPanel\[RightFloor]", "CodeSubsubsubsection",
  Evaluatable->True,ExpressionUUID->"03107a1f-8703-4ba2-ad86-3cba049588b4"],
 
 Cell[BoxData[
+ RowBox[{"acPanel", "//", 
+  "Clear"}]], \
+"CodeInput",ExpressionUUID->"3225d006-9e95-4696-879a-9bbf132a3229"],
+
+Cell[BoxData[
  RowBox[{
   RowBox[{
    RowBox[{"acPanel", "[", 
-    RowBox[{"items_", ",", " ", "selector_", ",", " ", "paste_", ",", 
-     RowBox[{"truncateAt", ":", 
-      RowBox[{"_Integer", "|", "None"}], ":", "10"}], ",", " ", 
+    RowBox[{
+    "items_", ",", " ", "selector_", ",", " ", "paste_", ",", " ", 
+     "truncateAt_", ",", " ", 
      RowBox[{"ops", ":", 
       RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
    RowBox[{"DynamicModule", "[", "\n", "\t\t", 
@@ -179,8 +184,7 @@ Cell[BoxData[
           RowBox[{
            RowBox[{"Which", "[", "\n", "\t\t\t\t\t\t", 
             RowBox[{
-             RowBox[{"truncate", "\[Equal]", "0"}], ",", "\n", 
-             "\t\t\t\t\t\t\t", 
+             RowBox[{"truncate", "===", "0"}], ",", "\n", "\t\t\t\t\t\t\t", 
              RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
               RowBox[{
                RowBox[{"{", "\"\<\>\"", "}"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
@@ -326,7 +330,7 @@ Cell[BoxData[
    RowBox[{
    "object_", ",", " ", "\n", "\t", "autocompletions_List", ",", "\n", "\t", 
     "selector_", ",", "\n", "\t", "pasteFunction_", ",", "\n", "\t", 
-    "maxItems_Integer", ",", "\n", "\t", "radialAway_", ",", "\n", "\t", 
+    "maxItems_", ",", "\n", "\t", "radialAway_", ",", "\n", "\t", 
     "alignment_", ",", "\n", "\t", "anchor_", ",", "\n", "\t", 
     "closingActions_", ",", "\n", "\t", 
     RowBox[{"ops", ":", 
@@ -374,7 +378,7 @@ Cell[BoxData[{
          RowBox[{
           RowBox[{"Print", "[", "#", "]"}], "&"}], ")"}]}], ",", "\n", 
        "\t\t\t", 
-       RowBox[{"\"\<MaxDisplayItems\>\"", "\[Rule]", "5"}], ",", "\n", 
+       RowBox[{"\"\<MaxDisplayItems\>\"", "\[Rule]", "Infinity"}], ",", "\n", 
        "\t\t\t", 
        RowBox[{"\"\<AttachmentOptions\>\"", "\[Rule]", "\n", "\t\t\t\t", 
         RowBox[{"{", "\n", "\t\t\t\t\t", 
@@ -424,11 +428,9 @@ Cell[BoxData[{
         RowBox[{"<|", "|>"}]}]}], "]"}], ";", "\n", "\t\t", 
      RowBox[{"If", "[", 
       RowBox[{
-       RowBox[{
-        RowBox[{"!", 
-         RowBox[{"IntegerQ", "@", "maxItems"}]}], "&&", 
-        RowBox[{"maxItems", "=!=", "Infinity"}]}], ",", " ", 
-       RowBox[{"maxItems", "=", "5"}]}], "]"}], ";", "\n", "\t\t", 
+       RowBox[{"!", 
+        RowBox[{"IntegerQ", "@", "maxItems"}]}], ",", " ", 
+       RowBox[{"maxItems", "=", "All"}]}], "]"}], ";", "\n", "\t\t", 
      RowBox[{"attachedCell", "=", "\n", "\t\t\t", 
       RowBox[{"attachAutocompletions", "[", "\n", "\t\t\t\t", 
        RowBox[{

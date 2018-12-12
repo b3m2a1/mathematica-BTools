@@ -72,7 +72,10 @@ acOCButton[item_, fn_]:=
 
 
 
-acPanel[items_, selector_, paste_,truncateAt:_Integer|None:10, ops:OptionsPattern[]]:=
+acPanel//Clear
+
+
+acPanel[items_, selector_, paste_, truncateAt_, ops:OptionsPattern[]]:=
   DynamicModule[
     {
       displayAll,
@@ -87,7 +90,7 @@ acPanel[items_, selector_, paste_,truncateAt:_Integer|None:10, ops:OptionsPatter
           Pick[fullItems, selector/@fullItems];
         Grid[
           Which[
-            truncate==0,
+            truncate===0,
               {
                 {""},
                 {
@@ -151,7 +154,7 @@ attachAutocompletions[
   autocompletions_List,
   selector_,
   pasteFunction_,
-  maxItems_Integer,
+  maxItems_,
   radialAway_,
   alignment_,
   anchor_,
@@ -182,7 +185,7 @@ Options[AttachAutocompletionMenu]=
     {
       "SelectionFunction"->(True&),
       "PasteFunction"->(Print[#]&),
-      "MaxDisplayItems"->5,
+      "MaxDisplayItems"->Infinity,
       "AttachmentOptions"->
         {
           "Position"->Automatic,
@@ -206,7 +209,7 @@ AttachAutocompletionMenu[
       paste=OptionValue["PasteFunction"]
       },
     If[!AssociationQ@attops, attops=<||>];
-    If[!IntegerQ@maxItems&&maxItems=!=Infinity, maxItems=5];
+    If[!IntegerQ@maxItems, maxItems=All];
     attachedCell=
       attachAutocompletions[
         object, 
