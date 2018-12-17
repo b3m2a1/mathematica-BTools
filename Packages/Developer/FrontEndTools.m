@@ -832,7 +832,7 @@ feAttachCellValidateAnchor[spec_]:=
     PackageThrowMessage[
       "BadSpec",
       "FEAttachCell anchor spec can only be one of ``",
-      "MessageParameters"->{
+      "MessageParameters"->List@{
         Center, Left, Right, Bottom, Top, 
         {
           Center|Left|Right|Scaled[SpanFromLeft]|Integer|Real,

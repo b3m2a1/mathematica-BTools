@@ -6,11 +6,15 @@ Cell["Notebook Tools", "CodeSection",
   3.6853652617639227`*^9}},ExpressionUUID->"7b2da0b8-80cd-404d-9e95-\
 2f08fb05b7cf"],
 
-Cell[BoxData[
+Cell[BoxData[{
  RowBox[{
   RowBox[{
    RowBox[{"AttachAutocompletionMenu", "::", "usage"}], "=", "\"\<\>\""}], 
-  ";"}]], "CodeInput",ExpressionUUID->"a8704cb4-145a-4a87-9616-47efcd325b9c"],
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AutocompleteEventHandler", "::", "usage"}], "=", "\"\<\>\""}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"a8704cb4-145a-4a87-9616-47efcd325b9c"],
 
 Cell[BoxData[
  RowBox[{
@@ -316,7 +320,7 @@ Cell[BoxData[
            "/@", "items"}], "}"}], "]"}]}], "\n", "\t\t\t\t", "}"}]}]}], "\n",
      "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"ece2392c-59ea-4bea-8edf-d6e296fc889a"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -394,124 +398,253 @@ Cell[BoxData[{
          "\t\t\t\t\t", "}"}]}]}], "\n", "\t\t\t", "}"}]}], "\n", "\t\t", 
     "]"}]}], ";"}], "\n", 
  RowBox[{
-  RowBox[{"AttachAutocompletionMenu", "[", "\n", "\t", 
-   RowBox[{
-    RowBox[{"object", ":", 
-     RowBox[{"$FEObjectPatterns", "|", "Automatic"}], ":", "Automatic"}], ",",
-     "\n", "\t", "items_List", ",", "\n", "\t", 
-    RowBox[{"ops", ":", 
-     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
-  "\t", 
-  RowBox[{"Module", "[", "\n", "\t\t", 
-   RowBox[{
-    RowBox[{"{", "\n", "\t\t\t", 
-     RowBox[{
-      RowBox[{"attops", "=", 
-       RowBox[{"Association", "@", 
-        RowBox[{"OptionValue", "[", "\"\<AttachmentOptions\>\"", "]"}]}]}], 
-      ",", "\n", "\t\t\t", 
-      RowBox[{"maxItems", "=", 
-       RowBox[{"OptionValue", "[", "\"\<MaxDisplayItems\>\"", "]"}]}], ",", 
-      "\n", "\t\t\t", "attachedCell", ",", "\n", "\t\t\t", 
-      RowBox[{"select", "=", 
-       RowBox[{"OptionValue", "[", "\"\<SelectionFunction\>\"", "]"}]}], ",", 
-      "\n", "\t\t\t", 
-      RowBox[{"paste", "=", 
-       RowBox[{"OptionValue", "[", "\"\<PasteFunction\>\"", "]"}]}]}], "\n", 
-     "\t\t\t", "}"}], ",", "\n", "\t\t", 
+  RowBox[{
+   RowBox[{"AttachAutocompletionMenu", "[", "\n", "\t", 
     RowBox[{
-     RowBox[{"If", "[", 
+     RowBox[{"object", ":", 
+      RowBox[{"$FEObjectPatterns", "|", "Automatic"}], ":", "Automatic"}], 
+     ",", "\n", "\t", "items_List", ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"Module", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", 
       RowBox[{
-       RowBox[{"!", 
-        RowBox[{"AssociationQ", "@", "attops"}]}], ",", " ", 
        RowBox[{"attops", "=", 
-        RowBox[{"<|", "|>"}]}]}], "]"}], ";", "\n", "\t\t", 
-     RowBox[{"If", "[", 
-      RowBox[{
-       RowBox[{"!", 
-        RowBox[{"IntegerQ", "@", "maxItems"}]}], ",", " ", 
-       RowBox[{"maxItems", "=", "All"}]}], "]"}], ";", "\n", "\t\t", 
-     RowBox[{"attachedCell", "=", "\n", "\t\t\t", 
-      RowBox[{"attachAutocompletions", "[", "\n", "\t\t\t\t", 
+        RowBox[{"Association", "@", 
+         RowBox[{"OptionValue", "[", "\"\<AttachmentOptions\>\"", "]"}]}]}], 
+       ",", "\n", "\t\t\t", 
+       RowBox[{"maxItems", "=", 
+        RowBox[{"OptionValue", "[", "\"\<MaxDisplayItems\>\"", "]"}]}], ",", 
+       "\n", "\t\t\t", "attachedCell", ",", "\n", "\t\t\t", 
+       RowBox[{"select", "=", 
+        RowBox[{"OptionValue", "[", "\"\<SelectionFunction\>\"", "]"}]}], ",",
+        "\n", "\t\t\t", 
+       RowBox[{"paste", "=", 
+        RowBox[{"OptionValue", "[", "\"\<PasteFunction\>\"", "]"}]}]}], "\n", 
+      "\t\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"If", "[", 
        RowBox[{
-       "object", ",", " ", "\n", "\t\t\t\t", "items", ",", "\n", "\t\t\t\t", 
-        "select", ",", "\n", "\t\t\t\t", 
+        RowBox[{"!", 
+         RowBox[{"AssociationQ", "@", "attops"}]}], ",", " ", 
+        RowBox[{"attops", "=", 
+         RowBox[{"<|", "|>"}]}]}], "]"}], ";", "\n", "\t\t", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"!", 
+         RowBox[{"IntegerQ", "@", "maxItems"}]}], ",", " ", 
+        RowBox[{"maxItems", "=", "All"}]}], "]"}], ";", "\n", "\t\t", 
+      RowBox[{"attachedCell", "=", "\n", "\t\t\t", 
+       RowBox[{"attachAutocompletions", "[", "\n", "\t\t\t\t", 
         RowBox[{
-         RowBox[{"With", "[", 
-          RowBox[{
-           RowBox[{"{", 
-            RowBox[{"res", "=", 
-             RowBox[{"paste", "[", "##", "]"}]}], "}"}], ",", "\n", 
-           "\t\t\t\t\t", 
-           RowBox[{
-            RowBox[{"If", "[", 
-             RowBox[{
-              RowBox[{"res", "=!=", "\"\<NoDetach\>\""}], ",", "\n", 
-              "\t\t\t\t\t\t", 
-              RowBox[{"FrontEndExecute", "@", 
-               RowBox[{"FrontEnd`DetachCell", "[", "attachedCell", "]"}]}]}], 
-             "\n", "\t\t\t\t\t\t", "]"}], ";", "\n", "\t\t\t\t\t", "res"}]}], 
-          "\n", "\t\t\t\t\t", "]"}], "&"}], ",", "\n", "\t\t\t\t", "maxItems",
-         ",", "\n", "\t\t\t\t", 
-        RowBox[{"Lookup", "[", 
-         RowBox[{"attops", ",", " ", "\"\<Offset\>\"", ",", " ", "0"}], "]"}],
-         ",", "\n", "\t\t\t\t", 
-        RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
+        "object", ",", " ", "\n", "\t\t\t\t", "items", ",", "\n", "\t\t\t\t", 
+         "select", ",", "\n", "\t\t\t\t", 
          RowBox[{
-          RowBox[{"Lookup", "[", 
+          RowBox[{"With", "[", 
            RowBox[{
-           "attops", ",", " ", "\"\<Position\>\"", ",", " ", "Automatic"}], 
-           "]"}], ",", "\n", "\t\t\t\t\t", 
-          RowBox[{"{", "\n", "\t\t\t\t\t\t", 
-           RowBox[{"Automatic", ":>", "\n", "\t\t\t\t\t\t\t", 
-            RowBox[{"Replace", "[", 
-             RowBox[{"object", ",", "\n", "\t\t\t\t\t\t\t\t", 
-              RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
-               RowBox[{
-                RowBox[{
-                "$FENotebookPatterns", ":>", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                 RowBox[{"{", 
-                  RowBox[{"Left", ",", " ", "Top"}], "}"}]}], ",", "\n", 
-                "\t\t\t\t\t\t\t\t\t", 
-                RowBox[{"$FECellPatterns", ":>", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                 RowBox[{"{", 
-                  RowBox[{"Left", ",", " ", "Bottom"}], "}"}]}], ",", "\n", 
-                "\t\t\t\t\t\t\t\t\t", 
-                RowBox[{
-                "$FEBoxPatterns", ":>", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                 RowBox[{"{", 
-                  RowBox[{"Right", ",", " ", "Bottom"}], "}"}]}]}], "\n", 
-               "\t\t\t\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t\t\t\t", 
-             "]"}]}], "\n", "\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t", 
-         "]"}], ",", "\n", "\t\t\t\t", 
-        RowBox[{"Lookup", "[", 
-         RowBox[{"attops", ",", " ", "\"\<Alignment\>\"", ",", " ", 
-          RowBox[{"{", 
-           RowBox[{"Left", ",", " ", "Top"}], "}"}]}], "]"}], ",", "\n", "\t",
-         "\t\t\t", 
-        RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t", 
-         RowBox[{
-          RowBox[{"Lookup", "[", 
-           RowBox[{
-           "attops", ",", " ", "\"\<ClosingActions\>\"", ",", " ", 
-            "Automatic"}], "]"}], ",", "\n", "\t", "\t\t\t\t", 
-          RowBox[{"Automatic", ":>", "\n", "\t", "\t\t\t\t\t", 
-           RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t", 
+            RowBox[{"{", 
+             RowBox[{"res", "=", 
+              RowBox[{"paste", "[", "##", "]"}]}], "}"}], ",", "\n", 
+            "\t\t\t\t\t", 
             RowBox[{
              RowBox[{"If", "[", 
               RowBox[{
-               RowBox[{"!", 
-                RowBox[{"MatchQ", "[", 
-                 RowBox[{"object", ",", " ", "$FENotebookPatterns"}], "]"}]}],
-                ",", " ", "\"\<ParentChanged\>\"", ",", " ", "Nothing"}], 
-              "]"}], ",", " ", "\n", "\t", "\t\t\t\t\t\t", 
-             "\"\<EvaluatorQuit\>\"", ",", " ", "\"\<OutsideMouseClick\>\""}],
-             "\n", "\t", "\t\t\t\t\t\t", "}"}]}]}], "\n", "\t", "\t\t\t\t", 
-         "]"}], ",", "\n", "\t", "\t\t\t", "ops"}], "\n", "\t", "\t\t\t", 
-       "]"}]}]}]}], "\n", "\t\t", 
-   "]"}]}]}], \
+               RowBox[{"res", "=!=", "\"\<NoDetach\>\""}], ",", "\n", 
+               "\t\t\t\t\t\t", 
+               RowBox[{"FrontEndExecute", "@", 
+                RowBox[{"FrontEnd`DetachCell", "[", "attachedCell", "]"}]}]}],
+               "\n", "\t\t\t\t\t\t", "]"}], ";", "\n", "\t\t\t\t\t", 
+             "res"}]}], "\n", "\t\t\t\t\t", "]"}], "&"}], ",", "\n", 
+         "\t\t\t\t", "maxItems", ",", "\n", "\t\t\t\t", 
+         RowBox[{"Lookup", "[", 
+          RowBox[{"attops", ",", " ", "\"\<Offset\>\"", ",", " ", "0"}], 
+          "]"}], ",", "\n", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
+           RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"Automatic", ":>", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{"Replace", "[", 
+              RowBox[{"object", ",", "\n", "\t\t\t\t\t\t\t\t", 
+               RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{
+                 "$FENotebookPatterns", ":>", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"{", 
+                   RowBox[{"Left", ",", " ", "Top"}], "}"}]}], ",", "\n", 
+                 "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                 "$FECellPatterns", ":>", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"{", 
+                   RowBox[{"Left", ",", " ", "Bottom"}], "}"}]}], ",", "\n", 
+                 "\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{"$FEBoxPatterns", ":>", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"{", 
+                   RowBox[{"Right", ",", " ", "Bottom"}], "}"}]}]}], "\n", 
+                "\t\t\t\t\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t\t\t\t\t", 
+              "]"}]}], "\n", "\t\t\t\t\t\t", "}"}], "\n", "\t\t\t\t\t", "]"}],
+           "@", "\n", "\t\t\t\t", 
+          RowBox[{"Lookup", "[", 
+           RowBox[{
+           "attops", ",", " ", "\"\<Position\>\"", ",", " ", "Automatic"}], 
+           "]"}]}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"Lookup", "[", 
+          RowBox[{"attops", ",", " ", "\"\<Alignment\>\"", ",", " ", 
+           RowBox[{"{", 
+            RowBox[{"Left", ",", " ", "Top"}], "}"}]}], "]"}], ",", "\n", 
+         "\t\t\t\t", 
+         RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Lookup", "[", 
+            RowBox[{
+            "attops", ",", " ", "\"\<ClosingActions\>\"", ",", " ", 
+             "Automatic"}], "]"}], ",", "\n", "\t", "\t\t\t\t", 
+           RowBox[{"Automatic", ":>", "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"If", "[", 
+               RowBox[{
+                RowBox[{"!", 
+                 RowBox[{"MatchQ", "[", 
+                  RowBox[{"object", ",", " ", "$FENotebookPatterns"}], 
+                  "]"}]}], ",", " ", "\n", "\t\t\t\t\t\t\t\t", 
+                "\"\<ParentChanged\>\"", ",", " ", "\n", "\t\t\t\t\t\t\t\t", 
+                "Nothing"}], "\n", "\t\t\t\t\t\t\t\t", "]"}], ",", " ", "\n", 
+              "\t\t\t\t\t\t\t", "\"\<EvaluatorQuit\>\"", ",", " ", 
+              "\"\<OutsideMouseClick\>\""}], "\n", "\t", "\t\t\t\t\t\t", 
+             "}"}]}]}], "\n", "\t", "\t\t\t\t", "]"}], ",", "\n", "\t", 
+         "\t\t\t", "ops"}], "\n", "\t\t\t\t", "]"}]}]}]}], "\n", "\t\t", 
+    "]"}]}], ";"}]}], \
 "CodeInput",ExpressionUUID->"309baa52-ac96-4e10-a877-2fabfd1ab938"]
-}, Open  ]]
+}, Closed]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AutocompleteEventHandler\[RightFloor]", \
+"CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"d32c9626-2d55-402a-90a2-8ebbea0b8b8f"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "AutocompleteEventHandler", "]"}], "=", "\n", "\t", 
+   RowBox[{"Options", "[", "AttachAutocompletionMenu", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"AutocompleteEventHandler", "[", "\n", "\t", 
+   RowBox[{"obj_", ",", "\n", "\t", "events_", ",", "\n", "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"DynamicModule", "[", 
+   RowBox[{
+    RowBox[{"{", "cell", "}"}], ",", "\n", "\t\t", 
+    RowBox[{"EventHandler", "[", "\n", "\t\t\t", 
+     RowBox[{"obj", ",", "\n", "\t", "\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Append", "[", 
+         RowBox[{"PassEventsDown", "\[Rule]", "True"}], "]"}], "@", "\n", 
+        "\t", "\t\t\t", 
+        RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Flatten", "@", 
+           RowBox[{"{", "events", "}"}]}], ",", "\n", "\t", "\t", "\t\t\t", 
+          RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"(", 
+              RowBox[{"bindPat_", "\[Rule]", "l_List"}], ")"}], ":>", "\n", 
+             "\t", "\t", "\t\t\t\t\t", 
+             RowBox[{"(", "\n", "\t\t\t\t\t\t\t\t", 
+              RowBox[{"bindPat", "\[RuleDelayed]", "\n", "\t\t\t\t\t\t\t\t\t", 
+               RowBox[{"(", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"Quiet", "@", 
+                  RowBox[{"NotebookDelete", "[", "cell", "]"}]}], ";", "\n", 
+                 "\t\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{"cell", "=", 
+                  RowBox[{"AttachAutocompletionMenu", "[", 
+                   RowBox[{
+                    RowBox[{"EvaluationBox", "[", "]"}], ",", " ", "l", ",", 
+                    " ", "ops"}], "]"}]}]}], "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                ")"}]}], "\n", "\t\t\t\t\t\t\t\t\t", ")"}]}], ",", "\n", 
+            "\t\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"(", 
+              RowBox[{"bindPat_", "\[Rule]", "fn_"}], ")"}], "\[RuleDelayed]",
+              "\n", "\t", "\t", "\t\t\t\t\t", 
+             RowBox[{"(", "\n", "\t", "\t", "\t\t\t\t\t\t", 
+              RowBox[{
+              "bindPat", "\[RuleDelayed]", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
+               RowBox[{"With", "[", 
+                RowBox[{
+                 RowBox[{"{", 
+                  RowBox[{"l", "=", 
+                   RowBox[{"fn", "[", "]"}]}], "}"}], ",", "\n", 
+                 "\t\t\t\t\t\t\t\t\t\t", 
+                 RowBox[{
+                  RowBox[{"Quiet", "@", 
+                   RowBox[{"NotebookDelete", "[", "cell", "]"}]}], ";", "\n", 
+                  "\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"If", "[", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", "l"}], ">", "0"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"cell", "=", 
+                    RowBox[{"AttachAutocompletionMenu", "[", 
+                    RowBox[{
+                    RowBox[{"EvaluationBox", "[", "]"}], ",", " ", "l", ",", 
+                    " ", "ops"}], "]"}]}]}], "\n", "\t", "\t", 
+                   "\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t", "\t", 
+                "\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t", "\t", "\t\t\t\t\t\t",
+               ")"}]}], ",", "\n", "\t", "\t", "\t\t\t\t", 
+            RowBox[{
+             RowBox[{"fn", ":", 
+              RowBox[{"Except", "[", "_RuleDelayed", "]"}]}], ":>", "\n", 
+             "\t", "\t", "\t\t\t\t\t", 
+             RowBox[{"(", "\n", "\t", "\t", "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                 RowBox[{"{", 
+                  RowBox[{"\"\<KeyDown\>\"", ",", " ", "#"}], "}"}], 
+                 "\[RuleDelayed]", "\n", "\t", "\t", "\t\t\t\t\t\t\t", 
+                 RowBox[{"With", "[", 
+                  RowBox[{
+                   RowBox[{"{", 
+                    RowBox[{"l", "=", 
+                    RowBox[{"fn", "[", "]"}]}], "}"}], ",", "\n", 
+                   "\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{
+                    RowBox[{"Quiet", "@", 
+                    RowBox[{"NotebookDelete", "[", "cell", "]"}]}], ";", "\n",
+                     "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Length", "@", "l"}], ">", "0"}], ",", " ", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"cell", "=", 
+                    RowBox[{"AttachAutocompletionMenu", "[", 
+                    RowBox[{
+                    RowBox[{"EvaluationBox", "[", "]"}], ",", " ", "l", ",", 
+                    " ", "ops"}], "]"}]}]}], "\n", "\t", "\t", 
+                    "\t\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t", "\t", 
+                  "\t\t\t\t\t\t\t\t", "]"}]}], "&"}], "/@", 
+               RowBox[{"Join", "[", 
+                RowBox[{
+                 RowBox[{"Alphabet", "[", "]"}], ",", " ", 
+                 RowBox[{"ToUpperCase", "@", 
+                  RowBox[{"Alphabet", "[", "]"}]}]}], "]"}]}], "\n", "\t", 
+              "\t", "\t\t\t\t\t\t", ")"}]}]}], "\n", "\t", "\t", "\t\t\t\t", 
+           "}"}], ",", "\n", "\t", "\t", "\t\t\t", "1"}], "\n", "\t", "\t", 
+         "\t\t\t", "]"}]}], "//", "Flatten"}]}], "\n", "\t\t\t", "]"}]}], 
+   "\n", "\t", 
+   "]"}]}]}], \
+"CodeInput",ExpressionUUID->"25933cda-12c6-4780-8d9f-66f20da88bcd"]
 }, Open  ]]
 }, Open  ]],
 

@@ -70,6 +70,7 @@ AppAddStylesheet::usage="Adds a stylesheet to the app";
 AppAddDocPage::usage="Adds a doc page for a symbol to the app";
 AppAddGuidePage::usage="Adds a guide to the app";
 AppAddTutorialPage::usage="Adds a tutorial page to the app";
+AppAddDependency::usage="Adds a dependency to the app";
 
 
 AppRegenerateDirectories::usage=
@@ -747,26 +748,29 @@ AppAddTutorialPage[name_,file_]:=
 
 
 
+$DefaultBundleInfo=
+  {
+    "RemovePaths"->{
+      "Private",
+      "project",
+      "GitHub",
+      ".git"
+      },
+    "RemovePatterns"->{
+      "Packages/*.nb",
+      "Packages/*/*.nb",
+      "Packages/*/*/*.nb",
+      ".DS_Store"
+      }
+    };
+
+
 Options[AppRegenerateBundleInfo]=
   Options@AppPacletBundle;
 AppRegenerateBundleInfo[app_String,ops:OptionsPattern[]]:=
   Export[AppPath[app,"Config","BundleInfo.m"],
     DeleteDuplicatesBy[First]@
-      Flatten@{
-        ops,
-        "RemovePaths"->{
-          "Private",
-          "project",
-          "GitHub",
-          ".git"
-          },
-        "RemovePatterns"->{
-          "Packages/*.nb",
-          "Packages/*/*.nb",
-          "Packages/*/*/*.nb",
-          ".DS_Store"
-          }
-        }
+      Flatten@{ops, $DefaultBundleInfo}
     ];
 
 
@@ -827,6 +831,106 @@ AppRegenerateContextLoadFiles[app_]:=
       cts
       ]
     ]
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppAddDependency*)
+
+
+
+Options[AppAddDependency]=
+  {
+    "RemovePaths"->Automatic,
+    "RemovePatterns"->Automatic
+    }
+AppAddDependency[
+  name_?StringQ,
+  dependency_String?DirectoryQ,
+  ops:OptionsPattern[]
+  ]:=
+  Block[
+    {
+      $AppDirectoryRoot=
+        Replace[OptionValue@Directory,
+          Automatic:>$AppDirectoryRoot],
+      $AppDirectoryName=
+        Replace[OptionValue@Extension,{
+          Automatic:>$AppDirectoryName,
+          Except[_String]->Nothing
+          }],
+      deppath,
+      newload
+      },
+    deppath=AppPath[name, "Dependencies", FileBaseName[dependency]];
+    Quiet@
+      DeleteDirectory[deppath, DeleteContents->True];
+    CopyDirectory[
+      dependency,
+      deppath
+      ];
+    Which[
+      DirectoryQ@#, 
+        DeleteDirectory[#, DeleteContents->True],
+      FileExistsQ@#,
+        DeleteFile[#]
+      ]&/@
+        Join[
+          FileNames[
+            Flatten@{
+              Replace[OptionValue["RemovePaths"],
+                {
+                  Automatic:>Lookup[$DefaultBundleInfo, "RemovePaths"]
+                  }
+                ]
+              }, 
+            AppPath[name]
+            ],
+          FileNames[
+            Flatten@{
+              Replace[OptionValue["RemovePatterns"],
+                {
+                  Automatic:>Lookup[$DefaultBundleInfo, "RemovePatterns"]
+                  }
+                ]
+              },
+            AppPath[name],
+            \[Infinity]
+            ]
+          ];
+    newload=
+      Merge[
+        {
+          Quiet@
+            Replace[
+              Get@
+                SelectFirst[
+                  {
+                    AppPath[deppath, "Config", "LoadInfo.wl"],
+                    AppPath[deppath, "Config", "LoadInfo.m"]
+                    },
+                  FileExistsQ
+                  ],
+              Except[_?OptionQ]->{}
+              ],
+          "Mode"->"Dependency"
+          },
+        Last
+        ];
+    AppRegenerateBuildInfo[
+      deppath, 
+      newload
+      ];
+    deppath
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppUpdateDependencies*)
+
+
+
+AppUpdateDependencies[name_]:=
+  
 
 
 (* ::Subsection:: *)
