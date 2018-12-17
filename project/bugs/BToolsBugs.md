@@ -319,3 +319,37 @@ https://github.com/b3m2a1/mathematica-BTools/issues/14
 <<Note>>
 
 BTools::MarkdownExport: NotebookToMarkdown generated empty output
+
+<a id="addeasydependency" class="Section" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
+
+# Add easy dependency system
+
+    timestamp: Mon 17 Dec 2018 02:13:27
+
+    timestamp: 
+
+    ID: 10
+
+    package: BTools
+
+    owner: 
+
+    keywords: dependencies
+
+<a id="description" class="Subsection" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
+
+## Description
+
+Based on the drop-in dependency structure introduced for the SimpleDocs package it should be possible to easily and programatically add dependencies to packages and to get them to update cleanly too.
+
+<a id="examples" class="Subsection" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
+
+## Examples
+
+<<Example>>
+
+<a id="notes" class="Subsection" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
+
+## Notes
+
+<<Note>>

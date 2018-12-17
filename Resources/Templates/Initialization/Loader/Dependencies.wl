@@ -325,7 +325,7 @@ PackageUpdatePacletDependency[
 (*PackageEnsureLoadDependencies*)
 
 
-PackageEnsureLoadDependency[dep_, site_]:=
+PackageEnsureLoadDependency[dep_, ops:OptionsPattern[]]:=
   Module[
     {
       depsDir=PackageFilePath["Dependencies"],
@@ -345,11 +345,16 @@ PackageEnsureLoadDependency[dep_, site_]:=
      Quiet[(* this is a temporary hack until WRI fixes a $ContextPath bug *)
        If[!StringQ@foundFile,
          PackgeLoadPacletDependency[dep,
-           "Site"->site,
-           "Update"->True,
-           "Loading"->Get
+           FilterRules[
+             {
+               ops,
+               "Update"->True,
+               "Loading"->Get
+               },
+             Options@PackgeLoadPacletDependency
+             ]
            ],
-         Get@foundFile
+         Lookup[Flatten@{ops}, "Loading", Get]@foundFile
          (* I have my reasons to do this rather than Needs... but it could change... *)
          ],
       General::shdw
@@ -367,11 +372,11 @@ PackageEnsureLoadDependencies[]:=
         },
        PackageExecute[
          Begin["`Dependencies`"];
-         PackageEnsureLoadDependency[#, site]&/@deps;
+         PackageEnsureLoadDependency@@Flatten@{#, "Site"->site}&/@deps;
          PackageExtendContextPath@
            Map[
              If[MemberQ[$Packages, $Context<>#], $Context<>#, #]&, 
-             deps
+             First@Flatten@{#}&/@deps
              ];
          End[]
          ]

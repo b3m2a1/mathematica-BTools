@@ -70,7 +70,6 @@ AppAddStylesheet::usage="Adds a stylesheet to the app";
 AppAddDocPage::usage="Adds a doc page for a symbol to the app";
 AppAddGuidePage::usage="Adds a guide to the app";
 AppAddTutorialPage::usage="Adds a tutorial page to the app";
-AppAddDependency::usage="Adds a dependency to the app";
 
 
 AppRegenerateDirectories::usage=
@@ -93,6 +92,12 @@ AppRegenerateReadme::usage=
   "Generates a GitHub README.md file for the app";
 AppRegenerateUploadInfo::usage=
   "Regenerates the UploadInfo.m file";
+
+
+AppAddDependency::usage=
+  "Adds a dependency to the app";
+AppUpdateDependencies::usage=
+  "...";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -765,8 +770,7 @@ $DefaultBundleInfo=
     };
 
 
-Options[AppRegenerateBundleInfo]=
-  Options@AppPacletBundle;
+Options[AppRegenerateBundleInfo]=Options@AppPacletBundle;
 AppRegenerateBundleInfo[app_String,ops:OptionsPattern[]]:=
   Export[AppPath[app,"Config","BundleInfo.m"],
     DeleteDuplicatesBy[First]@
@@ -780,6 +784,31 @@ AppRegenerateBundleInfo[app_String,ops:OptionsPattern[]]:=
 
 
 Options[AppRegenerateLoadInfo]=
+  {
+    "PreLoad"-> None,
+    "FEHidden" -> {},
+    "PackageScope"->None,
+    "Mode"->"Primary"
+    };
+AppRegenerateLoadInfo[app_String,ops:OptionsPattern[]]:=
+  Export[
+    AppPath[app,"Config","LoadInfo.wl"],
+    PrettyString@
+      DeleteDuplicatesBy[First]@
+        Flatten@{
+          ops,
+          Options@AppRegenerateLoadInfo
+        },
+    "Text"
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*RegenerateDependencyInfo*)
+
+
+
+Options[RegenerateDependencyInfo]=
   {
     "PreLoad"-> None,
     "FEHidden" -> {},
@@ -922,6 +951,24 @@ AppAddDependency[
       ];
     deppath
     ];
+AppAddDependency[
+  name_?StringQ,
+  p_PacletManager`Paclet,
+  ops:OptionsPattern[]
+  ]:=
+  AppAddDependency[name, p["Location"], ops];
+AppAddDependency[
+  name_?StringQ,
+  n_String,
+  ops:OptionsPattern[]
+  ]:=
+  Replace[PacletManager`PacletFind[n],
+    {
+      {p_, ___}:>
+        AppAddDependency[name, p, ops],
+      _->$Failed
+      }
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -929,8 +976,30 @@ AppAddDependency[
 
 
 
-AppUpdateDependencies[name_]:=
-  
+AppUpdateDependencies[name_, ops:OptionsPattern[]]:=
+  Module[
+    {
+      depPath=AppPath[name, "Dependencies"],
+      depConf=
+        SelectFirst[
+          {
+            AppPath[name, "Config", "LoadInfo.wl"],
+            AppPath[name, "Config", "LoadInfo.m"]
+            },
+          FileExistsQ,
+          None
+          ],
+      depNames
+      },
+    If[depConf=!=None,
+      depNames=Lookup[Get@depConf, "Dependencies", {}],
+      depNames={}
+      ];
+    Map[
+      AppAddDependency[name, Sequence@@Flatten@{#, ops}]&,
+      depNames
+      ]
+    ]
 
 
 (* ::Subsection:: *)
