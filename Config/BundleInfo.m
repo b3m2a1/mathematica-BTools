@@ -7,7 +7,8 @@
 		"Private",
 		".git",
 		"project",
-		"README.nb"
+		"README.nb",
+		".gitignore"
 		},
 	"RemovePatterns" -> {
 		"Packages/*.nb",

@@ -216,9 +216,13 @@ AppPacletBundle[
       Automatic:>
         AppPacletBundle[app,
           "BundleInfo"->
-            Replace[AppPath[First@{app},"Config", "BundleInfo.m"],
-              Except[_String?FileExistsQ]:>
-                AppPath[First@{app},"BundleInfo.wl"]
+            SelectFirst[
+              {
+                AppPath[First@{app}, "Config", "BundleInfo.m"],
+                AppPath[First@{app}, "Config", "BundleInfo.wl"]
+                },
+              FileExistsQ,
+              AppPath[First@{app},"BundleInfo.wl"]
               ],
           ops
           ],

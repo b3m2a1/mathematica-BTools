@@ -451,7 +451,7 @@ $AppPacletExecuteMethods=
     "Upload"->
       AppPacletUpload,
     "Bundle"->
-      PacletBundle,
+      AppPacletBundle,
     "Backup"->
       AppPacletBackup,
     "UploadSubpaclet"->

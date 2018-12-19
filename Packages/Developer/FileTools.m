@@ -48,10 +48,7 @@ PartialDirectoryCopy[src_, targ_, ops:OptionsPattern[]]:=
           ];
       restFiles=
         Select[
-          Complement[
-            fullFNames,
-            remFiles
-            ],
+          Complement[fullFNames, remFiles],
           Not@*StringStartsQ[Alternatives@@remFiles]
           ];
       fileBytesTotal=
@@ -82,6 +79,7 @@ PartialDirectoryCopy[src_, targ_, ops:OptionsPattern[]]:=
 
 
 
+getMinimalFileModSpec//Clear
 getMinimalFileModSpec[
   restFiles_, 
   files_,
@@ -89,8 +87,8 @@ getMinimalFileModSpec[
   ]:=
   Module[
     {
-      g1=GroupBy[restFiles, DirectoryName],
-      g2=GroupBy[files, DirectoryName],
+      g1,
+      g2,
       unchangedReduction,
       changedReduction,
       containedReduction,
@@ -100,25 +98,26 @@ getMinimalFileModSpec[
       baseSpec,
       deadDirs
       },
-    (* all the directories are keys in the Associations optimally *)
-    g1=Select[Not@*DirectoryQ]/@g1;
+    (* 
+			build associations mapping directories to contained files
+			all the directories are keys in the Associations optimally 
+			*)
+    g1=Select[Not@*DirectoryQ]/@GroupBy[restFiles, DirectoryName];
     deadDirs=Complement[Select[restFiles, DirectoryQ], Keys@g1];
-    g2=Select[Not@*DirectoryQ]/@g2;
+    g2=Select[Not@*DirectoryQ]/@GroupBy[files, DirectoryName];
     (* figures out which directories may be copied across wholesale *)
     unchangedReduction=
       AssociationMap[
         #[[1]]->
           If[
             !ListQ@g2[#[[1]]]||
-              (
-                (*Length@#[[2]]>0&&*)(* this test needs to come at the *very* end I think... *)
-                Length@Complement[Flatten@{g2[#[[1]]]}, #[[2]]]==0
-                ),
+              Length@Complement[Flatten@{g2[#[[1]]]}, #[[2]]]==0,
             #[[1]],
             #[[2]]
             ]&,
         g1
         ];
+    (* find the directories that are in the full set but missing in the reduced set to prevent over reduction *)
     missingDirs=
       AssociationThread[
         Complement[Keys@g2, Keys@g1],
@@ -138,9 +137,10 @@ getMinimalFileModSpec[
           ],
         unchangedReduction
         ];
+    (* figure out which parent directories have changed *)
     keys=Keys@containedReduction;
     changedKeys=
-      Select[keys, !AnyTrue[keys, StringMatchQ[#~~__]&]];
+      Select[keys, !AnyTrue[keys, StringMatchQ[#~~__]]&];
     baseSpec=
       Flatten@Values@
           KeyDrop[containedReduction, changedKeys];
