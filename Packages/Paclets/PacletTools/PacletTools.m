@@ -1291,7 +1291,8 @@ PacletBundle[f:(_String|_File)?FileExistsQ, ops:OptionsPattern[]]:=
   With[{d=CreateDirectory[]},
     (DeleteDirectory[d, DeleteContents->True];#)&@
       PacletBundle[
-        PacletAutoPaclet[d, f,
+        PacletAutoPaclet[d, 
+          f,
           FilterRules[
             {
               ops,

@@ -4,17 +4,22 @@
 
 PartialDirectoryCopy::usage="";
 CopyDirectoryFiles::usage="";
-PruneDirectory::usage="";
+PruneDirectoryFiles::usage="";
 
 
 Begin["`Private`"];
+
+
+(* ::Subsubsection::Closed:: *)
+(*PartialDirectoryCopy*)
+
 
 
 Options[PartialDirectoryCopy]=
   {
     "RemovePaths"->{},
     "RemovePatterns"->{},
-    "ModeSwitchByteCount"->5*10^7
+    "ModeSwitchByteCount"->5*10^6
     };
 PartialDirectoryCopy[src_, targ_, ops:OptionsPattern[]]:=
   Module[
@@ -51,15 +56,15 @@ PartialDirectoryCopy[src_, targ_, ops:OptionsPattern[]]:=
           ];
       fileBytesTotal=
         Total[FileByteCount/@Select[remFiles, Not@*DirectoryQ]];
+      Quiet@DeleteDirectory[targ, DeleteContents->True];
       If[TrueQ[fileBytesTotal>OptionValue["ModeSwitchByteCount"]],
         CopyDirectoryFiles[src, targ, 
           getMinimalFileModSpec[restFiles, fullFNames]
           ],
-        Quiet@DeleteDirectory[targ, DeleteContents->True];
         CopyDirectory[src, targ];
         PruneDirectoryFiles[targ, 
           StringTrim[
-            getMinimalFileModSpec[remFiles, fullFNames], 
+            getMinimalFileModSpec[remFiles, fullFNames, False],
             src
             ]
           ]
@@ -77,7 +82,11 @@ PartialDirectoryCopy[src_, targ_, ops:OptionsPattern[]]:=
 
 
 
-getMinimalFileModSpec[restFiles_, files_]:=
+getMinimalFileModSpec[
+  restFiles_, 
+  files_,
+  pruneEmpties:True|False:True
+  ]:=
   Module[
     {
       g1=GroupBy[restFiles, DirectoryName],
@@ -88,12 +97,14 @@ getMinimalFileModSpec[restFiles_, files_]:=
       keys,
       changedKeys,
       missingDirs,
-      baseSpec
+      baseSpec,
+      deadDirs
       },
-    (* all the directories are keys in the Associations *)
+    (* all the directories are keys in the Associations optimally *)
     g1=Select[Not@*DirectoryQ]/@g1;
+    deadDirs=Complement[Select[restFiles, DirectoryQ], Keys@g1];
     g2=Select[Not@*DirectoryQ]/@g2;
-    (* figures out which directoreis may be copied across wholesale *)
+    (* figures out which directories may be copied across wholesale *)
     unchangedReduction=
       AssociationMap[
         #[[1]]->
@@ -133,16 +144,18 @@ getMinimalFileModSpec[restFiles_, files_]:=
     baseSpec=
       Flatten@Values@
           KeyDrop[containedReduction, changedKeys];
-    Select[
-      baseSpec,
-      (* makes sure we're not pulling directories with not stuff to copy *)
-      !DirectoryQ[#]||
-        Length@g1[#]>0||
-        AnyTrue[
-          Flatten@Values@KeySelect[g1, StringStartsQ[#]], 
-          !DirectoryQ
-          ]&
-      ]
+    If[pruneEmpties,
+      (* makes sure we're not pulling directories with no stuff to copy *)
+      Select[
+        !DirectoryQ[#]||
+          Length@g1[#]>0||
+          AnyTrue[
+            Flatten@Values@KeySelect[g1, StringStartsQ[#]], 
+            !DirectoryQ
+            ]&
+        ],
+      Union[#, deadDirs]&
+      ]@baseSpec
     ]
 
 
@@ -162,7 +175,7 @@ CopyDirectoryFiles[src_, targ_, files_]:=
           CopyDirectory[#, #2],
         FileExistsQ@#,
           If[!DirectoryQ@DirectoryName[#2], 
-            CreateDirectory[#2, CreateIntermediateDirectories->True]
+            CreateDirectory[DirectoryName[#2], CreateIntermediateDirectories->True]
             ];
           CopyFile[#, #2, OverwriteTarget->True]
         ]&,

@@ -825,8 +825,7 @@ Options[AppRegenerateBundleInfo]=Options@AppPacletBundle;
 AppRegenerateBundleInfo[app_String,ops:OptionsPattern[]]:=
   Export[
     getConfigFile[app, "BundleInfo"],
-    DeleteDuplicatesBy[First]@
-      Flatten@{ops, $DefaultBundleInfo}
+    DeleteDuplicatesBy[First]@Flatten@{ops, $DefaultBundleInfo}
     ];
 
 
@@ -914,14 +913,6 @@ AppAddDependency[
   ]:=
   Block[
     {
-      (*$AppDirectoryRoot=
-				Replace[OptionValue@Directory,
-					Automatic\[RuleDelayed]$AppDirectoryRoot],
-			$AppDirectoryName=
-				Replace[OptionValue@Extension,{
-					Automatic\[RuleDelayed]$AppDirectoryName,
-					Except[_String]\[Rule]Nothing
-					}],*)
       deppath,
       newload,
       rempaths,
