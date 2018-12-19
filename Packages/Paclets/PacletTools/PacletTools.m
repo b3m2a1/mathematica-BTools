@@ -1667,7 +1667,7 @@ PacletSiteFiles[infoFiles_, ops:OptionsPattern[]]:=
         Which[
           FileExistsQ@FileNameJoin@{s,"PacletSite.mz"},
             FileNameJoin@{s,"PacletSite.mz"},
-          FileExistsQ@FileNameJoin@{s,"PacletInfo.m"},
+          FileExistsQ@FileNameJoin@{s, "PacletInfo.m"},
             FileNameJoin@{s,"PacletInfo.m"},
           True,
             Replace[FileNames["*PacletSite.mz",s],{
@@ -2880,7 +2880,7 @@ PacletFindBuiltFile[
       build=TrueQ@OptionValue@"BuildPaclets"
       },
     Which[
-      MatchQ[f,_PacletManager`Paclet],
+      MatchQ[f, _PacletManager`Paclet],
         (* We're handed a Paclet expression so we confirm that a .paclet file exists for it or build it ourselves *)
         With[{
           info=
@@ -2903,7 +2903,7 @@ PacletFindBuiltFile[
             ]
           ],
       MatchQ[f, (_File|_String)?DirectoryQ]&&
-        !FileExistsQ[FileNameJoin@{f,"PacletInfo.m"}],
+        !FileExistsQ[FileNameJoin@{f, "PacletInfo.m"}],
         (* prep non-paclet directories for packing *)
         If[build,
           PacletInfoExpressionBundle[Replace[f,File[s_]:>s]];

@@ -197,7 +197,9 @@ AppPathFormat[pspec_]:=
 
 AppNames//Clear
 AppNames[
-  pat:_?StringPattern`StringPatternQ:WordCharacter..,
+  pat:
+    _?StringPattern`StringPatternQ|
+      {__?StringPattern`StringPatternQ}:WordCharacter..,
   baseName:True|False:True,
   first:True|False:False
   ]:=
@@ -215,7 +217,7 @@ AppNames[
         ]@
         DeleteDuplicates@
           Join[
-            {pat},
+            Select[Flatten@{pat}, StringQ],
             FileNames[pat, $AppDirectory],
             FileNames[pat, $AppDirectories]
             ]
