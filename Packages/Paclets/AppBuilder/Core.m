@@ -28,6 +28,7 @@ $AppPacletExecuteMethods::usage=
 
 
 $AppPathMap::usage="";
+AppNames::usage="Finds the names of apps matching a pattern";
 AppLocate::usage="Locates an app";
 AppPathFormat::usage="";
 AppFileNames::usage="FileNames on an app";
@@ -190,14 +191,47 @@ AppPathFormat[pspec_]:=
 
 
 (* ::Subsubsection::Closed:: *)
+(*AppNames*)
+
+
+
+AppNames//Clear
+AppNames[
+  pat:_?StringPattern`StringPatternQ:WordCharacter..,
+  baseName:True|False:True,
+  first:True|False:False
+  ]:=
+  If[
+    first&&StringQ@pat&&DirectoryQ@pat&&
+      FileExistsQ@FileNameJoin[{pat, "PacletInfo.m"}],
+    If[baseName, FileBaseName, Identity]@
+      pat,
+    If[first, 
+      Identity,
+      DeleteDuplicates@*
+        If[baseName, Map[FileBaseName], Identity]
+      ]@If[first, SelectFirst, Select][
+        FileExistsQ@FileNameJoin[{#, "PacletInfo.m"}]&
+        ]@
+        DeleteDuplicates@
+          Join[
+            {pat},
+            FileNames[pat, $AppDirectory],
+            FileNames[pat, $AppDirectories]
+            ]
+  ];
+
+
+(* ::Subsubsection::Closed:: *)
 (*AppLocate*)
 
 
 
 AppLocate[app_]:=
   Replace[
-    AppNames[app, False], 
+    AppNames[app, False, True], 
     {
+      f_String:>f,
       {
         f_,
         ___
@@ -749,6 +783,22 @@ AppAddTutorialPage[name_,file_]:=
 
 
 (* ::Subsubsection::Closed:: *)
+(*getConfigFile*)
+
+
+
+getConfigFile[app_, name_]:=
+  SelectFirst[
+    {
+      AppPath[app, "Config", name<>".m"],
+      AppPath[app, "Config", name<>".wl"]
+      },
+    FileExistsQ,
+    AppPath[app, "Config", name<>".wl"]
+    ]
+
+
+(* ::Subsubsection::Closed:: *)
 (*RegenerateBundleInfo*)
 
 
@@ -765,14 +815,16 @@ $DefaultBundleInfo=
       "Packages/*.nb",
       "Packages/*/*.nb",
       "Packages/*/*/*.nb",
-      ".DS_Store"
+      ".DS_Store",
+      ".gitignore"
       }
     };
 
 
 Options[AppRegenerateBundleInfo]=Options@AppPacletBundle;
 AppRegenerateBundleInfo[app_String,ops:OptionsPattern[]]:=
-  Export[AppPath[app,"Config","BundleInfo.m"],
+  Export[
+    getConfigFile[app, "BundleInfo"],
     DeleteDuplicatesBy[First]@
       Flatten@{ops, $DefaultBundleInfo}
     ];
@@ -788,36 +840,12 @@ Options[AppRegenerateLoadInfo]=
     "PreLoad"-> None,
     "FEHidden" -> {},
     "PackageScope"->None,
-    "Mode"->"Primary"
+    "Mode"->"Primary",
+    "Dependencies"->{}
     };
 AppRegenerateLoadInfo[app_String,ops:OptionsPattern[]]:=
   Export[
-    AppPath[app,"Config","LoadInfo.wl"],
-    PrettyString@
-      DeleteDuplicatesBy[First]@
-        Flatten@{
-          ops,
-          Options@AppRegenerateLoadInfo
-        },
-    "Text"
-    ];
-
-
-(* ::Subsubsection::Closed:: *)
-(*RegenerateDependencyInfo*)
-
-
-
-Options[RegenerateDependencyInfo]=
-  {
-    "PreLoad"-> None,
-    "FEHidden" -> {},
-    "PackageScope"->None,
-    "Mode"->"Primary"
-    };
-AppRegenerateLoadInfo[app_String,ops:OptionsPattern[]]:=
-  Export[
-    AppPath[app,"Config","LoadInfo.wl"],
+    getConfigFile[app, "LoadInfo"],
     PrettyString@
       DeleteDuplicatesBy[First]@
         Flatten@{
@@ -867,6 +895,13 @@ AppRegenerateContextLoadFiles[app_]:=
 
 
 
+$DefaultDepRemove=
+  <|
+    "RemovePaths"->{"Documentation"},
+    "RemovePatterns"->{}
+    |>
+
+
 Options[AppAddDependency]=
   {
     "RemovePaths"->Automatic,
@@ -879,53 +914,74 @@ AppAddDependency[
   ]:=
   Block[
     {
-      $AppDirectoryRoot=
-        Replace[OptionValue@Directory,
-          Automatic:>$AppDirectoryRoot],
-      $AppDirectoryName=
-        Replace[OptionValue@Extension,{
-          Automatic:>$AppDirectoryName,
-          Except[_String]->Nothing
-          }],
+      (*$AppDirectoryRoot=
+				Replace[OptionValue@Directory,
+					Automatic\[RuleDelayed]$AppDirectoryRoot],
+			$AppDirectoryName=
+				Replace[OptionValue@Extension,{
+					Automatic\[RuleDelayed]$AppDirectoryName,
+					Except[_String]\[Rule]Nothing
+					}],*)
       deppath,
-      newload
+      newload,
+      rempaths,
+      rempatts,
+      confBase
       },
+    Quiet@CreateDirectory@AppPath[name, "Dependencies"];
     deppath=AppPath[name, "Dependencies", FileBaseName[dependency]];
-    Quiet@
-      DeleteDirectory[deppath, DeleteContents->True];
-    CopyDirectory[
-      dependency,
-      deppath
-      ];
-    Which[
-      DirectoryQ@#, 
-        DeleteDirectory[#, DeleteContents->True],
-      FileExistsQ@#,
-        DeleteFile[#]
-      ]&/@
-        Join[
-          FileNames[
-            Flatten@{
-              Replace[OptionValue["RemovePaths"],
+    confBase=
+      Replace[
+        getConfigFile[deppath, "BundleInfo"],
+        {
+          f_String?FileExistsQ:>Get@f,
+          _-><||>
+          }
+        ];
+    rempaths=
+      DeleteDuplicates@Flatten@
+        Replace[
+          Flatten@{
+            Replace[OptionValue["RemovePaths"],
+              Automatic:>
                 {
-                  Automatic:>Lookup[$DefaultBundleInfo, "RemovePaths"]
+                  Lookup[confBase, "RemovePaths", ParentList],
+                  ParentList
                   }
-                ]
-              }, 
-            AppPath[name]
-            ],
-          FileNames[
-            Flatten@{
-              Replace[OptionValue["RemovePatterns"],
-                {
-                  Automatic:>Lookup[$DefaultBundleInfo, "RemovePatterns"]
-                  }
-                ]
-              },
-            AppPath[name],
-            \[Infinity]
-            ]
+              ]
+            },
+          ParentList:>
+            Join[
+              Lookup[$DefaultBundleInfo, "RemovePaths"],
+              Lookup[$DefaultDepRemove, "RemovePaths"]
+              ],
+          1
           ];
+    rempatts=
+      DeleteDuplicates@Flatten@
+        Replace[
+          Flatten@{
+            Replace[OptionValue["RemovePatterns"],
+              Automatic:>
+                  {
+                    Lookup[confBase, "RemovePatterns", ParentList],
+                    ParentList
+                    }
+              ]
+            },
+          ParentList:>
+            Join[
+              Lookup[$DefaultBundleInfo, "RemovePatterns"],
+              Lookup[$DefaultDepRemove, "RemovePatterns"]
+              ],
+          1
+          ];
+    PartialDirectoryCopy[
+      dependency,
+      deppath,
+      "RemovePaths"->rempaths,
+      "RemovePatterns"->rempatts
+      ];
     newload=
       Merge[
         {
@@ -945,9 +1001,9 @@ AppAddDependency[
           },
         Last
         ];
-    AppRegenerateBuildInfo[
+    AppRegenerateLoadInfo[
       deppath, 
-      newload
+      Sequence@@Normal@newload
       ];
     deppath
     ];
@@ -962,7 +1018,7 @@ AppAddDependency[
   n_String,
   ops:OptionsPattern[]
   ]:=
-  Replace[PacletManager`PacletFind[n],
+  Replace[PacletManager`PacletFind[StringSplit[n, "`"][[1]]],
     {
       {p_, ___}:>
         AppAddDependency[name, p, ops],

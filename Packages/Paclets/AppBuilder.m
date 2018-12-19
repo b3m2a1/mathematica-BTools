@@ -93,6 +93,10 @@ $AppEditMethods=
       AppFindFile,
     "AddContent"->
       AppAddContent,
+    "AddDependency"->
+      AppAddDependency,
+    "UpdateDependencies"->
+      AppUpdateDependencies,
     "ListPackages"->
       AppPackages,
     "ListStylesheets"->

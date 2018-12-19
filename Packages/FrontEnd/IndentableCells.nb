@@ -595,7 +595,7 @@ Cell[BoxData[
    "\"\<@\>\"", "|", "\"\<->\>\"", "|", "\"\<\[Rule]\>\"", "|", "\"\<:>\>\"", 
     "|", "\"\<\[RuleDelayed]\>\"", "|", "\"\<=\>\"", "|", "\"\<==\>\"", "|", 
     "\"\<===\>\"", "|", "\"\<\[Equal]\>\"", "|", "\"\<:=\>\"", "|", 
-    "\"\<//\>\""}]}], 
+    "\"\<//\>\"", "|", "\"\<||\>\"", "|", "\"\<&&\>\""}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"80d0aa73-7fad-483a-88b8-72b1dba32563"]
 }, Open  ]],
 
@@ -616,9 +616,17 @@ Cell[BoxData[
        "\t\t\t\t", 
        RowBox[{"CompoundExpression", "[", "\n", "\t\t\t\t\t", 
         RowBox[{
-         RowBox[{"$indentationAdd", "=", 
-          RowBox[{"$indentationAddOld", "+", "1"}]}], ",", "\n", "\t\t\t\t\t",
-          "k"}], "\n", "\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t", 
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{"$indentationPreviousAdd", "=!=", "k"}], ",", "\n", 
+           "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"$indentationAdd", "=", 
+             RowBox[{"$indentationAddOld", "+", "1"}]}], ";", "\n", 
+            "\t\t\t\t\t\t", 
+            RowBox[{"$indentationPreviousAdd", "=", "k"}]}]}], "\n", 
+          "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t", "k"}], "\n", 
+        "\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t", 
       RowBox[{
        RowBox[{"e", ":", 
         RowBox[{"Alternatives", "@@", 
@@ -664,11 +672,12 @@ Cell[BoxData[
        RowBox[{"(", 
         RowBox[{"calculateIndentation", "[", "]"}], ")"}]}], ",", "\n", 
       "\t\t\t", 
-      RowBox[{"e_", "\[RuleDelayed]", 
-       RowBox[{"(", 
+      RowBox[{"e_", "\[RuleDelayed]", "\n", "\t\t\t\t", 
+       RowBox[{"(", "\n", "\t\t\t\t\t", 
         RowBox[{
-         RowBox[{"$indentationAdd", "=", "$indentationAddOld"}], ";", "e"}], 
-        ")"}]}]}], "\n", "\t\t\t", "}"}]}]}], 
+         RowBox[{"$indentationAdd", "=", "$indentationAddOld"}], ";", "\n", 
+         "\t", "\t\t\t\t", "e"}], "\n", "\t", "\t\t\t\t", ")"}]}]}], "\n", 
+     "\t\t\t", "}"}]}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"89b86a21-6d23-44d5-91e5-d7ee8dbb1a94"]
 }, Open  ]],
 
@@ -690,8 +699,11 @@ Cell[BoxData[
       RowBox[{
        RowBox[{"$indentationAdd", "=", "$indentationAdd"}], ",", " ", "\n", 
        "\t\t\t", 
-       RowBox[{"$indentationAddOld", "=", "$indentationAdd"}]}], "\n", 
-      "\t\t\t", "}"}], ",", "\n", "\t\t", 
+       RowBox[{"$indentationAddOld", "=", "$indentationAdd"}], ",", "\n", 
+       "\t\t\t", 
+       RowBox[{"$indentationPreviousAdd", "=", "1"}]}], 
+      RowBox[{"(*", "$indentationPreviousAdd", "*)"}], "\n", "\t\t\t", "}"}], 
+     ",", "\n", "\t\t", 
      RowBox[{"RowBox", "@", 
       RowBox[{"Replace", "[", 
        RowBox[{"data", ",", " ", "$indentReplaceDispatch", ",", " ", "1"}], 
@@ -715,7 +727,8 @@ Cell[BoxData[{
           RowBox[{"0", "&"}], ",", " ", 
           RowBox[{"Values", "[", "$indentKeyMapOpen", "]"}]}], "]"}]}], ",", 
        "\n", "\t\t\t", "$intentationPreviousLevels", ",", "\n", "\t\t\t", 
-       "$indentationLevel"}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t\t", 
+       "$indentationLevel", ",", "\n", "\t\t\t", "$indentationPreviousAdd"}], 
+      "\n", "\t\t\t", "}"}], ",", "\n", "\t\t\t", 
      RowBox[{
       RowBox[{"$indentationLevel", "=", "\n", "\t\t\t\t", 
        RowBox[{

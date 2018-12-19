@@ -321,7 +321,7 @@ PackageUpdatePacletDependency[
 (*Nothing I've implemented yet, but could be very useful for installing resources for a paclet*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*PackageEnsureLoadDependencies*)
 
 

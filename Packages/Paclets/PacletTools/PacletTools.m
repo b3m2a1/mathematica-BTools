@@ -1196,14 +1196,14 @@ Options[PacletBundle]=
 PacletBundle[dir:(_String|_File)?DirectoryQ, ops:OptionsPattern[]]:=
   With[{
     rmpaths=
-      Replace[
+      Select[
         Flatten@List@OptionValue["RemovePaths"],
-        Except[{__?StringPattern`StringPatternQ}]:>{}
+        StringPattern`StringPatternQ
         ],
     rmpatterns=
-      Replace[
+      Select[
         Flatten@List@OptionValue["RemovePatterns"],
-        Except[{__?StringPattern`StringPatternQ}]:>{}
+        StringPattern`StringPatternQ
         ],
     pacletDir=
       FileNameJoin@{
@@ -1268,23 +1268,11 @@ PacletBundle[dir:(_String|_File)?DirectoryQ, ops:OptionsPattern[]]:=
         If[FileExistsQ@pacletDir,
           DeleteDirectory[pacletDir,DeleteContents->True]
           ];
-        CopyDirectory[dir,pacletDir];
-        Do[
-          With[{p=If[Not@FileExistsQ@path,FileNameJoin@{pacletDir,path},path]},
-            If[DirectoryQ@p,
-              DeleteDirectory[p,
-                DeleteContents->True
-                ],
-              If[FileExistsQ@p,DeleteFile[p]]
-              ]
-            ],
-          {path, 
-            Join[
-              fullPathSpec,
-              FileNameDrop[#,FileNameDepth@pacletDir]&/@
-                FileNames[fullPatternSpec, pacletDir, \[Infinity]]
-              ]
-            }
+        PartialDirectoryCopy[
+          dir,
+          pacletDir,
+          "RemovePaths"->rmpaths,
+          "RemovePatterns"->rmpatterns
           ];
         With[{pacletFile=PacletManager`PackPaclet[pacletDir]},
           pacletFile

@@ -236,7 +236,7 @@ calculateIndentation[]:=
 
 
 $indentAfterItems=
-  "@"|"->"|"\[Rule]"|":>"|"\[RuleDelayed]"|"="|"=="|"==="|"\[Equal]"|":="|"//";
+  "@"|"->"|"\[Rule]"|":>"|"\[RuleDelayed]"|"="|"=="|"==="|"\[Equal]"|":="|"//"|"||"|"&&";
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -249,7 +249,10 @@ $indentReplaceDispatch=
     {
       k:$indentAfterItems:>
         CompoundExpression[
-          $indentationAdd=$indentationAddOld+1,
+          If[$indentationPreviousAdd=!=k,
+            $indentationAdd=$indentationAddOld+1;
+            $indentationPreviousAdd=k
+            ],
           k
           ],
       e:Alternatives@@Keys[$indentKeyMapOpen]:>
@@ -266,7 +269,11 @@ $indentReplaceDispatch=
       r2_RowBox:>
         indentingNewLineReplace[r2],
       $indentingNewLine:>(calculateIndentation[]),
-      e_:>($indentationAdd=$indentationAddOld;e)
+      e_:>
+        (
+          $indentationAdd=$indentationAddOld;
+          e
+          )
       };
 
 
@@ -279,7 +286,8 @@ indentingNewLineReplace[r:RowBox[data_]]:=
   Block[
     {
       $indentationAdd=$indentationAdd, 
-      $indentationAddOld=$indentationAdd
+      $indentationAddOld=$indentationAdd,
+      $indentationPreviousAdd=1(*$indentationPreviousAdd*)
       },
     RowBox@Replace[data, $indentReplaceDispatch, 1]
     ];
@@ -292,7 +300,8 @@ IndentingNewLineReplace[r:RowBox[data_]]:=
       $indentationUnbalancedBrackets=
         AssociationMap[0&, Values[$indentKeyMapOpen]],
       $intentationPreviousLevels,
-      $indentationLevel
+      $indentationLevel,
+      $indentationPreviousAdd
       },
       $indentationLevel=
         $intentationPreviousLevels=

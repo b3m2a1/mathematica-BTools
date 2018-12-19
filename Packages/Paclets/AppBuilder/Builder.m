@@ -15,9 +15,6 @@ AppPath::usage=
   "A path parser for a given app name";
 
 
-AppNames::usage="Finds the names of apps matching a pattern";
-
-
 (* ::Subsubsection::Closed:: *)
 (*Edit*)
 
@@ -125,30 +122,6 @@ If[$AppBuilderConfigLoaded=!=True,
 
 
 (* ::Subsection:: *)
-(*Find*)
-
-
-
-(* ::Subsubsection::Closed:: *)
-(*AppNames*)
-
-
-
-AppNames[
-  pat:_?StringPattern`StringPatternQ:WordCharacter..,
-  baseName:True|False:True
-  ]:=
-  DeleteDuplicates@
-  If[baseName, Map[FileBaseName], Identity]@
-    Select[FileExistsQ@FileNameJoin[{#, "PacletInfo.m"}]&]@
-      DeleteDuplicates@
-        Join[
-          FileNames[pat, $AppDirectory],
-          FileNames[pat, $AppDirectories]
-          ];
-
-
-(* ::Subsection:: *)
 (*Builder*)
 
 
@@ -201,35 +174,35 @@ AppPath[
 
 
 configureDirectories[name_String]:=
-Do[
-If[Not@DirectoryQ@
-      FileNameJoin@Flatten@{$AppDirectory, dir},
-CreateDirectory@
-      FileNameJoin@Flatten@{$AppDirectory, dir}
-    ],
-{dir,
-Table[Flatten@{name,e},
-{e,
-{"Kernel",
-"FrontEnd",
-"Packages",
-        {"Packages","__Future__"},
-{"FrontEnd","Palettes"},
-        {"FrontEnd","Palettes",name},
-{"FrontEnd","StyleSheets"},
-        {"FrontEnd","StyleSheets",name},
-"Documentation",
-{"Documentation","English"},
-        "Config",
-        "Private",
-        "Resources",
-        $AppProjectExtension,
-        {$AppProjectExtension, $AppProjectImages},
-        {$AppProjectExtension, $AppProjectCSS}
-}
-}]~Prepend~name
-}
-];
+  Do[
+    If[Not@DirectoryQ@
+          FileNameJoin@Flatten@{$AppDirectory, dir},
+      CreateDirectory@
+        FileNameJoin@Flatten@{$AppDirectory, dir}
+      ],
+    {dir,
+      Table[Flatten@{name,e},
+        {e,
+          {"Kernel",
+            "FrontEnd",
+            "Packages",
+            {"Packages","__Future__"},
+            {"FrontEnd","Palettes"},
+            {"FrontEnd","Palettes",name},
+            {"FrontEnd","StyleSheets"},
+            {"FrontEnd","StyleSheets",name},
+            "Documentation",
+            {"Documentation","English"},
+            "Config",
+            "Private",
+            "Resources",
+            "Dependencies",
+            $AppProjectExtension,
+            {$AppProjectExtension, $AppProjectImages}
+            }
+          }]~Prepend~name
+      }
+    ];
 AppRegenerateDirectories[app_String]:=
   configureDirectories[app];
 
@@ -491,7 +464,7 @@ Options[AppConfigure]=
     "Resources"->{},
     "PacletInfo"->{},
     "BundleInfo"->{},
-    "LoadInfo"->None,
+    "LoadInfo"->{},
     "UploadInfo"->None
     };
 AppConfigure[
