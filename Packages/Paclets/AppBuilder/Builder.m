@@ -1001,7 +1001,6 @@ AppAddContent[
 
 Options[AppPublish]=
   {
-  
     "PacletBackup"->True,
     "UpdatePaclet"->True,
     "GitCommit"->Automatic,
