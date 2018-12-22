@@ -203,7 +203,8 @@ Options[AppPacletBundle]=
         "BundleInfo"->Automatic,
         "AppRegeneratePacletInfo"->Automatic,
         "UpdatePacletInfo"->False,
-        "UpdateDependencies"->True
+        "UpdateDependencies"->True,
+        "UpdateLoader"->True
         },
       Options[PacletBundle]
       ];
@@ -238,6 +239,9 @@ AppPacletBundle[
           ],
       _:>
         (
+          If[TrueQ@OptionValue["UpdateLoader"],
+            AppRegenerateInit[app]
+            ];
           If[TrueQ@OptionValue["UpdateDependencies"], 
             AppUpdateDepdencies[app]
             ];

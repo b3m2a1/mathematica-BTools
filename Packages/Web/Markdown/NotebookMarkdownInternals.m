@@ -204,13 +204,16 @@ MarkdownFileMetadataSlug[t_,name_,opsassoc_]:=
 
 
 
-MarkdownFileMetadata[val_,opsassoc_]:=
-  Replace[val,{
+MarkdownFileMetadata[val_, opsassoc_]:=
+  Replace[val, {
     _List:>
-      StringRiffle[ToString/@val,","],
+      StringRiffle[MarkdownFileMetadata[#, opsassoc]&/@val, ","],
+    <||>|{}:>"",
     _DateObject:>
-      StringReplace[DateString[val,"ISODateTime"],"T"->" "]
-    }]
+      StringReplace[DateString[val,"ISODateTime"], "T"->" "],
+    e_:>ToString[e]
+    }
+  ]
 
 
 (* ::Subsubsubsubsection::Closed:: *)
@@ -324,7 +327,7 @@ MarkdownNotebookContext[nb_]:=
 
 (* ::Subsection:: *)
 (*Settings*)
-
+ 
 
 
 (* ::Subsubsubsection::Closed:: *)

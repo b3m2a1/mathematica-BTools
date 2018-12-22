@@ -3589,21 +3589,12 @@ installPacletGenerate[file:(_String|_File)?FileExistsQ,ops:OptionsPattern[]]:=
             "PacletInfo.m"
             },
           CopyFile[
-            FileNameJoin@{
-              DirectoryName@file,
-              "PacletInfo.m"
-              },
-            FileNameJoin@{
-              dir,
-              "PacletInfo.m"
-              }  
+            FileNameJoin@{DirectoryName@file, "PacletInfo.m"},
+            FileNameJoin@{dir, "PacletInfo.m"}
             ]
           ];
         CopyFile[file,
-          FileNameJoin@{
-            dir,
-            FileNameTake@file
-            },
+          FileNameJoin@{dir, FileNameTake@file},
           OverwriteTarget->True
           ];
         PacletInfoExpressionBundle[dir,
@@ -3632,6 +3623,19 @@ installPacletGenerate[file:(_String|_File)?FileExistsQ,ops:OptionsPattern[]]:=
         ],
     "paclet",
       file,
+    "zip",
+      With[
+        {
+          dir=
+            FileNameJoin@{
+              $TemporaryDirectory,
+              StringJoin@RandomSample[Alphabet[],10],
+              FileBaseName@file
+              }
+          },
+        ExtractArchive[file, dir];
+        installPacletGenerate[dir]
+        ],
     _,
       PackageRaiseException[
         Automatic,
@@ -3992,7 +3996,7 @@ PacletDownloadPaclet[
                     ]&@URLParse[loc]
                   ],
                 {
-                  URLParse[loc,"Path"][[-1]],
+                  URLParse[loc, "Path"][[-1]],
                   $PackageDependenciesFile,
                   "PacletInfo.m"
                   }
@@ -4000,31 +4004,6 @@ PacletDownloadPaclet[
           _,
             Message[PacletDownloadPaclet::nopac, loc];
             $Failed
-            (*Replace[
-					Quiet@Normal@PacletSiteInfoDataset[loc],
-					{
-						Except[{__Association}]:>
-							(
-								Message[PacletDownloadPaclet::nopac, loc];
-								$Failed
-								),
-						a:{__Association}:>
-							PacletDownloadPaclet[
-								URLBuild@
-									Flatten@{
-										loc,
-										StringJoin@{
-											Lookup[Last@SortBy[a, #Version&],{
-												"Name",
-												"Version"
-												}],
-											".paclet"
-											}
-										},
-								ops
-								]
-						}
-					]*)
           ]
       ];
 

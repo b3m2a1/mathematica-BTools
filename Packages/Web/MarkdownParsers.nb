@@ -24,7 +24,8 @@ a7a25da5e895"],
 
 Cell[CellGroupData[{
 
-Cell["MarkdownToXML", "CodeSubsection",
+Cell["\[LeftCeiling]MarkdownToXML\[RightFloor]", "CodeSubsection",
+ Evaluatable->True,
  CellChangeTimes->{{3.712619023511644*^9, 
   3.712619026320654*^9}},ExpressionUUID->"1f62bfc6-6dd1-4abe-883c-\
 e8a7eaf94faf"],
@@ -580,7 +581,7 @@ Cell[BoxData[
  RowBox[{
   RowBox[{"markdownToXMLFormat", "[", "\n", "\t", 
    RowBox[{"\"\<CodeLine\>\"", ",", "\n", "\t", "text_"}], "\n", "\t", "]"}], 
-  ":=", "\n", "\t", "\n", "\t", 
+  ":=", "\n", "\t", 
   RowBox[{"With", "[", 
    RowBox[{
     RowBox[{"{", "\n", "\t\t", 
@@ -606,7 +607,7 @@ Cell[BoxData[
       RowBox[{"{", "striptext", "}"}]}], "]"}]}], "\n", "\t\t", 
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"8514dd20-ae2b-48ff-a3b5-115e15c90c66"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -663,7 +664,7 @@ Cell[BoxData[
      RowBox[{"\"\<XMLToExport\>\"", "[", "h", "]"}]}]}], "\n", "\t\t", 
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"78926e6d-0878-4488-b0c1-8093879ad81d"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -1574,7 +1575,7 @@ Cell[BoxData[
     RowBox[{"o", ",", " ", "\"\<Link\>\"", ",", " ", "link"}], 
     "]"}]}]}]], \
 "CodeInput",ExpressionUUID->"8529685b-d3e0-4d50-ba1e-48c04f89904c"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -1999,7 +2000,7 @@ Cell[BoxData[
     "$markdownToXMLShortXMLBlock", ",", "\n", "\t\t", 
      "$markdownToXMLCompleXMLBlock"}], "\n", "\t\t", "}"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"1e6e92b8-22fb-4b9b-b323-d72ca8c13f9b"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -2240,7 +2241,7 @@ Cell[BoxData[
       "\t\t\t\t", "1"}], "\n", "\t\t\t\t", 
      "]"}]}]}]}]], \
 "CodeInput",ExpressionUUID->"02585757-891d-48b2-842b-891db122f5b5"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -2420,6 +2421,72 @@ Cell[BoxData[{
   "markdownToXMLReinsertXML", "~", "SetAttributes", "~", "HoldFirst"}], 
   ";"}]}], "CodeInput",ExpressionUUID->"637bb3fb-55f7-4c06-8123-b26acffefe80"]\
 
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]markdownFixedPointReplace\[RightFloor]", \
+"CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"f5eb1db9-2e1d-47e9-bd30-4157e54d3c01"],
+
+Cell["\<\
+\[LeftCeiling]
+\tDone with FixedPoint to handle all of the hash-prep stuff. 
+\tHopefully done in such a way as to not fuck up everything.
+\[RightFloor]\
+\>", "Text",
+ Evaluatable->True,ExpressionUUID->"2e2bf730-1e4d-42e5-8d26-bcddcfbbbc41"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"markdownFixedPointReplace", "[", 
+   RowBox[{"text_", ",", " ", "rules_"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"FixedPoint", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"StringQ", "@", "#"}], ",", "\n", "\t\t\t", 
+       RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"markdownToXMLPrep", "[", 
+          RowBox[{"#", ",", " ", "rules"}], "]"}], ",", " ", "\n", "\t", 
+         "\t\t\t", 
+         RowBox[{"{", "\n", "\t", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"s", ":", 
+             RowBox[{"{", 
+              RowBox[{"_String", ",", " ", "__String"}], "}"}]}], 
+            "\[RuleDelayed]", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"markdownToXMLPrep", "[", 
+             RowBox[{
+              RowBox[{"StringJoin", "[", "s", "]"}], ",", " ", "rules"}], 
+             "]"}]}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{"e_List", ":>", "\n", "\t\t\t\t\t\t", 
+            RowBox[{"Flatten", "[", "\n", "\t\t\t\t\t\t\t", 
+             RowBox[{
+              RowBox[{"Replace", "[", 
+               RowBox[{
+                RowBox[{"SplitBy", "[", 
+                 RowBox[{"e", ",", " ", "StringQ"}], "]"}], ",", "\n", "\t", 
+                "\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"j", ":", 
+                  RowBox[{"{", "__String", "}"}]}], "\[RuleDelayed]", 
+                 RowBox[{"StringJoin", "[", "j", "]"}]}], ",", "\n", 
+                "\t\t\t\t\t\t\t\t", "1"}], "\n", "\t\t\t\t\t\t\t\t", "]"}], 
+              ",", "\n", "\t\t\t\t\t\t\t", "1"}], "\n", "\t\t\t\t\t\t\t", 
+             "]"}]}]}], "\n", "\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t", "]"}], 
+       ",", "\n", "\t\t\t", "#"}], "\n", "\t\t\t", "]"}], "&"}], ",", "\n", 
+    "\t\t", "text", ",", "\n", "\t\t", "10"}], " ", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+     RowBox[{"could", " ", "forsee", " ", "recursion", " ", "infinitely"}], 
+     ",", " ", 
+     RowBox[{"but", " ", "unlikely"}]}], " ", "*)"}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"14fd5603-522a-4fb9-8221-10e1f543bf31"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -2491,19 +2558,20 @@ Cell[BoxData[
       "$markdownToXMLOneTimeElementRules", "=", "\n", "\t\t\t\t", 
        "oneTimeElementRules"}]}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
     RowBox[{"Flatten", "@", "\n", "\t\t\t", 
-     RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
+     RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
       RowBox[{
-       RowBox[{"markdownToXMLPrep", "[", 
-        RowBox[{"text", ",", " ", "rules"}], "]"}], ",", " ", 
+       RowBox[{"markdownFixedPointReplace", "[", 
+        RowBox[{"text", ",", " ", "rules"}], "]"}], ",", " ", "\n", 
+       "\t\t\t\t", 
        RowBox[{"{", "\n", "\t\t\t\t\t", 
         RowBox[{
          RowBox[{"s_String", "\[RuleDelayed]", "\n", "\t\t\t\t\t\t", 
           RowBox[{"If", "[", 
            RowBox[{
-            RowBox[{"rules", "===", "Automatic"}], ",", "\n", "\t", 
-            "\t\t\t\t\t\t", 
+            RowBox[{"rules", "===", "Automatic"}], ",", "\n", 
+            "\t\t\t\t\t\t\t", 
             RowBox[{"Flatten", "@", 
-             RowBox[{"List", "@", "\n", "\t\t\t\t\t\t\t\t", 
+             RowBox[{"List", "@", 
               RowBox[{"markdownToXMLPostProcess1", "[", "s", "]"}]}]}], ",", 
             "\n", "\t", "\t\t\t\t\t\t", 
             RowBox[{"{", "s", "}"}]}], "\n", "\t", "\t\t\t\t\t\t", "]"}]}], 
@@ -2559,7 +2627,7 @@ Cell[BoxData[
               RowBox[{
                RowBox[{"(", 
                 RowBox[{"r_", "\[Rule]", "s_"}], ")"}], ":>", "\n", 
-               "\t\t\t\t\t\t\t\t\t", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+               "\t\t\t\t\t\t\t\t\t\t", 
                RowBox[{"markdownToXMLFormat", "[", 
                 RowBox[{"r", ",", " ", "s"}], "]"}]}]}], "\n", 
              "\t\t\t\t\t\t\t\t", "}"}], ",", "\n", "\t", "\t\t\t\t\t\t", 
@@ -2908,7 +2976,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"0792ebaa-1dc2-414d-9656-\
 e65bfc12151a"]
 },
 WindowSize->{808, 755},
-WindowMargins->{{207, Automatic}, {38, Automatic}},
+WindowMargins->{{198, Automatic}, {Automatic, 40}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

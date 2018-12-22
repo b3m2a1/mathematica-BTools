@@ -9,6 +9,11 @@ MarkdownToXML::usage=
 Begin["`Private`"];
 
 
+(* ::Subsection:: *)
+(*MarkdownToXML*)
+
+
+
 markdownToXMLFormat//ClearAll
 
 
@@ -337,7 +342,6 @@ markdownToXMLFormat[
   "CodeLine",
   text_
   ]:=
-  
   With[{
     striptext=
       StringTrim[
@@ -1118,6 +1122,44 @@ markdownToXMLReinsertXML~SetAttributes~HoldFirst;
 
 
 (* ::Subsubsection::Closed:: *)
+(*markdownFixedPointReplace*)
+
+
+
+(* ::Text:: *)
+(*
+	Done with FixedPoint to handle all of the hash-prep stuff. 
+	Hopefully done in such a way as to not fuck up everything.
+*)
+
+
+
+markdownFixedPointReplace[text_, rules_]:=
+  FixedPoint[
+    If[StringQ@#,
+      Replace[
+        markdownToXMLPrep[#, rules], 
+        {
+          s:{_String, __String}:>
+            markdownToXMLPrep[StringJoin[s], rules],
+          e_List:>
+            Flatten[
+              Replace[SplitBy[e, StringQ],
+                j:{__String}:>StringJoin[j],
+                1
+                ],
+              1
+              ]
+          }
+        ],
+      #
+      ]&,
+    text,
+    10 (* could forsee recursion infinitely, but unlikely *)
+    ]
+
+
+(* ::Subsubsection::Closed:: *)
 (*markdownToXML*)
 
 
@@ -1158,11 +1200,11 @@ markdownToXML[
       },
     Flatten@
       Replace[
-          markdownToXMLPrep[text, rules], {
+        markdownFixedPointReplace[text, rules], 
+        {
           s_String:>
             If[rules===Automatic,
-              Flatten@List@
-                markdownToXMLPostProcess1[s],
+              Flatten@List@markdownToXMLPostProcess1[s],
               {s}
               ],
           l_List:>
@@ -1189,7 +1231,6 @@ markdownToXML[
                       ]
                     ],
                 (r_->s_):>
-                  
                     markdownToXMLFormat[r, s]
                 },
               1

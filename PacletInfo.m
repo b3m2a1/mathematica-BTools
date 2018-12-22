@@ -1,7 +1,10 @@
+(* ::Package:: *)
+
 Paclet[
   Name -> "BTools",
   Version -> "2.1.38",
   Creator -> "b3m2a1@gmail.com",
+  WolframVersion -> "11+",
   URL -> "https://github.com/b3m2a1/mathematica-BTools",
   Description -> "A suite of development tools",
   Thumbnail -> "PacletIcon.png",
@@ -175,10 +178,8 @@ Paclet[
        			"web"
        		},
      		"Categories" -> {"Development"},
-     		"Description" -> 
-      "A general purpose package that implements useful functionality for application development.
-Features include: distribution tools, documentation generation, front-end manipulation, and application editing
-  ",
+     		"Description" ->
+      "A general purpose package that implements useful functionality for application development. Features include: distribution tools, documentation generation, front-end manipulation, and application editing",
      		"License" -> "MIT"
      	},
     	{

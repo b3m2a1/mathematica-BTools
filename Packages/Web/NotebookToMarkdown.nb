@@ -99,7 +99,8 @@ Cell[BoxData[
   "\t", 
   RowBox[{"Replace", "[", 
    RowBox[{"name", ",", "\n", "\t\t", 
-    RowBox[{"Automatic", ":>", "\n", "\t\t\t", 
+    RowBox[{
+     RowBox[{"Except", "[", "_String", "]"}], ":>", "\n", "\t\t\t", 
      RowBox[{"MarkdownNameToSlug", "@", "\n", "\t\t\t\t", 
       RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
        RowBox[{
@@ -133,7 +134,9 @@ Cell[BoxData[
   RowBox[{"MarkdownSiteBase", "@", "\n", "\t\t", 
    RowBox[{"Replace", "[", 
     RowBox[{"dop", ",", "\n", "\t\t\t", 
-     RowBox[{"Automatic", ":>", 
+     RowBox[{
+      RowBox[{"Except", "[", 
+       RowBox[{"_String", "?", "DirectoryQ"}], "]"}], ":>", 
       RowBox[{"MarkdownSiteBase", "[", "dir", "]"}]}]}], "\n", "\t\t\t", 
     "]"}]}]}]], \
 "CodeInput",ExpressionUUID->"87d8fcd1-6872-42c9-a31b-d1ba846c78a6"]
@@ -150,7 +153,8 @@ Cell[BoxData[
    RowBox[{"pa_", ",", " ", "dir_"}], "]"}], ":=", "\n", "\t", 
   RowBox[{"Replace", "[", 
    RowBox[{"pa", ",", "\n", "\t\t", 
-    RowBox[{"Automatic", ":>", "\n", "\t\t\t", 
+    RowBox[{
+     RowBox[{"Except", "[", "_String", "]"}], ":>", "\n", "\t\t\t", 
      RowBox[{"If", "[", 
       RowBox[{
        RowBox[{"StringMatchQ", "[", 
@@ -1177,16 +1181,18 @@ Cell[BoxData[
                 RowBox[{
                  RowBox[{"Normal", "@", "expOps"}], ",", "\n", 
                  "\t\t\t\t\t\t\t\t", 
-                 RowBox[{"\"\<Name\>\"", "\[Rule]", 
+                 RowBox[{
+                 "\"\<Name\>\"", "\[Rule]", "\n", "\t\t\t\t\t\t\t\t\t", 
                   RowBox[{"getNotebookName", "[", 
                    RowBox[{"None", ",", " ", "meta", ",", " ", "nb"}], 
                    "]"}]}], ",", "\n", "\t\t\t\t\t\t\t\t", 
-                 RowBox[{"\"\<Directory\>\"", "\[Rule]", 
+                 RowBox[{
+                 "\"\<Directory\>\"", "\[Rule]", "\n", "\t\t\t\t\t\t\t\t\t", 
                   RowBox[{"getNotebookDirectory", "[", 
-                   RowBox[{"None", ",", " ", 
+                   RowBox[{"Automatic", ",", " ", 
                     RowBox[{"MarkdownNotebookDirectory", "[", "nb", "]"}]}], 
                    "]"}]}], ",", "\n", "\t\t\t\t\t\t\t\t", 
-                 RowBox[{"\"\<Path\>\"", "->", 
+                 RowBox[{"\"\<Path\>\"", "->", "\n", "\t\t\t\t\t\t\t\t\t", 
                   RowBox[{"getNotebookPath", "[", 
                    RowBox[{"None", ",", " ", 
                     RowBox[{"MarkdownNotebookDirectory", "[", "nb", "]"}]}], 

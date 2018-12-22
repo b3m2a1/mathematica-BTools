@@ -52,7 +52,7 @@ Options[NotebookToMarkdown]=
 
 getNotebookName[name_, meta_, nb_]:=
   Replace[name,
-    Automatic:>
+    Except[_String]:>
       MarkdownNameToSlug@
         Replace[
           Lookup[meta, "Slug", Automatic],
@@ -72,7 +72,7 @@ getNotebookName[name_, meta_, nb_]:=
 getNotebookDirectory[dop_, dir_]:=
   MarkdownSiteBase@
     Replace[dop,
-      Automatic:>MarkdownSiteBase[dir]
+      Except[_String?DirectoryQ]:>MarkdownSiteBase[dir]
       ]
 
 
@@ -83,7 +83,7 @@ getNotebookDirectory[dop_, dir_]:=
 
 getNotebookPath[pa_, dir_]:=
   Replace[pa,
-    Automatic:>
+    Except[_String]:>
       If[StringMatchQ[dir, MarkdownContentPath[dir]~~___],
         "",
         URLBuild@
@@ -547,9 +547,12 @@ NotebookMarkdownSave[
             FilterRules[
               {
                 Normal@expOps,
-                "Name"->getNotebookName[None, meta, nb],
-                "Directory"->getNotebookDirectory[None, MarkdownNotebookDirectory[nb]],
-                "Path"->getNotebookPath[None, MarkdownNotebookDirectory[nb]]
+                "Name"->
+                  getNotebookName[None, meta, nb],
+                "Directory"->
+                  getNotebookDirectory[Automatic, MarkdownNotebookDirectory[nb]],
+                "Path"->
+                  getNotebookPath[None, MarkdownNotebookDirectory[nb]]
                 }, 
               Options[exporter]
               ]

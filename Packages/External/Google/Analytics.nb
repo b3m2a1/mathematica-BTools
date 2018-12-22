@@ -136,7 +136,7 @@ Cell[BoxData[
   3.704638620131921*^9}, {3.7348378704644403`*^9, 
   3.734837872256855*^9}},ExpressionUUID->"7285fc6d-b62f-4a3e-8d70-\
 41b313c36210"]
-}, Closed]]
+}, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -656,6 +656,52 @@ a888f114047e"]
 
 Cell[CellGroupData[{
 
+Cell["\[LeftCeiling]gaaPrepDateRanges\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"7cea3a82-3a61-4ec7-a300-b72bd3d77d47"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"gaaPrepDateRanges", "[", 
+   RowBox[{"start_", ",", " ", "end_"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{"Not", "[", 
+       RowBox[{"ListQ", "@", "#"}], "]"}], ",", "\n", "\t\t", 
+      RowBox[{"PackageRaiseException", "[", "\n", "\t\t\t", 
+       RowBox[{
+       "Automatic", ",", "\n", "\t\t\t", 
+        "\"\<Date range start spec `` and end spec `` invalid\>\"", ",", "\n",
+         "\t\t\t", "start", ",", "\n", "\t\t\t", "end"}], "\n", "\t\t\t", 
+       "]"}], ",", "\n", "\t\t", "#"}], "\n", "\t\t", "]"}], "&"}], "@", "\n",
+    "\t", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"ListQ", "@", "start"}], "&&", 
+      RowBox[{"ListQ", "@", "end"}]}], ",", "\n", "\t\t", 
+     RowBox[{"MapThread", "[", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"\"\<startDate\>\"", "\[Rule]", "#"}], ",", " ", 
+          RowBox[{"\"\<endDate\>\"", "\[Rule]", "#2"}]}], "}"}], "&"}], ",", 
+       "\n", "\t\t\t", 
+       RowBox[{"{", 
+        RowBox[{"start", ",", " ", "end"}], "}"}]}], "\n", "\t\t\t", "]"}], 
+     ",", "\n", "\t\t", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"\"\<startDate\>\"", "\[Rule]", "start"}], ",", " ", 
+       RowBox[{"\"\<endDate\>\"", "\[Rule]", "end"}]}], "}"}]}], "\n", "\t\t",
+     "]"}]}]}]], \
+"CodeInput",ExpressionUUID->"58ea6dfb-f746-45cd-aa78-940ddbe7e1c2"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
 Cell["\[LeftCeiling]GAAGetReport\[RightFloor]", "CodeSubsubsubsection",
  Evaluatable->True,
  CellChangeTimes->{
@@ -690,54 +736,54 @@ Cell[BoxData[{
      RowBox[{"$GAParamMap", "[", "\"\<GetReport\>\"", "]"}]}], "\n", "\t\t", 
     "]"}]}], ";"}], "\n", 
  RowBox[{
-  RowBox[{"GAAGetReport", "[", "\n", "\t", 
-   RowBox[{
-    RowBox[{"viewID", ":", 
-     RowBox[{"_String", "|", "_Integer"}]}], ",", "\n", "\t", 
-    RowBox[{"ops", ":", 
-     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
-  "\t", 
-  RowBox[{"GAAnalyticsRequest", "[", "\n", "\t\t", 
-   RowBox[{
-    RowBox[{"<|", "\n", "\t\t\t", 
-     RowBox[{
-      RowBox[{"\"\<Path\>\"", "->", "\"\<reports\>\""}], ",", "\n", "\t\t\t", 
-      
-      RowBox[{"\"\<Port\>\"", "\[Rule]", "\"\<batchGet\>\""}]}], "\n", 
-     "\t\t\t", "|>"}], ",", "\n", "\t\t", 
-    RowBox[{"<|", "\n", "\t\t\t", 
-     RowBox[{
-      RowBox[{"\"\<Method\>\"", "\[Rule]", "\"\<POST\>\""}], ",", "\n", 
-      "\t\t\t", 
-      RowBox[{"\"\<Body\>\"", "->", "\n", "\t\t\t\t", 
-       RowBox[{"ExportString", "[", "\n", "\t\t\t\t\t", 
-        RowBox[{
-         RowBox[{"{", "\n", "\t\t\t\t\t\t", 
-          RowBox[{"\"\<reportRequests\>\"", "->", "\n", "\t\t\t\t\t\t\t", 
-           RowBox[{"Flatten", "@", "\n", "\t\t\t\t\t\t\t\t", 
-            RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
-             RowBox[{
-              RowBox[{"\"\<viewId\>\"", "\[Rule]", 
-               RowBox[{"ToString", "@", "viewID"}]}], ",", "\n", 
-              "\t\t\t\t\t\t\t\t\t", 
-              RowBox[{"GAPrepParams", "[", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-               RowBox[{
-                RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
-                 RowBox[{"ops", ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{
-                  "\"\<dateRanges\>\"", "->", "\n", 
-                   "\t\t\t\t\t\t\t\t\t\t\t\t", 
-                   RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"\"\<startDate\>\"", "->", 
-                    RowBox[{"OptionValue", "[", "\"\<StartDate\>\"", "]"}]}], 
-                    ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"\"\<endDate\>\"", "\[Rule]", 
-                    RowBox[{"OptionValue", "[", "\"\<EndDate\>\"", "]"}]}]}], 
-                    "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", "}"}]}], ",", "\n", 
-                  "\t\t\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{"Replace", "[", 
+  RowBox[{
+   RowBox[{"GAAGetReport", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"viewID", ":", 
+      RowBox[{"_String", "|", "_Integer"}]}], ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"GAAnalyticsRequest", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"<|", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"\"\<Path\>\"", "->", "\"\<reports\>\""}], ",", "\n", "\t\t\t", 
+       RowBox[{"\"\<Port\>\"", "\[Rule]", "\"\<batchGet\>\""}]}], "\n", 
+      "\t\t\t", "|>"}], ",", "\n", "\t\t", 
+     RowBox[{"<|", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"\"\<Method\>\"", "\[Rule]", "\"\<POST\>\""}], ",", "\n", 
+       "\t\t\t", 
+       RowBox[{"\"\<Body\>\"", "->", "\n", "\t\t\t\t", 
+        RowBox[{"ExportString", "[", "\n", "\t\t\t\t\t", 
+         RowBox[{
+          RowBox[{"{", "\n", "\t\t\t\t\t\t", 
+           RowBox[{"\"\<reportRequests\>\"", "->", "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{"Flatten", "@", "\n", "\t\t\t\t\t\t\t\t", 
+             RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"\"\<viewId\>\"", "\[Rule]", 
+                RowBox[{"ToString", "@", "viewID"}]}], ",", "\n", 
+               "\t\t\t\t\t\t\t\t\t", 
+               RowBox[{"GAPrepParams", "[", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"ops", ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t", 
                    RowBox[{
+                   "\"\<dateRanges\>\"", "->", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    "gaaPrepDateRanges", "[", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"OptionValue", "[", "\"\<StartDate\>\"", "]"}], 
+                    ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"OptionValue", "[", "\"\<EndDate\>\"", "]"}]}], 
+                    "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+                   "\t\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"Replace", "[", 
+                    RowBox[{
                     RowBox[{"OptionValue", "[", "\"\<Metrics\>\"", "]"}], ",",
                      "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
@@ -760,10 +806,10 @@ Cell[BoxData[{
                     RowBox[{"_", "\[Rule]", 
                     RowBox[{"{", "}"}]}]}], "\n", 
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t", "}"}]}], "\n", 
-                   "\t\t\t\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
-                  "\t\t\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{"Replace", "[", 
-                   RowBox[{
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+                   "\t\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"Replace", "[", 
+                    RowBox[{
                     RowBox[{"OptionValue", "[", "\"\<Dimensions\>\"", "]"}], 
                     ",", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
@@ -786,12 +832,10 @@ Cell[BoxData[{
                     RowBox[{"_", "\[Rule]", 
                     RowBox[{"{", "}"}]}]}], "\n", 
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t", "}"}]}], "\n", 
-                   "\t\t\t\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
-                  "\t\t\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{
-                  "Sequence", "@@", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
-                   RowBox[{
-                   "Normal", "@", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t", "]"}], ",", "\n", 
+                   "\t\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"Sequence", "@@", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Normal", "@", "\n", "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{
                     "Merge", "[", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{
@@ -809,39 +853,43 @@ Cell[BoxData[{
                     RowBox[{"Flatten", "[", 
                     RowBox[{"#", ",", " ", "1"}], "]"}], "&"}]}], "\n", 
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t\t", "]"}]}]}]}], "\n", 
-                 "\t\t\t\t\t\t\t\t\t\t\t", "}"}], ",", "\n", 
-                "\t\t\t\t\t\t\t\t\t\t", "GAAGetReport", ",", "\n", 
-                "\t\t\t\t\t\t\t\t\t\t", "\"\<GetReport\>\""}], "\n", 
-               "\t\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t\t\t", 
-             "}"}]}]}], "\n", "\t\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t", 
-         "\"\<JSON\>\""}], "\n", "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", 
-     "|>"}]}], "\n", "\t\t", "]"}]}]}], "CodeInput",
- CellChangeTimes->{{3.7348380944645557`*^9, 3.734838125460226*^9}, {
-   3.734838184836413*^9, 3.7348381855032873`*^9}, {3.734838386490972*^9, 
-   3.73483839887157*^9}, {3.7348385623993177`*^9, 3.73483871949172*^9}, {
-   3.734839032992586*^9, 3.734839046630024*^9}, {3.7348390772579*^9, 
-   3.734839077836705*^9}, {3.734839122130436*^9, 3.734839157786978*^9}, {
-   3.7348402868772306`*^9, 3.734840292993678*^9}, {3.734840889129074*^9, 
-   3.734840933893139*^9}, {3.734841585197466*^9, 3.7348415909967203`*^9}, {
-   3.734842804059705*^9, 3.7348428132891283`*^9}, 3.7348429335327168`*^9, {
-   3.7348429968829536`*^9, 3.734843068973434*^9}, {3.7348433225798197`*^9, 
-   3.734843328308462*^9}, 3.734843362158106*^9, {3.734843733052988*^9, 
-   3.734843857880404*^9}, {3.734843922409355*^9, 3.7348439581683607`*^9}, {
-   3.734844813183551*^9, 3.734844924976746*^9}, {3.7348454324330606`*^9, 
-   3.734845507787627*^9}, {3.734845578825884*^9, 3.734845586604786*^9}, {
-   3.734845833520421*^9, 3.7348458789147167`*^9}, {3.734846011774328*^9, 
-   3.734846027444356*^9}, {3.734846086804543*^9, 3.734846171936082*^9}, {
-   3.734846203668277*^9, 3.734846204031466*^9}, {3.7348462882258263`*^9, 
-   3.7348462928950987`*^9}, {3.734846385969141*^9, 3.7348465185047207`*^9}, {
-   3.7348465769893227`*^9, 3.7348465895168447`*^9}, {3.734846677734036*^9, 
-   3.734846717883811*^9}, {3.734846749795092*^9, 3.734846805057897*^9}, {
-   3.734846862488697*^9, 3.734846969788403*^9}, {3.734847111740965*^9, 
-   3.7348471628984613`*^9}, {3.734847308384935*^9, 3.7348473674011507`*^9}, {
-   3.7348915279746637`*^9, 
-   3.734891531667321*^9}},ExpressionUUID->"88537ff6-6b0d-43fb-a80a-\
-81c66cec6ea8"]
+                  "\t\t\t\t\t\t\t\t\t\t\t", "}"}], ",", "\n", 
+                 "\t\t\t\t\t\t\t\t\t\t", "GAAGetReport", ",", "\n", 
+                 "\t\t\t\t\t\t\t\t\t\t", "\"\<GetReport\>\""}], "\n", 
+                "\t\t\t\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t\t\t\t", 
+              "}"}]}]}], "\n", "\t\t\t\t\t\t", "}"}], ",", "\n", 
+          "\t\t\t\t\t", "\"\<JSON\>\""}], "\n", "\t\t\t\t\t", "]"}]}]}], "\n",
+       "\t\t\t", "|>"}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"GAAGetReport", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"viewID", ":", 
+     RowBox[{"_String", "|", "_Integer"}]}], ",", "\n", "\t", "name_String", 
+    ",", "\n", "\t", 
+    RowBox[{"ops", ":", 
+     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"rep", "=", 
+      RowBox[{"$GAANamedReports", "[", "name", "]"}]}], "}"}], ",", "\n", 
+    "\t\t", 
+    RowBox[{
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"MissingQ", "@", "rep"}], ",", "\n", "\t\t\t", 
+       RowBox[{"PackageRaiseException", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+        "Automatic", ",", "\n", "\t", "\t\t\t", "\"\<Unknown report ``\>\"", 
+         ",", "\n", "\t\t\t\t", "name"}], "\n", "\t\t\t\t", "]"}]}], "\n", 
+      "\t\t\t", "]"}], ";", "\n", "\t\t", 
+     RowBox[{"GAAGetReport", "[", 
+      RowBox[{"viewID", ",", " ", "rep", ",", " ", "ops"}], "]"}]}]}], "\n", 
+   "\t\t", "]"}]}]}], \
+"CodeInput",ExpressionUUID->"88537ff6-6b0d-43fb-a80a-81c66cec6ea8"]
 }, Open  ]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -863,32 +911,35 @@ Cell[BoxData[
 Cell[BoxData[
  RowBox[{"$GAANamedReports", "=", "\n", "\t", 
   RowBox[{"<|", "\n", "\t\t", 
-   RowBox[{
-    RowBox[{"\"\<PageUserNumbers\>\"", "->", "\n", "\t\t\t", 
-     RowBox[{"{", "\n", "\t\t\t\t", 
-      RowBox[{
-       RowBox[{"\"\<Dimensions\>\"", "->", "\n", "\t\t\t\t\t", 
+   RowBox[{"\"\<PageUserNumbers\>\"", "->", "\n", "\t\t\t", 
+    RowBox[{"{", "\n", "\t\t\t\t", 
+     RowBox[{
+      RowBox[{"\"\<Dimensions\>\"", "->", "\n", "\t\t\t\t\t", 
+       RowBox[{
+       "{", "\n", "\t\t\t\t\t\t", "\"\<PagePath\>\"", "\n", "\t\t\t\t\t\t", 
+        "}"}]}], ",", "\n", "\t\t\t\t", 
+      RowBox[{"\"\<Metrics\>\"", "->", "\n", "\t\t\t\t\t", 
+       RowBox[{"{", "\n", "\t\t\t\t\t\t", 
         RowBox[{
-        "{", "\n", "\t\t\t\t\t\t", "\"\<PagePath\>\"", "\n", "\t\t\t\t\t\t", 
-         "}"}]}], ",", "\n", "\t\t\t\t", 
-       RowBox[{"\"\<Metrics\>\"", "->", "\n", "\t\t\t\t\t", 
-        RowBox[{"{", "\n", "\t\t\t\t\t\t", 
-         RowBox[{
-         "\"\<Users\>\"", ",", " ", "\n", "\t", "\t\t\t\t\t", 
-          "\"\<Visitors\>\"", ",", "\n", "\t", "\t\t\t\t\t", 
-          "\"\<NewUsers\>\"", ",", "\n", "\t", "\t\t\t\t\t", 
-          "\"\<NewVisits\>\""}], "\n", "\t", "\t\t\t\t\t", "}"}]}]}], "\n", 
-      "\t\t\t\t", "}"}]}], ","}], "\n", "\t\t", "\n", "\t\t", 
-   "|>"}]}]], "CodeInput",
- CellChangeTimes->{{3.734891568014522*^9, 
-  3.734891616540578*^9}},ExpressionUUID->"6db2d3ac-cbaf-4709-8a8a-\
-72bfbba1915f"],
+        "\"\<Users\>\"", ",", " ", "\n", "\t", "\t\t\t\t\t", 
+         "\"\<Visitors\>\"", ",", "\n", "\t", "\t\t\t\t\t", 
+         "\"\<NewUsers\>\"", ",", "\n", "\t", "\t\t\t\t\t", 
+         "\"\<NewVisits\>\""}], "\n", "\t\t\t\t\t\t", "}"}]}]}], "\n", 
+     "\t\t\t\t", "}"}]}], "\n", "\t\t", 
+   "|>"}]}]], \
+"CodeInput",ExpressionUUID->"6db2d3ac-cbaf-4709-8a8a-72bfbba1915f"],
 
-Cell[BoxData[
- RowBox[{"\n", "\t\t\t\t"}]], "CodeInput",
- CellChangeTimes->{
-  3.7348915964453907`*^9},ExpressionUUID->"36ab5fd9-7f93-4eec-a3fb-\
-9da22e674c3b"]
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAANamedReport", "[", "]"}], ":=", "\n", "\t", 
+   "$GAANamedReports"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAANamedReport", "[", "name_", "]"}], ":=", "\n", "\t", 
+   RowBox[{"$GAANamedReports", "[", "name", "]"}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"ba0df688-625d-4c0f-887c-2004641a315c"]\
+
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -990,7 +1041,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"7d46921f-36b4-414a-b43f-\
 6fecf718d29f"]
 },
 WindowSize->{748, 767},
-WindowMargins->{{340, Automatic}, {Automatic, 30}},
+WindowMargins->{{36, Automatic}, {Automatic, 26}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

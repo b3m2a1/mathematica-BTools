@@ -321,29 +321,40 @@ PackageUpdatePacletDependency[
 (*Nothing I've implemented yet, but could be very useful for installing resources for a paclet*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*PackageEnsureLoadDependencies*)
 
 
+Options[PackageEnsureLoadDependency]=
+  Join[
+    Options@PackgeLoadPacletDependency,
+    {
+      "Bundled"->True
+      }
+    ];
 PackageEnsureLoadDependency[dep_, ops:OptionsPattern[]]:=
   Module[
     {
       depsDir=PackageFilePath["Dependencies"],
-      foundFile
+      foundFile,
+      bund=TrueQ@Quiet@OptionValue["Bundled"]
       },
-     If[DirectoryQ@depsDir,
-       foundFile=
-         Block[
-           {
-             $Path=depsDir,
-             PacletManager`PacletManagerEnabled
-             },
-           FindFile[dep]
-           ]
+     If[bund,
+       If[DirectoryQ@depsDir,
+         foundFile=
+           Block[
+             {
+               $Path=depsDir,
+               PacletManager`PacletManagerEnabled
+               },
+             FindFile[dep]
+             ];
+         ];
+       If[!StringQ@foundFile, foundFile=FindFile[dep]];
+       bund=StringQ@foundFile
        ];
-     If[!StringQ@foundFile, foundFile=FindFile[dep]];
      Quiet[(* this is a temporary hack until WRI fixes a $ContextPath bug *)
-       If[!StringQ@foundFile,
+       If[!bund,
          PackgeLoadPacletDependency[dep,
            FilterRules[
              {
@@ -372,13 +383,10 @@ PackageEnsureLoadDependencies[]:=
         },
        PackageExecute[
          Begin["`Dependencies`"];
-         PackageEnsureLoadDependency@@Flatten@{#, "Site"->site}&/@deps;
-         PackageExtendContextPath@
-           Map[
-             If[MemberQ[$Packages, $Context<>#], $Context<>#, #]&, 
-             First@Flatten@{#}&/@deps
-             ];
-         End[]
+         PackageEnsureLoadDependency@@
+           Flatten@{#, "Site"->site}&/@deps;
+         PackageExposeDependencies[];
+         End[];
          ]
       ];
    ];
@@ -392,12 +400,19 @@ PackageExposeDependencies[deps_, permanent:True|False:False]:=
   Module[
     {
       cdeps,
-      loadQ
+      loadQ,
+      depC
       },
     (* 
       someday I'll need this to be more sophisticated, but today is not that day
       *)
-    cdeps=$PackageContexts[[1]]<>"Dependencies`"<>#&/@deps;
+    depC=$PackageContexts[[1]]<>"Dependencies`";
+    cdeps=
+      If[Length@Join[Names[depC<>#<>"*"], Names[depC<>#<>"*`*"]]>0,
+        depC<>#,
+        #
+        ]&/@deps;
+    (* only gonna be used within PackageExecute...? *)
     $ContextPath=
       DeleteDuplicates@
         Join[cdeps, $ContextPath];
@@ -405,7 +420,9 @@ PackageExposeDependencies[deps_, permanent:True|False:False]:=
       PackageExtendContextPath@cdeps
       ];
     cdeps
-    ]
+    ];
+PackageExposeDependencies[]:= 
+  PackageExposeDependencies[$PackageLoadSpecs["DependencyContexts"], True]
 
 
 (* ::Subsubsection:: *)

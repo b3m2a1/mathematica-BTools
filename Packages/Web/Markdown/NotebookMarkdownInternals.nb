@@ -338,7 +338,7 @@ Cell[BoxData[
    RowBox[{"Replace", "[", 
     RowBox[{"t", ",", "\n", "\t\t", 
      RowBox[{"{", "\n", "\t\t\t", 
-      RowBox[{"Automatic", "\[RuleDelayed]", "name"}], "\n", "\t", "\t\t", 
+      RowBox[{"Automatic", "\[RuleDelayed]", "name"}], "\n", "\t\t\t", 
       "}"}]}], "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"e2c7c89d-6be0-48dc-85ca-521ea1c08e40"]
 }, Closed]],
@@ -382,26 +382,36 @@ Cell["\[LeftCeiling]Metadata\[RightFloor]", "CodeSubsubsubsubsection",
 Cell[BoxData[
  RowBox[{
   RowBox[{"MarkdownFileMetadata", "[", 
-   RowBox[{"val_", ",", "opsassoc_"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"val_", ",", " ", "opsassoc_"}], "]"}], ":=", "\n", "\t", 
   RowBox[{"Replace", "[", 
-   RowBox[{"val", ",", 
+   RowBox[{"val", ",", " ", 
     RowBox[{"{", "\n", "\t\t", 
      RowBox[{
       RowBox[{"_List", ":>", "\n", "\t\t\t", 
        RowBox[{"StringRiffle", "[", 
         RowBox[{
-         RowBox[{"ToString", "/@", "val"}], ",", "\"\<,\>\""}], "]"}]}], ",", 
-      "\n", "\t\t", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"MarkdownFileMetadata", "[", 
+            RowBox[{"#", ",", " ", "opsassoc"}], "]"}], "&"}], "/@", "val"}], 
+         ",", " ", "\"\<,\>\""}], "]"}]}], ",", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"<|", "|>"}], "|", 
+        RowBox[{"{", "}"}]}], "\[RuleDelayed]", "\"\<\>\""}], ",", "\n", 
+      "\t\t", 
       RowBox[{"_DateObject", ":>", "\n", "\t\t\t", 
        RowBox[{"StringReplace", "[", 
         RowBox[{
          RowBox[{"DateString", "[", 
-          RowBox[{"val", ",", "\"\<ISODateTime\>\""}], "]"}], ",", 
-         RowBox[{"\"\<T\>\"", "\[Rule]", "\"\< \>\""}]}], "]"}]}]}], "\n", 
-     "\t\t", "}"}]}], 
-   "]"}]}]], \
+          RowBox[{"val", ",", "\"\<ISODateTime\>\""}], "]"}], ",", " ", 
+         RowBox[{"\"\<T\>\"", "\[Rule]", "\"\< \>\""}]}], "]"}]}], ",", "\n", 
+      "\t\t", 
+      RowBox[{"e_", "\[RuleDelayed]", 
+       RowBox[{"ToString", "[", "e", "]"}]}]}], "\n", "\t\t", "}"}]}], "\n", 
+   "\t", "]"}]}]], \
 "CodeInput",ExpressionUUID->"20d34739-8aaf-4fb9-85b9-2d5b6d219c18"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -471,9 +481,9 @@ Cell[BoxData[
            "opsassoc"}]}], "\n", "\t", "\t\t\t\t", "]"}]}]}], "\n", "\t", 
       "\t\t", "]"}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"4297fe84-3986-45b2-9ac2-43147d6fa028"]
-}, Closed]]
 }, Open  ]]
-}, Closed]],
+}, Open  ]]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -651,11 +661,11 @@ instead.\>\""}], ";"}], "\n",
    "]"}]}]}], \
 "CodeInput",ExpressionUUID->"8b078e2b-e4df-409c-86f1-799f192e1056"]
 }, Closed]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
-Cell["\[LeftCeiling]Settings\[RightFloor]", "CodeSubsection",
+Cell["\[LeftCeiling]Settings\[RightFloor] ", "CodeSubsection",
  Evaluatable->True,ExpressionUUID->"f28a3ed0-98d9-4432-a587-18ac44cbc59f"],
 
 Cell[CellGroupData[{
@@ -756,7 +766,7 @@ Cell[BoxData[
    3.7229730579157267`*^9}, {3.722989091635777*^9, 
    3.722989091969878*^9}},ExpressionUUID->"80e30a58-93c4-4d9d-aa06-\
 7490d7c1c198"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -4135,7 +4145,7 @@ Cell[BoxData[
     "\n", "\t\t", "|>"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"0b1445d1-2f41-4f7b-b8ff-0baf9a1c1b3e"]
 }, Closed]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -6183,7 +6193,7 @@ Cell[BoxData[
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"bb34abb8-74df-484d-bc45-c9904b9a159a"]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -6452,8 +6462,8 @@ Cell[BoxData[
      RowBox[{"Select", "[", 
       RowBox[{
        RowBox[{"{", "o", "}"}], ",", " ", "OptionQ"}], "]"}]}], "\n", "\t\t", 
-    "]"}]}], ";"}]], \
-"CodeInput",ExpressionUUID->"a9644b3b-375e-4499-a65d-9a1ef15f8998"],
+    "]"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"a9644b3b-375e-4499-a65d-9a1ef15f8998"],
 
 Cell[BoxData[
  RowBox[{
@@ -7035,7 +7045,7 @@ Cell[BoxData[
        "\"\< \>\"", "<>", "s"}]}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"0d59180d-fa2c-4f43-9bbd-79f8a284e605"]
 }, Open  ]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -8840,7 +8850,7 @@ Cell[BoxData[
        "&"}], "@@", "d"}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"d1aa37ec-9fda-4cf3-bfa1-21e0a30c0380"]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -9842,7 +9852,7 @@ Cell[BoxData[
     "]"}]}], ";"}]], \
 "CodeInput",ExpressionUUID->"d64cc8a4-b810-4c81-91f5-c89f6ad93f69"]
 }, Closed]]
-}, Open  ]]
+}, Closed]]
 }, Open  ]],
 
 Cell[BoxData[

@@ -313,8 +313,10 @@ GoogleAPIClearAuth[
       Replace[clientID, Automatic:>$GAClientID],
     kc=$GACacheSym
       },
-    kc[{u,cid,scope,"token"}]=.;
-    kc[{u,cid,scope,"code"}]=.;
+    Quiet[
+      kc[{u, cid, scope,"token"}]=.;
+      kc[{u, cid, scope,"code"}]=.;
+      ]
     ];
 
 
@@ -446,8 +448,8 @@ GAOAuthenticate[
                 }],
               If[$GAOAuthTokenCalls>1&&KeyMemberQ[a,"access_token"],
                 a["access_token"],
-                GoogleAPIClearAuth[u,cid,scope];
-                GAOAuthenticate[u,cid,scope]
+                GoogleAPIClearAuth[u, cid, scope];
+                GAOAuthenticate[u,    cid, scope]
                 ]
               ],
             $Failed
@@ -529,7 +531,7 @@ GAOAuthTokenData[
 
 
 
-$GAParamMap=<||>;
+If[!AssociationQ@$GAParamMap, $GAParamMap=<||>];
 
 
 GAPrepType//Clear
@@ -714,40 +716,70 @@ GAParse[a_Association]:=
     a
     ];
 GAParse[h_HTTPResponse]:=
-  <|
-    "StatusCode"->
-      h["StatusCode"],
-    "Content"->
-      If[MatchQ[h["StatusCode"],0|(_?(Between@{200,299}))],
-        Switch[
-          h["ContentType"],
-            _?(StringContainsQ@"text/x-objcsrc"),
-              h["BodyByteArray"],
-            _?(StringContainsQ@"text/"),
-              Import[h,"Text"],
-            _,
-              GAParse@
-                Replace[
-                  Quiet@Import[h,"RawJSON"],
-                  Except[_String|_Association|_List]:>
-                    Import[h,"Text"]
-                  ]
+  If[200<=h["StatusCode"]<300, 
+    Success["Status:"<>ToString@h["StatusCode"], 
+      Insert[
+        If[AssociationQ@#["Content"], 
+          Join[KeyDrop[#, "Content"], #["Content"]],
+          #
           ],
-        With[
-          {
-            head=
-              If[$GAActiveHead===Unevaluated[$GAActiveHead], 
-                GoogleDrive, 
-                $GAActiveHead
-                ],
-            errStr=GAErrorString@h
-            },
-          $GALastError=errStr;
-          Message[head::err, errStr]
-          ];
-        $Failed
+        "ContentBytes"->ByteCount[#["Content"]],
+        2
         ]
-    |>;
+      ]&,
+    Failure["Status:"<>ToString@h["StatusCode"], 
+      Insert[#,
+        "ContentBytes"->ByteCount[#["Content"]],
+        2
+        ]
+      ]&
+    ]@
+    <|
+      "StatusCode"->
+        h["StatusCode"],
+      "Content"->
+        If[MatchQ[h["StatusCode"],0|(_?(Between@{200,299}))],
+          Switch[
+            h["ContentType"],
+              _?(StringContainsQ@"text/x-objcsrc"),
+                h["BodyByteArray"],
+              _?(StringContainsQ@"text/"),
+                Import[h,"Text"],
+              _,
+                With[
+                  {
+                    clean=
+                      FromCharacterCode@
+                        ToCharacterCode[Import[h, "Text"], "UTF-8"]
+                    },
+                  GAParse@
+                    Replace[
+                      Quiet@ImportString[clean, "RawJSON"],
+                      Except[_String|_Association|_List]:>
+                        Replace[
+                          Quiet@ImportString[clean, "JSON"],
+                          {
+                            Except[_Association?AssociationQ]:>Import[h,"Text"]
+                            }
+                          ]
+                      ]
+                  ]
+            ],
+          With[
+            {
+              head=
+                If[$GAActiveHead===Unevaluated[$GAActiveHead], 
+                  GoogleDrive, 
+                  $GAActiveHead
+                  ],
+              errStr=GAErrorString@h
+              },
+            $GALastError=errStr;
+            Message[head::err, errStr]
+            ];
+          $Failed
+          ]
+      |>;
 GAParse[s_String]:=
   If[StringLength@StringTrim@s>0,
     Which[

@@ -95,6 +95,8 @@ AppRegenerateUploadInfo::usage=
   "Regenerates the UploadInfo.m file";
 
 
+AppBundleDependency::usage=
+  "Bundles a dependency into the app";
 AppAddDependency::usage=
   "Adds a dependency to the app";
 AppUpdateDependencies::usage=
@@ -892,7 +894,7 @@ AppRegenerateContextLoadFiles[app_]:=
 
 
 (* ::Subsubsection::Closed:: *)
-(*AppAddDependency*)
+(*AppBundleDependency*)
 
 
 
@@ -903,78 +905,78 @@ $DefaultDepRemove=
     |>
 
 
-Options[AppAddDependency]=
+Options[AppBundleDependency]=
   {
     "RemovePaths"->Automatic,
     "RemovePatterns"->Automatic
-    }
-AppAddDependency[
+    };
+AppBundleDependency[
   name_?StringQ,
   dependency_String?DirectoryQ,
   ops:OptionsPattern[]
   ]:=
-  Block[
+  Module[
     {
       deppath,
-      newload,
       rempaths,
       rempatts,
-      confBase
+      confBase,
+      newload
       },
-    Quiet@CreateDirectory@AppPath[name, "Dependencies"];
-    deppath=AppPath[name, "Dependencies", FileBaseName[dependency]];
-    confBase=
-      Replace[
-        getConfigFile[deppath, "BundleInfo"],
-        {
-          f_String?FileExistsQ:>Get@f,
-          _-><||>
-          }
-        ];
-    rempaths=
-      DeleteDuplicates@Flatten@
+      Quiet@CreateDirectory@AppPath[name, "Dependencies"];
+      deppath=AppPath[name, "Dependencies", FileBaseName[dependency]];
+      confBase=
         Replace[
-          Flatten@{
-            Replace[OptionValue["RemovePaths"],
-              Automatic:>
-                {
-                  Lookup[confBase, "RemovePaths", ParentList],
-                  ParentList
-                  }
-              ]
-            },
-          ParentList:>
-            Join[
-              Lookup[$DefaultBundleInfo, "RemovePaths"],
-              Lookup[$DefaultDepRemove, "RemovePaths"]
-              ],
-          1
+          getConfigFile[deppath, "BundleInfo"],
+          {
+            f_String?FileExistsQ:>Get@f,
+            _-><||>
+            }
           ];
-    rempatts=
-      DeleteDuplicates@Flatten@
-        Replace[
-          Flatten@{
-            Replace[OptionValue["RemovePatterns"],
-              Automatic:>
+      rempaths=
+        DeleteDuplicates@Flatten@
+          Replace[
+            Flatten@{
+              Replace[OptionValue["RemovePaths"],
+                Automatic:>
                   {
-                    Lookup[confBase, "RemovePatterns", ParentList],
+                    Lookup[confBase, "RemovePaths", ParentList],
                     ParentList
                     }
-              ]
-            },
-          ParentList:>
-            Join[
-              Lookup[$DefaultBundleInfo, "RemovePatterns"],
-              Lookup[$DefaultDepRemove, "RemovePatterns"]
-              ],
-          1
-          ];
-    PartialDirectoryCopy[
-      dependency,
-      deppath,
-      "RemovePaths"->rempaths,
-      "RemovePatterns"->rempatts
-      ];
+                ]
+              },
+            ParentList:>
+              Join[
+                Lookup[$DefaultBundleInfo, "RemovePaths"],
+                Lookup[$DefaultDepRemove, "RemovePaths"]
+                ],
+            1
+            ];
+      rempatts=
+        DeleteDuplicates@Flatten@
+          Replace[
+            Flatten@{
+              Replace[OptionValue["RemovePatterns"],
+                Automatic:>
+                    {
+                      Lookup[confBase, "RemovePatterns", ParentList],
+                      ParentList
+                      }
+                ]
+              },
+            ParentList:>
+              Join[
+                Lookup[$DefaultBundleInfo, "RemovePatterns"],
+                Lookup[$DefaultDepRemove, "RemovePatterns"]
+                ],
+            1
+            ];
+      PartialDirectoryCopy[
+        dependency,
+        deppath,
+        "RemovePaths"->rempaths,
+        "RemovePatterns"->rempatts
+        ];
     newload=
       Merge[
         {
@@ -1000,13 +1002,13 @@ AppAddDependency[
       ];
     deppath
     ];
-AppAddDependency[
+AppBundleDependency[
   name_?StringQ,
   p_PacletManager`Paclet,
   ops:OptionsPattern[]
   ]:=
-  AppAddDependency[name, p["Location"], ops];
-AppAddDependency[
+  AppBundleDependency[name, p["Location"], ops];
+AppBundleDependency[
   name_?StringQ,
   n_String,
   ops:OptionsPattern[]
@@ -1014,9 +1016,63 @@ AppAddDependency[
   Replace[PacletManager`PacletFind[StringSplit[n, "`"][[1]]],
     {
       {p_, ___}:>
-        AppAddDependency[name, p, ops],
+        AppBundleDependency[name, p, ops],
       _->$Failed
       }
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*AppAddDependency*)
+
+
+
+AppAddDependency//Clear
+
+
+Options[AppAddDependency]=
+  Join[
+    Options[AppBundleDependency],
+    {
+      "Bundled"->True
+      }
+    ];
+AppAddDependency[
+  name_?StringQ,
+  dependency_String,
+  ops:OptionsPattern[]
+  ]:=
+  Block[
+    {
+      newload,
+      bund=Lookup[Select[Flatten@{ops}, OptionQ], "Bundled", True], 
+      loadconf,
+      deplist,
+      depname
+      },
+    If[bund,
+      AppBundleDepdency[name, dependency, 
+        FilterRules[{ops}, Options[AppBundleDepdency]]
+        ]
+      ];
+    loadconf=
+      Association@
+        Replace[Quiet@Get[getConfigFile[name, "LoadInfo"]],
+          Except[_Association?AssociationQ|_List?OptionQ]->{}
+          ];
+    deplist=Lookup[loadconf, "Dependencies", {}];
+    deplist=
+      Association@
+        Map[If[StringQ@#, #-><||>, #[[1]]->Association@Rest[#]]&, deplist];
+    depname=
+      StringSplit[FileBaseName[dependency], "-"|"`"][[1]]<>"`";
+    deplist[depname]=Association[ops];
+    loadconf["Dependencies"]=
+      KeyValueMap[
+        Prepend[Normal@#2, #]&,
+        deplist
+        ];
+    AppRegenerateLoadInfo[name, Sequence@@Normal@loadconf]
     ];
 
 
@@ -1045,9 +1101,13 @@ AppUpdateDependencies[name_, ops:OptionsPattern[]]:=
       depNames={}
       ];
     Map[
-      AppAddDependency[name, Sequence@@Flatten@{#, ops}]&,
+      If[Lookup[Select[Flatten@{#}, OptionQ], "Update"]=!=False,
+        AppAddDependency[name, 
+          Sequence@@Flatten@{#, ops}
+          ]
+        ]&,
       depNames
-      ]
+      ];
     ]
 
 

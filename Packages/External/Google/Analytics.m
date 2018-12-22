@@ -26,31 +26,31 @@ Begin["`Private`"];
 
 
 GAAnalyticsRequest[
-	mode:"AnalyticsReporting":"AnalyticsReporting",
-	passoc_Association,
-	assoc:_Association:<||>
-	]:=
-	Block[{$GAVersion=4},
-		GARequest[
-			"AnalyticsReporting",
-			passoc,
-			assoc
-			]
-		];
+  mode:"AnalyticsReporting":"AnalyticsReporting",
+  passoc_Association,
+  assoc:_Association:<||>
+  ]:=
+  Block[{$GAVersion=4},
+    GARequest[
+      "AnalyticsReporting",
+      passoc,
+      assoc
+      ]
+    ];
 GAAnalyticsRequest[
-	mode:"AnalyticsReporting":"AnalyticsReporting",
-	path:_String|{__String}|Nothing:Nothing,
-	query:_Rule|{___Rule}:{},
-	assoc:_Association:<||>
-	]:=
-	Block[{$GAVersion=4},
-		GARequest[
-			"AnalyticsReporting",
-			path,
-			query,
-			assoc
-			]
-		];
+  mode:"AnalyticsReporting":"AnalyticsReporting",
+  path:_String|{__String}|Nothing:Nothing,
+  query:_Rule|{___Rule}:{},
+  assoc:_Association:<||>
+  ]:=
+  Block[{$GAVersion=4},
+    GARequest[
+      "AnalyticsReporting",
+      path,
+      query,
+      assoc
+      ]
+    ];
 
 
 GoogleAnalytics::err="\n``";
@@ -62,8 +62,8 @@ GoogleAnalytics::err="\n``";
 
 
 If[!AssociationQ@$GoogleAnalyticsCalls,
-	$GoogleAnalyticsCalls=<||>
-	];
+  $GoogleAnalyticsCalls=<||>
+  ];
 
 
 (* ::Subsection:: *)
@@ -77,75 +77,75 @@ If[!AssociationQ@$GoogleAnalyticsCalls,
 
 
 $GAAReportDimensions=
-	<|
-		"UserDimensions"->
-			{
-				"UserType","VisitorType","SessionCount",
-				"VisitCount","DaysSinceLastSession","UserDefinedValue",
-				"UserBucket"
-				},
-		"SessionDimensions"->
-			{
-				"SessionDurationBucket","VisitLength"
-				},
-		"TrafficSourceDimensions"->
-			{
-				"ReferralPath","FullReferrer","Campaign",
-				"Source","Medium","SourceMedium",
-				"Keyword","AdContent","SocialNetwork",
-				"HasSocialSourceReferral","CampaignCode"
-				},
-		"PageDimensions"->
-			{
-				"Hostname","PagePath","PagePathLevel1",
-				"PagePathLevel2","PagePathLevel3","PagePathLevel4",
-				"PageTitle","LandingPagePath","SecondPagePath",
-				"ExitPagePath","PreviousPagePath","PageDepth"
-				},
-		"LocationDimensions"->
-			{
-				"Continent","SubContinent","Country",
-				"Region","Metro","City",
-				"Latitude","Longitude","NetworkDomain",
-				"NetworkLocation","CityId","ContinentId",
-				"CountryIsoCode","MetroId","RegionId",
-				"RegionIsoCode","SubContinentCode"
-				},
-		"TimeDimensions"->
-			{
-				"Date","Year","Month",
-				"Week","Day","Hour",
-				"Minute","NthMonth","NthWeek",
-				"NthDay","NthMinute","DayOfWeek",
-				"DayOfWeekName","DateHour","DateHourMinute",
-				"YearMonth","YearWeek","IsoWeek",
-				"IsoYear","IsoYearIsoWeek","NthHour"
-				},
-		"AudienceDimensions"->
-			{
-				"UserAgeBracket","VisitorAgeBracket","UserGender",
-				"VisitorGender","InterestOtherCategory",
-				"InterestAffinityCategory",
-				"InterestInMarketCategory"
-				},
-		"EventDimensions"->
-			{
-				"EventCategory","EventAction","EventLabel"
-				}
-		|>;
+  <|
+    "UserDimensions"->
+      {
+        "UserType","VisitorType","SessionCount",
+        "VisitCount","DaysSinceLastSession","UserDefinedValue",
+        "UserBucket"
+        },
+    "SessionDimensions"->
+      {
+        "SessionDurationBucket","VisitLength"
+        },
+    "TrafficSourceDimensions"->
+      {
+        "ReferralPath","FullReferrer","Campaign",
+        "Source","Medium","SourceMedium",
+        "Keyword","AdContent","SocialNetwork",
+        "HasSocialSourceReferral","CampaignCode"
+        },
+    "PageDimensions"->
+      {
+        "Hostname","PagePath","PagePathLevel1",
+        "PagePathLevel2","PagePathLevel3","PagePathLevel4",
+        "PageTitle","LandingPagePath","SecondPagePath",
+        "ExitPagePath","PreviousPagePath","PageDepth"
+        },
+    "LocationDimensions"->
+      {
+        "Continent","SubContinent","Country",
+        "Region","Metro","City",
+        "Latitude","Longitude","NetworkDomain",
+        "NetworkLocation","CityId","ContinentId",
+        "CountryIsoCode","MetroId","RegionId",
+        "RegionIsoCode","SubContinentCode"
+        },
+    "TimeDimensions"->
+      {
+        "Date","Year","Month",
+        "Week","Day","Hour",
+        "Minute","NthMonth","NthWeek",
+        "NthDay","NthMinute","DayOfWeek",
+        "DayOfWeekName","DateHour","DateHourMinute",
+        "YearMonth","YearWeek","IsoWeek",
+        "IsoYear","IsoYearIsoWeek","NthHour"
+        },
+    "AudienceDimensions"->
+      {
+        "UserAgeBracket","VisitorAgeBracket","UserGender",
+        "VisitorGender","InterestOtherCategory",
+        "InterestAffinityCategory",
+        "InterestInMarketCategory"
+        },
+    "EventDimensions"->
+      {
+        "EventCategory","EventAction","EventLabel"
+        }
+    |>;
 
 
 $GoogleAnalyticsCalls["ReportDimensions"]=
-	GAAReportDimensions;
+  GAAReportDimensions;
 
 
 GAAReportDimensions//Clear
 
 
 GAAReportDimensions[]:=
-	$GAAReportDimensions;
+  $GAAReportDimensions;
 GAAReportDimensions[p_String, e___String, ___]:=
-	$GAAReportDimensions[StringTrim[p, "s"|"Dimensions"]<>"Dimensions", e];
+  $GAAReportDimensions[StringTrim[p, "s"|"Dimensions"]<>"Dimensions", e];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -154,53 +154,53 @@ GAAReportDimensions[p_String, e___String, ___]:=
 
 
 $GAAReportMetrics=
-	<|
-		"UserMetrics"->
-			{
-				"Users","Visitors","NewUsers",
-				"NewVisits","1DayUsers","7DayUsers",
-				"14DayUsers","28DayUsers","30DayUsers",
-				"SessionsPerUser",
-				"PercentNewSessions","PercentNewVisits"
-				},
-		"SessionMetrics"->
-			{
-				"Sessions",
-				"Visits","Bounces","SessionDuration",
-				"UniqueDimensionCombinations","Hits",
-				"BounceRate","VisitBounceRate","AvgSessionDuration"
-				},
-		"TrafficSourceMetrics"->
-			{
-				"OrganicSearches"
-				},
-		"PageMetrics"->
-			{
-				"PageValue","Entrances","Pageviews",
-				"UniquePageviews","TimeOnPage","Exits",
-				"EntranceRate","PageviewsPerSession","PageviewsPerVisit",
-				"AvgTimeOnPage","ExitRate"
-				},
-		"EventMetrics"->
-			{
-				"TotalEvents","UniqueEvents","EventValue",
-				"SessionsWithEvent","VisitsWithEvent","AvgEventValue",
-				"EventsPerSessionWithEvent","EventsPerVisitWithEvent"
-				}
-		|>;
+  <|
+    "UserMetrics"->
+      {
+        "Users","Visitors","NewUsers",
+        "NewVisits","1DayUsers","7DayUsers",
+        "14DayUsers","28DayUsers","30DayUsers",
+        "SessionsPerUser",
+        "PercentNewSessions","PercentNewVisits"
+        },
+    "SessionMetrics"->
+      {
+        "Sessions",
+        "Visits","Bounces","SessionDuration",
+        "UniqueDimensionCombinations","Hits",
+        "BounceRate","VisitBounceRate","AvgSessionDuration"
+        },
+    "TrafficSourceMetrics"->
+      {
+        "OrganicSearches"
+        },
+    "PageMetrics"->
+      {
+        "PageValue","Entrances","Pageviews",
+        "UniquePageviews","TimeOnPage","Exits",
+        "EntranceRate","PageviewsPerSession","PageviewsPerVisit",
+        "AvgTimeOnPage","ExitRate"
+        },
+    "EventMetrics"->
+      {
+        "TotalEvents","UniqueEvents","EventValue",
+        "SessionsWithEvent","VisitsWithEvent","AvgEventValue",
+        "EventsPerSessionWithEvent","EventsPerVisitWithEvent"
+        }
+    |>;
 
 
 $GoogleAnalyticsCalls["ReportMetrics"]=
-	GAAReportMetrics;
+  GAAReportMetrics;
 
 
 GAAReportMetrics//Clear
 
 
 GAAReportMetrics[]:=
-	$GAAReportMetrics;
+  $GAAReportMetrics;
 GAAReportMetrics[p_, e___String, ___]:=
-	$GAAReportMetrics[StringTrim[p, "s"|"Metrics"]<>"Metrics", e];
+  $GAAReportMetrics[StringTrim[p, "s"|"Metrics"]<>"Metrics", e];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -209,7 +209,7 @@ GAAReportMetrics[p_, e___String, ___]:=
 
 
 $GoogleAnalyticsCalls["GetReport"]=
-	GAAGetReport;
+  GAAGetReport;
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -218,24 +218,24 @@ $GoogleAnalyticsCalls["GetReport"]=
 
 
 $GAParamMap["GetReport"]=
-	{
-		"dateRanges"->Automatic,
-		"samplingLevel"->Automatic,
-		"dimensions"->Automatic,
-		"dimensionFilterClauses"->Automatic,
-		"metrics"->Automatic,
-		"metricFilterClauses"->Automatic,
-		"filtersExpression"->Automatic,
-		"orderBys"->Automatic,
-		"segments"->Automatic,
-		"pivots"->Automatic,
-		"cohortGroup"->Automatic,
-		"pageToken"->Automatic,
-		"pageSize"->Automatic,
-		"includeEmptyRows"->Automatic,
-		"hideTotals"->Automatic,
-		"hideValueRanges"->Automatic
-		};
+  {
+    "dateRanges"->Automatic,
+    "samplingLevel"->Automatic,
+    "dimensions"->Automatic,
+    "dimensionFilterClauses"->Automatic,
+    "metrics"->Automatic,
+    "metricFilterClauses"->Automatic,
+    "filtersExpression"->Automatic,
+    "orderBys"->Automatic,
+    "segments"->Automatic,
+    "pivots"->Automatic,
+    "cohortGroup"->Automatic,
+    "pageToken"->Automatic,
+    "pageSize"->Automatic,
+    "includeEmptyRows"->Automatic,
+    "hideTotals"->Automatic,
+    "hideValueRanges"->Automatic
+    };
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -244,16 +244,16 @@ $GAParamMap["GetReport"]=
 
 
 gaaDecapsMet[s_]:=
-	With[{bits=
-		DeleteCases[""]@
-			StringSplit[s, StartOfString~~n:NumberString:>n, 2]},
-		"ga:"<>
-			If[Length@bits==2,
-				bits[[1]]<>
-					ToLowerCase@StringTake[bits[[2]], 1]<>StringDrop[bits[[2]], 1],
-				ToLowerCase@StringTake[bits[[1]], 1]<>StringDrop[bits[[1]], 1]
-				]
-		]
+  With[{bits=
+    DeleteCases[""]@
+      StringSplit[s, StartOfString~~n:NumberString:>n, 2]},
+    "ga:"<>
+      If[Length@bits==2,
+        bits[[1]]<>
+          ToLowerCase@StringTake[bits[[2]], 1]<>StringDrop[bits[[2]], 1],
+        ToLowerCase@StringTake[bits[[1]], 1]<>StringDrop[bits[[1]], 1]
+        ]
+    ]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -262,13 +262,13 @@ gaaDecapsMet[s_]:=
 
 
 gaaPrepMetrics[s:{__String}]:=
-	Map[
-		{"expression"->gaaDecapsMet[#]}&,
-		Take[
-			s,
-			UpTo[10]
-			]
-		]
+  Map[
+    {"expression"->gaaDecapsMet[#]}&,
+    Take[
+      s,
+      UpTo[10]
+      ]
+    ]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -277,13 +277,13 @@ gaaPrepMetrics[s:{__String}]:=
 
 
 gaaPrepDims[s:{__String}]:=
-	Map[
-		{"name"->gaaDecapsMet[#]}&,
-		Take[
-			s,
-			UpTo[10]
-			]
-		]
+  Map[
+    {"name"->gaaDecapsMet[#]}&,
+    Take[
+      s,
+      UpTo[10]
+      ]
+    ]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -292,21 +292,45 @@ gaaPrepDims[s:{__String}]:=
 
 
 gaaPrepReportReqs[s_String]:=
-	{
-		"metrics"->
-			gaaPrepMetrics@
-				Lookup[$GAAReportMetrics, 
-					StringTrim[s, "s"]<>"Metrics",
-					{}
-					],
-		"dimensions"->
-			gaaPrepDims@
-				Lookup[$GAAReportDimensions, 
-					StringTrim[s, "s"]<>"Dimensions",
-					{}
-					]
-		};
+  {
+    "metrics"->
+      gaaPrepMetrics@
+        Lookup[$GAAReportMetrics, 
+          StringTrim[s, "s"]<>"Metrics",
+          {}
+          ],
+    "dimensions"->
+      gaaPrepDims@
+        Lookup[$GAAReportDimensions, 
+          StringTrim[s, "s"]<>"Dimensions",
+          {}
+          ]
+    };
 gaaPrepReportReqs[___]:={};
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*gaaPrepDateRanges*)
+
+
+
+gaaPrepDateRanges[start_, end_]:=
+  If[Not[ListQ@#],
+    PackageRaiseException[
+      Automatic,
+      "Date range start spec `` and end spec `` invalid",
+      start,
+      end
+      ],
+    #
+    ]&@
+  If[ListQ@start&&ListQ@end,
+    MapThread[
+      {"startDate"->#, "endDate"->#2}&,
+      {start, end}
+      ],
+    {"startDate"->start, "endDate"->end}
+    ]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -318,77 +342,92 @@ GAAGetReport//Clear
 
 
 Options[GAAGetReport]=
-	Join[
-		{
-			"StartDate":>DateObject[{2005, 1, 1}],
-			"EndDate":>Tomorrow,
-			"Reports"->None,
-			"Metrics"->None,
-			"Dimensions"->None
-			},
-		$GAParamMap["GetReport"]
-		];
+  Join[
+    {
+      "StartDate":>DateObject[{2005, 1, 1}],
+      "EndDate":>Tomorrow,
+      "Reports"->None,
+      "Metrics"->None,
+      "Dimensions"->None
+      },
+    $GAParamMap["GetReport"]
+    ];
 GAAGetReport[
-	viewID:_String|_Integer,
-	ops:OptionsPattern[]
-	]:=
-	GAAnalyticsRequest[
-		<|
-			"Path"->"reports",
-			"Port"->"batchGet"
-			|>,
-		<|
-			"Method"->"POST",
-			"Body"->
-				ExportString[
-					{
-						"reportRequests"->
-							Flatten@
-								{
-									"viewId"->ToString@viewID,
-									GAPrepParams[
-										{
-											ops,
-											"dateRanges"->
-												{
-													"startDate"->OptionValue["StartDate"],
-													"endDate"->OptionValue["EndDate"]
-													},
-											Replace[OptionValue["Metrics"],
-												{
-													s_String:>
-														("metrics"->gaaPrepMetrics[{s}]),
-													s:{__String}:>
-														("metrics"->gaaPrepMetrics[s]),
-													_->{}
-													}
-												],
-											Replace[OptionValue["Dimensions"],
-												{
-													s_String:>
-														("dimensions"->gaaPrepDims[{s}]),
-													s:{__String}:>
-														("dimensions"->gaaPrepDims[s]),
-													_->{}
-													}
-												],
-											Sequence@@
-												Normal@
-													Merge[
-														Replace[Except[_List]->{}]@
-														Map[gaaPrepReportReqs, OptionValue["Reports"]],
-														Flatten[#, 1]&
-														]
-											},
-										GAAGetReport,
-										"GetReport"
-										]
-									}
-						},
-					"JSON"
-					]
-			|>
-		]
+  viewID:_String|_Integer,
+  ops:OptionsPattern[]
+  ]:=
+  GAAnalyticsRequest[
+    <|
+      "Path"->"reports",
+      "Port"->"batchGet"
+      |>,
+    <|
+      "Method"->"POST",
+      "Body"->
+        ExportString[
+          {
+            "reportRequests"->
+              Flatten@
+                {
+                  "viewId"->ToString@viewID,
+                  GAPrepParams[
+                    {
+                      ops,
+                      "dateRanges"->
+                        gaaPrepDateRanges[
+                          OptionValue["StartDate"],
+                          OptionValue["EndDate"]
+                          ],
+                      Replace[OptionValue["Metrics"],
+                        {
+                          s_String:>
+                            ("metrics"->gaaPrepMetrics[{s}]),
+                          s:{__String}:>
+                            ("metrics"->gaaPrepMetrics[s]),
+                          _->{}
+                          }
+                        ],
+                      Replace[OptionValue["Dimensions"],
+                        {
+                          s_String:>
+                            ("dimensions"->gaaPrepDims[{s}]),
+                          s:{__String}:>
+                            ("dimensions"->gaaPrepDims[s]),
+                          _->{}
+                          }
+                        ],
+                      Sequence@@
+                        Normal@
+                          Merge[
+                            Replace[Except[_List]->{}]@
+                            Map[gaaPrepReportReqs, OptionValue["Reports"]],
+                            Flatten[#, 1]&
+                            ]
+                      },
+                    GAAGetReport,
+                    "GetReport"
+                    ]
+                  }
+            },
+          "JSON"
+          ]
+      |>
+    ];
+GAAGetReport[
+  viewID:_String|_Integer,
+  name_String,
+  ops:OptionsPattern[]
+  ]:=
+  With[{rep=$GAANamedReports[name]},
+    If[MissingQ@rep,
+      PackageRaiseException[
+        Automatic,
+        "Unknown report ``",
+        name
+        ]
+      ];
+    GAAGetReport[viewID, rep, ops]
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -397,31 +436,32 @@ GAAGetReport[
 
 
 $GoogleAnalyticsCalls["NamedReports"]=
-	GAANamedReport;
+  GAANamedReport;
 
 
 $GAANamedReports=
-	<|
-		"PageUserNumbers"->
-			{
-				"Dimensions"->
-					{
-						"PagePath"
-						},
-				"Metrics"->
-					{
-						"Users", 
-						"Visitors",
-						"NewUsers",
-						"NewVisits"
-						}
-				},
-		
-		|>
+  <|
+    "PageUserNumbers"->
+      {
+        "Dimensions"->
+          {
+            "PagePath"
+            },
+        "Metrics"->
+          {
+            "Users", 
+            "Visitors",
+            "NewUsers",
+            "NewVisits"
+            }
+        }
+    |>
 
 
-
-				
+GAANamedReport[]:=
+  $GAANamedReports;
+GAANamedReport[name_]:=
+  $GAANamedReports[name];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -430,45 +470,45 @@ $GAANamedReports=
 
 
 $GoogleAnalyticsCalls["GetPageViews"]=
-	GAAGetPageViews;
+  GAAGetPageViews;
 
 
 Options[GAAGetPageViews]=
-	{
-		"StartDate":>DateObject[{2005, 1, 1}],
-		"EndDate":>Tomorrow
-		};
+  {
+    "StartDate":>DateObject[{2005, 1, 1}],
+    "EndDate":>Tomorrow
+    };
 GAAGetPageViews[
-	viewID:_String|_Integer,
-	ops:OptionsPattern[]
-	]:=
-	Module[
-		{
-			rawData=
-				GoogleAnalytics[
-					"GetReport",
-					viewID,
-					"Dimensions"->"PagePath",
-					"Metrics"->"Pageviews",
-					ops
-					],
-			ds
-			},
-		If[rawData["StatusCode"]==200,
-			ds=
-				Dataset@rawData[["Content", "Reports", 1, "Data", "Rows"]],
-			ds=$Failed
-			];
-		If[ds=!=$Failed,
-			ds[All,
-				<|
-					"Page"->#Dimensions[[1]],
-					"Views"->Floor@Internal`StringToDouble@#Metrics[[1, "Values", 1]]
-					|>&
-				],
-			$Failed
-			]
-		]
+  viewID:_String|_Integer,
+  ops:OptionsPattern[]
+  ]:=
+  Module[
+    {
+      rawData=
+        GoogleAnalytics[
+          "GetReport",
+          viewID,
+          "Dimensions"->"PagePath",
+          "Metrics"->"Pageviews",
+          ops
+          ],
+      ds
+      },
+    If[rawData["StatusCode"]==200,
+      ds=
+        Dataset@rawData[["Content", "Reports", 1, "Data", "Rows"]],
+      ds=$Failed
+      ];
+    If[ds=!=$Failed,
+      ds[All,
+        <|
+          "Page"->#Dimensions[[1]],
+          "Views"->Floor@Internal`StringToDouble@#Metrics[[1, "Values", 1]]
+          |>&
+        ],
+      $Failed
+      ]
+    ]
 
 
 End[];

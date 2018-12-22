@@ -224,6 +224,10 @@ Cell[BoxData[{
 Cell[BoxData[{
  RowBox[{
   RowBox[{
+   RowBox[{"AppBundleDependency", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Bundles a dependency into the app\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
    RowBox[{"AppAddDependency", "::", "usage"}], "=", "\n", "\t", 
    "\"\<Adds a dependency to the app\>\""}], ";"}], "\n", 
  RowBox[{
@@ -544,7 +548,7 @@ Cell[BoxData[{
          "\t", "\t\t\t\t", "]"}]}]}]}]}], "\n", "\t", "]"}]}], 
   ";"}]}], "CodeInput",ExpressionUUID->"39fec671-799e-49ed-888c-c65176324723"]\
 
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -1836,7 +1840,7 @@ Cell[BoxData[{
     "\t\t", "]"}]}], 
   ";"}]}], "CodeInput",ExpressionUUID->"af95be69-b8a5-467f-9c27-e9f8c5db04f1"]\
 
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -1965,8 +1969,8 @@ Cell[BoxData[
 
 Cell[CellGroupData[{
 
-Cell["\[LeftCeiling]AppAddDependency\[RightFloor]", "CodeSubsubsection",
- Evaluatable->True,ExpressionUUID->"bd937203-4f25-445d-bda4-51bc22a47728"],
+Cell["\[LeftCeiling]AppBundleDependency\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"184aeb0d-d789-4870-afb5-341bae68103c"],
 
 Cell[BoxData[
  RowBox[{"$DefaultDepRemove", "=", "\n", "\t", 
@@ -1981,130 +1985,136 @@ Cell[BoxData[
 
 Cell[BoxData[{
  RowBox[{
-  RowBox[{"Options", "[", "AppAddDependency", "]"}], "=", "\n", "\t", 
-  RowBox[{"{", "\n", "\t\t", 
-   RowBox[{
-    RowBox[{"\"\<RemovePaths\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
-    "\t\t", 
-    RowBox[{"\"\<RemovePatterns\>\"", "\[Rule]", "Automatic"}]}], "\n", 
-   "\t\t", "}"}]}], "\n", 
+  RowBox[{
+   RowBox[{"Options", "[", "AppBundleDependency", "]"}], "=", "\n", "\t", 
+   RowBox[{"{", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"\"\<RemovePaths\>\"", "\[Rule]", "Automatic"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"\"\<RemovePatterns\>\"", "\[Rule]", "Automatic"}]}], "\n", 
+    "\t\t", "}"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
-   RowBox[{"AppAddDependency", "[", "\n", "\t", 
+   RowBox[{"AppBundleDependency", "[", "\n", "\t", 
     RowBox[{
      RowBox[{"name_", "?", "StringQ"}], ",", "\n", "\t", 
      RowBox[{"dependency_String", "?", "DirectoryQ"}], ",", "\n", "\t", 
      RowBox[{"ops", ":", 
       RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
     "\t", 
-   RowBox[{"Block", "[", "\n", "\t\t", 
+   RowBox[{"Module", "[", "\n", "\t\t", 
     RowBox[{
      RowBox[{"{", "\n", "\t\t\t", 
       RowBox[{
-      "deppath", ",", "\n", "\t\t\t", "newload", ",", "\n", "\t\t\t", 
-       "rempaths", ",", "\n", "\t\t\t", "rempatts", ",", "\n", "\t\t\t", 
-       "confBase"}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+      "deppath", ",", "\n", "\t\t\t", "rempaths", ",", "\n", "\t\t\t", 
+       "rempatts", ",", "\n", "\t\t\t", "confBase", ",", "\n", "\t\t\t", 
+       "newload"}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t\t", 
      RowBox[{
       RowBox[{"Quiet", "@", 
        RowBox[{"CreateDirectory", "@", 
         RowBox[{"AppPath", "[", 
          RowBox[{"name", ",", " ", "\"\<Dependencies\>\""}], "]"}]}]}], ";", 
-      "\n", "\t\t", 
+      "\n", "\t", "\t\t", 
       RowBox[{"deppath", "=", 
        RowBox[{"AppPath", "[", 
         RowBox[{"name", ",", " ", "\"\<Dependencies\>\"", ",", " ", 
          RowBox[{"FileBaseName", "[", "dependency", "]"}]}], "]"}]}], ";", 
-      "\n", "\t\t", 
-      RowBox[{"confBase", "=", "\n", "\t\t\t", 
-       RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
+      "\n", "\t", "\t\t", 
+      RowBox[{"confBase", "=", "\n", "\t", "\t\t\t", 
+       RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t", 
         RowBox[{
          RowBox[{"getConfigFile", "[", 
           RowBox[{"deppath", ",", " ", "\"\<BundleInfo\>\""}], "]"}], ",", 
-         "\n", "\t\t\t\t", 
-         RowBox[{"{", "\n", "\t\t\t\t\t", 
+         "\n", "\t", "\t\t\t\t", 
+         RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
           RowBox[{
            RowBox[{
             RowBox[{"f_String", "?", "FileExistsQ"}], "\[RuleDelayed]", 
-            RowBox[{"Get", "@", "f"}]}], ",", "\n", "\t\t\t\t\t", 
+            RowBox[{"Get", "@", "f"}]}], ",", "\n", "\t", "\t\t\t\t\t", 
            RowBox[{"_", "\[Rule]", 
-            RowBox[{"<|", "|>"}]}]}], "\n", "\t\t\t\t\t", "}"}]}], "\n", 
-        "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
-      RowBox[{"rempaths", "=", "\n", "\t\t\t", 
+            RowBox[{"<|", "|>"}]}]}], "\n", "\t", "\t\t\t\t\t", "}"}]}], "\n",
+         "\t", "\t\t\t\t", "]"}]}], ";", "\n", "\t", "\t\t", 
+      RowBox[{"rempaths", "=", "\n", "\t", "\t\t\t", 
        RowBox[{"DeleteDuplicates", "@", 
-        RowBox[{"Flatten", "@", "\n", "\t\t\t\t", 
-         RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
+        RowBox[{"Flatten", "@", "\n", "\t", "\t\t\t\t", 
+         RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t\t", 
           RowBox[{
            RowBox[{"Flatten", "@", 
-            RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t\t", 
              RowBox[{"Replace", "[", 
               RowBox[{
                RowBox[{"OptionValue", "[", "\"\<RemovePaths\>\"", "]"}], ",", 
-               "\n", "\t\t\t\t\t\t\t", 
+               "\n", "\t", "\t\t\t\t\t\t\t", 
                RowBox[{
-               "Automatic", "\[RuleDelayed]", "\n", "\t\t\t\t\t\t\t\t", 
-                RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t", 
+               "Automatic", "\[RuleDelayed]", "\n", "\t", "\t\t\t\t\t\t\t\t", 
+                
+                RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
                  RowBox[{
                   RowBox[{"Lookup", "[", 
                    RowBox[{
                    "confBase", ",", " ", "\"\<RemovePaths\>\"", ",", " ", 
-                    "ParentList"}], "]"}], ",", "\n", "\t\t\t\t\t\t\t\t\t", 
-                  "ParentList"}], "\n", "\t\t\t\t\t\t\t\t\t", "}"}]}]}], "\n",
-               "\t\t\t\t\t\t\t", "]"}], "\n", "\t\t\t\t\t\t", "}"}]}], ",", 
-           "\n", "\t\t\t\t\t", 
-           RowBox[{"ParentList", ":>", "\n", "\t\t\t\t\t\t", 
-            RowBox[{"Join", "[", "\n", "\t\t\t\t\t\t\t", 
+                    "ParentList"}], "]"}], ",", "\n", "\t", 
+                  "\t\t\t\t\t\t\t\t\t", "ParentList"}], "\n", "\t", 
+                 "\t\t\t\t\t\t\t\t\t", "}"}]}]}], "\n", "\t", 
+              "\t\t\t\t\t\t\t", "]"}], "\n", "\t", "\t\t\t\t\t\t", "}"}]}], 
+           ",", "\n", "\t", "\t\t\t\t\t", 
+           RowBox[{"ParentList", ":>", "\n", "\t", "\t\t\t\t\t\t", 
+            RowBox[{"Join", "[", "\n", "\t", "\t\t\t\t\t\t\t", 
              RowBox[{
               RowBox[{"Lookup", "[", 
                RowBox[{
                "$DefaultBundleInfo", ",", " ", "\"\<RemovePaths\>\""}], "]"}],
-               ",", "\n", "\t\t\t\t\t\t\t", 
+               ",", "\n", "\t", "\t\t\t\t\t\t\t", 
               RowBox[{"Lookup", "[", 
                RowBox[{"$DefaultDepRemove", ",", " ", "\"\<RemovePaths\>\""}],
-                "]"}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
-           "\t\t\t\t\t", "1"}], "\n", "\t\t\t\t\t", "]"}]}]}]}], ";", "\n", 
-      "\t\t", 
-      RowBox[{"rempatts", "=", "\n", "\t\t\t", 
+                "]"}]}], "\n", "\t", "\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+           "\t", "\t\t\t\t\t", "1"}], "\n", "\t", "\t\t\t\t\t", "]"}]}]}]}], 
+      ";", "\n", "\t", "\t\t", 
+      RowBox[{"rempatts", "=", "\n", "\t", "\t\t\t", 
        RowBox[{"DeleteDuplicates", "@", 
-        RowBox[{"Flatten", "@", "\n", "\t\t\t\t", 
-         RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
+        RowBox[{"Flatten", "@", "\n", "\t", "\t\t\t\t", 
+         RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t\t", 
           RowBox[{
            RowBox[{"Flatten", "@", 
-            RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
+            RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t\t", 
              RowBox[{"Replace", "[", 
               RowBox[{
                RowBox[{"OptionValue", "[", "\"\<RemovePatterns\>\"", "]"}], 
-               ",", "\n", "\t\t\t\t\t\t\t", 
+               ",", "\n", "\t", "\t\t\t\t\t\t\t", 
                RowBox[{
-               "Automatic", "\[RuleDelayed]", "\n", "\t\t\t\t\t\t\t\t\t", 
-                RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+               "Automatic", "\[RuleDelayed]", "\n", "\t", 
+                "\t\t\t\t\t\t\t\t\t", 
+                RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
                  RowBox[{
                   RowBox[{"Lookup", "[", 
                    RowBox[{
                    "confBase", ",", " ", "\"\<RemovePatterns\>\"", ",", " ", 
-                    "ParentList"}], "]"}], ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
-                  "ParentList"}], "\n", "\t\t\t\t\t\t\t\t\t\t", "}"}]}]}], 
-              "\n", "\t\t\t\t\t\t\t", "]"}], "\n", "\t\t\t\t\t\t", "}"}]}], 
-           ",", "\n", "\t\t\t\t\t", 
-           RowBox[{"ParentList", ":>", "\n", "\t\t\t\t\t\t", 
-            RowBox[{"Join", "[", "\n", "\t\t\t\t\t\t\t", 
+                    "ParentList"}], "]"}], ",", "\n", "\t", 
+                  "\t\t\t\t\t\t\t\t\t\t", "ParentList"}], "\n", "\t", 
+                 "\t\t\t\t\t\t\t\t\t\t", "}"}]}]}], "\n", "\t", 
+              "\t\t\t\t\t\t\t", "]"}], "\n", "\t", "\t\t\t\t\t\t", "}"}]}], 
+           ",", "\n", "\t", "\t\t\t\t\t", 
+           RowBox[{"ParentList", ":>", "\n", "\t", "\t\t\t\t\t\t", 
+            RowBox[{"Join", "[", "\n", "\t", "\t\t\t\t\t\t\t", 
              RowBox[{
               RowBox[{"Lookup", "[", 
                RowBox[{
                "$DefaultBundleInfo", ",", " ", "\"\<RemovePatterns\>\""}], 
-               "]"}], ",", "\n", "\t\t\t\t\t\t\t", 
+               "]"}], ",", "\n", "\t", "\t\t\t\t\t\t\t", 
               RowBox[{"Lookup", "[", 
                RowBox[{
                "$DefaultDepRemove", ",", " ", "\"\<RemovePatterns\>\""}], 
-               "]"}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
-           "\t\t\t\t\t", "1"}], "\n", "\t\t\t\t\t", "]"}]}]}]}], ";", "\n", 
-      "\t\t", 
-      RowBox[{"PartialDirectoryCopy", "[", "\n", "\t\t\t", 
+               "]"}]}], "\n", "\t", "\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
+           "\t", "\t\t\t\t\t", "1"}], "\n", "\t", "\t\t\t\t\t", "]"}]}]}]}], 
+      ";", "\n", "\t", "\t\t", 
+      RowBox[{"PartialDirectoryCopy", "[", "\n", "\t", "\t\t\t", 
        RowBox[{
-       "dependency", ",", "\n", "\t\t\t", "deppath", ",", "\n", "\t\t\t", 
-        RowBox[{"\"\<RemovePaths\>\"", "\[Rule]", "rempaths"}], ",", "\n", 
+       "dependency", ",", "\n", "\t", "\t\t\t", "deppath", ",", "\n", "\t", 
         "\t\t\t", 
+        RowBox[{"\"\<RemovePaths\>\"", "\[Rule]", "rempaths"}], ",", "\n", 
+        "\t", "\t\t\t", 
         RowBox[{"\"\<RemovePatterns\>\"", "\[Rule]", "rempatts"}]}], "\n", 
-       "\t\t\t", "]"}], ";", "\n", "\t\t", 
+       "\t\t\t\t", "]"}], ";", "\n", "\t\t", 
       RowBox[{"newload", "=", "\n", "\t\t\t", 
        RowBox[{"Merge", "[", "\n", "\t\t\t\t", 
         RowBox[{
@@ -2145,20 +2155,20 @@ Cell[BoxData[{
       "\n", "\t\t", "deppath"}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
-   RowBox[{"AppAddDependency", "[", "\n", "\t", 
+   RowBox[{"AppBundleDependency", "[", "\n", "\t", 
     RowBox[{
      RowBox[{"name_", "?", "StringQ"}], ",", "\n", "\t", 
      "p_PacletManager`Paclet", ",", "\n", "\t", 
      RowBox[{"ops", ":", 
       RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
     "\t", 
-   RowBox[{"AppAddDependency", "[", 
+   RowBox[{"AppBundleDependency", "[", 
     RowBox[{"name", ",", " ", 
      RowBox[{"p", "[", "\"\<Location\>\"", "]"}], ",", " ", "ops"}], "]"}]}], 
   ";"}], "\n", 
  RowBox[{
   RowBox[{
-   RowBox[{"AppAddDependency", "[", "\n", "\t", 
+   RowBox[{"AppBundleDependency", "[", "\n", "\t", 
     RowBox[{
      RowBox[{"name_", "?", "StringQ"}], ",", "\n", "\t", "n_String", ",", 
      "\n", "\t", 
@@ -2177,13 +2187,135 @@ Cell[BoxData[{
        RowBox[{
         RowBox[{"{", 
          RowBox[{"p_", ",", " ", "___"}], "}"}], ":>", "\n", "\t\t\t\t", 
-        RowBox[{"AppAddDependency", "[", 
+        RowBox[{"AppBundleDependency", "[", 
          RowBox[{"name", ",", " ", "p", ",", " ", "ops"}], "]"}]}], ",", "\n",
         "\t\t\t", 
        RowBox[{"_", "\[Rule]", "$Failed"}]}], "\n", "\t\t\t", "}"}]}], "\n", 
     "\t\t", "]"}]}], 
-  ";"}]}], "CodeInput",ExpressionUUID->"3eb3634e-bb31-491b-91be-4c4d253ef831"]\
+  ";"}]}], "CodeInput",ExpressionUUID->"b1489fc1-bd4a-48b5-ae7b-d010d36368bf"]\
 
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]AppAddDependency\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"bd937203-4f25-445d-bda4-51bc22a47728"],
+
+Cell[BoxData[
+ RowBox[{"AppAddDependency", "//", 
+  "Clear"}]], \
+"CodeInput",ExpressionUUID->"6fb6e582-2d7e-4042-88a9-ecc1442849bd"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "AppAddDependency", "]"}], "=", "\n", "\t", 
+   RowBox[{"Join", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Options", "[", "AppBundleDependency", "]"}], ",", "\n", "\t\t", 
+     
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{"\"\<Bundled\>\"", "\[Rule]", "True"}], "\n", "\t\t\t", "}"}]}],
+     "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AppAddDependency", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"name_", "?", "StringQ"}], ",", "\n", "\t", "dependency_String", 
+     ",", "\n", "\t", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
+    "\t", 
+   RowBox[{"Block", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{"newload", ",", "\n", "\t\t\t", 
+       RowBox[{"bund", "=", 
+        RowBox[{"Lookup", "[", 
+         RowBox[{
+          RowBox[{"Select", "[", 
+           RowBox[{
+            RowBox[{"Flatten", "@", 
+             RowBox[{"{", "ops", "}"}]}], ",", " ", "OptionQ"}], "]"}], ",", 
+          " ", "\"\<Bundled\>\"", ",", " ", "True"}], "]"}]}], ",", " ", "\n",
+        "\t\t\t", "loadconf", ",", "\n", "\t\t\t", "deplist", ",", "\n", 
+       "\t\t\t", "depname"}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"If", "[", 
+       RowBox[{"bund", ",", "\n", "\t\t\t", 
+        RowBox[{"AppBundleDepdency", "[", 
+         RowBox[{"name", ",", " ", "dependency", ",", " ", "\n", "\t\t\t\t", 
+          RowBox[{"FilterRules", "[", 
+           RowBox[{
+            RowBox[{"{", "ops", "}"}], ",", " ", 
+            RowBox[{"Options", "[", "AppBundleDepdency", "]"}]}], "]"}]}], 
+         "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}], ";", "\n", "\t\t", 
+      
+      RowBox[{"loadconf", "=", "\n", "\t\t\t", 
+       RowBox[{"Association", "@", "\n", "\t\t\t\t", 
+        RowBox[{"Replace", "[", 
+         RowBox[{
+          RowBox[{"Quiet", "@", 
+           RowBox[{"Get", "[", 
+            RowBox[{"getConfigFile", "[", 
+             RowBox[{"name", ",", " ", "\"\<LoadInfo\>\""}], "]"}], "]"}]}], 
+          ",", "\n", "\t", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Except", "[", 
+            RowBox[{
+             RowBox[{"_Association", "?", "AssociationQ"}], "|", 
+             RowBox[{"_List", "?", "OptionQ"}]}], "]"}], "\[Rule]", 
+           RowBox[{"{", "}"}]}]}], "\n", "\t", "\t\t\t\t", "]"}]}]}], ";", 
+      "\n", "\t\t", 
+      RowBox[{"deplist", "=", 
+       RowBox[{"Lookup", "[", 
+        RowBox[{"loadconf", ",", " ", "\"\<Dependencies\>\"", ",", " ", 
+         RowBox[{"{", "}"}]}], "]"}]}], ";", "\n", "\t\t", 
+      RowBox[{"deplist", "=", "\n", "\t\t\t", 
+       RowBox[{"Association", "@", "\n", "\t\t\t\t", 
+        RowBox[{"Map", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{"StringQ", "@", "#"}], ",", " ", 
+             RowBox[{"#", "\[Rule]", 
+              RowBox[{"<|", "|>"}]}], ",", " ", 
+             RowBox[{
+              RowBox[{"#", "[", 
+               RowBox[{"[", "1", "]"}], "]"}], "\[Rule]", 
+              RowBox[{"Association", "@", 
+               RowBox[{"Rest", "[", "#", "]"}]}]}]}], "]"}], "&"}], ",", " ", 
+          "deplist"}], "]"}]}]}], ";", "\n", "\t\t", 
+      RowBox[{"depname", "=", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"StringSplit", "[", 
+          RowBox[{
+           RowBox[{"FileBaseName", "[", "dependency", "]"}], ",", " ", 
+           RowBox[{"\"\<-\>\"", "|", "\"\<`\>\""}]}], "]"}], "[", 
+         RowBox[{"[", "1", "]"}], "]"}], "<>", "\"\<`\>\""}]}], ";", "\n", 
+      "\t\t", 
+      RowBox[{
+       RowBox[{"deplist", "[", "depname", "]"}], "=", 
+       RowBox[{"Association", "[", "ops", "]"}]}], ";", "\n", "\t\t", 
+      RowBox[{
+       RowBox[{"loadconf", "[", "\"\<Dependencies\>\"", "]"}], "=", "\n", 
+       "\t\t\t", 
+       RowBox[{"KeyValueMap", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Prepend", "[", 
+           RowBox[{
+            RowBox[{"Normal", "@", "#2"}], ",", " ", "#"}], "]"}], "&"}], ",",
+          "\n", "\t\t\t\t", "deplist"}], "\n", "\t\t\t\t", "]"}]}], ";", "\n",
+       "\t\t", 
+      RowBox[{"AppRegenerateLoadInfo", "[", 
+       RowBox[{"name", ",", " ", 
+        RowBox[{"Sequence", "@@", 
+         RowBox[{"Normal", "@", "loadconf"}]}]}], "]"}]}]}], "\n", "\t\t", 
+    "]"}]}], ";"}]}], \
+"CodeInput",ExpressionUUID->"3eb3634e-bb31-491b-91be-4c4d253ef831"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -2236,13 +2368,25 @@ Cell[BoxData[
      RowBox[{"Map", "[", "\n", "\t\t\t", 
       RowBox[{
        RowBox[{
-        RowBox[{"AppAddDependency", "[", 
-         RowBox[{"name", ",", " ", 
-          RowBox[{"Sequence", "@@", 
-           RowBox[{"Flatten", "@", 
-            RowBox[{"{", 
-             RowBox[{"#", ",", " ", "ops"}], "}"}]}]}]}], "]"}], "&"}], ",", 
-       "\n", "\t\t\t", "depNames"}], "\n", "\t\t\t", "]"}]}]}], "\n", "\t\t", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Lookup", "[", 
+            RowBox[{
+             RowBox[{"Select", "[", 
+              RowBox[{
+               RowBox[{"Flatten", "@", 
+                RowBox[{"{", "#", "}"}]}], ",", " ", "OptionQ"}], "]"}], ",", 
+             " ", "\"\<Update\>\""}], "]"}], "=!=", "False"}], ",", "\n", 
+          "\t\t\t\t", 
+          RowBox[{"AppAddDependency", "[", 
+           RowBox[{"name", ",", " ", "\n", "\t\t\t\t\t", 
+            RowBox[{"Sequence", "@@", 
+             RowBox[{"Flatten", "@", 
+              RowBox[{"{", 
+               RowBox[{"#", ",", " ", "ops"}], "}"}]}]}]}], "\n", 
+           "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", "]"}], "&"}], ",", "\n", 
+       "\t\t\t", "depNames"}], "\n", "\t\t\t", "]"}], ";"}]}], "\n", "\t\t", 
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"ee803564-0ee4-47d3-b713-6253e218ad1c"]
 }, Open  ]]
@@ -5210,7 +5354,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"51af92ef-62b7-4e37-bdaf-\
 538e35eb72a6"]
 },
 WindowSize->{798, 765},
-WindowMargins->{{34, Automatic}, {24, Automatic}},
+WindowMargins->{{81, Automatic}, {Automatic, 0}},
 Visible->True,
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
