@@ -243,7 +243,7 @@ AppPacletBundle[
             AppRegenerateInit[app]
             ];
           If[TrueQ@OptionValue["UpdateDependencies"], 
-            AppUpdateDepdencies[app]
+            AppUpdateDependencies[app]
             ];
           PacletBundle[
             AppDirectory[app],

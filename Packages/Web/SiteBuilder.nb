@@ -252,7 +252,7 @@ Cell[BoxData[{
   3.723003282032915*^9, 3.723003375869944*^9}, {3.723055458979436*^9, 
   3.723055463136051*^9}},ExpressionUUID->"27eee7d8-e2f7-4648-af63-\
 2c0b461afb40"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -4717,7 +4717,7 @@ Cell[BoxData[{
     "\t\t", "]"}]}], 
   ";"}]}], "CodeInput",ExpressionUUID->"e3aca857-e027-499a-ab12-0c55d97791da"]\
 
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -5461,6 +5461,8 @@ Cell["\[LeftCeiling]webSiteCopyContentSpec\[RightFloor]", \
 
 Cell[BoxData[{
  RowBox[{
+  RowBox[{"webSiteCopyContentSpec", "//", "Clear"}], ";"}], "\n", 
+ RowBox[{
   RowBox[{
    RowBox[{"webSiteCopyContentSpec", "[", 
     RowBox[{"True", "|", "Automatic"}], "]"}], ":=", "\n", "\t", 
@@ -5495,7 +5497,7 @@ Cell[BoxData[{
    RowBox[{"webSiteCopyContentSpec", "[", "e_", "]"}], ":=", "\n", "\t", 
    "e"}], ";"}]}], \
 "CodeInput",ExpressionUUID->"3e3227b7-8428-4b84-a275-08358b422e6d"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -5503,10 +5505,9 @@ Cell["\[LeftCeiling]WebSiteCopyContent\[RightFloor]", "CodeSubsubsubsection",
  Evaluatable->True,ExpressionUUID->"8076f63e-ea41-4ce8-bb74-f8f6f6b3b2fb"],
 
 Cell[BoxData[
- RowBox[{"WebSiteCopyContent", "//", "Clear"}]], "CodeInput",
- CellChangeTimes->{{3.720649351986136*^9, 
-  3.720649353136948*^9}},ExpressionUUID->"6ca97a4e-f4a1-4c26-a702-\
-509836318988"],
+ RowBox[{"Clear", "[", 
+  RowBox[{"iWebSiteCopyContent", ",", " ", "WebSiteCopyContent"}], 
+  "]"}]], "CodeInput",ExpressionUUID->"6ca97a4e-f4a1-4c26-a702-509836318988"],
 
 Cell[BoxData[{
  RowBox[{
@@ -5516,11 +5517,13 @@ Cell[BoxData[{
     RowBox[{"Monitor", "\[Rule]", "True"}], "\n", "\t\t", "}"}]}], 
   ";"}], "\n", 
  RowBox[{
+  RowBox[{"Options", "[", "iWebSiteCopyContent", "]"}], "=", "\n", "\t", 
+  RowBox[{"Options", "[", "WebSiteCopyContent", "]"}]}], "\n", 
+ RowBox[{
   RowBox[{
-   RowBox[{"WebSiteCopyContent", "[", "\n", "\t", 
+   RowBox[{"iWebSiteCopyContent", "[", "\n", "\t", 
     RowBox[{"dir_", ",", "\n", "\t", "outDir_", ",", "\n", "\t", 
-     RowBox[{"sel", ":", 
-      RowBox[{"_", "?", "StringPattern`StringPatternQ"}]}], ",", "\n", "\t", 
+     RowBox[{"sel", ":", "_"}], ",", "\n", "\t", 
      RowBox[{"ops", ":", 
       RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
     "\t", 
@@ -5548,16 +5551,31 @@ Cell[BoxData[{
          RowBox[{"fils", "=", "\n", "\t\t\t\t", 
           RowBox[{
            RowBox[{"Select", "[", "\n", "\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{"MatchQ", "[", 
+            RowBox[{"If", "[", 
+             RowBox[{
+              RowBox[{"StringPattern`StringPatternQ", "[", "selPat", "]"}], 
+              ",", "\n", "\t\t\t\t\t\t", 
               RowBox[{
-               RowBox[{"FileNameTake", "[", 
-                RowBox[{"#", ",", " ", 
-                 RowBox[{"{", 
-                  RowBox[{
-                   RowBox[{"FileNameDepth", "[", "contDir", "]"}], "+", "1"}],
-                   "}"}]}], "]"}], ",", " ", "selPat"}], "]"}], "&"}], "\n", 
-            "\t\t\t\t\t", "]"}], "@", "\n", "\t\t\t\t\t", 
+               RowBox[{"StringMatchQ", "[", 
+                RowBox[{
+                 RowBox[{"FileNameTake", "[", 
+                  RowBox[{"#", ",", " ", 
+                   RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"FileNameDepth", "[", "contDir", "]"}], "+", 
+                    "1"}], "}"}]}], "]"}], ",", " ", "selPat"}], "]"}], "&"}],
+               ",", "\n", "\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{"MatchQ", "[", 
+                RowBox[{
+                 RowBox[{"FileNameTake", "[", 
+                  RowBox[{"#", ",", " ", 
+                   RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"FileNameDepth", "[", "contDir", "]"}], "+", 
+                    "1"}], "}"}]}], "]"}], ",", " ", "selPat"}], "]"}], 
+               "&"}]}], "\n", "\t\t\t\t\t\t", "]"}], "\n", "\t\t\t\t\t", 
+            "]"}], "@", "\n", "\t\t\t\t\t", 
            RowBox[{
             RowBox[{"Select", "[", 
              RowBox[{"Not", "@*", "DirectoryQ"}], "]"}], "@", "\n", "\t", 
@@ -5661,6 +5679,10 @@ Cell[BoxData[{
      RowBox[{"s", "=", 
       RowBox[{"webSiteCopyContentSpec", "[", "e", "]"}]}], "}"}], ",", "\n", 
     "\t\t", 
+    RowBox[{"iWebSiteCopyContent", "[", 
+     RowBox[{"dir", ",", " ", "outDir", ",", " ", "s", ",", " ", "ops"}], 
+     "]"}]}], 
+   RowBox[{"(*", 
     RowBox[{"If", "[", 
      RowBox[{
       RowBox[{"StringPattern`StringPatternQ", "[", "s", "]"}], ",", "\n", 
@@ -5668,10 +5690,10 @@ Cell[BoxData[{
       RowBox[{"WebSiteCopyContent", "[", 
        RowBox[{"dir", ",", " ", "outDir", ",", " ", "s", ",", " ", "ops"}], 
        "]"}], ",", "\n", "\t\t\t", 
-      RowBox[{"{", "}"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+      RowBox[{"{", "}"}]}], "\n", "\t\t\t", "]"}], "*)"}], "\n", "\t\t", 
    "]"}]}]}], \
 "CodeInput",ExpressionUUID->"921c6c3b-771f-45a2-ba78-a7a5411fe24a"]
-}, Closed]]
+}, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -6427,7 +6449,7 @@ Cell[BoxData[{
     "\t\t", "]"}]}], 
   ";"}]}], "CodeInput",ExpressionUUID->"517ea520-000a-4346-98e0-dd6d1c19b1d6"]\
 
-}, Open  ]]
+}, Closed]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -8251,7 +8273,7 @@ Cell[BoxData[{
        "\t\t\t\t", "]"}], ";"}]}], "\n", "\t\t\t", "]"}]}], 
   ";"}]}], "CodeInput",ExpressionUUID->"b207c801-bd72-4899-b5b1-0589f6d9b138"]\
 
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -8598,11 +8620,9 @@ Cell[BoxData[{
       RowBox[{"WebSiteCopyContent", "[", "\n", "\t\t\t", 
        RowBox[{"dir", ",", "\n", "\t\t\t", "outDir", ",", "\n", "\t\t\t", 
         RowBox[{"Lookup", "[", 
-         RowBox[{
-         "confOps", ",", " ", "\n", "\t\t\t\t", "\"\<CopyContent\>\"", ",", 
-          " ", "\n", "\t\t\t\t", 
-          RowBox[{"OptionValue", "[", "\"\<CopyContent\>\"", "]"}]}], "\n", 
-         "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
+         RowBox[{"confOps", ",", " ", "\"\<CopyContent\>\"", ",", " ", 
+          RowBox[{"OptionValue", "[", "\"\<CopyContent\>\"", "]"}]}], "]"}], 
+        ",", "\n", "\t\t\t", 
         RowBox[{"FilterRules", "[", "\n", "\t\t\t\t", 
          RowBox[{
           RowBox[{"Normal", "@", "\n", "\t\t\t\t\t", 
@@ -9327,7 +9347,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"4900c668-e5de-468b-908d-\
 3bbe427549a1"]
 },
 WindowSize->{808, 756},
-WindowMargins->{{149, Automatic}, {Automatic, 0}},
+WindowMargins->{{95, Automatic}, {Automatic, 16}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

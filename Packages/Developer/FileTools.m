@@ -138,9 +138,15 @@ getMinimalFileModSpec[
         unchangedReduction
         ];
     (* figure out which parent directories have changed *)
-    keys=Keys@containedReduction;
+    keys=Keys@Select[containedReduction, StringQ];
     changedKeys=
-      Select[keys, !AnyTrue[keys, StringMatchQ[#~~__]]&];
+      Select[keys, 
+        With[{k=#}, 
+          AnyTrue[keys, 
+            StringMatchQ[k~~__]
+            ]
+          ]&
+        ];
     baseSpec=
       Flatten@Values@
           KeyDrop[containedReduction, changedKeys];
@@ -170,7 +176,7 @@ CopyDirectoryFiles[src_, targ_, files_]:=
       Which[
         DirectoryQ@#, 
           If[!DirectoryQ@DirectoryName[#2], 
-            CreateDirectory[#2, CreateIntermediateDirectories->True]
+            CreateDirectory[DirectoryName[#2], CreateIntermediateDirectories->True]
             ];
           CopyDirectory[#, #2],
         FileExistsQ@#,

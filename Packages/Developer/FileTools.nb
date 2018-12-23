@@ -312,17 +312,24 @@ Cell[BoxData[{
       "figure", " ", "out", " ", "which", " ", "parent", " ", "directories", 
        " ", "have", " ", "changed"}], " ", "*)"}], "\n", "\t\t", 
      RowBox[{"keys", "=", 
-      RowBox[{"Keys", "@", "containedReduction"}]}], ";", "\n", "\t\t", 
+      RowBox[{"Keys", "@", 
+       RowBox[{"Select", "[", 
+        RowBox[{"containedReduction", ",", " ", "StringQ"}], "]"}]}]}], ";", 
+     "\n", "\t\t", 
      RowBox[{"changedKeys", "=", "\n", "\t\t\t", 
       RowBox[{"Select", "[", 
-       RowBox[{"keys", ",", " ", 
+       RowBox[{"keys", ",", " ", "\n", "\t\t\t\t", 
         RowBox[{
-         RowBox[{"!", 
-          RowBox[{"AnyTrue", "[", 
-           RowBox[{"keys", ",", " ", 
-            RowBox[{"StringMatchQ", "[", 
-             RowBox[{"#", "~~", "__"}], "]"}]}], "]"}]}], "&"}]}], "]"}]}], 
-     ";", "\n", "\t\t", 
+         RowBox[{"With", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"k", "=", "#"}], "}"}], ",", " ", "\n", "\t\t\t\t\t", 
+           RowBox[{"AnyTrue", "[", 
+            RowBox[{"keys", ",", " ", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"StringMatchQ", "[", 
+              RowBox[{"k", "~~", "__"}], "]"}]}], "\n", "\t\t\t\t\t\t", 
+            "]"}]}], "\n", "\t\t\t\t\t", "]"}], "&"}]}], "\n", "\t\t\t\t", 
+       "]"}]}], ";", "\n", "\t\t", 
      RowBox[{"baseSpec", "=", "\n", "\t\t\t", 
       RowBox[{"Flatten", "@", 
        RowBox[{"Values", "@", "\n", "\t\t\t\t\t", 
@@ -362,7 +369,7 @@ Cell[BoxData[{
         "]"}], "@", "baseSpec"}]}]}], "\n", "\t\t", 
    "]"}]}]}], \
 "CodeInput",ExpressionUUID->"a8f3da7f-0e2d-47bc-ac29-3c8d26c0d8f9"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -388,15 +395,14 @@ Cell[BoxData[
             RowBox[{"!", 
              RowBox[{"DirectoryQ", "@", 
               RowBox[{"DirectoryName", "[", "#2", "]"}]}]}], ",", " ", "\n", 
-            "\t", "\t\t\t\t\t", 
+            "\t\t\t\t\t\t", 
             RowBox[{"CreateDirectory", "[", 
-             RowBox[{"#2", ",", " ", 
+             RowBox[{
+              RowBox[{"DirectoryName", "[", "#2", "]"}], ",", " ", 
               RowBox[{"CreateIntermediateDirectories", "\[Rule]", "True"}]}], 
-             "]"}]}], "\n", "\t", "\t\t\t\t\t", "]"}], ";", "\n", "\t", 
-          "\t\t\t\t", 
+             "]"}]}], "\n", "\t\t\t\t\t\t", "]"}], ";", "\n", "\t\t\t\t\t", 
           RowBox[{"CopyDirectory", "[", 
-           RowBox[{"#", ",", " ", "#2"}], "]"}]}], ",", "\n", "\t", "\t\t\t", 
-         
+           RowBox[{"#", ",", " ", "#2"}], "]"}]}], ",", "\n", "\t\t\t\t", 
          RowBox[{"FileExistsQ", "@", "#"}], ",", "\n", "\t", "\t\t\t\t", 
          RowBox[{
           RowBox[{"If", "[", 
@@ -414,9 +420,9 @@ Cell[BoxData[
           RowBox[{"CopyFile", "[", 
            RowBox[{"#", ",", " ", "#2", ",", " ", 
             RowBox[{"OverwriteTarget", "\[Rule]", "True"}]}], "]"}]}]}], "\n",
-         "\t", "\t\t\t", "]"}], "&"}], ",", "\n", "\t", "\t\t", 
-      RowBox[{"{", "\n", "\t", "\t\t\t", 
-       RowBox[{"files", ",", "\n", "\t", "\t\t\t", 
+         "\t", "\t\t\t", "]"}], "&"}], ",", "\n", "\t\t\t", 
+      RowBox[{"{", "\n", "\t\t\t\t", 
+       RowBox[{"files", ",", "\n", "\t\t\t\t", 
         RowBox[{"Map", "[", 
          RowBox[{
           RowBox[{
@@ -428,7 +434,7 @@ Cell[BoxData[
        "\t\t\t", "}"}]}], "\n", "\t", "\t\t", "]"}], ";"}], "\n", "\t", 
    "\t\t", ")"}]}]], \
 "CodeInput",ExpressionUUID->"7c263536-32f2-4ad7-8b66-57730f523619"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -468,15 +474,15 @@ Cell[BoxData[
 Cell[BoxData[
  RowBox[{
   RowBox[{"End", "[", "]"}], 
-  ";"}]], "InputSection",ExpressionUUID->"da959e37-3581-4707-95be-\
-41c6f03c6cbc"]
+  ";"}]], \
+"InputSection",ExpressionUUID->"da959e37-3581-4707-95be-41c6f03c6cbc"]
 }, Open  ]],
 
 Cell["", "SectionSeparator",ExpressionUUID->"8b650c8d-9d4f-44a8-a616-\
 d693a8202253"]
 },
 WindowSize->{808, 755},
-WindowMargins->{{Automatic, 292}, {11, Automatic}},
+WindowMargins->{{Automatic, 274}, {Automatic, 37}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

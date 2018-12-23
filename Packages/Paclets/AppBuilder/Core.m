@@ -742,14 +742,18 @@ Options[AppRegenerateUploadInfo]=
     Options@AppPacletSiteMZ
     ];
 AppRegenerateUploadInfo[app_String,ops:OptionsPattern[]]:=
-  Export[AppPath[app,"Config","UploadInfo.m"],
-    Flatten@{
-      ops,
-      "ServerName"->
-        Automatic,
-      CloudConnect->
-        False
-      }];
+  (
+    If[!DirectoryQ@AppPath[app,"Config"], CreateDirectory[AppPath[app,"Config"]]];
+    Export[
+      AppPath[app,"Config","UploadInfo.m"],
+      Flatten@{
+        ops,
+        "ServerName"->
+          Automatic,
+        CloudConnect->
+          False
+        }]
+    );
 
 
 (* ::Subsection:: *)
@@ -847,16 +851,19 @@ Options[AppRegenerateLoadInfo]=
     "Dependencies"->{}
     };
 AppRegenerateLoadInfo[app_String,ops:OptionsPattern[]]:=
-  Export[
-    getConfigFile[app, "LoadInfo"],
-    PrettyString@
-      DeleteDuplicatesBy[First]@
-        Flatten@{
-          ops,
-          Options@AppRegenerateLoadInfo
-        },
-    "Text"
-    ];
+  (
+    If[!DirectoryQ@AppPath[app,"Config"], CreateDirectory[AppPath[app,"Config"]]];
+    Export[
+      getConfigFile[app, "LoadInfo"],
+      PrettyString@
+        DeleteDuplicatesBy[First]@
+          Flatten@{
+            ops,
+            Options@AppRegenerateLoadInfo
+          },
+      "Text"
+      ]
+    );
 
 
 (* ::Subsubsection::Closed:: *)
@@ -908,7 +915,8 @@ $DefaultDepRemove=
 Options[AppBundleDependency]=
   {
     "RemovePaths"->Automatic,
-    "RemovePatterns"->Automatic
+    "RemovePatterns"->Automatic,
+    "LoadInfo"->{}
     };
 AppBundleDependency[
   name_?StringQ,
@@ -992,7 +1000,11 @@ AppBundleDependency[
                   ],
               Except[_?OptionQ]->{}
               ],
-          "Mode"->"Dependency"
+          "Mode"->"Dependency",
+          Quiet@
+            Replace[OptionValue["LoadInfo"],
+              Except[_?OptionQ]->{}
+              ]
           },
         Last
         ];
@@ -1050,9 +1062,9 @@ AppAddDependency[
       deplist,
       depname
       },
-    If[bund,
-      AppBundleDepdency[name, dependency, 
-        FilterRules[{ops}, Options[AppBundleDepdency]]
+  If[bund,
+      AppBundleDependency[name, dependency, 
+        FilterRules[{ops}, Options[AppBundleDependency]]
         ]
       ];
     loadconf=

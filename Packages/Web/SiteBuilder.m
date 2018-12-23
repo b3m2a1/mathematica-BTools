@@ -2703,6 +2703,7 @@ WebSiteCopyTheme[dir_,outDir_, theme_,
 
 
 
+webSiteCopyContentSpec//Clear;
 webSiteCopyContentSpec[True|Automatic]:=
   Except["posts"|"pages"];
 webSiteCopyContentSpec[l:{__String}]:=
@@ -2718,17 +2719,19 @@ webSiteCopyContentSpec[e_]:=
 
 
 
-WebSiteCopyContent//Clear
+Clear[iWebSiteCopyContent, WebSiteCopyContent]
 
 
 Options[WebSiteCopyContent]=
   {
     Monitor->True
     };
-WebSiteCopyContent[
+Options[iWebSiteCopyContent]=
+  Options[WebSiteCopyContent]
+iWebSiteCopyContent[
   dir_,
   outDir_,
-  sel:_?StringPattern`StringPatternQ,
+  sel:_,
   ops:OptionsPattern[]
   ]:=
   With[{
@@ -2741,7 +2744,10 @@ WebSiteCopyContent[
     With[{
       fils=
         Select[
-          MatchQ[FileNameTake[#, {FileNameDepth[contDir]+1}], selPat]&
+          If[StringPattern`StringPatternQ[selPat],
+            StringMatchQ[FileNameTake[#, {FileNameDepth[contDir]+1}], selPat]&,
+            MatchQ[FileNameTake[#, {FileNameDepth[contDir]+1}], selPat]&
+            ]
           ]@
           Select[Not@*DirectoryQ]@
             FileNames["*",contDir,\[Infinity]]
@@ -2791,10 +2797,10 @@ WebSiteCopyContent[
   ops:OptionsPattern[]
   ]:=
   With[{s=webSiteCopyContentSpec[e]},
-    If[StringPattern`StringPatternQ[s],
-      WebSiteCopyContent[dir, outDir, s, ops],
-      {}
-      ]
+    iWebSiteCopyContent[dir, outDir, s, ops](*If[StringPattern`StringPatternQ[s],
+			WebSiteCopyContent[dir, outDir, s, ops],
+			{}
+			]*)
     ]
 
 
@@ -4352,10 +4358,7 @@ WebSiteBuild[
     WebSiteCopyContent[
       dir,
       outDir,
-      Lookup[confOps, 
-        "CopyContent", 
-        OptionValue["CopyContent"]
-        ],
+      Lookup[confOps, "CopyContent", OptionValue["CopyContent"]],
       FilterRules[
         Normal@
           Merge[
