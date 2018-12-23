@@ -142,15 +142,19 @@ $PackageListing=<||>;
 $Name["Contexts"]:=$PackageContexts;
 If[!ListQ@$PackageContexts,
   $PackageContexts=
-    If[$PackageLoadingMode==="Dependency",
-      $RootContext<>#&/@#,
-      #
-      ]&@
-      {
-        "$Name`",
-        "$Name`PackageScope`Private`",
-        "$Name`PackageScope`Package`"
-        }
+    Join[
+      If[$PackageLoadingMode==="Dependency",
+        $RootContext<>#&/@#,
+        #
+        ]&@
+        {
+          "$Name`",
+          "$Name`PackageScope`Private`",
+          "$Name`PackageScope`Package`"
+          },
+      Lookup[$PackageLoadSpecs, "ExtraContexts", {}]
+      ]
+      ]
   ];
 $PackageDeclared=
   TrueQ[$PackageDeclared];

@@ -1053,7 +1053,9 @@ AppPublish[app_,ops:OptionsPattern[]]:=
         Association@{
           If[TrueQ@pacletServerPush,
             "ServerPaclet"->
-              PacletServerAdd[$PacletServer, app],
+              PacletServerAdd[$PacletServer, 
+                AppPacletBundle[app]
+                ],
             Nothing
             ],
           If[TrueQ@OptionValue["PublishServer"]||

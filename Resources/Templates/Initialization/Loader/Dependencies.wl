@@ -450,7 +450,10 @@ PackageExposeDependencies[deps_, permanent:True|False:False]:=
     cdeps
     ];
 PackageExposeDependencies[]:= 
-  PackageExposeDependencies[$PackageLoadSpecs["DependencyContexts"], True]
+  PackageExposeDependencies[
+    Lookup[$PackageLoadSpecs, "DependencyContexts", {}],
+    True
+    ]
 
 
 (* ::Subsubsection:: *)

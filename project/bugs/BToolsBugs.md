@@ -318,15 +318,13 @@ https://github.com/b3m2a1/mathematica-BTools/issues/14
 
 <<Note>>
 
-BTools::MarkdownExport: NotebookToMarkdown generated empty output
-
 <a id="addeasydependency" class="Section" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
 
 # Add easy dependency system
 
     timestamp: Mon 17 Dec 2018 02:13:27
 
-    timestamp: 
+    timestamp: Thu 20 Dec 2018 00:58:54
 
     ID: 10
 
@@ -340,7 +338,43 @@ BTools::MarkdownExport: NotebookToMarkdown generated empty output
 
 ## Description
 
-Based on the drop-in dependency structure introduced for the SimpleDocs package it should be possible to easily and programatically add dependencies to packages and to get them to update cleanly too.
+Based on the drop-in dependency structure introduced for the SimpleDocs package it should be possible to easily and programmatically add dependencies to packages and to get them to update cleanly too.
+
+<a id="examples" class="Subsection" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
+
+## Examples
+
+<<Example>>
+
+<a id="notes" class="Subsection" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
+
+## Notes
+
+Handled, but still has a few flaws in terms of utility
+
+Should be able to just list dependencies
+
+<a id="wikipagesneeded" class="Section" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
+
+# Wiki Pages needed for Git and other popular functions
+
+    timestamp: Sun 23 Dec 2018 03:31:40
+
+    timestamp: 
+
+    ID: 11
+
+    package: BTools
+
+    owner: 
+
+    keywords: wiki, docs, git
+
+<a id="description" class="Subsection" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
+
+## Description
+
+https://github.com/b3m2a1/mathematica-BTools/issues/15#issuecomment-449552396
 
 <a id="examples" class="Subsection" style="width:0;height:0;margin:0;padding:0;">&zwnj;</a>
 
