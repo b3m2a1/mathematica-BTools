@@ -360,6 +360,7 @@ PackageRecontext::usage="";
 
 
 PackageEnsureLoadDependencies::usage="Predeclared...";
+PackageEnsureLoad::usage="Ensures everything is loaded";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -496,40 +497,40 @@ PackagePullDeclarations[pkgFile_]:=
 (*PackageLoadPackage*)
 
 
-PackageLoadPackage[heldSym_,context_,pkgFile_->syms_]:=
-  Block[{
-    $loadingChain=
-      If[ListQ@$loadingChain,$loadingChain,{}],
-    $inLoad=TrueQ[$inLoad]
-    },
-    Internal`WithLocalSettings[
-      System`Private`NewContextPath@$ContextPath,
-      If[!MemberQ[$loadingChain,pkgFile],
-        AppendTo[$loadingChain, pkgFile];
-        With[{$$inLoad=$inLoad},
-          $inLoad=True;
-          If[$AllowPackageRecoloring,
-            Internal`SymbolList[False]
-            ];
-          Replace[Thread[syms,HoldPattern],
-            Verbatim[HoldPattern][{s__}]:>Clear[s]
-            ];
-          If[Not@MemberQ[$ContextPath,context],
-            $ContextPath=Prepend[$ContextPath,context];
-            ];
-          Block[{PackageFEHiddenBlock=Null},
-            PackageAppGet[context,pkgFile];
-            ];
-          Unprotect[$LoadedPackages];
-          AppendTo[$LoadedPackages, pkgFile];
-          Protect[$LoadedPackages];
-          If[!$$inLoad&&$AllowPackageRecoloring,
-            Internal`SymbolList[True]
-            ];
-          ReleaseHold[heldSym]
-          ]
-        ],
-      System`Private`RestoreContextPath[]
+PackageLoadPackage[heldSym_, context_, pkgFile_->syms_]:=
+  Block[
+    {
+      $loadingChain=If[ListQ@$loadingChain, $loadingChain, {}],
+      $inLoad=TrueQ[$inLoad],
+      $$inLoad=TrueQ[$inLoad],
+      recolor=!TrueQ[$inLoad]&&$AllowPackageRecoloring
+      },
+    If[!MemberQ[$loadingChain, pkgFile],
+      AppendTo[$loadingChain, pkgFile];
+      $inLoad=True;
+      Internal`WithLocalSettings[
+        (* holds the CPath so it can be restored later *)
+        System`Private`NewContextPath@$ContextPath;
+        If[recolor, Internal`SymbolList[False]],
+        Replace[syms,
+          s_Symbol|Verbatim[HoldPattern][s_Symbol]:>
+            (OwnValues[s]={}),
+          1
+          ];
+        (*If[Not@MemberQ[$ContextPath, context],
+          $ContextPath=Prepend[$ContextPath, context];
+          ];*)(* I don't see how this can do anything...? *)
+        Block[{PackageFEHiddenBlock=Null},
+          PackageEnsureLoad[];
+          PackageAppGet[context, pkgFile];
+          ];
+        Unprotect[$LoadedPackages];
+        AppendTo[$LoadedPackages, pkgFile];
+        Protect[$LoadedPackages],
+        If[recolor, Internal`SymbolList[True]];
+        System`Private`RestoreContextPath[]
+        ];
+      ReleaseHold[heldSym]
       ]
     ];
 
@@ -540,14 +541,15 @@ PackageLoadPackage[heldSym_,context_,pkgFile_->syms_]:=
 
 PackageDeclarePackage[pkgFile_->syms_]:=
   With[{c=$Context},
-    PackageEnsureLoadDependencies[];
     $DeclaredPackages[pkgFile]=syms;
     $PackageFileContexts[pkgFile]=c;
-    Map[
-      If[True,
-        #:=PackageLoadPackage[#,c,pkgFile->syms]
-        ]&,
-      syms
+    Replace[syms,
+      s_Symbol|Verbatim[HoldPattern][s_Symbol]:>
+        SetDelayed[
+          s,
+          PackageLoadPackage[HoldPattern[s], c, pkgFile->syms]
+          ],
+      1
       ]
     ];
 
@@ -760,6 +762,28 @@ PackageScopeBlock[
 PackageScopeBlock[e_, scope_String:"Package"]/;Not@TrueQ[$AllowPackageRescoping]:=
   If[$PackageScopeBlockEvalExpr,e];
 PackageScopeBlock~SetAttributes~HoldFirst;
+
+
+(* ::Subsubsection::Closed:: *)
+(*PackageExposeContexts*)
+
+
+PackageExposeContexts[]:=
+  If[ListQ@$PackageLoadSpecs["ExtraContexts"],
+    PackageExtendContextPath@$PackageLoadSpecs["ExtraContexts"]
+    ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*PackageEnsureLoad*)
+
+
+PackageEnsureLoad[]:=
+  If[!TrueQ[$pkgLoaded],
+    $pkgLoaded=True;
+    PackageEnsureLoadDependencies[];
+    PackageExposeContexts[];
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1133,28 +1157,52 @@ PackageUpdatePacletDependency[
 
 
 (* ::Subsubsection::Closed:: *)
-(*PackageEnsureLoadDependencies*)
+(*PackageEnsureLoadDependency*)
 
 
+Options[PackageEnsureLoadDependency]=
+  Join[
+    Options@PackgeLoadPacletDependency,
+    {
+      "Bundled"->True
+      }
+    ];
 PackageEnsureLoadDependency[dep_, ops:OptionsPattern[]]:=
   Module[
     {
-      depsDir=PackageFilePath["Dependencies"],
-      foundFile
+      depsDir=
+        Join[
+          If[$PackageLoadingMode==="Dependency",
+            {
+              FileNameJoin@{
+                ParentDirectory@$PackageDirectory,
+                "Dependencies"
+                }
+              },
+            {
+              }
+            ],
+          PackageFilePath["Dependencies"]
+          ],
+      foundFile,
+      bund=TrueQ@Quiet@OptionValue["Bundled"]
       },
-     If[DirectoryQ@depsDir,
-       foundFile=
-         Block[
-           {
-             $Path=depsDir,
-             PacletManager`PacletManagerEnabled
-             },
-           FindFile[dep]
-           ]
+     If[bund,
+       If[DirectoryQ@depsDir,
+         foundFile=
+           Block[
+             {
+               $Path=depsDir,
+               PacletManager`PacletManagerEnabled
+               },
+             FindFile[dep]
+             ];
+         ];
+       If[!StringQ@foundFile, foundFile=FindFile[dep]];
+       bund=StringQ@foundFile
        ];
-     If[!StringQ@foundFile, foundFile=FindFile[dep]];
      Quiet[(* this is a temporary hack until WRI fixes a $ContextPath bug *)
-       If[!StringQ@foundFile,
+       If[!bund,
          PackgeLoadPacletDependency[dep,
            FilterRules[
              {
@@ -1173,6 +1221,10 @@ PackageEnsureLoadDependency[dep_, ops:OptionsPattern[]]:=
      ];
 
 
+(* ::Subsubsection::Closed:: *)
+(*PackageEnsureLoadDependencies*)
+
+
 PackageEnsureLoadDependencies[]:=
   If[!TrueQ@$dependenciesLoaded,
     $dependenciesLoaded=True;
@@ -1183,13 +1235,10 @@ PackageEnsureLoadDependencies[]:=
         },
        PackageExecute[
          Begin["`Dependencies`"];
-         PackageEnsureLoadDependency@@Flatten@{#, "Site"->site}&/@deps;
-         PackageExtendContextPath@
-           Map[
-             If[MemberQ[$Packages, $Context<>#], $Context<>#, #]&, 
-             First@Flatten@{#}&/@deps
-             ];
-         End[]
+         PackageEnsureLoadDependency@@
+           Flatten@{#, "Site"->site}&/@deps;
+         PackageExposeDependencies[];
+         End[];
          ]
       ];
    ];
@@ -1203,12 +1252,30 @@ PackageExposeDependencies[deps_, permanent:True|False:False]:=
   Module[
     {
       cdeps,
-      loadQ
+      loadQ,
+      depCs
       },
     (* 
       someday I'll need this to be more sophisticated, but today is not that day
       *)
-    cdeps=$PackageContexts[[1]]<>"Dependencies`"<>#&/@deps;
+    depCs=
+      {
+        If[$PackageLoadingMode==="Dependency",
+          StringSplit[$PackageContexts[[1]]<>"Dependencies`", 2][[1]]<>
+            "Dependencies`",
+          Nothing
+          ],
+        $PackageContexts[[1]]<>"Dependencies`"
+        };
+    cdeps=
+      With[{ctx=#},
+        SelectFirst[
+          depCs,
+          Length@Join[Names[#<>ctx<>"*"], Names[#<>ctx<>"*`*"]]>0&,
+          ""
+          ]<>#
+        ]&/@deps;
+    (* only gonna be used within PackageExecute...? *)
     $ContextPath=
       DeleteDuplicates@
         Join[cdeps, $ContextPath];
@@ -1216,7 +1283,9 @@ PackageExposeDependencies[deps_, permanent:True|False:False]:=
       PackageExtendContextPath@cdeps
       ];
     cdeps
-    ]
+    ];
+PackageExposeDependencies[]:= 
+  PackageExposeDependencies[$PackageLoadSpecs["DependencyContexts"], True]
 
 
 (* ::Subsubsection:: *)

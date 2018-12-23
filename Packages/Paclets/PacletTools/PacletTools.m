@@ -1271,8 +1271,8 @@ PacletBundle[dir:(_String|_File)?DirectoryQ, ops:OptionsPattern[]]:=
         PartialDirectoryCopy[
           dir,
           pacletDir,
-          "RemovePaths"->rmpaths,
-          "RemovePatterns"->rmpatterns
+          "RemovePaths"->fullPathSpec,
+          "RemovePatterns"->fullPatternSpec
           ];
         With[{pacletFile=PacletManager`PackPaclet[pacletDir]},
           pacletFile
