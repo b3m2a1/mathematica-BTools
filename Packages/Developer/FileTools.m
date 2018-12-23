@@ -19,7 +19,7 @@ Options[PartialDirectoryCopy]=
   {
     "RemovePaths"->{},
     "RemovePatterns"->{},
-    "ModeSwitchByteCount"->5*10^6
+    "ModeSwitchByteCount"->0(*5*10^6*)
     };
 PartialDirectoryCopy[src_, targ_, ops:OptionsPattern[]]:=
   Module[
@@ -59,12 +59,12 @@ PartialDirectoryCopy[src_, targ_, ops:OptionsPattern[]]:=
           getMinimalFileModSpec[restFiles, fullFNames]
           ],
         CopyDirectory[src, targ];
-        PruneDirectoryFiles[targ, 
-          StringTrim[
-            getMinimalFileModSpec[remFiles, fullFNames, False],
-            src
-            ]
-          ]
+        PruneDirectoryFiles[
+          targ, 
+          getMinimalFileModSpec[remFiles, fullFNames, False],
+          src
+          ];
+        DirectoryQ@targ;
         ],
       If[True(*OptionValue@OverwriteTarget//TrueQ*),
         Quiet@DeleteDirectory[targ, DeleteContents->True];
@@ -105,24 +105,28 @@ getMinimalFileModSpec[
     g1=Select[Not@*DirectoryQ]/@GroupBy[restFiles, DirectoryName];
     deadDirs=Complement[Select[restFiles, DirectoryQ], Keys@g1];
     g2=Select[Not@*DirectoryQ]/@GroupBy[files, DirectoryName];
-    (* figures out which directories may be copied across wholesale *)
-    unchangedReduction=
-      AssociationMap[
-        #[[1]]->
-          If[
-            !ListQ@g2[#[[1]]]||
-              Length@Complement[Flatten@{g2[#[[1]]]}, #[[2]]]==0,
-            #[[1]],
-            #[[2]]
-            ]&,
-        g1
-        ];
+    
     (* find the directories that are in the full set but missing in the reduced set to prevent over reduction *)
     missingDirs=
       AssociationThread[
         Complement[Keys@g2, Keys@g1],
         0
         ];
+    
+    (* figures out which directories may be copied across wholesale *)
+    unchangedReduction=
+      AssociationMap[
+        #[[1]]->
+          If[
+            (!ListQ@g2[#[[1]]]||
+              Length@Complement[Flatten@{g2[#[[1]]]}, #[[2]]]==0)&&
+              !AnyTrue[Keys@missingDirs, StringStartsQ[#[[1]]]],
+            #[[1]],
+            #[[2]]
+            ]&,
+        g1
+        ];
+        
     containedReduction=
       FixedPoint[
         KeySelect[
@@ -131,9 +135,7 @@ getMinimalFileModSpec[
 						if there's nothing missing vis-a-vis the original 
 					*)
           !StringQ@unchangedReduction[#]||
-            !StringQ@unchangedReduction[DirectoryName[#]]||
-            KeyExistsQ[missingDirs, DirectoryName[#]]||
-            AnyTrue[Keys@missingDirs, StringStartsQ[DirectoryName[#]]]&
+            !StringQ@unchangedReduction[DirectoryName[#]]&
           ],
         unchangedReduction
         ];
@@ -198,14 +200,18 @@ CopyDirectoryFiles[src_, targ_, files_]:=
 
 
 
-PruneDirectoryFiles[targ_, files_]:=
+PruneDirectoryFiles[targ_, files_, src_:""]:=
   (
     Which[
       DirectoryQ@#, 
         DeleteDirectory[#, DeleteContents->True],
       FileExistsQ@#,
         DeleteFile[#]
-      ]&/@Map[FileNameJoin@{targ, #}&, files];
+      ]&/@
+      Map[
+        FileNameJoin@{targ, #}&, 
+        StringTrim[files, src]
+        ];
     )
 
 

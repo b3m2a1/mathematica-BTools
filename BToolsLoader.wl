@@ -12,7 +12,7 @@ If[Temp`PackageScope`BToolsLoading`Private`$DependencyLoad,
   Unprotect["`BTools`PackageScope`Private`$TopLevelLoad"];
   Evaluate[Symbol["`BTools`PackageScope`Private`$TopLevelLoad"]]=False,
   Unprotect["BTools`PackageScope`Private`$TopLevelLoad"];
-  Evaluate[Symbol["BTools`PackageScope`BToolsLoading`$TopLevelLoad"]]=
+  Evaluate[Symbol["BTools`PackageScope`Private`$TopLevelLoad"]]=
     MemberQ[$ContextPath, "Global`"]
   ];
 
@@ -223,7 +223,6 @@ If[!ListQ@$PackageContexts,
           "BTools`PackageScope`Package`"
           },
       Lookup[$PackageLoadSpecs, "ExtraContexts", {}]
-      ]
       ]
   ];
 $PackageDeclared=

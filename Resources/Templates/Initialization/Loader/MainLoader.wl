@@ -11,10 +11,10 @@
 Temp`PackageScope`$NameLoading`Private`$DependencyLoad=
   TrueQ@Temp`PackageScope`$NameLoading`Private`$DependencyLoad;
 If[Temp`PackageScope`$NameLoading`Private`$DependencyLoad,
-  Unprotect["`$Name`PackageScope`Private`$TopLevelLoad"];
-  Evaluate[Symbol["`$Name`PackageScope`Private`$TopLevelLoad"]]=False,
-  Unprotect["$Name`PackageScope`Private`$TopLevelLoad"];
-  Evaluate[Symbol["$Name`PackageScope`$NameLoading`$TopLevelLoad"]]=
+  Unprotect["`$Name`PackageScope`Private`Constants`$TopLevelLoad"];
+  Evaluate[Symbol["`$Name`PackageScope`Private`Constants`$TopLevelLoad"]]=False,
+  Unprotect["$Name`PackageScope`Private`Constants`$TopLevelLoad"];
+  Evaluate[Symbol["$Name`PackageScope`Private`Constants`$TopLevelLoad"]]=
     MemberQ[$ContextPath, "Global`"]
   ];
 
