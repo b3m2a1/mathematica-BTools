@@ -9,10 +9,10 @@
 Temp`PackageScope`BToolsLoading`Private`$DependencyLoad=
   TrueQ@Temp`PackageScope`BToolsLoading`Private`$DependencyLoad;
 If[Temp`PackageScope`BToolsLoading`Private`$DependencyLoad,
-  Unprotect["`BTools`PackageScope`Private`$TopLevelLoad"];
-  Evaluate[Symbol["`BTools`PackageScope`Private`$TopLevelLoad"]]=False,
-  Unprotect["BTools`PackageScope`Private`$TopLevelLoad"];
-  Evaluate[Symbol["BTools`PackageScope`Private`$TopLevelLoad"]]=
+  Unprotect["`BTools`PackageScope`Private`Constants`$TopLevelLoad"];
+  Evaluate[Symbol["`BTools`PackageScope`Private`Constants`$TopLevelLoad"]]=False,
+  Unprotect["BTools`PackageScope`Private`Constants`$TopLevelLoad"];
+  Evaluate[Symbol["BTools`PackageScope`Private`Constants`$TopLevelLoad"]]=
     MemberQ[$ContextPath, "Global`"]
   ];
 
@@ -1174,24 +1174,18 @@ PackageEnsureLoadDependency[dep_, ops:OptionsPattern[]]:=
   Module[
     {
       depsDir=
-        Join[
+        {
           If[$PackageLoadingMode==="Dependency",
-            {
-              FileNameJoin@{
-                ParentDirectory@$PackageDirectory,
-                "Dependencies"
-                }
-              },
-            {
-              }
+            ParentDirectory@$PackageDirectory,
+            Nothing
             ],
           PackageFilePath["Dependencies"]
-          ],
+          },
       foundFile,
       bund=TrueQ@Quiet@OptionValue["Bundled"]
       },
      If[bund,
-       If[DirectoryQ@depsDir,
+       If[AnyTrue[depsDir, DirectoryQ],
          foundFile=
            Block[
              {
@@ -1264,7 +1258,7 @@ PackageExposeDependencies[deps_, permanent:True|False:False]:=
     depCs=
       {
         If[$PackageLoadingMode==="Dependency",
-          StringSplit[$PackageContexts[[1]]<>"Dependencies`", 2][[1]]<>
+          StringSplit[$PackageContexts[[1]], "Dependencies`", 2][[1]]<>
             "Dependencies`",
           Nothing
           ],
