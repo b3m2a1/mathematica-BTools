@@ -154,7 +154,6 @@ If[!ListQ@$PackageContexts,
           },
       Lookup[$PackageLoadSpecs, "ExtraContexts", {}]
       ]
-      ]
   ];
 $PackageDeclared=
   TrueQ[$PackageDeclared];
