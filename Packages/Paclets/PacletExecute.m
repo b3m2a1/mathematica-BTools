@@ -116,9 +116,13 @@ $PacletExecuteExpressionMethods=
     "Open"->
       PacletOpen,
     "InstalledQ"->
-      PacletInstalledQ,
-    "ExistsQ"->
-      PacletExistsQ,
+      PacletInstalledQ,(*
+		"ExistsQ"->
+			PacletExistsQ,*)
+    "FindDirectory"->
+      PacletDirectoryFind,
+    "ValidDirectoryQ"->
+      PacletDirectoryQ,
     "SetFormatting"->
       SetPacletFormatting
     |>;

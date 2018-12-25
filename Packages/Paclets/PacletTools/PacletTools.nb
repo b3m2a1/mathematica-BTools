@@ -154,15 +154,7 @@ directory\>\""}], ";"}], "\n",
   RowBox[{
    RowBox[{"PacletOpen", "::", "usage"}], "=", "\n", "\t", 
    "\"\<Opens an installed paclet from its \\\"Location\\\"\>\""}], 
-  ";"}]}], "CodeInput",
- CellChangeTimes->{{3.7027306251286077`*^9, 3.702730669012924*^9}, {
-  3.702731233868539*^9, 3.702731281104533*^9}, {3.703445972479219*^9, 
-  3.703445973311514*^9}, {3.7127881921409473`*^9, 3.712788203391788*^9}, {
-  3.71279309386418*^9, 3.712793126498087*^9}, {3.713114928986142*^9, 
-  3.7131149572046223`*^9}, {3.7205579379866962`*^9, 3.720557943198613*^9}, {
-  3.727880007142709*^9, 3.727880073643139*^9}, {3.734138679411787*^9, 
-  3.7341386799528313`*^9}},ExpressionUUID->"3ec74622-fe68-48f4-96f6-\
-e2a12ff0ef3a"],
+  ";"}]}], "CodeInput",ExpressionUUID->"3ec74622-fe68-48f4-96f6-e2a12ff0ef3a"],
 
 Cell[BoxData[
  RowBox[{
@@ -173,7 +165,20 @@ Cell[BoxData[
  CellChangeTimes->{{3.729728736168133*^9, 3.729728751770198*^9}, {
   3.7341386555557528`*^9, 
   3.734138673159644*^9}},ExpressionUUID->"e58d3f53-2291-442c-a231-\
-df47dd2ca270"]
+df47dd2ca270"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"PacletDirectoryQ", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Tests whether a directory is a valid paclet directory\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PacletDirectoryFind", "::", "usage"}], "=", "\n", "\t", 
+   "\"\<Finds a paclet directory in the current directory\>\""}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"0b2e9b24-7861-4856-99cc-76bbb0fb8eef"]\
+
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -456,11 +461,8 @@ Cell[BoxData[{
 
 Cell[CellGroupData[{
 
-Cell["\[LeftCeiling]Paclets\[RightFloor]", "CodeSubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.703751907459077*^9, 
-  3.703751914017556*^9}},ExpressionUUID->"8bc7952f-fac7-4ba9-8111-\
-486d554f2140"],
+Cell["\[LeftCeiling]Paclet Expressions\[RightFloor]", "CodeSubsection",
+ Evaluatable->True,ExpressionUUID->"8bc7952f-fac7-4ba9-8111-486d554f2140"],
 
 Cell[CellGroupData[{
 
@@ -754,11 +756,9 @@ Cell[BoxData[{
                RowBox[{
                 RowBox[{"(", 
                  RowBox[{"_String", "|", "_File"}], ")"}], "?", 
-                "DirectoryQ"}]}], ":>", "\n", "\t", "\t", "\t\t\t\t", 
-              RowBox[{"FileNameJoin", "@", 
-               RowBox[{"{", 
-                RowBox[{"d", ",", " ", "\"\<PacletInfo.m\>\""}], "}"}]}]}], 
-             ",", "\n", "\t", "\t", "\t\t\t", 
+                "DirectoryQ"}]}], ":>", "\n", "\t\t\t\t\t\t", 
+              RowBox[{"GetPacletInfoFile", "[", "d", "]"}]}], ",", "\n", 
+             "\t\t\t\t\t", 
              RowBox[{
               RowBox[{"f", ":", 
                RowBox[{
@@ -778,10 +778,11 @@ Cell[BoxData[{
                  RowBox[{"rd", "=", 
                   RowBox[{"$tmpdir", "=", 
                    RowBox[{"CreateDirectory", "[", "]"}]}]}], "}"}], ",", 
-                "\n", "\t", "\t", "\t\t\t\t\t", 
-                RowBox[{"First", "@", 
+                "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{"First", "@", "\n", "\t\t\t\t\t\t\t\t", 
                  RowBox[{"ExtractArchive", "[", 
-                  RowBox[{"f", ",", "rd", ",", "\"\<*PacletInfo.m\>\""}], 
+                  RowBox[{
+                  "f", ",", " ", "rd", ",", " ", "\"\<*PacletInfo.*\>\""}], 
                   "]"}]}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}]}], "\n", 
             "\t\t\t\t\t", "}"}]}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", 
         "}"}], ",", "\n", "\t\t\t", 
@@ -808,12 +809,11 @@ Cell[BoxData[{
   ";"}], "\n", 
  RowBox[{
   RowBox[{
-   RowBox[{
-    RowBox[{"PacletInfo", "[", 
-     RowBox[{"pac_PacletManager`Paclet", ",", " ", 
-      RowBox[{"ops", ":", 
-       RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
-    "pac"}], ";"}], 
+   RowBox[{"PacletInfo", "[", 
+    RowBox[{"pac_PacletManager`Paclet", ",", " ", 
+     RowBox[{"ops", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+   "pac"}], ";", 
   RowBox[{"(*", 
    RowBox[{
     RowBox[{"With", "[", 
@@ -836,8 +836,7 @@ Cell[BoxData[{
           RowBox[{"{", 
            RowBox[{"pf", ",", " ", "\"\<PacletInfo.m\>\""}], "}"}]}]}], ",", 
         "\n", "\t\t\t", "pac"}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}],
-     ";"}], "*)"}]}], "\n", 
- RowBox[{
+     ";"}], "*)"}], "\n", 
   RowBox[{
    RowBox[{"PacletInfo", "[", "\n", "\t", 
     RowBox[{
@@ -1684,8 +1683,8 @@ Cell[BoxData[{
        RowBox[{
         RowBox[{"OptionValue", "[", "\"\<LibraryLink\>\"", "]"}], ",", "\n", 
         "\t\t\t", "dest"}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "}"}]}]}], 
-  ";"}]}], \
-"CodeInput",ExpressionUUID->"89c7319f-2fbc-4d11-9bd8-b47b4935fd98"]
+  ";"}]}], "CodeInput",ExpressionUUID->"89c7319f-2fbc-4d11-9bd8-b47b4935fd98"]\
+
 }, Open  ]]
 }, Closed]],
 
@@ -2324,10 +2323,8 @@ Cell[BoxData[{
     RowBox[{
      RowBox[{"{", 
       RowBox[{"pacletFile", "=", 
-       RowBox[{"FileNameJoin", "@", 
-        RowBox[{"{", 
-         RowBox[{"dest", ",", " ", "\"\<PacletInfo.m\>\""}], "}"}]}]}], "}"}],
-      ",", "\n", "\t\t", 
+       RowBox[{"GetPacletInfoFile", "[", "dest", "]"}]}], "}"}], ",", "\n", 
+     "\t\t", 
      RowBox[{
       RowBox[{"WriteString", "[", 
        RowBox[{"pacletFile", ",", " ", "\n", "\t\t\t", 
@@ -2381,7 +2378,7 @@ Cell[BoxData[{
   3.72789389234583*^9, 
   3.727893892350543*^9}},ExpressionUUID->"89dc3829-2454-49ae-a388-\
 a820bdef8ad5"]
-}, Open  ]]
+}, Closed]]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -2582,10 +2579,8 @@ Cell[BoxData[{
                RowBox[{
                 RowBox[{"!", 
                  RowBox[{"FileExistsQ", "@", 
-                  RowBox[{"FileNameJoin", "@", 
-                   RowBox[{"{", 
-                    RowBox[{"d", ",", " ", "\"\<PacletInfo.m\>\""}], 
-                    "}"}]}]}]}], ",", "\n", "\t", "\t\t\t\t\t\t", 
+                  RowBox[{"GetPacletInfoFile", "[", "d", "]"}]}]}], ",", "\n",
+                 "\t\t\t\t\t\t\t", 
                 RowBox[{"PacletInfoExpressionBundle", "[", 
                  RowBox[{"d", ",", " ", "ops"}], "]"}]}], "\n", 
                "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t", "]"}]}], 
@@ -2604,10 +2599,8 @@ Cell[BoxData[{
            RowBox[{"Which", "[", "\n", "\t\t\t\t\t\t", 
             RowBox[{
              RowBox[{"FileExistsQ", "@", 
-              RowBox[{"FileNameJoin", "@", 
-               RowBox[{"{", 
-                RowBox[{"d", ",", " ", "\"\<PacletInfo.m\>\""}], "}"}]}]}], 
-             ",", "\n", "\t\t\t\t\t\t\t", "d", ",", "\n", "\t\t\t\t\t\t", 
+              RowBox[{"GetPacletInfoFile", "[", "d", "]"}]}], ",", "\n", 
+             "\t\t\t\t\t\t\t", "d", ",", "\n", "\t\t\t\t\t\t", 
              RowBox[{"DirectoryQ", "@", 
               RowBox[{"FileNameJoin", "@", 
                RowBox[{"{", 
@@ -2785,21 +2778,8 @@ Cell[BoxData[{
         RowBox[{
          RowBox[{"PacletAutoPaclet", "::", "nopac"}], ",", " ", "s"}], "]"}], 
        ";", "\n", "\t\t\t", "$Failed"}]}], "\n", "\t\t\t", "]"}]}], "\n", 
-   "\t\t", "]"}]}]}], "CodeInput",
- CellChangeTimes->{{3.7205572185898743`*^9, 3.7205573384654093`*^9}, {
-  3.720557376111512*^9, 3.7205574752593946`*^9}, {3.720557536609283*^9, 
-  3.720557601712179*^9}, {3.720557645163804*^9, 3.72055777714084*^9}, {
-  3.720557859938686*^9, 3.7205579294871187`*^9}, {3.720559998090767*^9, 
-  3.720560013440427*^9}, {3.7205601368193808`*^9, 3.720560141112837*^9}, {
-  3.720560196903517*^9, 3.720560200406508*^9}, {3.720560278655809*^9, 
-  3.720560283724375*^9}, {3.727893892367145*^9, 3.72789389238822*^9}, {
-  3.734139016447877*^9, 3.734139019621128*^9}, {3.734139049993668*^9, 
-  3.7341391046536827`*^9}, {3.734139175289328*^9, 3.7341391909983377`*^9}, {
-  3.734139221207576*^9, 3.734139256455736*^9}, {3.7341393342529583`*^9, 
-  3.734139744792389*^9}, {3.7341397795084953`*^9, 3.7341397928773947`*^9}, {
-  3.7341398272269173`*^9, 
-  3.734139887360209*^9}},ExpressionUUID->"9f30cc16-74f3-4df6-8382-\
-08d819960a9d"]
+   "\t\t", "]"}]}]}], \
+"CodeInput",ExpressionUUID->"9f30cc16-74f3-4df6-8382-08d819960a9d"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -3141,7 +3121,7 @@ Cell[BoxData[{
   3.734140569843234*^9, 3.734140579751219*^9}, {3.734140697287017*^9, 
   3.7341407655734653`*^9}},ExpressionUUID->"025bef67-402b-4d1c-b9ca-\
 b45e4edd63dd"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -3892,10 +3872,10 @@ Cell[BoxData[{
       RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
        RowBox[{
         RowBox[{"Flatten", "@", 
-         RowBox[{"{", " ", 
+         RowBox[{"{", 
           RowBox[{"infoFiles", ",", " ", 
            RowBox[{"OptionValue", "[", "\"\<MergePacletInfo\>\"", "]"}]}], 
-          " ", "}"}]}], ",", 
+          "}"}]}], ",", 
         RowBox[{"{", "\n", "\t\t\t\t\t", 
          RowBox[{
           RowBox[{
@@ -3924,13 +3904,9 @@ Cell[BoxData[{
              RowBox[{"s", ",", "\"\<PacletSite.mz\>\""}], "}"}]}], ",", "\n", 
            "\t\t\t\t\t", 
            RowBox[{"FileExistsQ", "@", 
-            RowBox[{"FileNameJoin", "@", 
-             RowBox[{"{", 
-              RowBox[{"s", ",", " ", "\"\<PacletInfo.m\>\""}], "}"}]}]}], ",",
-            "\n", "\t\t\t\t\t\t", 
-           RowBox[{"FileNameJoin", "@", 
-            RowBox[{"{", 
-             RowBox[{"s", ",", "\"\<PacletInfo.m\>\""}], "}"}]}], ",", "\n", 
+            RowBox[{"GetPacletInfoFile", "[", "s", "]"}]}], ",", "\n", 
+           "\t\t\t\t\t\t", 
+           RowBox[{"GetPacletInfoFile", "[", "s", "]"}], ",", "\n", 
            "\t\t\t\t\t", "True", ",", "\n", "\t\t\t\t\t\t", 
            RowBox[{"Replace", "[", 
             RowBox[{
@@ -4056,10 +4032,7 @@ Cell[BoxData[{
 Cell[CellGroupData[{
 
 Cell["\[LeftCeiling]PacletSiteInfo\[RightFloor]", "CodeSubsubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.700972301268733*^9, 3.700972303338254*^9}, 
-   3.702672539590036*^9},ExpressionUUID->"d4d3d975-9dcf-4098-a0b6-\
-1958766ad6de"],
+ Evaluatable->True,ExpressionUUID->"d4d3d975-9dcf-4098-a0b6-1958766ad6de"],
 
 Cell[BoxData[
  RowBox[{
@@ -4191,19 +4164,20 @@ Cell[BoxData[{
              RowBox[{"URLParse", "[", 
               RowBox[{"#", ",", "\"\<Scheme\>\""}], "]"}], "=!=", "None"}], 
             ",", "\n", "\t", "\t", "\t\t\t", 
-            RowBox[{"If", "[", "\n", "\t", "\t", "\t\t\t\t", 
+            RowBox[{"If", "[", "\n", "\t\t\t\t\t\t", 
              RowBox[{
-              RowBox[{"StringMatchQ", "[", 
+              RowBox[{"StringMatchQ", "[", "\n", "\t\t\t\t\t\t\t", 
                RowBox[{
                 RowBox[{"Last", "@", 
                  RowBox[{"URLParse", "[", 
                   RowBox[{"#", ",", "\"\<Path\>\""}], "]"}]}], ",", "\n", 
                 "\t\t\t\t\t\t\t", 
                 RowBox[{
-                "\"\<*.paclet\>\"", "|", "\"\<PacletSite.m\>\"", "|", "\n", 
-                 "\t\t\t\t\t\t\t", "\"\<PacletInfo.m\>\"", "|", 
-                 "\"\<PacletSite.mz\>\""}]}], "]"}], ",", "\n", 
-              "\t\t\t\t\t\t", 
+                "\"\<*.paclet\>\"", "|", "\n", "\t\t\t\t\t\t\t\t", 
+                 "\"\<PacletInfo.m\>\"", "|", "\"\<PacletInfo.wl\>\"", "|", 
+                 "\n", "\t\t\t\t\t\t\t\t", "\"\<PacletSite.m\>\"", "|", 
+                 "\"\<PacletSite.mz\>\""}]}], "\n", "\t\t\t\t\t\t\t", "]"}], 
+              ",", "\n", "\t\t\t\t\t\t", 
               RowBox[{"With", "[", 
                RowBox[{
                 RowBox[{"{", 
@@ -4407,58 +4381,9 @@ Cell[BoxData[{
           RowBox[{"pacletsite", ",", 
            RowBox[{"Except", "[", "_PacletManager`Paclet", "]"}]}], "]"}]}], 
         "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
-    "]"}]}], ";"}]}], "CodeInput",
- CellChangeTimes->{{3.7009723086979218`*^9, 3.7009723087019672`*^9}, {
-   3.700972341498904*^9, 3.700972434145322*^9}, {3.700972511097521*^9, 
-   3.7009725202780867`*^9}, {3.700972681573906*^9, 3.700972686296485*^9}, {
-   3.700972762187269*^9, 3.70097281424666*^9}, {3.700972895443489*^9, 
-   3.7009728974908333`*^9}, 3.7009729630582037`*^9, {3.700973645078268*^9, 
-   3.7009736477648363`*^9}, {3.7009742265200977`*^9, 3.700974293855214*^9}, {
-   3.7023780038390017`*^9, 3.702378028932478*^9}, {3.7023857636061077`*^9, 
-   3.7023857805008793`*^9}, {3.70238624375031*^9, 3.702386243923829*^9}, {
-   3.7023864239269457`*^9, 3.7023864656528273`*^9}, {3.702386672832301*^9, 
-   3.702386692137403*^9}, {3.702386734317582*^9, 3.702386738890239*^9}, {
-   3.7023869667090797`*^9, 3.702386995441403*^9}, {3.7023870376684933`*^9, 
-   3.702387102447654*^9}, {3.7026104173984547`*^9, 3.702610457054772*^9}, 
-   3.70267250712877*^9, {3.7026740592124033`*^9, 3.702674135376275*^9}, {
-   3.702674180136384*^9, 3.7026742445963907`*^9}, {3.7026752608819313`*^9, 
-   3.702675365407415*^9}, {3.702729130920658*^9, 3.7027291651707573`*^9}, {
-   3.702733011379593*^9, 3.702733029421342*^9}, {3.7027332671316442`*^9, 
-   3.7027333373102207`*^9}, 3.702733449350292*^9, {3.702733612647316*^9, 
-   3.702733683304389*^9}, {3.702733737159012*^9, 3.702733794257221*^9}, {
-   3.702733830240732*^9, 3.702733940070562*^9}, {3.7027340670784693`*^9, 
-   3.702734073485424*^9}, {3.703606338913591*^9, 3.703606350028606*^9}, {
-   3.70360671016439*^9, 3.703606791921608*^9}, {3.703606961741172*^9, 
-   3.7036069620849447`*^9}, {3.703607016949829*^9, 3.703607017851465*^9}, {
-   3.703607711660244*^9, 3.703607722440563*^9}, {3.703607806762195*^9, 
-   3.703607907046977*^9}, {3.703607964402318*^9, 3.703607987455608*^9}, {
-   3.703608162395132*^9, 3.70360816281738*^9}, {3.703609197104763*^9, 
-   3.703609225278558*^9}, 3.70361113452809*^9, {3.7039519261179934`*^9, 
-   3.703952052111445*^9}, {3.70395294103965*^9, 3.703952947947731*^9}, {
-   3.70395326411908*^9, 3.703953351932456*^9}, {3.7039534605699167`*^9, 
-   3.703953578378872*^9}, 3.7039536601779833`*^9, {3.703953719905262*^9, 
-   3.703953747002081*^9}, {3.703953794214945*^9, 3.703953812214302*^9}, {
-   3.703953931496531*^9, 3.703953933841639*^9}, {3.7039540135070953`*^9, 
-   3.703954024415676*^9}, {3.703954684839913*^9, 3.7039546988657913`*^9}, {
-   3.703954738983653*^9, 3.70395476202862*^9}, {3.703954804776264*^9, 
-   3.7039548637078857`*^9}, {3.7039550218306637`*^9, 
-   3.7039550340471067`*^9}, {3.7039550695866613`*^9, 3.703955075039256*^9}, 
-   3.704667010395907*^9, {3.704668024626225*^9, 3.7046680595702763`*^9}, {
-   3.7046710100983677`*^9, 3.704671032176557*^9}, 3.704671315992416*^9, 
-   3.705177422939085*^9, {3.705634899702083*^9, 3.7056349477610064`*^9}, {
-   3.7056349808672953`*^9, 3.705634986487418*^9}, {3.712814533472959*^9, 
-   3.712814549454316*^9}, {3.712879618851165*^9, 3.7128796687612877`*^9}, 
-   3.7128797934031153`*^9, 3.712880019846949*^9, {3.71715422857327*^9, 
-   3.7171542547037086`*^9}, {3.717154419091015*^9, 3.717154472855356*^9}, {
-   3.7171545324752398`*^9, 3.717154566484564*^9}, 3.7171546271129913`*^9, {
-   3.7171547466165457`*^9, 3.717154780184782*^9}, 3.717155361842101*^9, {
-   3.7171562751629477`*^9, 3.717156327554315*^9}, {3.717156627139814*^9, 
-   3.717156629668933*^9}, 3.717156684073165*^9, {3.720576166998602*^9, 
-   3.720576188517342*^9}, {3.720576790527237*^9, 3.72057681982069*^9}, {
-   3.720578667810196*^9, 3.720578676836719*^9}, 3.7205787972968483`*^9, 
-   3.726941661002256*^9, {3.733357584018729*^9, 3.7333576436680117`*^9}, 
-   3.733357694284008*^9},ExpressionUUID->"c8773fa0-b3af-4d1e-ab9d-\
-f9d6edc59038"]
+    "]"}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"c8773fa0-b3af-4d1e-ab9d-f9d6edc59038"]\
+
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -4780,7 +4705,7 @@ PacletSite file\>\""}], ";"}], "*)"}]}], "\n",
 "CodeInput",ExpressionUUID->"1f2797c9-339d-42b4-ba15-09f8f8975dc1"]
 }, Open  ]]
 }, Closed]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -5213,8 +5138,8 @@ Cell[BoxData[{
                      "\t", "\t\t\t\t\t\t\t\t\t   \t\t\t\t", 
                     "PacletManager`Private`rest__"}], "}"}], " ", ":>", " ", 
                     "\n", "\t", "\t\t\t\t\t\t\t\t\t   \t\t\t\t", 
-                    RowBox[{"{", "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t\t   \t\t\t\t\t", 
+                    RowBox[{
+                    "{", "\n", "\t", "\t\t\t\t\t\t\t\t\t   \t\t\t\t\t", 
                     RowBox[{
                     "PacletManager`Private`a", ",", " ", "\n", "\t", 
                     "\t\t\t\t\t\t\t\t\t   \t\t\t\t\t", 
@@ -6995,10 +6920,8 @@ Cell[BoxData[{
          "]"}], "&&", "\n", "\t\t\t\t", 
         RowBox[{"!", 
          RowBox[{"FileExistsQ", "[", 
-          RowBox[{"FileNameJoin", "@", 
-           RowBox[{"{", 
-            RowBox[{"f", ",", " ", "\"\<PacletInfo.m\>\""}], "}"}]}], 
-          "]"}]}]}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"GetPacletInfoFile", "[", "f", "]"}], "]"}]}]}], ",", "\n", 
+       "\t\t\t\t", 
        RowBox[{"(*", " ", 
         RowBox[{
          RowBox[{"prep", " ", "non"}], "-", 
@@ -7077,10 +7000,8 @@ Cell[BoxData[{
                RowBox[{
                 RowBox[{"TrueQ", "@", 
                  RowBox[{"FileExistsQ", "@", 
-                  RowBox[{"FileNameJoin", "@", 
-                   RowBox[{"{", 
-                    RowBox[{"f", ",", "\"\<PacletInfo.m\>\""}], "}"}]}]}]}], 
-                ",", "\n", "\t\t\t\t\t\t\t\t\t", 
+                  RowBox[{"GetPacletInfoFile", "[", "f", "]"}]}]}], ",", "\n",
+                 "\t\t\t\t\t\t\t\t\t", 
                 RowBox[{"(*", " ", 
                  RowBox[{
                  "if", " ", "f", " ", "is", " ", "a", " ", "paclet", " ", 
@@ -7090,10 +7011,8 @@ Cell[BoxData[{
                   RowBox[{"{", 
                    RowBox[{"a", "=", 
                     RowBox[{"PacletInfoAssociation", "[", 
-                    RowBox[{"FileNameJoin", "@", 
-                    RowBox[{"{", 
-                    RowBox[{"f", ",", "\"\<PacletInfo.m\>\""}], "}"}]}], 
-                    "]"}]}], "}"}], ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"GetPacletInfoFile", "[", "f", "]"}], "]"}]}], 
+                   "}"}], ",", "\n", "\t\t\t\t\t\t\t\t\t\t", 
                   RowBox[{"(*", " ", 
                    RowBox[{
                    "check", " ", "again", " ", "for", " ", "the", " ", 
@@ -7893,7 +7812,7 @@ Cell[BoxData[{
          "]"}]}]}], "\n", "\t\t", "]"}]}]}]}], 
   ";"}]}], "CodeInput",ExpressionUUID->"37031b1f-2d40-42d5-a94b-1615067f71b4"]\
 
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -7992,9 +7911,9 @@ Cell[BoxData[{
      "\n", "\t\t", "]"}]}]}], 
   ";"}]}], "CodeInput",ExpressionUUID->"f31d221d-b94c-4b04-bd87-3c6d6731ab90"]\
 
-}, Open  ]]
 }, Closed]]
-}, Closed]],
+}, Closed]]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -8369,13 +8288,12 @@ Cell[BoxData[
       RowBox[{
        RowBox[{"(", 
         RowBox[{"_String", "|", "_File"}], ")"}], "?", "DirectoryQ"}]}], ",", 
-     
+     " ", 
      RowBox[{"ops", ":", 
       RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
    RowBox[{"Block", "[", 
     RowBox[{
-     RowBox[{"{", 
-      RowBox[{"bundleDir", "=", "dir"}], "}"}], ",", "\n", "\t\t", 
+     RowBox[{"{", "bundleDir", "}"}], ",", "\n", "\t\t", 
      RowBox[{
       RowBox[{"If", "[", 
        RowBox[{
@@ -8384,8 +8302,8 @@ Cell[BoxData[
         RowBox[{"DisplayTemporary", "@", "\n", "\t\t\t\t", 
          RowBox[{"Internal`LoadingPanel", "[", "\n", "\t\t\t\t\t", 
           RowBox[{"TemplateApply", "[", 
-           RowBox[{"\"\<Bundling paclet for ``\>\"", ",", "dir"}], "]"}], 
-          "\n", "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", "]"}], ";", "\n", 
+           RowBox[{"\"\<Bundling paclet for ``\>\"", ",", " ", "dir"}], "]"}],
+           "\n", "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", "]"}], ";", "\n", 
       "\t\t", 
       RowBox[{"(*", " ", 
        RowBox[{
@@ -8408,17 +8326,17 @@ Cell[BoxData[
        RowBox[{
         RowBox[{"If", "[", 
          RowBox[{
-          RowBox[{"FileExistsQ", "@", "#"}], ",", 
+          RowBox[{"FileExistsQ", "@", "#"}], ",", " ", 
           RowBox[{"Quiet", "@", 
            RowBox[{"ExtractArchive", "[", 
-            RowBox[{"#", ",", "dir"}], "]"}]}]}], "]"}], "&"}], "/@", "\n", 
-       "\t\t\t", 
+            RowBox[{"#", ",", " ", "dir"}], "]"}]}]}], " ", "]"}], "&"}], "/@",
+        "\n", "\t\t\t", 
        RowBox[{"Map", "[", "\n", "\t\t\t\t", 
         RowBox[{
          RowBox[{
           RowBox[{"FileNameJoin", "@", 
            RowBox[{"{", 
-            RowBox[{"dir", ",", 
+            RowBox[{"dir", ",", " ", 
              RowBox[{
               RowBox[{"FileBaseName", "@", "dir"}], "<>", "#"}]}], "}"}]}], 
           "&"}], ",", "\n", "\t\t\t\t", 
@@ -8440,19 +8358,18 @@ Cell[BoxData[
            RowBox[{"--", 
             RowBox[{"--", 
              RowBox[{"--", "-"}]}]}]}]}]}]}], " ", "*)"}], "\n", "\t\t", 
+      RowBox[{"bundleDir", "=", 
+       RowBox[{"PacletDirectoryFind", "[", "dir", "]"}]}], ";", "\n", "\t\t", 
+      
       RowBox[{"Which", "[", "\n", "\t\t\t", 
        RowBox[{
-        RowBox[{"FileExistsQ", "@", 
-         RowBox[{"FileNameJoin", "@", 
-          RowBox[{"{", 
-           RowBox[{"dir", ",", "\"\<PacletInfo.m\>\""}], "}"}]}]}], ",", "\n",
-         "\t\t\t\t", 
-        RowBox[{"bundleDir", "=", "dir"}], ",", "\n", "\t\t\t", 
+        RowBox[{"DirectoryQ", "@", "bundleDir"}], ",", "\n", "\t\t\t\t", 
+        RowBox[{"bundleDir", "=", "bundleDir"}], ",", "\n", "\t\t\t", 
         RowBox[{
          RowBox[{"FileExistsQ", "@", 
           RowBox[{"FileNameJoin", "@", 
            RowBox[{"{", 
-            RowBox[{"dir", ",", 
+            RowBox[{"dir", ",", " ", 
              RowBox[{
               RowBox[{"FileBaseName", "[", "dir", "]"}], "<>", 
               "\"\<.m\>\""}]}], "}"}]}]}], "||", "\n", "\t\t\t\t", 
@@ -8480,22 +8397,18 @@ Cell[BoxData[
          RowBox[{"PacletInfoExpressionBundle", "[", "bundleDir", "]"}]}], ",",
          "\n", "\t\t\t", 
         RowBox[{"FileExistsQ", "@", 
-         RowBox[{"FileNameJoin", "@", 
-          RowBox[{"{", 
-           RowBox[{"dir", ",", 
-            RowBox[{"FileBaseName", "@", "dir"}], ",", 
-            "\"\<PacletInfo.m\>\""}], "}"}]}]}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"GetPacletInfoFile", "[", 
+          RowBox[{"dir", ",", " ", "2"}], "]"}]}], ",", "\n", "\t\t\t\t", 
         RowBox[{"bundleDir", "=", 
-         RowBox[{"FileNameJoin", "@", 
-          RowBox[{"{", 
-           RowBox[{"dir", ",", 
-            RowBox[{"FileBaseName", "@", "dir"}]}], "}"}]}]}], ",", "\n", 
+         RowBox[{"DirectoryName", "[", 
+          RowBox[{"GetPacletInfoFile", "[", 
+           RowBox[{"dir", ",", " ", "2"}], "]"}], "]"}]}], ",", "\n", 
         "\t\t\t", 
         RowBox[{"FileExistsQ", "@", 
          RowBox[{"FileNameJoin", "@", 
           RowBox[{"{", 
-           RowBox[{"dir", ",", 
-            RowBox[{"FileBaseName", "@", "dir"}], ",", 
+           RowBox[{"dir", ",", " ", 
+            RowBox[{"FileBaseName", "@", "dir"}], ",", " ", 
             RowBox[{
              RowBox[{"FileBaseName", "@", "dir"}], "<>", "\"\<.m\>\""}]}], 
            "}"}]}]}], ",", "\n", "\t\t\t\t", 
@@ -8548,10 +8461,8 @@ StringReplace[$InputFileName,\\\".m\\\"->\\\".nb\\\"]\n\t]\>\""}], ",", "\n",
         "\t\t\t", 
         RowBox[{"!", 
          RowBox[{"FileExistsQ", "@", 
-          RowBox[{"FileNameJoin", "@", 
-           RowBox[{"{", 
-            RowBox[{"bundleDir", ",", " ", "\"\<PacletInfo.m\>\""}], 
-            "}"}]}]}]}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"GetPacletInfoFile", "[", "bundleDir", "]"}]}]}], ",", "\n",
+         "\t\t\t\t", 
         RowBox[{"PackageRaiseException", "[", "\n", "\t\t\t\t\t", 
          RowBox[{"Automatic", ",", "\n", "\t\t\t\t\t", 
           RowBox[{"PacletInstallPaclet", "::", "dumcode"}], ",", "\n", 
@@ -8560,7 +8471,7 @@ StringReplace[$InputFileName,\\\".m\\\"->\\\".nb\\\"]\n\t]\>\""}], ",", "\n",
         RowBox[{"PacletBundle", "[", "bundleDir", "]"}]}], "\n", "\t\t\t", 
        "]"}]}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"2d0407ff-6749-430f-b941-af373e03ec6b"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -8636,28 +8547,27 @@ Cell[BoxData[
                 "$PackageDependenciesFile"}], "\n", "\t\t\t\t\t\t\t", 
                "}"}]}]}], "\t", "\n", "\t\t\t\t\t\t", "]"}]}], "\n", 
           "\t\t\t\t\t", "]"}], ";", "\n", "\t\t\t\t", 
-         RowBox[{"If", "[", 
+         RowBox[{"With", "[", 
           RowBox[{
-           RowBox[{"FileExistsQ", "@", "\n", "\t", "\t", "\t\t\t", 
-            RowBox[{"FileNameJoin", "@", 
-             RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t", 
-              RowBox[{
-               RowBox[{"DirectoryName", "@", "file"}], ",", "\n", 
-               "\t\t\t\t\t\t", "\"\<PacletInfo.m\>\""}], "\n", "\t\t\t\t\t\t",
-               "}"}]}]}], ",", "\n", "\t\t\t\t\t", 
-           RowBox[{"CopyFile", "[", "\n", "\t", "\t", "\t\t\t\t", 
+           RowBox[{"{", 
+            RowBox[{"pif", "=", 
+             RowBox[{"GetPacletInfoFile", "[", 
+              RowBox[{"DirectoryName", "@", "file"}], "]"}]}], "}"}], ",", 
+           "\n", "\t\t\t\t\t", 
+           RowBox[{"If", "[", 
             RowBox[{
-             RowBox[{"FileNameJoin", "@", 
-              RowBox[{"{", 
-               RowBox[{
-                RowBox[{"DirectoryName", "@", "file"}], ",", " ", 
-                "\"\<PacletInfo.m\>\""}], "}"}]}], ",", "\n", "\t\t\t\t\t\t", 
-             
-             RowBox[{"FileNameJoin", "@", 
-              RowBox[{"{", 
-               RowBox[{"dir", ",", " ", "\"\<PacletInfo.m\>\""}], "}"}]}]}], 
-            "\n", "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "]"}], ";", 
-         "\n", "\t\t\t\t", 
+             RowBox[{"FileExistsQ", "@", "pif"}], ",", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"CopyFile", "[", 
+              RowBox[{"pif", ",", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"FileNameJoin", "@", 
+                RowBox[{"{", 
+                 RowBox[{"dir", ",", " ", 
+                  RowBox[{"StringTrim", "[", 
+                   RowBox[{"pif", ",", " ", 
+                    RowBox[{"DirectoryName", "@", "file"}]}], "]"}]}], 
+                 "}"}]}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}], "\n", 
+            "\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t", "]"}], ";", "\n", 
+         "\t\t\t\t", 
          RowBox[{"CopyFile", "[", 
           RowBox[{"file", ",", "\n", "\t", "\t\t\t\t", 
            RowBox[{"FileNameJoin", "@", 
@@ -8684,29 +8594,30 @@ Cell[BoxData[
            RowBox[{"\"\<BuildRoot\>\"", "\[Rule]", "$TemporaryDirectory"}]}], 
           "\n", "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", "]"}]}], ",", "\n",
       "\t\t", "\"\<nb\>\"", ",", "\n", "\t\t\t", 
-     RowBox[{"With", "[", 
+     RowBox[{"With", "[", "\n", "\t\t\t\t", 
       RowBox[{
-       RowBox[{"{", 
-        RowBox[{"dir", "=", "\n", "\t\t\t\t", 
+       RowBox[{"{", "\n", "\t\t\t\t\t", 
+        RowBox[{"dir", "=", "\n", "\t\t\t\t\t\t", 
          RowBox[{"FileNameJoin", "@", 
-          RowBox[{"{", "\n", "\t\t\t\t\t", 
-           RowBox[{"$TemporaryDirectory", ",", "\n", "\t\t\t\t\t", 
+          RowBox[{"{", "\n", "\t", "\t", "\t\t\t\t\t", 
+           RowBox[{"$TemporaryDirectory", ",", "\n", "\t", "\t", "\t\t\t\t\t", 
             RowBox[{"StringJoin", "@", 
              RowBox[{"RandomSample", "[", 
               RowBox[{
-               RowBox[{"Alphabet", "[", "]"}], ",", "10"}], "]"}]}], ",", 
-            "\n", "\t\t\t\t\t", 
-            RowBox[{"FileBaseName", "@", "file"}]}], "\n", "\t\t\t\t\t", 
-           "}"}]}]}], "\n", "\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t", 
+               RowBox[{"Alphabet", "[", "]"}], ",", " ", "10"}], "]"}]}], ",",
+             "\n", "\t\t\t\t\t\t\t", 
+            RowBox[{"FileBaseName", "@", "file"}]}], "\n", "\t", "\t", 
+           "\t\t\t\t\t", "}"}]}]}], "\n", "\t", "\t\t\t\t\t", "}"}], ",", 
+       "\n", "\t\t\t\t", 
        RowBox[{
         RowBox[{"Quiet", "[", "\n", "\t\t\t\t\t", 
          RowBox[{
           RowBox[{"DeleteDirectory", "[", 
-           RowBox[{"dir", ",", 
+           RowBox[{"dir", ",", " ", 
             RowBox[{"DeleteContents", "\[Rule]", "True"}]}], "]"}], ";", "\n",
            "\t\t\t\t\t", 
           RowBox[{"CreateDirectory", "[", 
-           RowBox[{"dir", ",", 
+           RowBox[{"dir", ",", " ", 
             RowBox[{"CreateIntermediateDirectories", "\[Rule]", "True"}]}], 
            "]"}]}], "\n", "\t\t\t\t\t", "]"}], ";", "\n", "\t\t\t\t", 
         RowBox[{"CopyFile", "[", 
@@ -8748,8 +8659,8 @@ Cell[BoxData[
        RowBox[{"FileExtension", "@", "file"}]}], "\n", "\t\t\t\t", "]"}]}], 
     "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"40bf45a2-0e4a-49f7-bf9f-7c291de018ff"]
-}, Open  ]]
-}, Closed]],
+}, Closed]]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -9496,7 +9407,7 @@ Cell[BoxData[
          "]"}], ";", "\n", "\t\t\t\t\t\t", "$Failed"}]}], "\n", "\t\t\t\t\t", 
       "]"}]}], "\n", "\t\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"5802cbbc-de9d-4169-a004-ef5d0f627059"]
-}, Open  ]]
+}, Closed]]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -9707,7 +9618,248 @@ Cell[BoxData[{
   ";"}]}], "CodeInput",ExpressionUUID->"627b9902-c8b5-4a07-9623-f0f559e48ab0"]\
 
 }, Closed]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Directory Stuff\[RightFloor]", "CodeSubsection",
+ Evaluatable->True,ExpressionUUID->"43f9eeab-7c3f-43ef-b91f-ff452cecf945"],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]GetPacletFiles\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"24c5bfa9-63c3-4e18-88b9-ed4e425bce3a"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GetPacletInfoFiles", "[", 
+    RowBox[{"dir_", ",", " ", 
+     RowBox[{"depth_:", "1"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"FileNames", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\"\<PacletInfo.m\>\"", ",", " ", "\"\<PacletInfo.wl\>\""}], 
+      "}"}], ",", " ", "dir", ",", " ", "depth"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"GetPacletInfoFile", "[", 
+   RowBox[{"dir_", ",", " ", 
+    RowBox[{"depth_:", "1"}]}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Replace", "[", 
+   RowBox[{
+    RowBox[{"GetPacletInfoFiles", "[", 
+     RowBox[{"dir", ",", " ", "depth"}], "]"}], ",", "\n", "\t\t", 
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"f_", ",", " ", "___"}], "}"}], "\[RuleDelayed]", "f"}], ",", 
+      "\n", "\t\t\t", 
+      RowBox[{"_", "\[RuleDelayed]", 
+       RowBox[{"FileNameJoin", "@", 
+        RowBox[{"{", 
+         RowBox[{"dir", ",", " ", "\"\<PacletInfo.m\>\""}], "}"}]}]}]}], "\n",
+      "\t\t\t", "}"}]}], "\n", "\t\t", 
+   "]"}]}]}], \
+"CodeInput",ExpressionUUID->"b747d7e3-297a-4b4e-bfe0-8b90a81609fa"]
 }, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]DirectoryQ\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"8c07a72c-24fb-4af3-93dc-69fcb099e358"],
+
+Cell[BoxData[{
+ RowBox[{"validateDirExtension", "//", "Clear"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"validateDirExtension", "[", 
+    RowBox[{"dir_", ",", " ", 
+     RowBox[{"\"\<Kernel\>\"", "|", "\"\<Application\>\""}], ",", " ", 
+     "ops_"}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"l", "=", 
+        RowBox[{"Lookup", "[", 
+         RowBox[{"ops", ",", " ", "\"\<Root\>\"", ",", " ", "\"\<.\>\""}], 
+         "]"}]}], ",", " ", "\n", "\t", "\t\t", 
+       RowBox[{"ctx", "=", 
+        RowBox[{
+         RowBox[{"Lookup", "[", 
+          RowBox[{"ops", ",", " ", "\"\<Context\>\"", ",", " ", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"StringSplit", "[", 
+              RowBox[{
+               RowBox[{"FileBaseName", "[", "dir", "]"}], ",", " ", 
+               "\"\<-\>\""}], "]"}], "[", 
+             RowBox[{"[", "1", "]"}], "]"}], "}"}]}], "]"}], "[", 
+         RowBox[{"[", "1", "]"}], "]"}]}]}], "\n", "\t\t", "}"}], ",", "\n", 
+     "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"l", "===", "\"\<.\>\""}], ",", "\n", "\t\t\t", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"DirectoryQ", "@", 
+           RowBox[{"FileNameJoin", "@", 
+            RowBox[{"{", 
+             RowBox[{"dir", ",", " ", "\"\<Kernel\>\""}], "}"}]}]}], "&&", 
+          "\n", "\t\t\t\t", 
+          RowBox[{"FileExistsQ", "@", 
+           RowBox[{"FileNameJoin", "@", 
+            RowBox[{"{", 
+             RowBox[{
+             "dir", ",", " ", "\"\<Kernel\>\"", ",", " ", "\"\<init.m\>\""}], 
+             "}"}]}]}]}], ")"}], "||", "\n", "\t\t\t\t", 
+        RowBox[{"FileExistsQ", "@", 
+         RowBox[{"FileNameJoin", "@", 
+          RowBox[{"Flatten", "@", 
+           RowBox[{"{", 
+            RowBox[{"dir", ",", " ", 
+             RowBox[{"StringSplit", "[", 
+              RowBox[{"ctx", ",", " ", "\"\<`\>\""}], "]"}]}], "}"}]}]}]}]}], 
+       ",", "\n", "\t\t\t", 
+       RowBox[{"FileExistsQ", "@", 
+        RowBox[{"FileNameJoin", "@", 
+         RowBox[{"Flatten", "@", 
+          RowBox[{"{", 
+           RowBox[{"dir", ",", " ", 
+            RowBox[{"URLParse", "[", 
+             RowBox[{"l", ",", " ", "\"\<Path\>\""}], "]"}], ",", " ", 
+            "\"\<init.m\>\""}], "}"}]}]}]}]}], "\n", "\t\t\t", "]"}]}], "\n", 
+    "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"validateDirExtension", "[", 
+    RowBox[{"dir_", ",", " ", "\"\<FrontEnd\>\"", ",", " ", "ops_"}], "]"}], ":=",
+    "\n", "\t", 
+   RowBox[{"With", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{"l", "=", 
+       RowBox[{"Lookup", "[", 
+        RowBox[{"ops", ",", " ", "\"\<Root\>\"", ",", " ", "\"\<.\>\""}], 
+        "]"}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"l", "===", "\"\<.\>\""}], ",", "\n", "\t\t\t", 
+       RowBox[{"DirectoryQ", "@", 
+        RowBox[{"FileNameJoin", "@", 
+         RowBox[{"{", 
+          RowBox[{
+          "dir", ",", " ", "\"\<FrontEnd\>\"", ",", " ", "\"\<init.m\>\""}], 
+          "}"}]}]}], ",", "\n", "\t\t\t", 
+       RowBox[{"DirectoryQ", "@", 
+        RowBox[{"FileNameJoin", "@", 
+         RowBox[{"Flatten", "@", 
+          RowBox[{"{", 
+           RowBox[{"dir", ",", " ", 
+            RowBox[{"URLParse", "[", 
+             RowBox[{"l", ",", " ", "\"\<Path\>\""}], "]"}], ",", " ", 
+            "\"\<FrontEnd\>\""}], "}"}]}]}]}]}], "\n", "\t\t\t", "]"}]}], 
+    "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"validateDirExtension", "[", 
+    RowBox[{"dir_", ",", " ", "\"\<Documentation\>\"", ",", " ", "ops_"}], 
+    "]"}], ":=", "\n", "\t", 
+   RowBox[{"With", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{"l", "=", 
+       RowBox[{"Lookup", "[", 
+        RowBox[{"ops", ",", " ", "\"\<Root\>\"", ",", " ", "\"\<.\>\""}], 
+        "]"}]}], "\n", "\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"l", "===", "\"\<.\>\""}], ",", "\n", "\t\t\t", 
+       RowBox[{"DirectoryQ", "@", 
+        RowBox[{"FileNameJoin", "@", 
+         RowBox[{"{", 
+          RowBox[{"dir", ",", " ", "\"\<Documentation\>\""}], "}"}]}]}], ",", 
+       "\n", "\t\t\t", 
+       RowBox[{"DirectoryQ", "@", 
+        RowBox[{"FileNameJoin", "@", 
+         RowBox[{"Flatten", "@", 
+          RowBox[{"{", 
+           RowBox[{"dir", ",", " ", 
+            RowBox[{"URLParse", "[", 
+             RowBox[{"l", ",", " ", "\"\<Path\>\""}], "]"}], ",", " ", 
+            "\"\<Documentation\>\""}], "}"}]}]}]}]}], "\n", "\t\t\t", "]"}]}],
+     "\n", "\t\t", "]"}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"68baf801-655f-4793-bb59-7fa4d02377b0"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"iPacletDirectoryQ", "[", "dir_", "]"}], ":=", "\n", "\t", 
+  RowBox[{"Module", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"ass", "=", 
+       RowBox[{"PacletInfoAssociation", "[", "dir", "]"}]}], ",", "\n", 
+      "\t\t\t", "ext"}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"ext", "=", 
+      RowBox[{"Lookup", "[", 
+       RowBox[{"ass", ",", " ", "\"\<Extensions\>\"", ",", " ", "None"}], 
+       "]"}]}], ";", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"Length", "@", "ext"}], "===", "0"}], "||", "\n", "\t\t\t", 
+      RowBox[{"MemberQ", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"KeyValueMap", "[", "\n", "\t", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"validateDirExtension", "[", 
+            RowBox[{"dir", ",", " ", "##"}], "]"}], "&"}], ",", "\n", "\t", 
+          "\t\t\t\t", "ext"}], "\n", "\t", "\t\t\t\t", "]"}], ",", "\n", "\t",
+         "\t\t\t", "True"}], "\n", "\t", "\t\t\t", "]"}]}]}]}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"9406c0c1-419b-4930-b55f-59ca772d36d5"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"PacletDirectoryQ", "[", "dir_", "]"}], ":=", "\n", "\t", 
+  RowBox[{
+   RowBox[{"FileExistsQ", "@", 
+    RowBox[{"GetPacletInfoFile", "[", "dir", "]"}]}], "&&", "\n", "\t\t", 
+   RowBox[{
+   "iPacletDirectoryQ", "[", "dir", 
+    "]"}]}]}]], \
+"CodeInput",ExpressionUUID->"6ddfade0-0b01-444d-a4dd-0bc364b122b5"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]PacletDirectoryFind\[RightFloor]", "CodeSubsubsection",
+ Evaluatable->True,ExpressionUUID->"8292389f-05b6-4e4a-b27f-0d2cc149795b"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"PacletDirectoryFind", "[", 
+   RowBox[{"dir_", ",", " ", 
+    RowBox[{"depth_:", "2"}]}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"fnames", "=", 
+      RowBox[{"GetPacletInfoFiles", "[", 
+       RowBox[{"dir", ",", " ", "depth"}], "]"}]}], "}"}], ",", "\n", "\t\t", 
+    
+    RowBox[{"SelectFirst", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"DirectoryName", "/@", "fnames"}], ",", "\n", "\t\t\t", 
+      "PacletDirectoryQ"}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"82518a0d-d9d4-4eae-9233-c0654e6f80d6"]
+}, Closed]]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -10257,7 +10409,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"da815cab-e579-48bc-a264-\
 f175938d2794"]
 },
 WindowSize->{815, 780},
-WindowMargins->{{Automatic, 123}, {6, Automatic}},
+WindowMargins->{{292, Automatic}, {24, Automatic}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->Notebook[{

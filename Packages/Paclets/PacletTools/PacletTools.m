@@ -63,6 +63,12 @@ PacletInstalledQ::usage=
   "Tests whether a paclet has been installed";
 
 
+PacletDirectoryQ::usage=
+  "Tests whether a directory is a valid paclet directory";
+PacletDirectoryFind::usage=
+  "Finds a paclet directory in the current directory";
+
+
 (* ::Subsubsection::Closed:: *)
 (*Paclet Sites*)
 
@@ -188,7 +194,7 @@ $PacletUploadPatterns:=
 
 
 (* ::Subsection:: *)
-(*Paclets*)
+(*Paclet Expressions*)
 
 
 
@@ -274,10 +280,11 @@ PacletInfo[infoFile:(_String|_File)?FileExistsQ, ops:OptionsPattern[]]:=
       Replace[infoFile,
         {
           d:(_String|_File)?DirectoryQ:>
-            FileNameJoin@{d, "PacletInfo.m"},
+            GetPacletInfoFile[d],
           f:(_String|_File)?(FileExtension[#]=="paclet"&&FileExistsQ[#]&):>
             With[{rd=$tmpdir=CreateDirectory[]},
-              First@ExtractArchive[f,rd,"*PacletInfo.m"]
+              First@
+                ExtractArchive[f, rd, "*PacletInfo.*"]
               ]
           }
         ]
@@ -999,7 +1006,7 @@ PacletInfoExpressionBundle[
   dest_String?DirectoryQ,
   ops:OptionsPattern[]
   ]:=
-  With[{pacletFile=FileNameJoin@{dest, "PacletInfo.m"}},
+  With[{pacletFile=GetPacletInfoFile[dest]},
     WriteString[pacletFile, 
       First@
         PacletInfoExpressionStrings[{paclet},
@@ -1104,7 +1111,7 @@ PacletAutoPaclet[
           If[DirectoryQ@d,
             $Failed,
             CopyDirectory[f, d];
-            If[!FileExistsQ@FileNameJoin@{d, "PacletInfo.m"},
+            If[!FileExistsQ@GetPacletInfoFile[d],
               PacletInfoExpressionBundle[d, ops]
               ]
             ],
@@ -1113,7 +1120,7 @@ PacletAutoPaclet[
           ],
           ExtractArchive[f, d];
           Which[
-            FileExistsQ@FileNameJoin@{d, "PacletInfo.m"},
+            FileExistsQ@GetPacletInfoFile[d],
               d,
             DirectoryQ@FileNameJoin@{d, bn},
               CopyDirectory[FileNameJoin@{d, bn}, 
@@ -1656,7 +1663,7 @@ PacletSiteFiles[infoFiles_, ops:OptionsPattern[]]:=
   DeleteCases[Except[$PacletFilePatterns]]@
     Replace[
       Replace[
-        Flatten@{ infoFiles, OptionValue["MergePacletInfo"] },{
+        Flatten@{infoFiles, OptionValue["MergePacletInfo"]},{
           (p_PacletManager`Paclet->_):>
             p,
           (_->f_):>f
@@ -1667,8 +1674,8 @@ PacletSiteFiles[infoFiles_, ops:OptionsPattern[]]:=
         Which[
           FileExistsQ@FileNameJoin@{s,"PacletSite.mz"},
             FileNameJoin@{s,"PacletSite.mz"},
-          FileExistsQ@FileNameJoin@{s, "PacletInfo.m"},
-            FileNameJoin@{s,"PacletInfo.m"},
+          FileExistsQ@GetPacletInfoFile[s],
+            GetPacletInfoFile[s],
           True,
             Replace[FileNames["*PacletSite.mz",s],{
               {}:>
@@ -1769,9 +1776,12 @@ PacletSiteInfo[infoFiles:Except[_?OptionQ]|All|{}:All,ops:OptionsPattern[]]:=
             ],
         URLParse[#,"Scheme"]=!=None,
           If[
-            StringMatchQ[Last@URLParse[#,"Path"],
-              "*.paclet"|"PacletSite.m"|
-              "PacletInfo.m"|"PacletSite.mz"],
+            StringMatchQ[
+              Last@URLParse[#,"Path"],
+              "*.paclet"|
+                "PacletInfo.m"|"PacletInfo.wl"|
+                "PacletSite.m"|"PacletSite.mz"
+              ],
             With[{file=
               FileNameJoin@{
                 $TemporaryDirectory,
@@ -2903,7 +2913,7 @@ PacletFindBuiltFile[
             ]
           ],
       MatchQ[f, (_File|_String)?DirectoryQ]&&
-        !FileExistsQ[FileNameJoin@{f, "PacletInfo.m"}],
+        !FileExistsQ[GetPacletInfoFile[f]],
         (* prep non-paclet directories for packing *)
         If[build,
           PacletInfoExpressionBundle[Replace[f,File[s_]:>s]];
@@ -2927,9 +2937,9 @@ PacletFindBuiltFile[
             {
               If[TrueQ@DirectoryQ@f,
                 (* handed a directory *)
-                If[TrueQ@FileExistsQ@FileNameJoin@{f,"PacletInfo.m"},
+                If[TrueQ@FileExistsQ@GetPacletInfoFile[f],
                   (* if f is a paclet directory *)
-                  With[{a=PacletInfoAssociation[FileNameJoin@{f,"PacletInfo.m"}]},
+                  With[{a=PacletInfoAssociation[GetPacletInfoFile[f]]},
                     (* check again for the paclet file by version*)
                     Replace[PacletFindBuiltFile[Lookup[a,{"Name","Version"}],ops],
                       {
@@ -3477,33 +3487,34 @@ Options[installPacletGenerate]={
 
 
 
-installPacletGenerate[dir:(_String|_File)?DirectoryQ,ops:OptionsPattern[]]:=
-  Block[{bundleDir=dir},
+installPacletGenerate[dir:(_String|_File)?DirectoryQ, ops:OptionsPattern[]]:=
+  Block[{bundleDir},
     If[OptionValue@"Verbose",
       DisplayTemporary@
         Internal`LoadingPanel[
-          TemplateApply["Bundling paclet for ``",dir]
+          TemplateApply["Bundling paclet for ``", dir]
           ]
         ];
     (* ------------ Extract Archive Files --------------- *)
-    If[FileExistsQ@#,Quiet@ExtractArchive[#,dir]]&/@
+    If[FileExistsQ@#, Quiet@ExtractArchive[#, dir] ]&/@
       Map[
-        FileNameJoin@{dir,FileBaseName@dir<>#}&,
+        FileNameJoin@{dir, FileBaseName@dir<>#}&,
         {".zip",".gz"}
         ];
     (* ------------ Detect Paclet Layout --------------- *)
+    bundleDir=PacletDirectoryFind[dir];
     Which[
-      FileExistsQ@FileNameJoin@{dir,"PacletInfo.m"},
-        bundleDir=dir,
-      FileExistsQ@FileNameJoin@{dir,FileBaseName[dir]<>".m"}||
+      DirectoryQ@bundleDir,
+        bundleDir=bundleDir,
+      FileExistsQ@FileNameJoin@{dir, FileBaseName[dir]<>".m"}||
         FileExistsQ@FileNameJoin@{dir,FileBaseName[dir]<>".wl"}||
         FileExistsQ@FileNameJoin@{dir,"Kernel","init"<>".m"}||
         FileExistsQ@FileNameJoin@{dir,"Kernel","init"<>".wl"},
         bundleDir=dir;
         PacletInfoExpressionBundle[bundleDir],
-      FileExistsQ@FileNameJoin@{dir,FileBaseName@dir,"PacletInfo.m"},
-        bundleDir=FileNameJoin@{dir,FileBaseName@dir},
-      FileExistsQ@FileNameJoin@{dir,FileBaseName@dir,FileBaseName@dir<>".m"},
+      FileExistsQ@GetPacletInfoFile[dir, 2],
+        bundleDir=DirectoryName[GetPacletInfoFile[dir, 2]],
+      FileExistsQ@FileNameJoin@{dir, FileBaseName@dir, FileBaseName@dir<>".m"},
         bundleDir=FileNameJoin@{dir,FileBaseName@dir};
         PacletInfoExpressionBundle[bundleDir],
       FileExistsQ@FileNameJoin@{dir,FileBaseName[dir]<>".nb"},
@@ -3532,7 +3543,7 @@ CreateDocument[
           PacletInstallPaclet::badbun,
           bundleDir
           ],
-      !FileExistsQ@FileNameJoin@{bundleDir, "PacletInfo.m"},
+      !FileExistsQ@GetPacletInfoFile[bundleDir],
         PackageRaiseException[
           Automatic,
           PacletInstallPaclet::dumcode,
@@ -3583,14 +3594,11 @@ installPacletGenerate[file:(_String|_File)?FileExistsQ,ops:OptionsPattern[]]:=
               }  
             ]
           ];
-        If[FileExistsQ@
-          FileNameJoin@{
-            DirectoryName@file,
-            "PacletInfo.m"
-            },
-          CopyFile[
-            FileNameJoin@{DirectoryName@file, "PacletInfo.m"},
-            FileNameJoin@{dir, "PacletInfo.m"}
+        With[{pif=GetPacletInfoFile[DirectoryName@file]},
+          If[FileExistsQ@pif,
+            CopyFile[pif,
+              FileNameJoin@{dir, StringTrim[pif, DirectoryName@file]}
+              ]
             ]
           ];
         CopyFile[file,
@@ -3607,16 +3615,18 @@ installPacletGenerate[file:(_String|_File)?FileExistsQ,ops:OptionsPattern[]]:=
           ]
         ],
     "nb",
-      With[{dir=
-        FileNameJoin@{
-          $TemporaryDirectory,
-          StringJoin@RandomSample[Alphabet[],10],
-          FileBaseName@file
-          }
-          },
+      With[
+        {
+          dir=
+            FileNameJoin@{
+              $TemporaryDirectory,
+              StringJoin@RandomSample[Alphabet[], 10],
+              FileBaseName@file
+              }
+            },
         Quiet[
-          DeleteDirectory[dir,DeleteContents->True];
-          CreateDirectory[dir,CreateIntermediateDirectories->True]
+          DeleteDirectory[dir, DeleteContents->True];
+          CreateDirectory[dir, CreateIntermediateDirectories->True]
           ];
         CopyFile[file,FileNameJoin@{dir,FileNameTake@file}];
         installPacletGenerate[dir]
@@ -4101,6 +4111,105 @@ PacletInstallPaclet[
             }
           ]
         ];
+
+
+(* ::Subsection:: *)
+(*Directory Stuff*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*GetPacletFiles*)
+
+
+
+GetPacletInfoFiles[dir_, depth_:1]:=
+  FileNames[{"PacletInfo.m", "PacletInfo.wl"}, dir, depth];
+GetPacletInfoFile[dir_, depth_:1]:=
+  Replace[GetPacletInfoFiles[dir, depth],
+    {
+      {f_, ___}:>f,
+      _:>FileNameJoin@{dir, "PacletInfo.m"}
+      }
+    ]
+
+
+(* ::Subsubsection::Closed:: *)
+(*DirectoryQ*)
+
+
+
+validateDirExtension//Clear
+validateDirExtension[dir_, "Kernel"|"Application", ops_]:=
+  With[
+    {
+      l=Lookup[ops, "Root", "."], 
+      ctx=Lookup[ops, "Context", {StringSplit[FileBaseName[dir], "-"][[1]]}][[1]]
+    },
+    If[l===".",
+      (DirectoryQ@FileNameJoin@{dir, "Kernel"}&&
+        FileExistsQ@FileNameJoin@{dir, "Kernel", "init.m"})||
+        FileExistsQ@FileNameJoin@Flatten@{dir, StringSplit[ctx, "`"]},
+      FileExistsQ@FileNameJoin@Flatten@{dir, URLParse[l, "Path"], "init.m"}
+      ]
+    ];
+validateDirExtension[dir_, "FrontEnd", ops_]:=
+  With[
+    {
+      l=Lookup[ops, "Root", "."]
+    },
+    If[l===".",
+      DirectoryQ@FileNameJoin@{dir, "FrontEnd", "init.m"},
+      DirectoryQ@FileNameJoin@Flatten@{dir, URLParse[l, "Path"], "FrontEnd"}
+      ]
+    ];
+validateDirExtension[dir_, "Documentation", ops_]:=
+  With[
+    {
+      l=Lookup[ops, "Root", "."]
+    },
+    If[l===".",
+      DirectoryQ@FileNameJoin@{dir, "Documentation"},
+      DirectoryQ@FileNameJoin@Flatten@{dir, URLParse[l, "Path"], "Documentation"}
+      ]
+    ];
+
+
+iPacletDirectoryQ[dir_]:=
+  Module[
+    {
+      ass=PacletInfoAssociation[dir],
+      ext
+      },
+    ext=Lookup[ass, "Extensions", None];
+    Length@ext===0||
+      MemberQ[
+        KeyValueMap[
+          validateDirExtension[dir, ##]&,
+          ext
+          ],
+        True
+        ]
+    ]
+
+
+PacletDirectoryQ[dir_]:=
+  FileExistsQ@GetPacletInfoFile[dir]&&
+    iPacletDirectoryQ[dir]
+
+
+(* ::Subsubsection::Closed:: *)
+(*PacletDirectoryFind*)
+
+
+
+PacletDirectoryFind[dir_, depth_:2]:=
+  With[{fnames=GetPacletInfoFiles[dir, depth]},
+    SelectFirst[
+      DirectoryName/@fnames,
+      PacletDirectoryQ
+      ]
+    ]
 
 
 (* ::Subsection:: *)

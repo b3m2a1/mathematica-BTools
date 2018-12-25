@@ -1895,7 +1895,7 @@ Cell[BoxData[
    3.734148090331306*^9}},ExpressionUUID->"b45461d5-cc21-45c9-8b05-\
 0309a5834555"]
 }, Closed]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -2721,6 +2721,11 @@ Cell["\[LeftCeiling]copyThumbnailFromPaclet\[RightFloor]", \
 "CodeSubsubsubsection",
  Evaluatable->True,ExpressionUUID->"94701a49-a2b6-4e92-b26a-73958f9433a7"],
 
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]New Version\[RightFloor]", "CodeSubsubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"82866cec-b4ab-418e-b0c6-c6e89f9cfdb3"],
+
 Cell[BoxData[
  RowBox[{
   RowBox[{
@@ -2743,18 +2748,26 @@ Cell[BoxData[
              RowBox[{"imgDir", ",", " ", 
               RowBox[{"URLParse", "[", 
                RowBox[{"ico", ",", " ", "\"\<Path\>\""}], "]"}]}], 
-             "}"}]}]}]}], ",", "\n", "\t", "\t\t\t", 
-         RowBox[{"icoFile", "=", 
+             "}"}]}]}]}], ",", "\n", "\t\t\t\t", 
+         RowBox[{"icoFile", "=", "\n", "\t\t\t\t\t", 
           RowBox[{"FileNameJoin", "@", 
-           RowBox[{"Prepend", "[", 
-            RowBox[{
-             RowBox[{"URLParse", "[", 
-              RowBox[{"ico", ",", " ", "\"\<Path\>\""}], "]"}], ",", " ", 
-             RowBox[{"FileBaseName", "[", "pacF", "]"}]}], "]"}]}]}], ",", 
-         "\n", "\t", "\t\t\t", "icoImg"}], "\n", "\t", "\t\t\t", "}"}], ",", 
-       "\n", "\t", "\t\t", 
+           RowBox[{"URLParse", "[", 
+            RowBox[{"ico", ",", " ", "\"\<Path\>\""}], "]"}]}]}], ",", "\n", 
+         "\t\t\t\t", "icoImg"}], "\n", "\t\t\t\t", "}"}], ",", "\n", "\t\t\t", 
        RowBox[{
-        RowBox[{"icoImg", "=", "\n", "\t", "\t\t\t\t", 
+        RowBox[{"icoFile", "=", "\n", "\t\t\t\t", 
+         RowBox[{"SelectFirst", "[", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Import", "[", 
+            RowBox[{"pacF", ",", " ", "\"\<ZIP\>\""}], "]"}], ",", "\n", 
+           "\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"#", "\[Equal]", "icoFile"}], "||", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"StringEndsQ", "[", 
+              RowBox[{"#", ",", " ", "icoFile"}], "]"}]}], "&"}]}], "\n", 
+          "\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t", 
+        RowBox[{"icoImg", "=", "\n", "\t\t\t\t\t", 
          RowBox[{"Quiet", "[", "\n", "\t\t\t\t\t\t", 
           RowBox[{
            RowBox[{"Import", "[", 
@@ -2788,12 +2801,18 @@ Cell[BoxData[
             "outpath", ",", " ", "icoImg", ",", " ", "\"\<String\>\""}], 
             "]"}]}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "]"}]}], 
     "\n", "\t\t", "]"}]}], 
-  ";"}]], "CodeInput",ExpressionUUID->"ce104ff5-4448-4f18-942f-f9b12afe1123"],
+  ";"}]], "CodeInput",ExpressionUUID->"ce104ff5-4448-4f18-942f-f9b12afe1123"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]Old Version\[RightFloor]", "CodeSubsubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"7da78bbe-99d5-4e27-b119-538af1e22ba1"],
 
 Cell[BoxData[
  RowBox[{
   RowBox[{
-   RowBox[{"copyThumbnailFromPaclet1", "[", 
+   RowBox[{"copyThumbnailFromPacletLegacy", "[", 
     RowBox[{"pacF_", ",", " ", "ico_", ",", " ", "imgDir_"}], "]"}], ":=", 
    "\n", "\t", 
    RowBox[{"Module", "[", 
@@ -2818,25 +2837,24 @@ Cell[BoxData[
            "\n", "\t", "\t\t\t\t", "]"}]}], "\n", "\t", "\t\t\t", "]"}], ";", 
         "\n", "\t", "\t\t", 
         RowBox[{"tmp", "=", 
-         RowBox[{"CreateDirectory", "[", "]"}]}], ";", "\n", "\t", "\t\t\t", 
-        RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t", 
+         RowBox[{"CreateDirectory", "[", "]"}]}], ";", "\n", "\t\t\t", 
+        RowBox[{"Replace", "[", "\n", "\t\t\t\t", 
          RowBox[{
-          RowBox[{"ExtractArchive", "[", "\n", "\t", "\t\t\t\t\t", 
+          RowBox[{"ExtractArchive", "[", "\n", "\t\t\t\t\t", 
            RowBox[{
-           "pacF", ",", "\n", "\t", "\t\t\t\t\t", "tmp", ",", "\n", "\t", 
-            "\t\t\t\t\t", 
+           "pacF", ",", "\n", "\t\t\t\t\t", "tmp", ",", "\n", "\t\t\t\t\t", 
             RowBox[{"FileNameJoin", "@", 
              RowBox[{"Prepend", "[", 
               RowBox[{
                RowBox[{"URLParse", "[", 
                 RowBox[{"ico", ",", " ", "\"\<Path\>\""}], "]"}], ",", " ", 
-               "\"\<*\>\""}], "]"}]}], ",", "\n", "\t", "\t\t\t\t\t", 
+               "\"\<*\>\""}], "]"}]}], ",", "\n", "\t\t\t\t\t", 
             RowBox[{"CreateIntermediateDirectories", "\[Rule]", "True"}]}], 
-           "\n", "\t", "\t\t\t\t\t", "]"}], ",", "\n", "\t", "\t\t\t\t", 
+           "\n", "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
           RowBox[{
            RowBox[{"{", 
-            RowBox[{"f_", ",", " ", "___"}], "}"}], ":>", "\n", "\t", 
-           "\t\t\t\t\t", 
+            RowBox[{"f_", ",", " ", "___"}], "}"}], ":>", "\n", "\t\t\t\t\t", 
+           
            RowBox[{"With", "[", 
             RowBox[{
              RowBox[{"{", 
@@ -2847,40 +2865,41 @@ Cell[BoxData[
                   RowBox[{"imgDir", ",", " ", 
                    RowBox[{"URLParse", "[", 
                     RowBox[{"ico", ",", " ", "\"\<Path\>\""}], "]"}]}], 
-                  "}"}]}]}]}], "}"}], ",", "\n", "\t", "\t\t\t\t\t\t", 
+                  "}"}]}]}]}], "}"}], ",", "\n", "\t\t\t\t\t\t", 
              RowBox[{
               RowBox[{"If", "[", 
                RowBox[{
                 RowBox[{"!", 
                  RowBox[{"DirectoryQ", "@", 
-                  RowBox[{"DirectoryName", "@", "exp"}]}]}], ",", "\n", "\t", 
+                  RowBox[{"DirectoryName", "@", "exp"}]}]}], ",", "\n", 
                 "\t\t\t\t\t\t\t", 
                 RowBox[{"CreateDirectory", "[", 
                  RowBox[{
-                  RowBox[{"DirectoryName", "@", "exp"}], ",", " ", "\n", "\t",
-                   "\t\t\t\t\t\t\t\t", 
+                  RowBox[{"DirectoryName", "@", "exp"}], ",", " ", "\n", 
+                  "\t\t\t\t\t\t\t\t", 
                   RowBox[{
                   "CreateIntermediateDirectories", "\[Rule]", "True"}]}], 
-                 "]"}]}], "\n", "\t", "\t\t\t\t\t\t\t", "]"}], ";", "\n", 
-              "\t", "\t\t\t\t\t\t", 
-              RowBox[{"CopyFile", "[", "\n", "\t", "\t\t\t\t\t\t\t", 
-               RowBox[{"f", ",", " ", "\n", "\t", "\t\t\t\t\t\t\t", 
+                 "]"}]}], "\n", "\t\t\t\t\t\t\t", "]"}], ";", "\n", 
+              "\t\t\t\t\t\t", 
+              RowBox[{"CopyFile", "[", "\n", "\t\t\t\t\t\t\t", 
+               RowBox[{"f", ",", " ", "\n", "\t\t\t\t\t\t\t", 
                 RowBox[{"FileNameJoin", "@", 
                  RowBox[{"Flatten", "@", 
                   RowBox[{"{", 
                    RowBox[{"imgDir", ",", " ", 
                     RowBox[{"URLParse", "[", 
                     RowBox[{"ico", ",", " ", "\"\<Path\>\""}], "]"}]}], 
-                   "}"}]}]}], ",", "\n", "\t", "\t\t\t\t\t\t\t", 
-                RowBox[{"OverwriteTarget", "\[Rule]", "True"}]}], "\n", "\t", 
-               "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t", "\t\t\t\t\t\t", 
-            "]"}]}]}], "\n", "\t", "\t\t\t\t", "]"}], ";", "\n", "\t", "\t\t", 
+                   "}"}]}]}], ",", "\n", "\t\t\t\t\t\t\t", 
+                RowBox[{"OverwriteTarget", "\[Rule]", "True"}]}], "\n", 
+               "\t\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t\t\t", "]"}]}]}], 
+         "\n", "\t\t\t\t", "]"}], ";", "\n", "\t", "\t\t", 
         RowBox[{"DeleteDirectory", "[", 
          RowBox[{"tmp", ",", " ", 
           RowBox[{"DeleteContents", "\[Rule]", "True"}]}], "]"}]}]}], "\n", 
       "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"767baf34-ddb8-4b44-b7eb-9c24a3dcc325"]
-}, Closed]],
+}, Closed]]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -3090,7 +3109,7 @@ Cell[BoxData[
               "]"}]}]}], "\n", "\t\t\t\t", "]"}]}], "&"}], "/@", 
        "siteDS"}]}]}], "\n", "\t\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"ad7150a2-89aa-4a9d-9a46-6c19aba2814b"]
-}, Open  ]]
+}, Closed]]
 }, Open  ]]
 }, Open  ]],
 
@@ -3105,7 +3124,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"703cd986-9567-4637-8a11-\
 388760e7411c"]
 },
 WindowSize->{808, 755},
-WindowMargins->{{142, Automatic}, {44, Automatic}},
+WindowMargins->{{Automatic, 233}, {Automatic, 0}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

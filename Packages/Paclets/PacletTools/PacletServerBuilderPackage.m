@@ -1197,14 +1197,26 @@ PacletServerInitialize[server:localPacletServerPatOrDir]:=
 
 
 
+(* ::Subsubsubsubsection::Closed:: *)
+(*New Version*)
+
+
+
 copyThumbnailFromPaclet[pacF_, ico_, imgDir_]:=
   If[StringQ@ico&&FileExistsQ@pacF,
     Module[
       {
         outpath=FileNameJoin@Flatten@{imgDir, URLParse[ico, "Path"]},
-        icoFile=FileNameJoin@Prepend[URLParse[ico, "Path"], FileBaseName[pacF]],
+        icoFile=
+          FileNameJoin@URLParse[ico, "Path"],
         icoImg
         },
+      icoFile=
+        SelectFirst[
+          Import[pacF, "ZIP"],
+          #==icoFile||
+            StringEndsQ[#, icoFile]&
+          ];
       icoImg=
           Quiet[
             Import[pacF,
@@ -1224,7 +1236,12 @@ copyThumbnailFromPaclet[pacF_, ico_, imgDir_]:=
     ];
 
 
-copyThumbnailFromPaclet1[pacF_, ico_, imgDir_]:=
+(* ::Subsubsubsubsection::Closed:: *)
+(*Old Version*)
+
+
+
+copyThumbnailFromPacletLegacy[pacF_, ico_, imgDir_]:=
   Module[{tmp},
   (* Copy in Thumbnail file *)
     If[FileExistsQ[pacF]&&StringQ@ico,
@@ -1234,26 +1251,26 @@ copyThumbnailFromPaclet1[pacF_, ico_, imgDir_]:=
           ]
         ];
       tmp=CreateDirectory[];
-        Replace[
-          ExtractArchive[
-            pacF,
-            tmp,
-            FileNameJoin@Prepend[URLParse[ico, "Path"], "*"],
-            CreateIntermediateDirectories->True
-            ],
-          {f_, ___}:>
-            With[{exp=FileNameJoin@Flatten@{imgDir, URLParse[ico, "Path"]}},
-              If[!DirectoryQ@DirectoryName@exp,
-                CreateDirectory[DirectoryName@exp, 
-                  CreateIntermediateDirectories->True]
-                ];
-              CopyFile[
-                f, 
-                FileNameJoin@Flatten@{imgDir, URLParse[ico, "Path"]},
-                OverwriteTarget->True
-                ]
+      Replace[
+        ExtractArchive[
+          pacF,
+          tmp,
+          FileNameJoin@Prepend[URLParse[ico, "Path"], "*"],
+          CreateIntermediateDirectories->True
+          ],
+        {f_, ___}:>
+          With[{exp=FileNameJoin@Flatten@{imgDir, URLParse[ico, "Path"]}},
+            If[!DirectoryQ@DirectoryName@exp,
+              CreateDirectory[DirectoryName@exp, 
+                CreateIntermediateDirectories->True]
+              ];
+            CopyFile[
+              f, 
+              FileNameJoin@Flatten@{imgDir, URLParse[ico, "Path"]},
+              OverwriteTarget->True
               ]
-          ];
+            ]
+        ];
       DeleteDirectory[tmp, DeleteContents->True]
       ]
     ];

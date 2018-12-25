@@ -323,7 +323,7 @@ Options[customServiceConnectionPrep]={
     None,
   "Information"->
     None,
-  "Icon"->
+  "Thumbnail"->
     None,
   "Functions"->
     None
@@ -600,8 +600,8 @@ customServicePacletExport[dir_, name_, ops:OptionsPattern[]]:=
         FileNameJoin@{dir,"ServiceConnection_"<>name},
         FilterRules[
           Flatten@{
-            FilterRules[{ops}, Except["Icon"]],
-            "Icon"->
+            FilterRules[{ops}, Except["Thumbnail"]],
+            "Thumbnail"->
               FileNameJoin@{
                   "FrontEnd",
                   "SystemResources",
