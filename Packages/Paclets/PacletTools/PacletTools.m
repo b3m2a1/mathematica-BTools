@@ -957,7 +957,31 @@ prettyFormatPacletString[
   pac_
   ]:=
   Block[{Internal`$ContextMarks=False},
-    With[{bits=prettyFormatPacletElement/@List@@pac},
+    With[
+    {
+      bits=prettyFormatPacletElement/@List@@pac
+      },
+      "Paclet[\n"<>StringRiffle[bits, ",\n"]<>"\n ]"
+      ]
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*prettyFormatPacletStringFast*)
+
+
+
+prettyFormatPacletStringFast[
+  pac_
+  ]:=
+  Block[{Internal`$ContextMarks=False},
+    With[
+    {
+      bits=
+        StringReplace[ToString[#, InputForm]&/@List@@pac,
+          (StartOfLine|StartOfString)->"  "
+          ]
+        },
       "Paclet[\n"<>StringRiffle[bits, ",\n"]<>"\n ]"
       ]
     ]
@@ -981,7 +1005,12 @@ PacletInfoExpressionStrings[
             Except[_List]:>$cleanPacletExcludedElements
             ]
         },
-      prettyFormatPacletString[cleanPacletForExport[#]]&/@
+      If[Length@pacs>5,
+        prettyFormatPacletStringFast,
+        prettyFormatPacletString
+        ][
+        cleanPacletForExport[#]
+        ]&/@
         pacs
       ]
 
@@ -1973,7 +2002,7 @@ Options[PacletSiteBundle]=
 PacletSiteBundle//Clear;
 PacletSiteBundle[dir_String?DirectoryQ, ops:OptionsPattern[]]:=
   PacletSiteBundle[
-    FileNames["*.paclet",dir,2],
+    FileNames["*.paclet", dir, 2],
     dir,
     ops
     ];

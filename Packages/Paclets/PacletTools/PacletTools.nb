@@ -809,11 +809,12 @@ Cell[BoxData[{
   ";"}], "\n", 
  RowBox[{
   RowBox[{
-   RowBox[{"PacletInfo", "[", 
-    RowBox[{"pac_PacletManager`Paclet", ",", " ", 
-     RowBox[{"ops", ":", 
-      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
-   "pac"}], ";", 
+   RowBox[{
+    RowBox[{"PacletInfo", "[", 
+     RowBox[{"pac_PacletManager`Paclet", ",", " ", 
+      RowBox[{"ops", ":", 
+       RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
+    "pac"}], ";"}], 
   RowBox[{"(*", 
    RowBox[{
     RowBox[{"With", "[", 
@@ -836,7 +837,8 @@ Cell[BoxData[{
           RowBox[{"{", 
            RowBox[{"pf", ",", " ", "\"\<PacletInfo.m\>\""}], "}"}]}]}], ",", 
         "\n", "\t\t\t", "pac"}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}],
-     ";"}], "*)"}], "\n", 
+     ";"}], "*)"}]}], "\n", 
+ RowBox[{
   RowBox[{
    RowBox[{"PacletInfo", "[", "\n", "\t", 
     RowBox[{
@@ -1685,8 +1687,8 @@ Cell[BoxData[{
         "\t\t\t", "dest"}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "}"}]}]}], 
   ";"}]}], "CodeInput",ExpressionUUID->"89c7319f-2fbc-4d11-9bd8-b47b4935fd98"]\
 
-}, Open  ]]
-}, Closed]],
+}, Closed]]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -2212,7 +2214,7 @@ Cell[CellGroupData[{
 
 Cell["\[LeftCeiling]prettyFormatPacletString\[RightFloor]", \
 "CodeSubsubsubsection",
- Evaluatable->True,ExpressionUUID->"d1275290-afcf-4558-a983-cf20ab9902e0"],
+ Evaluatable->True,ExpressionUUID->"48f7e7db-4d94-4e69-ab5f-9cd069fc04c7"],
 
 Cell[BoxData[
  RowBox[{
@@ -2224,23 +2226,59 @@ Cell[BoxData[
     RowBox[{"{", 
      RowBox[{"Internal`$ContextMarks", "=", "False"}], "}"}], ",", "\n", 
     "\t\t", 
-    RowBox[{"With", "[", 
+    RowBox[{"With", "[", "\n", "\t\t", 
      RowBox[{
-      RowBox[{"{", 
+      RowBox[{"{", "\n", "\t\t\t", 
        RowBox[{"bits", "=", 
         RowBox[{"prettyFormatPacletElement", "/@", 
-         RowBox[{"List", "@@", "pac"}]}]}], "}"}], ",", "\n", "\t", "\t\t", 
+         RowBox[{"List", "@@", "pac"}]}]}], "\n", "\t\t\t", "}"}], ",", "\n", 
+      "\t\t\t", 
       RowBox[{"\"\<Paclet[\\n\>\"", "<>", 
        RowBox[{"StringRiffle", "[", 
         RowBox[{"bits", ",", " ", "\"\<,\\n\>\""}], "]"}], "<>", 
        "\"\<\\n ]\>\""}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
-   "]"}]}]], "CodeInput",
- CellChangeTimes->{{3.733357745146717*^9, 3.7333579171996*^9}, {
-  3.733358288691454*^9, 3.733358342323072*^9}, {3.733358959156066*^9, 
-  3.733358961752967*^9}, {3.733359448009704*^9, 3.733359458117593*^9}, {
-  3.7333594961795197`*^9, 3.733359531993919*^9}, {3.733454153268018*^9, 
-  3.7334541645233727`*^9}},ExpressionUUID->"9759c9c0-360b-4d96-896d-\
-232d1fba8482"]
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"fa6a7b6a-0946-475d-ae13-f3014f4a8637"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]prettyFormatPacletStringFast\[RightFloor]", \
+"CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"d1275290-afcf-4558-a983-cf20ab9902e0"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+  "prettyFormatPacletStringFast", "[", "\n", "\t", "pac_", "\n", "\t", "]"}], 
+  ":=", "\n", "\t", 
+  RowBox[{"Block", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"Internal`$ContextMarks", "=", "False"}], "}"}], ",", "\n", 
+    "\t\t", 
+    RowBox[{"With", "[", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"{", "\n", "\t\t\t", 
+       RowBox[{"bits", "=", "\n", "\t\t\t\t", 
+        RowBox[{"StringReplace", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{"ToString", "[", 
+             RowBox[{"#", ",", " ", "InputForm"}], "]"}], "&"}], "/@", 
+           RowBox[{"List", "@@", "pac"}]}], ",", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{"StartOfLine", "|", "StartOfString"}], ")"}], "\[Rule]", 
+           "\"\<  \>\""}]}], "\n", "\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t", 
+       "}"}], ",", "\n", "\t\t\t", 
+      RowBox[{"\"\<Paclet[\\n\>\"", "<>", 
+       RowBox[{"StringRiffle", "[", 
+        RowBox[{"bits", ",", " ", "\"\<,\\n\>\""}], "]"}], "<>", 
+       "\"\<\\n ]\>\""}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"9759c9c0-360b-4d96-896d-232d1fba8482"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -2276,9 +2314,16 @@ Cell[BoxData[
       "\n", "\t\t\t\t", "}"}], ",", "\n", "\t\t\t", 
     RowBox[{
      RowBox[{
-      RowBox[{"prettyFormatPacletString", "[", 
-       RowBox[{"cleanPacletForExport", "[", "#", "]"}], "]"}], "&"}], "/@", 
-     "\n", "\t\t\t\t", "pacs"}]}], "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Length", "@", "pacs"}], ">", "5"}], ",", "\n", "\t\t\t\t", 
+         "prettyFormatPacletStringFast", ",", "\n", "\t\t\t\t", 
+         "prettyFormatPacletString"}], "\n", "\t\t\t\t", "]"}], "[", "\n", 
+       "\t\t\t\t", 
+       RowBox[{"cleanPacletForExport", "[", "#", "]"}], "\n", "\t\t\t\t", 
+       "]"}], "&"}], "/@", "\n", "\t\t\t\t", "pacs"}]}], "\n", "\t\t\t", 
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"045e6598-44b4-4af4-bbdd-b8993cdc49c3"]
 }, Closed]],
@@ -2379,7 +2424,7 @@ Cell[BoxData[{
   3.727893892350543*^9}},ExpressionUUID->"89dc3829-2454-49ae-a388-\
 a820bdef8ad5"]
 }, Closed]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -4381,9 +4426,8 @@ Cell[BoxData[{
           RowBox[{"pacletsite", ",", 
            RowBox[{"Except", "[", "_PacletManager`Paclet", "]"}]}], "]"}]}], 
         "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
-    "]"}]}], 
-  ";"}]}], "CodeInput",ExpressionUUID->"c8773fa0-b3af-4d1e-ab9d-f9d6edc59038"]\
-
+    "]"}]}], ";"}]}], \
+"CodeInput",ExpressionUUID->"c8773fa0-b3af-4d1e-ab9d-f9d6edc59038"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -4619,9 +4663,9 @@ PacletSite file\>\""}], ";"}], "*)"}]}], "\n",
    RowBox[{"PacletSiteBundle", "[", "\n", "\t\t", 
     RowBox[{
      RowBox[{"FileNames", "[", 
-      RowBox[{"\"\<*.paclet\>\"", ",", "dir", ",", "2"}], "]"}], ",", "\n", 
-     "\t\t", "dir", ",", "\n", "\t\t", "ops"}], "\n", "\t\t", "]"}]}], 
-  ";"}], "\n", 
+      RowBox[{"\"\<*.paclet\>\"", ",", " ", "dir", ",", " ", "2"}], "]"}], 
+     ",", "\n", "\t\t", "dir", ",", "\n", "\t\t", "ops"}], "\n", "\t\t", 
+    "]"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"PacletSiteBundle", "[", "\n", "\t", 
@@ -4704,7 +4748,7 @@ PacletSite file\>\""}], ";"}], "*)"}]}], "\n",
    "\t\t", "]"}]}]}], \
 "CodeInput",ExpressionUUID->"1f2797c9-339d-42b4-ba15-09f8f8975dc1"]
 }, Open  ]]
-}, Closed]]
+}, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -6596,8 +6640,8 @@ Cell[BoxData[{
    RowBox[{"PacletSiteUpload", "[", 
     RowBox[{"site", ",", 
      RowBox[{"{", "infoFiles", "}"}], ",", "ops"}], "]"}]}], 
-  ";"}]}], "CodeInput",ExpressionUUID->"0d1da453-900a-49a4-bd17-b39bd1b9c9f0"]\
-
+  ";"}]}], \
+"CodeInput",ExpressionUUID->"0d1da453-900a-49a4-bd17-b39bd1b9c9f0"]
 }, Open  ]]
 }, Closed]],
 
@@ -10409,7 +10453,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"da815cab-e579-48bc-a264-\
 f175938d2794"]
 },
 WindowSize->{815, 780},
-WindowMargins->{{292, Automatic}, {24, Automatic}},
+WindowMargins->{{150, Automatic}, {Automatic, 0}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->Notebook[{
