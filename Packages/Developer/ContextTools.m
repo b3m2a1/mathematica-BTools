@@ -30,6 +30,8 @@ ContextRemove[pkgContext_String]:=
         $Packages=Select[$Packages, Not@*StringStartsQ[cont]];
         Protect[$Packages];,
         {
+          ClearAll::locked,
+          Remove::rmlck,
           General::readp,
           Protect::locked,
           Attributes::locked,

@@ -35,6 +35,34 @@ Cell[BoxData[{
 
 Cell[BoxData[{
  RowBox[{
+  RowBox[{"GASetUseKeychain", "::", "usage"}], "=", "\"\<\>\""}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GASetUsername", "::", "usage"}], "=", "\"\<\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GASetClientID", "::", "usage"}], "=", "\"\<\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GASetClientSecret", "::", "usage"}], "=", "\"\<\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAResetUsername", "::", "usage"}], "=", "\"\<\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAResetClientID", "::", "usage"}], "=", "\"\<\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAResetClientSecret", "::", "usage"}], "=", "\"\<\>\""}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GASetUseKeychain", "::", "usage"}], "=", "\"\<\>\""}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"0ddf1bd0-8aa5-4776-9710-c78c613f5b36"],
+
+Cell[BoxData[{
+ RowBox[{
   RowBox[{
    RowBox[{"$GAVersion", "::", "usage"}], "=", "\"\<\>\""}], ";"}], "\n", 
  RowBox[{
@@ -134,52 +162,54 @@ Cell[BoxData[
   RowBox[{"$GASettings", "=", "\n", "\t", 
    RowBox[{"Replace", "[", "\n", "\t\t", 
     RowBox[{
-     RowBox[{"Do", "[", "\n", "\t", "\t\t", 
+     RowBox[{"Do", "[", "\n", "\t\t\t\t", 
       RowBox[{
-       RowBox[{"With", "[", 
+       RowBox[{"If", "[", 
         RowBox[{
-         RowBox[{"{", 
-          RowBox[{"f", "=", 
+         RowBox[{"FileExistsQ", "@", "f"}], ",", "\n", "\t", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"Return", "[", "\n", "\t", "\t\t\t\t\t", 
+           RowBox[{"Replace", "[", 
+            RowBox[{
+             RowBox[{"Quiet", "@", 
+              RowBox[{"Import", "@", "f"}]}], ",", "\n", "\t", "\t\t\t\t\t\t", 
+             RowBox[{"{", " ", "\n", "\t", "\t\t\t\t\t\t\t", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"o_", "?", "OptionQ"}], "\[RuleDelayed]", 
+                RowBox[{"Association", "@", "o"}]}], ",", "\n", "\t", 
+               "\t\t\t\t\t\t\t", 
+               RowBox[{"_", "\[Rule]", 
+                RowBox[{"<|", "|>"}]}]}], "\n", "\t", "\t\t\t\t\t\t\t", 
+              "}"}]}], "\n", "\t", "\t\t\t\t\t\t", "]"}], "\n", "\t", 
+           "\t\t\t\t\t", "]"}], ";", "\n", "\t", "\t\t\t\t", 
+          RowBox[{"Break", "[", "]"}]}]}], "\n", "\t\t\t\t\t", "]"}], ",", 
+       "\n", "\t\t\t", 
+       RowBox[{"{", 
+        RowBox[{"f", ",", "\n", "\t\t\t\t", 
+         RowBox[{"{", "\n", "\t\t\t\t\t", 
+          RowBox[{
            RowBox[{"PackageFilePath", "[", 
             RowBox[{
-            "\"\<Private\>\"", ",", " ", "\"\<Config\>\"", ",", " ", "d"}], 
-            "]"}]}], "}"}], ",", "\n", "\t", "\t\t\t", 
-         RowBox[{"If", "[", 
-          RowBox[{
-           RowBox[{"FileExistsQ", "@", "f"}], ",", "\n", "\t", "\t\t\t\t", 
-           RowBox[{
-            RowBox[{"Return", "[", "\n", "\t", "\t\t\t\t\t", 
-             RowBox[{"Replace", "[", 
-              RowBox[{
-               RowBox[{"Quiet", "@", 
-                RowBox[{"Import", "@", "f"}]}], ",", "\n", "\t", 
-               "\t\t\t\t\t\t", 
-               RowBox[{"{", " ", "\n", "\t", "\t\t\t\t\t\t\t", 
-                RowBox[{
-                 RowBox[{
-                  RowBox[{"o_", "?", "OptionQ"}], "\[RuleDelayed]", 
-                  RowBox[{"Association", "@", "o"}]}], ",", "\n", "\t", 
-                 "\t\t\t\t\t\t\t", 
-                 RowBox[{"_", "\[Rule]", 
-                  RowBox[{"<|", "|>"}]}]}], "\n", "\t", "\t\t\t\t\t\t\t", 
-                "}"}]}], "\n", "\t", "\t\t\t\t\t\t", "]"}], "\n", "\t", 
-             "\t\t\t\t\t", "]"}], ";", "\n", "\t", "\t\t\t\t", 
-            RowBox[{"Break", "[", "]"}]}]}], "\n", "\t", "\t\t\t\t", "]"}]}], 
-        "\n", "\t", "\t\t\t", "]"}], ",", "\n", "\t", "\t\t", 
-       RowBox[{"{", 
-        RowBox[{"d", ",", "\n", "\t", "\t\t\t", 
-         RowBox[{"{", "\n", "\t", "\t\t\t\t", 
-          RowBox[{
-          "\"\<GoogleConfig.m\>\"", ",", "\n", "\t", "\t\t\t\t", 
-           "\"\<GoogleConfig.wl\>\""}], "\n", "\t", "\t\t\t\t", "}"}]}], "\n",
-         "\t", "\t\t\t", "}"}]}], "\n", "\t", "\t\t", "]"}], ",", "\n", "\t", 
-     "\t", 
+            "\"\<Private\>\"", ",", " ", "\"\<Config\>\"", ",", " ", 
+             "\"\<GoogleConfig.m\>\""}], "]"}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{"PackageFilePath", "[", 
+            RowBox[{
+            "\"\<Private\>\"", ",", " ", "\"\<Config\>\"", ",", " ", 
+             "\"\<GoogleConfig.wl\>\""}], "]"}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{"PackageFilePath", "[", 
+            RowBox[{
+            "\"\<Config\>\"", ",", " ", "\"\<Misc\>\"", ",", " ", 
+             "\"\<GoogleConfig.m\>\""}], "]"}], ",", "\n", "\t\t\t\t\t", 
+           RowBox[{"PackageFilePath", "[", 
+            RowBox[{
+            "\"\<Config\>\"", ",", " ", "\"\<Misc\>\"", ",", " ", 
+             "\"\<GoogleConfig.wl\>\""}], "]"}]}], "\n", "\t\t\t\t\t", 
+          "}"}]}], "\n", "\t\t\t\t", "}"}]}], "\n", "\t\t\t", "]"}], ",", 
+     "\n", "\t", "\t", 
      RowBox[{"Null", "\[Rule]", 
-      RowBox[{"<|", "|>"}]}]}], "\n", "\t\t", "]"}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.734835113792885*^9, 3.734835199533803*^9}, {
-  3.7348367526853523`*^9, 
-  3.734836765067588*^9}},ExpressionUUID->"98aa46ac-b701-4309-856e-\
-283f62118162"]
+      RowBox[{"<|", "|>"}]}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"98aa46ac-b701-4309-856e-283f62118162"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -202,28 +232,51 @@ Cell["\[LeftCeiling]Keys\[RightFloor]", "CodeSubsubsection",
 
 Cell[BoxData[{
  RowBox[{
-  RowBox[{"$GoogleAPIUsernameName", "=", "\"\<GoogleAPIUsername\>\""}], 
-  ";"}], "\n", 
+  RowBox[{"$GoogleAPIUsernameName", "=", "\"\<Username\>\""}], ";"}], "\n", 
  RowBox[{
-  RowBox[{"$GAClientIDName", "=", "\"\<GoogleAPIClientID\>\""}], 
-  ";"}], "\n", 
+  RowBox[{"$GAClientIDName", "=", "\"\<ClientID\>\""}], ";"}], "\n", 
  RowBox[{
-  RowBox[{"$GAClientSecretName", "=", "\"\<GoogleAPIClientSecret\>\""}], 
-  ";"}]}], "CodeInput",
- CellChangeTimes->{{3.704153209910098*^9, 3.704153226666176*^9}, {
-   3.7044045880241547`*^9, 3.7044046277998953`*^9}, {3.704579909261856*^9, 
-   3.7045799322142887`*^9}, {3.704579965021718*^9, 3.704579965556531*^9}, 
-   3.704652568406066*^9},ExpressionUUID->"242cf951-404d-4f7f-8d9a-\
-20d3fc3ed39d"],
+  RowBox[{"$GAClientSecretName", "=", "\"\<ClientSecret\>\""}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"242cf951-404d-4f7f-8d9a-20d3fc3ed39d"],
 
 Cell[CellGroupData[{
 
-Cell["LoadParameter", "CodeSubsubsubsection",
- CellChangeTimes->{
-  3.734835493980485*^9, {3.734835918399094*^9, 3.734835919254702*^9}, {
-   3.734837419767899*^9, 
-   3.7348374271663933`*^9}},ExpressionUUID->"c3787765-daa0-4ca8-8382-\
-1503ad4e6905"],
+Cell["\[LeftCeiling]SetUseKeychain\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"c5fe1ebb-1b83-4ed1-bc3c-20c24c49fdf6"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"GASetUseKeychain", "[", 
+    RowBox[{"b", ":", 
+     RowBox[{"True", "|", "False"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"$GAUseKeychain", "=", "b"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"ae1bc3a9-9f02-449c-ad2d-1e9cfa7e5bd6"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]GACache\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"035bc8eb-311b-4467-8050-ec90605250ab"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"getPasswordVal", "[", "key_", "]"}], ":=", "\n", "\t", 
+  RowBox[{"Block", "[", 
+   RowBox[{
+    RowBox[{"{", "$auth", "}"}], ",", "\n", "\t\t", 
+    RowBox[{"PasswordDialog", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{"Dynamic", "@", "$auth"}], ",", "\n", "\t\t\t", "key", ",", 
+      "\n", "\t", "\t\t", "key", ",", "\n", "\t", "\t\t", 
+      RowBox[{
+      "\"\<PromptString\>\"", "->", "\n", "\t", "\t\t\t", 
+       "\"\<Enter ``:\>\""}], ",", "\n", "\t", "\t\t", 
+      RowBox[{"WindowTitle", "\[Rule]", "key"}], ",", "\n", "\t", "\t\t", 
+      RowBox[{"FieldMasked", "\[Rule]", "False"}]}], "\n", "\t\t\t", "]"}]}], 
+   "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"3365a45f-f114-42b8-998a-164cac261e24"],
 
 Cell[BoxData[{
  RowBox[{
@@ -245,22 +298,85 @@ Cell[BoxData[{
      "]"}], ",", "\n", "\t", 
     RowBox[{"SetAttributes", "[", 
      RowBox[{"$GACache", ",", " ", "Locked"}], "]"}]}], "\n", "\t", "]"}], 
-  ";"}]}], "CodeInput",
- CellChangeTimes->{{3.7348357833223133`*^9, 
-  3.734835814804976*^9}},ExpressionUUID->"59dc1b39-56cf-439e-b498-\
-d4b387f71eee"],
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GACacheGet", "[", 
+    RowBox[{"{", 
+     RowBox[{"\"\<AccountData\>\"", ",", " ", "k___"}], "}"}], "]"}], ":=", 
+   "\n", "\t", 
+   RowBox[{"$GACache", "[", 
+    RowBox[{"StringJoin", "[", "k", "]"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"GACacheGet", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"\"\<AccountData\>\"", ",", " ", "k___"}], "}"}], ",", " ", 
+    "True"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Replace", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"$GACache", "[", 
+     RowBox[{"StringJoin", "[", "k", "]"}], "]"}], ",", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Except", "[", 
+      RowBox[{"_String", "?", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"StringLength", "[", "#", "]"}], ">", "0"}], "&"}], ")"}]}],
+       "]"}], ":>", "\n", "\t\t\t", 
+     RowBox[{"Replace", "[", 
+      RowBox[{
+       RowBox[{"getPasswordVal", "[", 
+        RowBox[{"StringRiffle", "[", 
+         RowBox[{
+          RowBox[{"{", "k", "}"}], ",", " ", "\"\</\>\""}], "]"}], "]"}], ",",
+        "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"v_String", "?", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"StringLength", "[", "#", "]"}], ">", "0"}], "&"}], 
+          ")"}]}], ":>", "\n", "\t\t\t\t\t", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"$GACache", "[", "k", "]"}], "=", "v"}], ")"}]}]}], "\n", 
+      "\t\t\t\t", "]"}]}]}], "\n", "\t\t", 
+   "]"}]}]}], \
+"CodeInput",ExpressionUUID->"59dc1b39-56cf-439e-b498-d4b387f71eee"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]LoadParameter\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
+ CellChangeTimes->{
+  3.734835493980485*^9, {3.734835918399094*^9, 3.734835919254702*^9}, {
+   3.734837419767899*^9, 
+   3.7348374271663933`*^9}},ExpressionUUID->"c3787765-daa0-4ca8-8382-\
+1503ad4e6905"],
 
 Cell[BoxData[
- RowBox[{"$GACacheSym", ":=", "\n", "\t", 
+ RowBox[{
   RowBox[{"If", "[", 
    RowBox[{
-    RowBox[{"TrueQ", "@", 
-     RowBox[{"$GASettings", "[", "\"\<UseKeychain\>\"", "]"}]}], ",", " ", 
-    "$Keychain", ",", " ", "$GACache"}], "]"}]}]], "CodeInput",
- CellChangeTimes->{{3.734835948387776*^9, 3.7348359607315702`*^9}, {
-   3.734836772388921*^9, 3.734836787531013*^9}, 
-   3.734839812195056*^9},ExpressionUUID->"d696ebd4-edc5-43c8-a887-\
-2d65de34a71d"],
+    RowBox[{"!", 
+     RowBox[{"ValueQ", "@", "$GAUseKeychain"}]}], ",", "\n", "\t", 
+    RowBox[{"$GAUseKeychain", "=", "\n", "\t\t", 
+     RowBox[{"TrueQ", "@", 
+      RowBox[{"$GASettings", "[", "\"\<UseKeychain\>\"", "]"}]}]}]}], "\n", 
+   "\t", "]"}], 
+  ";"}]], "CodeInput",ExpressionUUID->"6141625a-8651-4685-abc6-11d0108ead79"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$GACacheGetter", ":=", "\n", "\t", 
+   RowBox[{"If", "[", 
+    RowBox[{
+    "$GAUseKeychain", ",", " ", "KeychainGet", ",", " ", "GACacheGet"}], 
+    "]"}]}], ";"}]], \
+"CodeInput",ExpressionUUID->"d696ebd4-edc5-43c8-a887-2d65de34a71d"],
 
 Cell[BoxData[{
  RowBox[{
@@ -269,10 +385,15 @@ Cell[BoxData[{
    RowBox[{"With", "[", 
     RowBox[{
      RowBox[{"{", 
-      RowBox[{"s", "=", "$GACacheSym"}], "}"}], ",", "\n", "\t", "\t", 
-     RowBox[{"Replace", "[", "\n", "\t", "\t\t", 
+      RowBox[{"s", "=", "$GACacheGetter"}], "}"}], ",", "\n", "\t\t", 
+     RowBox[{"Replace", "[", "\n", "\t\t\t", 
       RowBox[{
-       RowBox[{"s", "[", "key", "]"}], ",", "\n", "\t", "\t\t", 
+       RowBox[{"s", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+          "\"\<AccountData\>\"", ",", " ", "\"\<GoogleAPIs\>\"", ",", " ", 
+           "key"}], "}"}], ",", " ", "True"}], "]"}], ",", "\n", "\t\t\t", 
        RowBox[{
         RowBox[{"Except", "[", 
          RowBox[{"_String", "?", 
@@ -280,42 +401,21 @@ Cell[BoxData[{
            RowBox[{
             RowBox[{
              RowBox[{"StringLength", "@", "#"}], ">", "0"}], "&"}], ")"}]}], 
-         "]"}], ":>", "\n", "\t\t\t\t", 
-        RowBox[{"(", "\n", "\t\t\t\t", 
-         RowBox[{
-          RowBox[{"s", "[", "key", "]"}], "=", "\n", "\t", "\t\t\t\t", 
-          RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t\t", 
-           RowBox[{
-            RowBox[{"SelectFirst", "[", "\n", "\t", "\t\t\t\t\t\t", 
-             RowBox[{
-              RowBox[{
-               RowBox[{
-                RowBox[{"PackageFilePath", "[", 
-                 RowBox[{"\"\<Private\>\"", ",", "#"}], "]"}], "&"}], "/@", 
-               "\n", "\t", "\t\t\t\t\t\t\t", 
-               RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t", 
-                RowBox[{
-                 RowBox[{"key", "<>", "\"\<.wl\>\""}], ",", "\n", "\t", 
-                 "\t\t\t\t\t\t\t", 
-                 RowBox[{"key", "<>", "\"\<.m\>\""}]}], "\n", "\t", 
-                "\t\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t", "\t", "\t", "\t", 
-              "\t\t\t", "FileExistsQ", ",", "\n", "\t", "\t", "\t", "\t", 
-              "\t\t\t", "None"}], "\n", "\t", "\t", "\t", "\t", "\t\t\t", 
-             "]"}], ",", 
-            RowBox[{"{", "\n", "\t", "\t", "\t", "\t", "\t\t", 
-             RowBox[{"f_String", ":>", "\n", "\t", "\t", "\t", "\t", "\t\t\t", 
-              RowBox[{"Import", "[", "f", "]"}]}], "\n", "\t", "\t\t\t\t\t", 
-             "}"}]}], "]"}]}], "\n", "\t\t\t\t\t", ")"}]}]}], "\n", "\t\t\t", 
-      "]"}]}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
+         "]"}], ":>", "\n", "\t\t\t\t", "None"}]}], "\n", "\t\t\t", "]"}]}], 
+    "\n", "\t\t", "]"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"GALoadParameter", "[", 
     RowBox[{"key1_", ",", " ", "key2_"}], "]"}], ":=", "\n", "\t", 
    RowBox[{"Replace", "[", "\n", "\t\t", 
     RowBox[{
-     RowBox[{"$Keychain", "[", 
-      RowBox[{"{", 
-       RowBox[{"key1", ",", " ", "key2"}], "}"}], "]"}], ",", "\n", "\t\t", 
+     RowBox[{"$GACacheGetter", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+        "\"\<AccountData\>\"", ",", " ", "\"\<GoogleAPIs\>\"", ",", " ", 
+         "key1", ",", " ", "key2"}], "}"}], ",", " ", "True"}], "]"}], ",", 
+     "\n", "\t\t", 
      RowBox[{
       RowBox[{"Except", "[", 
        RowBox[{"_String", "?", 
@@ -324,70 +424,52 @@ Cell[BoxData[{
           RowBox[{
            RowBox[{"StringLength", "@", "#"}], ">", "0"}], "&"}], ")"}]}], 
        "]"}], ":>", "\n", "\t\t\t", 
-      RowBox[{"(", "\n", "\t\t\t", 
+      RowBox[{"Replace", "[", 
        RowBox[{
-        RowBox[{"$Keychain", "[", 
-         RowBox[{"{", 
-          RowBox[{"key1", ",", " ", "key2"}], "}"}], "]"}], "=", "\n", 
-        "\t\t\t\t", 
-        RowBox[{"Replace", "[", "\n", "\t\t\t\t\t", 
-         RowBox[{
-          RowBox[{"Replace", "[", "\n", "\t\t\t\t\t\t", 
-           RowBox[{
-            RowBox[{"SelectFirst", "[", "\n", "\t", "\t\t\t\t\t\t", 
-             RowBox[{
-              RowBox[{
-               RowBox[{
-                RowBox[{"PackageFilePath", "[", 
-                 RowBox[{"\"\<Private\>\"", ",", "#"}], "]"}], "&"}], "/@", 
-               "\n", "\t\t\t\t\t\t\t\t", 
-               RowBox[{"{", "\n", "\t\t\t\t\t\t\t\t", 
-                RowBox[{
-                 RowBox[{"key1", "<>", "\"\<.wl\>\""}], ",", "\n", 
-                 "\t\t\t\t\t\t\t\t", 
-                 RowBox[{"key1", "<>", "\"\<.m\>\""}]}], "\n", "\t", 
-                "\t\t\t\t\t\t\t", "}"}]}], ",", "\n", "\t", "\t", "\t", "\t", 
-              "\t\t\t", "FileExistsQ", ",", "\n", "\t", "\t", "\t", "\t", 
-              "\t\t\t", "None"}], "\n", "\t", "\t\t\t\t\t\t", "]"}], ",", 
-            "\n", "\t", "\t\t\t\t", 
-            RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
-             RowBox[{"f_String", ":>", "\n", "\t", "\t\t\t\t\t\t", 
-              RowBox[{"Import", "[", "f", "]"}]}], "\n", "\t\t\t\t\t\t", 
-             "}"}]}], "\n", "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
-          RowBox[{
-           RowBox[{"Except", "[", 
-            RowBox[{"_String", "?", 
-             RowBox[{"(", 
-              RowBox[{
-               RowBox[{
-                RowBox[{"StringLength", "@", "#"}], ">", "0"}], "&"}], 
-              ")"}]}], "]"}], ":>", "\n", "\t\t\t\t\t", 
-           RowBox[{"Replace", "[", 
+        RowBox[{"KeychainGet", "[", "key1", "]"}], ",", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"Except", "[", 
+          RowBox[{"_String", "?", 
+           RowBox[{"(", 
             RowBox[{
-             RowBox[{"$Keychain", "[", "key1", "]"}], ",", "\n", 
-             "\t\t\t\t\t\t", 
              RowBox[{
-              RowBox[{"Except", "[", 
-               RowBox[{"_String", "?", 
-                RowBox[{"(", 
-                 RowBox[{
-                  RowBox[{
-                   RowBox[{"StringLength", "@", "#"}], ">", "0"}], "&"}], 
-                 ")"}]}], "]"}], "\[Rule]", "None"}]}], "\n", "\t", 
-            "\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", "]"}]}], "\n", 
-       "\t\t\t\t", ")"}]}]}], "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
- CellChangeTimes->{{3.7348353824256563`*^9, 3.734835472965199*^9}, {
-  3.7348355453166647`*^9, 3.7348356312519407`*^9}, {3.734835933879393*^9, 
-  3.734835990073547*^9}, {3.7348367230649548`*^9, 
-  3.73483672724755*^9}},ExpressionUUID->"4428ec8c-34d6-4efb-957c-6504ca16f9a9"]
+              RowBox[{"StringLength", "@", "#"}], ">", "0"}], "&"}], ")"}]}], 
+          "]"}], "\[Rule]", "None"}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", 
+    "\t\t", "]"}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"4428ec8c-34d6-4efb-957c-6504ca16f9a9"]\
+
 }, Closed]],
 
 Cell[CellGroupData[{
 
-Cell["Username", "CodeSubsubsubsection",
+Cell["\[LeftCeiling]Username\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
  CellChangeTimes->{{3.734835501265725*^9, 
   3.734835503120412*^9}},ExpressionUUID->"b8d26f27-f193-46a7-94e8-\
 1b2113f4028e"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"GASetUsername", "[", "name_", "]"}], ":=", "\n", "\t", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"StringQ", "@", "name"}], "&&", "\n", "\t\t\t", 
+      RowBox[{"StringMatchQ", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"StringTrim", "[", 
+         RowBox[{"name", ",", " ", "\"\<@gmail.com\>\""}], "]"}], ",", " ", 
+        "\n", "\t", "\t\t\t", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+          "WordCharacter", "|", "\"\<_\>\"", "|", "\"\<.\>\"", "|", 
+           "\"\<-\>\""}], ")"}], ".."}]}], "\n", "\t", "\t\t\t", "]"}]}], ",",
+      "\n", "\t\t", 
+     RowBox[{"$GoogleAPIUsername", "=", "name"}], ",", "\n", "\t\t", 
+     "$Failed"}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"5e17fd28-1192-4121-9ff1-6e5aa883a620"],
 
 Cell[BoxData[
  RowBox[{
@@ -396,7 +478,7 @@ Cell[BoxData[
     RowBox[{"!", 
      RowBox[{"MatchQ", "[", 
       RowBox[{
-       RowBox[{"OwnValues", "[", "$GoogleAPIUsername", "]"}], ",", 
+       RowBox[{"OwnValues", "[", "$GoogleAPIUsername", "]"}], ",", " ", 
        RowBox[{"{", 
         RowBox[{"_", "\[RuleDelayed]", 
          RowBox[{"(", 
@@ -407,51 +489,52 @@ Cell[BoxData[
               RowBox[{"StringLength", "@", "#"}], ">", "0"}], "&"}], ")"}]}], 
           ")"}]}], "}"}]}], "]"}]}], ",", "\n", "\t", 
     RowBox[{"$GoogleAPIUsername", ":=", "\n", "\t\t", 
-     RowBox[{"$GoogleAPIUsername", "=", "\n", "\t\t\t", 
-      RowBox[{"GALoadParameter", "[", "$GoogleAPIUsernameName", "]"}]}]}]}], 
-   "\n", "\t", "]"}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.704151058924774*^9, 3.70415109485506*^9}, {
-   3.704151662772089*^9, 3.704151844111802*^9}, {3.704151901048633*^9, 
-   3.704151947383257*^9}, {3.70415199082944*^9, 3.7041520029949417`*^9}, {
-   3.7041520696356907`*^9, 3.704152111952409*^9}, {3.704152142738153*^9, 
-   3.704152156147875*^9}, {3.704152199981153*^9, 3.704152243540367*^9}, {
-   3.7041528957985086`*^9, 3.704152959142159*^9}, {3.70415319004461*^9, 
-   3.7041532488912*^9}, 3.704217635826029*^9, 3.704402682958042*^9, {
-   3.7044046597849073`*^9, 3.7044046898112507`*^9}, {3.704404740249898*^9, 
-   3.704404769209235*^9}, {3.7044056204088583`*^9, 3.7044056325226717`*^9}, {
-   3.704579947255274*^9, 3.7045799799435663`*^9}, {3.704652568414629*^9, 
-   3.7046525684488277`*^9}, {3.704653116307352*^9, 3.704653125855668*^9}, {
-   3.705178568243819*^9, 3.705178568252191*^9}, {3.705181023672804*^9, 
-   3.705181023680703*^9}, 3.70523300542181*^9, 3.705233056673483*^9, {
-   3.705233135617462*^9, 3.7052331684912987`*^9}, {3.7052331998382607`*^9, 
-   3.7052332421863728`*^9}, {3.705233611775539*^9, 3.7052336144816637`*^9}, 
-   3.705233684178583*^9, {3.705233897429377*^9, 3.7052339041998262`*^9}, {
-   3.705233960773756*^9, 3.7052339690734997`*^9}, {3.705234077867593*^9, 
-   3.705234113015019*^9}, {3.705234158517462*^9, 3.705234328811823*^9}, {
-   3.705235028287692*^9, 3.7052350344632883`*^9}, {3.705235097453197*^9, 
-   3.705235102710808*^9}, {3.733697127804777*^9, 3.733697127841457*^9}, {
-   3.734835233903502*^9, 3.734835254852193*^9}, {3.734835289364645*^9, 
-   3.734835369963648*^9}, 3.7348355075548267`*^9, {3.734835637814139*^9, 
-   3.73483564439706*^9}, 
-   3.734837015242373*^9},ExpressionUUID->"42dc172d-1634-417d-bbe3-\
-cf1c9add81c7"]
+     RowBox[{"GALoadParameter", "[", "$GoogleAPIUsernameName", "]"}]}]}], 
+   "\n", "\t", "]"}], 
+  ";"}]], "CodeInput",ExpressionUUID->"42dc172d-1634-417d-bbe3-cf1c9add81c7"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"GAResetUsername", "[", "]"}], ":=", "\n", "\t", 
+  RowBox[{"$GoogleAPIUsername", ":=", 
+   RowBox[{
+   "GALoadParameter", "[", "$GoogleAPIUsernameName", 
+    "]"}]}]}]], \
+"CodeInput",ExpressionUUID->"1a4efda6-fc58-4991-86fc-6fa20e91e658"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
-Cell["ClientID", "CodeSubsubsubsection",
+Cell["\[LeftCeiling]ClientID\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
  CellChangeTimes->{{3.734835501265725*^9, 
   3.734835510168262*^9}},ExpressionUUID->"7eb72df7-a250-41dd-9e34-\
 113e440b7470"],
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"GAGetClientID", "[", "userName_", "]"}], ":=", "\n", "\t", 
+  RowBox[{"GAGetClientID", "[", "username_", "]"}], ":=", "\n", "\t", 
   RowBox[{"GALoadParameter", "[", 
-   RowBox[{"$GAClientIDName", ",", " ", "userName"}], "]"}]}]], "CodeInput",
- CellChangeTimes->{{3.734837075618574*^9, 
-  3.734837139370542*^9}},ExpressionUUID->"ea57a15f-17d5-4c8c-8d4d-\
-93f63e0df874"],
+   RowBox[{"$GAClientIDName", ",", " ", "username"}], 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"4914c160-b3e4-433e-a1b1-b06643d9c7ce"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GASetClientID", "[", "id_", "]"}], ":=", "\n", "\t", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{"StringQ", "@", "id"}], ",", "\n", "\t\t", 
+     RowBox[{"$GAClientID", "=", "id"}], ",", "\n", "\t\t", "$Failed"}], "\n",
+     "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAResetClientID", "[", "]"}], ":=", "\n", "\t", 
+   RowBox[{"(", 
+    RowBox[{"$GAClientID", ":=", 
+     RowBox[{"GAGetClientID", "[", "$GoogleAPIUsername", "]"}]}], ")"}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"a4955190-5154-4f3e-af8a-f88e86543b0b"],
 
 Cell[BoxData[
  RowBox[{
@@ -470,39 +553,14 @@ Cell[BoxData[
              RowBox[{
               RowBox[{"StringLength", "@", "#"}], ">", "0"}], "&"}], ")"}]}], 
           ")"}]}], "}"}]}], "]"}]}], ",", "\n", "\t", 
-    RowBox[{"$GAClientID", ":=", 
-     RowBox[{"GAGetClientID", "[", "$GoogleAPIUsername", "]"}]}]}], "\n", 
-   "\t", "]"}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.704151058924774*^9, 3.70415109485506*^9}, {
-   3.704151662772089*^9, 3.704151844111802*^9}, {3.704151901048633*^9, 
-   3.704151947383257*^9}, {3.70415199082944*^9, 3.7041520029949417`*^9}, {
-   3.7041520696356907`*^9, 3.704152111952409*^9}, {3.704152142738153*^9, 
-   3.704152156147875*^9}, {3.704152199981153*^9, 3.704152243540367*^9}, {
-   3.7041528957985086`*^9, 3.704152959142159*^9}, {3.70415319004461*^9, 
-   3.7041532488912*^9}, 3.704217635826029*^9, 3.704402682958042*^9, {
-   3.7044046597849073`*^9, 3.7044046898112507`*^9}, {3.704404740249898*^9, 
-   3.704404769209235*^9}, {3.7044056204088583`*^9, 3.7044056325226717`*^9}, {
-   3.704579947255274*^9, 3.7045799799435663`*^9}, {3.704652568414629*^9, 
-   3.7046525684488277`*^9}, {3.704653116307352*^9, 3.704653125855668*^9}, {
-   3.705178568243819*^9, 3.705178568252191*^9}, {3.705181023672804*^9, 
-   3.705181023680703*^9}, 3.70523300542181*^9, 3.705233056673483*^9, {
-   3.705233135617462*^9, 3.7052331684912987`*^9}, {3.7052331998382607`*^9, 
-   3.7052332421863728`*^9}, {3.705233611775539*^9, 3.7052336144816637`*^9}, 
-   3.705233684178583*^9, {3.705233897429377*^9, 3.7052339041998262`*^9}, {
-   3.705233960773756*^9, 3.7052339690734997`*^9}, {3.705234077867593*^9, 
-   3.705234113015019*^9}, {3.705234158517462*^9, 3.705234328811823*^9}, {
-   3.705235028287692*^9, 3.7052350344632883`*^9}, {3.705235097453197*^9, 
-   3.705235102710808*^9}, {3.733697127804777*^9, 3.733697127841457*^9}, {
-   3.734835233903502*^9, 3.734835254852193*^9}, {3.734835289364645*^9, 
-   3.734835369963648*^9}, {3.7348355075548267`*^9, 3.734835514038046*^9}, {
-   3.7348370581392736`*^9, 
-   3.734837121211527*^9}},ExpressionUUID->"6f84526d-684d-4965-b5ee-\
-a790906c2383"]
-}, Closed]],
+    RowBox[{"GAResetClientID", "[", "]"}]}], "\n", "\t", "]"}], 
+  ";"}]], "CodeInput",ExpressionUUID->"6f84526d-684d-4965-b5ee-a790906c2383"]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
-Cell["ClientSecret", "CodeSubsubsubsection",
+Cell["\[LeftCeiling]ClientSecret\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,
  CellChangeTimes->{{3.734835501265725*^9, 
   3.7348355171901703`*^9}},ExpressionUUID->"158b7b52-11ec-422c-867d-\
 aeab51a721f1"],
@@ -517,6 +575,23 @@ Cell[BoxData[
   3.7348373985243807`*^9, 
   3.73483740595826*^9}},ExpressionUUID->"badb26c1-4bcd-4f9f-b0f2-\
 a5346676d551"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GASetClientSecret", "[", "id_", "]"}], ":=", "\n", "\t", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{"StringQ", "@", "id"}], ",", "\n", "\t\t", 
+     RowBox[{"$GAClientSecret", "=", "id"}], ",", "\n", "\t\t", "$Failed"}], 
+    "\n", "\t\t", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GAResetClientSecret", "[", "]"}], ":=", "\n", "\t", 
+   RowBox[{"(", 
+    RowBox[{"$GAClientSecret", ":=", 
+     RowBox[{"GAGetClientSecret", "[", "$GAClientID", "]"}]}], ")"}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"829b5b5a-c583-4232-b7eb-3cb8aa420691"],
 
 Cell[BoxData[
  RowBox[{
@@ -535,36 +610,10 @@ Cell[BoxData[
              RowBox[{
               RowBox[{"StringLength", "@", "#"}], ">", "0"}], "&"}], ")"}]}], 
           ")"}]}], "}"}]}], "]"}]}], ",", "\n", "\t", 
-    RowBox[{"$GAClientSecret", ":=", 
-     RowBox[{"GAGetClientSecret", "[", "$GAClientID", "]"}]}]}], "\n", "\t", 
-   "]"}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.704151058924774*^9, 3.70415109485506*^9}, {
-   3.704151662772089*^9, 3.704151844111802*^9}, {3.704151901048633*^9, 
-   3.704151947383257*^9}, {3.70415199082944*^9, 3.7041520029949417`*^9}, {
-   3.7041520696356907`*^9, 3.704152111952409*^9}, {3.704152142738153*^9, 
-   3.704152156147875*^9}, {3.704152199981153*^9, 3.704152243540367*^9}, {
-   3.7041528957985086`*^9, 3.704152959142159*^9}, {3.70415319004461*^9, 
-   3.7041532488912*^9}, 3.704217635826029*^9, 3.704402682958042*^9, {
-   3.7044046597849073`*^9, 3.7044046898112507`*^9}, {3.704404740249898*^9, 
-   3.704404769209235*^9}, {3.7044056204088583`*^9, 3.7044056325226717`*^9}, {
-   3.704579947255274*^9, 3.7045799799435663`*^9}, {3.704652568414629*^9, 
-   3.7046525684488277`*^9}, {3.704653116307352*^9, 3.704653125855668*^9}, {
-   3.705178568243819*^9, 3.705178568252191*^9}, {3.705181023672804*^9, 
-   3.705181023680703*^9}, 3.70523300542181*^9, 3.705233056673483*^9, {
-   3.705233135617462*^9, 3.7052331684912987`*^9}, {3.7052331998382607`*^9, 
-   3.7052332421863728`*^9}, {3.705233611775539*^9, 3.7052336144816637`*^9}, 
-   3.705233684178583*^9, {3.705233897429377*^9, 3.7052339041998262`*^9}, {
-   3.705233960773756*^9, 3.7052339690734997`*^9}, {3.705234077867593*^9, 
-   3.705234113015019*^9}, {3.705234158517462*^9, 3.705234328811823*^9}, {
-   3.705235028287692*^9, 3.7052350344632883`*^9}, {3.705235097453197*^9, 
-   3.705235102710808*^9}, {3.733697127804777*^9, 3.733697127841457*^9}, {
-   3.734835233903502*^9, 3.734835254852193*^9}, {3.734835289364645*^9, 
-   3.734835369963648*^9}, {3.7348355075548267`*^9, 3.734835514038046*^9}, {
-   3.734837150495469*^9, 3.7348371567016983`*^9}, {3.734837408647537*^9, 
-   3.734837412766467*^9}},ExpressionUUID->"46059263-9366-46e9-904c-\
-226b691dc23a"]
-}, Closed]]
-}, Closed]],
+    RowBox[{"GAResetClientSecret", "[", "]"}]}], "\n", "\t", "]"}], 
+  ";"}]], "CodeInput",ExpressionUUID->"46059263-9366-46e9-904c-226b691dc23a"]
+}, Open  ]]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -673,8 +722,8 @@ Cell[BoxData[
            RowBox[{"\"\<v\>\"", "<>", 
             RowBox[{"StringTrim", "[", 
              RowBox[{
-              RowBox[{"ToString", "@", "$GAVersion"}], ",", "\"\<v\>\""}], 
-             "]"}]}]}], "}"}]}], ",", "\n", "\t\t\t\t", 
+              RowBox[{"ToString", "@", "$GAVersion"}], ",", " ", 
+              "\"\<v\>\""}], "]"}]}]}], "}"}]}], ",", "\n", "\t\t\t\t", 
         RowBox[{"\"\<Query\>\"", "\[Rule]", 
          RowBox[{"{", "}"}]}]}], "\n", "\t\t\t\t", "|>"}]}], ",", "\n", 
      "\t\t", 
@@ -718,29 +767,8 @@ Cell[BoxData[
          "\"\<Authorization\>\"", ":>", "\n", "\t", "\t", "\t\t\t\t", 
           RowBox[{"\"\<Bearer \>\"", "<>", "$GAOAuthToken"}]}], "\n", "\t", 
          "\t\t\t\t", "}"}]}], "\n", "\t", "\t\t\t", "|>"}]}]}], "\n", "\t\t", 
-    "|>"}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.70414806660213*^9, 3.704148134743753*^9}, {
-   3.704148226388596*^9, 3.704148318852541*^9}, 3.70414874768773*^9, 
-   3.704150179354807*^9, {3.704152013412249*^9, 3.704152036137142*^9}, 
-   3.704152067840349*^9, {3.704152479679172*^9, 3.704152483331337*^9}, {
-   3.704152521221341*^9, 3.704152536577031*^9}, {3.70415260053262*^9, 
-   3.7041526143423777`*^9}, {3.704153348202847*^9, 3.704153419480208*^9}, {
-   3.704153489125841*^9, 3.704153504152817*^9}, {3.7041539587241163`*^9, 
-   3.7041539837149563`*^9}, 3.704157578544056*^9, {3.7041576501910877`*^9, 
-   3.704157715516561*^9}, {3.7041577864793167`*^9, 3.704157799014103*^9}, {
-   3.704157889558278*^9, 3.704157899501896*^9}, {3.704157943980626*^9, 
-   3.7041579442364798`*^9}, {3.704217308839711*^9, 3.704217310024745*^9}, {
-   3.704404203001294*^9, 3.704404206104013*^9}, 3.704404287724907*^9, {
-   3.704404364517777*^9, 3.70440441153505*^9}, {3.704406016257639*^9, 
-   3.704406024637916*^9}, {3.704406313323864*^9, 3.7044063152022*^9}, {
-   3.704408977705166*^9, 3.704408990614333*^9}, {3.704409026463029*^9, 
-   3.704409032479394*^9}, {3.704409120367876*^9, 3.704409170991647*^9}, {
-   3.704586011193942*^9, 3.704586025403784*^9}, {3.704588805702582*^9, 
-   3.704588845501647*^9}, {3.704592439779113*^9, 3.704592442027554*^9}, {
-   3.705349060038376*^9, 3.705349061356616*^9}, {3.734838759336836*^9, 
-   3.734838763124818*^9}, {3.734838957798373*^9, 
-   3.734838998712326*^9}},ExpressionUUID->"445dedc0-492f-4046-bfc4-\
-611dafbe2c71"]
+    "|>"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"445dedc0-492f-4046-bfc4-611dafbe2c71"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -888,10 +916,12 @@ Cell[BoxData[
         RowBox[{"StringTrim", "[", "\n", "\t", "\t\t\t", 
          RowBox[{
           RowBox[{"Replace", "[", 
-           RowBox[{"user", ",", " ", 
-            RowBox[{"Automatic", "\[RuleDelayed]", "$GoogleAPIUsername"}]}], 
-           "]"}], ",", "\n", "\t\t\t\t", "\"\<@gmail.com\>\""}], "\n", "\t", 
-         "\t\t\t", "]"}]}], ",", "\n", "\t\t", 
+           RowBox[{"user", ",", " ", "\n", "\t\t\t\t\t", 
+            RowBox[{
+            "Automatic", "\[RuleDelayed]", "\n", "\t\t\t\t\t\t", 
+             "$GoogleAPIUsername"}]}], "\n", "\t\t\t\t\t", "]"}], ",", "\n", 
+          "\t\t\t\t", "\"\<@gmail.com\>\""}], "\n", "\t", "\t\t\t", "]"}]}], 
+       ",", "\n", "\t\t", 
        RowBox[{"cid", "=", "\n", "\t\t\t", 
         RowBox[{"Replace", "[", 
          RowBox[{"clientID", ",", " ", 
@@ -1777,7 +1807,7 @@ Cell[BoxData[
    3.704657473463687*^9}, 3.7046577878973293`*^9, 
    3.734838533250247*^9},ExpressionUUID->"8377265d-fc6b-4169-8062-\
 7b18a906baed"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -2065,7 +2095,7 @@ Cell[BoxData[{
    RowBox[{"GAParse", "[", "e_", "]"}], ":=", "\n", "\t", "e"}], 
   ";"}]}], "CodeInput",ExpressionUUID->"9a5df5d2-4cc2-4724-83cc-eaacf988355e"]\
 
-}, Open  ]]
+}, Closed]]
 }, Open  ]],
 
 Cell[BoxData[
@@ -2079,7 +2109,7 @@ Cell["", "SectionSeparator",ExpressionUUID->"7d46921f-36b4-414a-b43f-\
 6fecf718d29f"]
 },
 WindowSize->{748, 767},
-WindowMargins->{{78, Automatic}, {41, Automatic}},
+WindowMargins->{{Automatic, 166}, {29, Automatic}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

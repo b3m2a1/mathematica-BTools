@@ -1027,6 +1027,37 @@ Cell[BoxData[
 
 Cell[CellGroupData[{
 
+Cell["\[LeftCeiling]pacletMarkdownNotebookMetadataSanitizeFields\[RightFloor]\
+", "CodeSubsubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"4b9852b5-34eb-4d94-84b0-b218ec5eab26"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+  "pacletMarkdownNotebookMetadataSanitizeFields", "[", "\n", "\t", "a_", "\n",
+    "\t", "]"}], ":=", "\n", "\t", 
+  RowBox[{"AssociationMap", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"#", "[", 
+       RowBox[{"[", "1", "]"}], "]"}], "->", "\n", "\t\t\t", 
+      RowBox[{"Replace", "[", 
+       RowBox[{
+        RowBox[{"#", "[", 
+         RowBox[{"[", "2", "]"}], "]"}], ",", "\n", "\t\t\t\t", 
+        RowBox[{"s_String", "\[RuleDelayed]", 
+         RowBox[{"StringDelete", "[", 
+          RowBox[{"s", ",", " ", 
+           RowBox[{"\"\<\\n\>\"", "|", "\"\<\\r\>\"", "|", "\"\<\\t\>\""}]}], 
+          "]"}]}]}], "\n", "\t\t\t\t", "]"}]}], "&"}], ",", "\n", "\t\t", 
+    "a"}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"2a9e9890-e337-4149-9483-4aa13290d922"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
 Cell["\[LeftCeiling]pacletMarkdownNotebookMetadataSection\[RightFloor]", \
 "CodeSubsubsubsubsection",
  Evaluatable->True,
@@ -1034,125 +1065,138 @@ Cell["\[LeftCeiling]pacletMarkdownNotebookMetadataSection\[RightFloor]", \
   3.733709093085929*^9},ExpressionUUID->"95f37405-4906-4d5a-aaa9-\
 8c2155a2542b"],
 
-Cell[BoxData[
+Cell[BoxData[{
+ RowBox[{"pacletMarkdownNotebookMetadataSection", "//", "Clear"}], "\n", 
  RowBox[{
-  RowBox[{"pacletMarkdownNotebookMetadataSection", "[", "a_", "]"}], ":=", 
-  "\n", "\t", 
-  RowBox[{"Cell", "[", "\n", "\t\t", 
-   RowBox[{
-    RowBox[{"BoxData", "@", 
-     RowBox[{"ToBoxes", "@", 
-      RowBox[{"Association", "@", 
-       RowBox[{"Normal", "@", "\n", "\t\t\t", 
-        RowBox[{"Join", "[", "\n", "\t\t\t\t", 
-         RowBox[{
-          RowBox[{"Which", "[", "\n", "\t\t\t\t\t", 
-           RowBox[{
-            RowBox[{"StringStartsQ", "[", 
-             RowBox[{
-              RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", 
-              "\"\<ServiceConnection_\>\""}], "]"}], ",", "\n", 
-            "\t\t\t\t\t\t", 
-            RowBox[{"pacletMarkdownNotebookMetadataAddCategory", "[", 
-             RowBox[{"a", ",", " ", "\"\<ServiceConnections\>\""}], "]"}], 
-            ",", "\n", "\t\t\t\t\t", 
-            RowBox[{"StringStartsQ", "[", 
-             RowBox[{
-              RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", 
-              "\"\<Documentation_\>\""}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
-            RowBox[{"pacletMarkdownNotebookMetadataAddCategory", "[", 
-             RowBox[{"a", ",", " ", "\"\<Documentation\>\""}], "]"}], ",", 
-            "\n", "\t\t\t\t\t", 
-            RowBox[{"StringStartsQ", "[", 
-             RowBox[{
-              RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", 
-              "\"\<DeviceDriver_\>\""}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
-            RowBox[{"pacletMarkdownNotebookMetadataAddCategory", "[", 
-             RowBox[{"a", ",", " ", "\"\<DeviceDriver\>\""}], "]"}], ",", 
-            "\n", "\t\t\t\t\t", 
-            RowBox[{"StringStartsQ", "[", 
-             RowBox[{
-              RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", 
-              "\"\<ExampleData_\>\""}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
-            RowBox[{"pacletMarkdownNotebookMetadataAddCategory", "[", 
-             RowBox[{"a", ",", " ", "\"\<ExampleData\>\""}], "]"}], ",", "\n",
-             "\t\t\t\t\t", 
-            RowBox[{"StringStartsQ", "[", 
-             RowBox[{
-              RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", 
-              "\"\<WordData_\>\""}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
-            RowBox[{"pacletMarkdownNotebookMetadataAddCategory", "[", 
-             RowBox[{"a", ",", " ", "\"\<WordData\>\""}], "]"}], ",", "\n", 
-            "\t\t\t\t\t", 
-            RowBox[{"StringEndsQ", "[", 
-             RowBox[{
-              RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", 
-              "\"\<_Index\>\""}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
-            RowBox[{"pacletMarkdownNotebookMetadataAddCategory", "[", 
-             RowBox[{"a", ",", " ", "\"\<DataIndices\>\""}], "]"}], ",", "\n",
-             "\t\t\t\t\t", 
-            RowBox[{"StringEndsQ", "[", 
-             RowBox[{
-              RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", 
-              RowBox[{"\"\<_Part\>\"", "~~", "NumberString"}]}], "]"}], ",", 
-            "\n", "\t\t\t\t\t\t", 
-            RowBox[{"pacletMarkdownNotebookMetadataAddCategory", "[", 
-             RowBox[{"a", ",", " ", "\"\<DataParts\>\""}], "]"}], ",", "\n", 
-            "\t\t\t\t\t", 
-            RowBox[{"StringContainsQ", "[", 
-             RowBox[{
-              RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", 
-              "\"\<_\>\""}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
-            RowBox[{"pacletMarkdownNotebookMetadataAddCategory", "[", 
-             RowBox[{"a", ",", " ", "\n", "\t\t\t\t\t\t\t", 
+  RowBox[{
+   RowBox[{"pacletMarkdownNotebookMetadataSection", "[", 
+    RowBox[{"a_", ",", " ", 
+     RowBox[{"sanitized", ":", "True"}]}], "]"}], ":=", "\n", "\t", 
+   RowBox[{"Cell", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"BoxData", "@", 
+      RowBox[{"ToBoxes", "@", 
+       RowBox[{"Association", "@", 
+        RowBox[{"Normal", "@", "\n", "\t\t\t", 
+         RowBox[{"Join", "[", "\n", "\t\t\t\t", 
+          RowBox[{
+           RowBox[{"Which", "[", "\n", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"StringStartsQ", "[", 
               RowBox[{
+               RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", 
+               "\"\<ServiceConnection_\>\""}], "]"}], ",", "\n", 
+             "\t\t\t\t\t\t", 
+             RowBox[{"pacletMarkdownNotebookMetadataAddCategory", "[", 
+              RowBox[{"a", ",", " ", "\"\<ServiceConnections\>\""}], "]"}], 
+             ",", "\n", "\t\t\t\t\t", 
+             RowBox[{"StringStartsQ", "[", 
+              RowBox[{
+               RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", 
+               "\"\<Documentation_\>\""}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"pacletMarkdownNotebookMetadataAddCategory", "[", 
+              RowBox[{"a", ",", " ", "\"\<Documentation\>\""}], "]"}], ",", 
+             "\n", "\t\t\t\t\t", 
+             RowBox[{"StringStartsQ", "[", 
+              RowBox[{
+               RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", 
+               "\"\<DeviceDriver_\>\""}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"pacletMarkdownNotebookMetadataAddCategory", "[", 
+              RowBox[{"a", ",", " ", "\"\<DeviceDriver\>\""}], "]"}], ",", 
+             "\n", "\t\t\t\t\t", 
+             RowBox[{"StringStartsQ", "[", 
+              RowBox[{
+               RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", 
+               "\"\<ExampleData_\>\""}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"pacletMarkdownNotebookMetadataAddCategory", "[", 
+              RowBox[{"a", ",", " ", "\"\<ExampleData\>\""}], "]"}], ",", 
+             "\n", "\t\t\t\t\t", 
+             RowBox[{"StringStartsQ", "[", 
+              RowBox[{
+               RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", 
+               "\"\<WordData_\>\""}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"pacletMarkdownNotebookMetadataAddCategory", "[", 
+              RowBox[{"a", ",", " ", "\"\<WordData\>\""}], "]"}], ",", "\n", 
+             "\t\t\t\t\t", 
+             RowBox[{"StringEndsQ", "[", 
+              RowBox[{
+               RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", 
+               "\"\<_Index\>\""}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"pacletMarkdownNotebookMetadataAddCategory", "[", 
+              RowBox[{"a", ",", " ", "\"\<DataIndices\>\""}], "]"}], ",", 
+             "\n", "\t\t\t\t\t", 
+             RowBox[{"StringEndsQ", "[", 
+              RowBox[{
+               RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", 
+               RowBox[{"\"\<_Part\>\"", "~~", "NumberString"}]}], "]"}], ",", 
+             "\n", "\t\t\t\t\t\t", 
+             RowBox[{"pacletMarkdownNotebookMetadataAddCategory", "[", 
+              RowBox[{"a", ",", " ", "\"\<DataParts\>\""}], "]"}], ",", "\n", 
+             "\t\t\t\t\t", 
+             RowBox[{"StringContainsQ", "[", 
+              RowBox[{
+               RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", 
+               "\"\<_\>\""}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"pacletMarkdownNotebookMetadataAddCategory", "[", 
+              RowBox[{"a", ",", " ", "\n", "\t\t\t\t\t\t\t", 
                RowBox[{
-                RowBox[{"Quiet", "@", 
-                 RowBox[{"Check", "[", 
+                RowBox[{
+                 RowBox[{"Quiet", "@", 
+                  RowBox[{"Check", "[", 
+                   RowBox[{
+                    RowBox[{"Pluralize", "@", "#"}], ",", " ", 
+                    RowBox[{"#", "<>", "\"\<s\>\""}]}], "]"}]}], "&"}], "@", 
+                "\n", "\t\t\t\t\t\t\t\t", 
+                RowBox[{
+                 RowBox[{"StringSplit", "[", 
                   RowBox[{
-                   RowBox[{"Pluralize", "@", "#"}], ",", " ", 
-                   RowBox[{"#", "<>", "\"\<s\>\""}]}], "]"}]}], "&"}], "@", 
-               "\n", "\t\t\t\t\t\t\t\t", 
-               RowBox[{
-                RowBox[{"StringSplit", "[", 
-                 RowBox[{
-                  RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", 
-                  "\"\<_\>\""}], "]"}], "[", 
-                RowBox[{"[", "1", "]"}], "]"}]}]}], "]"}], ",", "\n", 
-            "\t\t\t\t\t", 
-            RowBox[{"StringEndsQ", "[", 
-             RowBox[{
-              RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", 
-              "\"\<Data\>\""}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
-            RowBox[{"pacletMarkdownNotebookMetadataAddCategory", "[", 
-             RowBox[{"a", ",", " ", "\"\<DataPaclets\>\""}], "]"}], ",", "\n",
-             "\t\t\t\t\t", "True", ",", "\n", "\t\t\t\t\t\t", "a"}], "\n", 
-           "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
-          RowBox[{"<|", "\n", "\t\t\t\t", 
-           RowBox[{
-            RowBox[{"\"\<DisplayName\>\"", "->", "\n", "\t\t\t\t\t", 
-             RowBox[{"pacletMarkdownNotebookMakeName", "[", 
-              RowBox[{"a", "[", "\"\<Name\>\"", "]"}], "]"}]}], ",", "\n", 
-            "\t\t\t\t", 
-            RowBox[{"\"\<Modified\>\"", "->", "\n", "\t\t\t\t\t", 
-             RowBox[{
-             "pacletMarkdownNotebookMetadataGetFileModificationDate", "[", 
-              "\n", "\t\t\t\t\t\t", 
-              RowBox[{"Lookup", "[", 
-               RowBox[{"a", ",", " ", 
-                RowBox[{"{", 
-                 RowBox[{
-                 "\"\<Name\>\"", ",", " ", "\"\<Version\>\"", ",", " ", 
-                  "\"\<LastModified\>\""}], "}"}], ",", " ", 
-                RowBox[{"Missing", "[", "\"\<NotAvailable\>\"", "]"}]}], 
-               "]"}], "\n", "\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", 
-           "|>"}]}], "\n", "\t\t\t", "]"}]}]}]}]}], ",", "\n", "\t\t", 
-    "\"\<Metadata\>\"", ",", "\n", "\t\t", 
-    RowBox[{"CellTags", "\[Rule]", "\"\<Metadata\>\""}]}], "\n", "\t\t", 
-   "]"}]}]], \
+                   RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", 
+                   "\"\<_\>\""}], "]"}], "[", 
+                 RowBox[{"[", "1", "]"}], "]"}]}]}], "]"}], ",", "\n", 
+             "\t\t\t\t\t", 
+             RowBox[{"StringEndsQ", "[", 
+              RowBox[{
+               RowBox[{"a", "[", "\"\<Name\>\"", "]"}], ",", " ", 
+               "\"\<Data\>\""}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"pacletMarkdownNotebookMetadataAddCategory", "[", 
+              RowBox[{"a", ",", " ", "\"\<DataPaclets\>\""}], "]"}], ",", 
+             "\n", "\t\t\t\t\t", "True", ",", "\n", "\t\t\t\t\t\t", "a"}], 
+            "\n", "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
+           RowBox[{"<|", "\n", "\t\t\t\t", 
+            RowBox[{
+             RowBox[{"\"\<DisplayName\>\"", "->", "\n", "\t\t\t\t\t", 
+              RowBox[{"pacletMarkdownNotebookMakeName", "[", 
+               RowBox[{"a", "[", "\"\<Name\>\"", "]"}], "]"}]}], ",", "\n", 
+             "\t\t\t\t", 
+             RowBox[{"\"\<Modified\>\"", "->", "\n", "\t\t\t\t\t", 
+              RowBox[{
+              "pacletMarkdownNotebookMetadataGetFileModificationDate", "[", 
+               "\n", "\t\t\t\t\t\t", 
+               RowBox[{"Lookup", "[", 
+                RowBox[{"a", ",", " ", 
+                 RowBox[{"{", 
+                  RowBox[{
+                  "\"\<Name\>\"", ",", " ", "\"\<Version\>\"", ",", " ", 
+                   "\"\<LastModified\>\""}], "}"}], ",", " ", 
+                 RowBox[{"Missing", "[", "\"\<NotAvailable\>\"", "]"}]}], 
+                "]"}], "\n", "\t\t\t\t\t\t", "]"}]}]}], "\n", "\t\t\t\t", 
+            "|>"}]}], "\n", "\t\t\t", "]"}]}]}]}]}], ",", "\n", "\t\t", 
+     "\"\<Metadata\>\"", ",", "\n", "\t\t", 
+     RowBox[{"CellTags", "\[Rule]", "\"\<Metadata\>\""}]}], "\n", "\t\t", 
+    "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"pacletMarkdownNotebookMetadataSection", "[", 
+   RowBox[{"a_", ",", " ", 
+    RowBox[{"sanitized", ":", "False", ":", "False"}]}], "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"pacletMarkdownNotebookMetadataSection", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"pacletMarkdownNotebookMetadataSanitizeFields", "[", "a", "]"}], 
+    ",", " ", "True"}], 
+   "]"}]}]}], \
 "CodeInput",ExpressionUUID->"d77c2e28-02a0-4a9d-b902-7c18201b6ae3"]
 }, Closed]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1379,17 +1423,15 @@ Cell[BoxData[
  RowBox[{
   RowBox[{"pacletMarkdownNotebookDescriptionText", "[", "a_", "]"}], ":=", 
   "\n", "\t", 
-  RowBox[{"Cell", "[", 
+  RowBox[{"Cell", "[", "\n", "\t\t", 
    RowBox[{
     RowBox[{"Lookup", "[", 
-     RowBox[{"a", ",", "\"\<Description\>\"", ",", "\"\<\>\""}], "]"}], ",", 
-    "\"\<Text\>\"", ",", "\n", "\t\t", 
+     RowBox[{"a", ",", " ", "\"\<Description\>\"", ",", " ", "\"\<\>\""}], 
+     "]"}], ",", " ", "\n", "\t\t", "\"\<Text\>\"", ",", "\n", "\t\t", 
     RowBox[{"CellTags", "\[Rule]", "\"\<DescriptionText\>\""}]}], "\n", 
-   "\t\t", "]"}]}]], "CodeInput",
- CellChangeTimes->{{3.712863081315795*^9, 3.7128630906074867`*^9}, {
-  3.712863472503714*^9, 
-  3.71286347818176*^9}},ExpressionUUID->"7f779f4c-1854-4aea-8b5c-8483e7cbfc62"]
-}, Closed]],
+   "\t\t", "]"}]}]], \
+"CodeInput",ExpressionUUID->"7f779f4c-1854-4aea-8b5c-8483e7cbfc62"]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1772,15 +1814,16 @@ Cell[BoxData[
                     
                     RowBox[{
                     RowBox[{
-                    RowBox[{"Cell", "[", "\n", "\t", 
+                    RowBox[{
+                    "Cell", "[", "\n", "\t", 
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{
                     RowBox[{"Replace", "[", 
                     RowBox[{
                     "#", ",", " ", "\n", "\t", 
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    "{", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"{", "\n", "\t", 
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{
                     RowBox[{
                     RowBox[{"(", 
@@ -2899,7 +2942,7 @@ Cell[BoxData[
       "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"767baf34-ddb8-4b44-b7eb-9c24a3dcc325"]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -3109,7 +3152,7 @@ Cell[BoxData[
               "]"}]}]}], "\n", "\t\t\t\t", "]"}]}], "&"}], "/@", 
        "siteDS"}]}]}], "\n", "\t\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"ad7150a2-89aa-4a9d-9a46-6c19aba2814b"]
-}, Closed]]
+}, Open  ]]
 }, Open  ]]
 }, Open  ]],
 

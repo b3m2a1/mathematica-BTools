@@ -12,6 +12,16 @@ GoogleAPIClearAuth::usage=
   "Clears authentication data for the current user";
 
 
+GASetUseKeychain::usage=""
+GASetUsername::usage="";
+GASetClientID::usage="";
+GASetClientSecret::usage="";
+GAResetUsername::usage="";
+GAResetClientID::usage="";
+GAResetClientSecret::usage="";
+GASetUseKeychain::usage="";
+
+
 $GAVersion::usage="";
 $GAParameters::usage="";
 
@@ -47,7 +57,6 @@ Begin["`Private`"];
 $GASettings=
   Replace[
     Do[
-      With[{f=PackageFilePath["Private", "Config", d]},
         If[FileExistsQ@f,
           Return[
             Replace[Quiet@Import@f,
@@ -58,12 +67,13 @@ $GASettings=
               ]
             ];
           Break[]
-          ]
-        ],
-      {d,
+          ],
+      {f,
         {
-          "GoogleConfig.m",
-          "GoogleConfig.wl"
+          PackageFilePath["Private", "Config", "GoogleConfig.m"],
+          PackageFilePath["Private", "Config", "GoogleConfig.wl"],
+          PackageFilePath["Config", "Misc", "GoogleConfig.m"],
+          PackageFilePath["Config", "Misc", "GoogleConfig.wl"]
           }
         }
       ],
@@ -81,9 +91,37 @@ $GASettings=
 
 
 
-$GoogleAPIUsernameName="GoogleAPIUsername";
-$GAClientIDName="GoogleAPIClientID";
-$GAClientSecretName="GoogleAPIClientSecret";
+$GoogleAPIUsernameName="Username";
+$GAClientIDName="ClientID";
+$GAClientSecretName="ClientSecret";
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*SetUseKeychain*)
+
+
+
+GASetUseKeychain[b:True|False]:=
+  $GAUseKeychain=b;
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*GACache*)
+
+
+
+getPasswordVal[key_]:=
+  Block[{$auth},
+    PasswordDialog[
+      Dynamic@$auth,
+      key,
+      key,
+      "PromptString"->
+        "Enter ``:",
+      WindowTitle->key,
+      FieldMasked->False
+      ]
+    ]
 
 
 If[FreeQ[Attributes[$GACache], ReadProtected],
@@ -92,88 +130,121 @@ If[FreeQ[Attributes[$GACache], ReadProtected],
 If[FreeQ[Attributes[$GACache], Locked],
   SetAttributes[$GACache, Locked]
   ];
+GACacheGet[{"AccountData", k___}]:=
+  $GACache[StringJoin[k]];
+GACacheGet[{"AccountData", k___}, True]:=
+  Replace[
+    $GACache[StringJoin[k]],
+    Except[_String?(StringLength[#]>0&)]:>
+      Replace[getPasswordVal[StringRiffle[{k}, "/"]],
+        v_String?(StringLength[#]>0&):>
+          ($GACache[k]=v)
+        ]
+    ]
 
 
-$GACacheSym:=
-  If[TrueQ@$GASettings["UseKeychain"], $Keychain, $GACache]
+(* ::Subsubsubsection::Closed:: *)
+(*LoadParameter*)
+
+
+
+If[!ValueQ@$GAUseKeychain,
+  $GAUseKeychain=
+    TrueQ@$GASettings["UseKeychain"]
+  ];
+
+
+$GACacheGetter:=
+  If[$GAUseKeychain, KeychainGet, GACacheGet];
 
 
 GALoadParameter[key_]:=
-  With[{s=$GACacheSym},
+  With[{s=$GACacheGetter},
     Replace[
-      s[key],
+      s[{"AccountData", "GoogleAPIs", key}, True],
       Except[_String?(StringLength@#>0&)]:>
-        (
-        s[key]=
-          Replace[
-            SelectFirst[
-              PackageFilePath["Private",#]&/@
-                {
-                key<>".wl",
-                key<>".m"
-                },
-              FileExistsQ,
-              None
-              ],{
-            f_String:>
-              Import[f]
-            }]
-          )
+        None
       ]
     ];
 GALoadParameter[key1_, key2_]:=
   Replace[
-    $Keychain[{key1, key2}],
+    $GACacheGetter[{"AccountData", "GoogleAPIs", key1, key2}, True],
     Except[_String?(StringLength@#>0&)]:>
-      (
-      $Keychain[{key1, key2}]=
-        Replace[
-          Replace[
-            SelectFirst[
-              PackageFilePath["Private",#]&/@
-                {
-                key1<>".wl",
-                key1<>".m"
-                },
-              FileExistsQ,
-              None
-              ],
-          {
-            f_String:>
-              Import[f]
-            }
-          ],
-        Except[_String?(StringLength@#>0&)]:>
-          Replace[$Keychain[key1],
-            Except[_String?(StringLength@#>0&)]->None
-            ]
+      Replace[KeychainGet[key1],
+        Except[_String?(StringLength@#>0&)]->None
         ]
-        )
     ];
 
 
-If[!MatchQ[OwnValues[$GoogleAPIUsername],{_:>(_String?(StringLength@#>0&))}],
+(* ::Subsubsubsection::Closed:: *)
+(*Username*)
+
+
+
+GASetUsername[name_]:=
+  If[StringQ@name&&
+      StringMatchQ[
+        StringTrim[name, "@gmail.com"], 
+        (WordCharacter|"_"|"."|"-")..
+        ],
+    $GoogleAPIUsername=name,
+    $Failed
+    ];
+
+
+If[!MatchQ[OwnValues[$GoogleAPIUsername], {_:>(_String?(StringLength@#>0&))}],
   $GoogleAPIUsername:=
-    $GoogleAPIUsername=
-      GALoadParameter[$GoogleAPIUsernameName]
+    GALoadParameter[$GoogleAPIUsernameName]
   ];
 
 
-GAGetClientID[userName_]:=
-  GALoadParameter[$GAClientIDName, userName]
+GAResetUsername[]:=
+  $GoogleAPIUsername:=GALoadParameter[$GoogleAPIUsernameName]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*ClientID*)
+
+
+
+GAGetClientID[username_]:=
+  GALoadParameter[$GAClientIDName, username]
+
+
+GASetClientID[id_]:=
+  If[StringQ@id,
+    $GAClientID=id,
+    $Failed
+    ];
+GAResetClientID[]:=
+  ($GAClientID:=GAGetClientID[$GoogleAPIUsername]);
 
 
 If[!MatchQ[OwnValues[$GAClientID],{_:>(_String?(StringLength@#>0&))}],
-  $GAClientID:=GAGetClientID[$GoogleAPIUsername]
+  GAResetClientID[]
   ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*ClientSecret*)
+
 
 
 GAGetClientSecret[clientID_]:=
   GALoadParameter[$GAClientSecretName, clientID]
 
 
+GASetClientSecret[id_]:=
+  If[StringQ@id,
+    $GAClientSecret=id,
+    $Failed
+    ];
+GAResetClientSecret[]:=
+  ($GAClientSecret:=GAGetClientSecret[$GAClientID]);
+
+
 If[!MatchQ[OwnValues[$GAClientSecret],{_:>(_String?(StringLength@#>0&))}],
-  $GAClientSecret:=GAGetClientSecret[$GAClientID]
+  GAResetClientSecret[]
   ];
 
 
@@ -222,7 +293,7 @@ $GAParameters=
     "Drive"->
       <|
         "Path":>
-          {"drive","v"<>StringTrim[ToString@$GAVersion,"v"]},
+          {"drive","v"<>StringTrim[ToString@$GAVersion, "v"]},
         "Query"->{}
         |>,
     "AnalyticsReporting"->
@@ -306,7 +377,10 @@ GoogleAPIClearAuth[
   With[{
     u=
       StringTrim[
-        Replace[user, Automatic:>$GoogleAPIUsername],
+        Replace[user, 
+          Automatic:>
+            $GoogleAPIUsername
+          ],
         "@gmail.com"
         ],
     cid=

@@ -40,14 +40,19 @@ $GoogleAPIDataCalls=
     "AuthenticationData"->
       GAOAuthTokenData,
     "SetUsername"->
-      (If[StringQ@#&&
-          StringMatchQ[
-            StringTrim[#, "@gmail.com"], 
-            (WordCharacter|"_"|"."|"-")..
-            ],
-        $GoogleAPIUsername=#,
-        $Failed
-        ]&),
+      GASetUsername,
+    "SetClientID"->
+      GASetClientID,
+    "SetClientSecret"->
+      GASetClientSecret,
+    "ResetUsername"->
+      GAResetUsername,
+    "ResetClientID"->
+      GAResetClientID,
+    "ResetClientSecret"->
+      GAResetClientSecret,
+    "SetUseKeychain"->
+      GASetUseKeychain,
     "ClearAuthentication"->
       GoogleAPIClearAuth,
     "LastError"->

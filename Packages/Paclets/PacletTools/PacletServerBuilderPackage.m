@@ -455,11 +455,29 @@ pacletMarkdownNotebookMetadataGetFileModificationDate[
 
 
 (* ::Subsubsubsubsection::Closed:: *)
+(*pacletMarkdownNotebookMetadataSanitizeFields*)
+
+
+
+pacletMarkdownNotebookMetadataSanitizeFields[
+  a_
+  ]:=
+  AssociationMap[
+    #[[1]]->
+      Replace[#[[2]],
+        s_String:>StringDelete[s, "\n"|"\r"|"\t"]
+        ]&,
+    a
+    ]
+
+
+(* ::Subsubsubsubsection::Closed:: *)
 (*pacletMarkdownNotebookMetadataSection*)
 
 
 
-pacletMarkdownNotebookMetadataSection[a_]:=
+pacletMarkdownNotebookMetadataSection//Clear
+pacletMarkdownNotebookMetadataSection[a_, sanitized:True]:=
   Cell[
     BoxData@ToBoxes@Association@Normal@
       Join[
@@ -498,7 +516,10 @@ pacletMarkdownNotebookMetadataSection[a_]:=
       ],
     "Metadata",
     CellTags->"Metadata"
-    ]
+    ];
+pacletMarkdownNotebookMetadataSection[a_, sanitized:False:False]:=
+  pacletMarkdownNotebookMetadataSection[
+    pacletMarkdownNotebookMetadataSanitizeFields[a], True]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -605,7 +626,9 @@ pacletMarkdownNotebookDownloadLink[a_]:=
 
 
 pacletMarkdownNotebookDescriptionText[a_]:=
-  Cell[Lookup[a,"Description",""],"Text",
+  Cell[
+    Lookup[a, "Description", ""], 
+    "Text",
     CellTags->"DescriptionText"
     ]
 

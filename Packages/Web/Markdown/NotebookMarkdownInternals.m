@@ -211,7 +211,7 @@ MarkdownFileMetadata[val_, opsassoc_]:=
     <||>|{}:>"",
     _DateObject:>
       StringReplace[DateString[val,"ISODateTime"], "T"->" "],
-    e_:>ToString[e]
+    e:Except[_String]:>ToString[e, InputForm]
     }
   ]
 
