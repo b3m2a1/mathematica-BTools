@@ -35,7 +35,10 @@ ContextRemove[pkgContext_String]:=
           General::readp,
           Protect::locked,
           Attributes::locked,
-          Remove::rmnsm
+          Remove::rmnsm,
+          ClearAll::spsym,
+          Remove::spsym,
+          ClearAll::wrsym
           }
         ]
       ]

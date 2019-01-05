@@ -1,12 +1,10 @@
-(* ::Package:: *)
-
 Paclet[
   Name -> "BTools",
-  Version -> "2.1.38",
+  Version -> "2.1.39",
   Creator -> "b3m2a1@gmail.com",
-  WolframVersion -> "11+",
   URL -> "https://github.com/b3m2a1/mathematica-BTools",
   Description -> "A suite of development tools",
+  WolframVersion -> "11+",
   Thumbnail -> "PacletIcon.png",
   Extensions -> {
     	{
@@ -18,11 +16,32 @@ Paclet[
      		"Resource",
      		"Root" -> "Resources",
      		"Resources" -> {
+       			"Data",
        			"Icons",
        			"Images",
        			"PaletteGenerators",
        			"Templates",
        			"Themes",
+       			{
+        				"ResourceRules",
+        				"Data/FrontEnd/ResourceRules.wl"
+        			},
+       			{
+        				"ResourceStrings",
+        				"Data/FrontEnd/ResourceStrings.wl"
+        			},
+       			{
+        				"Resources",
+        				"Data/FrontEnd/Resources.wl"
+        			},
+       			{
+        				"Tokens",
+        				"Data/FrontEnd/Tokens.wl"
+        			},
+       			{
+        				"Values",
+        				"Data/FrontEnd/Values.wl"
+        			},
        			{
         				"PacletIcon",
         				"Icons/PacletIcon.png"
@@ -98,6 +117,10 @@ Paclet[
        			{
         				"ServiceConnectionTemplate",
         				"Templates/ServiceConnectionTemplate.nb"
+        			},
+       			{
+        				"FrontEnd",
+        				"Data/FrontEnd"
         			},
        			{
         				"Frameworks",
@@ -178,7 +201,7 @@ Paclet[
        			"web"
        		},
      		"Categories" -> {"Development"},
-     		"Description" ->
+     		"Description" -> 
       "A general purpose package that implements useful functionality for application development. Features include: distribution tools, documentation generation, front-end manipulation, and application editing",
      		"License" -> "MIT"
      	},

@@ -2891,7 +2891,10 @@ iWebSitePruneUnchangedAggPages[aggthing_][aggs_]:=
       ]
     ];
 WebSiteCollectAggPages[aggthing_, check:True|False:True]:=
-  If[check, iWebSitePruneUnchangedAggPages[aggthing], Identity]@
+  If[check, 
+    {iWebSitePruneUnchangedAggPages[aggthing][#], #}&, 
+    {#, #}&
+    ]@
     iWebSiteCollectAggPages[aggthing]
 
 
@@ -2996,6 +2999,7 @@ iWebSiteAggExportItem[
   outDir_, thm_, longDir_, config_,
   aggdata_, aggsingular_, aggthing_,
   Hold[aggbit_, $aggregationFiles_],
+  pruningList_,
   ops:OptionsPattern[]
   ][aggKey_, aggFiles_]:=
   With[{
@@ -3027,27 +3031,29 @@ iWebSiteAggExportItem[
 		Export aggregation file, e.g. tags/mathematica.html passing the 
 		list of file URLs as the aggregation name, e.g. Tags
 		*)
-    WebSiteTemplateExportPaginated[
-      aggbit,
-      FileBaseName[fout],
-      FileNameTake[fout, {1, -2}],
-      outDir,
-      {
-        thm,
-        FileNameJoin@{thm, "templates"},
-        longDir
-        },
-      None,
-      templates, 
-      Append[config, aggsingular->aggKey],
-      Lookup[
-        Lookup[$WebSiteBuildContentStack, aggFiles, <||>],
-        "Attributes",
-        <||>
-        ],
-      FilterRules[
-        {ops}, 
-        Options@WebSiteTemplateExportPaginated
+    If[KeyExistsQ[pruningList, aggKey],
+      WebSiteTemplateExportPaginated[
+        aggbit,
+        FileBaseName[fout],
+        FileNameTake[fout, {1, -2}],
+        outDir,
+        {
+          thm,
+          FileNameJoin@{thm, "templates"},
+          longDir
+          },
+        None,
+        templates, 
+        Append[config, aggsingular->aggKey],
+        Lookup[
+          Lookup[$WebSiteBuildContentStack, aggFiles, <||>],
+          "Attributes",
+          <||>
+          ],
+        FilterRules[
+          {ops}, 
+          Options@WebSiteTemplateExportPaginated
+          ]
         ]
       ];
       aggbit=.;
@@ -3078,9 +3084,11 @@ iWebSiteGenerateAggPages[
         (* Files to be collected and passed to combined aggregation *)
         $aggregationFiles=<||>,
         (*Collect type name and templates*)
+        pragglist,
         agglist=WebSiteCollectAggPages[aggthing, checkChanged]
         (*Gather elements in the content stack  by type in the aggregation*)
         },
+      {pragglist, agglist}=WebSiteCollectAggPages[aggthing, checkChanged];
       KeyValueMap[
         (*Map over aggregated elements, e.g., over each tag or category*)
         iWebSiteAggExportItem[
@@ -3088,6 +3096,7 @@ iWebSiteGenerateAggPages[
           outDir, thm, longDir, config,
           aggdata, aggsingular, aggthing,
           Hold[aggbit, $aggregationFiles],
+          pragglist,
           ops
           ],
         agglist

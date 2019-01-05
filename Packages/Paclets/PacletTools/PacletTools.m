@@ -3531,7 +3531,10 @@ installPacletGenerate[dir:(_String|_File)?DirectoryQ, ops:OptionsPattern[]]:=
         {".zip",".gz"}
         ];
     (* ------------ Detect Paclet Layout --------------- *)
-    bundleDir=PacletDirectoryFind[dir];
+    bundleDir=PacletDirectoryFind[dir, 3];
+    If[MissingQ@bundleDir,
+      bundleDir=dir
+      ];
     Which[
       DirectoryQ@bundleDir,
         bundleDir=bundleDir,
@@ -3561,7 +3564,7 @@ CreateDocument[
       _,
         PackageRaiseException[
           Automatic,
-          PacletInstallPaclet::laywha,
+          Evaluate[PacletDownloadPaclet::laywha],
           bundleDir
           ]
       ];
@@ -3569,13 +3572,13 @@ CreateDocument[
       !DirectoryQ@bundleDir,
         PackageRaiseException[
           Automatic,
-          PacletInstallPaclet::badbun,
+          Evaluate[PacletDownloadPaclet::badbun],
           bundleDir
           ],
       !FileExistsQ@GetPacletInfoFile[bundleDir],
         PackageRaiseException[
           Automatic,
-          PacletInstallPaclet::dumcode,
+          Evaluate[PacletDownloadPaclet::dumcode],
           bundleDir
           ],
       True,
@@ -3908,6 +3911,7 @@ PacletDownloadPaclet[
       },
   ops:OptionsPattern[]
   ]:=
+  PackageExceptionBlock["PacletDownload"]@
   With[
     {
       pname=
@@ -3960,6 +3964,7 @@ PacletDownloadPaclet[
   loc:(_String|_File)?FileExistsQ,
   ops:OptionsPattern[]
   ]:=
+  PackageExceptionBlock["PacletDownload"]@
   installPacletGenerate[loc, ops];
 
 
@@ -3972,6 +3977,7 @@ PacletDownloadPaclet[
   loc:(_String?(URLParse[#,"Scheme"]=!=None&)|_URL),
   ops:OptionsPattern[]
   ]:=
+  PackageExceptionBlock["PacletDownload"]@
   Which[
     URLParse[loc, "Domain"]==="github.com"||
     URLParse[loc, "Scheme"]=="github"||
@@ -4173,7 +4179,11 @@ validateDirExtension[dir_, "Kernel"|"Application", ops_]:=
   With[
     {
       l=Lookup[ops, "Root", "."], 
-      ctx=Lookup[ops, "Context", {StringSplit[FileBaseName[dir], "-"][[1]]}][[1]]
+      ctx=
+        Lookup[
+          ops, "Contexts",
+          Lookup[ops, "Context", {StringSplit[FileBaseName[dir], "-"][[1]]}][[1]]
+          ]
     },
     If[l===".",
       (DirectoryQ@FileNameJoin@{dir, "Kernel"}&&
@@ -4212,12 +4222,15 @@ iPacletDirectoryQ[dir_]:=
       },
     ext=Lookup[ass, "Extensions", None];
     Length@ext===0||
-      MemberQ[
+      Apply[
+        Or,
         KeyValueMap[
           validateDirExtension[dir, ##]&,
-          ext
-          ],
-        True
+          Join[
+            <|"Kernel"->{}|>,
+            ext
+            ]
+          ]
         ]
     ]
 
