@@ -1106,13 +1106,14 @@ AppPublish[app_,ops:OptionsPattern[]]:=
 AppGet::nopkg="Couldn't find package `` in app ``";
 
 
-AppGet[appName_,pkgName_String]:=
+AppGet[appName_, pkgName_String]:=
   With[{
     app=AppFromFile[appName],
     cont=$Context
     },
     Replace[
-      Names[app<>"`*`PackageAppGet"],{
+      SortBy[Length@StringSplit[#, "`"]&]@
+        Names[app<>"`*`PackageAppGet"],{
         {n_, ___}:>
           Replace[
             FileNames[
@@ -1210,12 +1211,39 @@ AppGet[appName_,pkgName_String]:=
     }]
   ];
 AppGet[appName_,pkgName:{__String}]:=
-  AppGet[appName,FileNameJoin@pkgName];
+  AppGet[appName, FileNameJoin@pkgName];
 AppGet[appName_,Optional[Automatic,Automatic]]:=
-  AppGet[appName,FileBaseName@NotebookFileName[]];
+  Module[
+    {
+      app=AppFromFile[appName],
+      baseDir,
+      baseName,
+      appPath
+      },
+    baseDir=AppDirectory[app];
+    baseName=
+      If[MatchQ[appName, NotebookObject],
+        NotebookFileName[appName],
+        NotebookFileName[]
+        ];
+    appPath=
+      StringTrim[
+        StringTrim[
+          StringTrim[baseName, 
+            FileNameJoin@{baseDir, "Packages"}],
+          "."<>FileExtension[baseName]
+          ],
+        "/"
+        ];
+    AppGet[app, appPath]
+    ];
 AppGet[Optional[Automatic,Automatic]]:=
-  With[{app=FileNameTake[NotebookFileName[],{FileNameDepth@$AppDirectory+1}]},
-    AppGet[app,Automatic]
+  Module[
+    {
+      baseName=
+        FileNameTake[NotebookFileName[],{FileNameDepth@$AppDirectory+1}]
+      },
+    AppGet[baseName,Automatic]
     ];
 
 

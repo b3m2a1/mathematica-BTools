@@ -75,7 +75,8 @@ $WebSitePath=
 If[Length@OwnValues[$WebThemesURLBase]===0,
   $WebThemesURLBase:=
     $WebThemesURLBase=
-      CloudObject["user:b3m2a1.paclets/PacletServer/Resources/SiteBuilder/Themes"][[1]]
+      "https://github.com/mresources/themes/releases/download/v1.0.0/"
+      (*CloudObject["user:b3m2a1.paclets/PacletServer/Resources/SiteBuilder/Themes"][[1]]*)
   ];
 $WebSiteTempThemeDir=
   FileNameJoin@{$TemporaryDirectory, "SiteBuilder_tmp", "Themes"};

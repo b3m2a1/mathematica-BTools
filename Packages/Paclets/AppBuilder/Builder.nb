@@ -2579,7 +2579,7 @@ Cell[BoxData[{
          "\n", "\t\t\t\t\t\t", "}"}]}]}]}], "\n", "\t\t\t", "|>"}]}], "\n", 
    "\t\t", "]"}]}]}], \
 "CodeInput",ExpressionUUID->"8c336370-3e1c-4a30-9ae1-8b8f269dea99"]
-}, Open  ]]
+}, Closed]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -2608,7 +2608,7 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{
    RowBox[{"AppGet", "[", 
-    RowBox[{"appName_", ",", "pkgName_String"}], "]"}], ":=", "\n", "\t", 
+    RowBox[{"appName_", ",", " ", "pkgName_String"}], "]"}], ":=", "\n", "\t", 
    RowBox[{"With", "[", 
     RowBox[{
      RowBox[{"{", "\n", "\t\t", 
@@ -2619,8 +2619,15 @@ Cell[BoxData[{
      "\t\t", 
      RowBox[{"Replace", "[", "\n", "\t\t\t", 
       RowBox[{
-       RowBox[{"Names", "[", 
-        RowBox[{"app", "<>", "\"\<`*`PackageAppGet\>\""}], "]"}], ",", 
+       RowBox[{
+        RowBox[{"SortBy", "[", 
+         RowBox[{
+          RowBox[{"Length", "@", 
+           RowBox[{"StringSplit", "[", 
+            RowBox[{"#", ",", " ", "\"\<`\>\""}], "]"}]}], "&"}], "]"}], "@", 
+        "\n", "\t\t\t\t", 
+        RowBox[{"Names", "[", 
+         RowBox[{"app", "<>", "\"\<`*`PackageAppGet\>\""}], "]"}]}], ",", 
        RowBox[{"{", "\n", "\t\t\t\t", 
         RowBox[{
          RowBox[{
@@ -2863,7 +2870,7 @@ Cell[BoxData[{
      RowBox[{"pkgName", ":", 
       RowBox[{"{", "__String", "}"}]}]}], "]"}], ":=", "\n", "\t", 
    RowBox[{"AppGet", "[", 
-    RowBox[{"appName", ",", 
+    RowBox[{"appName", ",", " ", 
      RowBox[{"FileNameJoin", "@", "pkgName"}]}], "]"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
@@ -2872,62 +2879,67 @@ Cell[BoxData[{
      RowBox[{"Optional", "[", 
       RowBox[{"Automatic", ",", "Automatic"}], "]"}]}], "]"}], ":=", "\n", 
    "\t", 
-   RowBox[{"AppGet", "[", 
-    RowBox[{"appName", ",", 
-     RowBox[{"FileBaseName", "@", 
-      RowBox[{"NotebookFileName", "[", "]"}]}]}], "]"}]}], ";"}], "\n", 
+   RowBox[{"Module", "[", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{
+       RowBox[{"app", "=", 
+        RowBox[{"AppFromFile", "[", "appName", "]"}]}], ",", "\n", "\t\t\t", 
+       "baseDir", ",", "\n", "\t\t\t", "baseName", ",", "\n", "\t\t\t", 
+       "appPath"}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"baseDir", "=", 
+       RowBox[{"AppDirectory", "[", "app", "]"}]}], ";", "\n", "\t\t", 
+      RowBox[{"baseName", "=", "\n", "\t\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"MatchQ", "[", 
+          RowBox[{"appName", ",", " ", "NotebookObject"}], "]"}], ",", "\n", 
+         "\t\t\t\t", 
+         RowBox[{"NotebookFileName", "[", "appName", "]"}], ",", "\n", 
+         "\t\t\t\t", 
+         RowBox[{"NotebookFileName", "[", "]"}]}], "\n", "\t\t\t\t", "]"}]}], 
+      ";", "\n", "\t\t", 
+      RowBox[{"appPath", "=", "\n", "\t\t\t", 
+       RowBox[{"StringTrim", "[", "\n", "\t\t\t\t", 
+        RowBox[{
+         RowBox[{"StringTrim", "[", "\n", "\t\t\t\t\t", 
+          RowBox[{
+           RowBox[{"StringTrim", "[", 
+            RowBox[{"baseName", ",", " ", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"FileNameJoin", "@", 
+              RowBox[{"{", 
+               RowBox[{"baseDir", ",", " ", "\"\<Packages\>\""}], "}"}]}]}], 
+            "]"}], ",", "\n", "\t", "\t", "\t", "\t\t", 
+           RowBox[{"\"\<.\>\"", "<>", 
+            RowBox[{"FileExtension", "[", "baseName", "]"}]}]}], "\n", 
+          "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", "\"\</\>\""}], "\n", 
+        "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
+      RowBox[{"AppGet", "[", 
+       RowBox[{"app", ",", " ", "appPath"}], "]"}]}]}], "\n", "\t\t", "]"}]}],
+   ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"AppGet", "[", 
     RowBox[{"Optional", "[", 
      RowBox[{"Automatic", ",", "Automatic"}], "]"}], "]"}], ":=", "\n", "\t", 
    
-   RowBox[{"With", "[", 
+   RowBox[{"Module", "[", "\n", "\t\t", 
     RowBox[{
-     RowBox[{"{", 
-      RowBox[{"app", "=", 
+     RowBox[{"{", "\n", "\t\t\t", 
+      RowBox[{"baseName", "=", "\n", "\t\t\t\t", 
        RowBox[{"FileNameTake", "[", 
         RowBox[{
          RowBox[{"NotebookFileName", "[", "]"}], ",", 
          RowBox[{"{", 
           RowBox[{
            RowBox[{"FileNameDepth", "@", "$AppDirectory"}], "+", "1"}], 
-          "}"}]}], "]"}]}], "}"}], ",", "\n", "\t\t", 
+          "}"}]}], "]"}]}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
      RowBox[{"AppGet", "[", 
-      RowBox[{"app", ",", "Automatic"}], "]"}]}], "\n", "\t\t", "]"}]}], 
-  ";"}]}], "CodeInput",
- CellChangeTimes->{{3.6866803808959723`*^9, 3.686680666698144*^9}, {
-   3.686680702472224*^9, 3.686680713035654*^9}, {3.686680756275738*^9, 
-   3.6866808191802883`*^9}, 3.686680853209467*^9, 3.686680931684602*^9, 
-   3.688430698687993*^9, {3.6974635486481733`*^9, 3.697463592460725*^9}, {
-   3.699639820029366*^9, 3.6996399123389997`*^9}, {3.699639954697711*^9, 
-   3.69963995907425*^9}, 3.7009304945474997`*^9, 3.701029059684704*^9, {
-   3.701029120555361*^9, 3.701029168557888*^9}, {3.702043590598893*^9, 
-   3.702043603038549*^9}, 3.702043643134591*^9, {3.702074134231957*^9, 
-   3.7020741471499557`*^9}, {3.705173268087257*^9, 3.705173291857286*^9}, {
-   3.705173326694408*^9, 3.7051734938703737`*^9}, {3.7051735326380568`*^9, 
-   3.705173546075226*^9}, {3.70517503643961*^9, 3.705175064529517*^9}, {
-   3.7051751323885736`*^9, 3.705175140690008*^9}, {3.7051757988584146`*^9, 
-   3.7051758210874863`*^9}, {3.705175885301182*^9, 3.705176179057694*^9}, {
-   3.705185212302513*^9, 3.705185284090478*^9}, {3.70518533646183*^9, 
-   3.705185383304452*^9}, {3.7051854552115097`*^9, 3.705185485048641*^9}, {
-   3.705243141943117*^9, 3.7052433408593063`*^9}, {3.705243439174728*^9, 
-   3.705243455075091*^9}, {3.7052435430976353`*^9, 3.7052435778866787`*^9}, {
-   3.705243612295966*^9, 3.705243615214484*^9}, {3.705243683612164*^9, 
-   3.705243695843457*^9}, {3.705411448654352*^9, 3.705411461555169*^9}, {
-   3.711850655797289*^9, 3.711850719157319*^9}, {3.713097411384982*^9, 
-   3.713097465165053*^9}, {3.715550973485386*^9, 3.715551148283414*^9}, {
-   3.7178768131513968`*^9, 3.717876861707239*^9}, {3.7180358828209352`*^9, 
-   3.718035928428565*^9}, {3.718036982456574*^9, 3.718037022377689*^9}, {
-   3.718037163468403*^9, 3.71803716616652*^9}, 3.7269417170436563`*^9, 
-   3.726941751660804*^9, {3.7278254834938087`*^9, 3.7278255347392807`*^9}, 
-   3.728950202074597*^9, {3.728950433526395*^9, 3.728950442059758*^9}, {
-   3.729134579689205*^9, 3.729134608437901*^9}, {3.732639066588819*^9, 
-   3.732639068866568*^9}, {3.732639104002687*^9, 3.7326391227749987`*^9}, {
-   3.7326391557628393`*^9, 
-   3.7326392345746813`*^9}},ExpressionUUID->"7ed9e6ea-a044-429f-a56e-\
-b23a44496148"]
-}, Closed]],
+      RowBox[{"baseName", ",", "Automatic"}], "]"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"7ed9e6ea-a044-429f-a56e-b23a44496148"]\
+
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -3185,8 +3197,14 @@ Cell["", "SectionSeparator",ExpressionUUID->"51af92ef-62b7-4e37-bdaf-\
 538e35eb72a6"]
 },
 WindowSize->{798, 764},
-WindowMargins->{{Automatic, 221}, {Automatic, 0}},
+WindowMargins->{{Automatic, 205}, {0, Automatic}},
 Visible->True,
+TaggingRules->{
+ "UUIDButtons" -> {
+   "Active" -> {
+     "Button-590233c6-9680-4d8a-a854-3b15b03893d8" -> False, 
+      "Button-33d6ec4d-a39a-4e80-8d92-b8c5561caada" -> False, 
+      "Button-c0a09a32-e26b-44bc-931b-a7a8eaa0a4c0" -> False}}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

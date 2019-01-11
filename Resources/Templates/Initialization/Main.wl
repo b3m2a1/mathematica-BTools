@@ -28,6 +28,8 @@ If[Temp`PackageScope`$NameLoading`Private`$DependencyLoad,
     Get@FileNameJoin@{DirectoryName@$InputFileName, "$NameLoader.wl"}
     ],
   If[!TrueQ[Evaluate[Symbol["$Name`PackageScope`Private`$LoadCompleted"]]],
-    <<$Name`$NameLoader`
-    ]
+    <<$Name`$NameLoader`,
+   BeginPackage["$Name`"];
+   EndPackage[];
+   ]
   ]

@@ -26,6 +26,8 @@ If[Temp`PackageScope`BToolsLoading`Private`$DependencyLoad,
     Get@FileNameJoin@{DirectoryName@$InputFileName, "BToolsLoader.wl"}
     ],
   If[!TrueQ[Evaluate[Symbol["BTools`PackageScope`Private`$LoadCompleted"]]],
-    <<BTools`BToolsLoader`
-    ]
+    <<BTools`BToolsLoader`,
+   BeginPackage["BTools`"];
+   EndPackage[];
+   ]
   ]
