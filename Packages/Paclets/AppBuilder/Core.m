@@ -669,7 +669,7 @@ $appInitStrings:=
 
 $appInitComponents=
   {
-    "Constants", "Paths", "Loading",
+    "Constants", "Paths", "Usages", "Loading",
     "Dependencies", "Exceptions", "Autocomplete",
     "FrontEnd"
     }

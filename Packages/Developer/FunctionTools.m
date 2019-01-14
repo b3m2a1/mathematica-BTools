@@ -101,7 +101,7 @@ $usageSymNames =
     s_Symbol :>
     RuleCondition[
       extractorLocalized@
-      ToLowerCase[StringTake[SymbolName[Unevaluated@s], UpTo[3]]],
+      SymbolName[Unevaluated@s](*ToLowerCase[StringTake[SymbolName[Unevaluated@s], UpTo[25]]]*),
       True
       ]
     };
@@ -233,6 +233,34 @@ With[{
 
 
 (* ::Subsubsection::Closed:: *)
+(*makeUsageMessage*)
+
+
+
+makeUsageMessage[baseUsage_, usageArg_, usageTemplate_, symbolName_]:=
+  Which[!StringContainsQ[baseUsage, StringSplit[usageArg, "["][[1]]<>"[" ],
+    Which[
+      baseUsage == "",
+        TemplateApply[usageTemplate, usageArg], 
+      ! StringStartsQ[baseUsage, symbolName],
+        usageArg<>" "<>baseUsage,
+      True,
+        {baseUsage, TemplateApply[usageTemplate, usageArg]}
+      ],
+    !StringContainsQ[baseUsage, usageArg],
+      TemplateApply[usageTemplate, usageArg],
+    True,
+      StringCases[
+        baseUsage, 
+        (StartOfLine | StartOfString) ~~ 
+          Except["\n"]... ~~ usageArg ~~
+          Except["\n"]... ~~ EndOfLine,
+        1
+        ][[1]]
+    ]
+
+
+(* ::Subsubsection::Closed:: *)
 (*generateSymbolUsage*)
 
 
@@ -245,7 +273,7 @@ generateSymbolUsage[
   defaultMessages : {(_Rule | _RuleDelayed) ...} : {},
   uTemp:_String|Automatic:Automatic
   ] :=
-With[
+Module[
   {
     ut=
       Replace[uTemp, Automatic->$defaultUsageTemplate], 
@@ -259,55 +287,36 @@ With[
           _ -> Nothing
           },
         {1}
-        ]
+        ],
+    baseUsage=Replace[Quiet[f::usage], Except[_String] -> ""]
     },
   DeleteDuplicates@Flatten@
-  Replace[
-    DeleteDuplicates@usagePatternReplace[Keys@getCodeValues[f]],
-    {
-      Verbatim[HoldPattern][s_[a___]]:>
-      With[
-        {
-          (* original usage message *)
-          uu =
-            StringTrim@
-              Replace[HoldPattern[s[a]] /. uml,
-                Except[_String] :>
-                Replace[Quiet@s::usage, Except[_String] -> ""]
-                ],
-          sn = ToString[Unevaluated@s],
-          (* head for the usage message I'm going to add*)
-          meuu = 
-            StringReplace[
-              ToString[Unevaluated[s[a]], InputForm], 
-              $privateWorkingCont -> ""
-              ]
-          },
-        Which[!StringContainsQ[uu, StringSplit[meuu, "["][[1]]<>"[" ],
-          Which[
-            uu == "",
-              TemplateApply[ut, meuu], 
-            ! StringStartsQ[uu, sn],
-              meuu<>" "<>uu,
-            True,
-              {uu, TemplateApply[ut, meuu]}
+    Replace[
+      DeleteDuplicates@usagePatternReplace[Keys@getCodeValues[f]],
+      {
+        Verbatim[HoldPattern][s_[a___]]:>
+          With[
+            {
+              (* original usage message *)
+              uu =
+                StringTrim@
+                  Replace[Replace[HoldPattern[s[a]], uml],
+                    Except[_String] :> baseUsage
+                    ],
+              sn = ToString[Unevaluated@s],
+              (* head for the usage message I'm going to add*)
+              meuu = 
+                StringReplace[
+                  ToString[Unevaluated[s[a]], InputForm], 
+                  $privateWorkingCont -> ""
+                  ]
+              },
+            makeUsageMessage[uu, meuu, ut, sn]
             ],
-          !StringContainsQ[uu, meuu],
-            TemplateApply[ut, meuu],
-          True,
-            StringCases[
-              uu, 
-              (StartOfLine | StartOfString) ~~ 
-                Except["\n"]... ~~ meuu ~~
-                Except["\n"]... ~~ EndOfLine,
-              1
-              ][[1]]
-          ]
-        ],
-      _ -> Nothing
-      },
-    {1}
-    ]
+        _ -> Nothing
+        },
+      {1}
+      ]
   ];
 generateSymbolUsage~SetAttributes~HoldFirst;
 

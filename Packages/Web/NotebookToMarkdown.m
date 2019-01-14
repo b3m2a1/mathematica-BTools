@@ -484,13 +484,14 @@ NotebookMarkdownSave//Clear
 
 NotebookMarkdownSave[
   nbObj:_NotebookObject|Automatic:Automatic,
+  target:_String|_File|Automatic:Automatic,
   ops:OptionsPattern[]
   ]:=
   Function[Null, Catch[#, "NotebookSaveAbort"], HoldFirst]@
   PackageExceptionBlock["MarkdownExport"]@
     Module[
       {
-        nb=Replace[nbObj,Automatic:>InputNotebook[]],
+        nb=Replace[nbObj, Automatic:>InputNotebook[]],
         meta,
         expOps,
         exporter,
@@ -574,7 +575,11 @@ NotebookMarkdownSave[
           md[[1]]
           ]
         ];
-      nbDir=MarkdownNotebookDirectory[nb];
+      nbDir=
+        If[target=!=Automatic,
+          If[DirectoryQ@target, target, DirectoryName@target],
+          MarkdownNotebookDirectory[nb]
+          ];
       siteBase=MarkdownSiteBase@nbDir;
       root=
         Replace[Lookup[expOps, "RootDirectory", Automatic],
@@ -596,33 +601,39 @@ NotebookMarkdownSave[
             }
           ];
       expDir=
-        Replace[Lookup[expOps, "Directory", Automatic],
-          {
-            f_String?(ExpandFileName[#]!=#||Not@DirectoryQ[#]&):>
-              ExpandFileName@
-                FileNameJoin@{
-                  nbDir,
-                  f
-                  },
-            {f__String}:>
-              ExpandFileName@
-                FileNameJoin@{
-                  nbDir,
-                  f
-                  },
-            Except[_String?(DirectoryQ)]:>
-              nbDir
-            }
+        If[target=!=Automatic,
+          nbDir,
+          Replace[Lookup[expOps, "Directory", Automatic],
+            {
+              f_String?(ExpandFileName[#]!=#||Not@DirectoryQ[#]&):>
+                ExpandFileName@
+                  FileNameJoin@{
+                    nbDir,
+                    f
+                    },
+              {f__String}:>
+                ExpandFileName@
+                  FileNameJoin@{
+                    nbDir,
+                    f
+                    },
+              Except[_String?(DirectoryQ)]:>
+                nbDir
+              }
+            ]
           ];
       expName=
-        Replace[Lookup[expOps, "Name", Automatic],
-          {
-            f_String:>
-              If[FileExtension[f]=="", f<>".md", f],
-            Except[_String?(DirectoryQ)]:>
-              FileBaseName@
-                Quiet[Replace[NotebookFileName[nb], $Failed->"Notebook"]]<>".md"
-            }
+        If[target=!=Automatic&&!DirectoryQ@target,
+          FileNameTake@target,
+          Replace[Lookup[expOps, "Name", Automatic],
+            {
+              f_String:>
+                If[FileExtension[f]=="", f<>".md", f],
+              Except[_String?(DirectoryQ)]:>
+                FileBaseName@
+                  Quiet[Replace[NotebookFileName[nb], $Failed->"Notebook"]]<>".md"
+              }
+            ]
           ];
       NotebookMarkdownSaveExportSown[root, Last[md], 
         {

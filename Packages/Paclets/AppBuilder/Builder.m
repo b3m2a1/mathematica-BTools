@@ -1138,7 +1138,7 @@ AppGet[appName_, pkgName_String]:=
               SelectFirst[
                 SortBy[FileNameDepth]@
                   FileNames[
-                    StringTrim[pkgName,".m"]<>".m",
+                    StringTrim[pkgName, ".m"|".wl"]~~(".m"|".wl"),
                     AppPath[app,"Packages"],
                     Infinity
                     ],
@@ -1210,7 +1210,7 @@ AppGet[appName_, pkgName_String]:=
         )
     }]
   ];
-AppGet[appName_,pkgName:{__String}]:=
+AppGet[appName_, pkgName:{__String}]:=
   AppGet[appName, FileNameJoin@pkgName];
 AppGet[appName_,Optional[Automatic,Automatic]]:=
   Module[
@@ -1241,7 +1241,7 @@ AppGet[Optional[Automatic,Automatic]]:=
   Module[
     {
       baseName=
-        FileNameTake[NotebookFileName[],{FileNameDepth@$AppDirectory+1}]
+        FileNameTake[NotebookFileName[], {FileNameDepth@$AppDirectory+1}]
       },
     AppGet[baseName,Automatic]
     ];

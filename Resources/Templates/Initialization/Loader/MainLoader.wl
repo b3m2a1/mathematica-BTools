@@ -325,9 +325,15 @@ PackagePreemptShadowing[]:=
 PackagePrepPackageSymbol[]:=
   Switch[$AllowPackageSymbolDefinitions,
     None,
-      Remove[$Name],
+      If[Length@OwnValues[$Name]==0,
+        Remove[$Name],
+        DownValues[$Name]={}
+        ],
     False,
-      Clear[$Name],
+      If[Length@OwnValues[$Name]==0,
+        Clear[$Name],
+        DownValues[$Name]={}
+        ],
     _,
       PackageAttachMainAutocomplete[]
     ]

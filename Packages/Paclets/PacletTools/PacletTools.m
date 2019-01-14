@@ -1035,14 +1035,21 @@ PacletInfoExpressionBundle[
   dest_String?DirectoryQ,
   ops:OptionsPattern[]
   ]:=
-  With[{pacletFile=GetPacletInfoFile[dest]},
-    WriteString[pacletFile, 
-      First@
-        PacletInfoExpressionStrings[{paclet},
-          OptionValue["ExcludedElements"]
-          ]
+  Module[
+    {
+      pacletFile=GetPacletInfoFile[dest],
+      handle
+      },
+    Internal`WithLocalSettings[
+      handle=OpenWrite[ExpandFileName@pacletFile],
+      WriteString[handle, 
+        First@
+          PacletInfoExpressionStrings[{paclet},
+            OptionValue["ExcludedElements"]
+            ]
+        ],
+      Quiet@Close[handle];
       ];
-    Close[pacletFile];
     pacletFile
     ];
 PacletInfoExpressionBundle[
