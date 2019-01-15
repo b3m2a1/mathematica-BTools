@@ -1236,7 +1236,8 @@ copyThumbnailFromPaclet[pacF_, ico_, imgDir_]:=
         },
       icoFile=
         SelectFirst[
-          Import[pacF, "ZIP"],
+          SortBy[Length@FileNameSplit[#]&]@
+            Import[pacF, "ZIP"],
           #==icoFile||
             StringEndsQ[#, icoFile]&
           ];

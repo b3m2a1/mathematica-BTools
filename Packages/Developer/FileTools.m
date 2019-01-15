@@ -79,6 +79,24 @@ PartialDirectoryCopy[src_, targ_, ops:OptionsPattern[]]:=
 
 
 
+(* ::Text:: *)
+(*
+The idea is as follows. Get a list of files:
+	RF = { f1, f2, f3, ....}
+Get the file list from which it originated:
+	OF = { f1, f1.2, f2, f2.1, f3, ...}
+Group all of RF and all of OF by directory:
+	ARF = GroupBy[RF, DirectoryName]
+	AOF = GroupBy[OF, DirectoryName]
+For each directory, if there are files in OF that aren\[CloseCurlyQuote]t in RF, leave the RF one be. If there are no changes, replace the list with its directory name. We will only copy this directory instead.
+
+Next we determine which directories are missing in RF that were in OF. We can\[CloseCurlyQuote]t copy these over.
+
+With this in hand, we merge the directories in RF upwards. If the parent directory is going to be copied in full, we want to drop the child. If the parent is noted as being coped in full, but there\[CloseCurlyQuote]s actually a missing subdirectory to copy, we drop the parent.
+*)
+
+
+
 getMinimalFileModSpec//Clear
 getMinimalFileModSpec[
   restFiles_, 
@@ -87,6 +105,8 @@ getMinimalFileModSpec[
   ]:=
   Module[
     {
+      emptyDirs,
+      realFiles,
       g1,
       g2,
       unchangedReduction,
@@ -105,14 +125,26 @@ getMinimalFileModSpec[
     g1=Select[Not@*DirectoryQ]/@GroupBy[restFiles, DirectoryName];
     deadDirs=Complement[Select[restFiles, DirectoryQ], Keys@g1];
     g2=Select[Not@*DirectoryQ]/@GroupBy[files, DirectoryName];
-    
+    (*
+			prune directories that are empty in the full set and have no children
+			*)
+  (*	emptyDirs=
+			With[{k=Keys@g2},
+				Select[Keys@g2, 
+					With[{k2=#},
+						Length[g2[#]]\[Equal]0&&
+							!AnyTrue[k, #=!=k2&]
+						]&
+					]
+				];
+		KeyDropFrom[g1, emptyDirs];
+		KeyDropFrom[g2, emptyDirs];*)
     (* find the directories that are in the full set but missing in the reduced set to prevent over reduction *)
     missingDirs=
       AssociationThread[
         Complement[Keys@g2, Keys@g1],
         0
         ];
-    
     (* figures out which directories may be copied across wholesale *)
     unchangedReduction=
       AssociationMap[
@@ -158,8 +190,9 @@ getMinimalFileModSpec[
         !DirectoryQ[#]||
           Length@g1[#]>0||
           AnyTrue[
-            Flatten@Values@KeySelect[g1, StringStartsQ[#]], 
-            !DirectoryQ
+            Flatten@Values@
+                KeySelect[g1, StringStartsQ[#]], 
+            Not@*DirectoryQ
             ]&
         ],
       Union[#, deadDirs]&

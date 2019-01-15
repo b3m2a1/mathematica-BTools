@@ -3,7 +3,6 @@
 <wolfram:slot id="head">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css">
-
   <link rel="stylesheet" href="<wolfram:slot id='SiteURL'/>/theme/tipuesearch/tipuesearch.css">
   <script src="<wolfram:slot id='SiteURL'/>/theme/tipuesearch/tipuesearch.min.js"></script>
 
@@ -12,9 +11,7 @@
 <wolfram:slot id="Head">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css">
-
   <link rel="stylesheet" href="<wolfram:slot id='SiteURL'/>/theme/tipuesearch/tipuesearch.css">
-  <script src="<wolfram:slot id='SiteURL'/>/theme/tipuesearch/tipuesearch.min.js"></script>
 
 </wolfram:slot>
 
@@ -32,7 +29,11 @@
 
   <script src="<wolfram:slot id='SiteURL'/>/theme/tipuesearch/tipuesearch_content.js"></script>
   <script src="<wolfram:slot id='SiteURL'/>/theme/tipuesearch/tipuesearch_set.js"></script>
+
   <script>
+    function loadTipue() {
+      $.getScript("<wolfram:slot id='SiteURL'/>/theme/tipuesearch/tipuesearch.min.js")
+    }
     function waitPerformSearch(){
       var tipuesearch_config = [
         tipuesearch,
@@ -47,13 +48,14 @@
         function(tspar){
           return typeof tspar !== "undefined"
           }
-        )){
+        ) && $('#tipue_search_input').length > 0 ){
         $('#tipue_search_input').tipuesearch(tipuesearch_options)
       }
       else{
         setTimeout(waitPerformSearch, 250);
       }
     }
+    $(document).ready(loadTipue);
     $(document).ready(waitPerformSearch);
   </script>
 

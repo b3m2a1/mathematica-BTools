@@ -169,6 +169,7 @@ Cell["\[LeftCeiling]getMinimalFileModSpec\[RightFloor]", "CodeSubsubsection",
  Evaluatable->True,ExpressionUUID->"21dff0d1-fe33-4068-950e-5b65eab6a0d3"],
 
 Cell["\<\
+\[LeftCeiling]
 The idea is as follows. Get a list of files:
 \tRF = { f1, f2, f3, ....}
 Get the file list from which it originated:
@@ -186,8 +187,10 @@ Next we determine which directories are missing in RF that were in OF. We can\
 With this in hand, we merge the directories in RF upwards. If the parent \
 directory is going to be copied in full, we want to drop the child. If the \
 parent is noted as being coped in full, but there\[CloseCurlyQuote]s actually \
-a missing subdirectory to copy, we drop the parent.\
-\>", "Text",ExpressionUUID->"6aa568f0-3028-4dc6-b7a8-f1a7a357253a"],
+a missing subdirectory to copy, we drop the parent.
+\[RightFloor]\
+\>", "Text",
+ Evaluatable->True,ExpressionUUID->"6aa568f0-3028-4dc6-b7a8-f1a7a357253a"],
 
 Cell[BoxData[{
  RowBox[{"getMinimalFileModSpec", "//", "Clear"}], "\n", 
@@ -201,12 +204,13 @@ Cell[BoxData[{
    RowBox[{
     RowBox[{"{", "\n", "\t\t\t", 
      RowBox[{
-     "g1", ",", "\n", "\t\t\t", "g2", ",", "\n", "\t\t\t", 
-      "unchangedReduction", ",", "\n", "\t\t\t", "changedReduction", ",", 
-      "\n", "\t\t\t", "containedReduction", ",", "\n", "\t\t\t", "keys", ",", 
-      "\n", "\t\t\t", "changedKeys", ",", "\n", "\t\t\t", "missingDirs", ",", 
-      "\n", "\t\t\t", "baseSpec", ",", "\n", "\t\t\t", "deadDirs"}], "\n", 
-     "\t\t\t", "}"}], ",", "\n", "\t\t", 
+     "emptyDirs", ",", "\n", "\t\t\t", "realFiles", ",", "\n", "\t\t\t", "g1",
+       ",", "\n", "\t\t\t", "g2", ",", "\n", "\t\t\t", "unchangedReduction", 
+      ",", "\n", "\t\t\t", "changedReduction", ",", "\n", "\t\t\t", 
+      "containedReduction", ",", "\n", "\t\t\t", "keys", ",", "\n", "\t\t\t", 
+      "changedKeys", ",", "\n", "\t\t\t", "missingDirs", ",", "\n", "\t\t\t", 
+      "baseSpec", ",", "\n", "\t\t\t", "deadDirs"}], "\n", "\t\t\t", "}"}], 
+    ",", "\n", "\t\t", 
     RowBox[{"(*", " ", "\n", "\t\t\t", 
      RowBox[{
      "build", " ", "associations", " ", "mapping", " ", "directories", " ", 
@@ -234,7 +238,45 @@ Cell[BoxData[{
         RowBox[{"Not", "@*", "DirectoryQ"}], "]"}], "/@", 
        RowBox[{"GroupBy", "[", 
         RowBox[{"files", ",", " ", "DirectoryName"}], "]"}]}]}], ";", "\n", 
-     "\t\t", "\n", "\t\t", 
+     "\t\t", 
+     RowBox[{"(*", "\n", "\t\t\t", 
+      RowBox[{
+      "prune", " ", "directories", " ", "that", " ", "are", " ", "empty", " ",
+        "in", " ", "the", " ", "full", " ", "set", " ", "and", " ", "have", 
+       " ", "no", " ", "children"}], "\n", "\t\t\t", "*)"}], "\n", "\t", 
+     RowBox[{"(*", "\t", 
+      RowBox[{
+       RowBox[{"emptyDirs", "=", "\n", "\t\t\t", 
+        RowBox[{"With", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"k", "=", 
+            RowBox[{"Keys", "@", "g2"}]}], "}"}], ",", "\n", "\t\t\t\t", 
+          RowBox[{"Select", "[", 
+           RowBox[{
+            RowBox[{"Keys", "@", "g2"}], ",", " ", "\n", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"With", "[", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"k2", "=", "#"}], "}"}], ",", "\n", "\t\t\t\t\t\t", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Length", "[", 
+                  RowBox[{"g2", "[", "#", "]"}], "]"}], "\[Equal]", "0"}], "&&",
+                 "\n", "\t", "\t", "\t\t\t\t\t", 
+                RowBox[{"!", 
+                 RowBox[{"AnyTrue", "[", 
+                  RowBox[{"k", ",", " ", 
+                   RowBox[{
+                    RowBox[{"#", "=!=", "k2"}], "&"}]}], "]"}]}]}]}], "\n", 
+              "\t\t\t\t\t\t", "]"}], "&"}]}], "\n", "\t\t\t\t\t", "]"}]}], 
+         "\n", "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
+       RowBox[{"KeyDropFrom", "[", 
+        RowBox[{"g1", ",", " ", "emptyDirs"}], "]"}], ";", "\n", "\t\t", 
+       RowBox[{"KeyDropFrom", "[", 
+        RowBox[{"g2", ",", " ", "emptyDirs"}], "]"}], ";"}], "*)"}], "\n", 
+     "\t\t", 
      RowBox[{"(*", " ", 
       RowBox[{
       "find", " ", "the", " ", "directories", " ", "that", " ", "are", " ", 
@@ -249,7 +291,7 @@ Cell[BoxData[{
          RowBox[{
           RowBox[{"Keys", "@", "g2"}], ",", " ", 
           RowBox[{"Keys", "@", "g1"}]}], "]"}], ",", "\n", "\t\t\t\t", "0"}], 
-       "\n", "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", "\n", "\t\t", 
+       "\n", "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
      RowBox[{"(*", " ", 
       RowBox[{
       "figures", " ", "out", " ", "which", " ", "directories", " ", "may", 
@@ -377,20 +419,20 @@ Cell[BoxData[{
            RowBox[{"AnyTrue", "[", "\n", "\t", "\t\t\t\t\t", 
             RowBox[{
              RowBox[{"Flatten", "@", 
-              RowBox[{"Values", "@", 
+              RowBox[{"Values", "@", "\n", "\t\t\t\t\t\t\t\t", 
                RowBox[{"KeySelect", "[", 
                 RowBox[{"g1", ",", " ", 
                  RowBox[{"StringStartsQ", "[", "#", "]"}]}], "]"}]}]}], ",", 
-             " ", "\n", "\t", "\t\t\t\t\t", 
-             RowBox[{"!", "DirectoryQ"}]}], "\n", "\t", "\t\t\t\t\t", "]"}]}],
-           "&"}], "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
+             " ", "\n", "\t\t\t\t\t\t", 
+             RowBox[{"Not", "@*", "DirectoryQ"}]}], "\n", "\t\t\t\t\t\t", 
+            "]"}]}], "&"}], "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
         RowBox[{
          RowBox[{"Union", "[", 
           RowBox[{"#", ",", " ", "deadDirs"}], "]"}], "&"}]}], "\n", "\t\t\t",
         "]"}], "@", "baseSpec"}]}]}], "\n", "\t\t", 
    "]"}]}]}], \
 "CodeInput",ExpressionUUID->"a8f3da7f-0e2d-47bc-ac29-3c8d26c0d8f9"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -455,7 +497,7 @@ Cell[BoxData[
        "\t\t\t", "}"}]}], "\n", "\t", "\t\t", "]"}], ";"}], "\n", "\t", 
    "\t\t", ")"}]}]], \
 "CodeInput",ExpressionUUID->"7c263536-32f2-4ad7-8b66-57730f523619"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -508,6 +550,12 @@ d693a8202253"]
 },
 WindowSize->{808, 755},
 WindowMargins->{{254, Automatic}, {36, Automatic}},
+TaggingRules->{
+ "UUIDButtons" -> {
+   "Active" -> {
+     "Button-b8297203-6b28-48f9-8ba3-edbd5eb431d2" -> False, 
+      "Button-8c92aebb-2725-4f7c-a6a8-f90e3a4dce9c" -> False, 
+      "Button-ede3a027-3279-40a0-8aa4-1fcc5f60357d" -> False}}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

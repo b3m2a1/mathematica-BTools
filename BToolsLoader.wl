@@ -2414,9 +2414,15 @@ PackagePreemptShadowing[]:=
 PackagePrepPackageSymbol[]:=
   Switch[$AllowPackageSymbolDefinitions,
     None,
-      Remove[BTools],
+      If[Length@OwnValues[BTools]==0,
+        Remove[BTools],
+        DownValues[BTools]={}
+        ],
     False,
-      Clear[BTools],
+      If[Length@OwnValues[BTools]==0,
+        Clear[BTools],
+        DownValues[BTools]={}
+        ],
     _,
       PackageAttachMainAutocomplete[]
     ]
