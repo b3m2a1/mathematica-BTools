@@ -1218,13 +1218,13 @@ PackageUpdatePacletDependency[
 (*Nothing I've implemented yet, but could be very useful for installing resources for a paclet*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*PackageEnsureLoadDependency*)
 
 
 Options[PackageEnsureLoadDependency]=
   Join[
-    Options@PackgeLoadPacletDependency,
+    Options@PackageLoadPacletDependency,
     {
       "Bundled"->True
       }
@@ -1259,14 +1259,14 @@ PackageEnsureLoadDependency[dep_, ops:OptionsPattern[]]:=
        ];
      Quiet[(* this is a temporary hack until WRI fixes a $ContextPath bug *)
        If[!bund,
-         PackgeLoadPacletDependency[dep,
-           FilterRules[
+         PackageLoadPacletDependency[dep,
+           Sequence@@FilterRules[
              {
                ops,
                "Update"->True,
                "Loading"->Get
                },
-             Options@PackgeLoadPacletDependency
+             Options@PackageLoadPacletDependency
              ]
            ],
          Lookup[Flatten@{ops}, "Loading", Get]@foundFile
@@ -1300,7 +1300,7 @@ PackageEnsureLoadDependencies[]:=
    ];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*PackageExposeDependencies*)
 
 

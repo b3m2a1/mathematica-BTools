@@ -1993,6 +1993,29 @@ WebSiteTemplateApply//ClearAll
 
 
 
+getApplicationTemplate[root_, name_]:=
+  Replace[
+    With[
+      {
+        dp=
+          Map[
+            FileNameJoin@*FileNameSplit,
+            Append[root, 
+              FileNameJoin@{$WebSiteTemplateLibDirectory, "templates"}
+              ]
+            ]
+        },
+      SortBy[
+        FileNames[name, dp],
+        Position[dp, FileNameJoin@FileNameSplit@DirectoryName@#]&
+        ]
+      ],
+    {
+      {f_, ___}:>f
+      }
+    ]
+
+
 WebSiteBuild::nocnt=
   "Can't export content `` to string";
 WebSiteTemplateApply[
@@ -2010,26 +2033,8 @@ WebSiteTemplateApply[
         },
         cname=webSitePrepContentName[content, root];
         fils=
-          Replace[
-            With[
-              {
-                dp=
-                  Map[
-                    FileNameJoin@*FileNameSplit,
-                    Append[root, 
-                      FileNameJoin@{$WebSiteTemplateLibDirectory, "templates"}
-                      ]
-                    ]
-                },
-              SortBy[
-                FileNames[#, dp],
-                Position[dp, FileNameJoin@FileNameSplit@DirectoryName@#]&
-                ]
-              ],
-            {
-              {f_, ___}:>f
-              }
-            ]&/@Flatten@List@templates//Flatten;
+          getApplicationTemplate[root, #]&/@
+            Flatten@List@templates//Flatten;
       args=
         If[MemberQ[Lookup[#, "Templates", {}], "article.html"],
           Merge[{
@@ -2047,6 +2052,7 @@ WebSiteTemplateApply[
         Merge[(* Collect the arguments to pass to the template *)
           {
             $WebSiteBuildAggStack,
+            "Templates"->Flatten@{templates},
             info,
             (* Include extracted attributes *)
             Lookup[

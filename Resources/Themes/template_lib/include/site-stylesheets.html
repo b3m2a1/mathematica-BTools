@@ -1,0 +1,23 @@
+<wolfram:get path="include/lib/templates/varNotFalseBlock.html">
+  <wolfram:slot id="var">StyleSheets</wolfram:slot>
+  <wolfram:slot id="if">
+    <wolfram:expr>
+      $$templateLib["makeSiteStylesheet"][
+        Replace[#StyleSheets,{
+          None->{},
+          Except[_List]:>
+            Prepend[
+              Import[FileNameJoin@{"include","config","stylesheets.m"}],
+              URLBuild@{
+                "pygments",
+                Replace[#PygmentsStyle,
+                  Except[_String]:>"default"
+                  ]<>".min.css"
+                }
+              ]
+          }],
+        #
+        ]
+    </wolfram:expr>
+  </wolfram:slot>
+</wolfram:get>

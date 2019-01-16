@@ -4164,7 +4164,9 @@ $GitHubActions=
         "PathQ"->
           GitHubPathQ,
         "RepoQ"->
-          GitHubRepoQ
+          GitHubRepoQ,
+        "ReleaseQ"->
+          GitHubReleaseQ
         |>
         ];
 

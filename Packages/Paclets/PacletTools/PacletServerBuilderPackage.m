@@ -510,7 +510,10 @@ pacletMarkdownNotebookMetadataSection[a_, sanitized:True]:=
           pacletMarkdownNotebookMakeName[a["Name"]],
         "Modified"->
           pacletMarkdownNotebookMetadataGetFileModificationDate[
-            Lookup[a, {"Name", "Version", "LastModified"}, Missing["NotAvailable"]]
+            Lookup[a, 
+              {"Name", "Version", "LastModified"}, 
+              Missing["NotAvailable"]
+              ]
             ]
         |>
       ],
@@ -1305,7 +1308,8 @@ copyThumbnailFromPacletLegacy[pacF_, ico_, imgDir_]:=
 
 
 
-RegeneratePacletPages[server_, servDir_, pacletsDir_, siteData_, 
+RegeneratePacletPages[
+  server_, servDir_, pacletsDir_, siteData_, 
   mon_, regen_
   ]:=
   Module[
@@ -1334,7 +1338,12 @@ RegeneratePacletPages[server_, servDir_, pacletsDir_, siteData_,
         ],
       Identity
       ]@
-      Block[{md, nb},
+      Block[
+        {
+          md, nb, 
+          $BuildingPacletServerDirectory=(* not sure if I should do this...? *)
+            DirectoryName@pacletsDir
+          },
         nbout=PacletServerFile[server, {"content","posts",#Name<>".nb"}];
         pacF=
           FileNameJoin@

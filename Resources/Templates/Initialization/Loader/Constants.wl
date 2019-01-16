@@ -189,19 +189,19 @@ $Name["AllowRescoping"]:=$AllowPackageRescoping;
 $AllowPackageRescoping=
   Replace[
     Lookup[$PackageLoadSpecs, "AllowRescoping"],
-    Except[True|False]->$TopLevelLoad
+    Except[True|False]->($PackageLoadingMode==="Primary")(*$TopLevelLoad*)
     ];
 $Name["AllowRecoloring"]:=$AllowPackageRecoloring;
 $AllowPackageRecoloring=
   Replace[
     Lookup[$PackageLoadSpecs, "AllowRecoloring"],
-    Except[True|False]->$TopLevelLoad
+    Except[True|False]->($PackageLoadingMode==="Primary")(*$TopLevelLoad*)
     ];
 $Name["AllowAutocompletions"]:=$AllowPackageAutocompletions;
 $AllowPackageAutocompletions=
   Replace[
     Lookup[$PackageLoadSpecs, "AllowAutocompletions"],
-    Except[True|False]->$TopLevelLoad
+    Except[True|False]->($PackageLoadingMode==="Primary")(*$TopLevelLoad*)
     ];
 
 
