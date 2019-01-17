@@ -1152,7 +1152,8 @@ Options[PacletServerBuild]=
         {
           "RegenerateContent"->Automatic,
           "BuildSite"->True,
-          "GenerateSearchPage"->Automatic
+          "GenerateSearchPage"->Automatic,
+          "ContentSortingFunction"->(#["Attributes", "Name"]&)
           },
         {
           "PacletsDirectory"->Automatic
@@ -1209,14 +1210,14 @@ PacletServerBuild[
             Sequence@@
               FilterRules[
                 FilterRules[
-                  {
+                  Flatten@{
                     ops,
                     "OutputDirectory"->
                       If[GitRepoQ@PacletServerDirectory[server],
                         "docs",
                         Automatic
                         ],
-                    "GenerateSearchPage"->Automatic
+                    Options[PacletServerBuild]
                     },
                   Options@WebSiteBuild
                   ],

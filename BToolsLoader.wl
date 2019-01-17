@@ -259,19 +259,19 @@ BTools["AllowRescoping"]:=$AllowPackageRescoping;
 $AllowPackageRescoping=
   Replace[
     Lookup[$PackageLoadSpecs, "AllowRescoping"],
-    Except[True|False]->$TopLevelLoad
+    Except[True|False]->($PackageLoadingMode==="Primary")(*$TopLevelLoad*)
     ];
 BTools["AllowRecoloring"]:=$AllowPackageRecoloring;
 $AllowPackageRecoloring=
   Replace[
     Lookup[$PackageLoadSpecs, "AllowRecoloring"],
-    Except[True|False]->$TopLevelLoad
+    Except[True|False]->($PackageLoadingMode==="Primary")(*$TopLevelLoad*)
     ];
 BTools["AllowAutocompletions"]:=$AllowPackageAutocompletions;
 $AllowPackageAutocompletions=
   Replace[
     Lookup[$PackageLoadSpecs, "AllowAutocompletions"],
-    Except[True|False]->$TopLevelLoad
+    Except[True|False]->($PackageLoadingMode==="Primary")(*$TopLevelLoad*)
     ];
 
 

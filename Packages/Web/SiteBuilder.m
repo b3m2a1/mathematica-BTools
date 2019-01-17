@@ -75,7 +75,7 @@ $WebSitePath=
 If[Length@OwnValues[$WebThemesURLBase]===0,
   $WebThemesURLBase:=
     $WebThemesURLBase=
-      "https://github.com/mresources/themes/releases/download/v1.0.0/"
+      "https://github.com/mresources/themes/releases/download/v1.0.1/"
       (*CloudObject["user:b3m2a1.paclets/PacletServer/Resources/SiteBuilder/Themes"][[1]]*)
   ];
 $WebSiteTempThemeDir=
@@ -2248,11 +2248,11 @@ WebSiteTemplateExportPaginated[
                       articles, 
                       {1+pageSize*(i-1), UpTo[pageSize*i]}
                       ],
-                  "PageNumber"->i,
-                  "PageNumberTotal"->
+                  "PaginationCurrent"->i,
+                  "PaginationCount"->
                     Ceiling[Length[articles]/pageSize],
-                  "PageSize"->pageSize,
-                  "PreviousPageURL"->
+                  "PaginationPageSize"->pageSize,
+                  "PaginationPreviousURL"->
                     If[i>1,
                       WebSiteBuildURL@
                         FileNameDrop[
@@ -2264,7 +2264,7 @@ WebSiteTemplateExportPaginated[
                           ],
                       None
                       ],
-                  "NextPageURL"->
+                  "PaginationNextURL"->
                     If[i<Ceiling[Length[articles]/pageSize],
                       WebSiteBuildURL@
                         FileNameDrop[
@@ -2365,123 +2365,139 @@ WebSiteImportMeta[XMLElement["meta",info_,_]]:=
 
 
 
-WebSiteContentStackPrep[]:=
-  If[AssociationQ@$WebSiteBuildContentStack,
-    $WebSiteBuildContentDataStack=
-      Association@
-        Map[
-          #["Attributes", "URL"]->#&,
-          Values@$WebSiteBuildContentStack
-          ];
-    $WebSiteBuildAggStack=
-      <|
-        (* A function for getting object attributes by file name *)
-        "ContentStack"->
-          Function[
-            Lookup[$WebSiteBuildContentStack, #,
-              Lookup[$WebSiteBuildContentDataStack, #, None]
-              ]
-            ],
-        (* This is filled in later by the aggregation generator (if aggregations turned on) *)
-        "AggregationStack"->
-          Function@PackageThrowMessage["SiteBuilder", "Aggregations not turned on"],
-        (* A function for getting object attributes by file name *)
-        "ContentData"->
-          Function[
-            Lookup[
+Options[WebSiteContentStackPrep]=
+  {
+    "ContentSortingFunction"->None
+    };
+WebSiteContentStackPrep[ops:OptionsPattern[]]:=
+  Module[
+    {
+      sort=OptionValue["ContentSortingFunction"]
+      },
+    If[AssociationQ@$WebSiteBuildContentStack,
+      If[sort=!=None,
+        With[{a=SortBy[$WebSiteBuildContentStack, sort]},
+          If[AssociationQ@a,
+            $WebSiteBuildContentStack=a
+            ]
+          ]
+        ];
+      $WebSiteBuildContentDataStack=
+        Association@
+          Map[
+            #["Attributes", "URL"]->#&,
+            Values@$WebSiteBuildContentStack
+            ];
+      $WebSiteBuildAggStack=
+        <|
+          (* A function for getting object attributes by file name *)
+          "ContentStack"->
+            Function[
+              Lookup[$WebSiteBuildContentStack, #,
+                Lookup[$WebSiteBuildContentDataStack, #, None]
+                ]
+              ],
+          (* This is filled in later by the aggregation generator (if aggregations turned on) *)
+          "AggregationStack"->
+            Function@PackageThrowMessage["SiteBuilder", "Aggregations not turned on"],
+          (* A function for getting object attributes by file name *)
+          "ContentData"->
+            Function[
               Lookup[
-                $WebSiteBuildContentDataStack, #,
-                Lookup[$WebSiteBuildContentStack, #, <||>]
-                ],
-              "Attributes",
-              <||>
-              ]
-            ],
-        (* A function for choosing objects by the template used *)
-        "SelectObjects"->
-          Function[
-            With[{type=StringTrim[ToLowerCase[#], ".html"]<>".html"},
-              Select[
-                Values@
-                  $WebSiteBuildContentStack[[All, "Attributes"]],
-                MemberQ[#["Templates"], type]&
+                Lookup[
+                  $WebSiteBuildContentDataStack, #,
+                  Lookup[$WebSiteBuildContentStack, #, <||>]
+                  ],
+                "Attributes",
+                <||>
                 ]
-              ]
-            ],
-        (* A function for getting objects sorted by some function *)
-        "SortedObjectsBy"->
-          Function[
-            With[{
-              order=#,
-              pageType=If[Length@{##}>1, {##}[[2]], "article"]
-              },
-              SortBy[order]@
-                $WebSiteBuildAggStack["SelectObjects"][pageType]
-              ]
-            ],
-        (* A function for getting the next object by some function *)
-        "NextObjectBy"->
-          Function[
-            With[{
-              self=#,
-              order=#2,
-              pageType=If[Length@{##}>2, {##}[[3]], "article"]
-              },
-              With[
-                {
-                  sorted=
-                    SortBy[order]@
-                    $WebSiteBuildAggStack["SelectObjects"][pageType]
-                  },
-                With[{pos=1+FirstPosition[sorted, self][[1]]},
-                  If[pos<=Length@sorted,
-                    sorted[[pos]],
-                    None
-                    ]
+              ],
+          (* A function for choosing objects by the template used *)
+          "SelectObjects"->
+            Function[
+              With[{type=StringTrim[ToLowerCase[#], ".html"]<>".html"},
+                Select[
+                  Values@
+                    $WebSiteBuildContentStack[[All, "Attributes"]],
+                  MemberQ[#["Templates"], type]&
                   ]
                 ]
-              ]
-            ],
-        (* A function for getting the previous object by some function *)
-        "PreviousObjectBy"->
-          Function[
-            With[{
-              self=#,
-              order=#2,
-              pageType=If[Length@{##}>2, {##}[[3]], "article"]
-              },
-              With[
-                {
-                  sorted=
-                    SortBy[order]@
-                    $WebSiteBuildAggStack["SelectObjects"][
-                      pageType
+              ],
+          (* A function for getting objects sorted by some function *)
+          "SortedObjectsBy"->
+            Function[
+              With[{
+                order=#,
+                pageType=If[Length@{##}>1, {##}[[2]], "article"]
+                },
+                SortBy[order]@
+                  $WebSiteBuildAggStack["SelectObjects"][pageType]
+                ]
+              ],
+          (* A function for getting the next object by some function *)
+          "NextObjectBy"->
+            Function[
+              With[{
+                self=#,
+                order=#2,
+                pageType=If[Length@{##}>2, {##}[[3]], "article"]
+                },
+                With[
+                  {
+                    sorted=
+                      SortBy[order]@
+                      $WebSiteBuildAggStack["SelectObjects"][pageType]
+                    },
+                  With[{pos=1+FirstPosition[sorted, self][[1]]},
+                    If[pos<=Length@sorted,
+                      sorted[[pos]],
+                      None
                       ]
-                  },
-                With[{pos=FirstPosition[sorted, self][[1]]-1},
-                  If[pos>0,
-                    sorted[[pos]],
-                    None
                     ]
                   ]
                 ]
-              ]
-            ],
-        (* The pages *)
-        "Pages":>
-          $WebSiteBuildAggStack["SelectObjects"]["page.html"],
-        (* The articles *)
-        "Articles":>
-          $WebSiteBuildAggStack["SelectObjects"]["article.html"],
-        (* The archives *)
-        "Archives":>
-          Reverse@
-            GatherBy[
-              Values@
-                $WebSiteBuildContentStack[[All,"Attributes"]],
-              #["Date"]&
-              ]
-        |>;
+              ],
+          (* A function for getting the previous object by some function *)
+          "PreviousObjectBy"->
+            Function[
+              With[{
+                self=#,
+                order=#2,
+                pageType=If[Length@{##}>2, {##}[[3]], "article"]
+                },
+                With[
+                  {
+                    sorted=
+                      SortBy[order]@
+                      $WebSiteBuildAggStack["SelectObjects"][
+                        pageType
+                        ]
+                    },
+                  With[{pos=FirstPosition[sorted, self][[1]]-1},
+                    If[pos>0,
+                      sorted[[pos]],
+                      None
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+          (* The pages *)
+          "Pages":>
+            $WebSiteBuildAggStack["SelectObjects"]["page.html"],
+          (* The articles *)
+          "Articles":>
+            $WebSiteBuildAggStack["SelectObjects"]["article.html"],
+          (* The archives *)
+          "Archives":>
+            Reverse@
+              GatherBy[
+                Values@
+                  $WebSiteBuildContentStack[[All,"Attributes"]],
+                #["Date"]&
+                ]
+          |>;
+      ]
     ]
 
 
@@ -3986,7 +4002,8 @@ Options[iWebSiteBuild]=
       Options[WebSiteGenerateIndex],
       Options[WebSiteGenerateAggregations],
       Options[WebSiteGenerateSearchPage],
-      Options[WebSiteGenerateRedirectPages]
+      Options[WebSiteGenerateRedirectPages],
+      Options[WebSiteContentStackPrep]
       ];
 iWebSiteBuild[
   dir_,
@@ -4083,7 +4100,12 @@ iWebSiteBuild[
           $WebSiteBuildContentStack
           ];
         ];
-      WebSiteContentStackPrep[];
+      WebSiteContentStackPrep[
+        FilterRules[
+          {ops},
+          Options[WebSiteContentStackPrep]
+          ]
+        ];
       If[genCont,
         WebSiteGenerateContent[
           dir,

@@ -4187,9 +4187,9 @@ validateDirExtension[dir_, "Kernel"|"Application", ops_]:=
     {
       l=Lookup[ops, "Root", "."], 
       ctx=
-        Lookup[
+        First@Flatten@List@Lookup[
           ops, "Contexts",
-          Lookup[ops, "Context", {StringSplit[FileBaseName[dir], "-"][[1]]}][[1]]
+          Lookup[ops, "Context", {StringSplit[FileBaseName[dir], "-"][[1]]}]
           ]
     },
     If[l===".",
