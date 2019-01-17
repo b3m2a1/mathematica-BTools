@@ -88,6 +88,13 @@ If[Length@OwnValues[$GitHubUseKeychain]==0,
   ];
 
 
+(*GitHubSetUseKeychain[state_]:=
+	$GitHubUseKeychain=TrueQ[state];
+GitHubClearUseKeychain[state_]:=
+	$GitHubUseKeychain:=
+		TrueQ@Lookup[$GitHubConfig, "UseKeychain", False];*)
+
+
 (* ::Subsubsection::Closed:: *)
 (*$GitHubConfig*)
 
@@ -324,6 +331,17 @@ $GitHubSSHConnected:=
       Length@$MessageList===0
       ]
     );
+
+
+(* ::Subsubsection::Closed:: *)
+(*$GitHubAuthorizeRequests*)
+
+
+
+If[Length@OwnValues[$GitHubAuthorizeRequests]==0,
+  $GitHubAuthorizeRequests:=
+    TrueQ@Lookup[$GitHubConfig, "AuthorizeRequests", False]
+  ];
 
 
 (* ::Subsection:: *)
@@ -803,7 +821,20 @@ GitHubQuery[
             ],
         Association@Normal@
           GitHubQueryPrepBody@
-            GitHubQueryAttachAuth@headers
+            GitHubQueryAttachAuth@
+              If[TrueQ@$GitHubAuthorizeRequests,
+                Merge[
+                  {
+                    <|"Headers"->{"Authorization"->Automatic}|>,
+                    headers
+                    },
+                  If[OptionQ[Flatten[#]],
+                    Normal@Merge[Flatten[#], Last],
+                    Last[#]
+                    ]&
+                  ],
+                headers
+                ]
         ]
       ]
     ];
