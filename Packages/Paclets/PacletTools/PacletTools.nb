@@ -882,6 +882,79 @@ Cell["\[LeftCeiling]PacletDocsInfo\[RightFloor]", "CodeSubsubsection",
   3.7027313313654203`*^9}},ExpressionUUID->"99cbc700-c5d4-48c1-985e-\
 3e09547f2d94"],
 
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]getDirectoryMainPage\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"646d411d-58e9-4032-817a-bdff8ee6d32e"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"getDirectoryMainPage", "[", 
+   RowBox[{"dest_", ",", " ", "lang_"}], "]"}], ":=", "\n", "\t", 
+  RowBox[{"Replace", "[", "\n", "\t\t", 
+   RowBox[{
+    RowBox[{"Map", "[", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"FileNameTake", "[", 
+        RowBox[{"#", ",", 
+         RowBox[{"-", "2"}]}], "]"}], "&"}], ",", "\n", "\t", "\t\t", 
+      RowBox[{"Replace", "[", "\n", "\t", "\t\t\t", 
+       RowBox[{
+        RowBox[{"FileNames", "[", 
+         RowBox[{"\"\<*.nb\>\"", ",", "\n", "\t", "\t\t\t\t", 
+          RowBox[{"FileNameJoin", "@", 
+           RowBox[{"{", 
+            RowBox[{
+            "dest", ",", "\"\<Documentation\>\"", ",", "lang", ",", 
+             "\"\<Guides\>\""}], "}"}]}]}], "\n", "\t", "\t\t\t\t", "]"}], 
+        ",", 
+        RowBox[{"{", "\n", "\t", "\t\t\t\t", 
+         RowBox[{
+          RowBox[{"{", "}"}], ":>", "\n", "\t", "\t\t\t\t\t", 
+          RowBox[{"FileNames", "[", 
+           RowBox[{"\"\<*.nb\>\"", ",", "\n", "\t", "\t\t\t\t\t\t", 
+            RowBox[{"FileNameJoin", "@", 
+             RowBox[{"{", 
+              RowBox[{"dest", ",", "\"\<Documentation\>\"", ",", "lang"}], 
+              "}"}]}], ",", "\n", "\t", "\t\t\t\t\t\t", "2"}], "]"}]}], "\n", 
+         "\t", "\t\t\t", "}"}]}], "]"}]}], "\n", "\t\t\t", "]"}], ",", "\n", 
+    "\t\t", 
+    RowBox[{"{", "\n", "\t\t\t", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"{", "}"}], "\[Rule]", "None"}], ",", "\n", "\t", "\t", "\t", 
+      RowBox[{
+       RowBox[{"p", ":", 
+        RowBox[{"{", "__", "}"}]}], ":>", "\n", "\t", "\t", "\t\t", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"MemberQ", "[", 
+          RowBox[{"p", ",", " ", "\"\<Guides/Overview.nb\>\""}], "]"}], ",", 
+         "\n", "\t", "\t", "\t\t\t", "\"\<Guides/Overview.nb\>\"", ",", "\n", 
+         "\t", "\t", "\t\t\t", 
+         RowBox[{"First", "@", "\n", "\t", "\t", "\t\t\t\t", 
+          RowBox[{"SortBy", "[", 
+           RowBox[{
+            RowBox[{"StringTrim", "[", 
+             RowBox[{"p", ",", " ", "\"\<.nb\>\""}], "]"}], ",", "\n", "\t", 
+            "\t", "\t\t\t\t\t", 
+            RowBox[{
+             RowBox[{"EditDistance", "[", 
+              RowBox[{
+               RowBox[{"FileBaseName", "@", "dest"}], ",", 
+               RowBox[{"FileBaseName", "@", "#"}]}], "]"}], "&"}]}], 
+           "]"}]}]}], "\n", "\t", "\t\t\t\t", "]"}]}]}], "\n", "\t", "\t\t", 
+     "}"}]}], "\n", "\t", "\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"539a5321-5f96-4456-b188-c5702f5f1500"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\[LeftCeiling]PacletDocsInfo\[RightFloor]", "CodeSubsubsubsection",
+ Evaluatable->True,ExpressionUUID->"2795ebb3-7fd9-43a6-a4bb-9f4efcdca994"],
+
 Cell[BoxData[{
  RowBox[{
   RowBox[{
@@ -980,79 +1053,14 @@ Cell[BoxData[{
            RowBox[{"Sequence", "@@", 
             RowBox[{"{", "}"}]}]}], "\n", "\t\t\t\t\t", "]"}], ",", "\n", 
          "\t\t\t\t", 
-         RowBox[{"\"\<MainPage\>\"", "->", "\n", "\t", "\t\t\t\t", 
-          RowBox[{"Replace", "[", "\n", "\t", "\t\t\t\t\t", 
-           RowBox[{
-            RowBox[{"Map", "[", "\n", "\t", "\t\t\t\t\t\t", 
-             RowBox[{
-              RowBox[{
-               RowBox[{"FileNameTake", "[", 
-                RowBox[{"#", ",", 
-                 RowBox[{"-", "2"}]}], "]"}], "&"}], ",", "\n", "\t", "\t", 
-              "\t\t\t\t\t", 
-              RowBox[{"Replace", "[", "\n", "\t", "\t", "\t\t\t\t\t\t", 
-               RowBox[{
-                RowBox[{"FileNames", "[", 
-                 RowBox[{
-                 "\"\<*.nb\>\"", ",", "\n", "\t", "\t\t\t\t\t\t\t\t", 
-                  RowBox[{"FileNameJoin", "@", 
-                   RowBox[{"{", 
-                    RowBox[{
-                    "dest", ",", "\"\<Documentation\>\"", ",", "lang", ",", 
-                    "\"\<Guides\>\""}], "}"}]}]}], "]"}], ",", 
-                RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t\t", 
-                 RowBox[{
-                  RowBox[{"{", "}"}], ":>", "\n", "\t", "\t", 
-                  "\t\t\t\t\t\t\t\t", 
-                  RowBox[{"FileNames", "[", 
-                   RowBox[{
-                   "\"\<*.nb\>\"", ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
-                    RowBox[{"FileNameJoin", "@", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "dest", ",", "\"\<Documentation\>\"", ",", "lang"}], 
-                    "}"}]}], ",", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", "2"}], 
-                   "]"}]}], "\n", "\t", "\t", "\t\t\t\t\t\t", "}"}]}], 
-               "]"}]}], "\n", "\t", "\t\t\t\t\t\t", "]"}], ",", 
-            RowBox[{"{", "\n", "\t", "\t\t\t\t\t", 
-             RowBox[{
-              RowBox[{
-               RowBox[{"{", "}"}], "\[Rule]", "None"}], ",", "\n", "\t", 
-              "\t\t\t\t\t", 
-              RowBox[{
-               RowBox[{"p", ":", 
-                RowBox[{"{", "__", "}"}]}], ":>", "\n", "\t\t\t\t\t\t\t", 
-               RowBox[{"If", "[", 
-                RowBox[{
-                 RowBox[{"MemberQ", "[", 
-                  RowBox[{"p", ",", " ", "\"\<Guides/Overview.nb\>\""}], 
-                  "]"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
-                 "\"\<Guides/Overview.nb\>\"", ",", "\n", "\t\t\t\t\t\t\t\t", 
-                 
-                 RowBox[{"First", "@", "\n", "\t\t\t\t\t\t\t\t\t", 
-                  RowBox[{"SortBy", "[", 
-                   RowBox[{
-                    RowBox[{"StringTrim", "[", 
-                    RowBox[{"p", ",", " ", "\"\<.nb\>\""}], "]"}], ",", "\n", 
-                    "\t", "\t", "\t\t\t\t\t\t\t\t", 
-                    RowBox[{
-                    RowBox[{"EditDistance", "[", 
-                    RowBox[{
-                    RowBox[{"FileBaseName", "@", "dest"}], ",", 
-                    RowBox[{"FileBaseName", "@", "#"}]}], "]"}], "&"}]}], 
-                   "]"}]}]}], "\n", "\t\t\t\t\t\t\t\t", "]"}]}]}], "\n", 
-             "\t\t\t\t\t\t", "}"}]}], "]"}]}]}], "\n", "\t\t\t\t", "]"}]}], 
-      "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], ";"}]}], "CodeInput",
- CellChangeTimes->{{3.702731029659607*^9, 3.702731111924505*^9}, {
-   3.703469785443849*^9, 3.703469821543401*^9}, {3.7034706071369047`*^9, 
-   3.7034706098812037`*^9}, 3.703470702999569*^9, {3.703470733925055*^9, 
-   3.703470736892271*^9}, 3.70347117860063*^9, {3.728883502792647*^9, 
-   3.728883529989396*^9}, 3.728883757322356*^9, {3.7306432459605207`*^9, 
-   3.730643354993*^9}, {3.730654101864439*^9, 3.7306541679166613`*^9}, {
-   3.730655447170596*^9, 
-   3.73065545421684*^9}},ExpressionUUID->"47e8e143-0f4a-4099-b26c-\
-fc33aef7cc21"]
-}, Closed]],
+         RowBox[{"\"\<MainPage\>\"", "->", "\n", "\t\t\t\t\t", 
+          RowBox[{"getDirectoryMainPage", "[", 
+           RowBox[{"dest", ",", " ", "lang"}], "]"}]}]}], "\n", "\t\t\t\t", 
+        "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], 
+  ";"}]}], "CodeInput",ExpressionUUID->"47e8e143-0f4a-4099-b26c-fc33aef7cc21"]\
+
+}, Open  ]]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1688,7 +1696,7 @@ Cell[BoxData[{
   ";"}]}], "CodeInput",ExpressionUUID->"89c7319f-2fbc-4d11-9bd8-b47b4935fd98"]\
 
 }, Closed]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -10502,7 +10510,10 @@ TaggingRules->{
    "Active" -> {
      "Button-b8297203-6b28-48f9-8ba3-edbd5eb431d2" -> False, 
       "Button-8c92aebb-2725-4f7c-a6a8-f90e3a4dce9c" -> False, 
-      "Button-ede3a027-3279-40a0-8aa4-1fcc5f60357d" -> False}}},
+      "Button-ede3a027-3279-40a0-8aa4-1fcc5f60357d" -> False, 
+      "Button-89ffd2c3-ec41-4179-a9b1-8e28670bca2c" -> False, 
+      "Button-ca46e5e0-4fd1-47e8-8cf6-72998922b757" -> False, 
+      "Button-a6d68254-3684-4d32-83fc-e5ef6f443930" -> False}}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->Notebook[{

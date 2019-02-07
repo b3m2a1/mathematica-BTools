@@ -320,6 +320,43 @@ PacletInfo[l:{$pacletInfoSpec..}, ops:OptionsPattern[]]:=
 
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*getDirectoryMainPage*)
+
+
+
+getDirectoryMainPage[dest_, lang_]:=
+  Replace[
+    Map[
+      FileNameTake[#,-2]&,
+      Replace[
+        FileNames["*.nb",
+          FileNameJoin@{dest,"Documentation",lang,"Guides"}
+          ],{
+          {}:>
+            FileNames["*.nb",
+              FileNameJoin@{dest,"Documentation",lang},
+              2]
+        }]
+      ],
+    {
+      {}->None,
+      p:{__}:>
+        If[MemberQ[p, "Guides/Overview.nb"],
+          "Guides/Overview.nb",
+          First@
+            SortBy[StringTrim[p, ".nb"],
+              EditDistance[FileBaseName@dest,FileBaseName@#]&]
+          ]
+      }
+    ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*PacletDocsInfo*)
+
+
+
 Options[PacletDocsInfo]={
   "Language"->"English",
   "Root"->None,
@@ -353,27 +390,7 @@ PacletDocsInfo[dest_String?DirectoryQ,ops:OptionsPattern[]]:=
           Sequence@@{}
           ],
         "MainPage"->
-          Replace[
-            Map[
-              FileNameTake[#,-2]&,
-              Replace[
-                FileNames["*.nb",
-                  FileNameJoin@{dest,"Documentation",lang,"Guides"}],{
-                  {}:>
-                    FileNames["*.nb",
-                      FileNameJoin@{dest,"Documentation",lang},
-                      2]
-                }]
-              ],{
-            {}->None,
-            p:{__}:>
-              If[MemberQ[p, "Guides/Overview.nb"],
-                "Guides/Overview.nb",
-                First@
-                  SortBy[StringTrim[p, ".nb"],
-                    EditDistance[FileBaseName@dest,FileBaseName@#]&]
-                ]
-            }]
+          getDirectoryMainPage[dest, lang]
         ]
       ]
     ];

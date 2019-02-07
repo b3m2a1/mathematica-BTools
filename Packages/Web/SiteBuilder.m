@@ -13,7 +13,7 @@ WebSiteSetOptions::usage="Sets configuration options for a website";
 
 WebSiteInitialize::usage="Makes a new website in a directory";
 WebSiteNewContent::usage="Makes a new post notebook";
-WebSiteNewTableOfContents::usage="Makes a new Table of Contents";
+WebSiteNewTableOfContents::usage="Makes a new Table fof Contents";
 
 
 WebSiteThemes::usage="";
@@ -976,7 +976,8 @@ WebSiteBuildSafeExportXML[xml_]:=
         (el/.s_String:>StringReplace[s, $WebSiteBuildSafeExportXMLMap]),
       "XML"
       ],
-    Reverse/@$WebSiteBuildSafeExportXMLMap
+    Reverse/@
+      $WebSiteBuildSafeExportXMLMap
     ]
 
 
@@ -1971,6 +1972,8 @@ WebSiteTemplateGatherArgs[fileContent_, args_]:=
             Nothing
           ],
         "Content"->
+          fileContent,
+        "HTML"->
           content
         },
       Last
@@ -2446,10 +2449,10 @@ WebSiteContentStackPrep[ops:OptionsPattern[]]:=
                   {
                     sorted=
                       SortBy[order]@
-                      $WebSiteBuildAggStack["SelectObjects"][pageType]
+                        $WebSiteBuildAggStack["SelectObjects"][pageType]
                     },
-                  With[{pos=1+FirstPosition[sorted, self][[1]]},
-                    If[pos<=Length@sorted,
+                  With[{pos=FirstPosition[sorted[[All, "SourceFile"]], self][[1]]},
+                    If[TrueQ[pos<=Length@sorted],
                       sorted[[pos]],
                       None
                       ]
@@ -2474,7 +2477,7 @@ WebSiteContentStackPrep[ops:OptionsPattern[]]:=
                         ]
                     },
                   With[{pos=FirstPosition[sorted, self][[1]]-1},
-                    If[pos>0,
+                    If[pos>0//TrueQ,
                       sorted[[pos]],
                       None
                       ]

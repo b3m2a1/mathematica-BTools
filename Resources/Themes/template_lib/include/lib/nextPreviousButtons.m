@@ -1,5 +1,5 @@
 With[{
-    curr=#ContentData[#SourceFile]
+    curr=#SourceFile
     },
   With[
     {

@@ -44,7 +44,7 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{
    RowBox[{"WebSiteNewTableOfContents", "::", "usage"}], "=", 
-   "\"\<Makes a new Table of Contents\>\""}], 
+   "\"\<Makes a new Table fof Contents\>\""}], 
   ";"}]}], "CodeInput",ExpressionUUID->"126b20e6-30e7-4b1c-a99d-14002c8a59d8"],
 
 Cell[BoxData[{
@@ -1533,7 +1533,7 @@ Cell[BoxData[
         RowBox[{"$templateLibLoaded", "=", "True"}]}]}], "\n", "\t\t\t", 
       "]"}]}], "\n", "\t\t", ")"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"8247f014-ce51-494e-8937-c90d73d5668a"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -2002,10 +2002,12 @@ Cell[BoxData[
             RowBox[{"s", ",", " ", "$WebSiteBuildSafeExportXMLMap"}], 
             "]"}]}]}], ")"}]}]}], ",", "\n", "\t", "\t\t", "\"\<XML\>\""}], 
      "\n", "\t\t\t", "]"}], ",", "\n", "\t\t", 
-    RowBox[{"Reverse", "/@", "$WebSiteBuildSafeExportXMLMap"}]}], "\n", 
-   "\t\t", "]"}]}]], \
+    RowBox[{
+    "Reverse", "/@", "\n", "\t\t\t", "$WebSiteBuildSafeExportXMLMap"}]}], 
+   "\n", "\t\t", 
+   "]"}]}]], \
 "CodeInput",ExpressionUUID->"67ba5c36-5362-4fb3-ad74-b0f1549d6234"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -2034,7 +2036,7 @@ Cell[BoxData[
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"fcd7a343-0ff6-4220-ba33-c0d6072df430"]
 }, Closed]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -3993,14 +3995,15 @@ Cell[BoxData[
                 RowBox[{"FileNameTake", "@", "fp"}]}]}], "]"}]}]}], ",", "\n",
             "\t\t\t\t\t", "True", ",", "\t", "\n", "\t\t\t\t\t\t", 
            "Nothing"}], "\n", "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
-         RowBox[{
-         "\"\<Content\>\"", "->", "\n", "\t", "\t\t\t\t", "content"}]}], "\n",
-         "\t", "\t\t\t", "}"}], ",", "\n", "\t", "\t\t", "Last"}], "\n", "\t",
-       "\t\t", "]"}]}]}], "\n", "\t", "\t", 
+         RowBox[{"\"\<Content\>\"", "->", "\n", "\t\t\t\t\t", "fileContent"}],
+          ",", "\n", "\t\t\t\t", 
+         RowBox[{"\"\<HTML\>\"", "->", "\n", "\t\t\t\t\t", "content"}]}], 
+        "\n", "\t", "\t\t\t", "}"}], ",", "\n", "\t", "\t\t", "Last"}], "\n", 
+      "\t", "\t\t", "]"}]}]}], "\n", "\t", "\t", 
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"17b78b98-9484-4a98-800f-2bbd2202e38f"]
 }, Open  ]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -4225,7 +4228,7 @@ Cell[BoxData[{
       "]"}], ";", "\n", "\t\t", "$Failed"}]}], "\n", "\t\t", 
    "]"}]}]}], \
 "CodeInput",ExpressionUUID->"1c73590a-13c0-48f6-bb83-ffafae910f6a"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -4937,8 +4940,8 @@ Cell[BoxData[{
                 RowBox[{"{", "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
                  RowBox[{"sorted", "=", "\n", "\t", "\t\t\t\t\t\t\t\t\t\t", 
                   RowBox[{
-                   RowBox[{"SortBy", "[", "order", "]"}], "@", "\n", "\t", 
-                   "\t\t\t\t\t\t\t\t\t\t", 
+                   RowBox[{"SortBy", "[", "order", "]"}], "@", "\n", 
+                   "\t\t\t\t\t\t\t\t\t\t\t\t", 
                    RowBox[{
                     RowBox[{
                     "$WebSiteBuildAggStack", "[", "\"\<SelectObjects\>\"", 
@@ -4949,17 +4952,21 @@ Cell[BoxData[{
                  RowBox[{
                   RowBox[{"{", 
                    RowBox[{"pos", "=", 
-                    RowBox[{"1", "+", 
                     RowBox[{
                     RowBox[{"FirstPosition", "[", 
-                    RowBox[{"sorted", ",", " ", "self"}], "]"}], "[", 
-                    RowBox[{"[", "1", "]"}], "]"}]}]}], "}"}], ",", "\n", 
-                  "\t", "\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"sorted", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"All", ",", " ", "\"\<SourceFile\>\""}], "]"}], 
+                    "]"}], ",", " ", "self"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}], "}"}], ",", "\n", 
+                  "\t\t\t\t\t\t\t\t\t\t", 
                   RowBox[{"If", "[", 
                    RowBox[{
+                    RowBox[{"TrueQ", "[", 
                     RowBox[{"pos", "\[LessEqual]", 
-                    RowBox[{"Length", "@", "sorted"}]}], ",", "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{"Length", "@", "sorted"}]}], "]"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"sorted", "[", 
                     RowBox[{"[", "pos", "]"}], "]"}], ",", "\n", "\t", 
                     "\t\t\t\t\t\t\t\t\t\t", "None"}], "\n", "\t", 
@@ -5021,8 +5028,9 @@ Cell[BoxData[{
                   "\n", "\t", "\t\t\t\t\t\t\t\t\t", 
                   RowBox[{"If", "[", 
                    RowBox[{
-                    RowBox[{"pos", ">", "0"}], ",", "\n", "\t", 
-                    "\t\t\t\t\t\t\t\t\t\t", 
+                    RowBox[{
+                    RowBox[{"pos", ">", "0"}], "//", "TrueQ"}], ",", "\n", 
+                    "\t\t\t\t\t\t\t\t\t\t\t", 
                     RowBox[{"sorted", "[", 
                     RowBox[{"[", "pos", "]"}], "]"}], ",", "\n", "\t", 
                     "\t\t\t\t\t\t\t\t\t\t", "None"}], "\n", "\t", 
@@ -9415,9 +9423,8 @@ Cell[BoxData[{
              "\t\t\t\t\t", 
              RowBox[{"{", "}"}]}], "\n", "\t\t\t\t\t", "]"}]}], "\n", 
           "\t\t\t\t", "}"}]}]}], "\n", "\t\t\t", "]"}]}]}], "\n", "\t\t", 
-    "]"}]}], 
-  ";"}]}], "CodeInput",ExpressionUUID->"967ab656-4fa9-41d0-93a8-c47292ee5832"]\
-
+    "]"}]}], ";"}]}], \
+"CodeInput",ExpressionUUID->"967ab656-4fa9-41d0-93a8-c47292ee5832"]
 }, Closed]]
 }, Closed]]
 }, Open  ]],
@@ -9433,13 +9440,16 @@ Cell["", "SectionSeparator",ExpressionUUID->"4900c668-e5de-468b-908d-\
 3bbe427549a1"]
 },
 WindowSize->{808, 756},
-WindowMargins->{{76, Automatic}, {Automatic, 13}},
+WindowMargins->{{110, Automatic}, {Automatic, 0}},
 TaggingRules->{
  "UUIDButtons" -> {
    "Active" -> {
      "Button-b8297203-6b28-48f9-8ba3-edbd5eb431d2" -> False, 
       "Button-8c92aebb-2725-4f7c-a6a8-f90e3a4dce9c" -> False, 
-      "Button-ede3a027-3279-40a0-8aa4-1fcc5f60357d" -> False}}},
+      "Button-ede3a027-3279-40a0-8aa4-1fcc5f60357d" -> False, 
+      "Button-89ffd2c3-ec41-4179-a9b1-8e28670bca2c" -> False, 
+      "Button-ca46e5e0-4fd1-47e8-8cf6-72998922b757" -> False, 
+      "Button-a6d68254-3684-4d32-83fc-e5ef6f443930" -> False}}},
 FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
 2018)",
 StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 

@@ -1,6 +1,6 @@
 Paclet[
   Name -> "BTools",
-  Version -> "2.1.44",
+  Version -> "2.1.45",
   Creator -> "b3m2a1@gmail.com",
   URL -> "https://github.com/b3m2a1/mathematica-BTools",
   Description -> "A suite of development tools",
@@ -81,10 +81,6 @@ Paclet[
        			{
         				"PaletteTemplate",
         				"PaletteGenerators/PaletteTemplate.nb"
-        			},
-       			{
-        				"PelicanHelperGenerator",
-        				"PaletteGenerators/PelicanHelperGenerator.nb"
         			},
        			{
         				"ServiceConnectionHelperGenerator",

@@ -1342,6 +1342,15 @@ containedFunctionOptions~SetAttributes~HoldFirst
 
 
 (* ::Subsubsection::Closed:: *)
+(*callSignatures*)
+
+
+
+(*callSignatures[dvs_List]:=
+	*)
+
+
+(* ::Subsubsection::Closed:: *)
 (*generateDetails*)
 
 
