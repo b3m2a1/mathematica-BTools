@@ -1972,9 +1972,9 @@ WebSiteTemplateGatherArgs[fileContent_, args_]:=
             Nothing
           ],
         "Content"->
-          fileContent,
-        "HTML"->
-          content
+          content,
+        "RawXML"->
+          fileContent
         },
       Last
       ]

@@ -1,0 +1,4 @@
+{
+	"BuildDirectory" -> Automatic,
+	"MarkdownOptions" -> {}
+}

@@ -1902,7 +1902,7 @@ $iNotebookToMarkdownOutputStringBaseForms=
   _GraphicsBox|_Graphics3DBox|
   TagBox[__,_Manipulate`InterpretManipulate]|
   TagBox[_GridBox, "Column"|"Grid"]|
-  TemplateBox[_, "Legended"|"EmbeddedHTML", ___];
+  TemplateBox[_, "Legended"|"EmbeddedHTML"|"MarkdownInterpretation", ___];
 $iNotebookToMarkdownOutputStringForms=
   $iNotebookToMarkdownOutputStringBaseForms|
   $iNotebookToMarkdownIgnoredBoxHeads[
@@ -4582,6 +4582,17 @@ iNotebookToMarkdownRegister[pathInfo_,
   "["<>"!["<>iNotebookToMarkdown[pathInfo, alt]<>"]("<>
     iNotebookToMarkdown[pathInfo, url]<>
     ")"<>"]("<>iNotebookToMarkdown[pathInfo, link]<>")"
+
+
+(* ::Subsubsection::Closed:: *)
+(*MarkdownInterpretation*)
+
+
+
+iNotebookToMarkdownRegister[pathInfo_, 
+  TemplateBox[{obj_, text_}, "MarkdownInterpretation", ___]
+  ]:=
+  text;
 
 
 (* ::Subsubsection::Closed:: *)
