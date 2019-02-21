@@ -1877,7 +1877,11 @@ $iNotebookToMarkdownMathBoxHeads=
 
 $iNotebookToMarkdownIgnoredIOBaseForms=
   OutputFormData[_, _]|
-    TemplateBox[__, "EmbeddedHTML", ___];
+    TemplateBox[__, 
+      "EmbeddedHTML"|"MarkdownLinkedImage"|
+      "MarkdownLinkedImageLink"|"MarkdownInterpretation", 
+      ___
+      ];
 $iNotebookToMarkdownIgnoredIOForms=
   $iNotebookToMarkdownIgnoredIOBaseForms|
     BoxData[$iNotebookToMarkdownIgnoredIOBaseForms]|
@@ -1902,7 +1906,9 @@ $iNotebookToMarkdownOutputStringBaseForms=
   _GraphicsBox|_Graphics3DBox|
   TagBox[__,_Manipulate`InterpretManipulate]|
   TagBox[_GridBox, "Column"|"Grid"]|
-  TemplateBox[_, "Legended"|"EmbeddedHTML"|"MarkdownInterpretation", ___];
+  TemplateBox[_, 
+    "Legended"|"EmbeddedHTML"|
+      "MarkdownLinkedImage"|"MarkdownLinkedImageLink"|"MarkdownInterpretation", ___];
 $iNotebookToMarkdownOutputStringForms=
   $iNotebookToMarkdownOutputStringBaseForms|
   $iNotebookToMarkdownIgnoredBoxHeads[
@@ -1942,13 +1948,15 @@ $iNotebookToMarkdownRasterizeBaseForms=
   $iNotebookToMarkdownRasterizeBoxHeads?(Not@*FreeQ[_DynamicBox])|
   TagBox[__, _InterpretTemplate, ___]|
   _GraphicsBox|_GraphicsBox3D;
-$iNotebookToMarkdownRasterizeForms=
-  $iNotebookToMarkdownRasterizeBaseForms|
-    $iNotebookToMarkdownBasicBoxHeads?(
+$iNotebookToMarkdownDeepRasterizeForms=
+  $iNotebookToMarkdownBasicBoxHeads?(
       Not@*FreeQ[
         $iNotebookToMarkdownRasterizeBaseForms|
           $iNotebookToMarkdownOutputStringBaseForms
         ])
+$iNotebookToMarkdownRasterizeForms=
+  $iNotebookToMarkdownRasterizeBaseForms|
+    $iNotebookToMarkdownDeepRasterizeForms
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2928,6 +2936,17 @@ iNotebookToMarkdownRegister[
 
 
 
+getCodeFence[s_]:=
+  StringRepeat["`", 
+    Max[
+      Join[
+        StringLength/@StringCases[s, "`"..],
+        {0}
+        ]
+      ]+1
+    ]
+
+
 (* ::Subsubsubsection::Closed:: *)
 (*ExternalLanguage*)
 
@@ -2953,7 +2972,7 @@ iNotebookToMarkdownRegister[pathInfo_,
       pathInfo,
       ReplaceAll[e, BoxData->TextData],
       {"PlainText", "Code"},
-      "```"<>cl<>"\n"<>#<>"\n"<>"```"&,
+      getCodeFence[#]<>cl<>"\n"<>#<>"\n"<>getCodeFence[#]&,
       StringReplace[#, 
         "<code>"->"<code class='language-"<>cl<>"'>",
         1
@@ -2984,14 +3003,15 @@ iNotebookToMarkdownRegister[pathInfo_,
           s_?(StringContainsQ["="]),
           b_
           }:>
-          "<?prettify "<>s<>" ?>\n"<>"```\n"<>b<>"\n"<>"```",
+          "<?prettify "<>s<>" ?>\n"<>
+            getCodeFence[b]"\n"<>b<>"\n"<>getCodeFence[b],
         {
           s_?(StringMatchQ[Except[WhitespaceCharacter]..]@*StringTrim),
           b_
           }:>
-          "```"<>StringTrim[s]<>"\n"<>b<>"\n```",
-        _:>
-          "```\n"<>#<>"\n"<>"```"
+          getCodeFence[b]<>StringTrim[s]<>"\n"<>b<>"\n"<>getCodeFence[b],
+          _:>
+          getCodeFence[#]<>"\n"<>#<>"\n"<>getCodeFence[#]
         }
       ]&,
     Identity,
@@ -3010,7 +3030,8 @@ iNotebookToMarkdownRegister[pathInfo_,
     pathInfo,
     e,
     {"InputText", "Code"},
-    "```mathematica\n"<>StringDelete[#, "\\\n"]<>"\n```"&,
+    getCodeFence[#]<>
+      "mathematica\n"<>StringDelete[#, "\\\n"]<>"\n"<>getCodeFence[#]&,
     StringReplace[#, 
       "<code>"->"<code class='language-mathematica'>",
       1
@@ -3066,7 +3087,7 @@ iNotebookToMarkdownRegister[pathInfo_,
       BoxData@$iNotebookToMarkdownIgnoredBoxHeads[expr_, ___]:>BoxData@expr
       ],
     {"InputText", "Code"},
-    "```"<>#<>If[StringEndsQ[#,"`"], " ", ""]<>"```"&,
+    getCodeFence[#]<>#<>If[StringEndsQ[#,"`"], " ", ""]<>getCodeFence[#]&,
     Identity,
     Select[{o}, OptionQ]
     ];
@@ -3087,7 +3108,7 @@ iNotebookToMarkdownRegister[pathInfo_,
         }
       ],
     {"PlainText", "Text"},
-    "```"<>#<>If[StringEndsQ[#,"`"]," ",""]<>"```"&,
+    getCodeFence[#]<>#<>If[StringEndsQ[#,"`"]," ",""]<>getCodeFence[#]&,
     Identity,
     Select[{o}, OptionQ]
     ];
@@ -3336,7 +3357,7 @@ iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"PageBreak",___]]:=
 
 
 iNotebookToMarkdownRegister[pathInfo_,Cell[t_,"Text",___]]:=
-  iNotebookToMarkdown[pathInfo,t];
+  iNotebookToMarkdown[pathInfo, t];
 
 
 iNotebookToMarkdownRegister[pathInfo_, Cell[t_, "CodeText", ___]]:=
@@ -4374,11 +4395,7 @@ iNotebookToMarkdownRegister[
 
 
 
-iNotebookToMarkdownRegister[
-  pathInfo_,
-  g:$iNotebookToMarkdownRasterizeForms,
-  style_:"Output"
-  ]:=
+rasterizeExportForm[pathInfo_, g_, style_:"Output"]:=
   markdownNotebookHashExport[
     pathInfo,
     g,
@@ -4391,6 +4408,14 @@ iNotebookToMarkdownRegister[
         ]
       ]&
     ]
+
+
+iNotebookToMarkdownRegister[
+  pathInfo_,
+  g:$iNotebookToMarkdownRasterizeBaseForms,
+  style_:"Output"
+  ]:=
+  rasterizeExportForm[pathInfo, g, style]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -4723,14 +4748,18 @@ iNotebookToMarkdownRegister[pathInfo_, $iNotebookToMarkdownIgnoredBoxHeads[e_,__
 
 
 iNotebookToMarkdownRegister[pathInfo_, e_, ___]:=
-  If[BoxQ@e,
-    notebookToMarkdownFEExport[
-      pathInfo,
-      BoxData@e,
-      "InputText",
-      "Output"
-      ],
-    ""
+  Which[
+    MatchQ[e, $iNotebookToMarkdownRasterizeForms],
+      rasterizeExportForm[pathInfo, e],
+    BoxQ@e,
+      notebookToMarkdownFEExport[
+        pathInfo,
+        BoxData@e,
+        "InputText",
+        "Output"
+        ],
+    True,
+      ""
     ];
 
 

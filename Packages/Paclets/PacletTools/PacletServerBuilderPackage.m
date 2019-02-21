@@ -797,15 +797,18 @@ pacletMarkdownNotebookExtensionSection[extensionData_]:=
                               ]@
                               Map[
                                 Cell[
-                                  Replace[#, 
-                                    {
-                                      (sk_->sv_):>
-                                        If[MatchQ[sk, _Symbol], 
-                                          SymbolName[sk], ToString[sk]]<>": "<>
-                                          ToString@
-                                            Replace[sv, str:{__String}:>StringRiffle[str, ", "]],
-                                      e_:>ToString[e]
-                                      }
+                                  BoxData@Cell[
+                                    Replace[#, 
+                                      {
+                                        (sk_->sv_):>
+                                          If[MatchQ[sk, _Symbol], 
+                                            SymbolName[sk], ToString[sk]]<>": "<>
+                                            ToString@
+                                              Replace[sv, str:{__String}:>StringRiffle[str, ", "]],
+                                        e_:>ToString[e]
+                                        }
+                                      ],
+                                    "InlineText"
                                     ], 
                                   "Subitem",
                                   CellTags->{"Info", "Line"}

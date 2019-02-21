@@ -4293,8 +4293,12 @@ Cell[BoxData[{
     RowBox[{"OutputFormData", "[", 
      RowBox[{"_", ",", " ", "_"}], "]"}], "|", "\n", "\t\t", 
     RowBox[{"TemplateBox", "[", 
-     RowBox[{"__", ",", " ", "\"\<EmbeddedHTML\>\"", ",", " ", "___"}], 
-     "]"}]}]}], ";"}], "\n", 
+     RowBox[{"__", ",", " ", "\n", "\t\t\t", 
+      RowBox[{
+      "\"\<EmbeddedHTML\>\"", "|", "\"\<MarkdownLinkedImage\>\"", "|", "\n", 
+       "\t\t\t", "\"\<MarkdownLinkedImageLink\>\"", "|", 
+       "\"\<MarkdownInterpretation\>\""}], ",", " ", "\n", "\t\t\t", "___"}], 
+     "\n", "\t\t\t", "]"}]}]}], ";"}], "\n", 
  RowBox[{"$iNotebookToMarkdownIgnoredIOForms", "=", "\n", "\t", 
   RowBox[{"$iNotebookToMarkdownIgnoredIOBaseForms", "|", "\n", "\t\t", 
    RowBox[{"BoxData", "[", "$iNotebookToMarkdownIgnoredIOBaseForms", "]"}], 
@@ -4303,7 +4307,7 @@ Cell[BoxData[{
    "TextData", "[", "$iNotebookToMarkdownIgnoredIOBaseForms", 
     "]"}]}]}]}], \
 "CodeInput",ExpressionUUID->"5c23c3f0-fcec-468f-bfd7-2f728b764ae0"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -4344,10 +4348,11 @@ Cell[BoxData[{
       RowBox[{"\"\<Column\>\"", "|", "\"\<Grid\>\""}]}], "]"}], "|", "\n", 
     "\t", 
     RowBox[{"TemplateBox", "[", 
-     RowBox[{"_", ",", " ", 
+     RowBox[{"_", ",", " ", "\n", "\t\t", 
       RowBox[{
-      "\"\<Legended\>\"", "|", "\"\<EmbeddedHTML\>\"", "|", 
-       "\"\<MarkdownInterpretation\>\""}], ",", " ", "___"}], "]"}]}]}], 
+      "\"\<Legended\>\"", "|", "\"\<EmbeddedHTML\>\"", "|", "\n", "\t\t\t", 
+       "\"\<MarkdownLinkedImage\>\"", "|", "\"\<MarkdownLinkedImageLink\>\"", 
+       "|", "\"\<MarkdownInterpretation\>\""}], ",", " ", "___"}], "]"}]}]}], 
   ";"}], "\n", 
  RowBox[{
   RowBox[{"$iNotebookToMarkdownOutputStringForms", "=", "\n", "\t", 
@@ -4421,19 +4426,21 @@ Cell[BoxData[{
     RowBox[{"TagBox", "[", 
      RowBox[{"__", ",", " ", "_InterpretTemplate", ",", " ", "___"}], "]"}], 
     "|", "\n", "\t", "_GraphicsBox", "|", "_GraphicsBox3D"}]}], ";"}], "\n", 
+ RowBox[{"$iNotebookToMarkdownDeepRasterizeForms", "=", "\n", "\t", 
+  RowBox[{"$iNotebookToMarkdownBasicBoxHeads", "?", 
+   RowBox[{"(", "\n", "\t\t\t", 
+    RowBox[{"Not", "@*", 
+     RowBox[{"FreeQ", "[", "\n", "\t\t\t\t", 
+      RowBox[{
+      "$iNotebookToMarkdownRasterizeBaseForms", "|", "\n", "\t\t\t\t\t", 
+       "$iNotebookToMarkdownOutputStringBaseForms"}], "\n", "\t\t\t\t", 
+      "]"}]}], ")"}]}]}], "\n", 
  RowBox[{"$iNotebookToMarkdownRasterizeForms", "=", "\n", "\t", 
-  RowBox[{"$iNotebookToMarkdownRasterizeBaseForms", "|", "\n", "\t\t", 
-   RowBox[{"$iNotebookToMarkdownBasicBoxHeads", "?", 
-    RowBox[{"(", "\n", "\t\t\t", 
-     RowBox[{"Not", "@*", 
-      RowBox[{"FreeQ", "[", "\n", "\t\t\t\t", 
-       RowBox[{
-       "$iNotebookToMarkdownRasterizeBaseForms", "|", "\n", "\t\t\t\t\t", 
-        "$iNotebookToMarkdownOutputStringBaseForms"}], "\n", "\t\t\t\t", 
-       "]"}]}], 
-     ")"}]}]}]}]}], \
+  RowBox[{
+  "$iNotebookToMarkdownRasterizeBaseForms", "|", "\n", "\t\t", 
+   "$iNotebookToMarkdownDeepRasterizeForms"}]}]}], \
 "CodeInput",ExpressionUUID->"490e67c6-63bf-4c34-a2e4-afe5462a9ca9"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -6224,6 +6231,24 @@ Cell["\[LeftCeiling]Input / Output \[RightFloor]", "CodeSubsubsection",
   3.710089078281348*^9}},ExpressionUUID->"7216c06d-b43c-4276-8178-\
 f8512984c102"],
 
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"getCodeFence", "[", "s_", "]"}], ":=", "\n", "\t", 
+  RowBox[{"StringRepeat", "[", 
+   RowBox[{"\"\<`\>\"", ",", " ", "\n", "\t\t", 
+    RowBox[{
+     RowBox[{"Max", "[", "\n", "\t\t\t", 
+      RowBox[{"Join", "[", "\n", "\t\t\t\t", 
+       RowBox[{
+        RowBox[{"StringLength", "/@", 
+         RowBox[{"StringCases", "[", 
+          RowBox[{"s", ",", " ", 
+           RowBox[{"\"\<`\>\"", ".."}]}], "]"}]}], ",", "\n", "\t\t\t\t", 
+        RowBox[{"{", "0", "}"}]}], "\n", "\t\t\t\t", "]"}], "\n", "\t\t\t", 
+      "]"}], "+", "1"}]}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"80a20418-ef22-4429-9894-e5cf1f9acbb5"],
+
 Cell[CellGroupData[{
 
 Cell["\[LeftCeiling]ExternalLanguage\[RightFloor]", "CodeSubsubsubsection",
@@ -6285,8 +6310,10 @@ Cell[BoxData[
        "\n", "\t\t\t", 
        RowBox[{
         RowBox[{
-        "\"\<```\>\"", "<>", "cl", "<>", "\"\<\\n\>\"", "<>", "#", "<>", 
-         "\"\<\\n\>\"", "<>", "\"\<```\>\""}], "&"}], ",", "\n", "\t\t\t", 
+         RowBox[{"getCodeFence", "[", "#", "]"}], "<>", "cl", "<>", 
+         "\"\<\\n\>\"", "<>", "#", "<>", "\"\<\\n\>\"", "<>", 
+         RowBox[{"getCodeFence", "[", "#", "]"}]}], "&"}], ",", "\n", 
+       "\t\t\t", 
        RowBox[{
         RowBox[{"StringReplace", "[", 
          RowBox[{"#", ",", " ", "\n", "\t\t\t\t", 
@@ -6358,9 +6385,13 @@ Cell[BoxData[
              ",", "\n", "\t\t\t\t\t", "b_"}], "\n", "\t\t\t\t\t", "}"}], ":>",
             "\n", "\t\t\t\t\t", 
            RowBox[{
-           "\"\<<?prettify \>\"", "<>", "s", "<>", "\"\< ?>\\n\>\"", "<>", 
-            "\"\<```\\n\>\"", "<>", "b", "<>", "\"\<\\n\>\"", "<>", 
-            "\"\<```\>\""}]}], ",", "\n", "\t\t\t\t", 
+            RowBox[{
+            "\"\<<?prettify \>\"", "<>", "s", "<>", "\"\< ?>\\n\>\"", "<>", 
+             "\n", "\t\t\t\t\t\t", 
+             RowBox[{"getCodeFence", "[", "b", "]"}]}], 
+            RowBox[{"\"\<\\n\>\"", "<>", "b", "<>", "\"\<\\n\>\"", "<>", 
+             RowBox[{"getCodeFence", "[", "b", "]"}]}]}]}], ",", "\n", 
+          "\t\t\t\t", 
           RowBox[{
            RowBox[{"{", "\n", "\t\t\t\t\t", 
             RowBox[{
@@ -6373,14 +6404,19 @@ Cell[BoxData[
                   "]"}], "@*", "StringTrim"}], ")"}]}], ",", "\n", "\t", 
              "\t\t\t\t", "b_"}], "\n", "\t", "\t\t\t\t", "}"}], ":>", "\n", 
            "\t\t\t\t\t", 
-           RowBox[{"\"\<```\>\"", "<>", 
+           RowBox[{
+            RowBox[{"getCodeFence", "[", "b", "]"}], "<>", 
             RowBox[{"StringTrim", "[", "s", "]"}], "<>", "\"\<\\n\>\"", "<>", 
-            "b", "<>", "\"\<\\n```\>\""}]}], ",", "\n", "\t\t\t\t", 
+            "b", "<>", "\"\<\\n\>\"", "<>", 
+            RowBox[{"getCodeFence", "[", "b", "]"}]}]}], ",", "\n", 
+          "\t\t\t\t\t", 
           RowBox[{"_", ":>", "\n", "\t\t\t\t\t", 
            RowBox[{
-           "\"\<```\\n\>\"", "<>", "#", "<>", "\"\<\\n\>\"", "<>", 
-            "\"\<```\>\""}]}]}], "\n", "\t\t\t\t", "}"}]}], "\n", "\t\t\t", 
-       "]"}], "&"}], ",", "\n", "\t\t", "Identity", ",", "\n", "\t\t", 
+            RowBox[{"getCodeFence", "[", "#", "]"}], "<>", "\"\<\\n\>\"", "<>",
+             "#", "<>", "\"\<\\n\>\"", "<>", 
+            RowBox[{"getCodeFence", "[", "#", "]"}]}]}]}], "\n", "\t\t\t\t", 
+         "}"}]}], "\n", "\t\t\t", "]"}], "&"}], ",", "\n", "\t\t", "Identity",
+      ",", "\n", "\t\t", 
      RowBox[{"Select", "[", 
       RowBox[{
        RowBox[{"{", 
@@ -6413,10 +6449,13 @@ Cell[BoxData[
       RowBox[{"\"\<InputText\>\"", ",", " ", "\"\<Code\>\""}], "}"}], ",", 
      "\n", "\t\t", 
      RowBox[{
-      RowBox[{"\"\<```mathematica\\n\>\"", "<>", 
+      RowBox[{
+       RowBox[{"getCodeFence", "[", "#", "]"}], "<>", "\n", "\t\t\t", 
+       "\"\<mathematica\\n\>\"", "<>", 
        RowBox[{"StringDelete", "[", 
         RowBox[{"#", ",", " ", "\"\<\\\\\\n\>\""}], "]"}], "<>", 
-       "\"\<\\n```\>\""}], "&"}], ",", "\n", "\t\t", 
+       "\"\<\\n\>\"", "<>", 
+       RowBox[{"getCodeFence", "[", "#", "]"}]}], "&"}], ",", "\n", "\t\t", 
      RowBox[{
       RowBox[{"StringReplace", "[", 
        RowBox[{"#", ",", " ", "\n", "\t\t\t", 
@@ -6427,8 +6466,8 @@ Cell[BoxData[
      RowBox[{"Select", "[", 
       RowBox[{
        RowBox[{"{", "o", "}"}], ",", " ", "OptionQ"}], "]"}]}], "\n", "\t\t", 
-    "]"}]}], ";"}]], \
-"CodeInput",ExpressionUUID->"97d67d72-7db0-4b77-a86f-09db16b0447b"]
+    "]"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"97d67d72-7db0-4b77-a86f-09db16b0447b"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -6468,8 +6507,8 @@ Cell[BoxData[
      RowBox[{"Select", "[", 
       RowBox[{
        RowBox[{"{", "o", "}"}], ",", " ", "OptionQ"}], "]"}]}], "\n", "\t\t", 
-    "]"}]}], 
-  ";"}]], "CodeInput",ExpressionUUID->"a9644b3b-375e-4499-a65d-9a1ef15f8998"],
+    "]"}]}], ";"}]], \
+"CodeInput",ExpressionUUID->"a9644b3b-375e-4499-a65d-9a1ef15f8998"],
 
 Cell[BoxData[
  RowBox[{
@@ -6533,13 +6572,15 @@ Cell[BoxData[
       RowBox[{"\"\<InputText\>\"", ",", " ", "\"\<Code\>\""}], "}"}], ",", 
      "\n", "\t\t", 
      RowBox[{
-      RowBox[{"\"\<```\>\"", "<>", "#", "<>", 
+      RowBox[{
+       RowBox[{"getCodeFence", "[", "#", "]"}], "<>", "#", "<>", 
        RowBox[{"If", "[", 
         RowBox[{
          RowBox[{"StringEndsQ", "[", 
           RowBox[{"#", ",", "\"\<`\>\""}], "]"}], ",", " ", "\"\< \>\"", ",", 
-         " ", "\"\<\>\""}], "]"}], "<>", "\"\<```\>\""}], "&"}], ",", "\n", 
-     "\t\t", "Identity", ",", "\n", "\t\t", 
+         " ", "\"\<\>\""}], "]"}], "<>", 
+       RowBox[{"getCodeFence", "[", "#", "]"}]}], "&"}], ",", "\n", "\t\t", 
+     "Identity", ",", "\n", "\t\t", 
      RowBox[{"Select", "[", 
       RowBox[{
        RowBox[{"{", "o", "}"}], ",", " ", "OptionQ"}], "]"}]}], "\n", "\t\t", 
@@ -6584,13 +6625,15 @@ Cell[BoxData[
       RowBox[{"\"\<PlainText\>\"", ",", " ", "\"\<Text\>\""}], "}"}], ",", 
      "\n", "\t\t", 
      RowBox[{
-      RowBox[{"\"\<```\>\"", "<>", "#", "<>", 
+      RowBox[{
+       RowBox[{"getCodeFence", "[", "#", "]"}], "<>", "#", "<>", 
        RowBox[{"If", "[", 
         RowBox[{
          RowBox[{"StringEndsQ", "[", 
           RowBox[{"#", ",", "\"\<`\>\""}], "]"}], ",", "\"\< \>\"", ",", 
-         "\"\<\>\""}], "]"}], "<>", "\"\<```\>\""}], "&"}], ",", "\n", "\t\t",
-      "Identity", ",", "\n", "\t\t", 
+         "\"\<\>\""}], "]"}], "<>", 
+       RowBox[{"getCodeFence", "[", "#", "]"}]}], "&"}], ",", "\n", "\t\t", 
+     "Identity", ",", "\n", "\t\t", 
      RowBox[{"Select", "[", 
       RowBox[{
        RowBox[{"{", "o", "}"}], ",", " ", "OptionQ"}], "]"}]}], "\n", "\t\t", 
@@ -6712,7 +6755,7 @@ Cell[BoxData[
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"2d25a359-c4fd-4a09-915b-827d1ccddbde"]
 }, Closed]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -7093,7 +7136,7 @@ Cell[BoxData[
       RowBox[{"t_", ",", "\"\<Text\>\"", ",", "___"}], "]"}]}], "]"}], ":=", 
    "\n", "\t", 
    RowBox[{"iNotebookToMarkdown", "[", 
-    RowBox[{"pathInfo", ",", "t"}], "]"}]}], 
+    RowBox[{"pathInfo", ",", " ", "t"}], "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"c45bc7fe-a456-4f40-82b0-461ccfe7828b"],
 
 Cell[BoxData[
@@ -7341,7 +7384,7 @@ Cell[BoxData[
         RowBox[{"StartOfLine", "|", "StartOfString"}], ")"}], "\[Rule]", 
        "\"\<    \>\""}], "]"}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"85802607-0bd4-4146-85f6-caaa8f07882e"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -7920,8 +7963,8 @@ Cell[BoxData[{
          RowBox[{"{", "}"}], ",", 
          RowBox[{"{", "md", "}"}]}], "]"}], ",", " ", "\"\<XML\>\""}], 
       "]"}]}], "\n", "\t\t", "]"}]}], 
-  ";"}]}], "CodeInput",ExpressionUUID->"9217ffec-182b-479b-acd0-33ffb089d8c5"]\
-
+  ";"}]}], \
+"CodeInput",ExpressionUUID->"9217ffec-182b-479b-acd0-33ffb089d8c5"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -8856,7 +8899,7 @@ Cell[BoxData[
        "&"}], "@@", "d"}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"d1aa37ec-9fda-4cf3-bfa1-21e0a30c0380"]
 }, Closed]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -9199,11 +9242,9 @@ Cell["\[LeftCeiling]Rasterizable\[RightFloor]", "CodeSubsubsection",
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"iNotebookToMarkdownRegister", "[", "\n", "\t", 
-   RowBox[{"pathInfo_", ",", "\n", "\t", 
-    RowBox[{"g", ":", "$iNotebookToMarkdownRasterizeForms"}], ",", "\n", "\t", 
-    RowBox[{"style_:", "\"\<Output\>\""}]}], "\n", "\t", "]"}], ":=", "\n", 
-  "\t", 
+  RowBox[{"rasterizeExportForm", "[", 
+   RowBox[{"pathInfo_", ",", " ", "g_", ",", " ", 
+    RowBox[{"style_:", "\"\<Output\>\""}]}], "]"}], ":=", "\n", "\t", 
   RowBox[{"markdownNotebookHashExport", "[", "\n", "\t\t", 
    RowBox[{
    "pathInfo", ",", "\n", "\t\t", "g", ",", "\n", "\t\t", "\"\<png\>\"", ",", 
@@ -9220,6 +9261,19 @@ Cell[BoxData[
         RowBox[{"CellContext", "\[Rule]", 
          RowBox[{"pathInfo", "[", "\"\<Context\>\"", "]"}]}]}], "\n", 
        "\t\t\t\t", "]"}], "\n", "\t\t\t", "]"}], "&"}]}], "\n", "\t\t", 
+   "]"}]}]], \
+"CodeInput",ExpressionUUID->"f787a77b-c50d-4927-926b-6b352f2fa13f"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"iNotebookToMarkdownRegister", "[", "\n", "\t", 
+   RowBox[{"pathInfo_", ",", "\n", "\t", 
+    RowBox[{"g", ":", "$iNotebookToMarkdownRasterizeBaseForms"}], ",", "\n", 
+    "\t", 
+    RowBox[{"style_:", "\"\<Output\>\""}]}], "\n", "\t", "]"}], ":=", "\n", 
+  "\t", 
+  RowBox[{"rasterizeExportForm", "[", 
+   RowBox[{"pathInfo", ",", " ", "g", ",", " ", "style"}], 
    "]"}]}]], \
 "CodeInput",ExpressionUUID->"3ec577fe-9752-4e44-b864-39f848aa5f60"]
 }, Closed]],
@@ -9739,7 +9793,7 @@ Cell[BoxData[{
      "\t\t\t", "]"}]}], "\n", "\t\t", 
    "]"}]}]}], \
 "CodeInput",ExpressionUUID->"8820a2d1-8fb5-45a4-8626-cb625cedc930"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -9836,7 +9890,7 @@ Cell[BoxData[
         "\"\<PlainText\>\"", ",", "\n", "\t\t\t\t", "\"\<Text\>\""}], "\n", 
        "\t\t\t\t", "]"}]}]}], "\n", "\t\t", "]"}]}], 
   ";"}]], "CodeInput",ExpressionUUID->"c2ab8548-7517-416c-a522-a3b28646fb18"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -9867,18 +9921,23 @@ Cell[BoxData[
    RowBox[{"iNotebookToMarkdownRegister", "[", 
     RowBox[{"pathInfo_", ",", " ", "e_", ",", " ", "___"}], "]"}], ":=", "\n",
     "\t", 
-   RowBox[{"If", "[", 
+   RowBox[{"Which", "[", "\n", "\t\t", 
     RowBox[{
-     RowBox[{"BoxQ", "@", "e"}], ",", "\n", "\t\t", 
-     RowBox[{"notebookToMarkdownFEExport", "[", "\n", "\t\t\t", 
-      RowBox[{"pathInfo", ",", "\n", "\t\t\t", 
-       RowBox[{"BoxData", "@", "e"}], ",", "\n", "\t\t\t", 
-       "\"\<InputText\>\"", ",", "\n", "\t", "\t\t", "\"\<Output\>\""}], "\n",
-       "\t\t\t", "]"}], ",", "\n", "\t\t", "\"\<\>\""}], "\n", "\t\t", 
-    "]"}]}], ";"}]], \
-"CodeInput",ExpressionUUID->"d64cc8a4-b810-4c81-91f5-c89f6ad93f69"]
-}, Closed]]
-}, Closed]]
+     RowBox[{"MatchQ", "[", 
+      RowBox[{"e", ",", " ", "$iNotebookToMarkdownRasterizeForms"}], "]"}], 
+     ",", "\n", "\t\t\t", 
+     RowBox[{"rasterizeExportForm", "[", 
+      RowBox[{"pathInfo", ",", " ", "e"}], "]"}], ",", "\n", "\t\t", 
+     RowBox[{"BoxQ", "@", "e"}], ",", "\n", "\t", "\t\t", 
+     RowBox[{"notebookToMarkdownFEExport", "[", "\n", "\t", "\t\t\t", 
+      RowBox[{"pathInfo", ",", "\n", "\t", "\t\t\t", 
+       RowBox[{"BoxData", "@", "e"}], ",", "\n", "\t", "\t\t\t", 
+       "\"\<InputText\>\"", ",", "\n", "\t", "\t", "\t\t", "\"\<Output\>\""}],
+       "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t", "True", ",", "\n", 
+     "\t\t\t", "\"\<\>\""}], "\n", "\t\t", "]"}]}], 
+  ";"}]], "CodeInput",ExpressionUUID->"d64cc8a4-b810-4c81-91f5-c89f6ad93f69"]
+}, Open  ]]
+}, Open  ]]
 }, Open  ]],
 
 Cell[BoxData[
