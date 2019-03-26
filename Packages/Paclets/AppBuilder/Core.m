@@ -907,7 +907,7 @@ AppRegenerateContextLoadFiles[app_]:=
 
 $DefaultDepRemove=
   <|
-    "RemovePaths"->{"Documentation"},
+    "RemovePaths"->{"Documentation", "PacletInfo.m"},
     "RemovePatterns"->{}
     |>
 

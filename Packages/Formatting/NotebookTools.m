@@ -91,6 +91,8 @@ acPanel[items_, selector_, paste_, truncateAt_, ops:OptionsPattern[]]:=
           Pick[fullItems, selector/@fullItems];
         Grid[
           Which[
+            truncate === All,
+              menuItems,
             truncate===0,
               {
                 {""},
