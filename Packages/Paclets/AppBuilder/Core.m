@@ -4,7 +4,7 @@
 
 (* ::Text:: *)
 (*AppBuilding utilities, pushed into a lower-context*)
-
+   
 
 
 (* ::Subsubsection::Closed:: *)
@@ -207,7 +207,14 @@ AppNames[
   ]:=
   If[
     first&&StringQ@pat&&DirectoryQ@pat&&
-      FileExistsQ@FileNameJoin[{pat, "PacletInfo.m"}],
+      AnyTrue[
+        {
+          "PacletInfo.m",
+          "Config",
+          "Packages"
+          },
+        FileExistsQ@FileNameJoin[Flatten@{pat, #}]&
+        ],
     If[baseName, FileBaseName, Identity]@
       pat,
     If[first, 
@@ -852,7 +859,9 @@ Options[AppRegenerateLoadInfo]=
     };
 AppRegenerateLoadInfo[app_String,ops:OptionsPattern[]]:=
   (
-    If[!DirectoryQ@AppPath[app,"Config"], CreateDirectory[AppPath[app,"Config"]]];
+    If[!DirectoryQ@AppPath[app, "Config"], 
+      CreateDirectory[AppPath[app,"Config"]]
+      ];
     Export[
       getConfigFile[app, "LoadInfo"],
       PrettyString@
