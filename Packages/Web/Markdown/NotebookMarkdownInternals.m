@@ -2936,14 +2936,14 @@ iNotebookToMarkdownRegister[
 
 
 
-getCodeFence[s_]:=
+getCodeFence[s_, min_:1]:=
   StringRepeat["`", 
     Max[
       Join[
         StringLength/@StringCases[s, "`"..],
         {0}
         ]
-      ]+1
+      ]+min
     ]
 
 
@@ -3004,14 +3004,14 @@ iNotebookToMarkdownRegister[pathInfo_,
           b_
           }:>
           "<?prettify "<>s<>" ?>\n"<>
-            getCodeFence[b]"\n"<>b<>"\n"<>getCodeFence[b],
+            getCodeFence[b, 3]"\n"<>b<>"\n"<>getCodeFence[b, 3],
         {
           s_?(StringMatchQ[Except[WhitespaceCharacter]..]@*StringTrim),
           b_
           }:>
-          getCodeFence[b]<>StringTrim[s]<>"\n"<>b<>"\n"<>getCodeFence[b],
+          getCodeFence[b, 3]<>StringTrim[s]<>"\n"<>b<>"\n"<>getCodeFence[b, 3],
           _:>
-          getCodeFence[#]<>"\n"<>#<>"\n"<>getCodeFence[#]
+          getCodeFence[#, 3]<>"\n"<>#<>"\n"<>getCodeFence[#, 3]
         }
       ]&,
     Identity,
@@ -3030,8 +3030,8 @@ iNotebookToMarkdownRegister[pathInfo_,
     pathInfo,
     e,
     {"InputText", "Code"},
-    getCodeFence[#]<>
-      "mathematica\n"<>StringDelete[#, "\\\n"]<>"\n"<>getCodeFence[#]&,
+    getCodeFence[#, 3]<>
+      "mathematica\n"<>StringDelete[#, "\\\n"]<>"\n"<>getCodeFence[#, 3]&,
     StringReplace[#, 
       "<code>"->"<code class='language-mathematica'>",
       1
@@ -4260,7 +4260,8 @@ notebookToMarkdownResolvePacletURL[s_String]:=
         Flatten@{
           If[StringQ[page]&&StringStartsQ[page,$InstallationDirectory],
             "https://reference.wolfram.com/language",
-            "https://www.wolframcloud.com/objects/b3m2a1.docs/reference"
+            "https://reference.wolfram.com/language"
+            (*"https://www.wolframcloud.com/objects/b3m2a1.docs/reference"*)
             ],
           URLParse[s,"Path"]
           }<>".html"

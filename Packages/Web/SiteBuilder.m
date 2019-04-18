@@ -155,7 +155,7 @@ WebSiteInitialize[
                 ops,
                 Replace[
                   Get@FileNameJoin@{temp, "SiteConfig.wl"},
-                  Except[_?OptionQ]:>{}
+                  Except[_?OptionQ|_?AssociationQ]:>{}
                   ]
                 },
           "Text"
@@ -191,7 +191,7 @@ WebSiteInitialize[
 
 WebSiteOptions[dir_String?(DirectoryQ@*DirectoryName)]:=
   Replace[Quiet@Get[FileNameJoin@{dir, "SiteConfig.wl"}],
-    Except[_?OptionQ]->
+    Except[_?OptionQ|_?AssociationQ]->
       {}
     ];
 WebSiteOptions[dir_String?(DirectoryQ@*DirectoryName), vals_]:=
@@ -208,7 +208,7 @@ WebSiteOptions[dir_String?(DirectoryQ@*DirectoryName), vals_]:=
 
 WebSiteSetOptions[
   dir_String?(DirectoryQ@*DirectoryName),
-  ops_?OptionQ
+  ops:_?OptionQ|_?AssociationQ
   ]:=
   Export[
     FileNameJoin@{dir,"SiteConfig.wl"},
@@ -635,7 +635,7 @@ WebSiteLoadCache[dir_]:=
   Replace[WebSiteFindCache[dir],
     {
       None-><||>,
-      f_:>Replace[Quiet@Import[f], Except[_Association]-><||>]
+      f_:>Replace[Quiet@Import[f], Except[_?AssociationQ]-><||>]
       }
     ];
 
@@ -663,7 +663,7 @@ WebSiteLoadTemplateCache[dir_]:=
   Replace[WebSiteFindTemplateCache[dir],
     {
       None-><||>,
-      f_:>Replace[Quiet@Import[f], Except[_Association]-><||>]
+      f_:>Replace[Quiet@Import[f], Except[_?AssociationQ]-><||>]
       }
     ];
 
@@ -1491,13 +1491,14 @@ webSiteTemplatePreProcessSplitOutput[pc_, cc_, head_, c_, tail_]:=
       Sequence@@
         Flatten@{
           If[Length@splits==0||StringQ@splits[[1, 1]],
-            webSiteTemplatePreProcessProcessSplitString[firstSplit, 
+            webSiteTemplatePreProcessProcessSplitString[
+              firstSplit, 
               pc, cc, head, {}
               ],
             With[{sp=splits[[1]]},
               splits=Rest@splits;
               webSiteTemplatePreProcessProcessSplitString[firstSplit, 
-                pc, cc, Join[head, sp]
+                pc, cc, Join[head, sp], {}
                 ]
               ]
             ],
@@ -1842,8 +1843,8 @@ WebSiteTemplateGatherArgs[fileContent_, args_]:=
               WebSiteBuildLogError[fp, "BadContent", e];
               PackageThrowMessage[
                 "SiteBuilder",
-                Evaluate[WebSiteBuild::nocnt],
-                Short[e]
+                Evaluate@WebSiteBuild::nocnt,
+                "MessageParameters":>{Short[e]}
                 ]
               )
           }
@@ -2025,7 +2026,7 @@ WebSiteTemplateApply[
   root:_String?DirectoryQ|{__String?DirectoryQ},
   content:_String|_File|None,
   templates:{__String}|_String,
-  info:_Association:<||>
+  info:_?AssociationQ:<||>
   ]:=
   If[AssociationQ@$WebSiteBuildContentStack,
     Module[
@@ -2451,8 +2452,8 @@ WebSiteContentStackPrep[ops:OptionsPattern[]]:=
                       SortBy[order]@
                         $WebSiteBuildAggStack["SelectObjects"][pageType]
                     },
-                  With[{pos=FirstPosition[sorted[[All, "SourceFile"]], self][[1]]},
-                    If[TrueQ[pos<=Length@sorted],
+                  With[{pos=FirstPosition[sorted, self][[1]]+1},
+                    If[pos<=Length@sorted//TrueQ,
                       sorted[[pos]],
                       None
                       ]
@@ -2472,9 +2473,7 @@ WebSiteContentStackPrep[ops:OptionsPattern[]]:=
                   {
                     sorted=
                       SortBy[order]@
-                      $WebSiteBuildAggStack["SelectObjects"][
-                        pageType
-                        ]
+                        $WebSiteBuildAggStack["SelectObjects"][pageType]
                     },
                   With[{pos=FirstPosition[sorted, self][[1]]-1},
                     If[pos>0//TrueQ,
@@ -3505,8 +3504,8 @@ iWebSiteGenerateSearchIndex[
         ];
     Export[
       FileNameJoin@{outDir, "theme", "search", "search_index.json"},
-      <|"pages"->Replace[contentData, Except[{__Association}]->{}]|>
-      ] 
+      <|"pages"->Replace[contentData, Except[{__?AssociationQ}]->{}]|>
+      ]
     ]
 
 

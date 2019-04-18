@@ -125,6 +125,15 @@ FESelectCells::usage=
 FEExport::usage="Exports FE stuff as text";
 
 
+(* ::Subsubsection::Closed:: *)
+(*FindFileOnPath*)
+
+
+
+FEFindFileOnPath::usage=
+  "Safe version of FrontEnd`FindFileOnPath"
+
+
 Begin["`Private`"];
 
 
@@ -1353,6 +1362,182 @@ PackageAddAutocompletions[
     $FEExportFormats
     }
   ]
+
+
+(* ::Subsection:: *)
+(*Paths*)
+
+
+
+(* ::Subsubsection::Closed:: *)
+(*FileOnPath*)
+
+
+
+$FEPathMap=
+  Thread/@
+    {
+      {"StyleSheets","StyleSheet","StyleSheetPath"}->
+        "StyleSheetPath",
+      {"Palettes","Palette","PalettePath"}->
+        "PalettePath",
+      {"TextResources","TextResource",
+        "PrivatePathsTextResources"}->
+        "PrivatePathsTextResources",
+      {"SystemResources","SystemResource",
+        "PrivatePathsSystemResources"}->
+        "PrivatePathsSystemResources",
+        {"AFM","PrivatePathsAFM"}->"PrivatePathsAFM",
+      {
+        "AutoCompletionData",
+        "PrivatePathsAutoCompletionData"
+        }->
+          "PrivatePathsAutoCompletionData",
+      {"Bitmaps","Bitmap","PrivatePathsBitmaps"}->
+        "PrivatePathsBitmaps",
+      {"Fonts","Font","PrivatePathsFonts"}->
+        "PrivatePathsFonts",
+      {"TranslationData","PrivatePathsTranslationData"}->
+        "PrivatePathsTranslationData",
+      "AddOnHelp"->"AddOnHelpPath",
+      "Autoload"->"AutoloadPath",
+      {"CharacterEncoding","CharacterEncodings"}->
+        "CharacterEncodingsPath",
+      "Configuration"->"ConfigurationPath",
+      {"Converter","Converters"}->"ConvertersPath",
+      "Notebook"->"NotebookPath",
+      "Preferences"->"PreferencesPath",
+      "SpellingDictionaries"->"SpellingDictionariesPath",
+      "SystemHelp"->"SystemHelpPath",
+      {"Trusted","TrustedPath"}->
+        "NotebookSecurityOptionsTrustedPath",
+      {"Untrusted","UntrustedPath"}->
+        "NotebookSecurityOptionsUntrustedPath"
+      }//Flatten//Association;
+
+
+FEFindFileOnPath//Clear
+
+
+Options[FEFindFileOnPath]=
+  {
+    "ReturnPath"->False,
+    "SelectFirst"->True
+    };
+Options[iFEFindFileOnPath]=
+  Options@FEFindFileOnPath;
+iFEFindFileOnPath[
+  file_,
+  path:{__String?(KeyMemberQ[$FEPathMap,#]&)},
+  ops:OptionsPattern[]
+  ]:=
+  Replace[{
+    {_,{}}->$Failed,
+    {_,{e_}}:>
+      If[OptionValue@"SelectFirst"//TrueQ,
+        First@e,
+        e
+        ]
+    }]@
+  Reap@
+    Catch@
+      Map[
+        Replace[
+          FrontEndExecute@
+            FrontEnd`FindFileOnPath[
+              Switch[file,
+                _FileName|_FrontEnd`FileName,
+                  ToFileName[file],
+                _List,
+                  FileNameJoin@file,
+                _File,
+                  First[file],
+                _String,
+                  file,
+                _,
+                  Throw@$Failed
+                ],
+              #
+              ],
+          s:Except[$Failed]:>
+            CompoundExpression[
+              Sow@
+                If[OptionValue@"ReturnPath"//TrueQ,
+                  #->s,
+                  s
+                  ],
+              If[OptionValue@"SelectFirst",Throw[Break]]
+              ]
+          ]&,
+        Flatten@Lookup[$FEPathMap,path]
+        ];
+FEFindFileOnPath[
+  file_,
+  path:{__String?(KeyMemberQ[$FEPathMap,#]&)},
+  exts:
+    {__String?(StringLength[#]<6&&StringMatchQ[#, WordCharacter..]&)}:
+    {"nb", "tr", "m"},
+  ops:OptionsPattern[]
+  ]:=
+  Replace[iFEFindFileOnPath[file, path, ops],
+    $Failed:>
+      Replace[Null->$Failed]@
+        Catch@
+          Scan[
+            Replace[e:Except[$Failed]:>Throw[e]]@
+              iFEFindFileOnPath[file<>"."<>#, path, ops]&,
+            exts
+            ]
+    ];
+FEFindFileOnPath[file_,
+  path:_String|Automatic:Automatic,
+  exts:
+    {__String?(StringLength[#]<6&&StringMatchQ[#, WordCharacter..]&)}:
+    {"nb", "tr", "m"},
+  ops:OptionsPattern[]
+  ]:=
+  FEFindFileOnPath[
+    file,
+    Replace[path, 
+      {
+        Automatic:>Keys@DeleteDuplicates@$FEPathMap,
+        s_String:>{s}
+        }
+      ],
+    exts,
+    ops
+    ];
+
+
+(*$FEPathMapSpecial=
+	<|
+		"ImportFormat"->
+			Function[{
+				FileNameJoin@{"SystemFiles",#,"Import.m"}
+		|>;*)
+
+
+(*FEFindFileOnPath[
+	file_,
+	"Format"
+	]*)
+
+
+PackageAddAutocompletions[
+  "FEFindFileOnPath",
+  {
+    {
+      "MenuSetup.tr",
+      "KeyEventTranslations.tr"
+      },
+    StringTrim[
+      StringTrim[
+        DeleteDuplicates@Values@$FEPathMap,
+        "PrivatePaths"|"Path"|"NotebookSecurityOptions"
+        ],
+      "s"
+      ]}
+  ];
 
 
 End[];
