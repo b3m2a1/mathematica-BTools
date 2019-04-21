@@ -410,7 +410,7 @@ NotebookMarkdownSaveExportSown[root_,
             Switch[FileExtension[f],
               "gif",
                 FilterRules[
-                  Lookup[ops, "gif"], 
+                  Normal@Lookup[ops, "gif"], 
                   Options[
                     {
                       "AnimationRepetitions","ColorSpace","DisplayDurations",
@@ -421,7 +421,7 @@ NotebookMarkdownSaveExportSown[root_,
               "png",
                 Sequence@@
                   FilterRules[
-                    Lookup[ops, "png"], 
+                    Normal@Lookup[ops, "png"], 
                     Options[Rasterize]
                     ],
               _,

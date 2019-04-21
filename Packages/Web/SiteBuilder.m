@@ -155,7 +155,7 @@ WebSiteInitialize[
                 ops,
                 Replace[
                   Get@FileNameJoin@{temp, "SiteConfig.wl"},
-                  Except[_?OptionQ|_?AssociationQ]:>{}
+                  Except[_?OptionQ|_?AssociationQ|_?AssociationQ]:>{}
                   ]
                 },
           "Text"
@@ -163,6 +163,14 @@ WebSiteInitialize[
       ];
     dir
     ];
+WebSiteInitialize[
+  dir_String?(
+    FileNameDepth[#]>1&&DirectoryQ@DirectoryName[#]&
+    ),
+  template:_String?DirectoryQ|Automatic:Automatic,
+  a_?AssociationQ
+  ]:=
+  WebSiteInitialize[dir, template, Normal[a]]
 
 
 WebSiteInitialize[
@@ -181,7 +189,15 @@ WebSiteInitialize[
       template,
       ops
       ]
-    )
+    );
+WebSiteInitialize[
+  s_String?(
+    FileNameDepth[#]==1||
+      (Not@FileExistsQ[#]&&StringFreeQ[#,$PathnameSeparator])&),
+  template:_String?DirectoryQ|Automatic:Automatic,
+  a_?AssociationQ
+  ]:=
+  WebSiteInitialize[s, template, Normal[a]]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -191,7 +207,7 @@ WebSiteInitialize[
 
 WebSiteOptions[dir_String?(DirectoryQ@*DirectoryName)]:=
   Replace[Quiet@Get[FileNameJoin@{dir, "SiteConfig.wl"}],
-    Except[_?OptionQ|_?AssociationQ]->
+    Except[_?OptionQ|_?AssociationQ|_?AssociationQ]->
       {}
     ];
 WebSiteOptions[dir_String?(DirectoryQ@*DirectoryName), vals_]:=
@@ -325,6 +341,20 @@ WebSiteNewContent[
         ],
       $Failed
       ]
+    ];
+WebSiteNewContent[
+  dir_String?DirectoryQ,
+  place_String,
+  name:_String|Automatic:Automatic,
+  content:_List|_Cell|Automatic:Automatic,
+  a_?AssociationQ
+  ]/;DirectoryQ@FileNameJoin@{dir,"content",place}:=
+  WebSiteNewContent[
+    dir,
+    place,
+    name,
+    content,
+    Normal@a
     ]
 
 
@@ -504,6 +534,8 @@ WebSiteFindTheme[dir_String?DirectoryQ, theme_String,
       $Failed
       ]
     ];
+WebSiteFindTheme[dir_String?DirectoryQ, theme_String, a_?AssociationQ]:=
+  WebSiteFindTheme[dir, theme, Normal@a]
 WebSiteFindTheme[dir_String?DirectoryQ, op:OptionsPattern[]]:=
   Module[
     {
@@ -529,6 +561,8 @@ WebSiteFindTheme[dir_String?DirectoryQ, op:OptionsPattern[]]:=
         }
       ]
     ];
+WebSiteFindTheme[dir_String?DirectoryQ, a_?AssociationQ]:=
+  WebSiteFindTheme[dir, theme, Normal@a]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -798,7 +832,7 @@ WebSiteXMLTemplateApply//Clear
 WebSiteXMLTemplateApply[
   root:_String|{__String}|Automatic:Automatic,
   template:(_String|_File)?FileExistsQ,
-  args:_?OptionQ:{}
+  args:_?OptionQ|_?AssociationQ:{}
   ]:=
   Replace[
     Internal`WithLocalSettings[
@@ -813,7 +847,7 @@ WebSiteXMLTemplateApply[
       s_String:>
         xmlTemplatePostProcessWhitespace[s]
       }
-    ]
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2172,12 +2206,13 @@ WebSiteTemplateExport[
               },
           If[
             !FileExistsQ[fil]||(* to preserve the modification date *)
-              (html=!=System`Convert`TextDump`PlaintextImport[fil][[2]]),
+              (
+                html=!=Quiet[ReadString[fil]]
+                  (*System`Convert`TextDump`PlaintextImport[fil][[2]] ]*)
+                ),
             Quiet@Close[fil];
             If[!DirectoryQ@DirectoryName[fil],
-              CreateDirectory[DirectoryName[fil], 
-                CreateIntermediateDirectories->True
-                ]
+              CreateDirectory[DirectoryName[fil], CreateIntermediateDirectories->True]
               ];
             Export[fil, html, "Text"]
             ]
@@ -2818,7 +2853,7 @@ iWebSiteCopyContent[
 WebSiteCopyContent[
   dir_,
   outDir_,
-  e:Except[_?OptionQ]:Automatic,
+  e:Except[_?OptionQ|_?AssociationQ]:Automatic,
   ops:OptionsPattern[]
   ]:=
   With[{s=webSiteCopyContentSpec[e]},
@@ -2826,7 +2861,14 @@ WebSiteCopyContent[
 			WebSiteCopyContent[dir, outDir, s, ops],
 			{}
 			]*)
-    ]
+    ];
+WebSiteCopyContent[
+  dir_,
+  outDir_,
+  e:Except[_?OptionQ|_?AssociationQ]:Automatic,
+  ops_?AssociationQ
+  ]:=
+  WebSiteCopyContent[dir, outDir, e, Normal[ops]]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -3225,6 +3267,22 @@ WebSiteGenerateAggregationPages[
         ];
       ];
     ];
+WebSiteGenerateAggregationPages[
+  dir_,
+  aggpages_,
+  outDir_,
+  theme_,
+  config_,
+  ops_?AssociationQ
+  ]:=
+  WebSiteGenerateAggregationPages[
+    dir,
+    aggpages,
+    outDir,
+    theme,
+    config,
+    Normal@ops
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -3287,6 +3345,8 @@ WebSiteGenerateIndexPages[dir_, outDir_, theme_, config_, ops:OptionsPattern[]]:
           ]
         ]&/@WebSiteGatherIndexTemplates[thm]
     ];
+WebSiteGenerateIndexPages[dir_, outDir_, theme_, config_, ops_?AssociationQ]:=
+  WebSiteGenerateIndexPages[dir, outDir, theme, config, Normal[ops]]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -3433,6 +3493,16 @@ WebSiteGenerateContent[
         ]
       ];
     ];
+WebSiteGenerateContent[
+  dir_,files_,
+  outDir_,theme_,config_,
+  ops_?AssociationQ
+  ]:=
+  WebSiteGenerateContent[
+    dir, files,
+    outDir, theme, config,
+    Normal@ops
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -3778,7 +3848,7 @@ WebSiteGenerateSearchPage[
       searchOps=
         Association@
           Replace[OptionValue["SearchPageOptions"],
-            Except[_?OptionQ]:>{}
+            Except[_?OptionQ|_?AssociationQ]:>{}
             ],
       thm=
         WebSiteFindTheme[dir, theme, "DownloadTheme"->True]
@@ -3862,7 +3932,7 @@ WebSiteGenerateRedirectPages[
       pages=
         Association@
           Replace[OptionValue["RedirectPages"],
-            Except[_?OptionQ]:>{}
+            Except[_?OptionQ|_?AssociationQ]:>{}
             ],
       pagesDefault
       },
@@ -3919,7 +3989,21 @@ WebSiteGenerateRedirectPages[
           ],
         pages
         ]
-    ]
+    ];
+WebSiteGenerateRedirectPages[
+  dir_, 
+  outDir_,
+  theme_,
+  config_, 
+  ops_?AssociationQ
+  ]:=
+  WebSiteGenerateRedirectPages[
+    dir, 
+    outDir,
+    theme,
+    config, 
+    Normal@ops
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -3955,7 +4039,7 @@ iWebSiteBuildGetFiles[patt_, dir_, dirs_, templates_]:=
       temps=
         Replace[
           templates,
-          Except[_?AssociationQ|_?OptionQ]->
+          Except[_?OptionQ|_?AssociationQ]->
             {
               "posts"->"article.html",
               _->"page.html"
@@ -4286,12 +4370,12 @@ WebSiteBuild[
             ],
           {
               f_String?FileExistsQ:>
-                Replace[Import[f], {o_?OptionQ:>Association[o],_-><||>}],
+                Replace[Import[f], {o:_?OptionQ|_?AssociationQ:>Association[o],_-><||>}],
               _-><||>
             }],
         Replace[Normal@OptionValue["ConfigurationOptions"],
           {
-            o_?OptionQ:>Association@o,
+            o:_?OptionQ|_?AssociationQ:>Association@o,
             _-><||>
             }
           ]
@@ -4347,7 +4431,7 @@ WebSiteBuild[
         {
           confOps,
           ops,
-          Replace[Except[_?OptionQ]->{}]@
+          Replace[Except[_?OptionQ|_?AssociationQ]->{}]@
             Normal@
               Replace[
                 FileNameJoin@{dir, "BuildInfo.wl"},
@@ -4455,7 +4539,7 @@ WebSiteBuild[
             Replace[OptionValue["DeployOptions"],
               Automatic:>Lookup[config,"DeployOptions",{}]
               ],
-            Except[_?OptionQ]->{}
+            Except[_?OptionQ|_?AssociationQ]->{}
             ]
           ],
         outDir
@@ -4793,7 +4877,7 @@ WebSiteDeploy[
       Flatten@{ops,
         Lookup[
           Replace[Quiet@Import[trueDir, "SiteConfig.wl"],
-            Except[_?OptionQ]:>{}
+            Except[_?OptionQ|_?AssociationQ]:>{}
             ],
           "DeployOptions",
           {}
@@ -4801,6 +4885,12 @@ WebSiteDeploy[
         }
       ]
     ];
+WebSiteDeploy[
+  outDir_String?DirectoryQ,
+  uri:_String|Automatic:Automatic,
+  ops_?AssociationQ
+  ]:=
+  WebSiteDeploy[outDir, uri, Normal[ops]];
 
 
 End[];

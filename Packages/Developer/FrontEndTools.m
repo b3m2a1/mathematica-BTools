@@ -130,6 +130,9 @@ FEExport::usage="Exports FE stuff as text";
 
 
 
+$FEPathMap::usage="The mapping of valid FE paths";
+
+
 FEFindFileOnPath::usage=
   "Safe version of FrontEnd`FindFileOnPath"
 
