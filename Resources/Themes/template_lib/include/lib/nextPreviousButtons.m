@@ -1,5 +1,3 @@
-(* ::Package:: *)
-
 With[{
     curr=#SourceFile
     },
@@ -8,21 +6,21 @@ With[{
         nextObj=
           #NextObjectBy[curr,
             Replace[
-              Replace[#SortingFunction,
-                _Missing:>#test
+              Replace[#["SortingFunction"],
+                _Missing:>#["test"]
                 ],
               _Missing:>(#["Date"]&)
-              ], 
+              ],
             #Templates[[1]]
             ],
         prevObj=
-          #PreviousObjectBy[curr, 
+          #PreviousObjectBy[curr,
             Replace[
-              Replace[#SortingFunction,
-                _Missing:>#test
+              Replace[#["SortingFunction"],
+                _Missing:>#["test"]
                 ],
               _Missing:>(#["Date"]&)
-              ], 
+              ],
             #Templates[[1]]
             ]
         },

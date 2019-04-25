@@ -1,6 +1,4 @@
-(* ::Package:: *)
-
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Temp Loading Flag Code*)
 
 
