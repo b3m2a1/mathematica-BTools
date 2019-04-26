@@ -112,6 +112,8 @@ getMinimalFileModSpec[
       unchangedReduction,
       changedReduction,
       containedReduction,
+      parentNodeMap,
+      actuallyDidChangeReduction,
       keys,
       changedKeys,
       missingDirs,
@@ -150,36 +152,49 @@ getMinimalFileModSpec[
       AssociationMap[
         #[[1]]->
           If[
-            (!ListQ@g2[#[[1]]]||
-              Length@Complement[Flatten@{g2[#[[1]]]}, #[[2]]]==0)&&
+            (
+              !ListQ@g2[#[[1]]]||(* not in the DirectoyName map...? *)
+                Length@Complement[Flatten@{g2[#[[1]]]}, #[[2]]]==0
+                (* nothing in the original that's gone missing *)
+              )&&
               !AnyTrue[Keys@missingDirs, StringStartsQ[#[[1]]]],
             #[[1]],
             #[[2]]
             ]&,
         g1
         ];
-        
+    (* figure out which directories actually do have changes, but down in a subdirectory *)
+    parentNodeMap=
+      GroupBy[Keys[unchangedReduction], DirectoryName];
+    Do[
+        If[StringQ@unchangedReduction[node],
+          If[
+            AnyTrue[Lookup[unchangedReduction, parentNodeMap[node]], Not@*StringQ],
+            unchangedReduction[node] = g1[node];
+            ]
+          ],
+        {node, Reverse@SortBy[FileNameDepth]@Keys@unchangedReduction}
+        ];
+    (* we then find which directories we can't copy because we're already copying the parent *)
     containedReduction=
       FixedPoint[
         KeySelect[
-          (* 
-					checks if both the child *and* the parent are unchanged *and* 
-						if there's nothing missing vis-a-vis the original 
-					*)
-          !StringQ@unchangedReduction[#]||
-            !StringQ@unchangedReduction[DirectoryName[#]]&
-          ],
-        unchangedReduction
-        ];
+          (*
+		  	      checks if both the child *and* the parent are unchanged *and* 
+  		  	      if all of the parent's child nodes are unchanged
+    			    *)
+          !(
+              StringQ@unchangedReduction[#]&&
+                unchangedReduction[DirectoryName[#]]
+            )&
+           ],
+      unchangedReduction
+      ];
     (* figure out which parent directories have changed *)
-    keys=Keys@Select[containedReduction, StringQ];
+    keys=Select[containedReduction, StringQ];
     changedKeys=
       Select[keys, 
-        With[{k=#}, 
-          AnyTrue[keys, 
-            StringMatchQ[k~~__]
-            ]
-          ]&
+        With[{k=#}, AnyTrue[keys, StringMatchQ[k~~__]]]&
         ];
     baseSpec=
       Flatten@Values@

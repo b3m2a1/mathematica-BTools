@@ -272,7 +272,7 @@ Notebook[{Cell[CellGroupData[{Cell["MarkdownParser", "CodeSection",
                           "]"}], "\n", "              ", "}"}]}], "\n", 
                           "            ", "]"}]}]}], "\n", "        ", 
                           "}"}]}], "]"}]}], "\n", "    ", "]"}]}], ";"}]}], 
-            "CodeInput"]}, Closed]]}, Closed]], 
+            "CodeInput"]}, Closed]]}, Open]], 
      Cell[CellGroupData[
        {Cell["\[LeftCeiling]MarkdownToNotebook\[RightFloor]", 
          "CodeSubsection", Evaluatable -> True], 
@@ -351,8 +351,8 @@ Notebook[{Cell[CellGroupData[{Cell["MarkdownParser", "CodeSection",
                  {RowBox[{"markdownToCell", "[", RowBox[{"\"QuoteBlock\"", 
                       ",", " ", "text_"}], "]"}], ":=", "\n", "\t", 
                   RowBox[{"Cell", "[", RowBox[{RowBox[{"prepCellData", "[", 
-                        "text", "]"}], ",", " ", "\"Text\"", ",", " ", 
-                      "\"Quote\"", ",", " ", "\"Markdown\""}], "]"}]}]], 
+                        "text", "]"}], ",", " ", "\"Quote\"", ",", " ", 
+                      "\"Text\"", ",", " ", "\"Markdown\""}], "]"}]}]], 
                "CodeInput"]}, Closed]], Cell[CellGroupData[
              {Cell["\[LeftCeiling]Header\[RightFloor]", 
                "CodeSubsubsubsection", Evaluatable -> True, 
@@ -422,14 +422,14 @@ Notebook[{Cell[CellGroupData[{Cell["MarkdownParser", "CodeSection",
                 3.712590815722493*^9}}], Cell[BoxData[RowBox[
                  {RowBox[{"markdownToCell", "[", RowBox[{"\"Delimiter\"", 
                       ",", " ", "_"}], "]"}], ":=", "\n", "\t", RowBox[
-                   {"Cell", "[", RowBox[{"\"\"", ",", " ", "\"PageBreak\"", 
-                      ",", " ", "\"Delimiter\"", ",", " ", "\"Markdown\"", 
+                   {"Cell", "[", RowBox[{"\"\"", ",", " ", "\"Delimiter\"", 
+                      ",", " ", "\"PageBreak\"", ",", " ", "\"Markdown\"", 
                       ",", "\n", "\t  ", RowBox[{"PageBreakAbove", "\[Rule]", 
                         "False"}], ",", "\n", "\t  ", RowBox[
                        {"PageBreakBelow", "\[Rule]", "False"}], ",", "\n", 
                       "\t  ", RowBox[{"PageBreakWithin", "\[Rule]", 
                         "False"}]}], "\n", "\t  ", "]"}]}]], "CodeInput"]}, 
-             Open]], Cell[CellGroupData[
+             Closed]], Cell[CellGroupData[
              {Cell["\[LeftCeiling]CodeLine\[RightFloor]", 
                "CodeSubsubsubsection", Evaluatable -> True], Cell[BoxData[
                 RowBox[{RowBox[{RowBox[{"markdownToCell", "[", RowBox[
@@ -437,16 +437,16 @@ Notebook[{Cell[CellGroupData[{Cell["MarkdownParser", "CodeSection",
                     "\t", RowBox[{"Cell", "[", RowBox[{RowBox[{"BoxData", 
                           "@", RowBox[{"getCodeBoxes", "[", "text", "]"}]}], 
                         ",", " ", "\"Input\"", ",", " ", "\"Markdown\""}], 
-                      "]"}]}], ";"}]], "CodeInput"]}, Open]], 
+                      "]"}]}], ";"}]], "CodeInput"]}, Closed]], 
            Cell[CellGroupData[{Cell["\[LeftCeiling]XML\[RightFloor]", 
                "CodeSubsubsubsection", Evaluatable -> True], Cell[BoxData[
                 RowBox[{RowBox[{RowBox[{"markdownToCell", "[", RowBox[
                        {"\"XML\"", ",", " ", "xml_"}], "]"}], ":=", "\n", 
                     "  ", RowBox[{"Cell", "[", RowBox[{RowBox[
                          {"ExportString", "[", RowBox[{"xml", ",", " ", 
-                          "\"XML\""}], "]"}], ",", " ", "\"Text\"", ",", " ", 
-                        "\"XML\"", ",", " ", "\"Markdown\""}], "]"}]}], 
-                  ";"}]], "CodeInput"]}, Closed]], 
+                          "\"XML\""}], "]"}], ",", " ", "\"RawMarkdown\"", 
+                        ",", " ", "\"Text\"", ",", " ", "\"Markdown\""}], 
+                      "]"}]}], ";"}]], "CodeInput"]}, Open]], 
            Cell[CellGroupData[{Cell["\[LeftCeiling]Hyperlink\[RightFloor]", 
                "CodeSubsubsubsection", Evaluatable -> True, 
                CellChangeTimes -> {{3.7125852658153553*^9, 
@@ -455,21 +455,22 @@ Notebook[{Cell[CellGroupData[{Cell["MarkdownParser", "CodeSection",
                       " ", RowBox[{"{", RowBox[{"link_", ",", " ", "body_"}], 
                         "}"}]}], "]"}], ":=", "\n", "  ", RowBox[
                    {"ButtonBox", "[", RowBox[{RowBox[{"prepCell", "[", 
-                        "body", "]"}], ",", " ", RowBox[{"BaseStyle", 
-                        "\[Rule]", "\"Hyperlink\""}], ",", " ", RowBox[
-                       {"ButtonData", "\[Rule]", RowBox[{"{", RowBox[
-                          {RowBox[{"URL", "[", "link", "]"}], ",", " ", 
-                          "None"}], "}"}]}]}], "]"}]}]], "CodeInput"]}, 
-             Closed]], Cell[CellGroupData[
-             {Cell["\[LeftCeiling]Img\[RightFloor]", "CodeSubsubsubsection", 
-               Evaluatable -> True], Cell[BoxData[RowBox[
-                 {RowBox[{"markdownToCell", "[", RowBox[{"\"Image\"", ",", 
-                      " ", RowBox[{"{", RowBox[{"src_", ",", " ", "alt_"}], 
-                        "}"}]}], "]"}], ":=", "\n", "\t", RowBox[
-                   {"TemplateBox", "[", "\n", "\t  ", RowBox[{RowBox[
-                       {"{", RowBox[{"src", ",", " ", "alt", ",", " ", 
-                          RowBox[{"ToBoxes", "[", "alt", "]"}]}], "}"}], ",", 
-                      "\n", "\t  ", "\"LinkedImage\"", ",", "\n", "\t  ", 
+                        "body", "]"}], ",", " ", "\n", "    ", RowBox[
+                       {"BaseStyle", "\[Rule]", "\"Hyperlink\""}], ",", " ", 
+                      RowBox[{"ButtonData", "\[Rule]", RowBox[{"{", RowBox[
+                          {RowBox[{"URL", "[", RowBox[{"StringTrim", "@", 
+                          "link"}], "]"}], ",", " ", "None"}], "}"}]}]}], 
+                    "]"}]}]], "CodeInput"]}, Closed]], 
+           Cell[CellGroupData[{Cell["\[LeftCeiling]Img\[RightFloor]", 
+               "CodeSubsubsubsection", Evaluatable -> True], Cell[BoxData[
+                RowBox[{RowBox[{"markdownToCell", "[", RowBox[{"\"Image\"", 
+                      ",", " ", RowBox[{"{", RowBox[{"src_", ",", " ", 
+                          "alt_"}], "}"}]}], "]"}], ":=", "\n", "\t", 
+                  RowBox[{"TemplateBox", "[", "\n", "\t  ", RowBox[
+                     {RowBox[{"{", RowBox[{RowBox[{"StringTrim", "@", 
+                          "src"}], ",", " ", "alt", ",", " ", RowBox[
+                          {"ToBoxes", "[", "alt", "]"}]}], "}"}], ",", "\n", 
+                      "\t  ", "\"LinkedImage\"", ",", "\n", "\t  ", 
                       RowBox[{"DisplayFunction", ":>", "\n", "\t    ", 
                         RowBox[{"Function", "[", "\n", "\t      ", RowBox[
                           {"TooltipBox", "[", "\n", "    \t    ", RowBox[

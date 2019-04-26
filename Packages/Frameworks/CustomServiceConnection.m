@@ -481,7 +481,7 @@ customServiceConnectionPrep[
         "$ServiceConnectionInformation"->
           OptionValue@"Information",
         "$ServiceConnectionIcon"->
-          OptionValue@"Icon",
+          OptionValue@"Thumbnail",
         "$ServiceConnectionHelperNames"->
           Verbatim@
             StringRiffle[
@@ -689,7 +689,7 @@ Options[CustomServiceConnection]=
     {
       "ImportFunctions"->{},
       "ProcessFunctions"->{},
-      "Icon"->None
+      "Thumbnail"->None
       },
     Options@customServiceConnectionPrep,
     Options@PacletInfoExpressionBundle
@@ -734,8 +734,8 @@ iCustomServiceConnection[
         OptionValue@"ProcessFunctions",
         FilterRules[
           {
-            "Icon"->
-              Replace[OptionValue@"Icon",
+            "Thumbnail"->
+              Replace[OptionValue@"Thumbnail",
                 {
                   Graphics[e_,o___]:>
                     Graphics[e,ImageSize->24,o],
@@ -758,7 +758,7 @@ iCustomServiceConnection[
       customServicePostProcess[
         dir,
         name,
-        OptionValue["Icon"],
+        OptionValue["Thumbnail"],
         pack,
         ops
         ];

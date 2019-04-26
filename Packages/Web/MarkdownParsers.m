@@ -338,7 +338,7 @@ markdownToCell["CodeBlock", text_]:=
 
 
 markdownToCell["QuoteBlock", text_]:=
-  Cell[prepCellData[text], "Text", "Quote", "Markdown"]
+  Cell[prepCellData[text], "Quote", "Text", "Markdown"]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -386,7 +386,7 @@ markdownToCell["ItalicBold", items_]:=
 
 
 markdownToCell["Delimiter", _]:=
-  Cell["", "PageBreak", "Delimiter", "Markdown",
+  Cell["", "Delimiter", "PageBreak", "Markdown",
     PageBreakAbove->False,
     PageBreakBelow->False,
     PageBreakWithin->False
@@ -408,7 +408,7 @@ markdownToCell["Code", text_]:=
 
 
 markdownToCell["XML", xml_]:=
-  Cell[ExportString[xml, "XML"], "Text", "XML", "Markdown"];
+  Cell[ExportString[xml, "XML"], "RawMarkdown", "Text", "Markdown"];
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -417,7 +417,8 @@ markdownToCell["XML", xml_]:=
 
 
 markdownToCell["Link", {link_, body_}]:=
-  ButtonBox[prepCell[body], BaseStyle->"Hyperlink", ButtonData->{URL[link], None}]
+  ButtonBox[prepCell[body], 
+    BaseStyle->"Hyperlink", ButtonData->{URL[StringTrim@link], None}]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -427,7 +428,7 @@ markdownToCell["Link", {link_, body_}]:=
 
 markdownToCell["Image", {src_, alt_}]:=
   TemplateBox[
-    {src, alt, ToBoxes[alt]},
+    {StringTrim@src, alt, ToBoxes[alt]},
     "LinkedImage",
     DisplayFunction:>
       Function[

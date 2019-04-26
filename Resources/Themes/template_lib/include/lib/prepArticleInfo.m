@@ -1,3 +1,5 @@
+(* ::Package:: *)
+
 Function[
   $$["ArticleInfoItems"]=
     Lookup[$$,
@@ -13,7 +15,7 @@ Function[
   $$["Article"]=
     If[AssociationQ@#,
       #,
-      Merge[Select[#, OptionQ], Last]
+      Merge[Select[#, AssociationQ[#]||OptionQ[#]&], Last]
       ];
   $$["Date"]=
     Which[
@@ -60,4 +62,5 @@ Function[
       True,
         None
       ];
+  $$
   ]

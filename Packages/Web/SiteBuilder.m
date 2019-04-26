@@ -1984,25 +1984,37 @@ WebSiteTemplateGatherArgs[fileContent_, args_]:=
         "SiteURL"->siteURL,
         Which[
           StringQ@url,
-            "URL"->url,
+            "URL"->StringReplace[Whitespace->"-"]@url,
           StringQ@slug,
             "URL"->
-              If[StringQ[fp],
-                URLBuild@
-                  Append[Most@FileNameSplit[fp], WebSiteBuildAttachExtension@slug],
-                WebSiteBuildAttachExtension@slug
-                ],
+              StringReplace[Whitespace->"-"]@
+                If[StringQ[fp],
+                  URLBuild@
+                    Append[
+                  Most@FileNameSplit[fp], 
+                  WebSiteBuildAttachExtension@slug
+                  ],
+                  WebSiteBuildAttachExtension@slug
+                  ],
           StringQ@title,
-            "URL"->If[StringQ[fp],
-                URLBuild@
-                  Append[Most@FileNameSplit[fp], WebSiteBuildAttachExtension@title],
-                WebSiteBuildAttachExtension@title
-                ],
+            "URL"->
+              StringReplace[Whitespace->"-"]@
+                If[StringQ[fp],
+                  URLBuild@
+                    Append[
+                  Most@FileNameSplit[fp],
+                  WebSiteBuildAttachExtension@title
+                  ],
+                  WebSiteBuildAttachExtension@title
+                  ],
           StringQ[fp],
             "URL"->
               URLBuild@
-                Append[Most@FileNameSplit[fp], 
-                  WebSiteBuildAttachExtension@FileNameTake@fp],
+                StringReplace[Whitespace->"-"]@
+                  Append[
+                    Most@FileNameSplit[fp], 
+                    WebSiteBuildAttachExtension@FileNameTake@fp
+                ],
           True,  
             Nothing
           ],

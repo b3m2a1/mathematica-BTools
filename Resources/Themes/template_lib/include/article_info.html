@@ -1,19 +1,28 @@
-<div class="article-info">
+<wolfram:comment> A hack to preload some data for use later </wolfram:comment>
+<wolfram:if test='
+  $$templateLib["prepArticleInfo"][#Article];
+  $$["BadInfo"] = !ListQ[$$["ArticleInfoItems"]];
+  $$["UseKey"] = MemberQ[$$["ArticleInfoItems"], #]&;
+  False
+  '>
+</wolfram:if>
 
+<div class="article-info">
   <wolfram:which>
-  <wolfram:if test='$$templateLib["prepArticleInfo"][#Article];(!ListQ[$$["ArticleInfoItems"]]||MemberQ[$$["ArticleInfoItems"], "Modified"])&&StringQ[$$["Modified"]]'>
+  <wolfram:if
+    test='($$["BadInfo"]||$$["UseKey"]["Modified"])&&StringQ[$$["Modified"]]'>
     <span class="modified">
       <i class="fa fa-calendar"></i><time datetime='<*$$["Modified"]*>'> <*$$["Modified"]*> </time>
     </span>&nbsp;
   </wolfram:if>
-  <wolfram:if test='(!ListQ[$$["ArticleInfoItems"]]||MemberQ[$$["ArticleInfoItems"], "Date"])&&StringQ[$$["Date"]]'>
+  <wolfram:if test='($$["BadInfo"]||$$["UseKey"]["Date"])&&StringQ[$$["Date"]]'>
     <span class="published">
       <i class="fa fa-calendar"></i><time datetime='<*$$["Date"]*>'> <*$$["Date"]*> </time>
     </span>&nbsp;
   </wolfram:if>
   </wolfram:which>
 
-  <wolfram:if test='(!ListQ[$$["ArticleInfoItems"]]||MemberQ[$$["ArticleInfoItems"], "Author"])&&ListQ[$$["Authors"]&&Length[$$["Authors"]]>0]'>
+  <wolfram:if test='($$["BadInfo"]||$$["UseKey"]["Author"])&&ListQ[$$["Authors"]]&&Length[$$["Authors"]]>0'>
     <span class="authors">
         <i class="fa fa-user"></i>
         <wolfram:sequence values='$$["Authors"]' slot="Author">
@@ -22,7 +31,7 @@
     </span>&nbsp;
   </wolfram:if>
 
-  <wolfram:if test='(!ListQ[$$["ArticleInfoItems"]]||MemberQ[$$["ArticleInfoItems"], "Category"])&&ListQ[$$["Categories"]&&Length[$$["Categories"]]>0]'>
+  <wolfram:if test='($$["BadInfo"]||$$["UseKey"]["Category"])&&ListQ[$$["Categories"]]&&Length[$$["Categories"]]>0'>
     <span class="categories">
       <i class="fa fa-folder"></i>
       <wolfram:sequence values='$$["Categories"]' slot="Category">
@@ -31,7 +40,7 @@
     </span>&nbsp;
   </wolfram:if>
 
-  <wolfram:if test='(!ListQ[$$["ArticleInfoItems"]]||MemberQ[$$["ArticleInfoItems"], "Tags"])&&ListQ[$$["Tags"]&&Length[$$["Tags"]]>0]'>
+  <wolfram:if test='(($$["BadInfo"]||$$["UseKey"]["Tags"]))&&ListQ[$$["Tags"]]&&Length[$$["Tags"]]>0'>
     <span class="tags">
       <i class="fa fa-tags"></i>
       <wolfram:sequence values='$$["Tags"]' slot="Tag">
