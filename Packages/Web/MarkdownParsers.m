@@ -280,13 +280,25 @@ MarkdownToXML[s_String, ops:OptionsPattern[]]:=
 
 
 
+$textForms=_String|_StyleBox|_ButtonBox|_Cell|_TextData;
+
+
 prepCellData//Clear
 prepCellData[s_String]:=s;
 prepCellData[{s_String}]:=s;
-prepCellData[e_]:=TextData[e];
+prepCellData[l:{$textForms...}]:=TextData[l];
+prepCellData[l_List]:=prepCellData[prepCellData/@l];
+prepCellData[b_BoxData]:=Cell[b];
+prepCellData[e:$textForms]:=e;
+prepCellData[e:Except[$textForms]]:=BoxData[e];
+
+
 prepCell//Clear;
 prepCell[{l:Except[_List]}]:=l;
-prepCell[l_List]:=Cell[TextData[l]];
+prepCell[l:{$textForms..}]:=Cell[TextData[l]];
+prepCell[l:_List]:=prepCell[prepCell/@l];
+prepCell[e:$textForms]:=e;
+prepCell[e:Except[_List]]:=Cell[BoxData@e];
 prepCell[e_]:=e;
 
 
@@ -408,7 +420,10 @@ markdownToCell["Code", text_]:=
 
 
 markdownToCell["XML", xml_]:=
-  Cell[ExportString[xml, "XML"], "RawMarkdown", "Text", "Markdown"];
+  Cell[
+    TextData@ExportString[xml, "HTMLFragment"], 
+    "RawMarkdown", "Text", "Markdown"
+    ];
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -418,7 +433,8 @@ markdownToCell["XML", xml_]:=
 
 markdownToCell["Link", {link_, body_}]:=
   ButtonBox[prepCell[body], 
-    BaseStyle->"Hyperlink", ButtonData->{URL[StringTrim@link], None}]
+    BaseStyle->"Hyperlink", 
+    ButtonData->{URL[Quiet@StringTrim[link]], None}]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -428,13 +444,13 @@ markdownToCell["Link", {link_, body_}]:=
 
 markdownToCell["Image", {src_, alt_}]:=
   TemplateBox[
-    {StringTrim@src, alt, ToBoxes[alt]},
+    {src, alt, ToBoxes[alt]},
     "LinkedImage",
-    DisplayFunction:>
+    DisplayFunction->
       Function[
         TooltipBox[
           DynamicBox[
-            ToBoxes@Refresh[Import[#], None],
+            ToBoxes@Refresh[Import[StringTrim@#], None],
             SingleEvaluation->True
             ],
           #3

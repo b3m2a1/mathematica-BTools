@@ -429,7 +429,10 @@ markdownPostProcess[postProcessor_][
         2
         ]
     },
-    Sow[{"ImageRefLink", StringTrim[First@bits, (Whitespace|"")~~"["]}->Last@bits];
+    Sow[
+      {"ImageRefLink", StringTrim[First@bits, (Whitespace|"")~~"["]}->Last@bits,
+      "RefLinks"
+      ];
     Nothing
     ];
 markdownPostProcess[postProcessor_][
@@ -456,8 +459,10 @@ markdownPostProcess[postProcessor_][t_, text_String]:=
 
 
 
-$hashKeyLH="-hash-!!!";
-$hashKeyRH="!!!-hash-";
+$hashKeyLH=
+  FromCharacterCode[RandomInteger[{1000, 5000}, 8]];
+$hashKeyRH=
+  FromCharacterCode[RandomInteger[{1000, 5000}, 8]];
 
 
 makeTempHashKey[h_]:=
@@ -709,16 +714,18 @@ badLinkChars="!"(*|"*"|"_"*);
 
 
 $markdownParseLink=
-  l:(o:Except[badLinkChars]|StartOfLine|StartOfString)~~
-    link:("["~~Except["\n"]..~~"]("~~Except[WhitespaceCharacter]..~~")")/;
-      markdownParseValidateLink[link]:>
+  l:Shortest[
+    (o:Except[badLinkChars]|StartOfLine|StartOfString)~~
+      link:("["~~Except["\n"]..~~"]("~~Except[WhitespaceCharacter]..~~")")
+      ]/;markdownParseValidateLink[link]:>
         makeHashRef[o, "Link", link]
 
 
 $markdownParseLinkRef=
-  l:(o:Except[badLinkChars]|StartOfLine|StartOfString)~~
-    link:("["~~Except["\n"]..~~"]["~~Except[WhitespaceCharacter]..~~"]")/;
-      markdownParseValidateLink2[link]:>
+  l:Shortest[
+    (o:Except[badLinkChars]|StartOfLine|StartOfString)~~
+      link:("["~~Except["\n"]..~~"]["~~Except[WhitespaceCharacter]..~~"]")
+    ]/;markdownParseValidateLink2[link]:>
         makeHashRef[o, "LinkRef", link]
 
 
@@ -728,7 +735,7 @@ $markdownParseLinkRef=
 
 
 $markdownParseImage=
-  img:("!["~~Except["\n"]..~~"]("~~Except[WhitespaceCharacter]..~~")")/;
+  img:Shortest[("!["~~Except["\n"]..~~"]("~~Except[WhitespaceCharacter]..~~")")]/;
     markdownParseValidateLink[img]:>
     makeHashRef["Image"->img]
 
@@ -739,7 +746,7 @@ $markdownParseImage=
 
 
 $markdownParseImageRef=
-  img:("!["~~Except["]"]..~~"]["~~Except["]"]..~~"]"):>
+  img:Shortest[("!["~~Except["]"]..~~"]["~~Except["]"]..~~"]")]:>
     makeHashRef["ImageRef"->img]
 
 
@@ -771,15 +778,15 @@ $markdownParseImageRefLink=
 
 
 
+validCodeBlockQ[r_, b_, mid_]:=
+  StringLength[r]==StringLength[b]&&StringCount[mid, "`"]<StringLength[r]
+
+
 $markdownParseCodeLine=
-  Shortest[
     o:(Except["`"]|StartOfLine|StartOfString)~~
       code:(
-        (r:"`"..)~~
-          Except["`"]~~mid___~~(Except["`"]|"")~~
-          (b:"`"..)
-        )/;StringLength[r]==StringLength[b]&&StringCount[mid, "`"]<StringLength[r]
-    ]:>
+        (r:"`"..)~~Except["`"]~~mid___~~(Except["`"]|"")~~(b:"`"..)
+        )/;validCodeBlockQ[r, b, mid]:>
     makeHashRef[o, "CodeLine", code]
 
 
@@ -912,12 +919,12 @@ $markdownParseElementRules=
   {
     $markdownParseXMLBlock,
     $markdownParseXMLLine,
+    $markdownParseCodeLine,
     $markdownParseLink,
     $markdownParseLinkRef,
     $markdownParseImageRef,
     $markdownParseImageRefLink,
     $markdownParseImage,
-    $markdownParseCodeLine,
     $markdownParseItalBold,
     $markdownParseMathLine
     };
@@ -969,9 +976,14 @@ markdownParsePrep[text_String, rules:_List|Automatic:Automatic, depth_:1]:=
           Replace[rules,
             Automatic:>
               If[depth>1,
-                Complement[$markdownParseBlockRules,
-                  Flatten@List@
-                    Replace[$markdownParseOneTimeBlockRules, Except[_List]->{}]
+                DeleteCases[
+                  $markdownParseBlockRules,
+                  Apply[
+                    Alternatives,
+                    Verbatim/@
+                      Flatten@List@
+                        Replace[$markdownParseOneTimeBlockRules, Except[_List]->{}]
+                 ]
                   ],
                 $markdownParseBlockRules
                 ]
@@ -1021,16 +1033,16 @@ markdownPrepRecursive[baseData_, rules_, depth_:1]:=
 
 markdownParseReinsertRefs[eeex_]:=
   Module[{reap, oppp, expr, ops},
-    reap=Reap[eeex];
+    reap=Reap[eeex, "RefLinks"];
     {expr, ops}=reap;
     oppp=Association@Cases[Flatten@ops, _Rule|_RuleDelayed];
-    expr/.
-    {
-      "ImageRefLink"[x_]:>
-        Lookup[oppp, Key@{"ImageRefLink", x}, x],
-      "RefLink"[x_]:>
-        Lookup[oppp, Key@{"ImageRefLink", x}, x]
-      }
+    expr//.
+      {
+        "ImageRefLink"[x_]:>
+          Lookup[oppp, Key@{"ImageRefLink", x}, x],
+        "RefLink"[x_]:>
+          Lookup[oppp, Key@{"ImageRefLink", x}, x]
+        }
     ];
 markdownParseReinsertRefs~SetAttributes~HoldFirst;
 
@@ -1040,11 +1052,20 @@ markdownParseReinsertRefs~SetAttributes~HoldFirst;
 
 
 
-markdownParseReinsertXML[postProcess_][expr_]:=
+makeXMLBlock//Clear;
+makeXMLBlock[{x_XMLElement}]:=x;
+makeXMLBlock[{x__XMLElement}]:=x;
+makeXMLBlock[e_]:=e;
+
+
+markdownParseReinsertXML[postProcess_]:=
+  Function[Null, imarkdownParseReinsertXML[#, postProcess], HoldAllComplete];
+imarkdownParseReinsertXML[expr_, postProcess_]:=
   Module[{reap, ex, keys, exported, expass, expass2},
     reap=Reap[expr, "XMLExportKeys"];
     keys=Flatten@reap[[2]];
     ex=reap[[1]];
+    Length@keys;
     If[Length@keys>0,
       exported=
         ImportString[
@@ -1076,17 +1097,26 @@ markdownParseReinsertXML[postProcess_][expr_]:=
                 {___, "class"->"hash-cell", "id"->id_, ___}|
                   {___, "id"->id_, "class"->"hash-cell", ___},
                 _
-                ]:>Sequence@@Lookup[expass, id, Echo[id](*Nothing*)]
+                ]:>Sequence@@Lookup[expass, id, "UnprocessedXML"[id](*Nothing*)]
               }
             ]&, 
           expass
           ]; 
-      ex/."XMLToExport"[h_]:>
-        Sequence@@postProcess["XML", Lookup[expass2, h, Echo[h](*Nothing*)]],
-      ex
+      ex//."XMLToExport"[h_]:>
+        postProcess["XML", 
+          makeXMLBlock@Lookup[expass2, h, 
+            XMLElement["unprocessedXML", {"hash"->ToString[h]}, {}]
+            (*Nothing*)
+            ]
+          ],
+      ex//."XMLToExport"[h_]:>
+        postProcess[
+          "XML",
+          XMLElement["unprocessedXML", {"hash"->ToString[h]}, {}]
+          ]
       ]
     ];
-markdownParseReinsertXML~SetAttributes~HoldFirst;
+imarkdownParseReinsertXML~SetAttributes~HoldFirst;
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1149,22 +1179,32 @@ markdownParse[postProcessor_][
     {
      $iteration = Replace[$iteration, Except[_Integer]->0] + 1,
       $markdownParseBlockRules=
-        Complement[
+        DeleteCases[
           DeleteDuplicates@Flatten@{
             Join[extraBlockRules,  $markdownParseBlockRules],
             oneTimeBlockRules
             },
-        Flatten@List@Replace[$markdownParseOneTimeBlockRules, Except[_List]->{}]
+        Apply[
+           Alternatives,
+           Verbatim/@
+             Flatten@List@
+               Replace[$markdownParseOneTimeElementRules, Except[_List]->{}]
+           ]
          ],
       $markdownParseOneTimeBlockRules=
         oneTimeBlockRules,
       $markdownParseElementRules=
-        Complement[
+        DeleteCases[
           DeleteDuplicates@Flatten@{
               Join[extraElementRules, $markdownParseElementRules],
               oneTimeElementRules
               },
-         Flatten@List@Replace[$markdownParseOneTimeElementRules, Except[_List]->{}]
+         Apply[
+           Alternatives,
+           Verbatim/@
+             Flatten@List@
+               Replace[$markdownParseOneTimeElementRules, Except[_List]->{}]
+           ]
          ],
       $markdownParseOneTimeElementRules=
         oneTimeElementRules
