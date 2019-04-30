@@ -8,6 +8,29 @@ Notebook[{Cell[CellGroupData[{Cell["MarkdownParser", "CodeSection",
       "CodeInput"], Cell[BoxData[RowBox[
         {RowBox[{"Begin", "[", "\"`Private`\"", "]"}], ";"}]], 
       "InputSection"], Cell[CellGroupData[
+       {Cell["\[LeftCeiling]Utils\[RightFloor]", "CodeSubsection", 
+         Evaluatable -> True], Cell[BoxData[
+          {RowBox[{RowBox[{"mdPostWrap", "//", "Clear"}], ";"}], "\n", 
+           RowBox[{RowBox[{RowBox[{"mdPostWrap", "[", RowBox[{"processor_", 
+                   ",", " ", "fallback_"}], "]"}], "[", "args___", "]"}], 
+             ":=", "\n", "  ", RowBox[{"Replace", "[", RowBox[
+                {RowBox[{"processor", "[", "args", "]"}], ",", " ", "\n", 
+                 "    ", RowBox[{"{", "\n", "      ", RowBox[
+                    {RowBox[{RowBox[{"Automatic", "|", RowBox[{"HoldPattern", 
+                          "[", "_processor", "]"}]}], ":>", "\n", "        ", 
+                       RowBox[{"fallback", "[", "args", "]"}]}], ",", "\n", 
+                     "      ", RowBox[{RowBox[{RowBox[{"(", RowBox[
+                          {"Automatic", "|", "processor"}], ")"}], "[", 
+                         RowBox[{"a_", ",", " ", "b_"}], "]"}], 
+                       "\[RuleDelayed]", "\n", "        ", RowBox[
+                        {"fallback", "[", RowBox[{"a", ",", " ", RowBox[
+                          {"Replace", "[", RowBox[{"b", ",", " ", RowBox[
+                          {RowBox[{"Automatic", "[", RowBox[{"c_", ",", " ", 
+                          "d_"}], "]"}], "\[RuleDelayed]", RowBox[
+                          {"fallback", "[", RowBox[{"c", ",", " ", "d"}], 
+                          "]"}]}], ",", " ", "1"}], "]"}]}], "]"}]}]}], "\n", 
+                   "      ", "}"}]}], "\n", "    ", "]"}]}]}], "CodeInput"]}, 
+       Closed]], Cell[CellGroupData[
        {Cell["\[LeftCeiling]MarkdownToXML\[RightFloor]", "CodeSubsection", 
          Evaluatable -> True], Cell[CellGroupData[
           {Cell["\[LeftCeiling]markdownToXMLElement\[RightFloor]", 
@@ -203,8 +226,9 @@ Notebook[{Cell[CellGroupData[{Cell["MarkdownParser", "CodeSection",
                       " ", "text_String"}], "]"}], ":=", "\n", "\t", 
                   RowBox[{"XMLElement", "[", RowBox[{"t", ",", " ", 
                       RowBox[{"{", "}"}], ",", " ", RowBox[{"{", "text", 
-                        "}"}]}], "]"}]}]], "CodeInput"]}, Closed]]}, Open]], 
-        Cell[CellGroupData[{Cell["\[LeftCeiling]MarkdownToXML\[RightFloor]", 
+                        "}"}]}], "]"}]}]], "CodeInput"]}, Closed]]}, 
+          Closed]], Cell[CellGroupData[
+          {Cell["\[LeftCeiling]MarkdownToXML\[RightFloor]", 
             "CodeSubsubsection", Evaluatable -> True], 
            Cell[BoxData[RowBox[{"MarkdownToXML", "//", "Clear"}]], 
             "CodeInput"], Cell[BoxData[{RowBox[{RowBox[{RowBox[{"Options", 
@@ -216,24 +240,29 @@ Notebook[{Cell[CellGroupData[{Cell["MarkdownParser", "CodeSection",
                           {"{", RowBox[{"\"meta\"", ",", " ", "\"style\"", 
                           ",", " ", "\"link\"", ",", " ", "\"title\""}], 
                           "}"}]}], ",", "\n", "        ", RowBox[
-                          {"\"PostProcessor\"", "\[Rule]", 
-                          "markdownToXMLElement"}]}], "\n", "        ", 
-                          "}"}], ",", "\n", "  ", "    ", RowBox[{"Options", 
-                          "[", "MarkdownParse", "]"}]}], "\n", "      ", 
-                      "]"}]}]}], ";"}], "\n", RowBox[{RowBox[
-                 {RowBox[{"MarkdownToXML", "[", RowBox[{"s_String", ",", " ", 
-                      RowBox[{"ops", ":", RowBox[{"OptionsPattern", "[", 
-                          "]"}]}]}], "]"}], ":=", "\n", "  ", RowBox[
-                   {"With", "[", RowBox[{RowBox[{"{", "\n", "      ", 
-                        RowBox[{"he", "=", RowBox[{"OptionValue", "[", 
-                          "\"HeaderElements\"", "]"}]}], "\n", "      ", 
+                          {"\"PostProcessor\"", "\[Rule]", "Automatic"}]}], 
+                          "\n", "        ", "}"}], ",", "\n", "      ", 
+                        RowBox[{"Options", "[", "MarkdownParse", "]"}]}], 
+                      "\n", "      ", "]"}]}]}], ";"}], "\n", 
+              RowBox[{RowBox[{RowBox[{"MarkdownToXML", "[", RowBox[
+                     {"s_String", ",", " ", RowBox[{"ops", ":", RowBox[
+                         {"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", 
+                  "\n", "  ", RowBox[{"With", "[", RowBox[{RowBox[{"{", "\n", 
+                        "      ", RowBox[{"he", "=", RowBox[{"OptionValue", 
+                          "[", "\"HeaderElements\"", "]"}]}], "\n", "      ", 
                         "}"}], ",", "\n", "    ", RowBox[{"Replace", "[", 
                         "\n", "      ", RowBox[{RowBox[{"GatherBy", "[", 
                           "\n", "        ", RowBox[{RowBox[{"MarkdownParse", 
                           "[", "\n", "          ", RowBox[{"s", ",", "\n", 
                           "          ", RowBox[{"FilterRules", "[", "\n", 
                           "            ", RowBox[{RowBox[{"{", "\n", 
-                          "              ", RowBox[{"ops", ",", "\n", 
+                          "              ", RowBox[{RowBox[{
+                          "\"PostProcessor\"", "\[Rule]", "\n", 
+                          "                ", RowBox[{"mdPostWrap", "[", 
+                          RowBox[{RowBox[{"OptionValue", "[", 
+                          "\"PostProcessor\"", "]"}], ",", " ", 
+                          "markdownToXMLElement"}], "]"}]}], ",", "\n", 
+                          "              ", "ops", ",", "\n", 
                           "              ", RowBox[{"Options", "[", 
                           "MarkdownToXML", "]"}]}], "\n", "              ", 
                           "}"}], ",", "\n", "            ", RowBox[
@@ -326,7 +355,7 @@ Notebook[{Cell[CellGroupData[{Cell["MarkdownParser", "CodeSection",
                     "\n", "  ", RowBox[{"MathLink`CallFrontEnd", "[", 
                       RowBox[{"FrontEnd`ReparseBoxStructurePacket", "[", 
                         "code", "]"}], "]"}]}], ";"}]], "CodeInput"]}, 
-             Open]], Cell[CellGroupData[
+             Closed]], Cell[CellGroupData[
              {Cell["\[LeftCeiling]Meta\[RightFloor]", "CodeSubsubsubsection", 
                Evaluatable -> True, CellChangeTimes -> 
                 {{3.7125915870629597*^9, 3.712591587606221*^9}}], 
@@ -473,7 +502,7 @@ Notebook[{Cell[CellGroupData[{Cell["MarkdownParser", "CodeSection",
                           RowBox[{"xml", ",", " ", "\"HTMLFragment\""}], 
                           "]"}]}], ",", " ", "\n", "    ", "\"RawMarkdown\"", 
                         ",", " ", "\"Text\"", ",", " ", "\"Markdown\""}], 
-                      "\n", "    ", "]"}]}], ";"}]], "CodeInput"]}, Open]], 
+                      "\n", "    ", "]"}]}], ";"}]], "CodeInput"]}, Closed]], 
            Cell[CellGroupData[{Cell["\[LeftCeiling]Hyperlink\[RightFloor]", 
                "CodeSubsubsubsection", Evaluatable -> True, 
                CellChangeTimes -> {{3.7125852658153553*^9, 
@@ -488,7 +517,7 @@ Notebook[{Cell[CellGroupData[{Cell["MarkdownParser", "CodeSection",
                         RowBox[{"{", RowBox[{RowBox[{"URL", "[", RowBox[
                           {"Quiet", "@", RowBox[{"StringTrim", "[", "link", 
                           "]"}]}], "]"}], ",", " ", "None"}], "}"}]}]}], 
-                    "]"}]}]], "CodeInput"]}, Open]], 
+                    "]"}]}]], "CodeInput"]}, Closed]], 
            Cell[CellGroupData[{Cell["\[LeftCeiling]Img\[RightFloor]", 
                "CodeSubsubsubsection", Evaluatable -> True], Cell[BoxData[
                 RowBox[{RowBox[{"markdownToCell", "[", RowBox[{"\"Image\"", 
@@ -520,13 +549,45 @@ Notebook[{Cell[CellGroupData[{Cell["MarkdownParser", "CodeSection",
                     RowBox[{"[", "1", "]"}], "]"}]}]], "CodeInput"]}, 
              Closed]], Cell[CellGroupData[
              {Cell["\[LeftCeiling]Text\[RightFloor]", "CodeSubsubsubsection", 
-               Evaluatable -> True], Cell[BoxData[RowBox[
-                 {RowBox[{"markdownToCell", "[", RowBox[{"\"Text\"", ",", 
-                      " ", "e_"}], "]"}], ":=", "\n", "  ", RowBox[
-                   {"Cell", "[", RowBox[{RowBox[{"prepCellData", "[", "e", 
-                        "]"}], ",", " ", "\"Text\"", ",", " ", 
-                      "\"Markdown\""}], "]"}]}]], "CodeInput"]}, Closed]], 
-           Cell[CellGroupData[{Cell["\[LeftCeiling]Fallback\[RightFloor]", 
+               Evaluatable -> True], Cell[BoxData[{RowBox[
+                  {RowBox[{RowBox[{"markdownToCell", "[", RowBox[{"\"Text\"", 
+                         ",", " ", "e_String"}], "]"}], ":=", "\n", "  ", 
+                     RowBox[{"Cell", "[", RowBox[{RowBox[{"prepCellData", 
+                          "[", RowBox[{"StringTrim", "[", "e", "]"}], "]"}], 
+                         ",", " ", "\"Text\"", ",", " ", "\"Markdown\""}], 
+                       "]"}]}], ";"}], "\n", RowBox[{RowBox[{RowBox[
+                      {"markdownToCell", "[", RowBox[{"\"Text\"", ",", " ", 
+                         RowBox[{"{", RowBox[{"a_String", ",", " ", "r__", 
+                          ",", " ", "b_String"}], "}"}]}], "]"}], ":=", "\n", 
+                     "  ", RowBox[{"Cell", "[", RowBox[{RowBox[
+                          {"prepCellData", "[", RowBox[{"{", RowBox[
+                          {RowBox[{"StringTrim", "[", "a", "]"}], ",", " ", 
+                          "r", ",", " ", RowBox[{"StringTrim", "[", "b", 
+                          "]"}]}], "}"}], "]"}], ",", " ", "\"Text\"", ",", 
+                         " ", "\"Markdown\""}], "]"}]}], ";"}], "\n", 
+                 RowBox[{RowBox[{RowBox[{"markdownToCell", "[", RowBox[
+                        {"\"Text\"", ",", " ", RowBox[{"{", RowBox[
+                          {"a_String", ",", " ", "r__"}], "}"}]}], "]"}], 
+                     ":=", "\n", "  ", RowBox[{"Cell", "[", RowBox[
+                        {RowBox[{"prepCellData", "[", RowBox[{"{", RowBox[
+                          {RowBox[{"StringTrim", "[", "a", "]"}], ",", " ", 
+                          "r"}], "}"}], "]"}], ",", " ", "\"Text\"", ",", 
+                         " ", "\"Markdown\""}], "]"}]}], ";"}], "\n", 
+                 RowBox[{RowBox[{RowBox[{"markdownToCell", "[", RowBox[
+                        {"\"Text\"", ",", " ", RowBox[{"{", RowBox[{"r__", 
+                          ",", " ", "b_String"}], "}"}]}], "]"}], ":=", "\n", 
+                     "  ", RowBox[{"Cell", "[", RowBox[{RowBox[
+                          {"prepCellData", "[", RowBox[{"{", RowBox[{"r", 
+                          ",", " ", RowBox[{"StringTrim", "[", "b", "]"}]}], 
+                          "}"}], "]"}], ",", " ", "\"Text\"", ",", " ", 
+                         "\"Markdown\""}], "]"}]}], ";"}], "\n", 
+                 RowBox[{RowBox[{RowBox[{"markdownToCell", "[", RowBox[
+                        {"\"Text\"", ",", " ", "e_"}], "]"}], ":=", "\n", 
+                     "  ", RowBox[{"Cell", "[", RowBox[{RowBox[
+                          {"prepCellData", "@", "e"}], ",", " ", "\"Text\"", 
+                         ",", " ", "\"Markdown\""}], "]"}]}], ";"}]}], 
+               "CodeInput"]}, Closed]], Cell[CellGroupData[
+             {Cell["\[LeftCeiling]Fallback\[RightFloor]", 
                "CodeSubsubsubsection", Evaluatable -> True], Cell[BoxData[
                 RowBox[{RowBox[{"markdownToCell", "[", RowBox[{"t_", ",", 
                       " ", "text_String"}], "]"}], ":=", "\n", "\t", 
@@ -539,28 +600,37 @@ Notebook[{Cell[CellGroupData[{Cell["MarkdownParser", "CodeSection",
            Cell[BoxData[RowBox[{"MarkdownToNotebook", "//", "Clear"}]], 
             "CodeInput"], Cell[BoxData[{RowBox[{RowBox[{RowBox[{"Options", 
                     "[", "MarkdownToNotebook", "]"}], "=", "\n", "  ", 
-                  RowBox[{"Normal", "@", "\n", "    ", RowBox[{"ReplacePart", 
-                      "[", "\n", "      ", RowBox[{RowBox[{"Association", 
-                          "@", RowBox[{"Options", "[", "MarkdownParse", 
-                          "]"}]}], ",", "\n", "  ", "    ", RowBox[
-                         {"\"PostProcessor\"", "\[Rule]", 
-                          "markdownToCell"}]}], "\n", "      ", "]"}]}]}], 
-                ";"}], "\n", RowBox[{RowBox[{RowBox[{"MarkdownToNotebook", 
-                    "[", RowBox[{"s_String", ",", " ", RowBox[{"ops", ":", 
-                        RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], 
-                  ":=", "\n", "  ", RowBox[{"Notebook", "[", "\n", "    ", 
-                    RowBox[{"Flatten", "@", RowBox[{"List", "@", RowBox[
-                         {"MarkdownParse", "[", "\n", "      ", RowBox[
-                          {"s", ",", "\n", "      ", RowBox[{"FilterRules", 
-                          "[", "\n", "  ", "      ", RowBox[{RowBox[{"{", 
-                          "\n", "  ", "        ", RowBox[{"ops", ",", "\n", 
-                          "          ", RowBox[{"Options", "[", 
-                          "MarkdownToNotebook", "]"}]}], "\n", "          ", 
-                          "}"}], ",", "\n", "  ", "      ", RowBox[
-                          {"Options", "[", "MarkdownParse", "]"}]}], "\n", 
-                          "        ", "]"}]}], "\n", "      ", "]"}]}]}], 
-                    "\n", "   ", "]"}]}], ";"}]}], "CodeInput"]}, Closed]]}, 
-       Open]], Cell[BoxData[RowBox[{RowBox[{"End", "[", "]"}], ";"}]], 
+                  RowBox[{"Join", "[", "\n", "    ", RowBox[{RowBox[
+                       {"Normal", "@", "\n", "      ", RowBox[{"ReplacePart", 
+                          "[", "\n", "  ", "      ", RowBox[{RowBox[
+                          {"Association", "@", RowBox[{"Options", "[", 
+                          "MarkdownParse", "]"}]}], ",", "\n", "  ", "  ", 
+                          "    ", RowBox[{"\"PostProcessor\"", "\[Rule]", 
+                          "Automatic"}]}], "\n", "        ", "]"}]}], ",", 
+                      "\n", "    ", RowBox[{"Options", "[", "Notebook", 
+                        "]"}]}], "\n", "    ", "]"}]}], ";"}], "\n", 
+              RowBox[{RowBox[{RowBox[{"MarkdownToNotebook", "[", RowBox[
+                     {"s_String", ",", " ", RowBox[{"ops", ":", RowBox[
+                         {"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", 
+                  "\n", "  ", RowBox[{"Notebook", "[", "\n", "    ", 
+                    RowBox[{RowBox[{"Flatten", "@", RowBox[{"List", "@", 
+                          RowBox[{"MarkdownParse", "[", "\n", "      ", 
+                          RowBox[{"s", ",", "\n", "      ", RowBox[
+                          {"FilterRules", "[", "\n", "        ", RowBox[
+                          {RowBox[{"{", "\n", "          ", RowBox[{RowBox[
+                          {"\"PostProcessor\"", "\[Rule]", "\n", 
+                          "            ", RowBox[{"mdPostWrap", "[", RowBox[
+                          {RowBox[{"OptionValue", "[", "\"PostProcessor\"", 
+                          "]"}], ",", " ", "markdownToCell"}], "]"}]}], ",", 
+                          "\n", "          ", "ops"}], "\n", "          ", 
+                          "}"}], ",", "\n", "        ", RowBox[{"Options", 
+                          "[", "MarkdownParse", "]"}]}], "\n", "        ", 
+                          "]"}]}], "\n", "      ", "]"}]}]}], ",", "\n", 
+                      "   ", RowBox[{"FilterRules", "[", RowBox[{RowBox[
+                          {"{", "ops", "}"}], ",", " ", RowBox[{"Options", 
+                          "[", "Notebook", "]"}]}], "]"}]}], "\n", "   ", 
+                    "]"}]}], ";"}]}], "CodeInput"]}, Open]]}, Open]], 
+     Cell[BoxData[RowBox[{RowBox[{"End", "[", "]"}], ";"}]], 
       "InputSection"]}, Open]], Cell["", "SectionSeparator"]}, 
  WindowSize -> {808, 755}, WindowMargins -> {{198, Automatic}, 
    {Automatic, 40}}, FrontEndVersion -> 

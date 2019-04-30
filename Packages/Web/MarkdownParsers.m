@@ -12,6 +12,23 @@ Begin["`Private`"];
 
 
 (* ::Subsection:: *)
+(*Utils*)
+
+
+
+mdPostWrap//Clear;
+mdPostWrap[processor_, fallback_][args___]:=
+  Replace[processor[args], 
+    {
+      Automatic|HoldPattern[_processor]:>
+        fallback[args],
+      (Automatic|processor)[a_, b_]:>
+        fallback[a, Replace[b, Automatic[c_, d_]:>fallback[c, d], 1]]
+      }
+    ]
+
+
+(* ::Subsection:: *)
 (*MarkdownToXML*)
 
 
@@ -221,7 +238,7 @@ Options[MarkdownToXML]=
     Join[
       {
         "HeaderElements"->{"meta", "style", "link", "title"},
-        "PostProcessor"->markdownToXMLElement
+        "PostProcessor"->Automatic
         },
       Options[MarkdownParse]
       ];
@@ -235,6 +252,8 @@ MarkdownToXML[s_String, ops:OptionsPattern[]]:=
           s,
           FilterRules[
             {
+              "PostProcessor"->
+                mdPostWrap[OptionValue["PostProcessor"], markdownToXMLElement],
               ops,
               Options[MarkdownToXML]
               },
@@ -473,8 +492,16 @@ markdownToCell["MathLine", text_String]:=
 
 
 
+markdownToCell["Text", e_String]:=
+  Cell[prepCellData[StringTrim[e]], "Text", "Markdown"];
+markdownToCell["Text", {a_String, r__, b_String}]:=
+  Cell[prepCellData[{StringTrim[a], r, StringTrim[b]}], "Text", "Markdown"];
+markdownToCell["Text", {a_String, r__}]:=
+  Cell[prepCellData[{StringTrim[a], r}], "Text", "Markdown"];
+markdownToCell["Text", {r__, b_String}]:=
+  Cell[prepCellData[{r, StringTrim[b]}], "Text", "Markdown"];
 markdownToCell["Text", e_]:=
-  Cell[prepCellData[e], "Text", "Markdown"]
+  Cell[prepCellData@e, "Text", "Markdown"];
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -495,23 +522,28 @@ MarkdownToNotebook//Clear
 
 
 Options[MarkdownToNotebook]=
-  Normal@
-    ReplacePart[
-      Association@Options[MarkdownParse],
-      "PostProcessor"->markdownToCell
-      ];
+  Join[
+    Normal@
+      ReplacePart[
+        Association@Options[MarkdownParse],
+        "PostProcessor"->Automatic
+        ],
+    Options[Notebook]
+    ];
 MarkdownToNotebook[s_String, ops:OptionsPattern[]]:=
   Notebook[
     Flatten@List@MarkdownParse[
       s,
       FilterRules[
         {
-          ops,
-          Options[MarkdownToNotebook]
+          "PostProcessor"->
+            mdPostWrap[OptionValue["PostProcessor"], markdownToCell],
+          ops
           },
         Options[MarkdownParse]
         ]
-      ]
+      ],
+   FilterRules[{ops}, Options[Notebook]]
    ];
 
 

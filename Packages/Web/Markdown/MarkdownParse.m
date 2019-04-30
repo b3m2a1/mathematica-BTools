@@ -224,10 +224,7 @@ markdownPostProcess[postProcessor_]["Item", text_String]:=
                       ("* "|"- "|((DigitCharacter..~~". ")))
                     ]
                   ],
-                Join[
-                  $markdownParseElementRules,
-                  $markdownParseOneTimeElementRules
-                  ]
+                "Elements"
                 ]
               ]
           ]&/@lines,
@@ -258,10 +255,7 @@ markdownPostProcess[postProcessor_]["ItalBold", t_]:=
         ],
       markdownParse[postProcessor][
         new,
-        Join[
-          $markdownParseElementRules,
-          $markdownParseOneTimeElementRules
-          ]
+        "Elements"
         ]
       ]
     ]
@@ -346,10 +340,7 @@ markdownPostProcess[postProcessor_][
         StringTrim[Last[bits],")"],
         markdownParse[postProcessor][
           StringTrim[First[bits],"["],
-          Join[
-            $markdownParseElementRules,
-            $markdownParseOneTimeElementRules
-            ]
+          "Elements"
           ]
         }
       ]
@@ -363,13 +354,10 @@ markdownPostProcess[postProcessor_][
   With[{bits=StringSplit[text, "][", 2]},
     postProcessor["Link",
       {
-        "RefLink"@StringTrim[Last[bits],"]"],
+        "RefLink"@StringTrim[Last[bits],"]"|"["],
         markdownParse[postProcessor][
-          StringTrim[First[bits],"["],
-          Join[
-            $markdownParseElementRules,
-            $markdownParseOneTimeElementRules
-            ]
+          StringTrim[First[bits],"["|"]"],
+          "Elements"
           ]
         }
       ]
@@ -621,6 +609,14 @@ $markdownParseDelimiter=
 
 
 
+$markdownParseHeaderFunky=
+  t:Shortest[
+    StartOfLine~~(head:Except["\n"]..)~~"\n"~~
+      (lab:"-"..)~~
+      (Except["\n", WhitespaceCharacter]...)~~EndOfLine
+    ]:>"Header"->(StringRepeat["#", StringLength[lab]]<>head)
+
+
 $markdownParseHeader=
   t:(StartOfLine~~(Whitespace|"")~~Longest["#"..]~~Except["\n"]..):>
     "Header"->t
@@ -646,14 +642,12 @@ $markdownParseQuoteBlock=
 
 
 $markdownParseLineIdentifier=
-  ("* "|"- "|((DigitCharacter..)~~". "))
+  ("* "|"- "|((DigitCharacter..)~~". "));
 
 
 $markdownParseBlankSpaces=  
-  Repeated[
-    ("\n"~~(Except["\n"]..)~~EndOfLine),
-    {0, 1}
-    ]~~("\n\n"|"")
+  Repeated[("\n"~~(Except["\n"]..)~~EndOfLine), {0, 1}]~~
+    ("\n\n"|"");
 
 
 $markdownParseItemLine=
@@ -661,19 +655,15 @@ $markdownParseItemLine=
     (StartOfLine|StartOfString)~~
       (Whitespace?(StringFreeQ["\n"])|"")~~
       $markdownParseLineIdentifier~~
-        Except["\n"]...~~(EndOfLine|EndOfString)
+     (Except["\n"]...)~~(EndOfLine|EndOfString)
     );
 
 
 $markdownParseItemSingle=
-  $markdownParseItemLine~~
-    $markdownParseBlankSpaces;
+  $markdownParseItemLine~~$markdownParseBlankSpaces;
 $markdownParseItemBlock=
-  t:
-    Repeated[
-      $markdownParseItemSingle
-      ]:>
-    "Item"->t
+  t:Repeated[$markdownParseItemSingle]:>
+    ("Item"->t);
 
 
 $markdownParseTwoWhitespaceItemLine=
@@ -685,10 +675,7 @@ $markdownParseTwoWhitespaceItemLine=
 $markdownParseMultiItemBlock=
   t:(
     $markdownParseTwoWhitespaceItemLine~~
-      Repeated[
-        $markdownParseItemSingle~~
-          ("\n\n"|"")
-        ]
+      Repeated[$markdownParseItemSingle~~("\n\n"|"")]
       ):>
     "Item"->t
 
@@ -704,6 +691,8 @@ markdownParseLinkPairedBrackets[o_]:=
 markdownParseValidateLink[o_]:=
   markdownParseLinkPairedBrackets[o]&&
     !markdownParseLinkPairedBrackets[StringSplit[o, "]", 2][[2]]];
+
+
 markdownParseValidateLink2[o_]:=
   StringCount[o, "]["]==1&&
     markdownParseLinkPairedBrackets[o]&&
@@ -726,6 +715,14 @@ $markdownParseLinkRef=
     (o:Except[badLinkChars]|StartOfLine|StartOfString)~~
       link:("["~~Except["\n"]..~~"]["~~Except[WhitespaceCharacter]..~~"]")
     ]/;markdownParseValidateLink2[link]:>
+        makeHashRef[o, "LinkRef", link];
+
+
+$markdownParseLinkRefOther=
+  l:Shortest[
+    (o:Except[badLinkChars]|StartOfLine|StartOfString)~~
+      link:("["~~Except["\n"]..~~"]")
+    ]:>
         makeHashRef[o, "LinkRef", link]
 
 
@@ -905,6 +902,7 @@ $markdownParseBlockRules={
   $markdownParseEndOfStringCodeBlock,
   $markdownParseDelimiter,
   $markdownParseHeader,
+  $markdownParseHeaderFunky,
   $markdownParseItemBlock,
   $markdownParseQuoteBlock
   };
@@ -946,50 +944,74 @@ $markdownParseNewLineElements=
 
 
 
-markdownParsePrep//Clear
-
-
-markdownParsePrep[text_String, rules:_List|Automatic:Automatic, depth_:1]:=
-  With[
+pruneRules[mainSet_, delete_]:=
+  Module[
     {
-      baseData=
+      s1=DeleteDuplicates@mainSet, 
+      s2=DeleteDuplicates@Replace[delete, Except[_List]->{}], 
+      s
+      },
+    s=
+      DeleteCases[
+        s1,
+        Apply[
+          Alternatives,
+          Verbatim/@Flatten@List@s2
+          ]
+        ];
+    s
+    ]
+
+
+markdownParsePrep//Clear
+markdownParsePrep[text_String, 
+  rules:_List|"Elements"|"Blocks"|Automatic:Automatic, depth_:1]:=
+  Module[
+    {
+      ruleList,
+      baseData
+      },
+    ruleList = 
+      Replace[rules,
+            {
+              Automatic|"Blocks":>
+                If[depth>1,
+                  pruneRules[$markdownParseBlockRules, $markdownParseOneTimeBlockRules],
+                  $markdownParseBlockRules
+                  ],
+              "Elements":>
+                If[depth>1,
+                  pruneRules[
+                    $markdownParseElementRules, 
+                    $markdownParseOneTimeElementRules
+                    ],
+                  $markdownParseElementRules
+                  ]
+              }
+            ];
+     baseData = 
         Fold[
           Flatten@
             Replace[
               Replace[#,
                 {
-                  baseText_String:>{baseText},
-                  StringExpression[l__]:>
-                    List[l]
-                  }
+                   baseText_String:>{baseText},
+                   StringExpression[l__]:>
+                     List[l]
+                   }
                 ],
               {
-                baseString_String:>
-                  Replace[
-                    StringReplace[baseString, #2],
-                    StringExpression[l__]:>
-                      List[l]
-                    ]
-                },
+                 baseString_String:>
+                   Replace[
+                     StringReplace[baseString, #2],
+                     StringExpression[l__]:>
+                       List[l]
+                     ]
+                 },
               1]&,
           text,
-          Replace[rules,
-            Automatic:>
-              If[depth>1,
-                DeleteCases[
-                  $markdownParseBlockRules,
-                  Apply[
-                    Alternatives,
-                    Verbatim/@
-                      Flatten@List@
-                        Replace[$markdownParseOneTimeBlockRules, Except[_List]->{}]
-                 ]
-                  ],
-                $markdownParseBlockRules
-                ]
-            ]
-          ]
-        },
+          ruleList
+          ];
       Which[
         StringQ@baseData,
           {baseData},
@@ -1169,7 +1191,7 @@ markdownParse//Clear
 
 markdownParse[postProcessor_][
   text_String,
-  rules:_List|Automatic:Automatic,
+  rules:_List|"Blocks"|"Elements"|Automatic:Automatic,
   extraBlockRules:_List:{},
   extraElementRules:_List:{},
   oneTimeBlockRules:_List:{},
@@ -1179,33 +1201,25 @@ markdownParse[postProcessor_][
     {
      $iteration = Replace[$iteration, Except[_Integer]->0] + 1,
       $markdownParseBlockRules=
-        DeleteCases[
-          DeleteDuplicates@Flatten@{
-            Join[extraBlockRules,  $markdownParseBlockRules],
-            oneTimeBlockRules
-            },
-        Apply[
-           Alternatives,
-           Verbatim/@
-             Flatten@List@
-               Replace[$markdownParseOneTimeElementRules, Except[_List]->{}]
-           ]
-         ],
+        pruneRules[
+          Flatten@{
+           oneTimeBlockRules,
+            Join[extraBlockRules, $markdownParseBlockRules]
+            }, 
+          $markdownParseOneTimeBlockRules
+          ],
+     (* we cache them now so they'll be removed next round *)
       $markdownParseOneTimeBlockRules=
         oneTimeBlockRules,
       $markdownParseElementRules=
-        DeleteCases[
-          DeleteDuplicates@Flatten@{
-              Join[extraElementRules, $markdownParseElementRules],
-              oneTimeElementRules
-              },
-         Apply[
-           Alternatives,
-           Verbatim/@
-             Flatten@List@
-               Replace[$markdownParseOneTimeElementRules, Except[_List]->{}]
-           ]
+        pruneRules[
+          Flatten@{
+            oneTimeElementRules,
+            Join[extraElementRules, $markdownParseElementRules]
+            },
+         $markdownParseOneTimeElementRules
          ],
+     (* we cache them now so they'll be removed next round *)
       $markdownParseOneTimeElementRules=
         oneTimeElementRules
       },
@@ -1260,7 +1274,7 @@ recursiveParseMarkdown[postProcessor_][string_]:=
     "Text",
     DeleteCases[_String?(StringMatchQ[Whitespace])]@
       Flatten@List@
-        markdownParse[postProcessor][string, $markdownParseElementRules]
+        markdownParse[postProcessor][string, "Elements"]
     ]
 
 

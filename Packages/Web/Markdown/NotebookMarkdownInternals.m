@@ -2042,6 +2042,7 @@ markdownCodeCellIOReformatPreClean[pathInfo_, e_, style_]:=
               {
                 "PlainText"->"Text",
                 "InputText"->"Input",
+                "Package"->"Code",
                 _->Last@Flatten@{style}
                 }
               ]
@@ -2409,7 +2410,7 @@ notebookToMarkdownCodeStringExport[s_String]:=
       ToExpression@s,
     StringStartsQ[s, "\""], 
       FrontEndExecute[
-        ExportPacket[Cell[BoxData@s, "Input"], "InputText"]
+        ExportPacket[Cell[BoxData@s, "Input"], "Package"]
         ][[1]],
     True,
       s
@@ -2582,7 +2583,7 @@ notebookToMarkdownHTMLExport[
   notebookToMarkdownFEExport[
     pathInfo,
     BoxData@ToBoxes@expr,
-    "InputText",
+    "Package",
     "Code"
     ]
 
@@ -2654,7 +2655,7 @@ notebookToMarkdownHTMLToExpressionExport[
   notebookToMarkdownFEExport[
     pathInfo,
     BoxData@boxes,
-    "InputText",
+    "Package",
     "Code"
     ]
 
@@ -2681,24 +2682,40 @@ notebookToMarkdownPlainTextExport[t_,ops:OptionsPattern[]]:=
 notebookToMarkdownFEExport[
   pathInfo_, t_, type_, style_, ops:OptionsPattern[]
   ]:=
-  Replace[
-    FrontEndExecute[
-      FrontEnd`ExportPacket[
-        Cell[
-          If[type=="InputText",
-            t/.TextData->BoxData,
-            t
-            ], 
-          First@Flatten@{style}, 
-          Flatten@{ops}
-          ],
-        type
-        ]
-      ][[1]],
-    {
-      s_String?(StringContainsQ["\\!\\("|"\!\("]):>
-        iNotebookToMarkdown[pathInfo, s]
-      }
+  With[{pw=CurrentValue[$FrontEndSession, {"ExportTypesetOptions", "PageWidth"}]},
+    Internal`WithLocalSettings[
+      CurrentValue[$FrontEndSession, {"ExportTypesetOptions", "PageWidth"}] = 10000,
+      Replace[
+        FrontEndExecute[
+          FrontEnd`ExportPacket[
+            Cell[
+              Which[
+                MemberQ[{"InputText", "Package"}, type],
+                  Replace[t, TextData->BoxData, 1, Heads->True],
+             type=="DefaultText"&&
+               MemberQ[{"InputText", "Package"},
+                 Lookup[Flatten@{ops}, TextClipboardType, "Package"]
+                 ],
+               Replace[t, TextData->BoxData, 1, Heads->True],
+                True,
+                  t
+                ], 
+              First@Flatten@{style}, 
+              Flatten@{
+                ops, 
+                If[type==="Package", TextClipboardType->"Package", Nothing]
+                }
+              ],
+            If[type==="Package", "DefaultText", type]
+            ]
+          ][[1]],
+        {
+          s_String?(StringContainsQ["\\!\\("|"\!\("]):>
+            iNotebookToMarkdown[pathInfo, s]
+          }
+        ],
+      CurrentValue[$FrontEndSession, {"ExportTypesetOptions", "PageWidth"}]=pw
+      ]
     ]
 
 
@@ -3029,7 +3046,7 @@ iNotebookToMarkdownRegister[pathInfo_,
   markdownCodeCellIOReformat[
     pathInfo,
     e,
-    {"InputText", "Code"},
+    {"Package", "Code"},
     getCodeFence[#, 3]<>
       "mathematica\n"<>StringDelete[#, "\\\n"]<>"\n"<>getCodeFence[#, 3]&,
     StringReplace[#, 
@@ -3050,7 +3067,7 @@ iNotebookToMarkdownRegister[pathInfo_,
   markdownCodeCellIOReformat[
     pathInfo,
     e,
-    {"InputText", "Code"},
+    {"Package", "Code"},
     StringReplace[#, 
       {
         (StartOfLine|StartOfString)->pathInfo["CodeIndentation"],
@@ -3063,16 +3080,18 @@ iNotebookToMarkdownRegister[pathInfo_,
 
 iNotebookToMarkdownRegister[pathInfo_,
   Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "Input", o___]]:=
-  iNotebookToMarkdown[
+  markdownCodeCellIOReformat[
     pathInfo,
-    Cell[
-      e(*BoxData@FrontEndExecute@
-				FrontEnd`ReparseBoxStructurePacket@Echo@First@
-					FrontEndExecute@ExportPacket[Cell[e, "Input"], "InputText"]*),
-      "Code",
-      o
-      ]
-  ]
+    e,
+    {"InputText", "Input"},
+    StringReplace[#, 
+      {
+        (StartOfLine|StartOfString)->pathInfo["CodeIndentation"],
+        "\\\n"->""
+        }]&,
+    Identity,
+    Select[{o}, OptionQ]
+    ]
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -3086,7 +3105,7 @@ iNotebookToMarkdownRegister[pathInfo_,
     Replace[e,
       BoxData@$iNotebookToMarkdownIgnoredBoxHeads[expr_, ___]:>BoxData@expr
       ],
-    {"InputText", "Code"},
+    {"Package", "Code"},
     getCodeFence[#]<>#<>If[StringEndsQ[#,"`"], " ", ""]<>getCodeFence[#]&,
     Identity,
     Select[{o}, OptionQ]
@@ -3123,7 +3142,7 @@ iNotebookToMarkdownRegister[pathInfo_,
   Cell[e:Except[$iNotebookToMarkdownIgnoredIOForms], "Output", o___]]:=
   markdownCodeCellIOReformat[pathInfo, 
     e,
-    {"InputText", "Output"},
+    {"Package", "Output"},
     StringReplace["(*Out:*)\n\n"<>#,
       {
         StartOfLine->"    "
@@ -3872,7 +3891,7 @@ iNotebookToMarkdownRegister[pathInfo_,
     notebookToMarkdownFEExport[
       pathInfo,
       BoxData@box,
-      "InputText",
+      "Package",
       "Output"
       ]
     ];
@@ -3894,7 +3913,7 @@ iNotebookToMarkdownRegister[pathInfo_,
     notebookToMarkdownFEExport[
       pathInfo,
       BoxData@box,
-      "InputText",
+      "Package",
       "Output"
       ]
     ]
@@ -3916,7 +3935,7 @@ iNotebookToMarkdownRegister[pathInfo_,
     notebookToMarkdownFEExport[
       pathInfo,
       BoxData@box,
-      "InputText",
+      "Package",
       "Output"
       ]
     ];
@@ -3939,7 +3958,7 @@ iNotebookToMarkdownRegister[
     notebookToMarkdownFEExport[
       pathInfo,
       BoxData@box,
-      "InputText",
+      "Package",
       "Output"
       ]
     ];
@@ -4756,7 +4775,7 @@ iNotebookToMarkdownRegister[pathInfo_, e_, ___]:=
       notebookToMarkdownFEExport[
         pathInfo,
         BoxData@e,
-        "InputText",
+        "Package",
         "Output"
         ],
     True,
