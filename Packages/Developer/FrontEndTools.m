@@ -1330,7 +1330,7 @@ FESetSymbolColoring~SetAttributes~HoldAllComplete;
 
 $FEExportFormats=
   {
-    "PlainText", "InputText",
+    "PlainText", "InputText", "DefaultText",
    "PostScript", "InputForm", "GIF",
    "BoundingBox", "NotebookString",
    "EnhancedMetafile", "Metafile", "MGF", 
