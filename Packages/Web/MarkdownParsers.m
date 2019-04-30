@@ -125,13 +125,13 @@ markdownToXMLElement[{"Header", n_}, xml_]:=
 
 
 markdownToXMLElement["OrderedList", items_]:=
-  XMLElement["ol", {}, items];
+  XMLElement["ol", {}, Flatten@{items}];
 markdownToXMLElement["UnorderedList", items_]:=
-  XMLElement["ul", {}, items];
+  XMLElement["ul", {}, Flatten@{items}];
 markdownToXMLElement["UnorderedList", items_]:=
-  XMLElement["ul", {}, items];
+  XMLElement["ul", {}, Flatten@{items}];
  markdownToXMLElement["Item", item_]:=
-  XMLElement["li", {}, item]; 
+  XMLElement["li", {}, Flatten@{item}]; 
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -140,11 +140,12 @@ markdownToXMLElement["UnorderedList", items_]:=
 
 
 markdownToXMLElement["Italic", items_]:=
-  XMLElement["em", {}, items];
+  XMLElement["em", {}, Flatten@{items}];
 markdownToXMLElement["Bold", items_]:=
-  XMLElement["strong", {}, items];
+  XMLElement["strong", {}, Flatten@{items}];
 markdownToXMLElement["ItalicBold", items_]:=
-  XMLElement["em", {}, XMLElement["strong", {}, items]];
+  XMLElement["em", {}, 
+    {XMLElement["strong", {}, Flatten@{items}]}];
 
 
 (* ::Subsubsubsection::Closed:: *)
@@ -180,7 +181,7 @@ markdownToXMLElement["XML", xml_]:=
 
 
 markdownToXMLElement["Link", {link_, body_}]:=
-  XMLElement["a", {"href"->link}, body]
+  XMLElement["a", {"href"->link}, Flatten@{body}]
 
 
 (* ::Subsubsubsection::Closed:: *)

@@ -120,22 +120,26 @@ Notebook[{Cell[CellGroupData[{Cell["MarkdownParser", "CodeSection",
                        "[", RowBox[{"\"OrderedList\"", ",", " ", "items_"}], 
                        "]"}], ":=", "\n", "  ", RowBox[{"XMLElement", "[", 
                        RowBox[{"\"ol\"", ",", " ", RowBox[{"{", "}"}], ",", 
-                         " ", "items"}], "]"}]}], ";"}], "\n", RowBox[
+                         " ", RowBox[{"Flatten", "@", RowBox[{"{", "items", 
+                          "}"}]}]}], "]"}]}], ";"}], "\n", RowBox[
                   {RowBox[{RowBox[{"markdownToXMLElement", "[", RowBox[
                         {"\"UnorderedList\"", ",", " ", "items_"}], "]"}], 
                      ":=", "\n", "  ", RowBox[{"XMLElement", "[", RowBox[
                         {"\"ul\"", ",", " ", RowBox[{"{", "}"}], ",", " ", 
-                         "items"}], "]"}]}], ";"}], "\n", RowBox[
+                         RowBox[{"Flatten", "@", RowBox[{"{", "items", 
+                          "}"}]}]}], "]"}]}], ";"}], "\n", RowBox[
                   {RowBox[{RowBox[{"markdownToXMLElement", "[", RowBox[
                         {"\"UnorderedList\"", ",", " ", "items_"}], "]"}], 
                      ":=", "\n", "  ", RowBox[{"XMLElement", "[", RowBox[
                         {"\"ul\"", ",", " ", RowBox[{"{", "}"}], ",", " ", 
-                         "items"}], "]"}]}], ";"}], "\n", RowBox[
+                         RowBox[{"Flatten", "@", RowBox[{"{", "items", 
+                          "}"}]}]}], "]"}]}], ";"}], "\n", RowBox[
                   {" ", RowBox[{RowBox[{RowBox[{"markdownToXMLElement", "[", 
                          RowBox[{"\"Item\"", ",", " ", "item_"}], "]"}], 
                        ":=", "\n", "  ", RowBox[{"XMLElement", "[", RowBox[
                           {"\"li\"", ",", " ", RowBox[{"{", "}"}], ",", " ", 
-                          "item"}], "]"}]}], ";"}], " "}]}], "CodeInput"]}, 
+                          RowBox[{"Flatten", "@", RowBox[{"{", "item", 
+                          "}"}]}]}], "]"}]}], ";"}], " "}]}], "CodeInput"]}, 
              Closed]], Cell[CellGroupData[
              {Cell["\[LeftCeiling]ItalBold\[RightFloor]", 
                "CodeSubsubsubsection", Evaluatable -> True], Cell[BoxData[
@@ -143,20 +147,24 @@ Notebook[{Cell[CellGroupData[{Cell["MarkdownParser", "CodeSection",
                        RowBox[{"\"Italic\"", ",", " ", "items_"}], "]"}], 
                      ":=", "\n", "  ", RowBox[{"XMLElement", "[", RowBox[
                         {"\"em\"", ",", " ", RowBox[{"{", "}"}], ",", " ", 
-                         "items"}], "]"}]}], ";"}], "\n", RowBox[
+                         RowBox[{"Flatten", "@", RowBox[{"{", "items", 
+                          "}"}]}]}], "]"}]}], ";"}], "\n", RowBox[
                   {RowBox[{RowBox[{"markdownToXMLElement", "[", RowBox[
                         {"\"Bold\"", ",", " ", "items_"}], "]"}], ":=", "\n", 
                      "  ", RowBox[{"XMLElement", "[", RowBox[{"\"strong\"", 
-                         ",", " ", RowBox[{"{", "}"}], ",", " ", "items"}], 
+                         ",", " ", RowBox[{"{", "}"}], ",", " ", RowBox[
+                          {"Flatten", "@", RowBox[{"{", "items", "}"}]}]}], 
                        "]"}]}], ";"}], "\n", RowBox[{RowBox[{RowBox[
                       {"markdownToXMLElement", "[", RowBox[{"\"ItalicBold\"", 
                          ",", " ", "items_"}], "]"}], ":=", "\n", "  ", 
                      RowBox[{"XMLElement", "[", RowBox[{"\"em\"", ",", " ", 
-                         RowBox[{"{", "}"}], ",", " ", RowBox[{"XMLElement", 
-                          "[", RowBox[{"\"strong\"", ",", " ", RowBox[{"{", 
-                          "}"}], ",", " ", "items"}], "]"}]}], "]"}]}], 
-                   ";"}]}], "CodeInput"]}, Closed]], 
-           Cell[CellGroupData[{Cell["\[LeftCeiling]Delimiter\[RightFloor]", 
+                         RowBox[{"{", "}"}], ",", " ", "\n", "    ", RowBox[
+                          {"{", RowBox[{"XMLElement", "[", RowBox[
+                          {"\"strong\"", ",", " ", RowBox[{"{", "}"}], ",", 
+                          " ", RowBox[{"Flatten", "@", RowBox[{"{", "items", 
+                          "}"}]}]}], "]"}], "}"}]}], "]"}]}], ";"}]}], 
+               "CodeInput"]}, Closed]], Cell[CellGroupData[
+             {Cell["\[LeftCeiling]Delimiter\[RightFloor]", 
                "CodeSubsubsubsection", Evaluatable -> True, 
                CellChangeTimes -> {{3.712590814499344*^9, 
                 3.712590815722493*^9}}], Cell[BoxData[RowBox[
@@ -187,7 +195,8 @@ Notebook[{Cell[CellGroupData[{Cell["MarkdownParser", "CodeSection",
                           "body_"}], "}"}]}], "]"}], ":=", "\n", "  ", 
                   RowBox[{"XMLElement", "[", RowBox[{"\"a\"", ",", " ", 
                       RowBox[{"{", RowBox[{"\"href\"", "->", "link"}], "}"}], 
-                      ",", " ", "body"}], "]"}]}]], "CodeInput"]}, Closed]], 
+                      ",", " ", RowBox[{"Flatten", "@", RowBox[{"{", "body", 
+                          "}"}]}]}], "]"}]}]], "CodeInput"]}, Closed]], 
            Cell[CellGroupData[{Cell["\[LeftCeiling]Img\[RightFloor]", 
                "CodeSubsubsubsection", Evaluatable -> True], Cell[BoxData[
                 RowBox[{RowBox[{"markdownToXMLElement", "[", RowBox[
@@ -226,9 +235,8 @@ Notebook[{Cell[CellGroupData[{Cell["MarkdownParser", "CodeSection",
                       " ", "text_String"}], "]"}], ":=", "\n", "\t", 
                   RowBox[{"XMLElement", "[", RowBox[{"t", ",", " ", 
                       RowBox[{"{", "}"}], ",", " ", RowBox[{"{", "text", 
-                        "}"}]}], "]"}]}]], "CodeInput"]}, Closed]]}, 
-          Closed]], Cell[CellGroupData[
-          {Cell["\[LeftCeiling]MarkdownToXML\[RightFloor]", 
+                        "}"}]}], "]"}]}]], "CodeInput"]}, Closed]]}, Open]], 
+        Cell[CellGroupData[{Cell["\[LeftCeiling]MarkdownToXML\[RightFloor]", 
             "CodeSubsubsection", Evaluatable -> True], 
            Cell[BoxData[RowBox[{"MarkdownToXML", "//", "Clear"}]], 
             "CodeInput"], Cell[BoxData[{RowBox[{RowBox[{RowBox[{"Options", 

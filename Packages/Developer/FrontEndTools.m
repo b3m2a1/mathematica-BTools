@@ -1355,7 +1355,7 @@ FEExport[
   thing_, 
   fmt:Alternatives@@$FEExportFormats:"PlainText"
   ]:=
-  First@FrontEndExecute@ExportPacket[FEExportPrep@thing, fmt];
+    First@FrontEndExecute@ExportPacket[FEExportPrep@thing, fmt];
 
 
 PackageAddAutocompletions[
