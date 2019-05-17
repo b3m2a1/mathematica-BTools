@@ -93,6 +93,70 @@ $GitActions::usage=
   "The known actions for Git";
 
 
+(* ::Subsubsection::Closed:: *)
+(*Misc*)
+
+
+
+(* ::Text:: *)
+(*
+	Auto-pulled from the registered functions
+*)
+
+
+
+GitAddGitExclude::usage="GitAddGitExclude";
+GitAddGitIgnore::usage="GitAddGitIgnore";
+GitApply::usage="GitApply";
+GitArchive::usage="GitArchive";
+GitBisect::usage="GitBisect";
+GitBlame::usage="GitBlame";
+GitBundle::usage="GitBundle";
+GitCheckout::usage="GitCheckout";
+GitClean::usage="GitClean";
+GitCurrentBranch::usage="GitCurrentBranch";
+GitDaemon::usage="GitDaemon";
+GitDescribe::usage="GitDescribe";
+GitDiff::usage="GitDiff";
+GitFileHistory::usage="GitFileHistory";
+GitFilterBranch::usage="GitFilterBranch";
+GitFilterTree::usage="GitFilterTree";
+GitGetRemoteURL::usage="GitGetRemoteURL";
+GitGrep::usage="GitGrep";
+GitHelpDescription::usage="GitHelpDescription";
+GitHelpFlagMap::usage="GitHelpFlagMap";
+GitHelpFlags::usage="GitHelpFlags";
+GitHelpOptions::usage="GitHelpOptions";
+GitHelpSynopsis::usage="GitHelpSynopsis";
+GitInstaWeb::usage="GitInstaWeb";
+GitListBranches::usage="GitListBranches";
+GitLogDataset::usage="GitLogDataset";
+GitMerge::usage="GitMerge";
+GitMergeTool::usage="GitMergeTool";
+GitMove::usage="GitMove";
+GitPrune::usage="GitPrune";
+GitRealignRemotes::usage="GitRealignRemotes";
+GitReattachHead::usage="GitReattachHead";
+GitRebase::usage="GitRebase";
+GitRefLog::usage="GitRefLog";
+GitRefLogExpire::usage="GitRefLogExpire";
+GitRemove::usage="GitRemove";
+GitRemoveCached::usage="GitRemoveCached";
+GitRemoveCachedRecursive::usage="GitRemoveCachedRecursive";
+GitRemoveRecursive::usage="GitRemoveRecursive";
+GitReset::usage="GitReset";
+GitRevert::usage="GitRevert";
+GitSetRemoteURL::usage="GitSetRemoteURL";
+GitShortLog::usage="GitShortLog";
+GitShow::usage="GitShow";
+GitSubmodule::usage="GitSubmodule";
+GitSVN::usage="GitSVN";
+GitSwitchBranch::usage="GitSwitchBranch";
+GitTag::usage="GitTag";
+GitWipeTheSlate::usage="GitWipeTheSlate";
+GitWorkTree::usage="GitWorkTree";
+
+
 Begin["`Private`"];
 
 
@@ -2929,6 +2993,13 @@ GitHelpFlagMap[cmd_]:=
 
 
 
+(* ::Text:: *)
+(*
+	Why is this here...?  What does it provide that the other stuff doesn\[CloseCurlyQuote]t?
+*)
+
+
+
 $GitActions=
   KeySort@
   <|
@@ -3052,7 +3123,7 @@ $GitActions=
       GitDescribe,
     "Apply"->
       GitApply,
-    "Rebse"->
+    "Rebase"->
       GitRebase,
     "Revert"->
       GitRevert,

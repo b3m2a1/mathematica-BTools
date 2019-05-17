@@ -1,324 +1,196 @@
-Notebook[{
-
-Cell[CellGroupData[{
-Cell["DocumentationSiteBuilder", "CodeSection",
- CellChangeTimes->{{3.71319127306992*^9, 
-  3.713191276780425*^9}},ExpressionUUID->"150e25b1-b08c-4424-b77d-\
-0092d2545335"],
-
-Cell[BoxData[{
- RowBox[{
-  RowBox[{
-   RowBox[{"DocumentationSiteBuild", "::", "usage"}], "=", "\n", "\t", 
-   "\"\<Builds the documentation site\>\""}], ";"}], "\n", 
- RowBox[{
-  RowBox[{
-   RowBox[{"DocumentationSiteDeploy", "::", "usage"}], "=", "\n", "\t", 
-   "\"\<Deploys the documentation site\>\""}], ";"}]}], "CodeInput",
- CellChangeTimes->{{3.713107395275382*^9, 
-  3.71310741773699*^9}},ExpressionUUID->"9388bb4a-6600-459f-a4b5-\
-8bd6d699148c"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
-  ";"}]], "InputSection",ExpressionUUID->"098ce072-81e5-460f-934d-\
-88417dfee09e"],
-
-Cell[CellGroupData[{
-
-Cell["\[LeftCeiling]DocumentationSite\[RightFloor]", "CodeSubsection",
- Evaluatable->True,
- CellChangeTimes->{{3.7131040740322323`*^9, 
-  3.713104076335137*^9}},ExpressionUUID->"c283fd0e-d393-4c4c-9ea2-\
-447c5ba99d00"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"$DocSiteDirectory", ":=", "\n", "\t", 
-   RowBox[{"$DocSiteDirectory", "=", "\n", "\t\t", 
-    RowBox[{"FileNameJoin", "@", 
-     RowBox[{"{", "\n", "\t\t\t", 
-      RowBox[{
-      "$WebSiteDirectory", ",", "\n", "\t\t\t", "\"\<DocumentationSite\>\""}],
-       "\n", "\t\t\t", "}"}]}]}]}], ";"}]], "CodeInput",
- CellChangeTimes->{{3.713104081468828*^9, 3.7131040888330927`*^9}, {
-  3.7131050622423267`*^9, 
-  3.713105089062496*^9}},ExpressionUUID->"bb7274bb-3ffd-4eb1-9f92-\
-031c064c8ad1"],
-
-Cell[BoxData[{
- RowBox[{
-  RowBox[{"Clear", "@", "DocSiteInitializedQ"}], ";"}], "\n", 
- RowBox[{
-  RowBox[{
-   RowBox[{"DocSiteInitializedQ", "[", 
-    RowBox[{"dir_String", "?", "DirectoryQ"}], "]"}], ":=", "\n", "\t", 
-   RowBox[{"AllTrue", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"dir", ",", 
-       RowBox[{"FileNameJoin", "@", 
-        RowBox[{"{", 
-         RowBox[{"dir", ",", "\"\<content\>\""}], "}"}]}], ",", 
-       RowBox[{"FileNameJoin", "@", 
-        RowBox[{"{", 
-         RowBox[{"dir", ",", "\"\<SiteConfig.wl\>\""}], "}"}]}]}], "}"}], ",",
-      "\n", "\t\t", "FileExistsQ"}], "\n", "\t\t", "]"}]}], ";"}], "\n", 
- RowBox[{
-  RowBox[{"DocSiteInitializedQ", "[", "___", "]"}], ":=", 
-  "False"}]}], "CodeInput",
- CellChangeTimes->{{3.712797018601123*^9, 3.712797077767762*^9}, {
-  3.712797953318877*^9, 3.71279796650816*^9}, {3.71279802333533*^9, 
-  3.712798072165327*^9}, {3.712798703436866*^9, 3.7127987112065773`*^9}, {
-  3.7131050338297243`*^9, 3.713105037226521*^9}, {3.730673336310493*^9, 
-  3.7306733621285343`*^9}, {3.7306735805628033`*^9, 
-  3.730673590859921*^9}},ExpressionUUID->"94419b80-3476-4e4e-9989-\
-c37b2800f7c5"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"$DocSiteInitialized", ":=", "\n", "\t", 
-   RowBox[{"DocSiteInitializedQ", "[", "$DocSiteDirectory", "]"}]}], 
-  ";"}]], "CodeInput",
- CellChangeTimes->{{3.712797018601123*^9, 3.712797077767762*^9}, {
-   3.712797953318877*^9, 3.71279796650816*^9}, {3.71279802333533*^9, 
-   3.712798072165327*^9}, {3.712798703436866*^9, 3.7127987112065773`*^9}, {
-   3.7131050338297243`*^9, 3.713105037226521*^9}, 3.730673336310493*^9, {
-   3.7306735760303373`*^9, 
-   3.7306735965753927`*^9}},ExpressionUUID->"9f1a3f13-36de-4e75-b7f2-\
-7341514e1d2d"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"possibleDocSiteQ", "=", 
-   RowBox[{"(", 
-    RowBox[{
-     RowBox[{
-      RowBox[{"DirectoryQ", "[", "#", "]"}], "||", 
-      RowBox[{"DirectoryQ", "[", 
-       RowBox[{"DirectoryName", "[", "#", "]"}], "]"}]}], "&"}], ")"}]}], 
-  ";"}]], "CodeInput",
- CellChangeTimes->{{3.730673522345766*^9, 
-  3.730673539184945*^9}},ExpressionUUID->"9bef8b80-ddb8-4d85-8c27-\
-d722b5366b10"],
-
-Cell[BoxData[{
- RowBox[{"DocumentationSiteInitialize", "//", "Clear"}], "\n", 
- RowBox[{
-  RowBox[{"DocumentationSiteInitialize", "[", "\n", "\t", 
-   RowBox[{"dir", ":", 
-    RowBox[{
-     RowBox[{"_String", "?", "possibleDocSiteQ"}], "|", "Automatic"}], ":", 
-    "Automatic"}], "\n", "\t", "]"}], ":=", "\n", "\t", 
-  RowBox[{"With", "[", 
-   RowBox[{
-    RowBox[{"{", 
-     RowBox[{"d", "=", 
-      RowBox[{"Replace", "[", 
-       RowBox[{"dir", ",", " ", 
-        RowBox[{"Automatic", ":>", "$DocSiteDirectory"}]}], "]"}]}], "}"}], 
-    ",", "\n", "\t\t", 
-    RowBox[{
-     RowBox[{"If", "[", 
-      RowBox[{
-       RowBox[{"!", 
-        RowBox[{"DocSiteInitializedQ", "[", "d", "]"}]}], ",", "\t", "\n", 
-       "\t\t\t", 
-       RowBox[{"If", "[", 
-        RowBox[{
-         RowBox[{"!", 
-          RowBox[{"DirectoryQ", "@", "d"}]}], ",", "\t", "\n", "\t\t\t\t", 
-         RowBox[{"CreateDirectory", "[", 
-          RowBox[{"d", ",", 
-           RowBox[{"CreateIntermediateDirectories", "\[Rule]", "True"}]}], 
-          "]"}]}], "\n", "\t\t\t\t", "]"}]}], "\n", "\t\t\t", "]"}], ";", 
-     "\n", "\t\t\t", 
-     RowBox[{"With", "[", "\n", "\t\t\t\t", 
-      RowBox[{
-       RowBox[{"{", "\n", "\t\t\t\t\t", 
-        RowBox[{"tempDir", "=", "\n", "\t\t\t\t\t\t", 
-         RowBox[{"PackageFilePath", "[", 
-          RowBox[{
-          "\"\<Resources\>\"", ",", " ", "\"\<Templates\>\"", ",", " ", 
-           "\"\<SiteBuilder\>\"", ",", " ", "\"\<DocumentationSite\>\""}], 
-          "]"}]}], "\n", "\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t", 
-       RowBox[{
-        RowBox[{"Map", "[", "\n", "\t\t\t\t\t", 
-         RowBox[{
-          RowBox[{
-           RowBox[{"With", "[", 
-            RowBox[{
-             RowBox[{"{", "\n", "\t\t\t\t\t\t", 
-              RowBox[{"tf", "=", 
-               RowBox[{"FileNameJoin", "@", 
-                RowBox[{"{", 
-                 RowBox[{"d", ",", 
-                  RowBox[{"FileNameDrop", "[", 
-                   RowBox[{"#", ",", 
-                    RowBox[{"FileNameDepth", "[", "tempDir", "]"}]}], "]"}]}],
-                  "}"}]}]}], "\n", "\t\t\t\t\t\t", "}"}], ",", "\n", 
-             "\t\t\t\t\t\t", 
-             RowBox[{"If", "[", 
-              RowBox[{
-               RowBox[{"!", 
-                RowBox[{"FileExistsQ", "@", "tf"}]}], ",", "\n", 
-               "\t\t\t\t\t\t\t", 
-               RowBox[{"If", "[", 
-                RowBox[{
-                 RowBox[{"DirectoryQ", "@", "#"}], ",", "\n", 
-                 "\t\t\t\t\t\t\t\t", 
-                 RowBox[{"CopyDirectory", "[", 
-                  RowBox[{"#", ",", "tf"}], "]"}], ",", "\n", 
-                 "\t\t\t\t\t\t\t\t", 
-                 RowBox[{"CopyFile", "[", 
-                  RowBox[{"#", ",", "tf"}], "]"}]}], "\n", "\t\t\t\t\t\t\t\t",
-                 "]"}]}], "\n", "\t\t\t\t\t\t\t", "]"}]}], "\n", 
-            "\t\t\t\t\t\t", "]"}], "&"}], ",", "\n", "\t\t\t\t\t", 
-          RowBox[{"FileNames", "[", 
-           RowBox[{"\"\<*\>\"", ",", "tempDir"}], "]"}]}], "\n", "\t\t\t\t\t",
-          "]"}], ";"}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", 
-   "]"}]}]}], \
-"CodeInput",ExpressionUUID->"a342ae38-fd5f-415e-a4a3-f2117d33a3ec"],
-
-Cell[BoxData[
- RowBox[{"DocumentationSiteBuild", "//", "Clear"}]], "CodeInput",
- CellChangeTimes->{{3.7306739974937963`*^9, 
-  3.730673998172063*^9}},ExpressionUUID->"c79c71c4-1a1f-41df-b36e-\
-4f4b5f623a5c"],
-
-Cell[BoxData[{
- RowBox[{
-  RowBox[{
-   RowBox[{"Options", "[", "DocumentationSiteBuild", "]"}], "=", "\n", "\t", 
-   RowBox[{"Join", "[", "\n", "\t\t", 
-    RowBox[{
-     RowBox[{"{", "\n", "\t\t\t", 
-      RowBox[{"\"\<BuildOverview\>\"", "\[Rule]", "False"}], "\n", "\t\t\t", 
-      "}"}], ",", "\n", "\t\t", 
-     RowBox[{"Options", "[", "WebSiteBuild", "]"}]}], "\n", "\t\t", "]"}]}], 
-  ";"}], "\n", 
- RowBox[{
-  RowBox[{
-   RowBox[{"DocumentationSiteBuild", "[", "\n", "\t", 
-    RowBox[{
-     RowBox[{"dir", ":", 
-      RowBox[{
-       RowBox[{"_String", "?", "possibleDocSiteQ"}], "|", "Automatic"}], ":", 
-      "Automatic"}], ",", "\n", "\t", 
-     RowBox[{"ops", ":", 
-      RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n",
-    "\t", 
-   RowBox[{"With", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"d", "=", 
-       RowBox[{"Replace", "[", 
-        RowBox[{"dir", ",", " ", 
-         RowBox[{"Automatic", "\[RuleDelayed]", "$DocSiteDirectory"}]}], 
-        "]"}]}], "}"}], ",", "\n", "\t\t", 
-     RowBox[{"With", "[", 
-      RowBox[{
-       RowBox[{"{", 
-        RowBox[{"buildOverview", "=", 
-         RowBox[{"TrueQ", "@", 
-          RowBox[{"OptionValue", "[", "\"\<BuildOverview\>\"", "]"}]}]}], 
-        "}"}], ",", "\n", "\t\t\t", 
-       RowBox[{
-        RowBox[{"DocumentationSiteInitialize", "[", "d", "]"}], ";", "\n", 
-        "\t\t\t", 
-        RowBox[{"If", "[", 
-         RowBox[{"buildOverview", ",", "\n", "\t", "\t\t\t", 
-          RowBox[{"DocGen", "[", "\n", "\t", "\t\t\t\t", 
-           RowBox[{"\"\<HTML\>\"", ",", "\n", "\t\t\t\t\t", 
-            RowBox[{"Evaluate", "@", 
-             RowBox[{"DocGen", "[", "\n", "\t", "\t\t\t\t\t", 
-              RowBox[{
-              "\"\<MultiPackageOverview\>\"", ",", "\n", "\t\t\t\t\t\t", 
-               RowBox[{"Evaluate", "@", "$DocGenDirectory"}], ",", "\n", 
-               "\t\t\t\t\t\t", 
-               RowBox[{"Method", "\[Rule]", "\"\<Save\>\""}]}], "\n", 
-              "\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t\t", 
-            RowBox[{"CloudDeploy", "\[Rule]", "True"}]}], "\n", "\t", 
-           "\t\t\t\t", "]"}]}], "\n", "\t", "\t\t\t", "]"}], ";", "\n", 
-        "\t\t\t", 
-        RowBox[{"WebSiteBuild", "[", 
-         RowBox[{"d", ",", "\n", "\t\t\t\t", 
-          RowBox[{"Sequence", "@@", 
-           RowBox[{"FilterRules", "[", 
-            RowBox[{
-             RowBox[{"{", "ops", "}"}], ",", 
-             RowBox[{"Options", "[", "WebSiteBuild", "]"}]}], "]"}]}]}], "\n",
-          "\t\t\t\t", "]"}]}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
-    "]"}]}], ";"}]}], "CodeInput",
- CellChangeTimes->{{3.713104078702401*^9, 3.713104080735136*^9}, {
-   3.713105107036759*^9, 3.713105188858141*^9}, {3.713105688381138*^9, 
-   3.713105799236161*^9}, {3.7131075235870237`*^9, 3.713107525608734*^9}, 
-   3.713107617064131*^9, 3.713112415147769*^9, {3.7131136246271687`*^9, 
-   3.713113626984623*^9}, 3.713113838188264*^9, {3.713134695326354*^9, 
-   3.713134730887006*^9}, {3.7131347865778913`*^9, 3.713134838482293*^9}, {
-   3.713135291059215*^9, 3.713135332687121*^9}, {3.7131353882816353`*^9, 
-   3.713135388715507*^9}, {3.713135423186014*^9, 3.713135423362465*^9}, {
-   3.730673387841576*^9, 3.730673495046962*^9}, {3.730673824650179*^9, 
-   3.730673962394652*^9}, 3.730674031499654*^9, {3.730674065320717*^9, 
-   3.730674072243684*^9}, 3.7306753606535788`*^9, {3.730675827119555*^9, 
-   3.730675827260138*^9}},ExpressionUUID->"bf8ca887-5e0e-45f4-8816-\
-cb71830dc682"],
-
-Cell[BoxData[{
- RowBox[{"DocumentationSiteDeploy", "//", "Clear"}], "\n", 
- RowBox[{
-  RowBox[{
-   RowBox[{"Options", "[", "DocumentationSiteDeploy", "]"}], "=", "\n", "\t", 
-   
-   RowBox[{"Options", "[", "WebSiteDeploy", "]"}]}], ";"}], "\n", 
- RowBox[{
-  RowBox[{"DocumentationSiteDeploy", "[", "\n", "\t", 
-   RowBox[{
-    RowBox[{"dir", ":", 
-     RowBox[{
-      RowBox[{"_String", "?", "possibleDocSiteQ"}], "|", "Automatic"}], ":", 
-     "Automatic"}], ",", "\n", "\t", 
-    RowBox[{"ops", ":", 
-     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
-  "\t", 
-  RowBox[{"With", "[", 
-   RowBox[{
-    RowBox[{"{", 
-     RowBox[{"d", "=", 
-      RowBox[{"Replace", "[", 
-       RowBox[{"dir", ",", " ", 
-        RowBox[{"Automatic", "\[RuleDelayed]", "$DocSiteDirectory"}]}], 
-       "]"}]}], "}"}], ",", "\n", "\t\t", 
-    RowBox[{"WebSiteDeploy", "[", "\n", "\t\t\t", 
-     RowBox[{
-     "d", ",", "\n", "\t", "\t\t", "\"\</\>\"", ",", "\n", "\t", "\t\t", 
-      RowBox[{"Sequence", "@@", "\n", "\t", "\t\t\t", 
-       RowBox[{"FilterRules", "[", 
-        RowBox[{
-         RowBox[{"{", "ops", "}"}], ",", 
-         RowBox[{"Options", "[", "WebSiteDeploy", "]"}]}], "]"}]}]}], "\n", 
-     "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}]}], "CodeInput",
- CellChangeTimes->{{3.730674000556551*^9, 3.7306740012112503`*^9}, 
-   3.730674038337902*^9},ExpressionUUID->"637d8e1f-cd03-4698-90bc-\
-811ba5a8300d"]
-}, Open  ]],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"End", "[", "]"}], 
-  ";"}]], "InputSection",ExpressionUUID->"f8b76207-4592-44e8-a0a1-\
-603f569b2609"]
-}, Open  ]],
-
-Cell["", "SectionSeparator",ExpressionUUID->"5bd2769f-e58a-47ff-b318-\
-0d9bcb099c5e"]
-},
-WindowSize->{808, 755},
-WindowMargins->{{205, Automatic}, {Automatic, 0}},
-FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
-2018)",
-StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
-  CharacterEncoding -> "UTF-8"]
-]
-
+Notebook[{Cell[CellGroupData[{Cell["DocumentationSiteBuilder", "CodeSection", 
+      CellChangeTimes -> {{3.71319127306992*^9, 3.713191276780425*^9}}], 
+     Cell[BoxData[{RowBox[{RowBox[{RowBox[{"DocumentationSiteBuild", "::", 
+              "usage"}], "=", "\n", "\t", 
+            "\"Builds the documentation site\""}], ";"}], "\n", 
+        RowBox[{RowBox[{RowBox[{"DocumentationSiteDeploy", "::", "usage"}], 
+            "=", "\n", "\t", "\"Deploys the documentation site\""}], ";"}]}], 
+      "CodeInput", CellChangeTimes -> {{3.713107395275382*^9, 
+       3.71310741773699*^9}}], 
+     Cell[BoxData[RowBox[{RowBox[{"Begin", "[", "\"`Private`\"", "]"}], 
+         ";"}]], "InputSection"], 
+     Cell[CellGroupData[{Cell["\[LeftCeiling]DocumentationSite\[RightFloor]", 
+         "CodeSubsection", Evaluatable -> True, CellChangeTimes -> 
+          {{3.7131040740322323*^9, 3.713104076335137*^9}}], 
+        Cell[BoxData[RowBox[{RowBox[{"$DocSiteDirectory", ":=", "\n", "\t", 
+              RowBox[{"$DocSiteDirectory", "=", "\n", "\t\t", RowBox[
+                 {"FileNameJoin", "@", RowBox[{"{", "\n", "\t\t\t", 
+                    RowBox[{"$WebSiteDirectory", ",", "\n", "\t\t\t", 
+                      "\"DocumentationSite\""}], "\n", "\t\t\t", "}"}]}]}]}], 
+            ";"}]], "CodeInput", CellChangeTimes -> {{3.713104081468828*^9, 
+          3.7131040888330927*^9}, {3.7131050622423267*^9, 
+          3.713105089062496*^9}}], 
+        Cell[BoxData[{RowBox[{RowBox[{"Clear", "@", "DocSiteInitializedQ"}], 
+             ";"}], "\n", RowBox[{RowBox[{RowBox[{"DocSiteInitializedQ", "[", 
+                 RowBox[{"dir_String", "?", "DirectoryQ"}], "]"}], ":=", 
+               "\n", "\t", RowBox[{"AllTrue", "[", RowBox[
+                  {RowBox[{"{", RowBox[{"dir", ",", RowBox[{"FileNameJoin", 
+                         "@", RowBox[{"{", RowBox[{"dir", ",", 
+                          "\"content\""}], "}"}]}], ",", RowBox[
+                        {"FileNameJoin", "@", RowBox[{"{", RowBox[{"dir", 
+                          ",", "\"SiteConfig.wl\""}], "}"}]}]}], "}"}], ",", 
+                   "\n", "\t\t", "FileExistsQ"}], "\n", "\t\t", "]"}]}], 
+             ";"}], "\n", RowBox[{RowBox[{"DocSiteInitializedQ", "[", "___", 
+               "]"}], ":=", "False"}]}], "CodeInput", CellChangeTimes -> 
+          {{3.712797018601123*^9, 3.712797077767762*^9}, 
+          {3.712797953318877*^9, 3.71279796650816*^9}, {3.71279802333533*^9, 
+          3.712798072165327*^9}, {3.712798703436866*^9, 
+          3.7127987112065773*^9}, {3.7131050338297243*^9, 
+          3.713105037226521*^9}, {3.730673336310493*^9, 
+          3.7306733621285343*^9}, {3.7306735805628033*^9, 
+          3.730673590859921*^9}}], 
+        Cell[BoxData[RowBox[{RowBox[{"$DocSiteInitialized", ":=", "\n", "\t", 
+              RowBox[{"DocSiteInitializedQ", "[", "$DocSiteDirectory", 
+                "]"}]}], ";"}]], "CodeInput", CellChangeTimes -> 
+          {{3.712797018601123*^9, 3.712797077767762*^9}, 
+           {3.712797953318877*^9, 3.71279796650816*^9}, {3.71279802333533*^9, 
+           3.712798072165327*^9}, {3.712798703436866*^9, 
+           3.7127987112065773*^9}, {3.7131050338297243*^9, 
+           3.713105037226521*^9}, 3.730673336310493*^9, 
+           {3.7306735760303373*^9, 3.7306735965753927*^9}}], 
+        Cell[BoxData[RowBox[{RowBox[{"possibleDocSiteQ", "=", 
+              RowBox[{"(", RowBox[{RowBox[{RowBox[{"DirectoryQ", "[", "#", 
+                      "]"}], "||", RowBox[{"DirectoryQ", "[", RowBox[
+                       {"DirectoryName", "[", "#", "]"}], "]"}]}], "&"}], 
+                ")"}]}], ";"}]], "CodeInput", CellChangeTimes -> 
+          {{3.730673522345766*^9, 3.730673539184945*^9}}], 
+        Cell[BoxData[{RowBox[{"DocumentationSiteInitialize", "//", "Clear"}], 
+           "\n", RowBox[{RowBox[{"DocumentationSiteInitialize", "[", "\n", 
+               "\t", RowBox[{"dir", ":", RowBox[{RowBox[{"_String", "?", 
+                     "possibleDocSiteQ"}], "|", "Automatic"}], ":", 
+                 "Automatic"}], "\n", "\t", "]"}], ":=", "\n", "\t", 
+             RowBox[{"With", "[", RowBox[{RowBox[{"{", RowBox[{"d", "=", 
+                     RowBox[{"Replace", "[", RowBox[{"dir", ",", " ", 
+                         RowBox[{"Automatic", ":>", "$DocSiteDirectory"}]}], 
+                       "]"}]}], "}"}], ",", "\n", "\t\t", RowBox[
+                  {RowBox[{"If", "[", RowBox[{RowBox[{"!", RowBox[
+                          {"DocSiteInitializedQ", "[", "d", "]"}]}], ",", 
+                       "\t", "\n", "\t\t\t", RowBox[{"If", "[", RowBox[
+                          {RowBox[{"!", RowBox[{"DirectoryQ", "@", "d"}]}], 
+                          ",", "\t", "\n", "\t\t\t\t", RowBox[
+                          {"CreateDirectory", "[", RowBox[{"d", ",", RowBox[
+                          {"CreateIntermediateDirectories", "\[Rule]", 
+                          "True"}]}], "]"}]}], "\n", "\t\t\t\t", "]"}]}], 
+                     "\n", "\t\t\t", "]"}], ";", "\n", "\t\t\t", RowBox[
+                    {"With", "[", "\n", "\t\t\t\t", RowBox[{RowBox[{"{", 
+                         "\n", "\t\t\t\t\t", RowBox[{"tempDir", "=", "\n", 
+                          "\t\t\t\t\t\t", RowBox[{"PackageFilePath", "[", 
+                          RowBox[{"\"Resources\"", ",", " ", "\"Templates\"", 
+                          ",", " ", "\"SiteBuilder\"", ",", " ", 
+                          "\"DocumentationSite\""}], "]"}]}], "\n", 
+                         "\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t", 
+                       RowBox[{RowBox[{"Map", "[", "\n", "\t\t\t\t\t", 
+                          RowBox[{RowBox[{RowBox[{"With", "[", RowBox[
+                          {RowBox[{"{", "\n", "\t\t\t\t\t\t", RowBox[{"tf", 
+                          "=", RowBox[{"FileNameJoin", "@", RowBox[{"{", 
+                          RowBox[{"d", ",", RowBox[{"FileNameDrop", "[", 
+                          RowBox[{"#", ",", RowBox[{"FileNameDepth", "[", 
+                          "tempDir", "]"}]}], "]"}]}], "}"}]}]}], "\n", 
+                          "\t\t\t\t\t\t", "}"}], ",", "\n", "\t\t\t\t\t\t", 
+                          RowBox[{"If", "[", RowBox[{RowBox[{"!", RowBox[
+                          {"FileExistsQ", "@", "tf"}]}], ",", "\n", 
+                          "\t\t\t\t\t\t\t", RowBox[{"If", "[", RowBox[{RowBox[
+                          {"DirectoryQ", "@", "#"}], ",", "\n", 
+                          "\t\t\t\t\t\t\t\t", RowBox[{"CopyDirectory", "[", 
+                          RowBox[{"#", ",", "tf"}], "]"}], ",", "\n", 
+                          "\t\t\t\t\t\t\t\t", RowBox[{"CopyFile", "[", RowBox[
+                          {"#", ",", "tf"}], "]"}]}], "\n", 
+                          "\t\t\t\t\t\t\t\t", "]"}]}], "\n", 
+                          "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t", 
+                          "]"}], "&"}], ",", "\n", "\t\t\t\t\t", RowBox[
+                          {"FileNames", "[", RowBox[{"\"*\"", ",", 
+                          "tempDir"}], "]"}]}], "\n", "\t\t\t\t\t", "]"}], 
+                         ";"}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", 
+               "\t\t\t", "]"}]}]}], "CodeInput"], 
+        Cell[BoxData[RowBox[{"DocumentationSiteBuild", "//", "Clear"}]], 
+         "CodeInput", CellChangeTimes -> {{3.7306739974937963*^9, 
+          3.730673998172063*^9}}], 
+        Cell[BoxData[{RowBox[{RowBox[{RowBox[{"Options", "[", 
+                 "DocumentationSiteBuild", "]"}], "=", "\n", "\t", RowBox[
+                {"Join", "[", "\n", "\t\t", RowBox[{RowBox[{"{", "\n", 
+                     "\t\t\t", RowBox[{"\"BuildOverview\"", "\[Rule]", 
+                       "False"}], "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
+                   RowBox[{"Options", "[", "WebSiteBuild", "]"}]}], "\n", 
+                 "\t\t", "]"}]}], ";"}], "\n", 
+           RowBox[{RowBox[{RowBox[{"DocumentationSiteBuild", "[", "\n", "\t", 
+                 RowBox[{RowBox[{"dir", ":", RowBox[{RowBox[{"_String", "?", 
+                         "possibleDocSiteQ"}], "|", "Automatic"}], ":", 
+                     "Automatic"}], ",", "\n", "\t", RowBox[{"ops", ":", 
+                     RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", 
+                 "]"}], ":=", "\n", "\t", RowBox[{"With", "[", RowBox[
+                  {RowBox[{"{", RowBox[{"d", "=", RowBox[{"Replace", "[", 
+                         RowBox[{"dir", ",", " ", RowBox[{"Automatic", 
+                          "\[RuleDelayed]", "$DocSiteDirectory"}]}], "]"}]}], 
+                     "}"}], ",", "\n", "\t\t", RowBox[{"With", "[", 
+                     RowBox[{RowBox[{"{", RowBox[{"buildOverview", "=", 
+                          RowBox[{"TrueQ", "@", RowBox[{"OptionValue", "[", 
+                          "\"BuildOverview\"", "]"}]}]}], "}"}], ",", "\n", 
+                       "\t\t\t", RowBox[{RowBox[
+                          {"DocumentationSiteInitialize", "[", "d", "]"}], 
+                         ";", "\n", "\t\t\t", RowBox[{"If", "[", RowBox[
+                          {"buildOverview", ",", "\n", "\t", "\t\t\t", 
+                          RowBox[{"DocGen", "[", "\n", "\t", "\t\t\t\t", 
+                          RowBox[{"\"HTML\"", ",", "\n", "\t\t\t\t\t", RowBox[
+                          {"Evaluate", "@", RowBox[{"DocGen", "[", "\n", 
+                          "\t", "\t\t\t\t\t", RowBox[{
+                          "\"MultiPackageOverview\"", ",", "\n", 
+                          "\t\t\t\t\t\t", RowBox[{"Evaluate", "@", 
+                          "$DocGenDirectory"}], ",", "\n", "\t\t\t\t\t\t", 
+                          RowBox[{"Method", "\[Rule]", "\"Save\""}]}], "\n", 
+                          "\t\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t\t\t", 
+                          RowBox[{"CloudDeploy", "\[Rule]", "True"}]}], "\n", 
+                          "\t", "\t\t\t\t", "]"}]}], "\n", "\t", "\t\t\t", 
+                          "]"}], ";", "\n", "\t\t\t", RowBox[{"WebSiteBuild", 
+                          "[", RowBox[{"d", ",", "\n", "\t\t\t\t", RowBox[
+                          {"Sequence", "@@", RowBox[{"FilterRules", "[", 
+                          RowBox[{RowBox[{"{", "ops", "}"}], ",", RowBox[
+                          {"Options", "[", "WebSiteBuild", "]"}]}], 
+                          "]"}]}]}], "\n", "\t\t\t\t", "]"}]}]}], "\n", 
+                     "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], ";"}]}], 
+         "CodeInput", CellChangeTimes -> {{3.713104078702401*^9, 
+           3.713104080735136*^9}, {3.713105107036759*^9, 
+           3.713105188858141*^9}, {3.713105688381138*^9, 
+           3.713105799236161*^9}, {3.7131075235870237*^9, 
+           3.713107525608734*^9}, 3.713107617064131*^9, 3.713112415147769*^9, 
+           {3.7131136246271687*^9, 3.713113626984623*^9}, 
+           3.713113838188264*^9, {3.713134695326354*^9, 
+           3.713134730887006*^9}, {3.7131347865778913*^9, 
+           3.713134838482293*^9}, {3.713135291059215*^9, 
+           3.713135332687121*^9}, {3.7131353882816353*^9, 
+           3.713135388715507*^9}, {3.713135423186014*^9, 
+           3.713135423362465*^9}, {3.730673387841576*^9, 
+           3.730673495046962*^9}, {3.730673824650179*^9, 
+           3.730673962394652*^9}, 3.730674031499654*^9, 
+           {3.730674065320717*^9, 3.730674072243684*^9}, 
+           3.7306753606535788*^9, {3.730675827119555*^9, 
+           3.730675827260138*^9}}], 
+        Cell[BoxData[{RowBox[{"DocumentationSiteDeploy", "//", "Clear"}], 
+           "\n", RowBox[{RowBox[{RowBox[{"Options", "[", 
+                 "DocumentationSiteDeploy", "]"}], "=", "\n", "\t", RowBox[
+                {"Options", "[", "WebSiteDeploy", "]"}]}], ";"}], "\n", 
+           RowBox[{RowBox[{"DocumentationSiteDeploy", "[", "\n", "\t", RowBox[
+                {RowBox[{"dir", ":", RowBox[{RowBox[{"_String", "?", 
+                       "possibleDocSiteQ"}], "|", "Automatic"}], ":", 
+                   "Automatic"}], ",", "\n", "\t", RowBox[{"ops", ":", 
+                   RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", "\t", 
+               "]"}], ":=", "\n", "\t", RowBox[{"With", "[", RowBox[
+                {RowBox[{"{", RowBox[{"d", "=", RowBox[{"Replace", "[", 
+                       RowBox[{"dir", ",", " ", RowBox[{"Automatic", 
+                          "\[RuleDelayed]", "$DocSiteDirectory"}]}], "]"}]}], 
+                   "}"}], ",", "\n", "\t\t", RowBox[{"WebSiteDeploy", "[", 
+                   "\n", "\t\t\t", RowBox[{"d", ",", "\n", "\t", "\t\t", 
+                     "\"/\"", ",", "\n", "\t", "\t\t", RowBox[{"Sequence", 
+                       "@@", "\n", "\t", "\t\t\t", RowBox[{"FilterRules", 
+                         "[", RowBox[{RowBox[{"{", "ops", "}"}], ",", RowBox[
+                          {"Options", "[", "WebSiteDeploy", "]"}]}], 
+                         "]"}]}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+               "]"}]}]}], "CodeInput", CellChangeTimes -> 
+          {{3.730674000556551*^9, 3.7306740012112503*^9}, 
+           3.730674038337902*^9}]}, Open]], 
+     Cell[BoxData[RowBox[{RowBox[{"End", "[", "]"}], ";"}]], 
+      "InputSection"]}, Open]], Cell["", "SectionSeparator"]}, 
+ WindowSize -> {808, 755}, WindowMargins -> {{205, Automatic}, 
+   {Automatic, 0}}, FrontEndVersion -> 
+  "11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, 2018)", 
+ StyleDefinitions -> FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
+   CharacterEncoding -> "UTF-8"]]

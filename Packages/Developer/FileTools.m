@@ -5,6 +5,7 @@
 PartialDirectoryCopy::usage="";
 CopyDirectoryFiles::usage="";
 PruneDirectoryFiles::usage="";
+GetMinimalFileModSpec::usage="";
 
 
 Begin["`Private`"];
@@ -21,7 +22,7 @@ Options[PartialDirectoryCopy]=
     "RemovePatterns"->{},
     "ModeSwitchByteCount"->0(*5*10^6*)
     };
-PartialDirectoryCopy[src_, targ_, ops:OptionsPattern[]]:=
+PartialDirectoryCopy[source_, dest_, ops:OptionsPattern[]]:=
   Module[
     {
       rempaths=
@@ -37,7 +38,9 @@ PartialDirectoryCopy[src_, targ_, ops:OptionsPattern[]]:=
       fullFNames,
       fileBytesTotal,
       remFiles,
-      restFiles
+      restFiles,
+      targ = ExpandFileName@dest,
+      src = ExpandFileName@source
       },
     If[Length@Join[rempaths, rempatts]>0,
       fullFNames=FileNames["*", src, \[Infinity]];
@@ -53,29 +56,47 @@ PartialDirectoryCopy[src_, targ_, ops:OptionsPattern[]]:=
           ];
       fileBytesTotal=
         Total[FileByteCount/@Select[remFiles, Not@*DirectoryQ]];
-      Quiet@DeleteDirectory[targ, DeleteContents->True];
+      If[!StringContainsQ[src, targ], (* check it's not a parent... *)
+        Quiet@DeleteDirectory[targ, DeleteContents->True],
+        targ = CreateDirectory[];
+        DeleteDirectory[targ];
+        ];
       If[TrueQ[fileBytesTotal>OptionValue["ModeSwitchByteCount"]],
         CopyDirectoryFiles[src, targ, 
-          getMinimalFileModSpec[restFiles, fullFNames]
+          GetMinimalFileModSpec[restFiles, fullFNames]
           ],
         CopyDirectory[src, targ];
         PruneDirectoryFiles[
           targ, 
-          getMinimalFileModSpec[remFiles, fullFNames, False],
+          GetMinimalFileModSpec[remFiles, fullFNames, False],
           src
           ];
-        DirectoryQ@targ;
-        ],
-      If[True(*OptionValue@OverwriteTarget//TrueQ*),
-        Quiet@DeleteDirectory[targ, DeleteContents->True];
         ];
-      CopyDirectory[src, targ]
+      If[StringContainsQ[src, ExpandFileName[dest]],
+        src = targ;
+        targ = ExpandFileName@dest;
+        Quiet@DeleteDirectory[targ, DeleteContents->True];
+        RenameDirectory[src, targ]
+        ],
+      If[!StringContainsQ[src, targ], (* check it's not a parent... *)
+        targ = CreateDirectory[];
+        DeleteDirectory[targ];
+        RenameDirectory[src, targ];
+        src = targ;
+        targ = ExpandFileName@dest;
+        Quiet@DeleteDirectory[targ, DeleteContents->True];
+        RenameDirectory[src, targ],
+        If[True(*OptionValue@OverwriteTarget//TrueQ*),
+          Quiet@DeleteDirectory[targ, DeleteContents->True];
+          ];
+        CopyDirectory[src, targ]
+        ]
       ]
     ];
 
 
 (* ::Subsubsection::Closed:: *)
-(*getMinimalFileModSpec*)
+(*GetMinimalFileModSpec*)
 
 
 
@@ -97,8 +118,8 @@ With this in hand, we merge the directories in RF upwards. If the parent directo
 
 
 
-getMinimalFileModSpec//Clear
-getMinimalFileModSpec[
+GetMinimalFileModSpec//Clear
+GetMinimalFileModSpec[
   restFiles_, 
   files_,
   pruneEmpties:True|False:True
