@@ -27,7 +27,7 @@ PacletServerRemove::usage=
 
 
 PacletServerBuild::usage="Builds a paclet server and site";
-PacletServerCloudDeploy::usage="Deploys a paclet server to the WolframCloud";
+PacletServerDeploy::usage="Deploys a paclet server to the web";
 
 
 PacletServerInterface::usage=
@@ -1263,25 +1263,25 @@ PacletServerBuild[
 
 
 (* ::Subsubsection::Closed:: *)
-(*PacletServerCloudDeploy*)
+(*PacletServerDeploy*)
 
 
 
-PacletServerCloudDeploy//Clear
+PacletServerDeploy//Clear
 
 
-PacletServerCloudDeploy::nobld=
-  "PacletServerBuild needs to be called before PacletServerCloudDeploy can work";
+PacletServerDeploy::nobld=
+  "PacletServerBuild needs to be called before PacletServerDeploy can work";
 
 
-Options[PacletServerCloudDeploy]=
+Options[PacletServerDeploy]=
   Join[
     Options[WebSiteDeploy],
     {
       "DeployPages"->True
       }
     ];
-PacletServerCloudDeploy[
+PacletServerDeploy[
   server:LocalPacletServerPattern,
   ops:OptionsPattern[]
   ]:=

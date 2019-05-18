@@ -6675,7 +6675,7 @@ WC\n\tis no longer a viable free option\n\[RightFloor]", "Text",
                      "\n", "\t", RowBox[{"WebSiteCloudDeploy", "[", RowBox[
                         {"outDir", ",", " ", "uri", ",", " ", RowBox[
                           {"Normal", "[", "ops", "]"}]}], "]"}]}], ";"}]}], 
-               "CodeInput"]}, Open]]}, Open]], 
+               "CodeInput"]}, Closed]]}, Closed]], 
         Cell[CellGroupData[{Cell["\[LeftCeiling]GitHubDeploy\[RightFloor]", 
             "CodeSubsubsection", Evaluatable -> True], 
            Cell[CellGroupData[
@@ -6721,40 +6721,52 @@ WC\n\tis no longer a viable free option\n\[RightFloor]", "Text",
                       "      ", RowBox[{RowBox[{"Git", "[", RowBox[
                           {"\"Init\"", ",", " ", "dir"}], "]"}], ";", "\n", 
                         "      ", RowBox[{"setupGitIgnore", "[", "dir", 
-                          "]"}], ";", "\n", "      ", "dir"}]}], "\n", 
-                    "    ", "]"}]}]], "CodeInput"]}, Closed]], 
-           Cell[CellGroupData[
+                          "]"}], ";", "\n", "      ", RowBox[{"Git", "[", 
+                          RowBox[{"\"Add\"", ",", " ", "dir", ",", " ", 
+                          RowBox[{"\"All\"", "\[Rule]", "True"}]}], "]"}], 
+                        ";", "\n", "      ", RowBox[{"Git", "[", RowBox[
+                          {"\"Commit\"", ",", " ", "dir", ",", " ", RowBox[
+                          {"\"Message\"", "\[Rule]", 
+                          "\"Setting up site\""}]}], "]"}], ";", "\n", 
+                        "      ", "dir"}]}], "\n", "    ", "]"}]}]], 
+               "CodeInput"]}, Closed]], Cell[CellGroupData[
              {Cell["\[LeftCeiling]checkoutGHPagesBranch\[RightFloor]", 
                "CodeSubsubsubsection", Evaluatable -> True], Cell[BoxData[
-                RowBox[{RowBox[{"checkoutGHPagesBranch", "[", RowBox[
-                     {"dir_", ",", " ", RowBox[{"curb_:", "Automatic"}], ",", 
-                      " ", RowBox[{"bname_:", "\"gh-pages\""}]}], "]"}], 
-                  ":=", "\n", "  ", RowBox[{"Module", "[", RowBox[
-                     {RowBox[{"{", RowBox[{"chk", ",", " ", RowBox[{"cur", 
-                          " ", "=", " ", "curb"}]}], "}"}], ",", "\n", 
-                      "    ", RowBox[{RowBox[{"If", "[", RowBox[{RowBox[
-                          {"cur", "===", "Automatic"}], ",", "\n", "      ", 
+                {RowBox[{"checkoutGHPagesBranch", "//", "Clear"}], "\n", 
+                 RowBox[{RowBox[{"checkoutGHPagesBranch", "[", RowBox[
+                      {"dir_", ",", " ", "\n", "  ", RowBox[{"curb", ":", 
+                         RowBox[{"_String", "|", "Automatic"}], ":", 
+                         "Automatic"}], ",", "\n", "  ", RowBox[{"bname", 
+                         ":", "_String", ":", "\"gh-pages\""}]}], "\n", "  ", 
+                     "]"}], ":=", "\n", "  ", RowBox[{"Module", "[", 
+                     RowBox[{RowBox[{"{", RowBox[{"chk", ",", " ", RowBox[
+                          {"cur", " ", "=", " ", "curb"}]}], "}"}], ",", 
+                       "\n", "    ", RowBox[{RowBox[{"If", "[", RowBox[
+                          {RowBox[{"cur", "===", "Automatic"}], ",", " ", 
                           RowBox[{"cur", " ", "=", " ", RowBox[{"Git", "[", 
                           RowBox[{"\"CurrentBranch\"", ",", " ", "dir"}], 
-                          "]"}]}]}], "\n", "      ", "]"}], ";", "\n", 
-                        "    ", RowBox[{"chk", " ", "=", " ", RowBox[{"Git", 
-                          "[", RowBox[{"\"Checkout\"", ",", " ", "bname"}], 
-                          "]"}]}], ";", " ", RowBox[{"(*", " ", RowBox[
-                          {"if", " ", RowBox[{"doesn", "'"}], "t", " ", 
-                          "exit", " ", RowBox[{"we", "'"}], "ll", " ", 
-                          "capture", " ", "that"}], " ", "*)"}], "\n", 
-                        "    ", RowBox[{"If", "[", RowBox[{RowBox[
+                          "]"}]}]}], "]"}], ";", "\n", "    ", RowBox[
+                          {"If", "[", RowBox[{RowBox[{"cur", "=!=", 
+                          "bname"}], ",", "\n", "      ", RowBox[{RowBox[
+                          {"chk", " ", "=", " ", RowBox[{"Git", "[", RowBox[
+                          {"\"Checkout\"", ",", " ", "dir", ",", " ", 
+                          "bname"}], "]"}]}], ";", " ", RowBox[{"(*", " ", 
+                          RowBox[{"if", " ", RowBox[{"doesn", "'"}], "t", 
+                          " ", "exit", " ", RowBox[{"we", "'"}], "ll", " ", 
+                          "capture", " ", "that"}], " ", "*)"}], "\n", "  ", 
+                          "    ", RowBox[{"If", "[", RowBox[{RowBox[
                           {"StringStartsQ", "[", RowBox[{"chk", ",", " ", 
-                          "\"error: pathspec \""}], "]"}], ",", "\n", 
+                          "\"error: pathspec \""}], "]"}], ",", "\n", "  ", 
                           "      ", RowBox[{RowBox[{"Git", "[", RowBox[
                           {"\"Branch\"", ",", " ", "dir", ",", " ", 
-                          "bname"}], "]"}], ";", "\n", "      ", RowBox[
+                          "bname"}], "]"}], ";", "\n", "  ", "      ", RowBox[
                           {"Git", "[", RowBox[{"\"Checkout\"", ",", " ", 
-                          "bname"}], "]"}], ";", "\n", "      ", RowBox[
+                          "dir", ",", " ", "bname"}], "]"}], ";"}]}], "\n", 
+                          "        ", "]"}], ";", "\n", "      ", RowBox[
                           {"Git", "[", RowBox[{"\"Rebase\"", ",", " ", "dir", 
-                          ",", " ", "cur"}], "]"}]}]}], "\n", "      ", 
+                          ",", " ", "cur"}], "]"}], ";"}]}], "\n", "      ", 
                           "]"}], ";", "\n", "    ", "cur"}]}], "\n", "    ", 
-                    "]"}]}]], "CodeInput"]}, Closed]], 
+                     "]"}]}]}], "CodeInput"]}, Open]], 
            Cell[CellGroupData[
              {Cell["\[LeftCeiling]deployGHPagesBranch\[RightFloor]", 
                "CodeSubsubsubsection", Evaluatable -> True], Cell[BoxData[
@@ -6765,17 +6777,20 @@ WC\n\tis no longer a viable free option\n\[RightFloor]", "Text",
                           ",", " ", "chk", ",", " ", "res"}], "}"}], ",", 
                       "\n", "    ", RowBox[{"Internal`WithLocalSettings", 
                         "[", "\n", "      ", RowBox[{RowBox[{"cur", " ", "=", 
-                          " ", RowBox[{"checkoutGHPagesBranch", "[", "dir", 
+                          " ", RowBox[{"checkoutGHPagesBranch", "[", RowBox[
+                          {"dir", ",", " ", "Automatic", ",", " ", "bname"}], 
                           "]"}]}], ",", "\n", "      ", RowBox[{RowBox[
                           {"setupGHPagesContent", "[", "dir", "]"}], ";", 
                           "\n", "      ", RowBox[{"pushGHPagesContent", "[", 
                           RowBox[{"dir", ",", " ", "path"}], "]"}]}], ",", 
                           "\n", "      ", RowBox[{"If", "[", RowBox[
-                          {RowBox[{"cur", "=!=", "bname"}], ",", " ", RowBox[
-                          {"Git", "[", RowBox[{"\"Checkout\"", ",", " ", 
-                          "cur"}], "]"}]}], "]"}]}], "\n", "      ", "]"}]}], 
-                    "\n", "    ", "]"}]}]], "CodeInput"]}, Closed]], 
-           Cell[CellGroupData[
+                          {RowBox[{RowBox[{"cur", "=!=", "bname"}], "&&", 
+                          RowBox[{"StringQ", "[", "cur", "]"}]}], ",", " ", 
+                          "\n", "        ", RowBox[{"Git", "[", RowBox[
+                          {"\"Checkout\"", ",", " ", "dir", ",", " ", 
+                          "cur"}], "]"}]}], "\n", "        ", "]"}]}], "\n", 
+                        "      ", "]"}]}], "\n", "    ", "]"}]}]], 
+               "CodeInput"]}, Open]], Cell[CellGroupData[
              {Cell["\[LeftCeiling]setupGHPagesContent\[RightFloor]", 
                "CodeSubsubsubsection", Evaluatable -> True], Cell[BoxData[
                 RowBox[{RowBox[{"setupGHPagesContent", "[", "dir_", "]"}], 
@@ -6790,27 +6805,38 @@ WC\n\tis no longer a viable free option\n\[RightFloor]", "Text",
                           RowBox[{"{", RowBox[{"dir", ",", " ", 
                           "\"output\""}], "}"}]}], ",", "\n", "          ", 
                           "dir", ",", "\n", "          ", RowBox[
-                          {"GetMinimalFileModSpec", "@", "\n", 
-                          "            ", RowBox[{"FileNames", "[", RowBox[
-                          {"\"*\"", ",", " ", RowBox[{"FileNameJoin", "@", 
-                          RowBox[{"{", RowBox[{"dir", ",", " ", 
-                          "\"output\""}], "}"}]}]}], "]"}]}]}], "\n", 
-                          "          ", "]"}], ",", "\n", "      ", RowBox[
-                          {"DirectoryQ", "@", RowBox[{"FileNameJoin", "@", 
-                          RowBox[{"{", RowBox[{"dir", ",", " ", "\"docs\""}], 
-                          "}"}]}]}], ",", "\n", "        ", RowBox[
-                          {"CopyDirectoryFiles", "[", "\n", "          ", 
-                          RowBox[{RowBox[{"FileNameJoin", "@", RowBox[{"{", 
-                          RowBox[{"dir", ",", " ", "\"docs\""}], "}"}]}], 
-                          ",", "\n", "          ", "dir", ",", "\n", 
-                          "          ", RowBox[{"GetMinimalFileModSpec", "@", 
-                          "\n", "            ", RowBox[{"FileNames", "[", 
+                          {"GetMinimalFileModSpec", "[", "\n", 
+                          "            ", RowBox[{RowBox[{"FileNames", "[", 
                           RowBox[{"\"*\"", ",", " ", RowBox[{"FileNameJoin", 
                           "@", RowBox[{"{", RowBox[{"dir", ",", " ", 
-                          "\"docs\""}], "}"}]}]}], "]"}]}]}], "\n", 
-                          "          ", "]"}]}], "\n", "      ", "]"}]}], 
-                    "\n", "    ", "]"}]}]], "CodeInput"]}, Closed]], 
-           Cell[CellGroupData[
+                          "\"output\""}], "}"}]}], ",", " ", "Infinity"}], 
+                          "]"}], ",", "\n", "            ", RowBox[
+                          {"FileNames", "[", RowBox[{"\"*\"", ",", " ", 
+                          RowBox[{"FileNameJoin", "@", RowBox[{"{", RowBox[
+                          {"dir", ",", " ", "\"output\""}], "}"}]}], ",", 
+                          " ", "Infinity"}], "]"}]}], "\n", "            ", 
+                          "]"}]}], "\n", "          ", "]"}], ",", "\n", 
+                          "      ", RowBox[{"DirectoryQ", "@", RowBox[
+                          {"FileNameJoin", "@", RowBox[{"{", RowBox[{"dir", 
+                          ",", " ", "\"docs\""}], "}"}]}]}], ",", "\n", 
+                          "        ", RowBox[{"CopyDirectoryFiles", "[", 
+                          "\n", "          ", RowBox[{RowBox[{"FileNameJoin", 
+                          "@", RowBox[{"{", RowBox[{"dir", ",", " ", 
+                          "\"docs\""}], "}"}]}], ",", "\n", "          ", 
+                          "dir", ",", "\n", "          ", RowBox[
+                          {"GetMinimalFileModSpec", "[", "\n", 
+                          "            ", RowBox[{RowBox[{"FileNames", "[", 
+                          RowBox[{"\"*\"", ",", " ", RowBox[{"FileNameJoin", 
+                          "@", RowBox[{"{", RowBox[{"dir", ",", " ", 
+                          "\"docs\""}], "}"}]}], ",", " ", "Infinity"}], 
+                          "]"}], ",", "\n", "            ", RowBox[
+                          {"FileNames", "[", RowBox[{"\"*\"", ",", " ", 
+                          RowBox[{"FileNameJoin", "@", RowBox[{"{", RowBox[
+                          {"dir", ",", " ", "\"docs\""}], "}"}]}], ",", " ", 
+                          "Infinity"}], "]"}]}], "\n", "            ", 
+                          "]"}]}], "\n", "          ", "]"}]}], "\n", 
+                        "      ", "]"}]}], "\n", "    ", "]"}]}]], 
+               "CodeInput"]}, Closed]], Cell[CellGroupData[
              {Cell["\[LeftCeiling]configureGHPagesRemote\[RightFloor]", 
                "CodeSubsubsubsection", Evaluatable -> True], 
               Cell["\[LeftCeiling]\n\tShould work to configure and set up a \
@@ -6832,43 +6858,54 @@ GitHub repo for the website...\n\[RightFloor]", "Text", Evaluatable -> True],
                           "\n", "      ", RowBox[{"If", "[", RowBox[{RowBox[
                           {RowBox[{"URLRead", "[", RowBox[{"addRem", ",", 
                           " ", "\"StatusCode\""}], "]"}], ">", "399"}], ",", 
-                          "\n", "        ", RowBox[{"GitHub", "[", RowBox[
-                          {"\"Create\"", ",", " ", "path"}], "]"}]}], "\n", 
-                          "        ", "]"}], ";", "\n", "      ", RowBox[
-                          {"rem2", " ", "=", " ", RowBox[{"Git", "[", RowBox[
-                          {"\"AddRemote\"", ",", " ", "dir", ",", " ", 
-                          "\"gh-pages\"", ",", " ", "addRem"}], "]"}]}], ";", 
-                          "\n", "      ", RowBox[{"If", "[", RowBox[{RowBox[
-                          {"rem2", "===", "Null"}], ",", " ", RowBox[{"rem", 
-                          " ", "=", " ", "addRem"}], ",", " ", RowBox[{"rem", 
-                          " ", "=", " ", "$Failed"}]}], "]"}]}]}], "\n", 
-                          "      ", "]"}], ";", "\n", "    ", "rem"}]}], 
-                    "\n", "    ", "]"}]}]], "CodeInput"]}, Closed]], 
-           Cell[CellGroupData[
+                          " ", RowBox[{"GitHub", "[", RowBox[{"\"Create\"", 
+                          ",", " ", "path"}], "]"}]}], "]"}], ";", "\n", 
+                          "      ", RowBox[{"rem2", " ", "=", " ", RowBox[
+                          {"Git", "[", RowBox[{"\"AddRemote\"", ",", " ", 
+                          "dir", ",", " ", "\"gh-pages\"", ",", " ", 
+                          "addRem"}], "]"}]}], ";", "\n", "      ", RowBox[
+                          {"If", "[", RowBox[{RowBox[{"rem2", "===", 
+                          "Null"}], ",", " ", RowBox[{"rem", " ", "=", " ", 
+                          "addRem"}], ",", " ", RowBox[{"rem", " ", "=", " ", 
+                          "$Failed"}]}], "]"}]}]}], "\n", "      ", "]"}], 
+                        ";", "\n", "    ", "rem"}]}], "\n", "    ", "]"}]}]], 
+               "CodeInput"]}, Open]], Cell[CellGroupData[
              {Cell["\[LeftCeiling]pushGHPagesContent\[RightFloor]", 
                "CodeSubsubsubsection", Evaluatable -> True], Cell[BoxData[
                 RowBox[{RowBox[{"pushGHPagesContent", "[", RowBox[{"dir_", 
                       ",", " ", "path_"}], "]"}], ":=", "\n", "  ", 
-                  RowBox[{"With", "[", RowBox[{RowBox[{"{", RowBox[{"rem", 
-                          "=", RowBox[{"configureGHPagesRemote", "[", "dir", 
-                          "]"}]}], "}"}], ",", "\n", "    ", RowBox[
-                       {RowBox[{"If", "[", RowBox[{RowBox[{"rem", "=!=", 
-                          "$Failed"}], ",", "\n", "      ", RowBox[{RowBox[
+                  RowBox[{"Module", "[", RowBox[{RowBox[{"{", RowBox[
+                         {RowBox[{"rem", "=", RowBox[
+                          {"configureGHPagesRemote", "[", RowBox[{"dir", ",", 
+                          " ", "path"}], "]"}]}], ",", " ", "\n", "    ", 
+                          RowBox[{"res", "=", "$Failed"}], ",", " ", RowBox[
+                          {"add", "=", "$Failed"}], ",", " ", RowBox[
+                          {"commit", "=", "$Failed"}]}], "}"}], ",", "\n", 
+                      "    ", RowBox[{RowBox[{"If", "[", RowBox[{RowBox[
+                          {"rem", "=!=", "$Failed"}], ",", "\n", "      ", 
+                          RowBox[{RowBox[{"add", " ", "=", " ", RowBox[
                           {"Git", "[", RowBox[{"\"Add\"", ",", " ", "dir", 
                           ",", " ", RowBox[{"\"All\"", "\[Rule]", "True"}]}], 
-                          "]"}], ";", "\n", "  ", "    ", RowBox[{"Git", "[", 
-                          RowBox[{"\"Commit\"", ",", " ", "dir", ",", " ", 
-                          "\n", "  ", "      ", RowBox[{"\"Message\"", "->", 
-                          RowBox[{"\"Deploying website at \"", "<>", RowBox[
+                          "]"}]}], ";", "\n", "      ", RowBox[{"commit", 
+                          " ", "=", " ", RowBox[{"Git", "[", RowBox[
+                          {"\"Commit\"", ",", " ", "dir", ",", " ", "\n", 
+                          "  ", "      ", RowBox[{"\"Message\"", "->", RowBox[
+                          {"\"Deploying website at \"", "<>", RowBox[
                           {"DateString", "[", RowBox[{"Now", ",", " ", 
                           "\"DateTimeShort\""}], "]"}]}]}]}], "\n", "  ", 
-                          "      ", "]"}], ";", "\n", "  ", "    ", RowBox[
-                          {"Git", "[", RowBox[{"\"Push\"", ",", " ", "dir", 
-                          ",", " ", "\"gh-pages\"", ",", " ", 
-                          "\"gh-pages\""}], "]"}], ";"}]}], "\n", "      ", 
-                          "]"}], ";", "\n", "    ", "rem"}]}], "\n", "    ", 
-                    "]"}]}]], "CodeInput"]}, Closed]], 
-           Cell[CellGroupData[
+                          "      ", "]"}]}], ";", "\n", "      ", RowBox[
+                          {"res", " ", "=", " ", RowBox[{"Git", "[", RowBox[
+                          {"\"Push\"", ",", " ", "dir", ",", " ", 
+                          "\"gh-pages\"", ",", " ", "\"gh-pages\""}], 
+                          "]"}]}], ";"}]}], "\n", "      ", "]"}], ";", "\n", 
+                        "    ", RowBox[{"<|", "\n", "      ", RowBox[
+                          {RowBox[{"\"Remote\"", "->", "rem"}], ",", " ", 
+                          "\n", "      ", RowBox[{"\"Add\"", "\[Rule]", 
+                          "add"}], ",", "\n", "      ", RowBox[{"\"Commit\"", 
+                          "\[Rule]", "commit"}], ",", "\n", "      ", RowBox[
+                          {"\"Results\"", "->", "res"}]}], "\n", "      ", 
+                          "|>"}]}]}], "\n", "    ", "]"}]}]], "CodeInput"]}, 
+             Open]], Cell[CellGroupData[
              {Cell["\[LeftCeiling]WebSiteGitHubDeploy\[RightFloor]", 
                "CodeSubsubsubsection", Evaluatable -> True], Cell[BoxData[
                 {RowBox[{RowBox[{"Options", "[", "WebSiteGitHubDeploy", 
@@ -6885,10 +6922,12 @@ GitHub repo for the website...\n\[RightFloor]", "Text", Evaluatable -> True],
                        "\n", "\t  ", RowBox[{RowBox[{"dep", " ", "=", " ", 
                           RowBox[{"getGHDeployRoot", "[", "outDir", "]"}]}], 
                          ";", "\n", "\t  ", RowBox[{"pat", " ", "=", " ", 
-                          RowBox[{"If", "[", RowBox[{RowBox[{"path", "===", 
-                          "Automatic"}], ",", " ", RowBox[{"StringDelete", 
-                          "[", RowBox[{RowBox[{"FileBaseName", "[", "dep", 
-                          "]"}], ",", " ", "Whitespace"}], "]"}]}], "]"}]}], 
+                          "\n", "\t    ", RowBox[{"If", "[", RowBox[
+                          {RowBox[{"path", "===", "Automatic"}], ",", " ", 
+                          "\n", "  ", "\t    ", RowBox[{"StringDelete", "[", 
+                          RowBox[{RowBox[{"FileBaseName", "[", "dep", "]"}], 
+                          ",", " ", "Whitespace"}], "]"}], ",", "\n", "  ", 
+                          "\t    ", "path"}], "\n", "  ", "\t    ", "]"}]}], 
                          ";", "\n", "\t  ", RowBox[{"initGitWebsite", "[", 
                           "dep", "]"}], ";", "\n", "\t  ", RowBox[
                           {"deployGHPagesBranch", "[", RowBox[{"dep", ",", 
@@ -6900,15 +6939,18 @@ GitHub repo for the website...\n\[RightFloor]", "Text", Evaluatable -> True],
              {Cell["\[LeftCeiling]getWebsiteDir\[RightFloor]", 
                "CodeSubsubsubsection", Evaluatable -> True], Cell[BoxData[
                 RowBox[{RowBox[{"getWebsiteDir", "[", "out_", "]"}], ":=", 
-                  "\n", "  ", RowBox[{"SelectFirst", "[", "\n", "    ", 
-                    RowBox[{RowBox[{RowBox[{RowBox[{"FileNameJoin", "@", 
-                          RowBox[{"{", RowBox[{"#", ",", " ", 
-                          "\"SiteConfig.wl\""}], "}"}]}], "&"}], "/@", "\n", 
-                        "      ", RowBox[{"NestList", "[", RowBox[
-                          {"DirectoryName", ",", " ", "out", ",", " ", "1"}], 
-                          "]"}]}], ",", "\n", "    ", "FileExistsQ", ",", 
-                      "\n", "    ", "out"}], "\n", "    ", "]"}]}]], 
-               "CodeInput"]}, Closed]], Cell[CellGroupData[
+                  "\n", "  ", RowBox[{"DirectoryName", "@", RowBox[
+                     {"SelectFirst", "[", "\n", "    ", RowBox[{RowBox[
+                         {RowBox[{RowBox[{"FileNameJoin", "@", RowBox[{"{", 
+                          RowBox[{"#", ",", " ", "\"SiteConfig.wl\""}], 
+                          "}"}]}], "&"}], "/@", "\n", "      ", RowBox[
+                          {"NestList", "[", RowBox[{"DirectoryName", ",", 
+                          " ", "out", ",", " ", "1"}], "]"}]}], ",", "\n", 
+                        "    ", "FileExistsQ", ",", "\n", "    ", RowBox[
+                         {"FileNameJoin", "@", RowBox[{"{", RowBox[{"out", 
+                          ",", " ", "\"SiteConfig.wl\""}], "}"}]}]}], "\n", 
+                      "    ", "]"}]}]}]], "CodeInput"]}, Closed]], 
+           Cell[CellGroupData[
              {Cell["\[LeftCeiling]getDeploymentSettings\[RightFloor]", 
                "CodeSubsubsubsection", Evaluatable -> True], Cell[BoxData[
                 RowBox[{RowBox[{"getDeploymentSettings", "[", RowBox[
@@ -6929,7 +6971,7 @@ GitHub repo for the website...\n\[RightFloor]", "Text", Evaluatable -> True],
                           ",", " ", "\"DeployOptions\"", ",", " ", RowBox[
                           {"{", "}"}]}], "]"}]}], "\n", "        ", 
                           "]"}]}]}], "\n", "    ", "]"}]}]], "CodeInput"]}, 
-             Closed]], Cell[CellGroupData[
+             Open]], Cell[CellGroupData[
              {Cell["\[LeftCeiling]WebSiteDeploy\[RightFloor]", 
                "CodeSubsubsubsection", Evaluatable -> True], Cell[BoxData[
                 RowBox[{RowBox[{"$deploymentDispatcher", "=", RowBox[
@@ -6939,45 +6981,51 @@ GitHub repo for the website...\n\[RightFloor]", "Text", Evaluatable -> True],
                       "\n", "  ", "|>"}]}], ";"}]], "CodeInput"], 
               Cell[BoxData[{RowBox[{RowBox[{RowBox[{"Options", "[", 
                        "WebSiteDeploy", "]"}], "=", "\n", "  ", RowBox[
-                      {"{", "\n", "    ", RowBox[{"\"DeploymentTarget\"", 
-                         "\[Rule]", "Automatic"}], "\n", "    ", "}"}]}], 
-                   ";"}], "\n", RowBox[{RowBox[{"WebSiteDeploy", "[", "\n", 
-                     "  ", RowBox[{RowBox[{"outDir_String", "?", 
-                         "DirectoryQ"}], ",", "\n", "  ", RowBox[{"uri", ":", 
-                         RowBox[{"_String", "|", "Automatic"}], ":", 
-                         "Automatic"}], ",", "\n", "\t", RowBox[{"ops", ":", 
-                         RowBox[{"OptionsPattern", "[", "]"}]}]}], "\n", 
-                     "\t", "]"}], ":=", "\n", "\t", RowBox[{RowBox[
-                      {"PackageExceptionBlock", "[", "\"WebSiteDeploy\"", 
-                       "]"}], "@", "\n", "\t  ", RowBox[{"Module", "[", "\n", 
-                       "  \t  ", RowBox[{RowBox[{"{", "\n", "  \t    ", 
-                          RowBox[{RowBox[{"out", " ", "=", " ", RowBox[
-                          {"getWebsiteDir", "[", "outDir", "]"}]}], ",", 
-                          "\n", "  ", "\t    ", "settings", ",", "\n", "  ", 
-                          "\t    ", "depTarg", ",", "\n", "  ", "\t    ", 
-                          "disp"}], "\n", "  ", "\t    ", "}"}], ",", "\n", 
-                         "  ", "\t  ", RowBox[{RowBox[{"settings", " ", "=", 
-                          " ", RowBox[{"getDeploymentSettings", "[", "out", 
-                          "]"}]}], ";", "\n", "  ", "\t  ", RowBox[
-                          {"depTarg", " ", "=", " ", "\n", "  ", "\t    ", 
-                          RowBox[{"Replace", "[", "\n", "  ", "  \t    ", 
-                          RowBox[{RowBox[{"OptionValue", "[", RowBox[
-                          {"WebSiteDeploy", ",", " ", "\n", "  ", 
-                          "  \t      ", RowBox[{"FilterRules", "[", RowBox[
-                          {RowBox[{"{", "ops", "}"}], ",", " ", RowBox[
-                          {"Options", "[", "WebSiteDeploy", "]"}]}], "]"}], 
-                          ",", " ", "\n", "  ", "  \t      ", 
-                          "\"DeploymentTarget\""}], "\n", "  ", "  \t      ", 
-                          "]"}], ",", " ", "\n", "  ", "  \t    ", RowBox[
-                          {"Automatic", "\[RuleDelayed]", RowBox[{"Lookup", 
-                          "[", RowBox[{"settings", ",", " ", 
-                          "\"DeploymentTarget\"", ",", " ", "\"GitHub\""}], 
-                          "]"}]}]}], "\n", "  ", "  \t    ", "]"}]}], ";", 
-                          "\n", "  ", "  \t", RowBox[{"disp", " ", "=", " ", 
-                          RowBox[{"$deploymentDispatcher", "[", "depTarg", 
-                          "]"}]}], ";", "\n", "  ", "  \t", RowBox[{"If", 
-                          "[", RowBox[{RowBox[{"MissingQ", "[", "disp", 
-                          "]"}], ",", "\n", "  ", "  \t  ", RowBox[
+                      {RowBox[{"DeleteDuplicatesBy", "[", "First", "]"}], 
+                       "@", "\n", "    ", RowBox[{"Join", "[", "\n", 
+                         "      ", RowBox[{RowBox[{"{", "\n", "        ", 
+                          RowBox[{"\"DeploymentTarget\"", "\[Rule]", 
+                          "Automatic"}], "\n", "  ", "      ", "}"}], ",", 
+                          "\n", "      ", RowBox[{"Flatten", "[", RowBox[
+                          {"Options", "/@", RowBox[{"Values", "[", 
+                          "$deploymentDispatcher", "]"}]}], "]"}]}], "\n", 
+                         "      ", "]"}]}]}], ";"}], "\n", RowBox[
+                  {RowBox[{"WebSiteDeploy", "[", "\n", "  ", RowBox[
+                      {RowBox[{"outDir_String", "?", "DirectoryQ"}], ",", 
+                       "\n", "  ", RowBox[{"uri", ":", RowBox[{"_String", 
+                          "|", "Automatic"}], ":", "Automatic"}], ",", "\n", 
+                       "\t", RowBox[{"ops", ":", RowBox[{"OptionsPattern", 
+                          "[", "]"}]}]}], "\n", "\t", "]"}], ":=", "\n", 
+                   "\t", RowBox[{RowBox[{"PackageExceptionBlock", "[", 
+                       "\"WebSiteDeploy\"", "]"}], "@", "\n", "\t  ", 
+                     RowBox[{"Module", "[", "\n", "  \t  ", RowBox[
+                        {RowBox[{"{", "\n", "  \t    ", RowBox[{RowBox[
+                          {"out", " ", "=", " ", RowBox[{"getWebsiteDir", 
+                          "[", "outDir", "]"}]}], ",", "\n", "  ", "\t    ", 
+                          "settings", ",", "\n", "  ", "\t    ", "depTarg", 
+                          ",", "\n", "  ", "\t    ", "disp"}], "\n", "  ", 
+                          "\t    ", "}"}], ",", "\n", "  ", "\t  ", RowBox[
+                          {RowBox[{"settings", " ", "=", " ", RowBox[
+                          {"getDeploymentSettings", "[", "out", "]"}]}], ";", 
+                          "\n", "  ", "\t  ", RowBox[{"depTarg", " ", "=", 
+                          " ", "\n", "  ", "\t    ", RowBox[{"Replace", "[", 
+                          "\n", "  ", "  \t    ", RowBox[{RowBox[
+                          {"OptionValue", "[", RowBox[{"WebSiteDeploy", ",", 
+                          " ", "\n", "  ", "  \t      ", RowBox[
+                          {"FilterRules", "[", RowBox[{RowBox[{"{", "ops", 
+                          "}"}], ",", " ", RowBox[{"Options", "[", 
+                          "WebSiteDeploy", "]"}]}], "]"}], ",", " ", "\n", 
+                          "  ", "  \t      ", "\"DeploymentTarget\""}], "\n", 
+                          "  ", "  \t      ", "]"}], ",", " ", "\n", "  ", 
+                          "  \t    ", RowBox[{"Automatic", "\[RuleDelayed]", 
+                          RowBox[{"Lookup", "[", RowBox[{"settings", ",", 
+                          " ", "\"DeploymentTarget\"", ",", " ", 
+                          "\"GitHub\""}], "]"}]}]}], "\n", "  ", "  \t    ", 
+                          "]"}]}], ";", "\n", "  ", "  \t", RowBox[{"disp", 
+                          " ", "=", " ", RowBox[{"$deploymentDispatcher", 
+                          "[", "depTarg", "]"}]}], ";", "\n", "  ", "  \t", 
+                          RowBox[{"If", "[", RowBox[{RowBox[{"MissingQ", "[", 
+                          "disp", "]"}], ",", "\n", "  ", "  \t  ", RowBox[
                           {"PackageRaiseException", "[", "\n", "    \t    ", 
                           RowBox[{"Automatic", ",", "\n", "    \t    ", "\"Si\
 te deployment target `` unknown. Known targets are ``\"", ",", "\n", 

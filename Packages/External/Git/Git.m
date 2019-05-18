@@ -2764,11 +2764,14 @@ GitListBranches[
 
 
 
-getGitCurrentBranch[bstring_]:=
-  First@StringCases[
-    bstring,
-    "* "~~name:Except[WhitespaceCharacter]..:>name
-    ]
+getGitCurrentBranch[bstring_String]:=
+  Replace[{{s_}:>s, _->None}]@
+    StringCases[
+      bstring,
+      "* "~~name:Except[WhitespaceCharacter]..:>name,
+     1
+      ];
+getGitCurrentBranch[_]:=None
 
 
 Options[GitCurrentBranch]=

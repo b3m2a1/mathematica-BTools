@@ -222,7 +222,7 @@ PacletServerURL//Clear
 
 PacletServerURL[serv:LocalPacletServerPattern]:=
   PacletSiteURL@
-    FilterRules[serv,
+    FilterRules[Normal@serv,
       Options[PacletSiteURL]
       ];
 PacletServerURL[serv_String?DirectoryQ]:=
@@ -259,7 +259,12 @@ PacletServerDeploymentURL[server:LocalPacletServerPattern]:=
       Flatten@{
         "ServerBase"->
           If[URLParse[PacletServerURL[server], "Scheme"]==="file", 
-            CloudObject, 
+            Replace[GitHub["CurrentUser"],
+              {
+                s_String:>TemplateApply["https://``.github.io/", s],
+                Except[_String]->CloudObject
+                }
+              ], 
             Lookup[server, "ServerBase"]
             ],
         Normal@server
@@ -335,8 +340,7 @@ PacletServerDataset[
       If[TrueQ@OptionValue["DeployedServer"],
         Prepend["ServerBase"->Automatic],
         Identity
-        ]@
-        Normal@server,
+        ]@Normal@server,
       Options[PacletSiteInfoDataset]
       ];
 

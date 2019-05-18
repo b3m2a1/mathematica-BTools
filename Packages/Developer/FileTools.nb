@@ -1,693 +1,454 @@
-Notebook[{
-
-Cell[CellGroupData[{
-Cell["Package Tools", "CodeSection",
- CellChangeTimes->{{3.727103325121559*^9, 
-  3.727103327270545*^9}},ExpressionUUID->"4dd417db-ab75-4625-9f58-\
-fe9ca6fd5672"],
-
-Cell[BoxData[{
- RowBox[{
-  RowBox[{
-   RowBox[{"PartialDirectoryCopy", "::", "usage"}], "=", "\"\<\>\""}], 
-  ";"}], "\n", 
- RowBox[{
-  RowBox[{
-   RowBox[{"CopyDirectoryFiles", "::", "usage"}], "=", "\"\<\>\""}], 
-  ";"}], "\n", 
- RowBox[{
-  RowBox[{
-   RowBox[{"PruneDirectoryFiles", "::", "usage"}], "=", "\"\<\>\""}], 
-  ";"}], "\n", 
- RowBox[{
-  RowBox[{
-   RowBox[{"GetMinimalFileModSpec", "::", "usage"}], "=", "\"\<\>\""}], 
-  ";"}]}], "CodeInput",ExpressionUUID->"b3c2c7ca-c580-4a13-9eb0-8dbea7011034"],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], 
-  ";"}]], "InputSection",ExpressionUUID->"10b86a12-a73d-466d-86ab-\
-ccf33e40ff23"],
-
-Cell[CellGroupData[{
-
-Cell["\[LeftCeiling]PartialDirectoryCopy\[RightFloor]", "CodeSubsubsection",
- Evaluatable->True,ExpressionUUID->"2680865f-b5a0-4515-8f8b-c82798af6447"],
-
-Cell[BoxData[{
- RowBox[{
-  RowBox[{
-   RowBox[{"Options", "[", "PartialDirectoryCopy", "]"}], "=", "\n", "\t", 
-   RowBox[{"{", "\n", "\t\t", 
-    RowBox[{
-     RowBox[{"\"\<RemovePaths\>\"", "\[Rule]", 
-      RowBox[{"{", "}"}]}], ",", "\n", "\t\t", 
-     RowBox[{"\"\<RemovePatterns\>\"", "\[Rule]", 
-      RowBox[{"{", "}"}]}], ",", "\n", "\t\t", 
-     RowBox[{"\"\<ModeSwitchByteCount\>\"", "\[Rule]", "0"}]}], 
-    RowBox[{"(*", 
-     RowBox[{"5", "*", 
-      RowBox[{"10", "^", "6"}]}], "*)"}], "\n", "\t\t", "}"}]}], 
-  ";"}], "\n", 
- RowBox[{
-  RowBox[{
-   RowBox[{"PartialDirectoryCopy", "[", 
-    RowBox[{"source_", ",", " ", "dest_", ",", " ", 
-     RowBox[{"ops", ":", 
-      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", "\n", "\t", 
-   RowBox[{"Module", "[", "\n", "\t\t", 
-    RowBox[{
-     RowBox[{"{", "\n", "\t\t\t", 
-      RowBox[{
-       RowBox[{"rempaths", "=", "\n", "\t\t\t\t", 
-        RowBox[{"Select", "[", "\n", "\t\t\t\t\t", 
-         RowBox[{
-          RowBox[{"Flatten", "@", 
-           RowBox[{"{", 
-            RowBox[{"OptionValue", "[", "\"\<RemovePaths\>\"", "]"}], "}"}]}],
-           ",", "\n", "\t\t\t\t\t", "StringPattern`StringPatternQ"}], "\n", 
-         "\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t", 
-       RowBox[{"rempatts", "=", "\n", "\t\t\t\t", 
-        RowBox[{"Select", "[", "\n", "\t\t\t\t\t", 
-         RowBox[{
-          RowBox[{"Flatten", "@", 
-           RowBox[{"{", 
-            RowBox[{"OptionValue", "[", "\"\<RemovePatterns\>\"", "]"}], 
-            "}"}]}], ",", "\n", "\t\t\t\t\t", 
-          "StringPattern`StringPatternQ"}], "\n", "\t\t\t\t\t", "]"}]}], ",", 
-       "\n", "\t\t\t", "fullFNames", ",", "\n", "\t\t\t", "fileBytesTotal", 
-       ",", "\n", "\t\t\t", "remFiles", ",", "\n", "\t\t\t", "restFiles", ",",
-        "\n", "\t\t\t", 
-       RowBox[{"targ", " ", "=", " ", 
-        RowBox[{"ExpandFileName", "@", "dest"}]}], ",", "\n", "\t\t\t", 
-       RowBox[{"src", " ", "=", " ", 
-        RowBox[{"ExpandFileName", "@", "source"}]}]}], "\n", "\t\t\t", "}"}], 
-     ",", "\n", "\t\t", 
-     RowBox[{"If", "[", 
-      RowBox[{
-       RowBox[{
-        RowBox[{"Length", "@", 
-         RowBox[{"Join", "[", 
-          RowBox[{"rempaths", ",", " ", "rempatts"}], "]"}]}], ">", "0"}], 
-       ",", "\n", "\t\t\t", 
-       RowBox[{
-        RowBox[{"fullFNames", "=", 
-         RowBox[{"FileNames", "[", 
-          RowBox[{"\"\<*\>\"", ",", " ", "src", ",", " ", "\[Infinity]"}], 
-          "]"}]}], ";", "\n", "\t\t\t", 
-        RowBox[{"remFiles", "=", "\n", "\t\t\t\t", 
-         RowBox[{"Join", "[", "\n", "\t\t\t\t\t", 
-          RowBox[{
-           RowBox[{"FileNames", "[", 
-            RowBox[{"rempaths", ",", " ", "src"}], "]"}], ",", "\n", 
-           "\t\t\t\t\t", 
-           RowBox[{"FileNames", "[", 
-            RowBox[{"rempatts", ",", " ", "src", ",", " ", "\[Infinity]"}], 
-            "]"}]}], "\n", "\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t", 
-        RowBox[{"restFiles", "=", "\n", "\t\t\t\t", 
-         RowBox[{"Select", "[", "\n", "\t\t\t\t\t", 
-          RowBox[{
-           RowBox[{"Complement", "[", 
-            RowBox[{"fullFNames", ",", " ", "remFiles"}], "]"}], ",", "\n", 
-           "\t\t\t\t\t", 
-           RowBox[{"Not", "@*", 
-            RowBox[{"StringStartsQ", "[", 
-             RowBox[{"Alternatives", "@@", "remFiles"}], "]"}]}]}], "\n", 
-          "\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t", 
-        RowBox[{"fileBytesTotal", "=", "\n", "\t\t\t\t", 
-         RowBox[{"Total", "[", 
-          RowBox[{"FileByteCount", "/@", 
-           RowBox[{"Select", "[", 
-            RowBox[{"remFiles", ",", " ", 
-             RowBox[{"Not", "@*", "DirectoryQ"}]}], "]"}]}], "]"}]}], ";", 
-        "\n", "\t\t\t", 
-        RowBox[{"If", "[", 
-         RowBox[{
-          RowBox[{"!", 
-           RowBox[{"StringContainsQ", "[", 
-            RowBox[{"src", ",", " ", "targ"}], "]"}]}], ",", " ", 
-          RowBox[{"(*", " ", 
-           RowBox[{
-            RowBox[{"check", " ", 
-             RowBox[{"it", "'"}], "s", " ", "not", " ", "a", " ", "parent"}], 
-            "..."}], " ", "*)"}], "\n", "\t\t\t\t", 
-          RowBox[{"Quiet", "@", 
-           RowBox[{"DeleteDirectory", "[", 
-            RowBox[{"targ", ",", " ", 
-             RowBox[{"DeleteContents", "\[Rule]", "True"}]}], "]"}]}], ",", 
-          "\n", "\t\t\t\t", 
-          RowBox[{
-           RowBox[{"targ", " ", "=", " ", 
-            RowBox[{"CreateDirectory", "[", "]"}]}], ";", "\n", "\t\t\t\t", 
-           RowBox[{"DeleteDirectory", "[", "targ", "]"}], ";"}]}], "\n", 
-         "\t\t\t\t", "]"}], ";", "\n", "\t\t\t", 
-        RowBox[{"If", "[", 
-         RowBox[{
-          RowBox[{"TrueQ", "[", 
-           RowBox[{"fileBytesTotal", ">", 
-            RowBox[{
-            "OptionValue", "[", "\"\<ModeSwitchByteCount\>\"", "]"}]}], "]"}],
-           ",", "\n", "\t\t\t\t", 
-          RowBox[{"CopyDirectoryFiles", "[", 
-           RowBox[{"src", ",", " ", "targ", ",", " ", "\n", "\t\t\t\t\t", 
-            RowBox[{"GetMinimalFileModSpec", "[", 
-             RowBox[{"restFiles", ",", " ", "fullFNames"}], "]"}]}], "\n", 
-           "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", 
-          RowBox[{
-           RowBox[{"CopyDirectory", "[", 
-            RowBox[{"src", ",", " ", "targ"}], "]"}], ";", "\n", "\t\t\t\t", 
-           RowBox[{"PruneDirectoryFiles", "[", "\n", "\t\t\t\t\t", 
-            RowBox[{"targ", ",", " ", "\n", "\t\t\t\t\t", 
-             RowBox[{"GetMinimalFileModSpec", "[", 
-              RowBox[{"remFiles", ",", " ", "fullFNames", ",", " ", "False"}],
-               "]"}], ",", "\n", "\t\t\t\t\t", "src"}], "\n", "\t\t\t\t\t", 
-            "]"}], ";"}]}], "\n", "\t\t\t\t", "]"}], ";", "\n", "\t\t\t", 
-        RowBox[{"If", "[", 
-         RowBox[{
-          RowBox[{"StringContainsQ", "[", 
-           RowBox[{"src", ",", " ", 
-            RowBox[{"ExpandFileName", "[", "dest", "]"}]}], "]"}], ",", "\n", 
-          "\t\t\t\t", 
-          RowBox[{
-           RowBox[{"src", " ", "=", " ", "targ"}], ";", "\n", "\t\t\t\t", 
-           RowBox[{"targ", " ", "=", " ", 
-            RowBox[{"ExpandFileName", "@", "dest"}]}], ";", "\n", "\t\t\t\t", 
-           
-           RowBox[{"Quiet", "@", 
-            RowBox[{"DeleteDirectory", "[", 
-             RowBox[{"targ", ",", " ", 
-              RowBox[{"DeleteContents", "\[Rule]", "True"}]}], "]"}]}], ";", 
-           "\n", "\t\t\t\t", 
-           RowBox[{"RenameDirectory", "[", 
-            RowBox[{"src", ",", " ", "targ"}], "]"}]}]}], "\n", "\t\t\t\t", 
-         "]"}]}], ",", "\n", "\t\t\t", 
-       RowBox[{"If", "[", 
-        RowBox[{
-         RowBox[{"!", 
-          RowBox[{"StringContainsQ", "[", 
-           RowBox[{"src", ",", " ", "targ"}], "]"}]}], ",", " ", 
-         RowBox[{"(*", " ", 
-          RowBox[{
-           RowBox[{"check", " ", 
-            RowBox[{"it", "'"}], "s", " ", "not", " ", "a", " ", "parent"}], 
-           "..."}], " ", "*)"}], "\n", "\t\t\t\t", 
-         RowBox[{
-          RowBox[{"targ", " ", "=", " ", 
-           RowBox[{"CreateDirectory", "[", "]"}]}], ";", "\n", "\t\t\t\t", 
-          RowBox[{"DeleteDirectory", "[", "targ", "]"}], ";", "\n", 
-          "\t\t\t\t", 
-          RowBox[{"RenameDirectory", "[", 
-           RowBox[{"src", ",", " ", "targ"}], "]"}], ";", "\n", "\t\t\t\t", 
-          RowBox[{"src", " ", "=", " ", "targ"}], ";", "\n", "\t\t\t\t", 
-          RowBox[{"targ", " ", "=", " ", 
-           RowBox[{"ExpandFileName", "@", "dest"}]}], ";", "\n", "\t\t\t\t", 
-          RowBox[{"Quiet", "@", 
-           RowBox[{"DeleteDirectory", "[", 
-            RowBox[{"targ", ",", " ", 
-             RowBox[{"DeleteContents", "\[Rule]", "True"}]}], "]"}]}], ";", 
-          "\n", "\t\t\t\t", 
-          RowBox[{"RenameDirectory", "[", 
-           RowBox[{"src", ",", " ", "targ"}], "]"}]}], ",", "\n", "\t\t\t\t", 
-         
-         RowBox[{
-          RowBox[{"If", "[", 
-           RowBox[{"True", 
-            RowBox[{"(*", 
-             RowBox[{
-              RowBox[{"OptionValue", "@", "OverwriteTarget"}], "//", 
-              "TrueQ"}], "*)"}], ",", "\n", "\t", "\t\t\t\t", 
-            RowBox[{
-             RowBox[{"Quiet", "@", 
-              RowBox[{"DeleteDirectory", "[", 
-               RowBox[{"targ", ",", " ", 
-                RowBox[{"DeleteContents", "\[Rule]", "True"}]}], "]"}]}], 
-             ";"}]}], "\n", "\t", "\t\t\t\t", "]"}], ";", "\n", "\t", 
-          "\t\t\t", 
-          RowBox[{"CopyDirectory", "[", 
-           RowBox[{"src", ",", " ", "targ"}], "]"}]}]}], "\n", "\t\t\t\t", 
-        "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", "]"}]}], 
-  ";"}]}], "CodeInput",ExpressionUUID->"08596edb-bebc-4c83-b072-929eb9ae5148"]\
-
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell["\[LeftCeiling]GetMinimalFileModSpec\[RightFloor]", "CodeSubsubsection",
- Evaluatable->True,ExpressionUUID->"a869f024-c9e2-4122-a6b4-102634ba27f6"],
-
-Cell["\<\
-\[LeftCeiling]
-The idea is as follows. Get a list of files:
-\tRF = { f1, f2, f3, ....}
-Get the file list from which it originated:
-\tOF = { f1, f1.2, f2, f2.1, f3, ...}
-Group all of RF and all of OF by directory:
-\tARF = GroupBy[RF, DirectoryName]
-\tAOF = GroupBy[OF, DirectoryName]
-For each directory, if there are files in OF that aren\[CloseCurlyQuote]t in \
-RF, leave the RF one be. If there are no changes, replace the list with its \
-directory name. We will only copy this directory instead.
-
-Next we determine which directories are missing in RF that were in OF. We can\
-\[CloseCurlyQuote]t copy these over.
-
-With this in hand, we merge the directories in RF upwards. If the parent \
-directory is going to be copied in full, we want to drop the child. If the \
-parent is noted as being coped in full, but there\[CloseCurlyQuote]s actually \
-a missing subdirectory to copy, we drop the parent.
-\[RightFloor]\
-\>", "Text",
- Evaluatable->True,ExpressionUUID->"e621b2b9-ca53-4159-9cc0-cc4933d6d7e7"],
-
-Cell[BoxData[{
- RowBox[{"GetMinimalFileModSpec", "//", "Clear"}], "\n", 
- RowBox[{
-  RowBox[{"GetMinimalFileModSpec", "[", "\n", "\t", 
-   RowBox[{"restFiles_", ",", " ", "\n", "\t", "files_", ",", "\n", "\t", 
-    RowBox[{"pruneEmpties", ":", 
-     RowBox[{"True", "|", "False"}], ":", "True"}]}], "\n", "\t", "]"}], ":=",
-   "\n", "\t", 
-  RowBox[{"Module", "[", "\n", "\t\t", 
-   RowBox[{
-    RowBox[{"{", "\n", "\t\t\t", 
-     RowBox[{
-     "emptyDirs", ",", "\n", "\t\t\t", "realFiles", ",", "\n", "\t\t\t", "g1",
-       ",", "\n", "\t\t\t", "g2", ",", "\n", "\t\t\t", "unchangedReduction", 
-      ",", "\n", "\t\t\t", "changedReduction", ",", "\n", "\t\t\t", 
-      "containedReduction", ",", "\n", "\t\t\t", "parentNodeMap", ",", "\n", 
-      "\t\t\t", "actuallyDidChangeReduction", ",", "\n", "\t\t\t", "keys", 
-      ",", "\n", "\t\t\t", "changedKeys", ",", "\n", "\t\t\t", "missingDirs", 
-      ",", "\n", "\t\t\t", "baseSpec", ",", "\n", "\t\t\t", "deadDirs"}], 
-     "\n", "\t\t\t", "}"}], ",", "\n", "\t\t", 
-    RowBox[{"(*", " ", "\n", "\t\t\t", 
-     RowBox[{
-     "build", " ", "associations", " ", "mapping", " ", "directories", " ", 
-      "to", " ", "contained", " ", "files", "\n", "\t\t\t", "all", " ", "the",
-       " ", "directories", " ", "are", " ", "keys", " ", "in", " ", "the", 
-      " ", "Associations", " ", "optimally"}], " ", "\n", "\t\t\t", "*)"}], 
-    "\n", "\t\t", 
-    RowBox[{
-     RowBox[{"g1", "=", 
-      RowBox[{
-       RowBox[{"Select", "[", 
-        RowBox[{"Not", "@*", "DirectoryQ"}], "]"}], "/@", 
-       RowBox[{"GroupBy", "[", 
-        RowBox[{"restFiles", ",", " ", "DirectoryName"}], "]"}]}]}], ";", 
-     "\n", "\t\t", 
-     RowBox[{"deadDirs", "=", 
-      RowBox[{"Complement", "[", 
-       RowBox[{
-        RowBox[{"Select", "[", 
-         RowBox[{"restFiles", ",", " ", "DirectoryQ"}], "]"}], ",", " ", 
-        RowBox[{"Keys", "@", "g1"}]}], "]"}]}], ";", "\n", "\t\t", 
-     RowBox[{"g2", "=", 
-      RowBox[{
-       RowBox[{"Select", "[", 
-        RowBox[{"Not", "@*", "DirectoryQ"}], "]"}], "/@", 
-       RowBox[{"GroupBy", "[", 
-        RowBox[{"files", ",", " ", "DirectoryName"}], "]"}]}]}], ";", "\n", 
-     "\t\t", 
-     RowBox[{"(*", "\n", "\t\t\t", 
-      RowBox[{
-      "prune", " ", "directories", " ", "that", " ", "are", " ", "empty", " ",
-        "in", " ", "the", " ", "full", " ", "set", " ", "and", " ", "have", 
-       " ", "no", " ", "children"}], "\n", "\t\t\t", "*)"}], "\n", "\t", 
-     RowBox[{"(*", "\t", 
-      RowBox[{
-       RowBox[{"emptyDirs", "=", "\n", "\t\t\t", 
-        RowBox[{"With", "[", 
-         RowBox[{
-          RowBox[{"{", 
-           RowBox[{"k", "=", 
-            RowBox[{"Keys", "@", "g2"}]}], "}"}], ",", "\n", "\t\t\t\t", 
-          RowBox[{"Select", "[", 
-           RowBox[{
-            RowBox[{"Keys", "@", "g2"}], ",", " ", "\n", "\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{"With", "[", 
-              RowBox[{
-               RowBox[{"{", 
-                RowBox[{"k2", "=", "#"}], "}"}], ",", "\n", "\t\t\t\t\t\t", 
-               RowBox[{
-                RowBox[{
-                 RowBox[{"Length", "[", 
-                  RowBox[{"g2", "[", "#", "]"}], "]"}], "\[Equal]", "0"}], "&&",
-                 "\n", "\t", "\t", "\t\t\t\t\t", 
-                RowBox[{"!", 
-                 RowBox[{"AnyTrue", "[", 
-                  RowBox[{"k", ",", " ", 
-                   RowBox[{
-                    RowBox[{"#", "=!=", "k2"}], "&"}]}], "]"}]}]}]}], "\n", 
-              "\t\t\t\t\t\t", "]"}], "&"}]}], "\n", "\t\t\t\t\t", "]"}]}], 
-         "\n", "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
-       RowBox[{"KeyDropFrom", "[", 
-        RowBox[{"g1", ",", " ", "emptyDirs"}], "]"}], ";", "\n", "\t\t", 
-       RowBox[{"KeyDropFrom", "[", 
-        RowBox[{"g2", ",", " ", "emptyDirs"}], "]"}], ";"}], "*)"}], "\n", 
-     "\t\t", 
-     RowBox[{"(*", " ", 
-      RowBox[{
-      "find", " ", "the", " ", "directories", " ", "that", " ", "are", " ", 
-       "in", " ", "the", " ", "full", " ", "set", " ", "but", " ", "missing", 
-       " ", "in", " ", "the", " ", "reduced", " ", "set", " ", "to", " ", 
-       "prevent", " ", "over", " ", "reduction"}], " ", "*)"}], "\n", "\t\t", 
-     
-     RowBox[{"missingDirs", "=", "\n", "\t\t\t", 
-      RowBox[{"AssociationThread", "[", "\n", "\t\t\t\t", 
-       RowBox[{
-        RowBox[{"Complement", "[", 
-         RowBox[{
-          RowBox[{"Keys", "@", "g2"}], ",", " ", 
-          RowBox[{"Keys", "@", "g1"}]}], "]"}], ",", "\n", "\t\t\t\t", "0"}], 
-       "\n", "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
-     RowBox[{"(*", " ", 
-      RowBox[{
-      "figures", " ", "out", " ", "which", " ", "directories", " ", "may", 
-       " ", "be", " ", "copied", " ", "across", " ", "wholesale"}], " ", 
-      "*)"}], "\n", "\t\t", 
-     RowBox[{"unchangedReduction", "=", "\n", "\t\t\t", 
-      RowBox[{"AssociationMap", "[", "\n", "\t\t\t\t", 
-       RowBox[{
-        RowBox[{
-         RowBox[{
-          RowBox[{"#", "[", 
-           RowBox[{"[", "1", "]"}], "]"}], "->", "\n", "\t\t\t\t\t", 
-          RowBox[{"If", "[", "\n", "\t\t\t\t\t\t", 
-           RowBox[{
-            RowBox[{
-             RowBox[{"(", "\n", "\t\t\t\t\t\t  ", 
-              RowBox[{
-               RowBox[{"!", 
-                RowBox[{"ListQ", "@", 
-                 RowBox[{"g2", "[", 
-                  RowBox[{"#", "[", 
-                   RowBox[{"[", "1", "]"}], "]"}], "]"}]}]}], "||", 
-               RowBox[{"(*", " ", 
-                RowBox[{
-                 RowBox[{
-                  RowBox[{
-                  "not", " ", "in", " ", "the", " ", "DirectoyName", " ", 
-                   "map"}], "..."}], "?"}], " ", "*)"}], "\n", 
-               "\t\t\t\t\t\t\t  ", 
-               RowBox[{
-                RowBox[{"Length", "@", 
-                 RowBox[{"Complement", "[", 
-                  RowBox[{
-                   RowBox[{"Flatten", "@", 
-                    RowBox[{"{", 
-                    RowBox[{"g2", "[", 
-                    RowBox[{"#", "[", 
-                    RowBox[{"[", "1", "]"}], "]"}], "]"}], "}"}]}], ",", " ", 
-                   
-                   RowBox[{"#", "[", 
-                    RowBox[{"[", "2", "]"}], "]"}]}], "]"}]}], "\[Equal]", 
-                "0"}]}], "\n", "\t\t\t\t\t\t\t  ", 
-              RowBox[{"(*", " ", 
-               RowBox[{"nothing", " ", "in", " ", "the", " ", "original", " ", 
-                RowBox[{"that", "'"}], "s", " ", "gone", " ", "missing"}], 
-               " ", "*)"}], "\n", "\t\t\t\t\t\t\t", ")"}], "&&", "\n", 
-             "\t\t\t\t\t\t\t", 
-             RowBox[{"!", 
-              RowBox[{"AnyTrue", "[", 
-               RowBox[{
-                RowBox[{"Keys", "@", "missingDirs"}], ",", " ", 
-                RowBox[{"StringStartsQ", "[", 
-                 RowBox[{"#", "[", 
-                  RowBox[{"[", "1", "]"}], "]"}], "]"}]}], "]"}]}]}], ",", 
-            "\n", "\t\t\t\t\t\t", 
-            RowBox[{"#", "[", 
-             RowBox[{"[", "1", "]"}], "]"}], ",", "\n", "\t\t\t\t\t\t", 
-            RowBox[{"#", "[", 
-             RowBox[{"[", "2", "]"}], "]"}]}], "\n", "\t\t\t\t\t\t", "]"}]}], 
-         "&"}], ",", "\n", "\t\t\t\t", "g1"}], "\n", "\t\t\t\t", "]"}]}], ";",
-      "\n", "\t\t", 
-     RowBox[{"(*", " ", 
-      RowBox[{
-       RowBox[{
-       "figure", " ", "out", " ", "which", " ", "directories", " ", 
-        "actually", " ", "do", " ", "have", " ", "changes"}], ",", " ", 
-       RowBox[{
-       "but", " ", "down", " ", "in", " ", "a", " ", "subdirectory"}]}], " ", 
-      "*)"}], "\n", "\t\t", 
-     RowBox[{"parentNodeMap", "=", "\n", "\t    ", 
-      RowBox[{"GroupBy", "[", 
-       RowBox[{
-        RowBox[{"Keys", "[", "unchangedReduction", "]"}], ",", " ", 
-        "DirectoryName"}], "]"}]}], ";", "\n", "\t  ", 
-     RowBox[{"Do", "[", "\n", "\t      ", 
-      RowBox[{
-       RowBox[{"If", "[", 
-        RowBox[{
-         RowBox[{"StringQ", "@", 
-          RowBox[{"unchangedReduction", "[", "node", "]"}]}], ",", "\n", 
-         "\t        ", 
-         RowBox[{"If", "[", "\n", "\t          ", 
-          RowBox[{
-           RowBox[{"AnyTrue", "[", 
-            RowBox[{
-             RowBox[{"Lookup", "[", 
-              RowBox[{"unchangedReduction", ",", " ", 
-               RowBox[{"parentNodeMap", "[", "node", "]"}]}], "]"}], ",", " ", 
-             RowBox[{"Not", "@*", "StringQ"}]}], "]"}], ",", "\n", 
-           "\t          ", 
-           RowBox[{
-            RowBox[{
-             RowBox[{"unchangedReduction", "[", "node", "]"}], " ", "=", " ", 
-             
-             RowBox[{"g1", "[", "node", "]"}]}], ";"}]}], "\n", 
-          "\t          ", "]"}]}], "\n", "\t        ", "]"}], ",", "\n", 
-       "\t      ", 
-       RowBox[{"{", 
-        RowBox[{"node", ",", " ", 
-         RowBox[{"Reverse", "@", 
-          RowBox[{
-           RowBox[{"SortBy", "[", "FileNameDepth", "]"}], "@", 
-           RowBox[{"Keys", "@", "unchangedReduction"}]}]}]}], "}"}]}], "\n", 
-      "\t      ", "]"}], ";", "\n", "\t  ", 
-     RowBox[{"(*", " ", 
-      RowBox[{
-      "we", " ", "then", " ", "find", " ", "which", " ", "directories", " ", 
-       "we", " ", 
-       RowBox[{"can", "'"}], "t", " ", "copy", " ", "because", " ", 
-       RowBox[{"we", "'"}], "re", " ", "already", " ", "copying", " ", "the", 
-       " ", "parent"}], " ", "*)"}], "\n", "\t\t", 
-     RowBox[{"containedReduction", "=", "\n", "\t\t\t", 
-      RowBox[{"FixedPoint", "[", "\n", "\t\t  \t", 
-       RowBox[{
-        RowBox[{"KeySelect", "[", "\n", "\t\t  \t  ", 
-         RowBox[{"(*", "\n", "\t\t  \t      ", 
-          RowBox[{
-          "checks", " ", "if", " ", "both", " ", "the", " ", "child", " ", 
-           "*", "and", "*", " ", "the", " ", "parent", " ", "are", " ", 
-           "unchanged", " ", "*", "and", "*", " ", "\n", "  ", 
-           "\t\t  \t      ", "if", " ", "all", " ", "of", " ", "the", " ", 
-           RowBox[{"parent", "'"}], "s", " ", "child", " ", "nodes", " ", 
-           "are", " ", "unchanged"}], "\n", "  ", "  \t\t\t    ", "*)"}], 
-         "\n", "  \t\t\t\t", 
-         RowBox[{
-          RowBox[{"!", 
-           RowBox[{"(", "\n", "  \t\t\t\t\t  ", 
-            RowBox[{
-             RowBox[{"StringQ", "@", 
-              RowBox[{"unchangedReduction", "[", "#", "]"}]}], "&&", "\n", 
-             "\t\t\t\t\t      ", 
-             RowBox[{"unchangedReduction", "[", 
-              RowBox[{"DirectoryName", "[", "#", "]"}], "]"}]}], "\n", 
-            "            ", ")"}]}], "&"}], "\n", "  \t\t\t\t ", "]"}], ",", 
-        "\n", "  \t\t", "unchangedReduction"}], "\n", "  \t\t", "]"}]}], ";", 
-     "\n", "\t\t", 
-     RowBox[{"(*", " ", 
-      RowBox[{
-      "figure", " ", "out", " ", "which", " ", "parent", " ", "directories", 
-       " ", "have", " ", "changed"}], " ", "*)"}], "\n", "\t\t", 
-     RowBox[{"keys", "=", 
-      RowBox[{"Select", "[", 
-       RowBox[{"containedReduction", ",", " ", "StringQ"}], "]"}]}], ";", 
-     "\n", "\t\t", 
-     RowBox[{"changedKeys", "=", "\n", "\t\t\t", 
-      RowBox[{"Select", "[", 
-       RowBox[{"keys", ",", " ", "\n", "\t\t\t\t", 
-        RowBox[{
-         RowBox[{"With", "[", 
-          RowBox[{
-           RowBox[{"{", 
-            RowBox[{"k", "=", "#"}], "}"}], ",", " ", 
-           RowBox[{"AnyTrue", "[", 
-            RowBox[{"keys", ",", " ", 
-             RowBox[{"StringMatchQ", "[", 
-              RowBox[{"k", "~~", "__"}], "]"}]}], "]"}]}], "]"}], "&"}]}], 
-       "\n", "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
-     RowBox[{"baseSpec", "=", "\n", "\t\t\t", 
-      RowBox[{"Flatten", "@", 
-       RowBox[{"Values", "@", "\n", "\t\t\t\t\t", 
-        RowBox[{"KeyDrop", "[", 
-         RowBox[{"containedReduction", ",", " ", "changedKeys"}], "]"}]}]}]}],
-      ";", "\n", "\t\t", 
-     RowBox[{
-      RowBox[{"If", "[", 
-       RowBox[{"pruneEmpties", ",", "\n", "\t\t\t", 
-        RowBox[{"(*", " ", 
-         RowBox[{"makes", " ", "sure", " ", 
-          RowBox[{"we", "'"}], "re", " ", "not", " ", "pulling", " ", 
-          "directories", " ", "with", " ", "no", " ", "stuff", " ", "to", " ",
-           "copy"}], " ", "*)"}], "\n", "\t\t\t", 
-        RowBox[{"Select", "[", "\n", "\t\t\t\t", 
-         RowBox[{
-          RowBox[{
-           RowBox[{"!", 
-            RowBox[{"DirectoryQ", "[", "#", "]"}]}], "||", "\n", "\t\t\t\t\t", 
-           RowBox[{
-            RowBox[{"Length", "@", 
-             RowBox[{"g1", "[", "#", "]"}]}], ">", "0"}], "||", "\n", "\t", 
-           "\t\t\t\t", 
-           RowBox[{"AnyTrue", "[", "\n", "\t", "\t\t\t\t\t", 
-            RowBox[{
-             RowBox[{"Flatten", "@", 
-              RowBox[{"Values", "@", "\n", "\t\t\t\t\t\t\t\t", 
-               RowBox[{"KeySelect", "[", 
-                RowBox[{"g1", ",", " ", 
-                 RowBox[{"StringStartsQ", "[", "#", "]"}]}], "]"}]}]}], ",", 
-             " ", "\n", "\t\t\t\t\t\t", 
-             RowBox[{"Not", "@*", "DirectoryQ"}]}], "\n", "\t\t\t\t\t\t", 
-            "]"}]}], "&"}], "\n", "\t\t\t\t", "]"}], ",", "\n", "\t\t\t", 
-        RowBox[{
-         RowBox[{"Union", "[", 
-          RowBox[{"#", ",", " ", "deadDirs"}], "]"}], "&"}]}], "\n", "\t\t\t",
-        "]"}], "@", "baseSpec"}]}]}], "\n", "\t\t", 
-   "]"}]}]}], \
-"CodeInput",ExpressionUUID->"4164acfc-9976-4b16-bf9e-c0557c3ccc85"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell["\[LeftCeiling]CopyDirectoryFiles\[RightFloor]", "CodeSubsubsection",
- Evaluatable->True,ExpressionUUID->"4fde4d4a-a6a9-4eb2-b7b8-141cf3280e74"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"CopyDirectoryFiles", "[", 
-   RowBox[{"src_", ",", " ", "targ_", ",", " ", "files_"}], "]"}], ":=", "\n",
-   "\t", 
-  RowBox[{"(", "\n", "\t\t", 
-   RowBox[{
-    RowBox[{"MapThread", "[", "\n", "\t\t\t", 
-     RowBox[{
-      RowBox[{
-       RowBox[{"Which", "[", "\n", "\t", "\t\t\t", 
-        RowBox[{
-         RowBox[{"DirectoryQ", "@", "#"}], ",", " ", "\n", "\t", "\t\t\t\t", 
-         RowBox[{
-          RowBox[{"If", "[", 
-           RowBox[{
-            RowBox[{"!", 
-             RowBox[{"DirectoryQ", "@", 
-              RowBox[{"DirectoryName", "[", "#2", "]"}]}]}], ",", " ", "\n", 
-            "\t\t\t\t\t\t", 
-            RowBox[{"CreateDirectory", "[", 
-             RowBox[{
-              RowBox[{"DirectoryName", "[", "#2", "]"}], ",", " ", 
-              RowBox[{"CreateIntermediateDirectories", "\[Rule]", "True"}]}], 
-             "]"}]}], "\n", "\t\t\t\t\t\t", "]"}], ";", "\n", "\t\t\t\t\t", 
-          RowBox[{"CopyDirectory", "[", 
-           RowBox[{"#", ",", " ", "#2"}], "]"}]}], ",", "\n", "\t\t\t\t", 
-         RowBox[{"FileExistsQ", "@", "#"}], ",", "\n", "\t", "\t\t\t\t", 
-         RowBox[{
-          RowBox[{"If", "[", 
-           RowBox[{
-            RowBox[{"!", 
-             RowBox[{"DirectoryQ", "@", 
-              RowBox[{"DirectoryName", "[", "#2", "]"}]}]}], ",", " ", "\n", 
-            "\t\t\t\t\t\t", 
-            RowBox[{"CreateDirectory", "[", 
-             RowBox[{
-              RowBox[{"DirectoryName", "[", "#2", "]"}], ",", " ", 
-              RowBox[{"CreateIntermediateDirectories", "\[Rule]", "True"}]}], 
-             "]"}]}], "\n", "\t", "\t\t\t\t\t", "]"}], ";", "\n", "\t", 
-          "\t\t\t\t", 
-          RowBox[{"CopyFile", "[", 
-           RowBox[{"#", ",", " ", "#2", ",", " ", 
-            RowBox[{"OverwriteTarget", "\[Rule]", "True"}]}], "]"}]}]}], "\n",
-         "\t", "\t\t\t", "]"}], "&"}], ",", "\n", "\t\t\t", 
-      RowBox[{"{", "\n", "\t\t\t\t", 
-       RowBox[{"files", ",", "\n", "\t\t\t\t", 
-        RowBox[{"Map", "[", 
-         RowBox[{
-          RowBox[{
-           RowBox[{"FileNameJoin", "@", 
-            RowBox[{"{", 
-             RowBox[{"targ", ",", " ", "#"}], "}"}]}], "&"}], ",", " ", 
-          RowBox[{"StringTrim", "[", 
-           RowBox[{"files", ",", " ", "src"}], "]"}]}], "]"}]}], "\n", "\t", 
-       "\t\t\t", "}"}]}], "\n", "\t", "\t\t", "]"}], ";"}], "\n", "\t", 
-   "\t\t", ")"}]}]], \
-"CodeInput",ExpressionUUID->"c4dab5f2-a472-4af4-ae62-8144ff5ba10c"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell["\[LeftCeiling]PruneDirectoryFiles\[RightFloor]", "CodeSubsubsection",
- Evaluatable->True,ExpressionUUID->"c15416c5-9601-4b0a-9bfb-c65afa48a361"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"PruneDirectoryFiles", "[", 
-   RowBox[{"targ_", ",", " ", "files_", ",", " ", 
-    RowBox[{"src_:", "\"\<\>\""}]}], "]"}], ":=", "\n", "\t", 
-  RowBox[{"(", "\n", "\t\t", 
-   RowBox[{
-    RowBox[{
-     RowBox[{
-      RowBox[{"Which", "[", "\n", "\t\t\t", 
-       RowBox[{
-        RowBox[{"DirectoryQ", "@", "#"}], ",", " ", "\n", "\t\t\t\t", 
-        RowBox[{"DeleteDirectory", "[", 
-         RowBox[{"#", ",", " ", 
-          RowBox[{"DeleteContents", "\[Rule]", "True"}]}], "]"}], ",", "\n", 
-        "\t", "\t\t", 
-        RowBox[{"FileExistsQ", "@", "#"}], ",", "\n", "\t", "\t\t\t", 
-        RowBox[{"DeleteFile", "[", "#", "]"}]}], "\n", "\t", "\t\t", "]"}], 
-      "&"}], "/@", "\n", "\t\t\t", 
-     RowBox[{"Map", "[", "\n", "\t\t\t\t", 
-      RowBox[{
-       RowBox[{
-        RowBox[{"FileNameJoin", "@", 
-         RowBox[{"{", 
-          RowBox[{"targ", ",", " ", "#"}], "}"}]}], "&"}], ",", " ", "\n", 
-       "\t\t\t\t", 
-       RowBox[{"StringTrim", "[", 
-        RowBox[{"files", ",", " ", "src"}], "]"}]}], "\n", "\t\t\t\t", 
-      "]"}]}], ";"}], "\n", "\t\t", 
-   ")"}]}]], \
-"CodeInput",ExpressionUUID->"c6d6a57b-56ea-4fab-9dff-e417ea712390"]
-}, Open  ]]
-}, Open  ]],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"End", "[", "]"}], 
-  ";"}]], "InputSection",ExpressionUUID->"25e21ab8-2f4d-498c-9bc7-\
-88120921a396"]
-}, Open  ]],
-
-Cell["", "SectionSeparator",ExpressionUUID->"bd35d8ed-3060-4730-8032-\
-46826bac6385"]
-},
-WindowSize->{808, 755},
-WindowMargins->{{Automatic, 154}, {Automatic, 19}},
-TaggingRules->{
- "UUIDButtons" -> {
-   "Active" -> {
-     "Button-b8297203-6b28-48f9-8ba3-edbd5eb431d2" -> False, 
-      "Button-8c92aebb-2725-4f7c-a6a8-f90e3a4dce9c" -> False, 
-      "Button-ede3a027-3279-40a0-8aa4-1fcc5f60357d" -> False, 
-      "Button-89ffd2c3-ec41-4179-a9b1-8e28670bca2c" -> False, 
-      "Button-ca46e5e0-4fd1-47e8-8cf6-72998922b757" -> False, 
-      "Button-a6d68254-3684-4d32-83fc-e5ef6f443930" -> False}}},
-FrontEndVersion->"12.0 for Mac OS X x86 (64-bit) (April 8, 2019)",
-StyleDefinitions->FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
-  CharacterEncoding -> "UTF-8"]
-]
-
+Notebook[{Cell[CellGroupData[{Cell["Package Tools", "CodeSection", 
+      CellChangeTimes -> {{3.727103325121559*^9, 3.727103327270545*^9}}], 
+     Cell[BoxData[{RowBox[{RowBox[{RowBox[{"PartialDirectoryCopy", "::", 
+              "usage"}], "=", "\"\""}], ";"}], "\n", 
+        RowBox[{RowBox[{RowBox[{"CopyDirectoryFiles", "::", "usage"}], "=", 
+            "\"\""}], ";"}], "\n", RowBox[
+         {RowBox[{RowBox[{"PruneDirectoryFiles", "::", "usage"}], "=", 
+            "\"\""}], ";"}], "\n", RowBox[
+         {RowBox[{RowBox[{"GetMinimalFileModSpec", "::", "usage"}], "=", 
+            "\"\""}], ";"}]}], "CodeInput"], 
+     Cell[CellGroupData[
+       {Cell[BoxData[RowBox[{RowBox[{"Begin", "[", "\"`Private`\"", "]"}], 
+            ";"}]], "InputSection"], Cell[CellGroupData[
+          {Cell["\[LeftCeiling]PartialDirectoryCopy\[RightFloor]", 
+            "CodeSubsubsection", Evaluatable -> True], 
+           Cell[BoxData[{RowBox[{RowBox[{RowBox[{"Options", "[", 
+                    "PartialDirectoryCopy", "]"}], "=", "\n", "\t", 
+                  RowBox[{"{", "\n", "\t\t", RowBox[{RowBox[
+                       {"\"RemovePaths\"", "\[Rule]", RowBox[{"{", "}"}]}], 
+                      ",", "\n", "\t\t", RowBox[{"\"RemovePatterns\"", 
+                        "\[Rule]", RowBox[{"{", "}"}]}], ",", "\n", "\t\t", 
+                      RowBox[{"\"ModeSwitchByteCount\"", "\[Rule]", "0"}]}], 
+                    RowBox[{"(*", RowBox[{"5", "*", RowBox[{"10", "^", 
+                          "6"}]}], "*)"}], "\n", "\t\t", "}"}]}], ";"}], 
+              "\n", RowBox[{RowBox[{RowBox[{"PartialDirectoryCopy", "[", 
+                    RowBox[{"source_", ",", " ", "dest_", ",", " ", 
+                      RowBox[{"ops", ":", RowBox[{"OptionsPattern", "[", 
+                          "]"}]}]}], "]"}], ":=", "\n", "\t", RowBox[
+                   {"Module", "[", "\n", "\t\t", RowBox[{RowBox[{"{", "\n", 
+                        "\t\t\t", RowBox[{RowBox[{"rempaths", "=", "\n", 
+                          "\t\t\t\t", RowBox[{"Select", "[", "\n", 
+                          "\t\t\t\t\t", RowBox[{RowBox[{"Flatten", "@", 
+                          RowBox[{"{", RowBox[{"OptionValue", "[", 
+                          "\"RemovePaths\"", "]"}], "}"}]}], ",", "\n", 
+                          "\t\t\t\t\t", "StringPattern`StringPatternQ"}], 
+                          "\n", "\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t", 
+                          RowBox[{"rempatts", "=", "\n", "\t\t\t\t", RowBox[
+                          {"Select", "[", "\n", "\t\t\t\t\t", RowBox[
+                          {RowBox[{"Flatten", "@", RowBox[{"{", RowBox[
+                          {"OptionValue", "[", "\"RemovePatterns\"", "]"}], 
+                          "}"}]}], ",", "\n", "\t\t\t\t\t", 
+                          "StringPattern`StringPatternQ"}], "\n", 
+                          "\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t", 
+                          "fullFNames", ",", "\n", "\t\t\t", 
+                          "fileBytesTotal", ",", "\n", "\t\t\t", "remFiles", 
+                          ",", "\n", "\t\t\t", "restFiles", ",", "\n", 
+                          "\t\t\t", RowBox[{"targ", " ", "=", " ", RowBox[
+                          {"ExpandFileName", "@", "dest"}]}], ",", "\n", 
+                          "\t\t\t", RowBox[{"src", " ", "=", " ", RowBox[
+                          {"ExpandFileName", "@", "source"}]}]}], "\n", 
+                        "\t\t\t", "}"}], ",", "\n", "\t\t", RowBox[{"If", 
+                        "[", RowBox[{RowBox[{RowBox[{"Length", "@", RowBox[
+                          {"Join", "[", RowBox[{"rempaths", ",", " ", 
+                          "rempatts"}], "]"}]}], ">", "0"}], ",", "\n", 
+                          "\t\t\t", RowBox[{RowBox[{"fullFNames", "=", 
+                          RowBox[{"FileNames", "[", RowBox[{"\"*\"", ",", 
+                          " ", "src", ",", " ", "\[Infinity]"}], "]"}]}], 
+                          ";", "\n", "\t\t\t", RowBox[{"remFiles", "=", "\n", 
+                          "\t\t\t\t", RowBox[{"Join", "[", "\n", 
+                          "\t\t\t\t\t", RowBox[{RowBox[{"FileNames", "[", 
+                          RowBox[{"rempaths", ",", " ", "src"}], "]"}], ",", 
+                          "\n", "\t\t\t\t\t", RowBox[{"FileNames", "[", 
+                          RowBox[{"rempatts", ",", " ", "src", ",", " ", 
+                          "\[Infinity]"}], "]"}]}], "\n", "\t\t\t\t\t", 
+                          "]"}]}], ";", "\n", "\t\t\t", RowBox[{"restFiles", 
+                          "=", "\n", "\t\t\t\t", RowBox[{"Select", "[", "\n", 
+                          "\t\t\t\t\t", RowBox[{RowBox[{"Complement", "[", 
+                          RowBox[{"fullFNames", ",", " ", "remFiles"}], 
+                          "]"}], ",", "\n", "\t\t\t\t\t", RowBox[{"Not", 
+                          "@*", RowBox[{"StringStartsQ", "[", RowBox[
+                          {"Alternatives", "@@", "remFiles"}], "]"}]}]}], 
+                          "\n", "\t\t\t\t\t", "]"}]}], ";", "\n", "\t\t\t", 
+                          RowBox[{"fileBytesTotal", "=", "\n", "\t\t\t\t", 
+                          RowBox[{"Total", "[", RowBox[{"FileByteCount", 
+                          "/@", RowBox[{"Select", "[", RowBox[{"remFiles", 
+                          ",", " ", RowBox[{"Not", "@*", "DirectoryQ"}]}], 
+                          "]"}]}], "]"}]}], ";", "\n", "\t\t\t", RowBox[
+                          {"If", "[", RowBox[{RowBox[{"!", RowBox[
+                          {"StringContainsQ", "[", RowBox[{"src", ",", " ", 
+                          "targ"}], "]"}]}], ",", " ", RowBox[{"(*", " ", 
+                          RowBox[{RowBox[{"check", " ", RowBox[{"it", "'"}], 
+                          "s", " ", "not", " ", "a", " ", "parent"}], 
+                          "..."}], " ", "*)"}], "\n", "\t\t\t\t", RowBox[
+                          {"Quiet", "@", RowBox[{"DeleteDirectory", "[", 
+                          RowBox[{"targ", ",", " ", RowBox[{"DeleteContents", 
+                          "\[Rule]", "True"}]}], "]"}]}], ",", "\n", 
+                          "\t\t\t\t", RowBox[{RowBox[{"targ", " ", "=", " ", 
+                          RowBox[{"CreateDirectory", "[", "]"}]}], ";", "\n", 
+                          "\t\t\t\t", RowBox[{"DeleteDirectory", "[", "targ", 
+                          "]"}], ";"}]}], "\n", "\t\t\t\t", "]"}], ";", "\n", 
+                          "\t\t\t", RowBox[{"If", "[", RowBox[{RowBox[
+                          {"TrueQ", "[", RowBox[{"fileBytesTotal", ">", 
+                          RowBox[{"OptionValue", "[", 
+                          "\"ModeSwitchByteCount\"", "]"}]}], "]"}], ",", 
+                          "\n", "\t\t\t\t", RowBox[{"CopyDirectoryFiles", 
+                          "[", RowBox[{"src", ",", " ", "targ", ",", " ", 
+                          "\n", "\t\t\t\t\t", RowBox[{
+                          "GetMinimalFileModSpec", "[", RowBox[{"restFiles", 
+                          ",", " ", "fullFNames"}], "]"}]}], "\n", 
+                          "\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t", RowBox[
+                          {RowBox[{"CopyDirectory", "[", RowBox[{"src", ",", 
+                          " ", "targ"}], "]"}], ";", "\n", "\t\t\t\t", RowBox[
+                          {"PruneDirectoryFiles", "[", "\n", "\t\t\t\t\t", 
+                          RowBox[{"targ", ",", " ", "\n", "\t\t\t\t\t", 
+                          RowBox[{"GetMinimalFileModSpec", "[", RowBox[
+                          {"remFiles", ",", " ", "fullFNames", ",", " ", 
+                          "False"}], "]"}], ",", "\n", "\t\t\t\t\t", "src"}], 
+                          "\n", "\t\t\t\t\t", "]"}], ";"}]}], "\n", 
+                          "\t\t\t\t", "]"}], ";", "\n", "\t\t\t", RowBox[
+                          {"If", "[", RowBox[{RowBox[{"StringContainsQ", "[", 
+                          RowBox[{"src", ",", " ", RowBox[{"ExpandFileName", 
+                          "[", "dest", "]"}]}], "]"}], ",", "\n", "\t\t\t\t", 
+                          RowBox[{RowBox[{"src", " ", "=", " ", "targ"}], 
+                          ";", "\n", "\t\t\t\t", RowBox[{"targ", " ", "=", 
+                          " ", RowBox[{"ExpandFileName", "@", "dest"}]}], 
+                          ";", "\n", "\t\t\t\t", RowBox[{"Quiet", "@", RowBox[
+                          {"DeleteDirectory", "[", RowBox[{"targ", ",", " ", 
+                          RowBox[{"DeleteContents", "\[Rule]", "True"}]}], 
+                          "]"}]}], ";", "\n", "\t\t\t\t", RowBox[
+                          {"RenameDirectory", "[", RowBox[{"src", ",", " ", 
+                          "targ"}], "]"}]}]}], "\n", "\t\t\t\t", "]"}]}], 
+                          ",", "\n", "\t\t\t", RowBox[{"If", "[", RowBox[
+                          {RowBox[{"!", RowBox[{"StringContainsQ", "[", 
+                          RowBox[{"src", ",", " ", "targ"}], "]"}]}], ",", 
+                          " ", RowBox[{"(*", " ", RowBox[{RowBox[{"check", 
+                          " ", RowBox[{"it", "'"}], "s", " ", "not", " ", 
+                          "a", " ", "parent"}], "..."}], " ", "*)"}], "\n", 
+                          "\t\t\t\t", RowBox[{RowBox[{"targ", " ", "=", " ", 
+                          RowBox[{"CreateDirectory", "[", "]"}]}], ";", "\n", 
+                          "\t\t\t\t", RowBox[{"DeleteDirectory", "[", "targ", 
+                          "]"}], ";", "\n", "\t\t\t\t", RowBox[
+                          {"RenameDirectory", "[", RowBox[{"src", ",", " ", 
+                          "targ"}], "]"}], ";", "\n", "\t\t\t\t", RowBox[
+                          {"src", " ", "=", " ", "targ"}], ";", "\n", 
+                          "\t\t\t\t", RowBox[{"targ", " ", "=", " ", RowBox[
+                          {"ExpandFileName", "@", "dest"}]}], ";", "\n", 
+                          "\t\t\t\t", RowBox[{"Quiet", "@", RowBox[
+                          {"DeleteDirectory", "[", RowBox[{"targ", ",", " ", 
+                          RowBox[{"DeleteContents", "\[Rule]", "True"}]}], 
+                          "]"}]}], ";", "\n", "\t\t\t\t", RowBox[
+                          {"RenameDirectory", "[", RowBox[{"src", ",", " ", 
+                          "targ"}], "]"}]}], ",", "\n", "\t\t\t\t", RowBox[
+                          {RowBox[{"If", "[", RowBox[{"True", RowBox[{"(*", 
+                          RowBox[{RowBox[{"OptionValue", "@", 
+                          "OverwriteTarget"}], "//", "TrueQ"}], "*)"}], ",", 
+                          "\n", "\t", "\t\t\t\t", RowBox[{RowBox[{"Quiet", 
+                          "@", RowBox[{"DeleteDirectory", "[", RowBox[
+                          {"targ", ",", " ", RowBox[{"DeleteContents", 
+                          "\[Rule]", "True"}]}], "]"}]}], ";"}]}], "\n", 
+                          "\t", "\t\t\t\t", "]"}], ";", "\n", "\t", "\t\t\t", 
+                          RowBox[{"CopyDirectory", "[", RowBox[{"src", ",", 
+                          " ", "targ"}], "]"}]}]}], "\n", "\t\t\t\t", 
+                          "]"}]}], "\n", "\t\t\t", "]"}]}], "\n", "\t\t", 
+                    "]"}]}], ";"}]}], "CodeInput"]}, Open]], 
+        Cell[CellGroupData[
+          {Cell["\[LeftCeiling]GetMinimalFileModSpec\[RightFloor]", 
+            "CodeSubsubsection", Evaluatable -> True], Cell["\[LeftCeiling]\n\
+The idea is as follows. Get a list of files:\n\tRF = { f1, f2, f3, ....}\nGet \
+the file list from which it originated:\n\tOF = { f1, f1.2, f2, f2.1, f3, \
+...}\nGroup all of RF and all of OF by directory:\n\tARF = GroupBy[RF, \
+DirectoryName]\n\tAOF = GroupBy[OF, DirectoryName]\nFor each directory, if \
+there are files in OF that aren\[CloseCurlyQuote]t in RF, leave the RF one \
+be. If there are no changes, replace the list with its directory name. We \
+will only copy this directory instead.\n\nNext we determine which directories \
+are missing in RF that were in OF. We can\[CloseCurlyQuote]t copy these \
+over.\n\nWith this in hand, we merge the directories in RF upwards. If the \
+parent directory is going to be copied in full, we want to drop the child. If \
+the parent is noted as being coped in full, but there\[CloseCurlyQuote]s \
+actually a missing subdirectory to copy, we drop the parent.\n\[RightFloor]", 
+            "Text", Evaluatable -> True], Cell[BoxData[
+             {RowBox[{"GetMinimalFileModSpec", "//", "Clear"}], "\n", 
+              RowBox[{RowBox[{"GetMinimalFileModSpec", "[", "\n", "\t", 
+                  RowBox[{"restFiles_", ",", " ", "\n", "\t", "files_", ",", 
+                    "\n", "\t", RowBox[{"pruneEmpties", ":", RowBox[{"True", 
+                        "|", "False"}], ":", "True"}]}], "\n", "\t", "]"}], 
+                ":=", "\n", "\t", RowBox[{"Module", "[", "\n", "\t\t", 
+                  RowBox[{RowBox[{"{", "\n", "\t\t\t", RowBox[{"emptyDirs", 
+                        ",", "\n", "\t\t\t", "realFiles", ",", "\n", 
+                        "\t\t\t", "g1", ",", "\n", "\t\t\t", "g2", ",", "\n", 
+                        "\t\t\t", "unchangedReduction", ",", "\n", "\t\t\t", 
+                        "changedReduction", ",", "\n", "\t\t\t", 
+                        "containedReduction", ",", "\n", "\t\t\t", 
+                        "parentNodeMap", ",", "\n", "\t\t\t", 
+                        "actuallyDidChangeReduction", ",", "\n", "\t\t\t", 
+                        "keys", ",", "\n", "\t\t\t", "changedKeys", ",", 
+                        "\n", "\t\t\t", "missingDirs", ",", "\n", "\t\t\t", 
+                        "baseSpec", ",", "\n", "\t\t\t", "deadDirs"}], "\n", 
+                      "\t\t\t", "}"}], ",", "\n", "\t\t", RowBox[{"(*", " ", 
+                      "\n", "\t\t\t", RowBox[{"build", " ", "associations", 
+                        " ", "mapping", " ", "directories", " ", "to", " ", 
+                        "contained", " ", "files", "\n", "\t\t\t", "all", 
+                        " ", "the", " ", "directories", " ", "are", " ", 
+                        "keys", " ", "in", " ", "the", " ", "Associations", 
+                        " ", "optimally"}], " ", "\n", "\t\t\t", "*)"}], 
+                    "\n", "\t\t", RowBox[{RowBox[{"g1", "=", RowBox[
+                         {RowBox[{"Select", "[", RowBox[{"Not", "@*", 
+                          "DirectoryQ"}], "]"}], "/@", RowBox[{"GroupBy", 
+                          "[", RowBox[{"restFiles", ",", " ", 
+                          "DirectoryName"}], "]"}]}]}], ";", "\n", "\t\t", 
+                      RowBox[{"deadDirs", "=", RowBox[{"Complement", "[", 
+                          RowBox[{RowBox[{"Select", "[", RowBox[{"restFiles", 
+                          ",", " ", "DirectoryQ"}], "]"}], ",", " ", RowBox[
+                          {"Keys", "@", "g1"}]}], "]"}]}], ";", "\n", "\t\t", 
+                      RowBox[{"g2", "=", RowBox[{RowBox[{"Select", "[", 
+                          RowBox[{"Not", "@*", "DirectoryQ"}], "]"}], "/@", 
+                          RowBox[{"GroupBy", "[", RowBox[{"files", ",", " ", 
+                          "DirectoryName"}], "]"}]}]}], ";", "\n", "\t\t", 
+                      RowBox[{"(*", "\n", "\t\t\t", RowBox[{"prune", " ", 
+                          "directories", " ", "that", " ", "are", " ", 
+                          "empty", " ", "in", " ", "the", " ", "full", " ", 
+                          "set", " ", "and", " ", "have", " ", "no", " ", 
+                          "children"}], "\n", "\t\t\t", "*)"}], "\n", "\t", 
+                      RowBox[{"(*", "\t", RowBox[{RowBox[{"emptyDirs", "=", 
+                          "\n", "\t\t\t", RowBox[{"With", "[", RowBox[
+                          {RowBox[{"{", RowBox[{"k", "=", RowBox[{"Keys", 
+                          "@", "g2"}]}], "}"}], ",", "\n", "\t\t\t\t", RowBox[
+                          {"Select", "[", RowBox[{RowBox[{"Keys", "@", 
+                          "g2"}], ",", " ", "\n", "\t\t\t\t\t", RowBox[
+                          {RowBox[{"With", "[", RowBox[{RowBox[{"{", RowBox[
+                          {"k2", "=", "#"}], "}"}], ",", "\n", 
+                          "\t\t\t\t\t\t", RowBox[{RowBox[{RowBox[{"Length", 
+                          "[", RowBox[{"g2", "[", "#", "]"}], "]"}], 
+                          "\[Equal]", "0"}], "&&", "\n", "\t", "\t", 
+                          "\t\t\t\t\t", RowBox[{"!", RowBox[{"AnyTrue", "[", 
+                          RowBox[{"k", ",", " ", RowBox[{RowBox[{"#", "=!=", 
+                          "k2"}], "&"}]}], "]"}]}]}]}], "\n", "\t\t\t\t\t\t", 
+                          "]"}], "&"}]}], "\n", "\t\t\t\t\t", "]"}]}], "\n", 
+                          "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", RowBox[
+                          {"KeyDropFrom", "[", RowBox[{"g1", ",", " ", 
+                          "emptyDirs"}], "]"}], ";", "\n", "\t\t", RowBox[
+                          {"KeyDropFrom", "[", RowBox[{"g2", ",", " ", 
+                          "emptyDirs"}], "]"}], ";"}], "*)"}], "\n", "\t\t", 
+                      RowBox[{"(*", " ", RowBox[{"find", " ", "the", " ", 
+                          "directories", " ", "that", " ", "are", " ", "in", 
+                          " ", "the", " ", "full", " ", "set", " ", "but", 
+                          " ", "missing", " ", "in", " ", "the", " ", 
+                          "reduced", " ", "set", " ", "to", " ", "prevent", 
+                          " ", "over", " ", "reduction"}], " ", "*)"}], "\n", 
+                      "\t\t", RowBox[{"missingDirs", "=", "\n", "\t\t\t", 
+                        RowBox[{"AssociationThread", "[", "\n", "\t\t\t\t", 
+                          RowBox[{RowBox[{"Complement", "[", RowBox[{RowBox[
+                          {"Keys", "@", "g2"}], ",", " ", RowBox[{"Keys", 
+                          "@", "g1"}]}], "]"}], ",", "\n", "\t\t\t\t", "0"}], 
+                          "\n", "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
+                      RowBox[{"(*", " ", RowBox[{"figures", " ", "out", " ", 
+                          "which", " ", "directories", " ", "may", " ", "be", 
+                          " ", "copied", " ", "across", " ", "wholesale"}], 
+                        " ", "*)"}], "\n", "\t\t", RowBox[
+                       {"unchangedReduction", "=", "\n", "\t\t\t", RowBox[
+                         {"AssociationMap", "[", "\n", "\t\t\t\t", RowBox[
+                          {RowBox[{RowBox[{RowBox[{"#", "[", RowBox[{"[", 
+                          "1", "]"}], "]"}], "->", "\n", "\t\t\t\t\t", RowBox[
+                          {"If", "[", "\n", "\t\t\t\t\t\t", RowBox[{RowBox[
+                          {RowBox[{"(", "\n", "\t\t\t\t\t\t  ", RowBox[
+                          {RowBox[{"!", RowBox[{"ListQ", "@", RowBox[{"g2", 
+                          "[", RowBox[{"#", "[", RowBox[{"[", "1", "]"}], 
+                          "]"}], "]"}]}]}], "||", RowBox[{"(*", " ", RowBox[
+                          {RowBox[{RowBox[{"not", " ", "in", " ", "the", " ", 
+                          "DirectoyName", " ", "map"}], "..."}], "?"}], " ", 
+                          "*)"}], "\n", "\t\t\t\t\t\t\t  ", RowBox[{RowBox[
+                          {"Length", "@", RowBox[{"Complement", "[", RowBox[
+                          {RowBox[{"Flatten", "@", RowBox[{"{", RowBox[{"g2", 
+                          "[", RowBox[{"#", "[", RowBox[{"[", "1", "]"}], 
+                          "]"}], "]"}], "}"}]}], ",", " ", RowBox[{"#", "[", 
+                          RowBox[{"[", "2", "]"}], "]"}]}], "]"}]}], 
+                          "\[Equal]", "0"}]}], "\n", "\t\t\t\t\t\t\t  ", 
+                          RowBox[{"(*", " ", RowBox[{"nothing", " ", "in", 
+                          " ", "the", " ", "original", " ", RowBox[{"that", 
+                          "'"}], "s", " ", "gone", " ", "missing"}], " ", 
+                          "*)"}], "\n", "\t\t\t\t\t\t\t", ")"}], "&&", "\n", 
+                          "\t\t\t\t\t\t\t", RowBox[{"!", RowBox[{"AnyTrue", 
+                          "[", RowBox[{RowBox[{"Keys", "@", "missingDirs"}], 
+                          ",", " ", RowBox[{"StringStartsQ", "[", RowBox[
+                          {"#", "[", RowBox[{"[", "1", "]"}], "]"}], "]"}]}], 
+                          "]"}]}]}], ",", "\n", "\t\t\t\t\t\t", RowBox[{"#", 
+                          "[", RowBox[{"[", "1", "]"}], "]"}], ",", "\n", 
+                          "\t\t\t\t\t\t", RowBox[{"#", "[", RowBox[{"[", "2", 
+                          "]"}], "]"}]}], "\n", "\t\t\t\t\t\t", "]"}]}], 
+                          "&"}], ",", "\n", "\t\t\t\t", "g1"}], "\n", 
+                          "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", RowBox[
+                       {"(*", " ", RowBox[{RowBox[{"figure", " ", "out", " ", 
+                          "which", " ", "directories", " ", "actually", " ", 
+                          "do", " ", "have", " ", "changes"}], ",", " ", 
+                          RowBox[{"but", " ", "down", " ", "in", " ", "a", 
+                          " ", "subdirectory"}]}], " ", "*)"}], "\n", "\t\t", 
+                      RowBox[{"parentNodeMap", "=", "\n", "\t    ", RowBox[
+                         {"GroupBy", "[", RowBox[{RowBox[{"Keys", "[", 
+                          "unchangedReduction", "]"}], ",", " ", 
+                          "DirectoryName"}], "]"}]}], ";", "\n", "\t  ", 
+                      RowBox[{"Do", "[", "\n", "\t      ", RowBox[
+                         {RowBox[{"If", "[", RowBox[{RowBox[{"StringQ", "@", 
+                          RowBox[{"unchangedReduction", "[", "node", "]"}]}], 
+                          ",", "\n", "\t        ", RowBox[{"If", "[", "\n", 
+                          "\t          ", RowBox[{RowBox[{"AnyTrue", "[", 
+                          RowBox[{RowBox[{"Lookup", "[", RowBox[
+                          {"unchangedReduction", ",", " ", RowBox[
+                          {"parentNodeMap", "[", "node", "]"}]}], "]"}], ",", 
+                          " ", RowBox[{"Not", "@*", "StringQ"}]}], "]"}], 
+                          ",", "\n", "\t          ", RowBox[{RowBox[{RowBox[
+                          {"unchangedReduction", "[", "node", "]"}], " ", 
+                          "=", " ", RowBox[{"g1", "[", "node", "]"}]}], 
+                          ";"}]}], "\n", "\t          ", "]"}]}], "\n", 
+                          "\t        ", "]"}], ",", "\n", "\t      ", 
+                          RowBox[{"{", RowBox[{"node", ",", " ", RowBox[
+                          {"Reverse", "@", RowBox[{RowBox[{"SortBy", "[", 
+                          "FileNameDepth", "]"}], "@", RowBox[{"Keys", "@", 
+                          "unchangedReduction"}]}]}]}], "}"}]}], "\n", 
+                        "\t      ", "]"}], ";", "\n", "\t  ", RowBox[
+                       {"(*", " ", RowBox[{"we", " ", "then", " ", "find", 
+                          " ", "which", " ", "directories", " ", "we", " ", 
+                          RowBox[{"can", "'"}], "t", " ", "copy", " ", 
+                          "because", " ", RowBox[{"we", "'"}], "re", " ", 
+                          "already", " ", "copying", " ", "the", " ", 
+                          "parent"}], " ", "*)"}], "\n", "\t\t", RowBox[
+                       {"containedReduction", "=", "\n", "\t\t\t", RowBox[
+                         {"FixedPoint", "[", "\n", "\t\t  \t", RowBox[
+                          {RowBox[{"KeySelect", "[", "\n", "\t\t  \t  ", 
+                          RowBox[{"(*", "\n", "\t\t  \t      ", RowBox[
+                          {"checks", " ", "if", " ", "both", " ", "the", " ", 
+                          "child", " ", "*", "and", "*", " ", "the", " ", 
+                          "parent", " ", "are", " ", "unchanged", " ", "*", 
+                          "and", "*", " ", "\n", "  ", "\t\t  \t      ", 
+                          "if", " ", "all", " ", "of", " ", "the", " ", 
+                          RowBox[{"parent", "'"}], "s", " ", "child", " ", 
+                          "nodes", " ", "are", " ", "unchanged"}], "\n", 
+                          "  ", "  \t\t\t    ", "*)"}], "\n", "  \t\t\t\t", 
+                          RowBox[{RowBox[{"!", RowBox[{"(", "\n", 
+                          "  \t\t\t\t\t  ", RowBox[{RowBox[{"StringQ", "@", 
+                          RowBox[{"unchangedReduction", "[", "#", "]"}]}], 
+                          "&&", "\n", "\t\t\t\t\t      ", RowBox[
+                          {"unchangedReduction", "[", RowBox[{
+                          "DirectoryName", "[", "#", "]"}], "]"}]}], "\n", 
+                          "            ", ")"}]}], "&"}], "\n", 
+                          "  \t\t\t\t ", "]"}], ",", "\n", "  \t\t", 
+                          "unchangedReduction"}], "\n", "  \t\t", "]"}]}], 
+                      ";", "\n", "\t\t", RowBox[{"(*", " ", RowBox[{"figure", 
+                          " ", "out", " ", "which", " ", "parent", " ", 
+                          "directories", " ", "have", " ", "changed"}], " ", 
+                        "*)"}], "\n", "\t\t", RowBox[{"keys", "=", RowBox[
+                         {"Select", "[", RowBox[{"containedReduction", ",", 
+                          " ", "StringQ"}], "]"}]}], ";", "\n", "\t\t", 
+                      RowBox[{"changedKeys", "=", "\n", "\t\t\t", RowBox[
+                         {"Select", "[", RowBox[{"keys", ",", " ", "\n", 
+                          "\t\t\t\t", RowBox[{RowBox[{"With", "[", RowBox[
+                          {RowBox[{"{", RowBox[{"k", "=", "#"}], "}"}], ",", 
+                          " ", RowBox[{"AnyTrue", "[", RowBox[{"keys", ",", 
+                          " ", RowBox[{"StringMatchQ", "[", RowBox[{"k", 
+                          "~~", "__"}], "]"}]}], "]"}]}], "]"}], "&"}]}], 
+                          "\n", "\t\t\t\t", "]"}]}], ";", "\n", "\t\t", 
+                      RowBox[{"baseSpec", "=", "\n", "\t\t\t", RowBox[
+                         {"Flatten", "@", RowBox[{"Values", "@", "\n", 
+                          "\t\t\t\t\t", RowBox[{"KeyDrop", "[", RowBox[
+                          {"containedReduction", ",", " ", "changedKeys"}], 
+                          "]"}]}]}]}], ";", "\n", "\t\t", RowBox[
+                       {RowBox[{"If", "[", RowBox[{"pruneEmpties", ",", "\n", 
+                          "\t\t\t", RowBox[{"(*", " ", RowBox[{"makes", " ", 
+                          "sure", " ", RowBox[{"we", "'"}], "re", " ", "not", 
+                          " ", "pulling", " ", "directories", " ", "with", 
+                          " ", "no", " ", "stuff", " ", "to", " ", "copy"}], 
+                          " ", "*)"}], "\n", "\t\t\t", RowBox[{"Select", "[", 
+                          "\n", "\t\t\t\t", RowBox[{RowBox[{RowBox[{"!", 
+                          RowBox[{"DirectoryQ", "[", "#", "]"}]}], "||", 
+                          "\n", "\t\t\t\t\t", RowBox[{RowBox[{"Length", "@", 
+                          RowBox[{"g1", "[", "#", "]"}]}], ">", "0"}], "||", 
+                          "\n", "\t", "\t\t\t\t", RowBox[{"AnyTrue", "[", 
+                          "\n", "\t", "\t\t\t\t\t", RowBox[{RowBox[
+                          {"Flatten", "@", RowBox[{"Values", "@", "\n", 
+                          "\t\t\t\t\t\t\t\t", RowBox[{"KeySelect", "[", 
+                          RowBox[{"g1", ",", " ", RowBox[{"StringStartsQ", 
+                          "[", "#", "]"}]}], "]"}]}]}], ",", " ", "\n", 
+                          "\t\t\t\t\t\t", RowBox[{"Not", "@*", 
+                          "DirectoryQ"}]}], "\n", "\t\t\t\t\t\t", "]"}]}], 
+                          "&"}], "\n", "\t\t\t\t", "]"}], ",", "\n", 
+                          "\t\t\t", RowBox[{RowBox[{"Union", "[", RowBox[
+                          {"#", ",", " ", "deadDirs"}], "]"}], "&"}]}], "\n", 
+                          "\t\t\t", "]"}], "@", "baseSpec"}]}]}], "\n", 
+                  "\t\t", "]"}]}]}], "CodeInput"]}, Open]], 
+        Cell[CellGroupData[
+          {Cell["\[LeftCeiling]CopyDirectoryFiles\[RightFloor]", 
+            "CodeSubsubsection", Evaluatable -> True], 
+           Cell[BoxData[RowBox[{RowBox[{"CopyDirectoryFiles", "[", 
+                 RowBox[{"src_", ",", " ", "targ_", ",", " ", "files_"}], 
+                 "]"}], ":=", "\n", "\t", RowBox[{"(", "\n", "\t\t", 
+                 RowBox[{RowBox[{"MapThread", "[", "\n", "\t\t\t", RowBox[
+                      {RowBox[{RowBox[{"Which", "[", "\n", "\t", "\t\t\t", 
+                          RowBox[{RowBox[{"DirectoryQ", "@", "#"}], ",", " ", 
+                          "\n", "\t", "\t\t\t\t", RowBox[{RowBox[{"If", "[", 
+                          RowBox[{RowBox[{"!", RowBox[{"DirectoryQ", "@", 
+                          RowBox[{"DirectoryName", "[", "#2", "]"}]}]}], ",", 
+                          " ", "\n", "\t\t\t\t\t\t", RowBox[
+                          {"CreateDirectory", "[", RowBox[{RowBox[
+                          {"DirectoryName", "[", "#2", "]"}], ",", " ", 
+                          RowBox[{"CreateIntermediateDirectories", "\[Rule]", 
+                          "True"}]}], "]"}]}], "\n", "\t\t\t\t\t\t", "]"}], 
+                          ";", "\n", "\t\t\t\t\t", RowBox[{"CopyDirectory", 
+                          "[", RowBox[{"#", ",", " ", "#2"}], "]"}]}], ",", 
+                          "\n", "\t\t\t\t", RowBox[{"FileExistsQ", "@", 
+                          "#"}], ",", "\n", "\t", "\t\t\t\t", RowBox[
+                          {RowBox[{"If", "[", RowBox[{RowBox[{"!", RowBox[
+                          {"DirectoryQ", "@", RowBox[{"DirectoryName", "[", 
+                          "#2", "]"}]}]}], ",", " ", "\n", "\t\t\t\t\t\t", 
+                          RowBox[{"CreateDirectory", "[", RowBox[{RowBox[
+                          {"DirectoryName", "[", "#2", "]"}], ",", " ", 
+                          RowBox[{"CreateIntermediateDirectories", "\[Rule]", 
+                          "True"}]}], "]"}]}], "\n", "\t", "\t\t\t\t\t", 
+                          "]"}], ";", "\n", "\t", "\t\t\t\t", RowBox[
+                          {"CopyFile", "[", RowBox[{"#", ",", " ", "#2", ",", 
+                          " ", RowBox[{"OverwriteTarget", "\[Rule]", 
+                          "True"}]}], "]"}]}]}], "\n", "\t", "\t\t\t", "]"}], 
+                         "&"}], ",", "\n", "\t\t\t", RowBox[{"{", "\n", 
+                         "\t\t\t\t", RowBox[{"files", ",", "\n", "\t\t\t\t", 
+                          RowBox[{"Map", "[", RowBox[{RowBox[{RowBox[
+                          {"FileNameJoin", "@", RowBox[{"{", RowBox[{"targ", 
+                          ",", " ", "#"}], "}"}]}], "&"}], ",", " ", RowBox[
+                          {"StringTrim", "[", RowBox[{"files", ",", " ", 
+                          "src"}], "]"}]}], "]"}]}], "\n", "\t", "\t\t\t", 
+                         "}"}]}], "\n", "\t", "\t\t", "]"}], ";"}], "\n", 
+                 "\t", "\t\t", ")"}]}]], "CodeInput"]}, Open]], 
+        Cell[CellGroupData[
+          {Cell["\[LeftCeiling]PruneDirectoryFiles\[RightFloor]", 
+            "CodeSubsubsection", Evaluatable -> True], 
+           Cell[BoxData[RowBox[{RowBox[{"PruneDirectoryFiles", "[", 
+                 RowBox[{"targ_", ",", " ", "files_", ",", " ", RowBox[
+                    {"src_:", "\"\""}]}], "]"}], ":=", "\n", "\t", RowBox[
+                {"(", "\n", "\t\t", RowBox[{RowBox[{RowBox[{RowBox[{"Which", 
+                         "[", "\n", "\t\t\t", RowBox[{RowBox[{"DirectoryQ", 
+                          "@", "#"}], ",", " ", "\n", "\t\t\t\t", RowBox[
+                          {"DeleteDirectory", "[", RowBox[{"#", ",", " ", 
+                          RowBox[{"DeleteContents", "\[Rule]", "True"}]}], 
+                          "]"}], ",", "\n", "\t", "\t\t", RowBox[
+                          {"FileExistsQ", "@", "#"}], ",", "\n", "\t", 
+                          "\t\t\t", RowBox[{"DeleteFile", "[", "#", "]"}]}], 
+                         "\n", "\t", "\t\t", "]"}], "&"}], "/@", "\n", 
+                     "\t\t\t", RowBox[{"Map", "[", "\n", "\t\t\t\t", 
+                       RowBox[{RowBox[{RowBox[{"FileNameJoin", "@", RowBox[
+                          {"{", RowBox[{"targ", ",", " ", "#"}], "}"}]}], 
+                          "&"}], ",", " ", "\n", "\t\t\t\t", RowBox[
+                          {"StringTrim", "[", RowBox[{"files", ",", " ", 
+                          "src"}], "]"}]}], "\n", "\t\t\t\t", "]"}]}], ";"}], 
+                 "\n", "\t\t", ")"}]}]], "CodeInput"]}, Open]]}, Open]], 
+     Cell[BoxData[RowBox[{RowBox[{"End", "[", "]"}], ";"}]], 
+      "InputSection"]}, Open]], Cell["", "SectionSeparator"]}, 
+ WindowSize -> {808, 755}, WindowMargins -> {{Automatic, 154}, 
+   {Automatic, 19}}, TaggingRules -> 
+  {"UUIDButtons" -> 
+    {"Active" -> {"Button-b8297203-6b28-48f9-8ba3-edbd5eb431d2" -> False, 
+       "Button-8c92aebb-2725-4f7c-a6a8-f90e3a4dce9c" -> False, 
+       "Button-ede3a027-3279-40a0-8aa4-1fcc5f60357d" -> False, 
+       "Button-89ffd2c3-ec41-4179-a9b1-8e28670bca2c" -> False, 
+       "Button-ca46e5e0-4fd1-47e8-8cf6-72998922b757" -> False, 
+       "Button-a6d68254-3684-4d32-83fc-e5ef6f443930" -> False}}}, 
+ FrontEndVersion -> "12.0 for Mac OS X x86 (64-bit) (April 8, 2019)", 
+ StyleDefinitions -> FrontEnd`FileName[{"BTools"}, "CodePackage.nb", 
+   CharacterEncoding -> "UTF-8"]]

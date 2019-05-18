@@ -4981,6 +4981,8 @@ initGitWebsite[dir_]:=
     True,
       Git["Init", dir];
       setupGitIgnore[dir];
+      Git["Add", dir, "All"->True];
+      Git["Commit", dir, "Message"->"Setting up site"];
       dir
     ]
 
@@ -4990,16 +4992,20 @@ initGitWebsite[dir_]:=
 
 
 
-checkoutGHPagesBranch[dir_, curb_:Automatic, bname_:"gh-pages"]:=
+checkoutGHPagesBranch//Clear
+checkoutGHPagesBranch[dir_, 
+  curb:_String|Automatic:Automatic,
+  bname:_String:"gh-pages"
+  ]:=
   Module[{chk, cur = curb},
-    If[cur===Automatic,
-      cur = Git["CurrentBranch", dir]
-      ];
-    chk = Git["Checkout", bname]; (* if doesn't exit we'll capture that *)
-    If[StringStartsQ[chk, "error: pathspec "],
-      Git["Branch", dir, bname];
-      Git["Checkout", bname];
-      Git["Rebase", dir, cur]
+    If[cur===Automatic, cur = Git["CurrentBranch", dir]];
+    If[cur=!=bname,
+      chk = Git["Checkout", dir, bname]; (* if doesn't exit we'll capture that *)
+      If[StringStartsQ[chk, "error: pathspec "],
+        Git["Branch", dir, bname];
+        Git["Checkout", dir, bname];
+        ];
+      Git["Rebase", dir, cur];
       ];
     cur
     ]
@@ -5013,10 +5019,12 @@ checkoutGHPagesBranch[dir_, curb_:Automatic, bname_:"gh-pages"]:=
 deployGHPagesBranch[dir_, path_, bname_:"gh-pages"]:=
   Module[{cur, chk, res},
     Internal`WithLocalSettings[
-      cur = checkoutGHPagesBranch[dir],
+      cur = checkoutGHPagesBranch[dir, Automatic, bname],
       setupGHPagesContent[dir];
       pushGHPagesContent[dir, path],
-      If[cur=!=bname, Git["Checkout", cur]]
+      If[cur=!=bname&&StringQ[cur], 
+        Git["Checkout", dir, cur]
+        ]
       ]
     ]
 
@@ -5033,15 +5041,19 @@ setupGHPagesContent[dir_]:=
         CopyDirectoryFiles[
           FileNameJoin@{dir, "output"},
           dir,
-          GetMinimalFileModSpec@
-            FileNames["*", FileNameJoin@{dir, "output"}]
+          GetMinimalFileModSpec[
+            FileNames["*", FileNameJoin@{dir, "output"}, Infinity],
+            FileNames["*", FileNameJoin@{dir, "output"}, Infinity]
+            ]
           ],
       DirectoryQ@FileNameJoin@{dir, "docs"},
         CopyDirectoryFiles[
           FileNameJoin@{dir, "docs"},
           dir,
-          GetMinimalFileModSpec@
-            FileNames["*", FileNameJoin@{dir, "docs"}]
+          GetMinimalFileModSpec[
+            FileNames["*", FileNameJoin@{dir, "docs"}, Infinity],
+            FileNames["*", FileNameJoin@{dir, "docs"}, Infinity]
+            ]
           ]
       ]
     ]
@@ -5064,9 +5076,7 @@ configureGHPagesRemote[dir_, path_]:=
     rem = Git["GetRemoteURL", dir, "gh-pages"];
     If[!StringContainsQ[rem, "github.com"],
       addRem = URL@GitHub["Path", path];
-      If[URLRead[addRem, "StatusCode"]>399,
-        GitHub["Create", path]
-        ];
+      If[URLRead[addRem, "StatusCode"]>399, GitHub["Create", path]];
       rem2 = Git["AddRemote", dir, "gh-pages", addRem];
       If[rem2===Null, rem = addRem, rem = $Failed]
       ];
@@ -5080,15 +5090,21 @@ configureGHPagesRemote[dir_, path_]:=
 
 
 pushGHPagesContent[dir_, path_]:=
-  With[{rem=configureGHPagesRemote[dir]},
+  Module[{rem=configureGHPagesRemote[dir, path], 
+    res=$Failed, add=$Failed, commit=$Failed},
     If[rem=!=$Failed,
-      Git["Add", dir, "All"->True];
-      Git["Commit", dir, 
+      add = Git["Add", dir, "All"->True];
+      commit = Git["Commit", dir, 
         "Message"->"Deploying website at "<>DateString[Now, "DateTimeShort"]
         ];
-      Git["Push", dir, "gh-pages", "gh-pages"];
+      res = Git["Push", dir, "gh-pages", "gh-pages"];
       ];
-    rem
+    <|
+      "Remote"->rem, 
+      "Add"->add,
+      "Commit"->commit,
+      "Results"->res
+      |>
     ]
 
 
@@ -5109,7 +5125,11 @@ WebSiteGitHubDeploy[
       pat
       },
     dep = getGHDeployRoot[outDir];
-    pat = If[path===Automatic, StringDelete[FileBaseName[dep], Whitespace]];
+    pat = 
+      If[path===Automatic, 
+        StringDelete[FileBaseName[dep], Whitespace],
+        path
+        ];
     initGitWebsite[dep];
     deployGHPagesBranch[dep, pat]
     ]
@@ -5126,11 +5146,11 @@ WebSiteGitHubDeploy[
 
 
 getWebsiteDir[out_]:=
-  SelectFirst[
+  DirectoryName@SelectFirst[
     FileNameJoin@{#, "SiteConfig.wl"}&/@
       NestList[DirectoryName, out, 1],
     FileExistsQ,
-    out
+    FileNameJoin@{out, "SiteConfig.wl"}
     ]
 
 
@@ -5164,9 +5184,13 @@ $deploymentDispatcher=<|
 
 
 Options[WebSiteDeploy]=
-  {
-    "DeploymentTarget"->Automatic
-    };
+  DeleteDuplicatesBy[First]@
+    Join[
+      {
+        "DeploymentTarget"->Automatic
+        },
+      Flatten[Options/@Values[$deploymentDispatcher]]
+      ];
 WebSiteDeploy[
   outDir_String?DirectoryQ,
   uri:_String|Automatic:Automatic,

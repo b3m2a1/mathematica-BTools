@@ -1698,6 +1698,8 @@ PacletSiteURL[ops:OptionsPattern[]]:=
             ]
         ]
       ];
+PacletSiteURL[a_Association?AssociationQ]:=
+  PacletSiteURL[Normal[a]]
 
 
 (* ::Subsubsection::Closed:: *)
