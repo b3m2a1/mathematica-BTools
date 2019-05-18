@@ -13,29 +13,29 @@
 
 
 AppGitInit::usage=
-	"Configures a Git repository for the app";
+  "Configures a Git repository for the app";
 AppGitClone::usage=
-	"Clones a Git repo";
+  "Clones a Git repo";
 AppGitCommit::usage=
-	"Configures pushes to the git repo";
+  "Configures pushes to the git repo";
 AppGitSafeCommit::usage=
-	"Commits, making sure the ignore and exclude exist";
+  "Commits, making sure the ignore and exclude exist";
 AppGitHubConfigure::usage=
-	"Configures the app to be able to push to github";
+  "Configures the app to be able to push to github";
 AppGitHubRepo::usage=
-	"The GitHub repo for the app";
+  "The GitHub repo for the app";
 AppGitHubSetRemote::usage=
-	"Sets the remote for the app";
+  "Sets the remote for the app";
 AppGitRealignRemotes::usage=
-	"Makes sure git will work across remotes";
+  "Makes sure git will work across remotes";
 AppGitHubPull::usage=
-	"Pulls the app from its master branch";
+  "Pulls the app from its master branch";
 AppGitHubPush::usage=
-	"Pushes the app to its master branch";
+  "Pushes the app to its master branch";
 AppGitHubDelete::usage=
-	"Removes a repo from github";
+  "Removes a repo from github";
 AppGitHubCreateRelease::usage=
-	"Creates a release on GitHub";
+  "Creates a release on GitHub";
 
 
 Begin["`Private`"];
@@ -52,14 +52,14 @@ Begin["`Private`"];
 
 
 AppGitInit[appName_:Automatic]:=
-	With[{app=AppFromFile[appName]},
-		With[{d=AppDirectory[app]},
-			GitInit[d];
-			AppRegenerateGitExclude[app];
-			AppRegenerateGitIgnore[app];
-			d
-			]
-		];
+  With[{app=AppFromFile[appName]},
+    With[{d=AppDirectory[app]},
+      GitInit[d];
+      AppRegenerateGitExclude[app];
+      AppRegenerateGitIgnore[app];
+      d
+      ]
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -68,27 +68,27 @@ AppGitInit[appName_:Automatic]:=
 
 
 AppRegenerateGitIgnore[appName_:Automatic,
-	patterns:_String|{__String}:
-		{
-			"Packages/*.nb",
-			"Packages/*/*.nb",
-			"Packages/*/*/*/*.nb",
-			".DS_Store"
-			}]:=
-	With[{
-		app=
-			AppFromFile[appName]
-			},
-		If[GitRepoQ@AppDirectory[app],
-			With[{f=OpenWrite[AppPath[app,".gitignore"]]},
-				WriteLine[f,
-					StringJoin@Riffle[Flatten@{patterns},"\n"]
-					];
-				Close@f
-				],
-			$Failed
-			]
-		];
+  patterns:_String|{__String}:
+    {
+      "Packages/*.nb",
+      "Packages/*/*.nb",
+      "Packages/*/*/*/*.nb",
+      ".DS_Store"
+      }]:=
+  With[{
+    app=
+      AppFromFile[appName]
+      },
+    If[GitRepoQ@AppDirectory[app],
+      With[{f=OpenWrite[AppPath[app,".gitignore"]]},
+        WriteLine[f,
+          StringJoin@Riffle[Flatten@{patterns},"\n"]
+          ];
+        Close@f
+        ],
+      $Failed
+      ]
+    ];
 
 
  (* ::Subsubsection::Closed:: *)
@@ -97,24 +97,24 @@ AppRegenerateGitIgnore[appName_:Automatic,
 
 
 AppRegenerateGitExclude[appName_:Automatic,
-	patterns:_String|{__String}:{"Private/*"}]:=
-	With[{
-		app=
-			AppFromFile[appName]
-			},
-		If[GitRepoQ@AppDirectory[app],
-			If[Not@DirectoryQ@AppDirectory[app,".git","info"],
-				CreateDirectory[AppDirectory[app,".git","info"]]
-				];
-			With[{f=OpenWrite[AppPath[app,".git","info","exclude"]]},
-				WriteLine[f,
-					StringJoin@Riffle[Flatten@{patterns},"\n"]
-					];
-				Close@f
-				],
-			$Failed
-			]
-		];
+  patterns:_String|{__String}:{"Private/*"}]:=
+  With[{
+    app=
+      AppFromFile[appName]
+      },
+    If[GitRepoQ@AppDirectory[app],
+      If[Not@DirectoryQ@AppDirectory[app,".git","info"],
+        CreateDirectory[AppDirectory[app,".git","info"]]
+        ];
+      With[{f=OpenWrite[AppPath[app,".git","info","exclude"]]},
+        WriteLine[f,
+          StringJoin@Riffle[Flatten@{patterns},"\n"]
+          ];
+        Close@f
+        ],
+      $Failed
+      ]
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -123,87 +123,87 @@ AppRegenerateGitExclude[appName_:Automatic,
 
 
 appREADMETemplate:=
-	StringReplace[
-		Import[
-			PackageAppPath["Resources", "Templates", "README.md"],
-			"Text"
-			],{
-		"`"->"`tick`",
-		"$"~~l:LetterCharacter..~~"$":>"`"<>l<>"`"
-		}]
+  StringReplace[
+    Import[
+      PackageAppPath["Resources", "Templates", "README.md"],
+      "Text"
+      ],{
+    "`"->"`tick`",
+    "$"~~l:LetterCharacter..~~"$":>"`"<>l<>"`"
+    }]
 
 
 Options[AppRegenerateReadme]={
-	"Header"->"",
-	"Footer"->""
-	};
+  "Header"->"",
+  "Footer"->""
+  };
 AppRegenerateReadme[appName:_String|Automatic:Automatic]:=
-	With[{app=AppFromFile[appName]},
-		GitHubCreateReadme[
-			AppDirectory[app],
-			TemplateApply[appREADMETemplate,<|
-				"tick"->"`",
-				"Name"->
-					app,
-				"FunctionCount"->
-					(
-						Needs[app<>"`"];
-						Length@Names[app<>"`*"]
-						),
-				"PackageCount"->
-					Length@AppPackages[app],
-				"SymbolPages"->
-					Replace[Length@AppSymbolPages[app],{
-						0->
-							"no ref pages",
-						1->
-							"1 ref page",
-						n_:>
-							ToString[n]<>" ref pages"
-						}],
-				"GuidePages"->
-					Replace[Length@AppGuides[app],{
-						0->
-							"no guide pages",
-						1->
-							"1 guide page",
-						n_:>
-							ToString[n]<>" guide pages"
-						}],
-				"TutorialPages"->
-					Replace[Length@AppTutorials[app],{
-						0->
-							"no tutorial pages",
-						1->
-							"1 tutorial page",
-						n_:>
-							ToString[n]<>" tutorial pages"
-						}],
-				"Stylesheets"->
-					Replace[Length@AppStyleSheets[app],{
-						0->
-							"no stylesheets",
-						1->
-							"1 stylesheet",
-						n_:>
-							ToString[n]<>" stylesheet"
-						}],
-				"Palettes"->
-					Replace[Length@AppPalettes[app],{
-						0->
-							"no palettes",
-						1->
-							"1 palette",
-						n_:>
-							ToString[n]<>" palettes"
-						}],
-				"Installer":>
-					AppPacletInstallerURL@app,
-				"Uninstaller":>
-					AppPacletUninstallerURL@app
-				|>]
-			]
-		]
+  With[{app=AppFromFile[appName]},
+    GitHubCreateReadme[
+      AppDirectory[app],
+      TemplateApply[appREADMETemplate,<|
+        "tick"->"`",
+        "Name"->
+          app,
+        "FunctionCount"->
+          (
+            Needs[app<>"`"];
+            Length@Names[app<>"`*"]
+            ),
+        "PackageCount"->
+          Length@AppPackages[app],
+        "SymbolPages"->
+          Replace[Length@AppSymbolPages[app],{
+            0->
+              "no ref pages",
+            1->
+              "1 ref page",
+            n_:>
+              ToString[n]<>" ref pages"
+            }],
+        "GuidePages"->
+          Replace[Length@AppGuides[app],{
+            0->
+              "no guide pages",
+            1->
+              "1 guide page",
+            n_:>
+              ToString[n]<>" guide pages"
+            }],
+        "TutorialPages"->
+          Replace[Length@AppTutorials[app],{
+            0->
+              "no tutorial pages",
+            1->
+              "1 tutorial page",
+            n_:>
+              ToString[n]<>" tutorial pages"
+            }],
+        "Stylesheets"->
+          Replace[Length@AppStyleSheets[app],{
+            0->
+              "no stylesheets",
+            1->
+              "1 stylesheet",
+            n_:>
+              ToString[n]<>" stylesheet"
+            }],
+        "Palettes"->
+          Replace[Length@AppPalettes[app],{
+            0->
+              "no palettes",
+            1->
+              "1 palette",
+            n_:>
+              ToString[n]<>" palettes"
+            }],
+        "Installer":>
+          AppPacletInstallerURL@app,
+        "Uninstaller":>
+          AppPacletUninstallerURL@app
+        |>]
+      ]
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -212,19 +212,19 @@ AppRegenerateReadme[appName:_String|Automatic:Automatic]:=
 
 
 AppGitClone[base_String]:=
-	With[{
-		url=
-			If[StringMatchQ@MatchQ[base,"http*"],
-				base,
-				GitHubRepo[base]
-				],
-		app=
-			AppFromFile[base]
-		},
-		GitClone[url,
-			AppDirectory[app]
-			]
-		]
+  With[{
+    url=
+      If[StringMatchQ@MatchQ[base,"http*"],
+        base,
+        GitHubRepo[base]
+        ],
+    app=
+      AppFromFile[base]
+    },
+    GitClone[url,
+      AppDirectory[app]
+      ]
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -233,47 +233,47 @@ AppGitClone[base_String]:=
 
 
 AppGitCommit[
-	appName:_String|Automatic:Automatic,
-	message:_String|Automatic:Automatic,
-	add:True|False:True
-	]:=
-	Replace[AppFromFile[appName],
-		app_String:>
-			With[{d=AppDirectory[app]},
-				If[add,GitAdd[d,"-A"]];
-				GitCommit[d,
-					"Message"->
-						Replace[message,
-							Automatic:>
-								TemplateApply[
-									"Committed `` application @ ``",
-									{
-										app,
-										StringReplace[
-											DateString["ISODateTime"],
-											"T"->"_"
-											]}
-									]
-							]
-					]
-				]
-		];
+  appName:_String|Automatic:Automatic,
+  message:_String|Automatic:Automatic,
+  add:True|False:True
+  ]:=
+  Replace[AppFromFile[appName],
+    app_String:>
+      With[{d=AppDirectory[app]},
+        If[add,GitAdd[d,"-A"]];
+        GitCommit[d,
+          "Message"->
+            Replace[message,
+              Automatic:>
+                TemplateApply[
+                  "Committed `` application @ ``",
+                  {
+                    app,
+                    StringReplace[
+                      DateString["ISODateTime"],
+                      "T"->"_"
+                      ]}
+                  ]
+              ]
+          ]
+        ]
+    ];
 
 
 AppGitSafeCommit[
-	appName:_String|Automatic:Automatic,
-	message:_String|Automatic:Automatic,
-	add:True|False:True
-	]:=
-	With[{app=AppFromFile[appName]},
-		If[!FileExistsQ@AppPath[app,".gitignore"],	
-			AppRegenerateGitIgnore[]
-			];
-		If[!FileExistsQ@AppPath[app,".git","info","exclude"],	
-			AppRegenerateGitExclude[]
-			];
-		AppGitCommit[app,message,add]
-		]
+  appName:_String|Automatic:Automatic,
+  message:_String|Automatic:Automatic,
+  add:True|False:True
+  ]:=
+  With[{app=AppFromFile[appName]},
+    If[!FileExistsQ@AppPath[app,".gitignore"],  
+      AppRegenerateGitIgnore[]
+      ];
+    If[!FileExistsQ@AppPath[app,".git","info","exclude"],  
+      AppRegenerateGitExclude[]
+      ];
+    AppGitCommit[app,message,add]
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -282,24 +282,24 @@ AppGitSafeCommit[
 
 
 $AppGitHubPrefix="";
-	(*"mathematica-";*)
+  (*"mathematica-";*)
 
 
 AppGitHubRepo[appName_, password_:None]:=
-	Replace[
-		AppFromFile[appName],
-		s_String:>
-			With[{u=Git["GetRemoteURL", AppPath[s]]},
-				If[URLParse[u, "Domain"]=!="github.com",
-					URL@
-						GitHubPath[
-							$AppGitHubPrefix<>s,
-							"Password"->password
-							],
-					u
-					]
-				]
-		];
+  Replace[
+    AppFromFile[appName],
+    s_String:>
+      With[{u=Git["GetRemoteURL", AppPath[s]]},
+        If[URLParse[u, "Domain"]=!="github.com",
+          URL@
+            GitHubPath[
+              $AppGitHubPrefix<>s,
+              "Password"->password
+              ],
+          u
+          ]
+        ]
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -308,25 +308,25 @@ AppGitHubRepo[appName_, password_:None]:=
 
 
 AppGitHubSetRemote[appName_,remote_:Automatic]:=
-	With[{app=AppFromFile[appName]},
-		Replace[Replace[remote,Except[_String]:>AppGitHubRepo[appName]],
-			r_String:>
-				(*Quiet@*)
-					Check[
-						Git["AddRemote", 
-							AppPath[app],
-							r
-							],
-						Git["RemoveRemote", AppPath[app],
-							r
-							];
-						Git["AddRemote", 
-							AppPath[app],
-							r
-							]
-						]
-			]
-		]
+  With[{app=AppFromFile[appName]},
+    Replace[Replace[remote,Except[_String]:>AppGitHubRepo[appName]],
+      r_String:>
+        (*Quiet@*)
+          Check[
+            Git["AddRemote", 
+              AppPath[app],
+              r
+              ],
+            Git["RemoveRemote", AppPath[app],
+              r
+              ];
+            Git["AddRemote", 
+              AppPath[app],
+              r
+              ]
+            ]
+      ]
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -335,16 +335,16 @@ AppGitHubSetRemote[appName_,remote_:Automatic]:=
 
 
 AppGitRealignRemotes[appName_]:=
-	With[{
-		app=AppFromFile[appName]
-		},
-		If[Git["ListRemotes", AppPath[app]]===Null,
-			AppGitHubSetRemote[AppDirectory[app]]
-			];
-		Git["Fetch", AppPath[app]];
-		Git["Reset", AppPath[app], "origin/master"];
-		Git["Checkout", AppPath[app], "origin/master"];
-		];
+  With[{
+    app=AppFromFile[appName]
+    },
+    If[Git["ListRemotes", AppPath[app]]===Null,
+      AppGitHubSetRemote[AppDirectory[app]]
+      ];
+    Git["Fetch", AppPath[app]];
+    Git["Reset", AppPath[app], "origin/master"];
+    Git["Checkout", AppPath[app], "origin/master"];
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -353,31 +353,31 @@ AppGitRealignRemotes[appName_]:=
 
 
 AppGitHubConfigure[appName_:Automatic]:=
-	Catch@
-		Module[{app=AppFromFile[appName],repo,repoExistsQ},
-			repo=AppGitHubRepo[app];
-			If[repo===$Failed,
-				Throw[$Failed]
-				];
-			If[!GitRepoQ@AppDirectory[app],
-				AppGitInit[app];
-				AppGitHubSetRemote[app, repo];
-				repoExistsQ=Between[URLRead[repo,"StatusCode"],{200,299}];
-				If[repoExistsQ,
-					AppGitRealignRemotes[app]
-					]
-				];
-			If[Git["RepoQ", AppDirectory[app]],
-				If[!ValueQ[repoExistsQ],
-					repoExistsQ=Between[URLRead[repo, "StatusCode"],{200,299}]
-					];
-				If[!repoExistsQ,
-					GitHub["Create", $AppGitHubPrefix<>app, "ImportedResult"];
-					AppGitHubSetRemote[app,repo]
-					];
-				repo
-				]
-			];
+  Catch@
+    Module[{app=AppFromFile[appName],repo,repoExistsQ},
+      repo=AppGitHubRepo[app];
+      If[repo===$Failed,
+        Throw[$Failed]
+        ];
+      If[!GitRepoQ@AppDirectory[app],
+        AppGitInit[app];
+        AppGitHubSetRemote[app, repo];
+        repoExistsQ=Between[URLRead[repo,"StatusCode"],{200,299}];
+        If[repoExistsQ,
+          AppGitRealignRemotes[app]
+          ]
+        ];
+      If[Git["RepoQ", AppDirectory[app]],
+        If[!ValueQ[repoExistsQ],
+          repoExistsQ=Between[URLRead[repo, "StatusCode"],{200,299}]
+          ];
+        If[!repoExistsQ,
+          GitHub["Create", $AppGitHubPrefix<>app, "ImportedResult"];
+          AppGitHubSetRemote[app,repo]
+          ];
+        repo
+        ]
+      ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -386,14 +386,14 @@ AppGitHubConfigure[appName_:Automatic]:=
 
 
 AppGitHubPush[appName_:Automatic]:=
-	With[{app=AppFromFile[appName]},
-		If[GitRepoQ@AppDirectory[app],
-			Git["PullOrigin", AppPath@app];
-			Block[{$GitHubEncodePassword=True},
-				GitHub["Push", AppDirectory[app]]
-				]
-			]
-		];
+  With[{app=AppFromFile[appName]},
+    If[GitRepoQ@AppDirectory[app],
+      Git["PullOrigin", AppPath@app];
+      Block[{$GitHubEncodePassword=True},
+        GitHub["Push", AppDirectory[app]]
+        ]
+      ]
+    ];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -402,19 +402,19 @@ AppGitHubPush[appName_:Automatic]:=
 
 
 AppGitHubDelete[appName_]:=
-	With[{app=AppFromFile[appName]},
-		If[GitRepoQ@AppPath[app],
-			With[{r=AppGitHubRepo[app]},
-				With[{res=GitHub["Delete", URLParse[r, "Path"][[-1]]]},
-					If[res["StatusCode"]<400,
-						Git["RemoveRemote", AppPath[app], r];
-						Success["Removed", Prepend[res, "Repository"->r]],
-						Failure["NotRemoved", res]
-						]
-					]
-				]
-			]
-		]
+  With[{app=AppFromFile[appName]},
+    If[GitRepoQ@AppPath[app],
+      With[{r=AppGitHubRepo[app]},
+        With[{res=GitHub["Delete", URLParse[r, "Path"][[-1]]]},
+          If[res["StatusCode"]<400,
+            Git["RemoveRemote", AppPath[app], r];
+            Success["Removed", Prepend[res, "Repository"->r]],
+            Failure["NotRemoved", res]
+            ]
+          ]
+        ]
+      ]
+    ]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -423,58 +423,58 @@ AppGitHubDelete[appName_]:=
 
 
 Options[AppGitHubCreateRelease]:=
-	Options[AppGitHubCreateRelease]=
-		Join[
-			GitHub["CreateRelease", "Options"],
-			{
-				"SubmitPaclet"->True,
-				"UseCachedPaclets"->True
-				}
-			];
+  Options[AppGitHubCreateRelease]=
+    Join[
+      GitHub["CreateRelease", "Options"],
+      {
+        "SubmitPaclet"->True,
+        "UseCachedPaclets"->True
+        }
+      ];
 AppGitHubCreateRelease[
-	app_, 
-	rname:_String|Automatic:Automatic, 
-	ops:OptionsPattern[]
-	]:=
-	Module[
-		{
-			repo=URLBuild@Normal@GitHub["Path", AppGitHubRepo[app]],
-			release,
-			paclet,
-			asset
-			},
-		release=
-			GitHub["CreateRelease", 
-				repo, 
-				Replace[rname, 
-					Automatic:>"v"<>AppPacletExecute["PacletInfo", app]["Version"]
-					],
-				ops,
-				"ResultObject"
-				];
-		If[!FailureQ@release,
-			If[OptionValue["SubmitPaclet"]//TrueQ,
-				paclet=
-					PacletExecute["FindPacletFile", app, 
-						"BuildPaclets"->False,
-						"UseCachedPaclets"->TrueQ@OptionValue["UseCachedPaclets"]
-						];
-				Which[
-					TrueQ@paclet,
-						paclet=PacletExecute["FindPacletFile", app],
-					!(StringQ@paclet&&FileExistsQ@paclet),
-						paclet=AppPacletExecute["Bundle", app]
-					];
-				asset=
-					GitHub["UploadReleaseAsset",
-						repo,
-						release["ID"],
-						paclet
-						];
-				];
-			];
-		release
-		]
+  app_, 
+  rname:_String|Automatic:Automatic, 
+  ops:OptionsPattern[]
+  ]:=
+  Module[
+    {
+      repo=URLBuild@Normal@GitHub["Path", AppGitHubRepo[app]],
+      release,
+      paclet,
+      asset
+      },
+    release=
+      GitHub["CreateRelease", 
+        repo, 
+        Replace[rname, 
+          Automatic:>"v"<>AppPacletExecute["PacletInfo", app]["Version"]
+          ],
+        ops,
+        "ResultObject"
+        ];
+    If[!FailureQ@release,
+      If[OptionValue["SubmitPaclet"]//TrueQ,
+        paclet=
+          PacletExecute["FindPacletFile", app, 
+            "BuildPaclets"->False,
+            "UseCachedPaclets"->TrueQ@OptionValue["UseCachedPaclets"]
+            ];
+        Which[
+          TrueQ@paclet,
+            paclet=PacletExecute["FindPacletFile", app],
+          !(StringQ@paclet&&FileExistsQ@paclet),
+            paclet=AppPacletExecute["Bundle", app]
+          ];
+        asset=
+          GitHub["UploadReleaseAsset",
+            repo,
+            release["ID"],
+            paclet
+            ];
+        ];
+      ];
+    release
+    ]
 
 
 End[];

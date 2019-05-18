@@ -5037,7 +5037,7 @@ deployGHPagesBranch[dir_, path_, bname_:"gh-pages"]:=
 setupGHPagesContent[dir_]:=
   Module[{contentDir},
     Which[
-      DirectoryQ@FileNameJoin@{dir, "output"},
+      Length[FileNames["*", FileNameJoin@{dir, "output"}, Infinity]]>0,
         CopyDirectoryFiles[
           FileNameJoin@{dir, "output"},
           dir,
@@ -5046,7 +5046,7 @@ setupGHPagesContent[dir_]:=
             FileNames["*", FileNameJoin@{dir, "output"}, Infinity]
             ]
           ],
-      DirectoryQ@FileNameJoin@{dir, "docs"},
+      Length[FileNames["*", FileNameJoin@{dir, "docs"}, Infinity]]>0,
         CopyDirectoryFiles[
           FileNameJoin@{dir, "docs"},
           dir,

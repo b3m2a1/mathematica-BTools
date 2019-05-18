@@ -1575,24 +1575,25 @@ packages or specs\""}], ";"}], "\n", RowBox[
                        {"\"ConfigureGitHub\"", "\[Rule]", "Automatic"}], ",", 
                       "\n", "\t\t", RowBox[{"\"PushToGitHub\"", "\[Rule]", 
                         "True"}], ",", "\n", "\t\t", RowBox[
-                       {"\"PushToCloud\"", "\[Rule]", "False"}], ",", "\n", 
-                      "\t\t", RowBox[{"\"PushToServer\"", "\[Rule]", 
-                        "True"}], ",", "\n", "\t\t", RowBox[
-                       {"\"PublishServer\"", "\[Rule]", "Automatic"}], ",", 
-                      "\n", "\t\t", RowBox[{"\"MakeSite\"", "\[Rule]", 
-                        "True"}], ",", "\n", "\t\t", RowBox[{"Verbose", 
-                        "\[Rule]", "True"}]}], "\n", "\t\t", "}"}]}], ";"}], 
-              "\n", RowBox[{RowBox[{"AppPublish", "[", RowBox[{"app_", ",", 
-                    RowBox[{"ops", ":", RowBox[{"OptionsPattern", "[", 
-                        "]"}]}]}], "]"}], ":=", "\n", "\t", RowBox[
-                 {"With", "[", RowBox[{RowBox[{"{", "\n", "\t\t", RowBox[
-                       {RowBox[{"updatePac", "=", RowBox[{"TrueQ", "[", 
-                          RowBox[{"OptionValue", "[", "\"UpdatePaclet\"", 
-                          "]"}], "]"}]}], ",", "\n", "\t\t", RowBox[
-                         {"gitCommit", "=", RowBox[{"OptionValue", "[", 
-                          "\"GitCommit\"", "]"}]}], ",", "\n", "\t\t", 
-                        RowBox[{"gitHubConfigure", "=", RowBox[
-                          {"OptionValue", "[", "\"ConfigureGitHub\"", 
+                       {"\"CreateRelease\"", "\[Rule]", "False"}], ",", "\n", 
+                      "\t\t", RowBox[{"\"PushToCloud\"", "\[Rule]", 
+                        "False"}], ",", "\n", "\t\t", RowBox[
+                       {"\"PushToServer\"", "\[Rule]", "True"}], ",", "\n", 
+                      "\t\t", RowBox[{"\"PublishServer\"", "\[Rule]", 
+                        "Automatic"}], ",", "\n", "\t\t", RowBox[
+                       {"\"MakeSite\"", "\[Rule]", "True"}], ",", "\n", 
+                      "\t\t", RowBox[{"Verbose", "\[Rule]", "True"}]}], "\n", 
+                    "\t\t", "}"}]}], ";"}], "\n", RowBox[{RowBox[
+                 {"AppPublish", "[", RowBox[{"app_", ",", RowBox[{"ops", ":", 
+                      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", 
+                "\n", "\t", RowBox[{"With", "[", RowBox[{RowBox[{"{", "\n", 
+                      "\t\t", RowBox[{RowBox[{"updatePac", "=", RowBox[
+                          {"TrueQ", "[", RowBox[{"OptionValue", "[", 
+                          "\"UpdatePaclet\"", "]"}], "]"}]}], ",", "\n", 
+                        "\t\t", RowBox[{"gitCommit", "=", RowBox[
+                          {"OptionValue", "[", "\"GitCommit\"", "]"}]}], ",", 
+                        "\n", "\t\t", RowBox[{"gitHubConfigure", "=", 
+                          RowBox[{"OptionValue", "[", "\"ConfigureGitHub\"", 
                           "]"}]}], ",", "\n", "\t\t", RowBox[{"gitHubPush", 
                           "=", RowBox[{"TrueQ", "[", RowBox[{"OptionValue", 
                           "[", "\"PushToGitHub\"", "]"}], "]"}]}], ",", "\n", 
@@ -1605,6 +1606,9 @@ packages or specs\""}], ";"}], "\n", RowBox[
                         "\t\t", RowBox[{"pacletBackup", "=", RowBox[{"TrueQ", 
                           "[", RowBox[{"OptionValue", "[", 
                           "\"PacletBackup\"", "]"}], "]"}]}], ",", "\n", 
+                        "\t\t", RowBox[{"gitHubRelease", "=", RowBox[
+                          {"TrueQ", "[", RowBox[{"OptionValue", "[", 
+                          "\"GitHubRelease\"", "]"}], "]"}]}], ",", "\n", 
                         "\t\t", RowBox[{"verb", "=", RowBox[{"TrueQ", "@", 
                           RowBox[{"OptionValue", "[", "Verbose", "]"}]}]}]}], 
                       "\n", "\t\t", "}"}], ",", "\n", "\t\t", RowBox[
@@ -1641,32 +1645,36 @@ packages or specs\""}], ";"}], "\n", RowBox[
                           " ", RowBox[{"Git", "::", "err"}]}], "]"}], ";", 
                           "\n", "\t\t\t\t\t", RowBox[{"AppGitHubRepo", "[", 
                           "app", "]"}]}]}], "\n", "\t\t\t\t\t", "]"}]}], ",", 
-                        "\n", "\t\t\t", RowBox[{"\"PushToCloud\"", "->", 
-                          "\n", "\t\t\t\t", RowBox[{"If", "[", RowBox[
-                          {"pacletCloudPush", ",", "\n", "\t\t\t\t\t", 
-                          RowBox[{"AppPacletUpload", "[", "app", "]"}]}], 
+                        "\n", "\t\t\t", RowBox[{"\"CreateRelease\"", "->", 
+                          "\n", "\t\t\t  ", RowBox[{"If", "[", RowBox[
+                          {"gitHubRelease", ",", "\n", "\t\t\t\t\t", RowBox[
+                          {"AppGitHubCreateRelease", "[", "app", "]"}]}], 
                           "\n", "\t\t\t\t\t", "]"}]}], ",", "\n", "\t\t\t", 
-                        RowBox[{"\"PushToServer\"", "->", "\n", "\t\t\t\t", 
-                          RowBox[{"Association", "@", RowBox[{"{", "\n", 
-                          "\t\t\t\t\t", RowBox[{RowBox[{"If", "[", RowBox[
-                          {RowBox[{"TrueQ", "@", "pacletServerPush"}], ",", 
-                          "\n", "\t\t\t\t\t\t", RowBox[{"\"ServerPaclet\"", 
-                          "->", "\n", "\t\t\t\t\t\t\t", RowBox[
-                          {"PacletServerAdd", "[", RowBox[{"$PacletServer", 
-                          ",", " ", "\n", "\t\t\t\t\t\t\t\t", RowBox[
-                          {"AppPacletBundle", "[", "app", "]"}]}], "\n", 
-                          "\t\t\t\t\t\t\t\t", "]"}]}], ",", "\n", 
-                          "\t\t\t\t\t\t", "Nothing"}], "\n", "\t\t\t\t\t\t", 
-                          "]"}], ",", "\n", "\t\t\t\t\t", RowBox[{"If", "[", 
-                          RowBox[{RowBox[{RowBox[{"TrueQ", "@", RowBox[
-                          {"OptionValue", "[", "\"PublishServer\"", "]"}]}], 
-                          "||", "\n", "\t\t\t\t\t\t", RowBox[{RowBox[
-                          {"TrueQ", "[", "pacletServerPush", "]"}], "&&", 
-                          RowBox[{RowBox[{"OptionValue", "[", 
-                          "\"PublishServer\"", "]"}], "===", 
-                          "Automatic"}]}]}], ",", "\n", "\t\t\t\t\t\t", 
-                          RowBox[{"\"ServerURL\"", "->", "\n", 
-                          "\t\t\t\t\t\t\t", RowBox[{"With", "[", RowBox[
+                        RowBox[{"\"PushToCloud\"", "->", "\n", "\t\t\t\t", 
+                          RowBox[{"If", "[", RowBox[{"pacletCloudPush", ",", 
+                          "\n", "\t\t\t\t\t", RowBox[{"AppPacletUpload", "[", 
+                          "app", "]"}]}], "\n", "\t\t\t\t\t", "]"}]}], ",", 
+                        "\n", "\t\t\t", RowBox[{"\"PushToServer\"", "->", 
+                          "\n", "\t\t\t\t", RowBox[{"Association", "@", 
+                          RowBox[{"{", "\n", "\t\t\t\t\t", RowBox[{RowBox[
+                          {"If", "[", RowBox[{RowBox[{"TrueQ", "@", 
+                          "pacletServerPush"}], ",", "\n", "\t\t\t\t\t\t", 
+                          RowBox[{"\"ServerPaclet\"", "->", "\n", 
+                          "\t\t\t\t\t\t\t", RowBox[{"PacletServerAdd", "[", 
+                          RowBox[{"$PacletServer", ",", " ", "\n", 
+                          "\t\t\t\t\t\t\t\t", RowBox[{"AppPacletBundle", "[", 
+                          "app", "]"}]}], "\n", "\t\t\t\t\t\t\t\t", "]"}]}], 
+                          ",", "\n", "\t\t\t\t\t\t", "Nothing"}], "\n", 
+                          "\t\t\t\t\t\t", "]"}], ",", "\n", "\t\t\t\t\t", 
+                          RowBox[{"If", "[", RowBox[{RowBox[{RowBox[{"TrueQ", 
+                          "@", RowBox[{"OptionValue", "[", 
+                          "\"PublishServer\"", "]"}]}], "||", "\n", 
+                          "\t\t\t\t\t\t", RowBox[{RowBox[{"TrueQ", "[", 
+                          "pacletServerPush", "]"}], "&&", RowBox[{RowBox[
+                          {"OptionValue", "[", "\"PublishServer\"", "]"}], 
+                          "===", "Automatic"}]}]}], ",", "\n", 
+                          "\t\t\t\t\t\t", RowBox[{"\"ServerURL\"", "->", 
+                          "\n", "\t\t\t\t\t\t\t", RowBox[{"With", "[", RowBox[
                           {RowBox[{"{", RowBox[{"mf", "=", RowBox[{"TrueQ", 
                           "@", RowBox[{"OptionValue", "[", "\"MakeSite\"", 
                           "]"}]}]}], "}"}], ",", "\n", "\t\t\t\t\t\t\t\t", 
@@ -1713,7 +1721,7 @@ packages or specs\""}], ";"}], "\n", RowBox[
                           "\t\t\t\t\t\t\t", "Nothing"}], "\n", 
                           "\t\t\t\t\t\t\t", "]"}]}], "\n", "\t\t\t\t\t\t", 
                           "}"}]}]}]}], "\n", "\t\t\t", "|>"}]}], "\n", 
-                  "\t\t", "]"}]}]}], "CodeInput"]}, Closed]]}, Open]], 
+                  "\t\t", "]"}]}]}], "CodeInput"]}, Open]]}, Open]], 
      Cell[CellGroupData[{Cell["\[LeftCeiling]Loading\[RightFloor]", 
          "CodeSubsection", Evaluatable -> True], 
         Cell[CellGroupData[{Cell["\[LeftCeiling]AppGet\[RightFloor]", 

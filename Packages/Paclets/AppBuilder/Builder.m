@@ -1006,6 +1006,7 @@ Options[AppPublish]=
     "GitCommit"->Automatic,
     "ConfigureGitHub"->Automatic,
     "PushToGitHub"->True,
+    "CreateRelease"->False,
     "PushToCloud"->False,
     "PushToServer"->True,
     "PublishServer"->Automatic,
@@ -1021,6 +1022,7 @@ AppPublish[app_,ops:OptionsPattern[]]:=
     pacletCloudPush=TrueQ[OptionValue["PushToCloud"]],
     pacletServerPush=TrueQ[OptionValue["PushToServer"]],
     pacletBackup=TrueQ[OptionValue["PacletBackup"]],
+    gitHubRelease=TrueQ[OptionValue["GitHubRelease"]],
     verb=TrueQ@OptionValue[Verbose]
     },
     <|
@@ -1044,6 +1046,10 @@ AppPublish[app_,ops:OptionsPattern[]]:=
         If[gitHubPush,
           Quiet[AppGitHubPush[app], Git::err];
           AppGitHubRepo[app]
+          ],
+      "CreateRelease"->
+        If[gitHubRelease,
+          AppGitHubCreateRelease[app]
           ],
       "PushToCloud"->
         If[pacletCloudPush,
