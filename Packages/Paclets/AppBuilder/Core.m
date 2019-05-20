@@ -732,7 +732,7 @@ AppRegenerateInit[name_String]:=
     pkg=AppDirectory[name,name<>".wl"],
     init=AppDirectory[name,"Kernel","init.m"]
     },
-    Export[loader,appInitTemplate[name],"Text"];
+    Export[loader, appInitTemplate[name],"Text"];
     Export[init, packageGet, "Text"];
     Export[pkg, loaderGet, "Text"]
     ];
@@ -1148,7 +1148,7 @@ AppGet[appName_,pkgName_String]:=
     cont=$Context
     },
     Replace[
-      SortBy[StringLength]@Names[app<>"`*`PackageAppGet"],{
+      SortBy[StringLength]@Names[app<>"`*`PackageAppGet"], {
         {n_, ___}:>
           Replace[
             FileNames[pkgName~~".wl"|".m",
@@ -1183,7 +1183,7 @@ AppGet[appName_,pkgName_String]:=
                     app<>"`"<>
                       StringReplace[
                         FileNameDrop[DirectoryName@pkg,
-                          FileNameDepth@AppDirectory[app,"Packages"]],
+                          FileNameDepth@AppDirectory[app, "Packages"]],
                         $PathnameSeparator->"`"
                         ]<>"`",
                     "``"->"`"
@@ -1295,7 +1295,10 @@ AppFromFile[f_String]:=
           MemberQ[FileNameTake/@AppNames["*", False], f],
             f,
           Length@PacletManager`PacletFind[f]>0,  
-            PacletManager`PacletFind[f][[1]]["Location"]//FileBaseName,
+            StringSplit[
+              PacletManager`PacletFind[f][[1]]["Location"]//FileBaseName,
+              "-"
+              ][[1]],
           True,
             $Failed
           ]
