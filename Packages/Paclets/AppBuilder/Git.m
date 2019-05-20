@@ -289,7 +289,7 @@ AppGitHubRepo[appName_, password_:None]:=
   Replace[
     AppFromFile[appName],
     s_String:>
-      With[{u=Git["GetRemoteURL", AppPath[s]]},
+      With[{u=StringTrim[Git["GetRemoteURL", AppPath[s]], ".git"]},
         If[URLParse[u, "Domain"]=!="github.com",
           URL@
             GitHubPath[

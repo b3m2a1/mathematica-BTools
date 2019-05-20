@@ -1012,7 +1012,7 @@ Options[AppPublish]=
     "PublishServer"->Automatic,
     "MakeSite"->True,
     Verbose->True
-    };
+    };s
 AppPublish[app_,ops:OptionsPattern[]]:=
   With[{
     updatePac=TrueQ[OptionValue["UpdatePaclet"]],
@@ -1022,7 +1022,7 @@ AppPublish[app_,ops:OptionsPattern[]]:=
     pacletCloudPush=TrueQ[OptionValue["PushToCloud"]],
     pacletServerPush=TrueQ[OptionValue["PushToServer"]],
     pacletBackup=TrueQ[OptionValue["PacletBackup"]],
-    gitHubRelease=TrueQ[OptionValue["GitHubRelease"]],
+    gitHubRelease=TrueQ[OptionValue["CreateRelease"]],
     verb=TrueQ@OptionValue[Verbose]
     },
     <|
