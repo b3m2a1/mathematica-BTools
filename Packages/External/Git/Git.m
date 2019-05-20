@@ -175,6 +175,14 @@ If[Not@MatchQ[$GitRepo,_String?DirectoryQ],
   ];
 
 
+(* ::Subsubsection::Closed:: *)
+(*$GitActions*)
+
+
+
+$GitActions=<||>;
+
+
 (* ::Subsection:: *)
 (*Git*)
 
@@ -2863,6 +2871,11 @@ GitWipeTheSlate[
 
 
 
+(* ::Subsubsubsection::Closed:: *)
+(*Basic*)
+
+
+
 GitHelp[cmd_String]:=
   With[{s=GitRun["help", cmd]},
     StringReplace[s, 
@@ -2901,7 +2914,7 @@ GitHelpPart[cmd_, delim1_, delim2_]:=
     ]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsubsection::Closed:: *)
 (*Synopsis*)
 
 
@@ -2910,7 +2923,7 @@ GitHelpSynopsis[cmd_String]:=
   GitHelpPart[cmd, "SYNOPSIS", "DESCRIPTION"]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsubsection::Closed:: *)
 (*Description*)
 
 
@@ -2919,7 +2932,7 @@ GitHelpDescription[cmd_String]:=
   GitHelpPart[cmd, "DESCRIPTION", "OPTIONS"]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsubsection::Closed:: *)
 (*Options*)
 
 
@@ -2930,7 +2943,7 @@ GitHelpOptions[cmd_String]:=
     ]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsubsection::Closed:: *)
 (*Flags*)
 
 
@@ -2943,7 +2956,7 @@ GitHelpFlags[cmd_String]:=
       ]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsubsection::Closed:: *)
 (*FlagMap*)
 
 
@@ -2992,173 +3005,364 @@ GitHelpFlagMap[cmd_]:=
 
 
 (* ::Subsubsection::Closed:: *)
+(*Stash*)
+
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Base*)
+
+
+
+$GitActions["Stash"]=GitStash;
+
+
+GitRegisterFunction[
+  GitStash,
+  "Stash",
+  {
+    }
+  ]
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*List*)
+
+
+
+$GitActions["StashList"]=GitStashList;
+
+
+GitRegisterFunction[
+  GitStashList,
+  {"stash", "list"},
+  {
+    
+    }
+  ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Show*)
+
+
+
+$GitActions["StashShow"]=GitStashShow;
+
+
+GitRegisterFunction[
+  GitStashList,
+  {"stash", "show"},
+  {
+    
+    }
+  ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Push*)
+
+
+
+$GitActions["StashPush"]=GitStashPush;
+
+
+GitRegisterFunction[
+  GitStashPush,
+  {"stash", "Push"},
+  {
+    "Patch"->"patch",
+    "KeepIndex"->"keep-index",
+    "NoKeepIndex"->"no-keep-index",
+    "IncludeUntracked"->"include-untracked",
+    "All"->"all",
+    "Quiet"->"quiet",
+    "Message"->"message"
+    }
+  ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Save*)
+
+
+
+$GitActions["StashSave"]=GitStashSave;
+
+
+GitRegisterFunction[
+  GitStashSave,
+  {"stash", "save"},
+  {
+    "Patch"->"patch",
+    "KeepIndex"->"keep-index",
+    "NoKeepIndex"->"no-keep-index",
+    "IncludeUntracked"->"include-untracked",
+    "All"->"all",
+    "Quiet"->"quiet",
+    "Message"->"message"
+    }
+  ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Pop*)
+
+
+
+$GitActions["StashPop"]=GitStashPop;
+
+
+GitRegisterFunction[
+  GitStashPop,
+  {"stash", "pop"},
+  {
+    "Index"->"index",
+    "Quiet"->"quiet"
+    }
+  ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Apply*)
+
+
+
+$GitActions["StashApply"]=GitStashApply;
+
+
+GitRegisterFunction[
+  GitStashApply,
+  {"stash", "apply"},
+  {
+    "Index"->"index",
+    "Quiet"->"quiet"
+    }
+  ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Branch*)
+
+
+
+$GitActions["StashBranch"]=GitStashBranch;
+
+
+GitRegisterFunction[
+  GitStashApply,
+  {"stash", "branch"},
+  {
+    }
+  ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Clear*)
+
+
+
+$GitActions["StashClear"]=GitStashClear;
+
+
+GitRegisterFunction[
+  GitStashApply,
+  {"stash", "clear"},
+  {
+    }
+  ];
+
+
+(* ::Subsubsubsection::Closed:: *)
+(*Drop*)
+
+
+
+$GitActions["StashDrop"]=GitStashDrop;
+
+
+GitRegisterFunction[
+  GitStashApply,
+  {"stash", "drop"},
+  {
+    }
+  ];
+
+
+(* ::Subsubsection::Closed:: *)
 (*Git*)
 
 
 
 (* ::Text:: *)
 (*
-	Why is this here...?  What does it provide that the other stuff doesn\[CloseCurlyQuote]t?
+	Why is this here...?  What does it provide that the other stuff doesn\[CloseCurlyQuote]t? Why not just add at definition time...?
 *)
 
 
 
 $GitActions=
   KeySort@
-  <|
-    "Repo"->
-      GitRepo,
-    "RepoQ"->
-      GitRepoQ,
-    "Create"->
-      GitCreate,
-    "Init"->
-      GitInit,
-    "Clone"->
-      GitClone,
-    "AddGitIgnore"->
-      GitAddGitIgnore,
-    "AddGitExclude"->
-      GitAddGitExclude,
-    "Add"->
-      GitAdd,
-    "Move"->
-      GitMove,
-    "Remove"->
-      GitRemove,
-    "RemoveCached"->
-      GitRemoveCached,
-    "RemoveRecursive"->
-      GitRemoveRecursive,
-    "RemoveCachedRecursive"->
-      GitRemoveCachedRecursive,
-    "Commit"->
-      GitCommit,
-    "Branch"->
-      GitBranch,
-    "ShowBranch"->
-      GitShowBranch,
-    "ListBranches"->
-      GitListBranches,
-    "CurrentBranch"->
-      GitCurrentBranch,
-    "SwitchBranch"->
-      GitSwitchBranch,
-    "ListRemotes"->
-      GitListRemotes,
-    "AddRemote"->
-      GitAddRemote,
-    "RemoveRemote"->
-      GitRemoveRemote,
-    "GetRemoteURL"->
-      GitGetRemoteURL,
-    "SetRemoteURL"->
-      GitSetRemoteURL,
-    "RealignRemotes"->
-      GitRealignRemotes,
-    "ReattachHead"->
-      GitReattachHead,
-    "Fetch"->
-      GitFetch,
-    "Reset"->
-      GitReset,
-    "Checkout"->
-      GitCheckout,
-    "Prune"->
-      GitPrune,
-    "Pull"->
-      GitPull,
-    "PullOrigin"->
-      GitPullOrigin,
-    "Push"->
-      GitPush,
-    "PushOrigin"->
-      GitPushOrigin,(*
-		"GetPushURL"->
-			GitGetPushURL,
-		"GetFetchURL"->
-			GitGetFetchURL,*)
-    "Repositories"->
-      GitRepositories,
-    "Log"->
-      GitLog,
-    "LogDataset"->
-      GitLogDataset,
-    "FileHistory"->
-      GitFileHistory,
-    "Status"->
-      GitStatus,
-    "ListTree"->
-      GitListTree,
-    "ListTreeRecursive"->
-      GitListTreeRecursive,
-    "RefLog"->
-      GitRefLog,
-    "RefLogExpire"->
-      GitRefLogExpire,
-    "Clean"->
-      GitClean,
-    "WipeTheSlate"->
-      GitWipeTheSlate,
-    "FilterBranch"->
-      GitFilterBranch,
-    "FilterTree"->
-      GitFilterTree,
-    "Config"->
-      GitConfig,
-    "Diff"->
-      GitDiff,
-    "Merge"->
-      GitMerge,
-    "MergeTool"->
-      GitMergeTool,
-    "Tag"->
-      GitTag,
-    "WorkTree"->
-      GitWorkTree,
-    "Submodule"->
-      GitSubmodule,
-    "Show"->
-      GitShow,
-    "ShortLog"->
-      GitShortLog,
-    "Describe"->
-      GitDescribe,
-    "Apply"->
-      GitApply,
-    "Rebase"->
-      GitRebase,
-    "Revert"->
-      GitRevert,
-    "Bisect"->
-      GitBisect,
-    "Blame"->
-      GitBlame,
-    "Grep"->
-      GitGrep,
-    "InstaWeb"->
-      GitInstaWeb,
-    "Archive"->
-      GitArchive,
-    "SVN"->
-      GitSVN,
-    "Bundle"->
-      GitBundle,
-    "Daemon"->
-      GitDaemon,
-    "Help"->
-      GitHelp,
-    "HelpSynopsis"->
-      GitHelpSynopsis,
-    "HelpDescription"->
-      GitHelpDescription,
-    "HelpOptions"->
-      GitHelpOptions,
-    "HelpFlags"->
-      GitHelpFlags,
-    "HelpFlagMap"->
-      GitHelpFlagMap
-    |>;
+    Merge[
+      {
+        <|
+          "Repo"->
+            GitRepo,
+          "RepoQ"->
+            GitRepoQ,
+          "Create"->
+            GitCreate,
+          "Init"->
+            GitInit,
+          "Clone"->
+            GitClone,
+          "AddGitIgnore"->
+            GitAddGitIgnore,
+          "AddGitExclude"->
+            GitAddGitExclude,
+          "Add"->
+            GitAdd,
+          "Move"->
+            GitMove,
+          "Remove"->
+            GitRemove,
+          "RemoveCached"->
+            GitRemoveCached,
+          "RemoveRecursive"->
+            GitRemoveRecursive,
+          "RemoveCachedRecursive"->
+            GitRemoveCachedRecursive,
+          "Commit"->
+            GitCommit,
+          "Branch"->
+            GitBranch,
+          "ShowBranch"->
+            GitShowBranch,
+          "ListBranches"->
+            GitListBranches,
+          "CurrentBranch"->
+            GitCurrentBranch,
+          "SwitchBranch"->
+            GitSwitchBranch,
+          "ListRemotes"->
+            GitListRemotes,
+          "AddRemote"->
+            GitAddRemote,
+          "RemoveRemote"->
+            GitRemoveRemote,
+          "GetRemoteURL"->
+            GitGetRemoteURL,
+          "SetRemoteURL"->
+            GitSetRemoteURL,
+          "RealignRemotes"->
+            GitRealignRemotes,
+          "ReattachHead"->
+            GitReattachHead,
+          "Fetch"->
+            GitFetch,
+          "Reset"->
+            GitReset,
+          "Checkout"->
+            GitCheckout,
+          "Prune"->
+            GitPrune,
+          "Pull"->
+            GitPull,
+          "PullOrigin"->
+            GitPullOrigin,
+          "Push"->
+            GitPush,
+          "PushOrigin"->
+            GitPushOrigin,(*
+      		"GetPushURL"->
+      			GitGetPushURL,
+      		"GetFetchURL"->
+      			GitGetFetchURL,*)
+          "Repositories"->
+            GitRepositories,
+          "Log"->
+            GitLog,
+          "LogDataset"->
+            GitLogDataset,
+          "FileHistory"->
+            GitFileHistory,
+          "Status"->
+            GitStatus,
+          "ListTree"->
+            GitListTree,
+          "ListTreeRecursive"->
+            GitListTreeRecursive,
+          "RefLog"->
+            GitRefLog,
+          "RefLogExpire"->
+            GitRefLogExpire,
+          "Clean"->
+            GitClean,
+          "WipeTheSlate"->
+            GitWipeTheSlate,
+          "FilterBranch"->
+            GitFilterBranch,
+          "FilterTree"->
+            GitFilterTree,
+          "Config"->
+            GitConfig,
+          "Diff"->
+            GitDiff,
+          "Merge"->
+            GitMerge,
+          "MergeTool"->
+            GitMergeTool,
+          "Tag"->
+            GitTag,
+          "WorkTree"->
+            GitWorkTree,
+          "Submodule"->
+            GitSubmodule,
+          "Show"->
+            GitShow,
+          "ShortLog"->
+            GitShortLog,
+          "Describe"->
+            GitDescribe,
+          "Apply"->
+            GitApply,
+          "Rebase"->
+            GitRebase,
+          "Revert"->
+            GitRevert,
+          "Bisect"->
+            GitBisect,
+          "Blame"->
+            GitBlame,
+          "Grep"->
+            GitGrep,
+          "InstaWeb"->
+            GitInstaWeb,
+          "Archive"->
+            GitArchive,
+          "SVN"->
+            GitSVN,
+          "Bundle"->
+            GitBundle,
+          "Daemon"->
+            GitDaemon,
+          "Help"->
+            GitHelp,
+          "HelpSynopsis"->
+            GitHelpSynopsis,
+          "HelpDescription"->
+            GitHelpDescription,
+          "HelpOptions"->
+            GitHelpOptions,
+          "HelpFlags"->
+            GitHelpFlags,
+          "HelpFlagMap"->
+            GitHelpFlagMap
+          |>,
+        $GitActions
+        },
+      First
+      ]
 
 
 End[];

@@ -515,16 +515,17 @@ WebSiteFindTheme[dir_String?DirectoryQ, theme_String,
   SelectFirst[
     Join[
       {
-        theme,
         FileNameJoin@{dir, "themes", theme},
-        FileNameJoin@{dir, "theme"}
+        FileNameJoin@{dir, theme},
+        FileNameJoin@{dir, "theme"},
+        theme
         },
       Map[
         FileNameJoin@{#, theme}&,
         $WebSiteThemePath
         ]
       ],
-    DirectoryQ,
+    DirectoryQ[#]&&DirectoryQ[FileNameJoin@{#, "templates"}]&,
     If[OptionValue["DownloadTheme"]===True,
       Replace[
         WebSiteInstallTheme[
@@ -564,7 +565,7 @@ WebSiteFindTheme[dir_String?DirectoryQ, op:OptionsPattern[]]:=
       ]
     ];
 WebSiteFindTheme[dir_String?DirectoryQ, a_?AssociationQ]:=
-  WebSiteFindTheme[dir, theme, Normal@a]
+  WebSiteFindTheme[dir, Normal@a]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -4997,15 +4998,28 @@ checkoutGHPagesBranch[dir_,
   curb:_String|Automatic:Automatic,
   bname:_String:"gh-pages"
   ]:=
-  Module[{chk, cur = curb},
+  Module[{chk, cur = curb, c2},
     If[cur===Automatic, cur = Git["CurrentBranch", dir]];
     If[cur=!=bname,
+      Git["Add", dir, "All"->True];
+      Git["Commit", dir, 
+        "Message"->"Commiting current branch before deployment..."
+        ];
       chk = Git["Checkout", dir, bname]; (* if doesn't exit we'll capture that *)
       If[StringStartsQ[chk, "error: pathspec "],
         Git["Branch", dir, bname];
         Git["Checkout", dir, bname];
         ];
-      Git["Rebase", dir, cur];
+      c2 = Git["CurrentBranch", dir];
+      If[c2 =!= bname, 
+        PackageRaiseException[
+          Automatic,
+          "Can't deploy from branch ``. Stuck on branch ``",
+          bname, 
+          c2
+          ]
+        ];
+      Git["Rebase", dir, cur, "StrategyOption"->"ours"];
       ];
     cur
     ]
@@ -5021,9 +5035,9 @@ deployGHPagesBranch[dir_, path_, bname_:"gh-pages"]:=
     Internal`WithLocalSettings[
       cur = checkoutGHPagesBranch[dir, Automatic, bname],
       setupGHPagesContent[dir];
-      pushGHPagesContent[dir, path],
+      pushGHPagesContent[dir, path, bname],
       If[cur=!=bname&&StringQ[cur], 
-        Git["Checkout", dir, cur]
+        Git["Checkout", dir, cur, "Force"->True]
         ]
       ]
     ]
@@ -5071,13 +5085,13 @@ setupGHPagesContent[dir_]:=
 
 
 
-configureGHPagesRemote[dir_, path_]:=
+configureGHPagesRemote[dir_, path_, bname_:"gh-pages"]:=
   Module[{rem, addRem, rem2},
-    rem = Git["GetRemoteURL", dir, "gh-pages"];
+    rem = Git["GetRemoteURL", dir, bname];
     If[!StringContainsQ[rem, "github.com"],
       addRem = URL@GitHub["Path", path];
       If[URLRead[addRem, "StatusCode"]>399, GitHub["Create", path]];
-      rem2 = Git["AddRemote", dir, "gh-pages", addRem];
+      rem2 = Git["AddRemote", dir, bname, addRem];
       If[rem2===Null, rem = addRem, rem = $Failed]
       ];
     rem
@@ -5089,19 +5103,19 @@ configureGHPagesRemote[dir_, path_]:=
 
 
 
-pushGHPagesContent[dir_, path_]:=
-  Module[{rem=configureGHPagesRemote[dir, path], 
+pushGHPagesContent[dir_, path_, bname_:"gh-pages"]:=
+  Module[{rem=configureGHPagesRemote[dir, path, bname], 
     res=$Failed, add=$Failed, commit=$Failed},
     If[rem=!=$Failed,
-      add = Git["Add", dir, "All"->True];
+      Echo@Git["Pull", dir, bname, bname, "StrategyOption"->"ours"];
+      Git["Add", dir, "All"->True];
       commit = Git["Commit", dir, 
         "Message"->"Deploying website at "<>DateString[Now, "DateTimeShort"]
         ];
-      res = Git["Push", dir, "gh-pages", "gh-pages"];
+      res = Git["Push", dir, bname, bname];
       ];
     <|
       "Remote"->rem, 
-      "Add"->add,
       "Commit"->commit,
       "Results"->res
       |>
